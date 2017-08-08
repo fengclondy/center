@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.ExecuteResult;
 import cn.htd.goodscenter.dto.indto.JudgeRecevieAddressInDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockInDTO;
@@ -30,9 +32,6 @@ import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateItemListInfoReqDTO;
 
-import com.alibaba.dubbo.rpc.RpcException;
-import com.alibaba.fastjson.JSONObject;
-
 @Service
 public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 
@@ -47,7 +46,7 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 
 	@Autowired
 	private ProductPlusExportService productPlusExportService;
-	
+
 	@Autowired
 	private VipItemExportService vipItemExportService;
 
@@ -231,47 +230,53 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 		return otherCenterResDTO;
 	}
 
-	
 	/*
 	 * 调商品中心批量释放库存-只是用messageId幂等性
 	 */
-	@Override
-	public OtherCenterResDTO<String> comboChangeStock(
-			List<Order4StockChangeDTO> order4StockChangeDTOs, String messageId) {
-		OtherCenterResDTO<String> otherCenterResDTO = new OtherCenterResDTO<String>();
-		try {
-			Long startTime = System.currentTimeMillis();
-			LOGGER.info("MessageId:{}调用商品中心(comboChangeStock批量释放库存)--组装查询参数开始:{}", messageId,
-					JSONObject.toJSONString(order4StockChangeDTOs));
-			for(Order4StockChangeDTO order4StockChangeDTO : order4StockChangeDTOs){
-				ExecuteResult<String> comboChangeStock = skuStockChangeExportService.comboChangeStock(order4StockChangeDTO);
-				Long endTime = System.currentTimeMillis();
-				LOGGER.info("MessageId:{}调用商品中心(comboChangeStock批量释放库存)--返回结果:{}", messageId,
-						JSONObject.toJSONString(comboChangeStock) + " 耗时:" + (endTime - startTime));
-				if (comboChangeStock.isSuccess() == true) {
-					otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
-				} else {
-					LOGGER.warn("MessageId:{} 调用商品中心(comboChangeStock批量释放库存)-返回错误码和错误信息:{}", messageId,
-							ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getCode()
-									+ ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getMsg());
-					otherCenterResDTO.setOtherCenterResponseCode(
-							ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getCode());
-					otherCenterResDTO.setOtherCenterResponseMsg(
-							ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getMsg());
-				}
-			}
-		} catch (Exception e) {
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法GoodsCenterRAOImpl.comboChangeStock出现异常{}", messageId,
-					w.toString());
-			otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
-		}
-		return otherCenterResDTO;
-	}
+	// @Override
+	// public OtherCenterResDTO<String> comboChangeStock(
+	// List<Order4StockChangeDTO> order4StockChangeDTOs, String messageId) {
+	// OtherCenterResDTO<String> otherCenterResDTO = new
+	// OtherCenterResDTO<String>();
+	// try {
+	// Long startTime = System.currentTimeMillis();
+	// LOGGER.info("MessageId:{}调用商品中心(comboChangeStock批量释放库存)--组装查询参数开始:{}",
+	// messageId,
+	// JSONObject.toJSONString(order4StockChangeDTOs));
+	// for (Order4StockChangeDTO order4StockChangeDTO : order4StockChangeDTOs) {
+	// ExecuteResult<String> comboChangeStock = skuStockChangeExportService
+	// .changePriceStock(order4StockChangeDTO);
+	// Long endTime = System.currentTimeMillis();
+	// LOGGER.info("MessageId:{}调用商品中心(comboChangeStock批量释放库存)--返回结果:{}",
+	// messageId,
+	// JSONObject.toJSONString(comboChangeStock) + " 耗时:" + (endTime -
+	// startTime));
+	// if (comboChangeStock.isSuccess() == true) {
+	// otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+	// } else {
+	// LOGGER.warn("MessageId:{} 调用商品中心(comboChangeStock批量释放库存)-返回错误码和错误信息:{}",
+	// messageId,
+	// ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getCode()
+	// + ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED
+	// .getMsg());
+	// otherCenterResDTO.setOtherCenterResponseCode(
+	// ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getCode());
+	// otherCenterResDTO.setOtherCenterResponseMsg(
+	// ResultCodeEnum.GOODSCENTER_RELEASE_RECHARGE_STOCK_FAILED.getMsg());
+	// }
+	// }
+	// } catch (Exception e) {
+	// StringWriter w = new StringWriter();
+	// e.printStackTrace(new PrintWriter(w));
+	// LOGGER.error("MessageId:{}
+	// 调用方法GoodsCenterRAOImpl.comboChangeStock出现异常{}", messageId,
+	// w.toString());
+	// otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+	// otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+	// }
+	// return otherCenterResDTO;
+	// }
 
-	
 	/*
 	 * 调商品中心批量扣减库存
 	 */
@@ -400,8 +405,9 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 		OtherCenterResDTO<Boolean> other = new OtherCenterResDTO<Boolean>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("商品中心--查询商品sku详细信息--组装查询参数开始:" + "MessageId:" + messageId+" sellerId:"+sellerId+" productChannel:"+productChannel
-					+" categoryId:"+categoryId+" brandId:"+brandId);
+			LOGGER.info("商品中心--查询商品sku详细信息--组装查询参数开始:" + "MessageId:" + messageId + " sellerId:"
+					+ sellerId + " productChannel:" + productChannel + " categoryId:" + categoryId
+					+ " brandId:" + brandId);
 			ExecuteResult<Boolean> flag = productPlusExportService
 					.canProductPlusSaleBySeller(sellerId, productChannel, categoryId, brandId);
 			LOGGER.info("MessageId:{} 商品中心--查询商品sku详细信息--返回结果:{}", messageId, flag);
@@ -423,32 +429,35 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 	}
 
 	@Override
-	public OtherCenterResDTO<List<VipItemEntryInfoDTO>> queryVipItemList(String vipSkuCode, String messageId) {
+	public OtherCenterResDTO<List<VipItemEntryInfoDTO>> queryVipItemList(String vipSkuCode,
+			String messageId) {
 		OtherCenterResDTO<List<VipItemEntryInfoDTO>> other = new OtherCenterResDTO<List<VipItemEntryInfoDTO>>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("商品中心--查询VIP套餐--组装查询参数开始:" + "MessageId:" + messageId+" vipSkuCode:"+vipSkuCode);
+			LOGGER.info("商品中心--查询VIP套餐--组装查询参数开始:" + "MessageId:" + messageId + " vipSkuCode:"
+					+ vipSkuCode);
 			VipItemListInDTO vipItemListInDTO = new VipItemListInDTO();
-			ExecuteResult<List<VipItemListOutDTO>> vipItemRes  = vipItemExportService.queryVipItemList(vipItemListInDTO);
+			ExecuteResult<List<VipItemListOutDTO>> vipItemRes = vipItemExportService
+					.queryVipItemList(vipItemListInDTO);
 			LOGGER.info("MessageId:{} 商品中心--查询VIP套餐--返回结果:{}", messageId,
 					JSONObject.toJSONString(vipItemRes));
 			Long endTime = System.currentTimeMillis();
 			LOGGER.info("MessageId:{} 商品中心--查询VIP套餐 耗时:{}", messageId, endTime - startTime);
 
-			if (vipItemRes != null && null != vipItemRes.getResult() && null != vipItemRes.getResult().get(0)
-					&& vipItemRes.isSuccess() == true) {
-				List<VipItemEntryInfoDTO> vipItemEntryInfoDTOList = vipItemRes.getResult().get(0).getVipItemEntryInfoList();
+			if (vipItemRes != null && null != vipItemRes.getResult()
+					&& null != vipItemRes.getResult().get(0) && vipItemRes.isSuccess() == true) {
+				List<VipItemEntryInfoDTO> vipItemEntryInfoDTOList = vipItemRes.getResult().get(0)
+						.getVipItemEntryInfoList();
 				other.setOtherCenterResult(vipItemEntryInfoDTOList);
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 				other.setOtherCenterResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 			} else {
-				LOGGER.warn(
-						"MessageId:{} 商品中心--查询VIP套餐 (queryVipItemList)-没有查到数据 参数:{}",
-						messageId, JSONObject.toJSONString(vipSkuCode));
+				LOGGER.warn("MessageId:{} 商品中心--查询VIP套餐 (queryVipItemList)-没有查到数据 参数:{}", messageId,
+						JSONObject.toJSONString(vipSkuCode));
 				other.setOtherCenterResponseCode(
 						ResultCodeEnum.ORDERSETTLEMENT_PRODUCT_IS_NULL.getCode());
-				other.setOtherCenterResponseMsg("查询VIP套餐:"+
-						ResultCodeEnum.ORDERSETTLEMENT_PRODUCT_IS_NULL.getMsg());
+				other.setOtherCenterResponseMsg(
+						"查询VIP套餐:" + ResultCodeEnum.ORDERSETTLEMENT_PRODUCT_IS_NULL.getMsg());
 			}
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
@@ -460,5 +469,5 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 		}
 		return other;
 	}
-	
+
 }

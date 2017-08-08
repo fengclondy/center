@@ -37,7 +37,6 @@ import cn.htd.tradecenter.common.enums.BoxAreaTypeEnum;
 import cn.htd.tradecenter.common.enums.YesNoEnum;
 import cn.htd.tradecenter.common.exception.TradeCenterBusinessException;
 import cn.htd.tradecenter.dto.TradeOrderItemsDTO;
-import cn.htd.tradecenter.dto.TradeOrderItemsPriceHistoryDTO;
 
 @Service("tradeOrderStockHandle")
 public class TradeOrderStockHandle {
@@ -252,8 +251,8 @@ public class TradeOrderStockHandle {
 		List<Order4StockEntryDTO> stockEntryList = new ArrayList<Order4StockEntryDTO>();
 		String dealFlag = "";
 		String orderNo = "";
-		int goodsCount = 0;
-		TradeOrderItemsPriceHistoryDTO itemPriceHistoryDTO = null;
+		// int goodsCount = 0;
+		// TradeOrderItemsPriceHistoryDTO itemPriceHistoryDTO = null;
 		try {
 
 			for (TradeOrderItemsDTO orderItemDTO : orderItemList) {
@@ -262,56 +261,70 @@ public class TradeOrderStockHandle {
 				if (StringUtils.isEmpty(dealFlag)) {
 					continue;
 				}
-				if ("add".equals(dealFlag)) {
-					stockEntryDTO = new Order4StockEntryDTO();
-					stockEntryDTO.setStockTypeEnum(isOpposition ? StockTypeEnum.RELEASE : StockTypeEnum.RESERVE);
-					stockEntryDTO.setOrderNo(orderNo);
-					stockEntryDTO.setOrderResource(orderFrom);
-					stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
-					stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
-					stockEntryDTO.setQuantity(orderItemDTO.getGoodsCount());
-				} else if ("update".equals(dealFlag)) {
-					stockEntryDTO = new Order4StockEntryDTO();
-					itemPriceHistoryDTO = orderItemDTO.getItemPriceHistoryDTO();
-					goodsCount = itemPriceHistoryDTO.getBeforeBargainingGoodsCount()
-							- itemPriceHistoryDTO.getAfterBargainingGoodsCount();
-					if (goodsCount == 0) {
-						continue;
-					} else if (goodsCount > 0) {
-						stockEntryDTO.setStockTypeEnum(isOpposition ? StockTypeEnum.RESERVE : StockTypeEnum.RELEASE);
-					} else {
-						goodsCount = goodsCount * -1;
-						stockEntryDTO.setStockTypeEnum(isOpposition ? StockTypeEnum.RELEASE : StockTypeEnum.RESERVE);
-					}
-					stockEntryDTO.setOrderNo(orderNo);
-					stockEntryDTO.setOrderResource(orderFrom);
-					stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
-					stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
-					stockEntryDTO.setQuantity(goodsCount);
-				} else if ("delete".equals(dealFlag)) {
-					stockEntryDTO = new Order4StockEntryDTO();
-					stockEntryDTO.setStockTypeEnum(isOpposition ? StockTypeEnum.RESERVE : StockTypeEnum.RELEASE);
-					stockEntryDTO.setOrderNo(orderNo);
-					stockEntryDTO.setOrderResource(orderFrom);
-					stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
-					stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
-					if (YesNoEnum.YES.getValue() == orderItemDTO.getIsChangePrice()) {
-						if (orderItemDTO.getBargainingGoodsCount() > 0) {
-							stockEntryDTO.setQuantity(orderItemDTO.getBargainingGoodsCount());
-						} else {
-							stockEntryDTO.setQuantity(orderItemDTO.getGoodsCount());
-						}
-					} else {
-						stockEntryDTO.setQuantity(orderItemDTO.getGoodsCount());
-					}
-				}
+				// if ("add".equals(dealFlag)) {
+				// stockEntryDTO = new Order4StockEntryDTO();
+				// stockEntryDTO.setStockTypeEnum(isOpposition ?
+				// StockTypeEnum.RELEASE : StockTypeEnum.RESERVE);
+				// stockEntryDTO.setOrderNo(orderNo);
+				// stockEntryDTO.setOrderResource(orderFrom);
+				// stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
+				// stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
+				// stockEntryDTO.setQuantity(orderItemDTO.getGoodsCount());
+				// } else if ("update".equals(dealFlag)) {
+				// stockEntryDTO = new Order4StockEntryDTO();
+				// itemPriceHistoryDTO = orderItemDTO.getItemPriceHistoryDTO();
+				// goodsCount =
+				// itemPriceHistoryDTO.getBeforeBargainingGoodsCount()
+				// - itemPriceHistoryDTO.getAfterBargainingGoodsCount();
+				// if (goodsCount == 0) {
+				// continue;
+				// } else if (goodsCount > 0) {
+				// stockEntryDTO.setStockTypeEnum(isOpposition ?
+				// StockTypeEnum.RESERVE : StockTypeEnum.RELEASE);
+				// } else {
+				// goodsCount = goodsCount * -1;
+				// stockEntryDTO.setStockTypeEnum(isOpposition ?
+				// StockTypeEnum.RELEASE : StockTypeEnum.RESERVE);
+				// }
+				// stockEntryDTO.setOrderNo(orderNo);
+				// stockEntryDTO.setOrderResource(orderFrom);
+				// stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
+				// stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
+				// stockEntryDTO.setQuantity(goodsCount);
+				// } else if ("delete".equals(dealFlag)) {
+				// stockEntryDTO = new Order4StockEntryDTO();
+				// stockEntryDTO.setStockTypeEnum(isOpposition ?
+				// StockTypeEnum.RESERVE : StockTypeEnum.RELEASE);
+				// stockEntryDTO.setOrderNo(orderNo);
+				// stockEntryDTO.setOrderResource(orderFrom);
+				// stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
+				// stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
+				// if (YesNoEnum.YES.getValue() ==
+				// orderItemDTO.getIsChangePrice()) {
+				// if (orderItemDTO.getBargainingGoodsCount() > 0) {
+				// stockEntryDTO.setQuantity(orderItemDTO.getBargainingGoodsCount());
+				// } else {
+				// stockEntryDTO.setQuantity(orderItemDTO.getGoodsCount());
+				// }
+				// } else {
+				// stockEntryDTO.setQuantity(orderItemDTO.getGoodsCount());
+				// }
+				// }
+				stockEntryDTO = new Order4StockEntryDTO();
+				stockEntryDTO.setStockTypeEnum(isOpposition ? StockTypeEnum.RELEASE : StockTypeEnum.RESERVE);
+				stockEntryDTO.setOrderNo(orderNo);
+				stockEntryDTO.setOrderResource(orderFrom);
+				stockEntryDTO.setSkuCode(orderItemDTO.getSkuCode());
+				stockEntryDTO.setIsBoxFlag(orderItemDTO.getIsBoxFlag());
+				// 议价直接传该订单行商品的议价商品数量
+				stockEntryDTO.setQuantity(orderItemDTO.getBargainingGoodsCount());
 				stockEntryList.add(stockEntryDTO);
 			}
 			stockDTO.setMessageId(messageId);
 			stockDTO.setOrderNo(orderNo);
 			stockDTO.setOrderResource(orderFrom);
 			stockDTO.setOrderEntries(stockEntryList);
-			stockResult = skuStockChangeExportService.comboChangeStock(stockDTO);
+			stockResult = skuStockChangeExportService.changePriceStock(stockDTO);
 			if (!stockResult.isSuccess()) {
 				throw new TradeCenterBusinessException(stockResult.getCode(),
 						StringUtils.join(stockResult.getErrorMessages(), "\n"));

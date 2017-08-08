@@ -79,11 +79,21 @@ public interface SkuStockChangeExportService {
     ExecuteResult<String> batchRollbackStock(List<Order4StockChangeDTO> order4StockChangeDTOs);
 
     /**
-     * 组合操作库存 - (一个订单有N种库存操作方式) 注 ：提供给ＶＭＳ拆单  议价专用
-     * 注：只针对内部供应商和外部供应商商品
-     * 【messageId + orderNo + skuCode + isBoxFlag + type  幂等唯一】
+     * 议价库存数量接口
+     * 商品数量传入每次议价后的数量
+     * 议价流程，先把原来的锁定全部释放，然后重新锁定此次议价的数量
+     * 比如：原来锁定了10个，现在议价成5个，则传入5个；
+     * @param order4StockChangeDTO
      * @return
      */
-    ExecuteResult<String> comboChangeStock(Order4StockChangeDTO order4StockChangeDTO);
+    ExecuteResult<String> changePriceStock(Order4StockChangeDTO order4StockChangeDTO);
+
+//    /**
+//     * 组合操作库存 - (一个订单有N种库存操作方式) 注 ：提供给ＶＭＳ拆单  议价专用
+//     * 注：只针对内部供应商和外部供应商商品
+//     * 【messageId + orderNo + skuCode + isBoxFlag + type  幂等唯一】
+//     * @return
+//     */
+//    ExecuteResult<String> comboChangeStock(Order4StockChangeDTO order4StockChangeDTO);
 
 }

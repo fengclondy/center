@@ -36,16 +36,18 @@ public class SkuStockReduceImplHandler extends AbstractSkuStockChangeHandler {
         // ADD-END
         // 查询实时库存
         ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
-        if (itemSkuPublishInfo.getReserveQuantity() - quantity < 0) {
-            throw new StockNotEnoughReserveQuantityException("扣减库存失败-锁定库存不足以扣减, 详细 :"
-                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
-        }
-        if (itemSkuPublishInfo.getDisplayQuantity() - quantity < 0) {
-            throw new StockNotEnoughDisplayQuantityException("扣减库存失败-可见库存不足以扣减, 详细 :"
-                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
-        }
-        itemSkuPublishInfo.setDisplayQuantity(itemSkuPublishInfo.getDisplayQuantity() - quantity);
-        itemSkuPublishInfo.setReserveQuantity(itemSkuPublishInfo.getReserveQuantity() - quantity);
+//        if (itemSkuPublishInfo.getReserveQuantity() - quantity < 0) {
+//            throw new StockNotEnoughReserveQuantityException("扣减库存失败-锁定库存不足以扣减, 详细 :"
+//                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
+//        }
+//        if (itemSkuPublishInfo.getDisplayQuantity() - quantity < 0) {
+//            throw new StockNotEnoughDisplayQuantityException("扣减库存失败-可见库存不足以扣减, 详细 :"
+//                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
+//        }
+        int displayQuantity = (itemSkuPublishInfo.getDisplayQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getDisplayQuantity() - quantity);
+        int reserveQuantity = (itemSkuPublishInfo.getReserveQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getReserveQuantity() - quantity - quantity);
+        itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
+        itemSkuPublishInfo.setReserveQuantity(reserveQuantity);
         // 更新库存信息
         this.updateItemSkuPublishInfo(itemSkuPublishInfo);
         // 添加操作历史记录

@@ -36,12 +36,13 @@ public class SkuStockReleaseImplHandler extends AbstractSkuStockChangeHandler {
         // 查询实时库存
         ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
         // 释放锁定的库存数量
-        if (itemSkuPublishInfo.getReserveQuantity() - quantity < 0) {
-            // 锁定库存的数量小于待释放的库存
-            throw new StockNotEnoughReserveQuantityException("释放库存错误-锁定库存数不足"
-                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
-        }
-        itemSkuPublishInfo.setReserveQuantity(itemSkuPublishInfo.getReserveQuantity() - quantity);
+//        if (itemSkuPublishInfo.getReserveQuantity() - quantity < 0) {
+//            // 锁定库存的数量小于待释放的库存
+//            throw new StockNotEnoughReserveQuantityException("释放库存错误-锁定库存数不足"
+//                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
+//        }
+        int reserveQuantity = (itemSkuPublishInfo.getReserveQuantity() - quantity) < 0 ? 0 : (itemSkuPublishInfo.getReserveQuantity() - quantity);
+        itemSkuPublishInfo.setReserveQuantity(reserveQuantity);
         // 更新库存信息
         this.updateItemSkuPublishInfo(itemSkuPublishInfo);
         // 添加操作历史记录

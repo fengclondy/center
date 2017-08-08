@@ -19,5 +19,5 @@ public interface StockChangeAble {
      * 改变库存 - 订单行
      * @param order4StockEntryDTO 订单行
      */
-    void changeEntryStock(Order4StockEntryDTO order4StockEntryDTO, boolean isSpecialOrder) throws Exception;
+    void changeEntryStock(Order4StockEntryDTO order4StockEntryDTO) throws Exception;
 }

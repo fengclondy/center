@@ -180,7 +180,9 @@
     WHERE
       stock_id = #{stockId,jdbcType=BIGINT}
       AND order_no = #{orderNo,jdbcType=VARCHAR}
-      AND update_type = #{updateType,jdbcType=VARCHAR}
+      <if test="updateType != null">
+        AND update_type = #{updateType,jdbcType=VARCHAR}
+      </if>
       <if test="messageId != null">
         AND message_id = #{messageId, jdbcType=VARCHAR}
       </if>

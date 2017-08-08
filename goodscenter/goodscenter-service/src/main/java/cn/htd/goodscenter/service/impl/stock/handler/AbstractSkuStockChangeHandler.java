@@ -77,7 +77,7 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             order4StockEntryDTO.setOrderResource(orderResource);
             order4StockEntryDTO.setMessageId(messageId);
             // lock and change
-            this.changeEntryStock(order4StockEntryDTO, false);
+            this.changeEntryStock(order4StockEntryDTO);
         }
     }
 
@@ -87,7 +87,7 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
      * @return 修改结果
      */
     @Override
-    public void changeEntryStock(Order4StockEntryDTO order4StockEntryDTO, boolean isSpecialOrder) throws Exception {
+    public void changeEntryStock(Order4StockEntryDTO order4StockEntryDTO) throws Exception {
         logger.info("changeWithLock, orderEntry : {}", order4StockEntryDTO);
         RLock rLock = null;
         try {
@@ -100,6 +100,9 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             }
             if (order4StockEntryDTO.getQuantity() == null || order4StockEntryDTO.getQuantity() < 0) {
                 throw new StockInParamIllegalException("入参校验错误, Quantity非法, Quantity : " + order4StockEntryDTO.getQuantity());
+            }
+            if (order4StockEntryDTO.getQuantity() == 0) {
+                return;
             }
             String skuCode = order4StockEntryDTO.getSkuCode();
             // 查询STOCK_ID
@@ -129,7 +132,7 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             /** 上锁 **/
             rLock.lock();
             // 做业务
-            this.doChange(order4StockEntryDTO, stockId, isSpecialOrder);
+            this.doChange(order4StockEntryDTO, stockId);
         } finally {
             /** 释放锁资源 **/
             if (rLock != null) {
@@ -144,7 +147,7 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
      * @param stockId
      * @return
      */
-    protected abstract void doChange(Order4StockEntryDTO order4StockEntryDTO, Long stockId, boolean isSpecialOrder) throws Exception;
+    protected abstract void doChange(Order4StockEntryDTO order4StockEntryDTO, Long stockId) throws Exception;
 
     protected void updateItemSkuPublishInfo(ItemSkuPublishInfo itemSkuPublishInfo) {
         this.itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
@@ -199,17 +202,12 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
      * @param orderNo 订单号
      * @param stockId 库存id
      * @param stockTypeEnum 操作类型
-     * @param messageId 线程号
-     * @param isSpecialOrder 是否特殊订单； vms议价特殊订单，订单周期可以被随意重复的订单
      */
-    protected boolean idempotentHandle(String orderNo, Long stockId, StockTypeEnum stockTypeEnum, String messageId, boolean isSpecialOrder) {
+    protected boolean idempotentHandle(String orderNo, Long stockId, StockTypeEnum stockTypeEnum) {
         ItemSkuPublishInfoHistory itemSkuPublishInfoHistory = new ItemSkuPublishInfoHistory();
         itemSkuPublishInfoHistory.setOrderNo(orderNo);
         itemSkuPublishInfoHistory.setStockId(stockId);
         itemSkuPublishInfoHistory.setUpdateType(stockTypeEnum.name());
-        if (isSpecialOrder) {
-            itemSkuPublishInfoHistory.setMessageId(messageId);
-        }
         List<ItemSkuPublishInfoHistory> itemSkuPublishInfoHistoryList = this.itemSkuPublishInfoHistoryMapper.select(itemSkuPublishInfoHistory);
         // 没有相关记录，不走幂等逻辑
         if (itemSkuPublishInfoHistoryList != null && itemSkuPublishInfoHistoryList.size() > 0) {
@@ -224,14 +222,10 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
      * 校验修改库存的前置条件
      * @param orderNo 订单号
      * @param stockId 库存id   商品库存
-     * @param isSpecialOrder 是否特殊订单； vms议价特殊订单，订单周期可以被随意重复的订单
      * @param preCondition 前置条件
      * @return
      */
-    protected boolean validateStockChangePreCondition(String orderNo, Long stockId, boolean isSpecialOrder, StockTypeEnum preCondition) {
-        if (isSpecialOrder) { // 如果是特殊订单，不校验
-            return true; // 校验通过
-        }
+    protected boolean validateStockChangePreCondition(String orderNo, Long stockId, StockTypeEnum preCondition, Integer quantity) {
         ItemSkuPublishInfoHistory itemSkuPublishInfoHistory = new ItemSkuPublishInfoHistory();
         itemSkuPublishInfoHistory.setOrderNo(orderNo);
         itemSkuPublishInfoHistory.setStockId(stockId);
@@ -239,8 +233,12 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
         ItemSkuPublishInfoHistory preStockChangeRecord = this.itemSkuPublishInfoHistoryMapper.selectLastStockRecord(itemSkuPublishInfoHistory);
         // 查看有没有前置操作的相关记录
         if (preStockChangeRecord != null && preCondition.name().equals(preStockChangeRecord.getUpdateType())) {
-            logger.info("存在库存修改的前置条件,校验通过. pre-stock-change-record: {}", JSONArray.fromObject(preStockChangeRecord));
-            return true;
+            if (preStockChangeRecord.getQuantity().equals(quantity)) {
+                logger.info("存在库存修改的前置条件,校验通过. pre-stock-change-record: {}", JSONArray.fromObject(preStockChangeRecord));
+                return true;
+            } else {
+                logger.error("之前：{}的数量:{}和目前的数量：{}不一致, 订单号：{}, 库存ID：{}", preStockChangeRecord.getUpdateType(), preStockChangeRecord.getQuantity(), quantity, orderNo,stockId);
+            }
         }
         return false;
     }

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.MallSubTabDAO">
+	
+	<!-- =========================================================== -->
+    <!-- 定义页签resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<resultMap id="mallSubTabMap" type="com.bjucloud.contentcenter.domain.MallSubTab">
+				<result property="id" column="id" /> 
+				<result property="sortNum" column="sort_num" /> <!--排序顺序-->
+				<result property="title" column="title"/> <!--名称    -->
+				<result property="recName" column="recName"/><!-- 楼层名称 -->
+				<result property="url" column="url" /> <!--链接指向-->
+				<result property="redId" column="red_id" /> <!--mall_recommend商城推荐id，即楼层id。-->
+				<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。-->
+				<result property="created" column="created" /> <!--创建时间-->
+				<result property="modified" column="modified" /> <!--改动时间-->
+				<result property="templateId" column="template_id" /> <!--页签对应模板id-->
+	</resultMap>
+	
+	<resultMap id="mallSubTabMapDto" type="com.bjucloud.contentcenter.dto.MallSubTabDTO">
+				<result property="id" column="id" /> 
+				<result property="sortNum" column="sort_num" /> <!--排序顺序-->
+				<result property="title" column="title"/> <!--名称    -->
+				<result property="recName" column="recName"/><!-- 楼层名称 -->
+				<result property="url" column="url" /> <!--链接指向-->
+				<result property="redId" column="red_id" /> <!--mall_recommend商城推荐id，即楼层id。-->
+				<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。-->
+				<result property="created" column="created" /> <!--创建时间-->
+				<result property="modified" column="modified" /> <!--改动时间-->
+				<result property="templateId" column="template_id" /> <!--页签对应模板id-->
+	</resultMap>
+	<resultMap id="mallSubTabMapECMDto" type="com.bjucloud.contentcenter.dto.MallSubTabECMDTO">
+				<result property="id" column="id" /> 
+				<result property="sortNum" column="sort_num" /> <!--排序顺序-->
+				<result property="title" column="title"/> <!--名称    -->
+				<result property="recName" column="recName"/><!-- 楼层名称 -->
+				<result property="url" column="url" /> <!--链接指向-->
+				<result property="redId" column="red_id" /> <!--mall_recommend商城推荐id，即楼层id。-->
+				<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。-->
+				<result property="created" column="created" /> <!--创建时间-->
+				<result property="modified" column="modified" /> <!--改动时间-->
+				<result property="templateId" column="template_id" /> <!--页签对应模板id-->
+				<result property="themeId" column="themeId" /> 
+				<result property="themeStatus" column="themeStatus" /> 
+				<result property="themeType" column="themeType" /> 
+				<result property="themeName" column="themeName" /> 
+				<result property="themeUId" column="themeUid" /> 
+				<result property="cid" column="cid"/>
+				<result property="addressId" column="addressId"/>
+	</resultMap>
+	
+	<!-- 页签公共条件 -->
+	<sql id="whereSubtab">
+	       <where>
+	       <if test="entity.title != null and entity.title != ''">
+	              and  subtab.title like concat('%',#{entity.title},'%')
+	       </if>
+	       <if test="entity.startTime != null and entity.startTime !=''">
+	             and subtab.created >= date_format(#{entity.startTime},'%Y-%m-%d')
+	       </if>
+	       <if test="entity.endTime != null and entity.endTime != ''">
+	           <![CDATA[
+	              and subtab.created <= DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+	             ]]>
+	       </if>
+	        <if test="entity.status != null and entity.status != ''">
+	              and subtab.status=#{entity.status}
+	        </if>
+	         <if test="entity.redId != null and entity.redId != ''">
+	              and subtab.red_id=#{entity.redId}
+	        </if>
+	        </where>
+	</sql>
+	<sql id="whereSubtab_ecm">
+	       <where>
+	       	<if test=" entity.themeType != null and entity.themeType != '' and entity.themeStatus != 0">
+				and mt.type = #{entity.themeType}
+			</if>
+			<if test=" entity.themeStatus != null and entity.themeStatus != ''  and entity.themeStatus != 0">
+				and mt.status = #{entity.themeStatus}
+			</if>
+			<if test=" entity.themeUId != null and entity.themeUId != '' ">
+				and mt.userId = #{entity.themeUId}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' ">
+				and mt.id = #{entity.themeId}
+			</if>
+	       <if test="entity.title != null and entity.title != ''">
+	              and  subtab.title like concat('%',#{entity.title},'%')
+	       </if>
+	       <if test="entity.startTime != null and entity.startTime !=''">
+	             and subtab.created >= date_format(#{entity.startTime},'%Y-%m-%d')
+	       </if>
+	       <if test="entity.endTime != null and entity.endTime != ''">
+	           <![CDATA[
+	              and subtab.created <= DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+	             ]]>
+	       </if>
+	        <if test="entity.status != null and entity.status != ''">
+	              and subtab.status=#{entity.status}
+	        </if>
+	         <if test="entity.redId != null and entity.redId != ''">
+	              and subtab.red_id=#{entity.redId}
+	        </if>
+	        </where>
+	</sql>
+	
+	<!-- 页签公共分页 -->
+	<sql id="pageSQL">
+	     limit #{page.pageOffset},#{page.rows}
+	</sql>
+	
+	<sql id="queryList_ecm">
+		 <![CDATA[
+	          SELECT 
+	          		  mt.id as themeId,
+					  mt.theme_name as themeName,
+					  mt.type as themeType,
+					  mt.status as themeStatus,
+					  mt.userId as themeUid, 
+					  mt.cId as cid,
+					  mt.addressId as addressId,
+					  subtab.id,
+					  subtab.sort_num,
+					  rec.title recName,
+					  subtab.title,
+					  subtab.url,
+					  subtab.red_id,
+					  subtab.STATUS,
+					  subtab.created,
+					  subtab.modified,
+					  subtab.template_id 
+					FROM
+					  (mall_theme as mt inner join mall_recommend as rec on mt.id=rec.theme_id)
+					  inner join mall_recommend_subtab as subtab ON subtab.red_id=rec.id
+		  ]]>
+	</sql>
+	
+	<!-- 分页查询页签所有 -->
+	<select id="queryMallSubTabPage" resultMap="mallSubTabMapDto">
+	      <![CDATA[
+	          SELECT 
+					  subtab.id,
+					  subtab.sort_num,
+					  rec.title recName,
+					  subtab.title,
+					  subtab.url,
+					  subtab.red_id,
+					  subtab.STATUS,
+					  subtab.created,
+					  subtab.modified,
+					  subtab.template_id 
+					FROM
+					  mall_recommend_subtab subtab INNER
+					  JOIN mall_recommend rec ON subtab.red_id=rec.id
+		  ]]>
+		  <include refid="whereSubtab" />
+		  <![CDATA[
+		        ORDER BY subtab.sort_num asc
+	      ]]>
+	      <include refid="pageSQL" />
+	</select>
+	<select id="equeryMallSubTabPage" resultMap="mallSubTabMapECMDto">	     
+		  <include refid="queryList_ecm" />
+		  <include refid="whereSubtab_ecm" />
+		  <![CDATA[
+		        ORDER BY subtab.sort_num asc
+	      ]]>
+	      <include refid="pageSQL" />
+	</select>
+	<select id="equeryMallSubCount" resultType="long">
+	      <![CDATA[
+	          SELECT 
+	          		count(0)
+					FROM
+					  (mall_theme as mt inner join mall_recommend as rec on mt.id=rec.theme_id)
+					  inner join mall_recommend_subtab as subtab ON subtab.red_id=rec.id
+		  ]]>
+		  <include refid="whereSubtab_ecm" />
+	</select>
+	<!-- 查询页签数据数 -->
+	<select id="queryMallSubCount" resultType="long">
+	      <![CDATA[
+	          select count(1) from mall_recommend_subtab subtab JOIN mall_recommend rec ON subtab.red_id=rec.id
+	      ]]>
+		<include refid="whereSubtab" />
+	</select>
+	
+	<!-- 页签新增 -->
+	<insert id="add">
+	      <![CDATA[
+	             INSERT INTO mall_recommend_subtab (
+					  id,
+					  sort_num,
+					  title,
+					  red_id,
+					  url,
+					  STATUS,
+					  created,
+					  modified,
+					  template_id
+					) 
+					VALUES
+					  (
+					    #{id},
+					    #{sortNum},
+					    #{title},
+					    #{redId},
+					     #{url},
+					    #{status},
+					    NOW(),
+					    NOW(),
+					    #{templateId}
+					  )
+	      ]]>
+	      <selectKey resultType="long" order="AFTER" keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<!-- 修改页签 -->
+	<update id="update">
+	      UPDATE 
+			  mall_recommend_subtab 
+			   SET
+			  title = #{title},
+			  sort_num = #{sortNum},
+			  red_id = #{redId},
+			  STATUS = #{status},
+			  modified = NOW(),
+			  template_id=#{templateId},
+			  url = #{url} 
+			  WHERE id=#{id}
+	</update>
+	
+	<!-- 根据id获取页签中数据 -->
+	<select id="queryById" resultMap="mallSubTabMap">
+	     select subtab.id,
+					  subtab.sort_num,
+					  subtab.title,
+					  subtab.url,
+					  subtab.red_id,
+					  subtab.STATUS,
+					  subtab.created,
+					  subtab.modified,subtab.template_id   from mall_recommend_subtab subtab
+	     where subtab.id=#{id}
+	</select>
+	
+	<!-- 根据id获取页签中数据 -->
+	<select id="queryByIdECM" resultMap="mallSubTabMapECMDto">
+	     <include refid="queryList_ecm" />
+	     where subtab.id=#{id}
+	</select>
+	
+	<!-- 修改页签状态 -->
+	<update id="updateStatus">
+	      UPDATE 
+			  mall_recommend_subtab 
+			   SET
+			  status = #{status},
+			  modified = NOW()
+			  WHERE id=#{id}
+	</update>
+
+
+	<delete id="deleteMallSub">
+		delete from mall_recommend_subtab where id = #{id}
+	</delete>
+	
+	
+</mapper>

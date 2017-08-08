@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.MallTypeSubDAO">
+  <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.HTDMallTypeSubDTO">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="type1_name" jdbcType="VARCHAR" property="type1Name" />
+    <result column="type1" jdbcType="VARCHAR" property="type1" />
+    <result column="type2_name" jdbcType="VARCHAR" property="type2Name" />
+    <result column="type2" jdbcType="VARCHAR" property="type2" />
+    <result column="type3_name" jdbcType="VARCHAR" property="type3Name" />
+    <result column="type3" jdbcType="VARCHAR" property="type3" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="name_color" jdbcType="VARCHAR" property="nameColor" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, type_id, type1_name, type1, type2_name, type2, type3_name, type3, name, name_color, 
+    sort_num, status
+  </sql>
+  <select id="selectByTypeId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mall_type_sub
+    where type_id = #{typeId,jdbcType=BIGINT}
+    ORDER BY sort_num
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from mall_type_sub
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="deleteByTypeId" parameterType="long">
+  	delete from mall_type_sub
+  	where type_id = #{typeId}
+  </delete>
+  
+  <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.HTDMallTypeSubDTO">
+    insert into mall_type_sub
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="typeId != null">
+        type_id,
+      </if>
+      <if test="type1Name != null">
+        type1_name,
+      </if>
+      <if test="type1 != null">
+        type1,
+      </if>
+      <if test="type2Name != null">
+        type2_name,
+      </if>
+      <if test="type2 != null">
+        type2,
+      </if>
+      <if test="type3Name != null">
+        type3_name,
+      </if>
+      <if test="type3 != null">
+        type3,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="nameColor != null">
+        name_color,
+      </if>
+      <if test="sortNum != null">
+        sort_num,
+      </if>
+        status
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="typeId != null">
+        #{typeId,jdbcType=BIGINT},
+      </if>
+      <if test="type1Name != null">
+        #{type1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="type1 != null">
+        #{type1,jdbcType=VARCHAR},
+      </if>
+      <if test="type2Name != null">
+        #{type2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="type2 != null">
+        #{type2,jdbcType=VARCHAR},
+      </if>
+      <if test="type3Name != null">
+        #{type3Name,jdbcType=VARCHAR},
+      </if>
+      <if test="type3 != null">
+        #{type3,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameColor != null">
+        #{nameColor,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        #{sortNum,jdbcType=BIGINT},
+      </if>
+       1
+    </trim>
+  </insert>
+  <update id="updateBySelect" parameterType="com.bjucloud.contentcenter.dto.HTDMallTypeSubDTO">
+    update mall_type_sub
+    <set>
+      <if test="typeId != null">
+        type_id = #{typeId,jdbcType=BIGINT},
+      </if>
+      <if test="type1Name != null">
+        type1_name = #{type1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="type1 != null">
+        type1 = #{type1,jdbcType=VARCHAR},
+      </if>
+      <if test="type2Name != null">
+        type2_name = #{type2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="type2 != null">
+        type2 = #{type2,jdbcType=VARCHAR},
+      </if>
+      <if test="type3Name != null">
+        type3_name = #{type3Name,jdbcType=VARCHAR},
+      </if>
+      <if test="type3 != null">
+        type3 = #{type3,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameColor != null">
+        name_color = #{nameColor,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        sort_num = #{sortNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bjucloud.contentcenter.dto.HTDMallTypeSubDTO">
+    update mall_type_sub
+    set type_id = #{typeId,jdbcType=BIGINT},
+      type1_name = #{type1Name,jdbcType=VARCHAR},
+      type1 = #{type1,jdbcType=VARCHAR},
+      type2_name = #{type2Name,jdbcType=VARCHAR},
+      type2 = #{type2,jdbcType=VARCHAR},
+      type3_name = #{type3Name,jdbcType=VARCHAR},
+      type3 = #{type3,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      name_color = #{nameColor,jdbcType=VARCHAR},
+      sort_num = #{sortNum,jdbcType=BIGINT},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

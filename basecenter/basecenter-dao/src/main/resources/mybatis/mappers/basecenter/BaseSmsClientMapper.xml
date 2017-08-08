@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.basecenter.dao.BaseSmsClientDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BaseSmsClient" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="template_code" property="templateCode" jdbcType="VARCHAR" />
+    <result column="template_type" property="templateType" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, template_code, template_type, content, delete_flag, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <select id="queryTemplateByCode" resultMap="BaseResultMap" parameterType="cn.htd.basecenter.domain.BaseSmsClient" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_sms_client
+    where template_code = #{templateCode,jdbcType=VARCHAR}
+      and delete_flag = #{deleteFlag,jdbcType=TINYINT}
+  </select>
+  <select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_sms_client
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="add" parameterType="cn.htd.basecenter.domain.BaseSmsClient" useGeneratedKeys="true" keyProperty="id">
+    insert into base_sms_client
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="templateCode != null" >
+        template_code,
+      </if>
+      <if test="templateType != null" >
+        template_type,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+        delete_flag,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="templateCode != null" >
+        #{templateCode,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null" >
+        #{templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+        0,
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.htd.basecenter.domain.BaseSmsClient" >
+    update base_sms_client
+    <set >
+        name = #{name,jdbcType=VARCHAR},
+        template_code = #{templateCode,jdbcType=VARCHAR},
+        template_type = #{templateType,jdbcType=VARCHAR},
+        content = #{content,jdbcType=VARCHAR},
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

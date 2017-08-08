@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.spu.ItemSpuDescribeMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" >
+    <id column="des_id" property="desId" jdbcType="BIGINT" />
+    <result column="spu_id" property="spuId" jdbcType="BIGINT" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" extends="BaseResultMap" >
+    <result column="spu_desc" property="spuDesc" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    des_id, spu_id, delete_flag, create_id, create_name, create_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    spu_desc
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from item_spu_describe
+    where des_id = #{desId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_spu_describe
+    where des_id = #{desId,jdbcType=BIGINT}
+  </delete>
+  <insert id="add" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" useGeneratedKeys="true" keyProperty="desId">
+    insert into item_spu_describe (des_id, spu_id, delete_flag, 
+      create_id, create_name, create_time, 
+      spu_desc)
+    values (#{desId,jdbcType=BIGINT}, #{spuId,jdbcType=BIGINT}, 0,
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+      #{spuDesc,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" >
+    insert into item_spu_describe
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="desId != null" >
+        des_id,
+      </if>
+      <if test="spuId != null" >
+        spu_id,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="spuDesc != null" >
+        spu_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="desId != null" >
+        #{desId,jdbcType=BIGINT},
+      </if>
+      <if test="spuId != null" >
+        #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="spuDesc != null" >
+        #{spuDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBySpuIdSelective" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" >
+    update item_spu_describe
+    <set >
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="spuDesc != null" >
+        spu_desc = #{spuDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" >
+    update item_spu_describe
+    set
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      spu_desc = #{spuDesc,jdbcType=LONGVARCHAR}
+    where des_id = #{desId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuDescribe" >
+    update item_spu_describe
+    set spu_id = #{spuId,jdbcType=BIGINT},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where des_id = #{desId,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="queryBySpuId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select
+     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from item_spu_describe
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </select>
+
+
+  <!-- 删除商品模板详情信息 -->
+  <update id="updateDeleteFlag" parameterType="cn.htd.goodscenter.dto.SpuInfoDTO" >
+    UPDATE item_spu_describe
+    SET item_spu_describe.delete_flag = #{entity.deleteFlag}
+    WHERE spu_id = #{entity.spuId,jdbcType=BIGINT}
+  </update>
+</mapper>

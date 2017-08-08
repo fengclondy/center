@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.MallBannerDAO">
+	<resultMap id="mallBannerMapper" type="com.bjucloud.contentcenter.domain.MallBanner">
+			<result property="id" column="id" />
+			<result property="bannerUrl" column="banner_url" />
+			<result property="platformId" column="platform_id" />
+			<result property="sortNumber" column="sort_number" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="status" column="status" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<result property="bannerLink" column="banner_link" />
+			<result property="title" column="title" />
+			<result property="type" column="type"/>
+			<result property="bgimgUrl" column="bgimg_url"/>
+			<result property="themeId" column="theme_id"/>
+	</resultMap>
+	<resultMap id="mallBannerDTO" type="com.bjucloud.contentcenter.dto.MallBannerDTO">
+			<result property="id" column="id" />
+			<result property="bannerUrl" column="banner_url" />
+			<result property="platformId" column="platform_id" />
+			<result property="bannerLink" column="banner_link" />
+			<result property="title" column="title" />
+			<result property="sortNumber" column="sort_number" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="status" column="status" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<result property="type" column="type"/>
+			<result property="bgimgUrl" column="bgimg_url"/>
+			<result property="themeId" column="theme_id"/>
+			<result property="themeName" column="themeName"/>
+			<result property="themeStatus" column="themeStatus"/>
+			<result property="themeType" column="themeType"/>
+			<result property="themeUId" column="themeUId"/>
+			<result property="cid" column="cid"/>
+			<result property="addressId" column="addressId"/>
+	</resultMap>
+	
+	<sql id="selectBannerReportColumns">
+		<![CDATA[
+		select
+ 			 mall_ad_count_.id
+ 			,mall_ad_count_.mall_ad_id
+ 			,mall_ad_count_.ad_count
+ 			,mall_ad_count_.click_date
+ 			,mall_banner.title
+		FROM 
+		mall_banner mall_banner LEFT JOIN  mall_ad_count mall_ad_count_ ON mall_ad_count_.mall_ad_id=mall_banner.id
+		]]>
+	</sql>
+	<select id="queryById" resultMap="mallBannerDTO" >
+		select 
+		mb.id,
+		mb.banner_url bannerUrl,
+		mb.banner_link bannerLink,
+		mb.platform_id platformId,
+		mb.sort_number sortNumber,
+		mb.title,
+		mb.created,
+		mb.modified,
+		mb.status,
+		mb.start_time startTime,
+		mb.end_time endTime,
+		mb.type,
+		mb.bgimg_url bgimgUrl,
+		mb.theme_id themeId,
+		mt.theme_name themeName,
+		mt.cId cid,
+		mt.addressId addressId,
+		mt.status themeStatus,
+		mt.type themeType,
+		mt.userId themeUId
+		from 
+		mall_banner mb INNER JOIN mall_theme mt ON mb.theme_id=mt.id
+		where mb.id = #{id}
+	</select>
+
+	<select id="queryMobileShopBannerById" resultMap="mallBannerDTO" >
+		select *  from
+		mall_banner mb
+		where mb.id = #{id}
+	</select>
+
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	<insert id="add">
+		insert into mall_banner(
+				banner_url,
+				platform_id,
+				sort_number,
+				created,
+				modified,
+				status,
+				start_time,
+				end_time,
+				banner_link,
+				title,
+				type,
+				bgimg_url,
+				theme_id
+		)values(
+				#{bannerUrl},
+				#{platformId},
+				#{sortNumber},
+				NOW(),
+				NOW(),
+				#{status},
+				#{startTime},
+				#{endTime},
+				#{bannerLink},
+				#{title},
+				#{type},
+				#{bgimgUrl},
+				#{themeId}
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<update id="update">
+		update mall_banner set
+				banner_url = #{bannerUrl},
+				platform_id = #{platformId},
+				sort_number = #{sortNumber},
+				modified = NOW(),
+				start_time = #{startTime},
+				status=#{status},
+				end_time = #{endTime},
+				banner_link = #{bannerLink},
+				title = #{title},
+				type = #{type},
+				bgimg_url = #{bgimgUrl}
+				<if test="themeId != null">
+					,theme_id = #{themeId}
+				</if>
+
+		where id = #{id}
+	</update>
+	<update id="updateStatusById">
+		update mall_banner set
+			status = #{publishFlag}
+			<!--如果是下架操作，则 更新定时发布时间和下架时间为null -->
+			<if test="publishFlag == 0">
+			,start_time = NULL,end_time = NULL
+			</if>
+		where id = #{id}
+	</update>
+	<update id="updateSortNumberById">
+		update mall_banner set
+			sort_number = #{sortNum}
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from mall_banner
+			where id = #{id}
+	</delete>
+
+	<select id="queryCountDTO" resultType="long">
+		select count(0) from mall_banner where 1=1
+		<if test="publishFlag!= null ">
+				and status = #{publishFlag}
+		</if>
+		<if test=" publishFlag != null and publishFlag==1 ">
+			<![CDATA[
+			and date_format(start_time,'%Y-%m-%d')  <= date_format(#{nowTime},'%Y-%m-%d')
+			]]>
+			and date_format(end_time,'%Y-%m-%d') >= date_format(#{nowTime},'%Y-%m-%d')
+		</if>
+	</select>
+	<select id="queryListDTO" resultMap="mallBannerDTO">
+		<![CDATA[
+		select 
+		mb.id,
+		mb.banner_url bannerUrl,
+		mb.banner_link bannerLink,
+		mb.platform_id platformId,
+		mb.sort_number sortNumber,
+		mb.title,
+		mb.created,
+		mb.modified,
+		mb.status,
+		mb.start_time startTime,
+		mb.end_time endTime,
+		mb.type,
+		mb.bgimg_url bgimgUrl,
+		mb.theme_id themeId,
+		mt.theme_name themeName,
+		mt.cId cid,
+		mt.status themeStatus,
+		mt.type themeType,
+		mt.userId themeUId
+		from 
+		mall_banner mb INNER JOIN mall_theme mt ON mb.theme_id=mt.id
+		]]>
+		<include refid="queryList_where"/>
+		<!--<if test="publishFlag!= null ">
+				and mb.status = #{publishFlag}
+		</if>
+		<if test=" publishFlag != null and publishFlag==1 ">
+			<![CDATA[
+			and ((date_format(mb.start_time,'%Y-%m-%d')  <=  date_format("2015-07-21",'%Y-%m-%d')
+			]]>
+            and date_format(mb.end_time,'%Y-%m-%d') >= date_format("2015-07-21",'%Y-%m-%d'))
+            or(mb.start_time is null and mb.end_time is null)
+            )
+
+		</if>-->
+		order by mb.sort_number asc, mb.modified desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<select id="queryCountDTOToAdmin" resultType="long">
+		<![CDATA[
+		select count(0) 
+		from 
+		mall_banner mb LEFT JOIN mall_theme mt ON mb.theme_id=mt.id
+		]]>
+		
+		<include refid="queryList_where"/>
+	</select>
+	<!-- 查询定时发布轮播图的list -->
+	<select id="queryTimeListDTO" resultMap="mallBannerDTO">
+		select 
+		mb.id,
+		mb.banner_url bannerUrl,
+		mb.banner_link bannerLink,
+		mb.platform_id platformId,
+		mb.sort_number sortNumber,
+		mb.title,
+		mb.created,
+		mb.modified,
+		mb.status,
+		mb.start_time startTime,
+		mb.end_time endTime,
+		mb.type,
+		mb.bgimg_url bgimgUrl,
+		mb.theme_id themeId
+		from 
+		mall_banner mb 
+		where mb.end_time is not null and mb.start_time is not null
+	</select>
+	
+	<select id="queryListDTOToAdmin" resultMap="mallBannerDTO">
+		<![CDATA[
+		select 
+		mb.id,
+		mb.banner_url bannerUrl,
+		mb.banner_link bannerLink,
+		mb.platform_id platformId,
+		mb.sort_number sortNumber,
+		mb.title,
+		mb.created,
+		mb.modified,
+		mb.status,
+		mb.start_time startTime,
+		mb.end_time endTime,
+		mb.type,
+		mb.bgimg_url bgimgUrl,
+		mb.theme_id themeId,
+		mt.theme_name themeName,
+		mt.addressId addressId,
+		mt.cId cid,
+		mt.status themeStatus,
+		mt.type themeType,
+		mt.userId themeUId
+		from 
+		mall_banner mb INNER JOIN mall_theme mt ON mb.theme_id=mt.id
+		]]>
+		 
+		<include refid="queryList_where"/>
+		order by sort_number asc, modified desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	<!--
+	<select id="queryListDTOToAdmin" resultMap="mallBannerDTO">
+			select * from mall_banner
+			<include refid="queryList_where"/>
+			order by sort_number asc, modified desc
+			  limit #{page.pageOffset} , #{page.rows}
+		</select>-->
+	
+	<sql id="queryList_where">
+			where 1=1
+			<!-- <if test="publishFlag!= null ">
+				and status = #{publishFlag}
+			</if> -->
+			<if test=" publishFlag != null and publishFlag==1 ">
+				
+				<![CDATA[
+				and date_format(mb.start_time,'%Y-%m-%d')  <=  date_format(#{nowTime},'%Y-%m-%d')
+				]]>
+				and date_format(mb.end_time,'%Y-%m-%d') >= date_format(#{nowTime},'%Y-%m-%d')
+			</if>
+			<if test="entity!=null">
+				<if test=" entity.themeType != null and entity.themeType != '' and entity.themeStatus != 0">
+					and mt.type = #{entity.themeType}
+				</if>
+				<if test=" entity.themeStatus != null and entity.themeStatus != ''  and entity.themeStatus != 0">
+					and mt.status = #{entity.themeStatus}
+				</if>
+				<if test=" entity.themeUId != null and entity.themeUId != '' ">
+					and mt.userId = #{entity.themeUId}
+				</if>
+				<if test=" entity.id != null and entity.id != '' ">
+					and mb.id = #{entity.id}
+				</if>
+				<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+					and mb.theme_id = #{entity.themeId}
+				</if>
+				<if test=" entity.status != null and entity.status != '' ">
+					and mb.status = #{entity.status}
+				</if>
+				<if test=" entity.title != null and entity.title != ''">
+					and mb.title like concat('%',#{entity.title},'%')
+				</if>
+				<!-- 滚动图片类型 -->
+				<if test=" entity.type != null ">
+					and mb.type = #{entity.type}
+				</if>
+				<if test=" entity.platformId != null ">
+					and mb.platform_id = #{entity.platformId}
+				</if>
+				<!-- timeFlag  ==== 0：创建时间  1：发布时间 -->
+				<if test=" entity.timeFlag != null and entity.timeFlag == 0 ">
+					<if test=" entity.startTime != null ">
+						and date_format(created,'%Y-%m-%d') >= date_format(#{entity.startTime},'%Y-%m-%d')
+					</if>
+					<if test=" entity.endTime != null ">
+						<![CDATA[
+						and date_format(created,'%Y-%m-%d') <= date_format(#{entity.endTime},'%Y-%m-%d')
+						]]>
+					</if>
+				</if>
+				<if test=" entity.timeFlag != null and entity.timeFlag == 1 ">
+					<if test=" entity.startTime != null ">
+						and date_format(mb.start_time,'%Y-%m-%d') >= date_format(#{entity.startTime},'%Y-%m-%d')
+					</if>
+					<if test=" entity.endTime != null ">
+						<![CDATA[
+						and date_format(mb.start_time,'%Y-%m-%d') <= date_format(#{entity.endTime},'%Y-%m-%d')
+						]]>
+					</if>
+				</if>
+			</if>
+		
+	</sql>
+	
+	<sql id="queryPage_where">
+		where 1=1 
+		<if test="entity!=null">
+			<if test="entity.ids != null">
+				<![CDATA[ and mall_ad_count_.id  in ]]>
+				<foreach collection="entity.ids" item="id" index="index"  open="(" close=")">  
+					#{id}
+				</foreach>
+			</if>
+			<if test="entity.mallAdId != null">
+				<![CDATA[ and mall_ad_count_.mall_ad_id =#{entity.mallAdId} ]]>
+			</if>
+			<if test=" entity.platformId != null ">
+				<![CDATA[ and mall_ad_count_.platform_id =#{entity.platformId} ]]>
+			</if>
+			<if test="entity.mallAdName != null">
+				<![CDATA[ and mall_banner.title like concat('%',#{entity.mallAdName},'%') ]]>
+			</if>
+			<if test="entity.tableType != null">
+				<![CDATA[ and mall_ad_count_.table_type =#{entity.tableType} ]]>
+			</if>
+			<if test="entity.adCountMin != null">
+				<![CDATA[ and mall_ad_count_.ad_count >=#{entity.adCountMin} ]]>
+			</if>
+			<if test="entity.adCountMax != null">
+				<![CDATA[ and mall_ad_count_.ad_count<=#{entity.adCountMax} ]]>
+			</if>
+			<if test="entity.clickDateBegin != null  and entity.clickDateBegin !=''">
+				<![CDATA[ and mall_ad_count_.click_date >DATE_FORMAT(#{entity.clickDateBegin},'%Y-%m-%d') ]]>
+			</if>
+			<if test="entity.clickDateEnd != null  and entity.clickDateEnd !=''">
+				<![CDATA[ and mall_ad_count_.click_date <DATE_FORMAT(#{entity.clickDateEnd},'%Y-%m-%d')]]>
+			</if>
+		</if>
+	</sql>
+
+	<select id="queryMobileShopBannerList" resultMap="mallBannerDTO">
+		<![CDATA[
+		select * from mall_banner mb
+		]]>
+		<where>
+		<if test="entity!=null">
+			<if test=" entity.id != null and entity.id != '' ">
+				and mb.id = #{entity.id}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+				and mb.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.status != null and entity.status != '' ">
+				and mb.status = #{entity.status}
+			</if>
+			<if test=" entity.title != null and entity.title != ''">
+				and mb.title like concat('%',#{entity.title},'%')
+			</if>
+			<!-- 滚动图片类型 -->
+			<if test=" entity.type != null ">
+				and mb.type = #{entity.type}
+			</if>
+			<if test=" entity.platformId != null ">
+				and mb.platform_id = #{entity.platformId}
+			</if>
+			<!-- timeFlag  ==== 0：创建时间  1：发布时间 -->
+			<if test=" entity.timeFlag != null and entity.timeFlag == 0 ">
+				<if test=" entity.startTime != null ">
+					and date_format(created,'%Y-%m-%d') >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+						and date_format(created,'%Y-%m-%d') <= date_format(#{entity.endTime},'%Y-%m-%d')
+						]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag != null and entity.timeFlag == 1 ">
+				<if test=" entity.startTime != null ">
+					and date_format(mb.start_time,'%Y-%m-%d') >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+						and date_format(mb.start_time,'%Y-%m-%d') <= date_format(#{entity.endTime},'%Y-%m-%d')
+						]]>
+				</if>
+			</if>
+		</if>
+
+		</where>
+		order by mb.sort_number asc, mb.modified desc
+		<if test="page!=null and page!=''">
+			limit #{page.pageOffset} , #{page.rows}
+		</if>
+	</select>
+
+	<select id="queryMobileShopBannerCount" resultType="Long" >
+		select count(0) from mall_banner mb
+		<where>
+			<if test="entity!=null">
+				<if test=" entity.id != null and entity.id != '' ">
+					and mb.id = #{entity.id}
+				</if>
+				<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+					and mb.theme_id = #{entity.themeId}
+				</if>
+				<if test=" entity.status != null and entity.status != '' ">
+					and mb.status = #{entity.status}
+				</if>
+				<if test=" entity.title != null and entity.title != ''">
+					and mb.title like concat('%',#{entity.title},'%')
+				</if>
+				<!-- 滚动图片类型 -->
+				<if test=" entity.type != null ">
+					and mb.type = #{entity.type}
+				</if>
+				<if test=" entity.platformId != null ">
+					and mb.platform_id = #{entity.platformId}
+				</if>
+				<!-- timeFlag  ==== 0：创建时间  1：发布时间 -->
+				<if test=" entity.timeFlag != null and entity.timeFlag == 0 ">
+					<if test=" entity.startTime != null ">
+						and date_format(created,'%Y-%m-%d') >= date_format(#{entity.startTime},'%Y-%m-%d')
+					</if>
+					<if test=" entity.endTime != null ">
+						<![CDATA[
+						and date_format(created,'%Y-%m-%d') <= date_format(#{entity.endTime},'%Y-%m-%d')
+						]]>
+					</if>
+				</if>
+				<if test=" entity.timeFlag != null and entity.timeFlag == 1 ">
+					<if test=" entity.startTime != null ">
+						and date_format(mb.start_time,'%Y-%m-%d') >= date_format(#{entity.startTime},'%Y-%m-%d')
+					</if>
+					<if test=" entity.endTime != null ">
+						<![CDATA[
+						and date_format(mb.start_time,'%Y-%m-%d') <= date_format(#{entity.endTime},'%Y-%m-%d')
+						]]>
+					</if>
+				</if>
+			</if>
+
+		</where>
+	</select>
+
+</mapper>

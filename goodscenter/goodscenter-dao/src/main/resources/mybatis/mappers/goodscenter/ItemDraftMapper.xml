@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.ItemDraftMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ItemDraft" >
+    <id column="item_draft_id" property="itemDraftId" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="cid" property="cid" jdbcType="BIGINT" />
+    <result column="brand" property="brand" jdbcType="BIGINT" />
+    <result column="model_type" property="modelType" jdbcType="VARCHAR" />
+    <result column="weight_unit" property="weightUnit" jdbcType="VARCHAR" />
+    <result column="tax_rate" property="taxRate" jdbcType="DECIMAL" />
+    <result column="weight" property="weight" jdbcType="DECIMAL" />
+    <result column="net_weight" property="netWeight" jdbcType="DECIMAL" />
+    <result column="length" property="length" jdbcType="DECIMAL" />
+    <result column="width" property="width" jdbcType="DECIMAL" />
+    <result column="height" property="height" jdbcType="DECIMAL" />
+    <result column="ad" property="ad" jdbcType="VARCHAR" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="attributes" property="attributes" jdbcType="VARCHAR" />
+    <result column="attr_sale" property="attrSale" jdbcType="VARCHAR" />
+    <result column="is_spu" property="isSpu" jdbcType="TINYINT" />
+    <result column="item_spu_id" property="itemSpuId" jdbcType="BIGINT" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="ean_code" property="eanCode" jdbcType="VARCHAR" />
+    <result column="verify_status" property="verifyStatus" jdbcType="TINYINT" />
+    <result column="verify_name" property="verifyName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap type="cn.htd.goodscenter.domain.ItemDraft" id="BaseResultMap2" extends="BaseResultMap">
+  	<result column="status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    item_draft_id, item_id, item_name, seller_id, shop_id, cid, brand, model_type, weight_unit, 
+    tax_rate, weight, net_weight, length, width, height, ad, origin, attributes, attr_sale, 
+    is_spu, item_spu_id, created, create_id, create_name, modified, modify_id, modify_name, 
+    ean_code
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_draft
+    where item_draft_id = #{itemDraftId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByItemId" resultMap="BaseResultMap2" parameterType="java.lang.Long" >
+    select 
+    item_draft_id, item_id, item_name, seller_id, shop_id, cid, brand, model_type, weight_unit, 
+    tax_rate, weight, net_weight, length, width, height, ad, origin, attributes, attr_sale, 
+    is_spu, item_spu_id, created, create_id, create_name, modified, modify_id, modify_name, 
+    ean_code,status,verify_status,verify_name
+    from item_draft
+    where item_id = #{itemId,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_draft
+    where item_draft_id = #{itemDraftId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.ItemDraft" useGeneratedKeys="true" keyProperty="itemDraftId">
+    insert into item_draft (item_draft_id, item_id, item_name, 
+      seller_id, shop_id, cid, 
+      brand, model_type, weight_unit, 
+      tax_rate, weight, net_weight, 
+      length, width, height, 
+      ad, origin, attributes, 
+      attr_sale, is_spu, item_spu_id, 
+      created, create_id, create_name, 
+      modified, modify_id, modify_name, 
+      ean_code)
+    values (#{itemDraftId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{itemName,jdbcType=VARCHAR}, 
+      #{sellerId,jdbcType=BIGINT}, #{shopId,jdbcType=BIGINT}, #{cid,jdbcType=BIGINT}, 
+      #{brand,jdbcType=BIGINT}, #{modelType,jdbcType=VARCHAR}, #{weightUnit,jdbcType=VARCHAR}, 
+      #{taxRate,jdbcType=DECIMAL}, #{weight,jdbcType=DECIMAL}, #{netWeight,jdbcType=DECIMAL}, 
+      #{length,jdbcType=DECIMAL}, #{width,jdbcType=DECIMAL}, #{height,jdbcType=DECIMAL}, 
+      #{ad,jdbcType=VARCHAR}, #{origin,jdbcType=VARCHAR}, #{attributes,jdbcType=VARCHAR}, 
+      #{attrSale,jdbcType=VARCHAR}, #{isSpu,jdbcType=TINYINT}, #{itemSpuId,jdbcType=BIGINT}, 
+      #{created,jdbcType=TIMESTAMP}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{modified,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
+      #{eanCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ItemDraft" useGeneratedKeys="true" keyProperty="itemDraftId">
+    insert into item_draft
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemDraftId != null" >
+        item_draft_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="itemName != null" >
+        item_name,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="cid != null" >
+        cid,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="modelType != null" >
+        model_type,
+      </if>
+      <if test="weightUnit != null" >
+        weight_unit,
+      </if>
+      <if test="taxRate != null" >
+        tax_rate,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="netWeight != null" >
+        net_weight,
+      </if>
+      <if test="length != null" >
+        length,
+      </if>
+      <if test="width != null" >
+        width,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+      <if test="ad != null" >
+        ad,
+      </if>
+      <if test="origin != null" >
+        origin,
+      </if>
+      <if test="attributes != null" >
+        attributes,
+      </if>
+      <if test="attrSale != null" >
+        attr_sale,
+      </if>
+      <if test="isSpu != null" >
+        is_spu,
+      </if>
+      <if test="itemSpuId != null" >
+        item_spu_id,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="modified != null" >
+        modified,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="eanCode != null" >
+        ean_code,
+      </if>
+      <if test="status != null">
+       status,
+      </if>
+      <if test="verifyName != null">
+      verify_name,
+      </if>
+      <if test="verifyStatus != null">
+      verify_status
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemDraftId != null" >
+        #{itemDraftId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="itemName != null" >
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="cid != null" >
+        #{cid,jdbcType=BIGINT},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=BIGINT},
+      </if>
+      <if test="modelType != null" >
+        #{modelType,jdbcType=VARCHAR},
+      </if>
+      <if test="weightUnit != null" >
+        #{weightUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null" >
+        #{taxRate,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="netWeight != null" >
+        #{netWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="length != null" >
+        #{length,jdbcType=DECIMAL},
+      </if>
+      <if test="width != null" >
+        #{width,jdbcType=DECIMAL},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=DECIMAL},
+      </if>
+      <if test="ad != null" >
+        #{ad,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="attributes != null" >
+        #{attributes,jdbcType=VARCHAR},
+      </if>
+      <if test="attrSale != null" >
+        #{attrSale,jdbcType=VARCHAR},
+      </if>
+      <if test="isSpu != null" >
+        #{isSpu,jdbcType=TINYINT},
+      </if>
+      <if test="itemSpuId != null" >
+        #{itemSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="eanCode != null" >
+        #{eanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null ">
+      	#{status},
+      </if>
+       <if test="verifyName != null">
+      	 #{verifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyStatus != null">
+      	#{verifyStatus,jdbcType=TINYINT}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ItemDraft" >
+    update item_draft
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="itemName != null" >
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="cid != null" >
+        cid = #{cid,jdbcType=BIGINT},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=BIGINT},
+      </if>
+      <if test="modelType != null" >
+        model_type = #{modelType,jdbcType=VARCHAR},
+      </if>
+      <if test="weightUnit != null" >
+        weight_unit = #{weightUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null" >
+        tax_rate = #{taxRate,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="netWeight != null" >
+        net_weight = #{netWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="length != null" >
+        length = #{length,jdbcType=DECIMAL},
+      </if>
+      <if test="width != null" >
+        width = #{width,jdbcType=DECIMAL},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=DECIMAL},
+      </if>
+      <if test="ad != null" >
+        ad = #{ad,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        origin = #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="attributes != null" >
+        attributes = #{attributes,jdbcType=VARCHAR},
+      </if>
+      <if test="attrSale != null" >
+        attr_sale = #{attrSale,jdbcType=VARCHAR},
+      </if>
+      <if test="isSpu != null" >
+        is_spu = #{isSpu,jdbcType=TINYINT},
+      </if>
+      <if test="itemSpuId != null" >
+        item_spu_id = #{itemSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="eanCode != null" >
+        ean_code = #{eanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyName != null">
+      	verify_name = #{verifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyStatus != null">
+      	verify_status = #{verifyStatus,jdbcType=TINYINT}
+      </if>
+    </set>
+    where item_draft_id = #{itemDraftId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemDraft" >
+    update item_draft
+    set item_id = #{itemId,jdbcType=BIGINT},
+      item_name = #{itemName,jdbcType=VARCHAR},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      shop_id = #{shopId,jdbcType=BIGINT},
+      cid = #{cid,jdbcType=BIGINT},
+      brand = #{brand,jdbcType=BIGINT},
+      model_type = #{modelType,jdbcType=VARCHAR},
+      weight_unit = #{weightUnit,jdbcType=VARCHAR},
+      tax_rate = #{taxRate,jdbcType=DECIMAL},
+      weight = #{weight,jdbcType=DECIMAL},
+      net_weight = #{netWeight,jdbcType=DECIMAL},
+      length = #{length,jdbcType=DECIMAL},
+      width = #{width,jdbcType=DECIMAL},
+      height = #{height,jdbcType=DECIMAL},
+      ad = #{ad,jdbcType=VARCHAR},
+      origin = #{origin,jdbcType=VARCHAR},
+      attributes = #{attributes,jdbcType=VARCHAR},
+      attr_sale = #{attrSale,jdbcType=VARCHAR},
+      is_spu = #{isSpu,jdbcType=TINYINT},
+      item_spu_id = #{itemSpuId,jdbcType=BIGINT},
+      created = #{created,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      modified = #{modified,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      ean_code = #{eanCode,jdbcType=VARCHAR}
+    where item_draft_id = #{itemDraftId,jdbcType=BIGINT}
+  </update>
+   <!-- venus my item start -->
+  <select id="queryDraftItemSkuList" parameterType="cn.htd.goodscenter.dto.venus.po.QueryVenusItemListParamDTO" 
+		resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemListStyleOutDTO">
+		select 
+			t.item_id as itemId,
+            i.item_code as itemCode,
+			sku.sku_id as skuId,
+			sku.sku_code as skuCode,
+			t.item_name as productName,
+			t.cid as categoryId,
+			cat.c_name as categoryName,
+			t.brand as brandId,
+			brand.brand_name as brandName,
+			t.model_type as serial,
+			sku.attributes as color,
+			t.weight_unit as unit,
+			t.weight as grossWeight,
+			t.net_weight as netWeight,
+			t.length,
+			t.width,
+			t.height,
+			'0' as productStatus,
+			i.erp_code as erpCode
+			 from item_sku sku 
+			  join item i on sku.item_id= i.item_id
+             join item_draft t on t.item_id=sku.item_id
+			 join item_category cat on t.cid=cat.cid
+			 join item_brand brand on t.brand=brand.brand_id
+			 where 
+			 1=1 and t.status = 0
+			 <if test="productCode !=null and productCode != '' ">
+			 	and i.item_code=#{productCode}
+			 </if>
+			 <if test="productName !=null and productName != '' ">
+			 	and (t.item_name  like concat('%',#{productName},'%') or i.item_code like concat('%',#{productName},'%'))
+			 </if>
+			 <if test="brandName != null and brandName != '' ">
+			 	and brand.brand_name=#{brandName}
+			 </if>
+			 <if test="categoryName !=null and categoryName != ''">
+			    and cat.c_name =#{categoryName}
+			 </if>
+			 <if test="serial !=null and serial !='' ">
+			 	and t.model_type =#{serial}
+			 </if>
+			and sku.seller_id=#{htdVendorId}
+			order by i.modified desc
+			limit #{start},#{pageSize};
+	</select>
+	
+	<select id="queryDraftItemSkuListCount" parameterType="cn.htd.goodscenter.dto.venus.po.QueryVenusItemListParamDTO" 
+		resultType="Long">
+		select 
+			count(1)
+			 from item_sku sku 
+			 join item i on sku.item_id= i.item_id
+             join item_draft t on t.item_id=sku.item_id
+			 join item_category cat on t.cid=cat.cid
+			 join item_brand brand on t.brand=brand.brand_id
+			 where 
+			 1=1 and t.status =0
+			 <if test="productCode !=null and productCode != '' ">
+			 	and i.item_code=#{productCode}
+			 </if>
+			 <if test="productName !=null and productName != '' ">
+			 	and (t.item_name  like concat('%',#{productName},'%') or i.item_code like concat('%',#{productName},'%'))
+			 </if>
+			 <if test="brandName != null and brandName != '' ">
+			 	and brand.brand_name=#{brandName}
+			 </if>
+			  <if test="categoryName !=null and categoryName != ''">
+			    and cat.c_name =#{categoryName}
+			 </if>
+			  <if test="serial !=null and serial !='' ">
+			 	and t.model_type =#{serial}
+			 </if>
+			 and sku.seller_id=#{htdVendorId}
+	</select>
+  <!-- venus my item end -->
+  
+  	<select id="queryItemSkuDraftDetail" parameterType="Long" resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO">
+		select
+		sku.sku_id as skuId,
+		sku.item_id as itemId,
+		cat.c_name as categoryName,
+		brand.brand_name as brandName,
+		t.brand as brandId,
+		t.model_type as modelType,
+		t.attr_sale as color,
+		t.item_name as itemName,
+		t.cid as thirdCatId,
+		t.weight_unit as unit,
+		t.ad,
+		t.weight,
+		t.net_weight as netWeight,
+		t.width,
+		t.length,
+		t.height,
+		t.tax_rate as taxRate,
+		t.attributes,
+		t.origin,
+		t.status as itemStatus
+		 from item_sku sku
+		join item_draft t on sku.item_id=t.item_id
+		join item_category cat on cat.cid=t.cid
+		join item_brand brand on brand.brand_id=t.brand
+		where sku.sku_id=#{skuId}
+	</select>
+	
+	<update id="updateItemDraftVerifyStatusByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemDraft" >
+    update item_draft
+    <set >
+      <if test="verifyName != null" >
+        verify_name = #{verifyName},
+      </if>
+      <if test="verifyStatus != null" >
+        verify_status = #{verifyStatus},
+      </if>
+    </set>
+    where item_draft_id = #{itemDraftId,jdbcType=BIGINT}
+  </update>
+</mapper>

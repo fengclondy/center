@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/rabbit
+		http://www.springframework.org/schema/rabbit/spring-rabbit-1.3.xsd">
+	
+	<!-- 定义queue start -->
+	
+	<rabbit:queue name="${middlewareErpDistribution}" />
+	
+	<!-- 监听京东状态上行 -->
+	<rabbit:queue name="${middlewareJDUpDistribution}" />
+	<!-- 定义queue end -->
+
+	
+	<!-- exchange重新定义并与上边的模本中保持一致，binding中的queue和key也要用自己重新定义的 start -->
+	
+	<rabbit:direct-exchange name="middleware-erp">
+		<rabbit:bindings>
+			<rabbit:binding queue="${middlewareErpDistribution}"/>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	<rabbit:direct-exchange name="middleware-erp">
+		<rabbit:bindings>
+			<rabbit:binding queue="${middlewareJDUpDistribution}"/>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	<!--exchange重新定义 end -->
+
+	<!-- mq listener configuration -->
+	 <rabbit:listener-container connection-factory="connectionFactory" concurrency="10" prefetch="5">
+		<rabbit:listener queue-names="${middlewareErpDistribution}" ref="orderDistributionStatusUpStreamListenter" method="onMessage"/>
+		<rabbit:listener queue-names="${middlewareJDUpDistribution}" ref="orderDistributionJDStatusUpStreamListenter" method="onMessage"/>
+	</rabbit:listener-container>
+
+	<!-- 定义监听对象 开始-->
+	<!-- 将mq监听转移到tradecenter by 张丁 2017-02-04 开始 -->
+	<bean id="orderDistributionStatusUpStreamListenter" class="cn.htd.zeus.tc.biz.listenter.OrderDistributionStatusUpStreamListenter" />
+	<bean id="orderDistributionJDStatusUpStreamListenter" class="cn.htd.zeus.tc.biz.listenter.JDOrderDistributionStatusUpStreamListenter" />
+	<!-- 将mq监听转移到tradecenter by 张丁 2017-02-04 结束 -->
+	<!-- 定义监听对象 结束-->
+</beans>

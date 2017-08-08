@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.pricecenter.dao.ItemSkuPriceHistoryMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.pricecenter.domain.ItemSkuPriceHistory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="area_sale_price" property="areaSalePrice" jdbcType="DECIMAL" />
+    <result column="box_sale_price" property="boxSalePrice" jdbcType="DECIMAL" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sku_id, channel_code, area_sale_price, box_sale_price, create_id, create_name, 
+    create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_sku_price_history
+    where ladder_id = #{ladderId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_sku_price_history
+    where ladder_id = #{ladderId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.pricecenter.domain.ItemSkuPriceHistory" >
+    insert into item_sku_price_history (id, sku_id, channel_code, 
+      area_sale_price, box_sale_price, create_id, 
+      create_name, create_time)
+    values (#{id,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, #{channelCode,jdbcType=VARCHAR}, 
+      #{areaSalePrice,jdbcType=DECIMAL}, #{boxSalePrice,jdbcType=DECIMAL}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.pricecenter.domain.ItemSkuPriceHistory" >
+    insert into item_sku_price_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ladderId != null" >
+        id,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="areaSalePrice != null" >
+        area_sale_price,
+      </if>
+      <if test="boxSalePrice != null" >
+        box_sale_price,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ladderId != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaSalePrice != null" >
+        #{areaSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="boxSalePrice != null" >
+        #{boxSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.pricecenter.domain.ItemSkuPriceHistory" >
+    update item_sku_price_history
+    <set >
+      <if test="skuId != null" >
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaSalePrice != null" >
+        area_sale_price = #{areaSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="boxSalePrice != null" >
+        box_sale_price = #{boxSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ladder_id = #{ladderId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.pricecenter.domain.ItemSkuPriceHistory" >
+    update item_sku_price_history
+    set sku_id = #{skuId,jdbcType=BIGINT},
+      channel_code = #{channelCode,jdbcType=VARCHAR},
+      area_sale_price = #{areaSalePrice,jdbcType=DECIMAL},
+      box_sale_price = #{boxSalePrice,jdbcType=DECIMAL},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where ladder_id = #{ladderId,jdbcType=BIGINT}
+  </update>
+</mapper>

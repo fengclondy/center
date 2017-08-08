@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.productplus.SellerCategoryBrandShieldMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.productplus.SellerCategoryBrandShield" >
+    <id column="category_brand_shield_id" property="categoryBrandShieldId" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="category_brand_id" property="categoryBrandId" jdbcType="BIGINT" />
+    <result column="third_category_id" property="thirdCategoryId" jdbcType="BIGINT" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="shield_flag" property="shieldFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="ComboResultMap" type="cn.htd.goodscenter.dto.productplus.SellerCategoryBrandShieldDTO" >
+    <id column="category_brand_shield_id" property="categoryBrandShieldId" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="category_brand_id" property="categoryBrandId" jdbcType="BIGINT" />
+    <result column="third_category_id" property="thirdCategoryId" jdbcType="BIGINT" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+    <result column="shield_flag" property="shieldFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    category_brand_shield_id, seller_id, shop_id, category_brand_id, third_category_id,
+    brand_id, channel_code, shield_flag, create_id, create_name, create_time, modify_id, 
+    modify_name, modify_time
+  </sql>
+
+  <sql id="Where_base">
+    WHERE
+      1 = 1
+    <if test="sellerId != null">
+      AND seller_id = #{sellerId}
+    </if>
+    <if test="shieldFlag != null">
+      AND shield_flag = #{shieldFlag}
+    </if>
+    <if test="thirdCategoryId != null">
+      AND third_category_id = #{thirdCategoryId}
+    </if>
+    <if test="brandId != null">
+      AND brand_id = #{brandId}
+    </if>
+    <if test="channelCode != null">
+      AND channel_code = #{channelCode}
+    </if>
+  </sql>
+
+  <!-- mysql 分页尾 -->
+  <sql id="pagination_tail">
+    <if test="page != null ">
+      limit #{page.pageOffset} , #{page.rows}
+    </if>
+  </sql>
+
+  <!-- 联合查询 : 查询卖家已屏蔽的品牌品类 -->
+  <select id="selectShieldSellerCategoryBrandList" resultMap="ComboResultMap">
+    select
+    shield.category_brand_shield_id,
+    shield.seller_id,
+    shield.shop_id,
+    shield.category_brand_id,
+    shield.third_category_id,
+    shield.brand_id,
+    shield.channel_code,
+    shield.shield_flag,
+    shield.create_id,
+    shield.create_name,
+    shield.create_time,
+    shield.modify_id,
+    shield.modify_name,
+    shield.modify_time,
+    brand.brand_name
+    from (
+      select
+         *
+      from
+      seller_category_brand_shield
+      where
+        channel_code = #{entity.channelCode}
+      and seller_id = #{entity.sellerId}
+      and shield_flag = 1
+      <if test="entity.categoryParam != null">
+        and third_category_id in
+        <foreach collection="entity.categoryParam" item="item" index="index" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    ) shield
+    left join
+    item_brand brand
+    on
+    shield.brand_id = brand.brand_id
+    where
+     1 = 1
+     <if test="entity.brandName != null">
+     adn brand.brand_name like CONCAT('%',#{entity.brandName},'%' )
+     </if>
+    order by create_time desc
+    <include refid="pagination_tail"/>
+  </select>
+
+  <!-- 联合查询 : 查询卖家已屏蔽的品牌品类数量 -->
+  <select id="selectShieldSellerCategoryBrandListCount" resultType="Long">
+    select
+    count(1)
+    from (
+    select
+    *
+    from
+    seller_category_brand_shield
+    where
+    channel_code = #{entity.channelCode}
+    and seller_id = #{entity.sellerId}
+    and shield_flag = 1
+    <if test="entity.brandId != null">
+      and brand_id = #{entity.brandId}
+    </if>
+    <if test="entity.categoryParam != null">
+      and third_category_id in
+      <foreach collection="entity.categoryParam" item="item" index="index"  open="(" separator=","  close=")">
+        #{item}
+      </foreach>
+    </if>
+    ) shield
+    left join
+    item_brand brand
+    on
+    shield.brand_id = brand.brand_id
+    where
+    1 = 1
+    <if test="entity.brandName != null">
+      and brand.brand_name like CONCAT('%',#{entity.brandName},'%' )
+    </if>
+  </select>
+
+  <!-- 查询卖家未屏蔽品牌品类列表 -->
+  <select id="selectSellerNoShieldCategoryBrandList" resultMap="ComboResultMap">
+    SELECT
+    item.cid as thirdCategoryId,
+    item.brand as brandId,
+    item.product_channel_code as channelCode,
+    brand.brand_name,
+    channel.channel_name
+    FROM
+    (
+    SELECT
+    DISTINCT
+    inner_item.cid,
+    inner_item.brand,
+    inner_item.product_channel_code
+    FROM
+    item inner_item
+    WHERE
+    inner_item.item_status = 5
+    AND inner_item.product_channel_code = #{entity.channelCode}
+    -- 商品+商品
+    AND inner_item.seller_id = 0
+    AND inner_item.shop_id = 0
+    -- 已映射内部品牌、品类
+    AND inner_item.cid != 0
+    AND inner_item.brand != 0
+    AND inner_item.outer_channel_brand_code IS NOT NULL
+    AND inner_item.outer_channel_category_code IS NOT NULL
+    ) item
+    LEFT JOIN
+    (
+    SELECT
+    *
+    FROM
+    seller_category_brand_shield
+    WHERE
+    channel_code = #{entity.channelCode}
+    AND seller_id = #{entity.sellerId}
+    and shield_flag = 1
+    ) brand_shield
+    ON
+    brand_shield.third_category_id = item.cid
+    AND brand_shield.brand_id = item.brand
+    LEFT JOIN
+    item_brand brand
+    ON
+    brand.brand_id = item.brand
+    LEFT JOIN
+    product_channel channel
+    ON
+    channel.channel_code = item.product_channel_code
+    WHERE
+    brand_shield.category_brand_shield_id is null
+    <if test="entity.brandName != null">
+      and brand.brand_name like CONCAT('%',#{entity.brandName},'%' )
+    </if>
+    <if test="entity.categoryParam != null">
+      and item.cid in
+      <foreach collection="entity.categoryParam" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <include refid="pagination_tail"/>
+  </select>
+
+  <!-- 查询卖家未屏蔽品牌品类列表数量 -->
+  <select id="selectSellerNoShieldCategoryBrandListCount" resultType="Long">
+    SELECT
+    count(1)
+    FROM
+    (
+    SELECT
+    DISTINCT
+    inner_item.cid,
+    inner_item.brand,
+    inner_item.product_channel_code
+    FROM
+    item inner_item
+    WHERE
+    inner_item.item_status = 5
+    AND inner_item.product_channel_code = #{entity.channelCode}
+    -- 商品+商品
+    AND inner_item.seller_id = 0
+    AND inner_item.shop_id = 0
+    -- 已映射内部品牌、品类
+    AND inner_item.cid != 0
+    AND inner_item.brand != 0
+    AND inner_item.outer_channel_brand_code IS NOT NULL
+    AND inner_item.outer_channel_category_code IS NOT NULL
+    ) item
+    LEFT JOIN
+    (
+    SELECT
+    *
+    FROM
+    seller_category_brand_shield
+    WHERE
+    channel_code = #{entity.channelCode}
+    AND seller_id = #{entity.sellerId}
+    and shield_flag = 1
+    ) brand_shield
+    ON
+    brand_shield.third_category_id = item.cid
+    AND brand_shield.brand_id = item.brand
+    LEFT JOIN
+    item_brand brand
+    ON
+    brand.brand_id = item.brand
+    LEFT JOIN
+    product_channel channel
+    ON
+    channel.channel_code = item.product_channel_code
+    WHERE
+    brand_shield.category_brand_shield_id is null
+    <if test="entity.brandName != null">
+      and brand.brand_name like CONCAT('%',#{entity.brandName},'%' )
+    </if>
+    <if test="entity.categoryParam != null">
+      and item.cid in
+      <foreach collection="entity.categoryParam" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM seller_category_brand_shield
+    <include refid="Where_base"/>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from seller_category_brand_shield
+    where category_brand_shield_id = #{categoryBrandShieldId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from seller_category_brand_shield
+    where category_brand_shield_id = #{categoryBrandShieldId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.productplus.SellerCategoryBrandShield" >
+    insert into seller_category_brand_shield (
+      seller_id, shop_id,
+      category_brand_id, third_category_id, brand_id, 
+      channel_code, shield_flag, create_id, 
+      create_name, create_time
+      )
+    values (
+      #{sellerId,jdbcType=BIGINT}, #{shopId,jdbcType=BIGINT},
+      #{categoryBrandId,jdbcType=BIGINT}, #{thirdCategoryId,jdbcType=BIGINT}, #{brandId,jdbcType=BIGINT}, 
+      #{channelCode,jdbcType=VARCHAR}, #{shieldFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.productplus.SellerCategoryBrandShield" >
+    insert into seller_category_brand_shield
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="categoryBrandShieldId != null" >
+        category_brand_shield_id,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="categoryBrandId != null" >
+        category_brand_id,
+      </if>
+      <if test="thirdCategoryId != null" >
+        third_category_id,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="shieldFlag != null" >
+        shield_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="categoryBrandShieldId != null" >
+        #{categoryBrandShieldId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="categoryBrandId != null" >
+        #{categoryBrandId,jdbcType=BIGINT},
+      </if>
+      <if test="thirdCategoryId != null" >
+        #{thirdCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="shieldFlag != null" >
+        #{shieldFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.productplus.SellerCategoryBrandShield" >
+    update seller_category_brand_shield
+    <set >
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="categoryBrandId != null" >
+        category_brand_id = #{categoryBrandId,jdbcType=BIGINT},
+      </if>
+      <if test="thirdCategoryId != null" >
+        third_category_id = #{thirdCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="shieldFlag != null" >
+        shield_flag = #{shieldFlag,jdbcType=TINYINT},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+        modify_time = now(),
+    </set>
+    where category_brand_shield_id = #{categoryBrandShieldId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.productplus.SellerCategoryBrandShield" >
+    update seller_category_brand_shield
+    set seller_id = #{sellerId,jdbcType=BIGINT},
+      shop_id = #{shopId,jdbcType=BIGINT},
+      category_brand_id = #{categoryBrandId,jdbcType=BIGINT},
+      third_category_id = #{thirdCategoryId,jdbcType=BIGINT},
+      brand_id = #{brandId,jdbcType=BIGINT},
+      channel_code = #{channelCode,jdbcType=VARCHAR},
+      shield_flag = #{shieldFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where category_brand_shield_id = #{categoryBrandShieldId,jdbcType=BIGINT}
+  </update>
+</mapper>

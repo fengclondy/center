@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderMonthAnalysisDAO" >
+
+<select id="queryShopInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderSalesMonthInfoDMO">
+        select a.shop_id shopId,b.member_code sellerCode,b.id supperlierId from shop_info a 
+        inner join member_base_info b on a.seller_id = b.id
+</select>
+
+<select id="queryOrderMonthAnalysisInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderSalesMonthInfoDMO"
+		parameterType="Object">
+		<![CDATA[
+	    select sum(order_pay_amount) salesAmount from trade_orders 
+	        where pay_order_time > #{firstDay} and pay_order_time < #{lastDay}
+	        and seller_code = #{sellerCode} and order_status>=30  and is_cancel_order = '0'
+	        group by seller_code
+	    ]]>    
+</select>
+
+<insert id="insertOrderMonthAnalysisInfo" parameterType="java.lang.Object">
+	<![CDATA[
+	insert into ORDERSALESMONTHINFO (
+			SUPPERLIER_ID,
+			SALES_MONTH_YEAR,
+			SALES_AMOUNT,
+			COUNT_TIME)
+		values (
+			${orderSalesMonthInfoDMO.supperlierId},
+			${orderSalesMonthInfoDMO.salesMonthYear},
+			${orderSalesMonthInfoDMO.salesAmount},
+			now()
+		)
+			
+	]]>
+</insert>
+
+<update id="updateOrderMonthAnalysisInfo" parameterType="cn.htd.zeus.tc.biz.dmo.OrderSalesMonthInfoDMO">
+	UPDATE ORDERSALESMONTHINFO  SET
+   		SALES_AMOUNT =  #{orderSalesMonthInfoDMO.salesAmount},
+  		COUNT_TIME = now()
+	where 1=1
+      	and SUPPERLIER_ID=#{orderSalesMonthInfoDMO.supperlierId} 
+      	and SALES_MONTH_YEAR = #{orderSalesMonthInfoDMO.salesMonthYear}
+</update>
+</mapper>

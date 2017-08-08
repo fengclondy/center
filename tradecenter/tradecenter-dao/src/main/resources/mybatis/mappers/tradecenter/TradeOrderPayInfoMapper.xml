@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderPayInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderPayInfoDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="down_order_no" property="downOrderNo" jdbcType="VARCHAR" />
+    <result column="order_type" property="orderType" jdbcType="TINYINT" />
+    <result column="pay_result_status" property="payResultStatus" jdbcType="TINYINT" />
+    <result column="pay_result_code" property="payResultCode" jdbcType="VARCHAR" />
+    <result column="pay_result_msg" property="payResultMsg" jdbcType="VARCHAR" />
+    <result column="pay_last_message_id" property="payLastMessageId" jdbcType="VARCHAR" />
+    <result column="pay_last_time" property="payLastTime" jdbcType="TIMESTAMP" />
+    <result column="pay_send_count" property="paySendCount" jdbcType="TINYINT" />
+    <result column="brand_code" property="brandCode" jdbcType="VARCHAR" />
+    <result column="class_code" property="classCode" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="department_code" property="departmentCode" jdbcType="VARCHAR" />
+    <result column="pay_status" property="payStatus" jdbcType="VARCHAR" />
+    <result column="pay_type" property="payType" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="is_lock_balance_flag" property="isLockBalanceFlag" jdbcType="TINYINT" />
+    <result column="member_code" property="memberCode" jdbcType="VARCHAR" />
+    <result column="product_code" property="productCode" jdbcType="VARCHAR" />
+    <result column="is_rush_receivable" property="isRushReceivable" jdbcType="TINYINT" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="order_from" property="orderFrom" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,
+	down_order_no,
+	order_type,
+	pay_result_status,
+	pay_result_code,
+	pay_result_msg,
+	pay_last_message_id,
+	pay_last_time,
+	pay_send_count,
+	brand_code,
+	class_code,
+	amount,
+	department_code,
+	pay_status,
+	pay_type,
+	order_no,
+	supplier_code,
+	is_lock_balance_flag,
+	member_code,
+	product_code,
+	is_rush_receivable,
+	remarks,
+	order_from,
+	delete_flag,
+	create_time,
+	modify_time
+  </sql>
+  <select id="queryOrderPayInfoByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_b_payorderinfo
+    where order_no = #{_parameter,jdbcType=VARCHAR}
+      and delete_flag = 0
+  </select>
+  <update id="updateOrderPayTimesByOrderItem" parameterType="cn.htd.tradecenter.dto.TradeOrderPayInfoDTO" >
+    update tb_b_payorderinfo
+    <set> 
+    	pay_result_status = #{payResultStatus,jdbcType=VARCHAR},
+        pay_send_count = #{paySendCount,jdbcType=TINYINT},
+        modify_time = now(),
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and class_code = #{classCode,jdbcType=VARCHAR}
+      and brand_code = #{brandCode,jdbcType=VARCHAR}
+      and delete_flag = 0
+  </update>
+  <update id="deleteOrderPayInfoByOrderNo" parameterType="java.lang.String" >
+    update tb_b_payorderinfo
+       set delete_flag = 1,
+           modify_time = now()
+    where order_no = #{_parameter,jdbcType=VARCHAR}
+      and delete_flag = 0;
+  </update>
+  <insert id="addOrderPayInfo" useGeneratedKeys="true" keyProperty="id" parameterType="cn.htd.tradecenter.dto.TradeOrderPayInfoDTO">
+    insert into tb_b_payorderinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="downOrderNo != null and downOrderNo != ''" >
+        down_order_no,
+      </if>
+      <if test="orderType != null" >
+		order_type,
+      </if>
+      <if test="payResultStatus != null" >
+		pay_result_status,
+      </if>
+      <if test="payResultCode != null and payResultCode != ''" >
+		pay_result_code,
+      </if>
+      <if test="payResultMsg != null and payResultMsg != ''" >
+		pay_result_msg,
+      </if>
+      <if test="payLastMessageId != null and payLastMessageId != ''" >
+		pay_last_message_id,
+      </if>
+      <if test="payLastTime != null" >
+		pay_last_time,
+      </if>
+      <if test="paySendCount != null" >
+		pay_send_count,
+      </if>
+      <if test="brandCode != null and brandCode != ''" >
+		brand_code,
+      </if>
+      <if test="classCode != null and classCode != ''" >
+		class_code,
+      </if>
+      <if test="amount != null" >
+		amount,
+      </if>
+      <if test="departmentCode != null and departmentCode != ''" >
+		department_code,
+      </if>
+      <if test="payStatus != null and payStatus != ''" >
+		pay_status,
+      </if>
+      <if test="payType != null" >
+		pay_type,
+      </if>
+      <if test="orderNo != null and orderNo != ''" >
+		order_no,
+      </if>
+      <if test="supplierCode != null and supplierCode != ''" >
+		supplier_code,
+      </if>
+      <if test="isLockBalanceFlag != null" >
+		is_lock_balance_flag,
+      </if>
+      <if test="memberCode != null and memberCode != ''" >
+		member_code,
+      </if>
+      <if test="productCode != null and productCode != ''" >
+		product_code,
+      </if>
+      <if test="isRushReceivable != null" >
+		is_rush_receivable,
+      </if>
+      <if test="remarks != null and remarks != ''" >
+		remarks,
+      </if>
+      <if test="orderFrom != null and orderFrom != ''" >
+		order_from,
+      </if>
+		delete_flag,
+		create_time,
+		modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="downOrderNo != null and downOrderNo != ''" >
+        #{downOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null and payResultCode != ''" >
+        #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null and payResultMsg != ''" >
+        #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null and payLastMessageId != ''" >
+        #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySendCount != null" >
+        #{paySendCount,jdbcType=TINYINT},
+      </if>
+      <if test="brandCode != null and brandCode != ''" >
+        #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null and classCode != ''" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null and departmentCode != ''" >
+        #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null and payStatus != ''" >
+        #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null and orderNo != ''" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null and supplierCode != ''" >
+        #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null and memberCode != ''" >
+        #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null and productCode != ''" >
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null and remarks != ''" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null and orderFrom != ''" >
+        #{orderFrom,jdbcType=VARCHAR},
+      </if>
+		0,
+		now(),
+		now(),
+    </trim>
+  </insert>
+</mapper>

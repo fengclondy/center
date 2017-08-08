@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+    <!--会员查询接口-->
+	<dubbo:reference id="memberBaseInfoService"
+	interface="cn.htd.membercenter.service.MemberBaseInfoService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	<dubbo:reference id="memberBuyerService"
+	interface="cn.htd.membercenter.service.MemberBuyerService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	 <!--会员等级查询接口-->
+	<dubbo:reference id="memberGradeService"
+	interface="cn.htd.membercenter.service.MemberGradeService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	<!-- 根据会员code和类型查询会员信息 -->
+	<dubbo:reference id="memberCallCenterService"
+	interface="cn.htd.membercenter.service.MemberCallCenterService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- 根据会员code查询会员发票信息 -->
+	<dubbo:reference id="memberInvoiceService"
+	interface="cn.htd.membercenter.service.MemberInvoiceService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	<!-- 根据会员code查询会员收货地址信息 -->
+	<dubbo:reference id="consigneeAddressService"
+	interface="cn.htd.membercenter.service.ConsigneeAddressService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" />  
+	
+	<dubbo:reference id="boxRelationshipService"
+	interface="cn.htd.membercenter.service.BoxRelationshipService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" />  
+	
+</beans>

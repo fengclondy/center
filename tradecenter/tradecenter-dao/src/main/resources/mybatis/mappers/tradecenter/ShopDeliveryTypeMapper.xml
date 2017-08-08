@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.tradecenter.dao.ShopDeliveryTypeDAO">
+	<resultMap id="shopDeliveryTypeDTO" type="cn.htd.tradecenter.dto.ShopDeliveryTypeDTO">
+		<id column="id" property="id" />
+		<result column="template_id" property="templateId" />
+		<result column="first_part" property="firstPart" />
+		<result column="first_price" property="firstPrice" />
+		<result column="continue_part" property="continuePart" />
+		<result column="continue_price" property="continuePrice" />
+		<result column="delivery_to" property="deliveryTo" />
+		<result column="delivery_type" property="deliveryType" />
+		<result column="shop_id" property="shopId" />
+		<result column="seller_id" property="sellerId" />
+		<result column="create_id" property="createId" />
+		<result column="create_name" property="createName" />
+		<result column="create_time" property="createTime" />
+		<result column="modify_id" property="modifyId" />
+		<result column="modify_name" property="modifyName" />
+		<result column="modify_time" property="modifyTime" />
+		<result column="delete_flag" property="deleteFlag" />
+		<result column="delivery_address" property="deliveryAddress" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+
+	<!--sql -->
+	<sql id="Base_Column_List">
+		select
+		id, template_id, first_part,
+		first_price, continue_part, continue_price,
+		delivery_to, delivery_type,
+		shop_id, seller_id,
+		create_time, create_id, create_name,
+		modify_time, modify_id, modify_name,
+		delete_flag,delivery_address
+		from shop_delivery_type
+	</sql>
+	<!--查询条件 -->
+	<sql id="where_shopDeliveryType">
+		where 1=1
+		<if test="entity!=null">
+			<if test="entity.id != null and entity.id !=''">
+				<![CDATA[ and id  = #{entity.id} ]]>
+			</if>
+			<if test="entity.templateId != null and entity.templateId !=''">
+				<![CDATA[ and template_id  = #{entity.templateId} ]]>
+			</if>
+			<if test="entity.shopId != null and entity.shopId !=''">
+				<![CDATA[ and shop_id  = #{entity.shopId} ]]>
+			</if>
+			<if test="entity.sellerId != null and entity.sellerId !=''">
+				<![CDATA[ and seller_id  = #{entity.sellerId} ]]>
+			</if>
+			<if test="entity.deleteFlag != null and entity.deleteFlag !=''">
+				<![CDATA[ and delete_flag  = #{entity.deleteFlag} ]]>
+			</if>
+		</if>
+	</sql>
+
+	<!--根据id获取数据 -->
+	<select id="queryById" parameterType="java.lang.Long" resultMap="shopDeliveryTypeDTO">
+		<include refid="Base_Column_List" />
+		where id = #{id}
+	</select>
+
+	<select id="selectListByCondition" resultMap="shopDeliveryTypeDTO">
+		<include refid="Base_Column_List" />
+		<include refid="where_shopDeliveryType" />
+	</select>
+
+	<!--删除 -->
+	<delete id="delete" parameterType="java.lang.Long">
+		delete from shop_delivery_type
+		where id = #{id}
+	</delete>
+	<!--新增 -->
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into shop_delivery_type
+		(
+		template_id, first_part,
+		first_price, continue_part, continue_price,
+		delivery_to, delivery_type, shop_id,
+		seller_id, create_time, create_id, create_name,
+		modify_time, modify_id, modify_name,
+		delete_flag, delivery_address
+		)
+		values
+		(
+		#{templateId}, #{firstPart},
+		#{firstPrice}, #{continuePart}, #{continuePrice},
+		#{deliveryTo}, #{deliveryType}, #{shopId},
+		#{sellerId}, now(), #{createId}, #{createName},
+		now(), #{modifyId}, #{modifyName},
+		#{deleteFlag}, #{deliveryAddress}
+		)
+	</insert>
+	<!--修改 -->
+	<update id="update">
+		update shop_delivery_type
+		<set>
+			<if test="templateId != null">
+				template_id = #{templateId},
+			</if>
+			<if test="firstPart != null">
+				first_part = #{firstPart},
+			</if>
+			<if test="firstPrice != null">
+				first_price = #{firstPrice},
+			</if>
+			<if test="continuePart != null">
+				continue_part = #{continuePart},
+			</if>
+			<if test="continuePrice != null">
+				continue_price = #{continuePrice},
+			</if>
+			<if test="deliveryTo != null">
+				delivery_to = #{deliveryTo},
+			</if>
+			<if test="deliveryType != null">
+				delivery_type = #{deliveryType},
+			</if>
+			<if test="shopId != null">
+				shop_id = #{shopId},
+			</if>
+			<if test="sellerId != null">
+				seller_id = #{sellerId},
+			</if>
+			<if test="modifyId != null">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null">
+				modify_name = #{modifyName},
+			</if>
+			<if test="modifyTime != null">
+				modify_time = #{modifyTime},
+			</if>
+			<if test="deleteFlag != null">
+				delete_flag = #{deleteFlag},
+			</if>
+			<if test="deliveryAddress != null">
+				delivery_address = #{deliveryAddress},
+			</if>
+		</set>
+		where 1=1
+		<if test="id != null  and id !=''">
+			<![CDATA[ and id  = #{id} ]]>
+		</if>
+		<if test="templateId != null  and templateId !=''">
+			<![CDATA[ and template_id  = #{templateId} ]]>
+		</if>
+	</update>
+
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.HTDCompanyDAO">
+
+    <!-- 添加HTD公司信息 -->
+    <insert id="insertHTDCompany" parameterType="cn.htd.usercenter.dto.HTDCompanyDTO">
+        <![CDATA[
+        insert into htd_company (
+            company_id,
+            name,
+            type,
+            parent_company_id,
+            address_province,
+            address_city,
+            address_district,
+            address_town,
+            area
+        ) values (
+            #{dto.companyId},
+            #{dto.name},
+            #{dto.type},
+            #{dto.parentCompanyId},
+            #{dto.addressProvince},
+            #{dto.addressCity},
+            #{dto.addressDistrict},
+            #{dto.addressTown},
+            #{dto.area}
+        )
+        ]]>
+    </insert>
+
+    <!-- 更新HTD公司信息 -->
+    <update id="updateHTDCompany" parameterType="cn.htd.usercenter.dto.HTDCompanyDTO">
+        <![CDATA[
+        update htd_company
+        set name = #{dto.name},
+            type = #{dto.type},
+            parent_company_id = #{dto.parentCompanyId},
+            address_province = #{dto.addressProvince},
+            address_city = #{dto.addressCity},
+            address_district = #{dto.addressDistrict},
+            address_town = #{dto.addressTown},
+            area = #{dto.area}
+        where 
+            company_id = #{dto.companyId}
+        ]]>
+    </update>
+
+    <!-- 查询指定ID的HTD公司信息 -->
+    <select id="queryHTDCompanyById" resultType="cn.htd.usercenter.dto.HTDCompanyDTO"
+        parameterType="Object">
+        select
+            company_id companyId,
+            name,
+            type,
+            area,
+            parent_company_id parentCompanyId,
+            address_province addressProvince,
+            address_city addressCity,
+            address_district addressDistrict,
+            address_town addressTown
+        from
+            htd_company
+        where
+            company_id = #{companyId}
+    </select>
+    
+    <!-- 查询所有公司 -->
+    <select id="selectEmployeeByTypeOrComplayId" resultType="cn.htd.usercenter.dto.HTDCompanyDTO">
+		select  h.company_id as companyId,h.name as name,h.area as area from htd_company h 
+		where 1=1
+		<if test="dto.type != null and dto.type != ''">
+		      and h.type = #{dto.type}
+		</if> 
+		<if test="dto.companyId != null and dto.companyId != ''">
+		      and h.parent_company_id = #{dto.companyId}
+		</if> 
+		order by h.area desc,h.company_id
+	</select>
+
+    <!-- 查询下级公司 -->
+    <select id="querySubCompanies" resultType="cn.htd.usercenter.dto.HTDCompanyDTO"
+        parameterType="Object">
+        select
+            company_id companyId
+        from
+            htd_company
+        where
+            parent_company_id in
+			<foreach item="item" index="index" collection="companyIds" open="(" separator="," close=")">  
+                #{item}
+			</foreach>
+    </select>
+    
+    <!-- 查询父公司的下级子公司 -->
+    <select id="querySubCompaniesByParentIdAndName" resultType="cn.htd.usercenter.dto.HTDCompanyDTO"
+        parameterType="Object">
+        select
+            company_id companyId,
+            name
+        from
+            htd_company
+        where
+            parent_company_id = #{parentCompanyId}
+	        <if test="name != null and name != ''">
+	            and name like concat('%', #{name}, '%')
+	        </if>
+	    order by
+            companyId asc
+    </select>
+    
+</mapper>

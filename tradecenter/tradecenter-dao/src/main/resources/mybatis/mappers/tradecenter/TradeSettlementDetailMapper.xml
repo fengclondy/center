@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeSettlementDetailDAO">
+    <resultMap id="tradeSettlementDetailMap" type="cn.htd.tradecenter.dto.bill.TradeSettlementDetailDTO"></resultMap>
+  	<sql id="pagination_tail">
+   		limit #{page.pageOffset} , #{page.rows}
+  	</sql>
+    <select id="queryTradeSettlementDetailsForPage" parameterType="hashmap" resultType="cn.htd.tradecenter.dto.bill.TradeSettlementDetailDTO">
+        <include refid="queryTradeSettlementDetails"/>
+        <if test="params.settlementNo!=null and params.settlementNo != ''">
+    		and settlement_no = #{params.settlementNo}
+    	</if>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+
+    <sql id="queryTradeSettlementDetails">
+        <include refid = "baseSQL" />
+	</sql>
+
+    <sql id="queryById">
+        <include refid = "baseSQL" />
+        <if test="id!=null and id != ''">
+            and id=#{id}
+        </if>
+    </sql>
+
+    <sql id="baseSQL">
+        select order_no orderNo , order_item_no orderItemNo , buyer_name buyerName , buyer_id buyerId ,
+        first_category_id firstCategoryId,first_category_name firstCategoryName,
+        second_category_id secondCategoryId,second_category_name secondCategoryName,
+        third_category_id thirdCategoryId,third_category_name thirdCategoryName,
+        vip_price_floating_ratio vipPriceFloatingRatio,
+        category_id_list categoryIdList,category_name_list categoryNameList,
+        cost_price costPrice ,price_floating_ratio priceFloatingRatio ,vip_price_floating_ratio vipPriceFloatingRatio ,
+		shop_name shopName , seller_name sellerName, seller_code sellerCode,
+		category_name_list categoryNameList , brand_name brandName,
+		goods_name goodsName , goods_count goodsCount , order_item_pay_amount orderItemPayAmount , 
+		commission_rate commissionRate , commission_Amount commissionAmount , settlement_amount settlementAmount , 
+		create_time createTime , buyer_code buyerCode 
+		from trade_settlement_detail where 1 = 1
+    </sql>
+    
+    <select id="countTradeSettlementDetails" parameterType="hashmap" resultType="int">
+    	select count(1) from trade_settlement_detail where 1 = 1
+    	<if test="params.settlementNo!=null and params.settlementNo != ''">
+    		and settlement_no = #{params.settlementNo}
+    	</if>
+    </select>
+    
+	<insert id="addTradeSettlementDetail" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementDetailDTO">
+        INSERT INTO trade_settlement_detail
+        (
+        settlement_no,
+        order_no,
+        order_item_no,
+        buyer_id,
+        buyer_code,
+        buyer_type,
+        buyer_name,
+        seller_id,
+        seller_code,
+        seller_type,
+        seller_name,
+        shop_id,
+        shop_name,
+        channel_code,
+        channel_name,
+        item_code,
+        goods_name,
+        sku_code,
+        sku_erp_code,
+        sku_ean_code,
+        first_category_id,
+        first_category_name,
+        second_category_id,
+        second_category_name,
+        third_category_id,
+        third_category_name,
+        category_id_list,
+        category_name_list,
+        brand_id,
+        brand_name,
+        pay_type,
+        goods_count,
+        order_item_total_amount,
+        order_item_pay_amount,
+        cost_price,
+        price_floating_ratio,
+        vip_price_floating_ratio,
+        commission_rate,
+        commission_Amount,
+        settlement_amount,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time) 
+        VALUES 
+        (
+        #{settlementNo,jdbcType=VARCHAR},
+        #{orderNo,jdbcType=VARCHAR},
+        #{orderItemNo,jdbcType=VARCHAR},
+        #{buyerId,jdbcType=BIGINT},
+        #{buyerCode,jdbcType=VARCHAR},
+        #{buyerType,jdbcType=VARCHAR},
+        #{buyerName,jdbcType=VARCHAR},
+        #{sellerId,jdbcType=BIGINT},
+        #{sellerCode,jdbcType=VARCHAR},
+        #{sellerType,jdbcType=VARCHAR},
+        #{sellerName,jdbcType=VARCHAR},
+        #{shopId,jdbcType=BIGINT},
+        #{shopName,jdbcType=VARCHAR},
+        #{channelCode,jdbcType=VARCHAR},
+        #{channelName,jdbcType=VARCHAR},
+        #{itemCode,jdbcType=VARCHAR},
+        #{goodsName,jdbcType=VARCHAR},
+        #{skuCode,jdbcType=VARCHAR},
+        #{skuErpCode,jdbcType=VARCHAR},
+        #{skuEanCode,jdbcType=VARCHAR},
+        #{firstCategoryId,jdbcType=BIGINT},
+        #{firstCategoryName,jdbcType=VARCHAR},
+        #{secondCategoryId,jdbcType=BIGINT},
+        #{secondCategoryName,jdbcType=VARCHAR},
+        #{thirdCategoryId,jdbcType=BIGINT},
+        #{thirdCategoryName,jdbcType=VARCHAR},
+        #{categoryIdList,jdbcType=VARCHAR},
+        #{categoryNameList,jdbcType=VARCHAR},
+        #{brandId,jdbcType=BIGINT},
+        #{brandName,jdbcType=VARCHAR},
+        #{payType,jdbcType=VARCHAR},
+        #{goodsCount,jdbcType=VARCHAR},
+        #{orderItemTotalAmount,jdbcType=DECIMAL},
+        #{orderItemPayAmount,jdbcType=DECIMAL},
+        #{costPrice,jdbcType=DECIMAL},
+        #{priceFloatingRatio,jdbcType=DECIMAL},
+        #{vipPriceFloatingRatio,jdbcType=DECIMAL},
+        #{commissionRate,jdbcType=DECIMAL},
+        #{commissionAmount,jdbcType=DECIMAL},
+        #{settlementAmount,jdbcType=DECIMAL},
+       	#{createId,jdbcType=BIGINT},
+		#{createName,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{modifyId,jdbcType=BIGINT},
+		#{modifyName,jdbcType=VARCHAR},
+		#{modifyTime,jdbcType=TIMESTAMP}
+		)
+    </insert>
+
+    <select id="queryCountMoney" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementWithdrawDTO" resultType="map">
+    	select sum(order_item_pay_amount) orderItemPayAmounts,
+    	cast(sum(settlement_amount) as char(50)) withdrawAmount,
+        cast(sum(commission_Amount) as char(50)) commissionAmounts ,
+    	cast(sum(cost_price*goods_count) + sum(commission_Amount) as char(50)) costAndComAmount  
+    	from trade_settlement_detail where 1 = 1
+		<if test="settlementNo !=null and settlementNo !=''">
+		and settlement_no = #{settlementNo}
+		</if>
+		<if test="payTypeList !=null and payTypeList !=''">
+		and pay_type in 
+		<foreach collection="payTypeList" item="list" open="(" close=")" separator=",">
+		#{list}
+		</foreach>
+		</if>
+    </select>
+
+    
+</mapper>

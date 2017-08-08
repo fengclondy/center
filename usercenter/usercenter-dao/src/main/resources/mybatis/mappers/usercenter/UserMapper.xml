@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.UserDAO">
+
+	<!-- 根据ID查询 用户信息 -->
+	<select id="queryUserById" resultType="cn.htd.usercenter.dto.UserDTO"
+		parameterType="Object">
+		SELECT
+            id,
+            name,
+			login_id loginId,
+			password,
+			email,
+			mobile,
+			deleted_flag deletedFlag
+		FROM user
+		WHERE user.id = #{userId}
+	</select>
+
+    <!-- 根据登录ID检索用户信息 -->
+    <select id="queryUserByLoginId" resultType="cn.htd.usercenter.dto.UserDTO"
+        parameterType="Object">
+        select
+            user.id id,
+            user.name name,
+            user.login_id loginId,
+            user.password password,
+            user.nickname nickname,
+            user.email email,
+            user.mobile mobile,
+            user.avatar avatar,
+            user.valid_flag validFlag,
+            user.deleted_flag deletedFlag,
+            user.failed_login_count failedLoginCount,
+            user.last_login_time lastLoginTime
+        <if test="isEmployee != null and isEmployee == false">
+            , customer.company_id cusCompanyId
+            , customer.is_vms_inner_user isVMSInnerUser
+        </if>
+        <if test="isEmployee != null and isEmployee == true">
+            , employee.emp_no empNo
+            , employee.company_id empCompanyId
+            , htd_company.name empCompanyName
+            , htd_company.type empCompanyType
+            , employee.superior_id empSuperiorId
+            , employee.superior_emp_no empSuperiorEmpNo
+            , employee.is_customer_manager isCustomerManager
+            , employee.status empStatus
+        </if>
+        from user
+        <if test="isEmployee != null and isEmployee == false">
+              join customer on user.id = customer.user_id
+              and customer.deleted_flag = 0
+        </if>
+        <if test="isEmployee != null and isEmployee == true">
+              join employee on user.id = employee.user_id
+              and employee.deleted_flag = 0
+              join htd_company on htd_company.company_id = employee.company_id
+        </if>
+        where login_id = #{loginId}
+        <if test="isEmployee != null and isEmployee == false">
+           OR   mobile = #{loginId} 
+        </if>
+    </select>
+
+    <!-- 更新上次登录成功时间 -->
+    <update id="updateLastLoginTime" parameterType="Object">
+        update user
+        set last_login_time = now(),
+            failed_login_count = 0
+        WHERE user.id = #{uid}
+    </update>
+
+    <!-- 递增登录失败次数 -->
+    <update id="addFailedLoginCount" parameterType="Object">
+        update user
+        set failed_login_count = #{failedLoginCount} + 1
+        <if test="validFlag != null">
+            ,valid_flag = 1
+        </if>
+        where user.id = #{uid}
+    </update>
+
+    <!-- 清空登录失败次数 -->
+    <update id="emptyFailedLoginCount" parameterType="Object">
+        update user
+        set failed_login_count = 0
+            ,valid_flag = 0
+        where user.id = #{uid}
+    </update>
+
+	<!-- 查询指定用户在指定产品下所有角色的所有菜单权限项目信息 -->
+	<select id="queryMenuPermissionByUserId" resultType="cn.htd.usercenter.dto.PermissionDTO"
+		parameterType="Object">
+		select distinct
+			p.permission_id permissionId,
+			p.name name,
+			p.type type,
+        	p.level level,
+			p.parent_id parentId,
+			p.page_url pageUrl,
+			p.display_order displayOrder
+		from
+            user_role_mapping urm
+            join user u on urm.user_id = u.id            
+            join role r on urm.role_id = r.role_id
+            join role_permission_mapping rpm on r.role_id = rpm.role_id
+            join permission p on rpm.product_id = p.product_id
+                and rpm.permission_id = p.permission_id
+		where
+            u.id = #{userId}
+        and u.deleted_flag = 0
+        and r.product_id = #{productId}
+        and r.deleted_flag = 0
+        and p.type in (1, 2)
+        and p.deleted_flag = 0
+        order by
+        	p.level asc,
+        	p.parent_id asc,
+        	p.display_order asc
+	</select>
+
+    <!-- 查询指定用户在指定页面下所有角色的所有机能权限项目信息 -->
+    <select id="queryPageFunctionPermissionByUserId" resultType="cn.htd.usercenter.dto.FunctionDTO"
+        parameterType="Object">
+        select distinct
+            p.name name,
+            p.function_symbol symbol,
+            p.display_order displayOrder
+        from
+            user_role_mapping urm
+            join user u on urm.user_id = u.id            
+            join role r on urm.role_id = r.role_id
+            join role_permission_mapping rpm on r.role_id = rpm.role_id
+            join permission p on rpm.product_id = p.product_id
+                and rpm.permission_id = p.permission_id
+        where
+            u.id = #{userId}
+        and u.deleted_flag = 0
+        and r.product_id = #{productId}
+        and r.deleted_flag = 0
+        and p.parent_id = #{permissionId}
+        and p.type = 3
+        and p.deleted_flag = 0
+        order by
+            p.display_order asc
+    </select>
+
+    <!-- 查询指定URL的权限项目信息 -->
+    <select id="queryPermissionByUrl" resultType="cn.htd.usercenter.dto.PermissionDTO"
+        parameterType="Object">
+        select
+            product_id productId,
+            permission_id permissionId
+        from
+            permission
+        where
+            product_id = #{productId}
+        and page_url = #{processUrl}
+        and deleted_flag = 0
+    </select>
+
+    <!-- 查询指定用户是否拥有指定的权限项目信息 -->
+    <select id="queryUserPermissionByPermissionId" resultType="cn.htd.usercenter.dto.PermissionDTO"
+        parameterType="Object">
+        select distinct
+            p.permission_id permissionId
+        from
+            user_role_mapping urm
+            join user u on urm.user_id = u.id            
+            join role r on urm.role_id = r.role_id
+            join role_permission_mapping rpm on r.role_id = rpm.role_id
+            join permission p on rpm.product_id = p.product_id
+                and rpm.permission_id = p.permission_id
+        where
+            u.id = #{userId}
+        and u.deleted_flag = 0
+        and r.product_id = #{productId}
+        and r.deleted_flag = 0
+        and p.product_id = #{productId}
+        and p.permission_id = #{permissionId}
+        and p.deleted_flag = 0
+    </select>
+
+    <!-- 添加登录日志信息 -->
+    <insert id="insertLoginLog" parameterType="cn.htd.usercenter.dto.LoginLogDTO"
+        useGeneratedKeys="true" keyProperty="dto.id">
+        <![CDATA[
+        insert into login_logs(
+            login_user_id,
+            login_user_name,
+            login_prod_name,
+            client_ip,
+            login_time
+        ) values (
+            #{dto.loginUserId},
+            #{dto.loginUserName},
+            #{dto.loginProductName},
+            inet_aton(#{dto.clientIPAddr}),
+            now()
+        )
+        ]]>
+    </insert>
+
+    <!-- 查询指定员工编号的员工信息 -->
+    <select id="queryEmployeeByEmpNo" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+        parameterType="Object">
+        select
+            user_id userId,
+            company_id companyId
+        from
+            employee
+        where
+            emp_no = #{empNo}
+    </select>
+
+    <!-- 添加用户信息 -->
+    <insert id="insertUser" parameterType="cn.htd.usercenter.dto.UserDTO"
+        useGeneratedKeys="true" keyProperty="dto.id">
+        <![CDATA[
+        insert into user (
+			name,
+			login_id,
+			password,
+			email,
+			mobile,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time
+        ) values (
+            #{dto.name},
+            #{dto.loginId},
+            #{dto.password},
+            #{dto.email},
+            #{dto.mobile},
+            0,
+            #{dto.createId},
+            now(),
+            #{dto.lastUpdateId},
+            now()
+        )
+        ]]>
+    </insert>
+
+    <!-- 更新用户信息 -->
+    <update id="updateUser" parameterType="cn.htd.usercenter.dto.UserDTO">
+        <![CDATA[
+        update user 
+        set name = #{dto.name},
+            login_id = #{dto.loginId},
+            password = #{dto.password},
+            email = #{dto.email},
+            mobile = #{dto.mobile},
+            last_updated_id = #{dto.lastUpdateId},
+            last_updated_time = now()
+        where
+            id = #{dto.id}
+        ]]>
+    </update>
+
+<update id="updateUserTime" parameterType="cn.htd.usercenter.dto.UserDTO">
+        <![CDATA[
+        UPDATE member_company_info c
+	SET
+		c.modify_time=NOW()
+	WHERE c.member_id=(
+	select b.id
+		from member_base_info b
+		where
+		b.member_code=#{dto.loginId} )
+          
+        ]]>
+    </update>
+<!-- 更新用户信息 -->
+    <update id="updateUserMobile" parameterType="cn.htd.usercenter.dto.UserDTO">
+        <![CDATA[
+        update user 
+        set  
+            mobile = #{dto.mobile},
+            last_updated_id = #{dto.lastUpdateId},
+            last_updated_time = now()
+        where
+            id = #{dto.id}
+        ]]>
+    </update>
+    <!-- 添加员工信息 -->
+    <insert id="insertEmployee" parameterType="cn.htd.usercenter.dto.EmployeeDTO">
+        <![CDATA[
+        insert into employee (
+			user_id,
+			type,
+			emp_no,
+			company_id,
+			superior_emp_no,
+			is_customer_manager,
+			status,
+			substation_id,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time,
+			gw
+        ) values (
+            #{dto.userId},
+            #{dto.type},
+            #{dto.empNo},
+            #{dto.companyId},
+            #{dto.superiorEmpNo},
+            #{dto.isCustomerManager},
+            #{dto.status},
+            #{dto.substationId},
+            0,
+            #{dto.createId},
+            now(),
+            #{dto.lastUpdateId},
+            now(),
+            #{dto.gw}
+        )
+        ]]>
+    </insert>
+
+    <!-- 更新员工信息 -->
+    <update id="updateEmployee" parameterType="cn.htd.usercenter.dto.EmployeeDTO">
+        <![CDATA[
+        update employee 
+        set type = #{dto.type},
+            emp_no = #{dto.empNo},
+            company_id = #{dto.companyId},
+            superior_emp_no = #{dto.superiorEmpNo},
+            is_customer_manager = #{dto.isCustomerManager},
+            status = #{dto.status},
+            last_updated_id = #{dto.lastUpdateId},
+            last_updated_time = now(),
+            gw = #{dto.gw}
+        where
+            user_id = #{dto.userId}
+        ]]>
+    </update>
+    
+    <update id="updateUserValidFlagByLoginId" parameterType="cn.htd.usercenter.dto.EmployeeDTO">
+        update user 
+        set 
+        <if test="valid == false">
+           valid_flag = 1,
+        </if>
+        <if test="valid == true">
+           valid_flag = 0,
+        </if>
+            last_updated_id = #{userId},
+            last_updated_time = now()
+        where
+            id = #{id}
+    </update>
+    
+
+    <!-- 更新员工上级信息 -->
+    <update id="updateEmployeeSuperior">
+        <![CDATA[
+        update employee e, (select user_id, emp_no from employee) s 
+        set superior_id = s.user_id
+        where e.superior_emp_no = s.emp_no
+        ]]>
+    </update>
+
+    <!-- 查询员工负责下级公司 -->
+    <select id="queryEmployeeByUserId" resultType="cn.htd.usercenter.dto.UserDTO"
+        parameterType="Object">
+        select
+            employee.company_id empCompanyId,
+            employee.incharge_companies empInchargeCompanies,
+            htd_company.type empCompanyType
+        from
+            employee
+            join htd_company on htd_company.company_id = employee.company_id
+        where
+            employee.user_id = #{userId}
+    </select>
+    
+    <update id="updateSubstationMan" parameterType="Object">
+        <![CDATA[
+        update user 
+        set 
+        	deleted_flag = 1,
+            last_updated_id = #{userId},
+            last_updated_time = now()
+        where
+            id = #{userid}
+        ]]>
+    </update>
+    
+    <select id="queryLastLoginLog" resultType="cn.htd.usercenter.dto.LoginLogDTO"
+		parameterType="Object">
+		select id,login_user_id loginUserId,
+		login_user_name loginUserName,
+		login_prod_name loginProdName,
+		login_device_info loginDeviceInfo,
+		client_ip clientIPAddr,
+		login_time loginTime
+		from login_logs where login_user_id=#{userid} order by login_time desc limit 1
+	</select>
+    
+    <!-- 根据员工ID检索用户信息 -->
+    <select id="queryUserByUserId" resultType="cn.htd.usercenter.dto.UserDTO"
+        parameterType="Object">
+        select
+            user.id id,
+            user.name name,
+            user.login_id loginId,
+            user.password password,
+            user.nickname nickname,
+            user.email email,
+            user.mobile mobile,
+            user.avatar avatar,
+            user.valid_flag validFlag,
+            user.deleted_flag deletedFlag,
+            user.failed_login_count failedLoginCount,
+            user.last_login_time lastLoginTime
+        <if test="isEmployee != null and isEmployee == false">
+            , customer.company_id cusCompanyId
+            , customer.is_vms_inner_user isVMSInnerUser
+        </if>
+        <if test="isEmployee != null and isEmployee == true">
+            , employee.emp_no empNo
+            , employee.company_id empCompanyId
+            , htd_company.name empCompanyName
+            , htd_company.type empCompanyType
+            , employee.superior_id empSuperiorId
+            , employee.superior_emp_no empSuperiorEmpNo
+            , employee.is_customer_manager isCustomerManager
+            , employee.status empStatus
+        </if>
+        from user
+        <if test="isEmployee != null and isEmployee == false">
+              join customer on user.id = customer.user_id
+              and customer.deleted_flag = 0
+        </if>
+        <if test="isEmployee != null and isEmployee == true">
+              join employee on user.id = employee.user_id
+              and employee.deleted_flag = 0
+              join htd_company on htd_company.company_id = employee.company_id
+        </if>
+        where user.id = #{userId}
+    </select>
+    
+    
+    <select id="queryVmsmenu" resultType="cn.htd.usercenter.dto.VmsmenuDTO">
+	select
+	a.id id,
+	a.name,
+	a.type,
+	a.level,
+	a.parent_id parentId,
+	a.page_url pageUrl,
+	a.function_symbol functionSymbol,
+	a.display_order displayOrder,
+	a.deleted_flag deletedFlag,
+	a.internal,
+	a.external ,
+	a.enableUrl ,
+	a.primary,
+	a.iconclass ,
+	a.created_id createdId,
+	a.created_time creteadTime,
+	a.last_updated_id lastUpdatedId,
+	a.last_updated_time lastUpdatedTime
+	from vmsmenu a
+	where deleted_flag = 0
+	order by a.id,a.display_order asc
+	</select>
+	
+	<!-- 根据手机号查询 用户信息 -->
+	<select id="queryUserByMobile" resultType="cn.htd.usercenter.dto.UserDTO"
+		parameterType="Object">
+		SELECT
+            id,
+            name,
+			login_id loginId,
+			email,
+			mobile,
+			deleted_flag deletedFlag
+		FROM user
+		WHERE mobile = #{mobile} and valid_flag=0 and deleted_flag=0
+	</select>
+	
+	<!-- 更新用户信息 -->
+    <update id="updateUserAvatar" parameterType="cn.htd.usercenter.dto.UserDTO">
+        <![CDATA[
+        update user 
+        set  
+            avatar = #{dto.avatar},
+            last_updated_id = #{dto.lastUpdateId},
+            last_updated_time = now()
+        where
+            id = #{dto.id}
+        ]]>
+    </update>
+    
+    <select id="queryUserByMemberId" resultType="cn.htd.usercenter.dto.UserDTO"
+		parameterType="Object">
+		select u.id
+		from user u,
+		customer c
+		where
+		c.user_id=u.id
+		and c.company_id=#{memberId} and c.is_vms_inner_user=0
+	</select>
+	
+	<update id="updateUserName" parameterType="cn.htd.usercenter.dto.UserDTO">
+        <![CDATA[
+        update user 
+        set  
+            name = #{dto.name}
+        where
+            id = #{dto.id}
+        ]]>
+    </update>
+</mapper>

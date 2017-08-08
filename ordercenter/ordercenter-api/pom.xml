@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>ordercenter</artifactId>
+		<groupId>cn.htd.zeus.tc</groupId>
+		<version>1.1.0-RELEASE</version>
+	</parent>
+	<groupId>cn.htd.zeus.tc</groupId>
+	<artifactId>ordercenter-api</artifactId>
+	<version>1.1.0-RELEASE</version>
+	<name>ordercenter-api</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<ordercenter-common.version>1.1.0-RELEASE</ordercenter-common.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>cn.htd.zeus.tc</groupId>
+			<artifactId>ordercenter-common</artifactId>
+			<version>${ordercenter-common.version}</version>
+		</dependency>
+		 <!-- add by zhangding 开始 -->
+		 <dependency>
+		 	<groupId>cn.htd.zeus.tc</groupId>
+			<artifactId>ordercenter-biz</artifactId>
+			<version>1.1.0-RELEASE</version>
+		 </dependency>
+		 
+	</dependencies>
+	
+	<build>
+	 <plugins>
+		<plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-jar-plugin</artifactId>
+	    <version>2.3</version>
+	    <executions>
+	        <execution>
+	            <id>cn.htd.zeus.tc</id>
+	            <phase>package</phase>
+	            <goals>
+	               <goal>jar</goal>
+	            </goals>
+	            <configuration>
+	               <classifier>remote</classifier>
+	               <jarName>ordercenter-remote-api</jarName>
+	               <includes>
+	                 <include>cn/htd/zeus/tc/api/*</include>
+	               </includes>
+	            </configuration>
+	        </execution>
+	    </executions>
+	  </plugin>
+	</plugins>
+	</build>
+
+</project>

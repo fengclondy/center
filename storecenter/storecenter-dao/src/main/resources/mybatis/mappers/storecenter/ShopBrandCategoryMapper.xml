@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.storecenter.dao.ShopBrandCategoryDAO">
+	
+	
+	<!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	
+	<!-- =========================================================== -->
+    <!-- DAO方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+   <!-- 根据id查询 -->
+	<select id="selectByBrandIdCategoryId" resultType="long" parameterType="java.util.List">
+		   
+		select distinct
+		shop_category_brand_.seller_id 
+		FROM
+		shop_category_brand shop_category_brand_ 
+		where 1=1
+		<if test="shopBrandCategoryDTO!=null and shopBrandCategoryDTO!=''">
+		<if test="shopBrandCategoryDTO.categoryId!=null and shopBrandCategoryDTO.categoryId!='' and shopBrandCategoryDTO.categoryId.size>0"> 
+ 		 	 
+ 		  		   <![CDATA[  and shop_category_brand_.category_id in ]]>
+      			<foreach collection="shopBrandCategoryDTO.categoryId" item="categoryId"  separator="," open="(" close=")" index="index" >
+       			  <![CDATA[ #{categoryId} ]]>
+     			</foreach>
+     		
+     		</if>
+      		<if test="shopBrandCategoryDTO.brandId!=null and shopBrandCategoryDTO.brandId!='' and shopBrandCategoryDTO.brandId.size>0">
+ 		 	 
+ 		   	  <![CDATA[ and shop_category_brand_.brand_id in ]]>
+      			<foreach collection="shopBrandCategoryDTO.brandId" item="brandId"  separator="," open="(" close=")" index="index" >
+       			  <![CDATA[ #{brandId} ]]>
+     			 </foreach>
+     		 </if>
+    	</if>
+    	
+    	
+	</select>
+	
+	
+</mapper>

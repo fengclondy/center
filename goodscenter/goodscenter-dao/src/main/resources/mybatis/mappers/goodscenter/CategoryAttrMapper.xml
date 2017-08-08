@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.goodscenter.dao.CategoryAttrDAO">
+	<resultMap id="itemCategoryAttrMapper" type="cn.htd.goodscenter.domain.CategoryAttr">
+		<result property="id" column="id" />
+		<result property="cid" column="cid" />
+		<result property="valueId" column="value_id" />
+		<result property="valueName" column="value_name" />
+		<result property="indexKey" column="index_key" />
+		<result property="attrId" column="attr_id" />
+		<result property="attrType" column="attr_type" />
+		<result property="attrName" column="attr_name" />
+		<result property="selectType" column="select_type" />
+		<result property="sortNumber" column="sort_number" />
+		<result property="optionType" column="option_type" />
+		<result property="features" column="features" />
+		<result property="status" column="status" />
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name" />
+		<result property="createTime" column="create_time" />
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name" />
+		<result property="modifyTime" column="modify_time" />
+	</resultMap>
+	<resultMap id="itemCategoryAttrDTOMapper" type="cn.htd.goodscenter.dto.CategoryAttrDTO">
+		<result property="attrId" column="id" />
+		<result property="attrCid" column="cid" />
+		<result property="attrValueId" column="value_id" />
+		<result property="attrValueName" column="value_name" />
+		<result property="attrIndexKey" column="index_key" />
+		<result property="attrAttrId" column="attr_id" />
+		<result property="attrAttrType" column="attr_type" />
+		<result property="attrAttrName" column="attr_name" />
+		<result property="attrSelectType" column="select_type" />
+		<result property="attrSortNumber" column="sort_number" />
+		<result property="attrOptionType" column="option_type" />
+		<result property="attrFeatures" column="features" />
+		<result property="attrStatus" column="status" />
+		<result property="attrCreateId" column="create_id"/>
+		<result property="attrCreateName" column="create_name" />
+		<result property="attrCreateTime" column="create_time" />
+		<result property="attrModifyId" column="modify_id"/>
+		<result property="attrModifyName" column="modify_name" />
+		<result property="attrModifyTime" column="modify_time" />
+	</resultMap>
+	<resultMap id="itemAttrSellerMap" type="cn.htd.goodscenter.domain.ItemAttrSeller">
+		<result property="sellerAttrId" column="seller_attrid" />
+		<result property="sellerId" column="seller_id" />
+		<result property="categoryId" column="category_id" />
+		<result property="attrId" column="attr_id" />
+		<result property="attrName" column="attr_name" />
+		<result property="attrType" column="attr_type" />
+		<result property="selectType" column="select_type" />
+		<result property="attrStatus" column="attr_status" />
+		<result property="sortNumber" column="sort_number" />
+		<result property="shopId" column="shop_id" />
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name" />
+		<result property="created" column="create_time" />
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name" />
+		<result property="modified" column="modify_time" />
+	</resultMap>
+	<resultMap id="itemAttrValueSellerMap" type="cn.htd.goodscenter.domain.ItemAttrValueSeller">
+		<result property="sellerAttrValueId" column="seller_attr_value_id" />
+		<result property="sellerAttrId" column="seller_attr_id" />
+		<result property="valueId" column="value_id" />
+		<result property="valueName" column="value_name" />
+		<result property="sortNumber" column="sort_number" />
+		<result property="attrValueStatus" column="attr_value_status" />
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name" />
+		<result property="created" column="create_time" />
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name" />
+		<result property="modified" column="modify_time" />
+	</resultMap>
+	<resultMap id="queryChildCategoryMap" type="cn.htd.goodscenter.dto.outdto.QueryChildCategoryOutDTO">
+		<result property="childCategorys" column="childCategorys" />
+	</resultMap>
+
+	<select id="queryChildCategory" resultMap="queryChildCategoryMap">
+		select queryChildCategory(#{entity.categoryCid}) childCategorys
+	</select>
+
+	<sql id="where_fragement_dto">
+		where 1=1
+		<if test="entity != null">
+			<if test="entity.attrCid!= null">
+				and cid = #{entity.attrCid}
+			</if>
+			<if test="entity.attrAttrType != null">
+				and attr_type = #{entity.attrAttrType}
+			</if>
+			<if test="entity.attrAttrId != null ">
+				and attr_id = #{entity.attrAttrId}
+			</if>
+			<if test="entity.attrValueId != null and entity.attrValueId != ''">
+				and value_id = #{entity.attrValueId}
+			</if>
+		</if>
+	</sql>
+	<select id="queryById" resultMap="itemCategoryAttrMapper">
+		select * from item_category_attr where id = #{id}
+	</select>
+
+	<insert id="add">
+		insert into item_category_attr(
+		cid,
+		attr_id,
+		attr_type,
+		select_type,
+		sort_number,
+		option_type,
+		features,
+		status,
+		create_id,
+		create_name,
+		create_time
+		)values(
+		#{attrCid},
+		#{attrAttrId},
+		#{attrAttrType},
+		#{attrSelectType},
+		#{attrSortNumber},
+		#{attrOptionType},
+		#{attrFeatures},
+		1,
+		#{attrCreateId},
+		#{attrCreateName},
+		now()
+		)
+	</insert>
+	<insert id="addAttr" parameterType="object" useGeneratedKeys="true" keyProperty="attrAttrId">
+		insert into item_attribute(
+		attr_name,
+		status,
+		create_id,
+		create_name,
+		create_time
+		)values(
+		#{attrAttrName},
+		1,
+		#{attrCreateId},
+		#{attrCreateName},
+		now()
+		)
+	</insert>
+	<insert id="addAttrValue" parameterType="object" useGeneratedKeys="true" keyProperty="attrValueId">
+		insert into
+		item_attribute_value(
+		attr_id,
+		value_name,
+		index_key,
+		status,
+		create_id,
+		create_name,
+		create_time
+		)values(
+		#{attrAttrId},
+		#{attrValueName},
+		#{attrIndexKey},
+		1,
+		#{attrCreateId},
+		#{attrCreateName},
+		now()
+		)
+	</insert>
+	<insert id="addCategoryAttrValue">
+		insert into
+		item_category_attr_value(
+		cid,
+		attr_id,
+		value_id,
+		sort_number,
+		status,
+		create_id,
+		create_name,
+		create_time
+		)values(
+		#{attrCid},
+		#{attrAttrId},
+		#{attrValueId},
+		#{attrSortNumber},
+		1,
+		#{attrCreateId},
+		#{attrCreateName},
+		now()
+		)
+	</insert>
+
+	<update id="update">
+		update item_category_attr set
+		id = #{id},
+		cid = #{cid},
+		attr_id = #{attrId},
+		attr_type = #{attrType},
+		attr_name = #{attrName},
+		select_type = #{selectType},
+		sort_number = #{sortNumber},
+		option_type = #{optionType},
+		features = #{features},
+		created = now(),
+		modified = now(),
+		status = #{status}
+		where id = #{id}
+	</update>
+	<update id="updateBySelect">
+
+	</update>
+
+	<delete id="delete">
+		update item_category_attr
+		set status = 0
+		<if test=" codes != null and codes.size() > 0 ">
+			where id in
+			<foreach collection="codes" open="(" separator="," close=")"
+				item="code">
+				#{code}
+			</foreach>
+		</if>
+		<if test=" codes == null or codes.size() == 0 ">
+			where 1 = 3
+		</if>
+	</delete>
+
+	<!-- 根据商品属性值删除商品类别属性关系 -->
+	<delete id="deleteCategoryAttrByAttrId">
+		update item_category_attr
+		set status = 0
+		where
+		attr_id=#{attr_id}
+	</delete>
+
+	<!-- 根据商品属性值删除商品类别属性值关系 -->
+	<delete id="deleteCategoryAttrValueByValueId">
+		update item_category_attr_value
+		set status = 0
+		where
+		value_id=#{value_id}
+	</delete>
+
+	<!-- 根据商品属性删除商品类别属性值关系 -->
+	<delete id="deleteCategoryAttrValueByAttrId">
+		update item_category_attr_value
+		set status = 0
+		where
+		attr_id=#{attr_id}
+	</delete>
+
+
+	<select id="queryCount"></select>
+	<!-- 根据类目id和商品类型关联两张表查询属性id和属性name -->
+	<select id="queryAttrNameList" resultMap="itemCategoryAttrDTOMapper">
+		select
+		ia.attr_name,ia.attr_id
+		from item_attribute ia,item_category_attr ica
+		where
+		ia.attr_id = ica.attr_id
+		and ica.cid = #{attrCid}
+		and ica.attr_type = #{attrAttrType}
+		and ia.status = 1
+		and ica.status = 1
+		<if test="attrAttrName != null ">
+		and ia.attr_name = #{attrAttrName}
+		</if>
+	</select>
+	<!-- 根据属性id和类目id关联两张表查询属性值id和属性值name -->
+	<select id="queryValueNameList" resultMap="itemCategoryAttrDTOMapper">
+		select
+		iav.value_id,iav.value_name
+		from
+		item_attribute_value iav,
+		item_category_attr_value icav
+		where
+		iav.value_id = icav.value_id
+		and icav.attr_id = #{attrAttrId}
+		and icav.cid = #{attrCid}
+		and iav.status = 1
+		and icav.status = 1
+		<if test="attrValueName != null">
+			and iav.value_name = #{attrValueName}
+		</if>
+	</select>
+
+	<select id="queryAttrSellerList" resultMap="itemAttrSellerMap">
+		SELECT
+		ia.*,
+		itema.attr_name
+		FROM
+		item_attr ia,
+		item_attribute itema
+		WHERE ia.attr_id = itema.attr_id
+		<if test="param.sellerId!=null">
+			AND ia.seller_id = #{param.sellerId}
+		</if>
+		AND ia.shop_id = #{param.shopId}
+		AND ia.attr_status=0
+		AND ia.attr_type=#{param.attrType}
+		and ia.category_id=#{param.cid}
+	</select>
+
+	<select id="queryAttrValueSellerList" resultMap="itemAttrValueSellerMap">
+		SELECT
+		iav.*,
+		itemv.value_name
+		FROM
+		item_attr_value iav,
+		item_attribute_value itemv
+		WHERE iav.value_id = itemv.value_id
+		AND iav.seller_attrid =#{sellerAttrId} and itemv.status = 1
+	</select>
+
+
+	<insert id="insertItemAttr" parameterType="cn.htd.goodscenter.domain.ItemAttrBean"
+		useGeneratedKeys="true" keyProperty="param.id">
+		<![CDATA[
+		insert into item_attribute(
+				attr_name
+				,status
+				,create_id
+				,create_name
+				,create_time
+				,modify_id
+				,modify_name
+				,modify_time
+		)values(
+				#{param.name}
+				,1
+				,#{param.createId}
+				,#{param.createName}
+				,now()
+				,#{param.modifyId}
+				,#{param.modifyName}
+				,now()
+		)
+		]]>
+	</insert>
+
+
+	<insert id="insertItemAttrSeller" parameterType="cn.htd.goodscenter.domain.ItemAttrSeller"
+		useGeneratedKeys="true" keyProperty="param.sellerAttrId">
+		<![CDATA[
+		INSERT INTO item_attr (
+		  seller_id,
+		  shop_id,
+		  category_id,
+		  attr_id,
+		  attr_type,
+		  attr_status,
+		  select_type,
+		  sort_number,
+		  create_id,
+		  create_name,
+		  create_time,
+		  modify_id,
+		  modify_name,
+		  modify_time
+
+		) 
+		VALUES
+		  (
+		    #{param.sellerId},
+		    #{param.shopId},
+		    #{param.categoryId},
+		    #{param.attrId},
+		    #{param.attrType},
+		    0,
+		    #{param.selectType},
+		    #{param.sortNumber},
+		    #{param.createId},
+		    #{param.createName},
+		    now(),
+		    #{param.modifyId},
+		    #{param.modifyName},
+		    now()
+		  )
+		]]>
+	</insert>
+
+	<select id="getItemAttrSeller" resultMap="itemAttrSellerMap">
+		SELECT
+		ia.*,
+		itema.attr_name
+		FROM
+		item_attr ia,
+		item_attribute itema
+		WHERE ia.attr_id = itema.attr_id
+		AND ia.seller_id = #{sellerId}
+		AND ia.shop_id = #{shopId}
+		AND ia.attr_status=0
+		AND ia.attr_id=#{attrId}
+		AND ia.category_id=#{cid}
+	</select>
+
+	<insert id="insertItemAttrValue" parameterType="cn.htd.goodscenter.domain.ItemAttrValueBean"
+		useGeneratedKeys="true" keyProperty="param.id">
+		<![CDATA[
+		INSERT INTO item_attribute_value (
+		  attr_id,
+		  value_name,
+		  index_key,
+		  status,
+		  create_id,
+		  create_name,
+		  create_time,
+		  modify_id,
+		  modify_name,
+		  modify_time
+		) 
+		VALUES
+		  (
+		    #{param.attrId},
+		    #{param.name},
+		    #{param.indexKey},
+		    1,
+		    #{param.createId},
+		    #{param.createName},
+		    now(),
+		    #{param.modifyId},
+		    #{param.modifyName},
+		    now()
+		  ) 
+		]]>
+	</insert>
+
+
+	<insert id="insertItemAttrValueSeller" parameterType="cn.htd.goodscenter.domain.ItemAttrValueSeller"
+		useGeneratedKeys="true" keyProperty="param.sellerAttrValueId">
+		<![CDATA[
+			INSERT INTO item_attr_value (
+			  seller_attrid,
+			  value_id,
+			  sort_number,
+			  attr_value_status,
+			  create_time,
+			  modify_time,
+			  create_id,
+			  create_name,
+			  modify_id,
+			  modify_name
+			) 
+			VALUES
+			  (
+			    #{param.sellerAttrId},
+			    #{param.valueId},
+			    #{param.sortNumber},
+			    0,
+			    now(),
+			    now(),
+			    #{param.createId},
+			    #{param.createName},
+			    #{param.modifyId},
+			    #{param.modifyName}
+			  )
+		]]>
+	</insert>
+
+	<select id="getAttrNameByAttrId" resultType="String">
+		select attr_name from item_attribute where attr_id=#{id} and status = 1
+	</select>
+
+	<select id="getAttrValueNameByAttrValueId" resultType="String">
+		select value_name from item_attribute_value where value_id=#{id} and status = 1
+	</select>
+
+	<select id="queryCidByAttributeId" resultType="Long">
+		SELECT
+		c_attr.cid
+		FROM
+		item_attribute attribute,
+		item_category_attr c_attr,
+		item_category category
+		WHERE
+		attribute.attr_id = c_attr.attr_id
+		and category.cid = c_attr.cid
+		and attribute.attr_id = #{attrId}
+	</select>
+
+	<select id="queryCidByAttributeValueId" resultType="Long">
+		SELECT
+		c_attr_value.cid
+		FROM
+		item_attribute_value attr_value,
+		item_category_attr_value c_attr_value,
+		item_category category
+		WHERE
+		attr_value.value_id = c_attr_value.value_id
+		and category.cid = c_attr_value.cid
+		and attr_value.value_id = #{attrValueId}
+	</select>
+</mapper>

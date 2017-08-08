@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.htd.marketcenter</groupId>
+	<artifactId>marketcenter</artifactId>
+	<packaging>pom</packaging>
+	<version>1.1.0-RELEASE</version>
+	<name>marketcenter</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<file.encoding>UTF-8</file.encoding>
+	</properties>
+	<modules>
+		<module>marketcenter-parent</module>
+		<module>marketcenter-export</module>
+		<module>marketcenter-rpc</module>
+		<module>marketcenter-common</module>
+		<module>marketcenter-domain</module>
+		<module>marketcenter-dao</module>
+		<module>marketcenter-service</module>
+		<module>marketcenter-web</module>
+	</modules>
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Releases</name>
+			<url>http://171.16.46.6:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots</name>
+			<url>http://171.16.46.6:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

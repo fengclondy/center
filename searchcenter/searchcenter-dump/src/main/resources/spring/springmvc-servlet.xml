@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+
+	<!-- spring mvc related -->
+	<context:component-scan base-package="cn.htd.searchcenter.controllers" />
+
+    <!-- 默认返回Json格式 -->
+    <mvc:annotation-driven content-negotiation-manager="contentManager"/>
+    <bean id="contentManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="favorPathExtension" value="true"/>
+        <property name="ignoreAcceptHeader" value="true" />
+        <property name="defaultContentType" value="application/json" />
+        <property name="useJaf" value="false"/>
+    </bean>
+
+	<!-- static resources -->
+	<mvc:resources location="/static/" mapping="/static/**"
+		cache-period="864000" /><!-- 24 * 3600 * 10 -->
+
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<!-- 定义默认的异常处理页面，当该异常类型的注册时使用 -->
+		<property name="defaultErrorView" value="error"></property>
+		<!-- 定义异常处理页面用来获取异常信息的变量名，默认名为exception -->
+		<property name="exceptionAttribute" value="ex"></property>
+		<!-- 定义需要特殊处理的异常，用类名或完全路径名作为key，异常也页名作为值 -->
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Exception">error</prop>
+				<!-- 这里还可以继续扩展对不同异常类型的处理 -->
+			</props>
+		</property>
+	</bean>
+
+	<mvc:view-controller path="/error" view-name="error" />
+	<mvc:view-controller path="/404" view-name="404" />
+	<mvc:view-controller path="/500" view-name="error" />
+
+	<!-- 添加cookie 的拦截器 -->
+	<bean class="cn.htd.searchcenter.dump.job.load.UpdateRunFlagLoad"/>
+</beans>

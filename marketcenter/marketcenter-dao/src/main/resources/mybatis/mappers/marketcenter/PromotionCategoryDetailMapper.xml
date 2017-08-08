@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.PromotionCategoryDetailDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.PromotionCategoryDetailDTO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId" />
+    <result column="rule_id" jdbcType="BIGINT" property="ruleId" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="brand_id_list" jdbcType="VARCHAR" property="brandIdList" />
+    <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,
+	promotion_id,
+	rule_id,
+	category_id,
+	brand_id_list,
+	delete_flag,
+	create_id,
+	create_name,
+	create_time,
+	modify_id,
+	modify_name,
+	modify_time
+  </sql>
+  <select id="queryByPromotionInfo" parameterType="cn.htd.marketcenter.dto.PromotionCategoryItemRuleDTO" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_category_detail
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+      and delete_flag = 0
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into promotion_category_detail 
+	<trim prefix="(" suffix=")" suffixOverrides=",">
+		promotion_id,
+        <if test="ruleId != null">
+        rule_id,
+        </if>
+		category_id,
+		brand_id_list,
+		delete_flag,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time,
+    </trim>
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+    	#{promotionId,jdbcType=VARCHAR},
+        <if test="ruleId != null">
+        #{ruleId,jdbcType=BIGINT},
+        </if>
+    	#{categoryId,jdbcType=BIGINT},
+     	#{brandIdList,jdbcType=VARCHAR}, 
+        0, 
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+    </trim>
+  </insert>
+  <update id="delete">
+    update promotion_category_detail
+    <set>
+        delete_flag = 1,
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+      and delete_flag = 0
+  </update>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderSalesMonthDAO" >
+
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.OrderSalesMonthInfoDMO" >
+    <id column="SALES_MONTH_YEAR" property="salesMonthYear" jdbcType="INTEGER" />
+    <id column="SUPPERLIER_ID" property="supperlierId" jdbcType="BIGINT" />
+    <result column="SALES_AMOUNT" property="salesAmount" jdbcType="BIGINT" />
+    <result column="COUNT_TIME" property="countTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+     SALES_MONTH_YEAR, SUPPERLIER_ID, SALES_AMOUNT, COUNT_TIME
+  </sql>
+  
+  <select id="queryOrderSalesMonthInfoSevenMonthsAgo" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	SELECT
+	 <include refid="Base_Column_List" />
+	FROM
+		ORDERSALESMONTHINFO
+	where 1=1
+	<![CDATA[ and SALES_MONTH_YEAR < #{salesMonthYear} ]]>
+	and SUPPERLIER_ID = #{supperlierId}
+	ORDER BY
+		SALES_MONTH_YEAR DESC
+	limit 7
+  </select>
+  
+</mapper>

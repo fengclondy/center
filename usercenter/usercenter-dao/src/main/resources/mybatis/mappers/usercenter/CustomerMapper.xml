@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.usercenter.dao.CustomerDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.usercenter.dto.CustomerDTO" >
+    <id column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="company_id" property="companyId" jdbcType="BIGINT" />
+    <result column="erp_code" property="erpCode" jdbcType="VARCHAR" />
+    <result column="is_unique_mobile" property="isUniqueMobile" jdbcType="BIT" />
+    <result column="is_binding_logon" property="isBindingLogon" jdbcType="BIT" />
+    <result column="is_vms_inner_user" property="isVmsInnerUser" jdbcType="BIT" />
+    <result column="vms_superior_id" property="vmsSuperiorId" jdbcType="BIGINT" />
+    <result column="vms_department" property="vmsDepartment" jdbcType="VARCHAR" />
+    <result column="vms_permissions" property="vmsPermissions" jdbcType="VARCHAR" />
+    <result column="default_contact" property="defaultContact" jdbcType="TINYINT" />
+    <result column="deleted_flag" property="deletedFlag" jdbcType="BIT" />
+    <result column="is_low_flag" property="isLowFlag" jdbcType="BIT" />
+    <result column="created_id" property="createdId" jdbcType="BIGINT" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="last_updated_id" property="lastUpdatedId" jdbcType="BIGINT" />
+    <result column="last_updated_time" property="lastUpdatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, company_id, erp_code, is_unique_mobile, is_binding_logon, is_vms_inner_user, 
+    vms_superior_id, vms_department, vms_permissions, default_contact, deleted_flag, is_low_flag,
+    created_id, created_time, last_updated_id, last_updated_time
+  </sql>
+  <select id="getCustomerInfo" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer
+    where user_id = #{userId,jdbcType=BIGINT} 
+  </select>
+  <select id="selectList" resultType="cn.htd.usercenter.dto.CustomerDTO"
+		parameterType="Object">
+	SELECT u.id, u.name, u.login_id loginId,
+			u.mobile,
+		
+			c.user_id userId, c.company_id companyId, c.erp_code erpCode, c.is_unique_mobile
+			isUniqueMobile,
+			c.is_binding_logon isBindingLogon, c.is_vms_inner_user isVmsInnerUser,
+			c.vms_superior_id vmsSuperiorId, c.vms_department vmsDepartment, c.vms_permissions
+			vmsPermissions,
+			c.default_contact defaultContact, c.is_low_flag isLowFlag, c.deleted_flag deletedFlag,
+			c.created_id createdId, c.created_time createdTime, c.last_updated_id
+			lastUpdatedId, c.last_updated_time lastUpdatedTime
+			FROM customer c,user
+			u
+			where c.user_id=u.id
+			and
+		    c.company_id = #{companyId}  and c.deleted_flag = 0
+	    <if test="name != null and name != ''">
+			<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+		</if> 
+    	limit #{pager.pageOffset},#{pager.rows}
+  </select>
+  
+  <select id="selectAllCount" resultType="java.lang.Long"
+		parameterType="Object">
+		SELECT count(0)  
+			FROM customer c,user u
+			where c.user_id=u.id
+			and
+			c.company_id = #{companyId}  and c.deleted_flag = 0
+		    <if test="name != null and name != ''">
+				<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+			</if> 
+	</select>
+	
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from customer
+    where user_id = #{userId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.usercenter.dto.CustomerDTO" >
+    insert into customer (user_id, company_id, erp_code, 
+      is_unique_mobile, is_binding_logon, is_vms_inner_user, 
+      vms_superior_id, vms_department, vms_permissions, 
+      default_contact, deleted_flag, created_id, 
+      created_time, last_updated_id, last_updated_time
+      )
+    values (#{userId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, #{erpCode,jdbcType=VARCHAR}, 
+      #{isUniqueMobile,jdbcType=BIT}, #{isBindingLogon,jdbcType=BIT}, #{isVmsInnerUser,jdbcType=BIT}, 
+      #{vmsSuperiorId,jdbcType=BIGINT}, #{vmsDepartment,jdbcType=VARCHAR}, #{vmsPermissions,jdbcType=VARCHAR}, 
+      #{defaultContact,jdbcType=TINYINT}, #{deletedFlag,jdbcType=BIT}, #{createdId,jdbcType=BIGINT}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{lastUpdatedId,jdbcType=BIGINT}, #{lastUpdatedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="addCustomer" parameterType="cn.htd.usercenter.dto.CustomerDTO" >
+    insert into customer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dto.userId != null" >
+        user_id,
+      </if>
+      <if test="dto.companyId != null" >
+        company_id,
+      </if>
+      <if test="dto.erpCode != null" >
+        erp_code,
+      </if>
+      <if test="dto.isUniqueMobile != null" >
+        is_unique_mobile,
+      </if>
+      <if test="dto.isBindingLogon != null" >
+        is_binding_logon,
+      </if>
+      <if test="dto.isVmsInnerUser != null" >
+        is_vms_inner_user,
+      </if>
+      <if test="dto.vmsSuperiorId != null" >
+        vms_superior_id,
+      </if>
+      <if test="dto.vmsDepartment != null" >
+        vms_department,
+      </if>
+      <if test="dto.vmsPermissions != null" >
+        vms_permissions,
+      </if>
+      <if test="dto.defaultContact != null" >
+        default_contact,
+      </if>
+      <if test="dto.deletedFlag != null" >
+        deleted_flag,
+      </if>
+      <if test="dto.createdId != null" >
+        created_id,
+      </if>
+        created_time,
+      <if test="dto.lastUpdatedId != null" >
+        last_updated_id,
+      </if>
+        last_updated_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dto.userId != null" >
+        #{dto.userId,jdbcType=BIGINT},
+      </if>
+      <if test="dto.companyId != null" >
+        #{dto.companyId,jdbcType=BIGINT},
+      </if>
+      <if test="dto.erpCode != null" >
+        #{dto.erpCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.isUniqueMobile != null" >
+        #{dto.isUniqueMobile,jdbcType=BIT},
+      </if>
+      <if test="dto.isBindingLogon != null" >
+        #{dto.isBindingLogon,jdbcType=BIT},
+      </if>
+      <if test="dto.isVmsInnerUser != null" >
+        #{dto.isVmsInnerUser,jdbcType=BIT},
+      </if>
+      <if test="dto.vmsSuperiorId != null" >
+        #{dto.vmsSuperiorId,jdbcType=BIGINT},
+      </if>
+      <if test="dto.vmsDepartment != null" >
+        #{dto.vmsDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.vmsPermissions != null" >
+        #{dto.vmsPermissions,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.defaultContact != null" >
+        #{dto.defaultContact,jdbcType=TINYINT},
+      </if>
+      <if test="dto.deletedFlag != null" >
+        #{dto.deletedFlag,jdbcType=BIT},
+      </if>
+      <if test="dto.createdId != null" >
+        #{dto.createdId,jdbcType=BIGINT},
+      </if>
+      now(),
+      <if test="dto.lastUpdatedId != null" >
+        #{dto.lastUpdatedId,jdbcType=BIGINT},
+      </if>
+		now()
+    </trim>
+  </insert>
+  <update id="updateByUid" parameterType="cn.htd.usercenter.dto.CustomerDTO" >
+    update customer
+    <set >
+      <if test="dto.companyId != null" >
+        company_id = #{dto.companyId,jdbcType=BIGINT},
+      </if>
+      <if test="dto.erpCode != null" >
+        erp_code = #{dto.erpCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.isUniqueMobile != null" >
+        is_unique_mobile = #{dto.isUniqueMobile,jdbcType=BIT},
+      </if>
+      <if test="dto.isBindingLogon != null" >
+        is_binding_logon = #{dto.isBindingLogon,jdbcType=BIT},
+      </if>
+      <if test="dto.isVmsInnerUser != null" >
+        is_vms_inner_user = #{dto.isVmsInnerUser,jdbcType=BIT},
+      </if>
+      <if test="dto.vmsSuperiorId != null" >
+        vms_superior_id = #{dto.vmsSuperiorId,jdbcType=BIGINT},
+      </if>
+      <if test="dto.vmsDepartment != null" >
+        vms_department = #{dto.vmsDepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.vmsPermissions != null" >
+        vms_permissions = #{dto.vmsPermissions,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.defaultContact != null" >
+        default_contact = #{dto.defaultContact,jdbcType=TINYINT},
+      </if>
+      <if test="dto.deletedFlag != null" >
+        deleted_flag = #{dto.deletedFlag,jdbcType=BIT},
+      </if>
+      <if test="dto.isLowFlag != null" >
+        is_low_flag = #{dto.isLowFlag,jdbcType=BIT},
+      </if>
+      <if test="dto.lastUpdatedId != null" >
+        last_updated_id = #{dto.lastUpdatedId,jdbcType=BIGINT},
+      </if>
+      last_updated_time = now()
+    </set>
+    where user_id = #{dto.userId,jdbcType=BIGINT}
+  </update>
+  <update id="updatePermByUid" parameterType="cn.htd.usercenter.dto.CustomerDTO" >
+    update customer
+    <set >
+      <if test="dto.vmsPermissions != null" >
+        vms_permissions = #{dto.vmsPermissions,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.isLowFlag != null" >
+        is_low_flag = #{dto.isLowFlag,jdbcType=BIT},
+      </if>
+      <if test="dto.lastUpdatedId != null" >
+        last_updated_id = #{dto.lastUpdatedId,jdbcType=BIGINT},
+      </if>
+      last_updated_time = now()
+    </set>
+    where user_id = #{dto.userId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="isRepeatMobile" resultType="cn.htd.usercenter.dto.CustomerDTO" parameterType="Object">
+		select u.name as name,e.company_id as companyId,
+		u.login_id as loginId,u.mobile as mobile,u.password as password from customer e 
+		left join user u on u.id = e.user_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0
+        <if test="mobile != null and mobile != ''">
+		      and u.mobile = #{mobile} and u.id not in ( #{userid} )
+		</if> 
+	</select>
+	
+	<select id="isRepeatdc" resultType="cn.htd.usercenter.dto.CustomerDTO" parameterType="Object">
+		select e.user_id as userId,u.name as name,e.company_id as companyId,
+		u.login_id as loginId,u.mobile as mobile,u.password as password from customer e 
+		left join user u on u.id = e.user_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0 and e.company_id = #{companyId}
+       and e.default_contact = '1' and u.id not in ( #{userid} )
+	</select>
+	
+	
+	<update id="deleteCustomer" parameterType="Object">
+        <![CDATA[
+        update customer 
+        set 
+        	deleted_flag = 1,
+            last_updated_id = #{userId},
+            last_updated_time = now()
+        where
+            user_id = #{userid}
+        ]]>
+    </update>
+    
+    <select id="genVMSMemberCode"  resultType="java.lang.String" >
+		SELECT seq_nextval('VMSmemberCode')
+	</select>
+	
+	<select id="genVMSPTMemberCode"  resultType="java.lang.String" >
+		SELECT seq_nextval('VMSPTmemberCode')
+	</select>
+	
+ 	<select id="genVMSOUTMemberCode"  resultType="java.lang.String" >
+		SELECT seq_nextval('VMSOUTmemberCode')
+	</select>
+  
+</mapper>

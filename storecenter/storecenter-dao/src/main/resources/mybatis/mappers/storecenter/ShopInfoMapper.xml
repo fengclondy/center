@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.storecenter.dao.ShopInfoDAO">
+
+	<!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<resultMap id="shopDTOMap" type="cn.htd.storecenter.dto.ShopDTO">
+				<result property="shopId" column="shop_id"/>
+				<result property="shopName" column="shop_name"/>
+				<result property="sellerId" column="seller_id"/>
+				<result property="status" column="status"/>
+				<result property="shopUrl" column="shop_url"/>
+				<result property="logoUrl" column="logo_url"/>
+				<result property="keyword" column="keyword"/>
+				<result property="introduce" column="introduce"/>
+				<result property="verifyId" column="verify_id"/>
+				<result property="createTime" column="create_time"/>
+				<result property="modifyTime" column="modify_time"/>
+				<result property="passTime" column="pass_time"/>
+				<result property="endTime" column="end_time"/>
+				<result property="cid" column="cid"  />
+				<result property="cStatus" column="cStatus"  />
+				<result property="shopType" column="shop_type"  />
+				<result property="businessType" column="business_type"  />
+				<result property="disclaimer" column="disclaimer"  />
+				<result property="createName" column="create_name"/>
+				<result property="createId" column="create_id"/>
+				<result property="modifyName" column="modify_name"/>
+				<result property="modifyId" column="modify_id"/>
+				<result property="bannerUrl" column="banner_url"/>
+	</resultMap>
+
+	<!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+ 			shop_id
+ 			,shop_name
+ 			,seller_id
+ 			,shop_url
+ 			,logo_url
+ 			,banner_url
+ 			,keyword
+ 			,introduce
+ 			,shop_type
+ 			,business_type
+ 			,pass_time
+ 			,end_time
+ 			,disclaimer
+ 			,status
+ 			,verify_id
+ 			,create_id
+ 			,create_name
+ 			,create_time
+ 			,modify_id
+ 			,modify_name
+ 			,modify_time
+ 		FROM
+ 			shop_info shop_info_
+		]]>
+	</sql>
+
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity!=null">
+			<if test="entity.shopName != null  and entity.shopName !=''">
+				<![CDATA[ and shop_info_.shop_name  LIKE CONCAT('%',#{entity.shopName},'%') ]]>
+			</if>
+			<if test="entity.shopId != null  and entity.shopId !=''">
+				<![CDATA[ and shop_info_.shop_id  LIKE CONCAT('%',#{entity.shopId},'%') ]]>
+			</if>
+			<if test="entity.sellerId != null  and entity.sellerId !=''">
+				<![CDATA[ and shop_info_.seller_id =#{entity.sellerId}]]>
+			</if>
+			<if test="entity.shopType != null  and entity.shopType !=''">
+				<![CDATA[ and shop_info_.shop_type =#{entity.shopType}]]>
+			</if>
+			<if test="entity.status != null  and entity.status !=''">
+				<![CDATA[ and shop_info_.status =#{entity.status}]]>
+			</if>
+			<if test="entity.keyword != null  and entity.keyword !=''">
+				<![CDATA[ and (shop_info_.keyword LIKE CONCAT('%',#{entity.keyword},'%') or shop_info_.shop_name LIKE CONCAT('%',#{entity.keyword},'%')]]>
+			</if>
+			<if test="entity.verifyId != null  and entity.verifyId !=''">
+				<![CDATA[ and shop_info_.verify_id =#{entity.verifyId}]]>
+			</if>
+			<if test="entity.createdend != null  and entity.createdend !=''">
+				<![CDATA[ and DATE_FORMAT(shop_info_.create_time,'%Y-%m-%d ' ) <= DATE_FORMAT(#{entity.createdend},'%Y-%m-%d' ) ]]>
+			</if>
+			<if test="entity.createdstr != null  and entity.createdstr !=''">
+				<![CDATA[ and DATE_FORMAT(shop_info_.create_time,'%Y-%m-%d ' )  >= DATE_FORMAT(#{entity.createdstr},'%Y-%m-%d') ]]>
+			</if>
+			<if test="entity.passTimeBegin != null  and entity.passTimeBegin !=''">
+                <![CDATA[ and DATE_FORMAT(shop_info_.pass_time,'%Y-%m-%d ' ) >= DATE_FORMAT(#{entity.passTimeBegin},'%Y-%m-%d' ) ]]>
+            </if>
+            <if test="entity.passTimeEnd != null  and entity.passTimeEnd !=''">
+                <![CDATA[ and DATE_FORMAT(shop_info_.pass_time,'%Y-%m-%d ' ) < DATE_FORMAT(#{entity.passTimeEnd},'%Y-%m-%d' ) ]]>
+            </if>
+			<if test="entity.statuss!=null and entity.statuss != ''">
+				<![CDATA[ and shop_info_.status in ]]>
+			  		<foreach collection="entity.statuss" item="it" index="index" open="(" separator="," close=")">
+			   			<![CDATA[   #{it} ]]>
+			   		</foreach>
+			</if>
+			<if test="entity.collation==1">
+				<![CDATA[ORDER BY  modify_time desc ]]>
+			</if>
+			<if test="entity.collation==2">
+				<![CDATA[ORDER BY  modify_time  ]]>
+			</if>
+
+		</if>
+	</sql>
+
+	<!-- =========================================================== -->
+    <!-- DAO方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+   <!-- 根据id查询 -->
+	<select id="selectById" resultMap="shopDTOMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where shop_info_.shop_id = #{id}
+		]]>
+	</select>
+
+	<select id="selectBySellerId" resultMap="shopDTOMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where shop_info_.seller_id = #{sellerId}
+		]]>
+	</select>
+
+	<select id="queryShopInfoByIds" resultMap="shopDTOMap" parameterType="long[]">
+		<![CDATA[ select s.*,sc.cid,sc.status cStatus from shop_info s,shop_platform_category sc  where s.shop_id=sc.shop_id ]]>
+		  <if test="entity.createdstr!= null and entity.createdstr !='' ">
+		  		<![CDATA[ and s.create_time > #{entity.createdstr} ]]>
+		  </if>
+		  <if test="entity.createdend!= null and entity.createdend !='' ">
+		  		<![CDATA[ and s.create_time < #{entity.createdend} ]]>
+		  </if>
+		  <if test="entity.passTimestr!= null and entity.passTimestr !='' ">
+		  		<![CDATA[ and s.pass_Time > #{entity.passTimestr} ]]>
+		  </if>
+		  <if test="entity.passTimeend!= null and entity.passTimeend !='' ">
+		  		<![CDATA[ and s.pass_Time < #{entity.passTimeend} ]]>
+		  </if>
+		  <if test="entity.sellerId!= null and entity.sellerId !='' ">
+		  		<![CDATA[ and s.seller_id = #{entity.sellerId} ]]>
+		  </if>
+		  <if test="entity.cid != null  and entity.cid !=''">
+				<choose>
+			         <when test="entity.childCategorys != null and entity.childCategorys!='' ">
+			            <![CDATA[ and FIND_IN_SET(sc.cid,#{entity.childCategorys}) ]]>
+			        </when>
+ 				        <otherwise>
+			            <![CDATA[ and sc.cid = #{entity.cid} ]]>
+			        </otherwise>
+		        </choose>
+		  </if>
+		  <if test="entity.shopName!= null and entity.shopName !='' ">
+		  		<![CDATA[ and s.shop_name LIKE CONCAT('%',#{entity.shopName},'%') ]]>
+		  </if>
+		  <if test="entity.status!= null and entity.status !='' ">
+		  		<![CDATA[ and s.status = #{entity.status} ]]>
+		  </if>
+		  <if test="entity.shopIds!=null">
+		  		<![CDATA[ and s.shop_id in]]>
+			  <foreach collection="entity.shopIds" item="it" index="index" open="(" separator="," close=")">
+			   	<![CDATA[   #{it} ]]>
+			  </foreach>
+		  </if>
+	</select>
+
+	<select id="queryShopByIds" resultMap="shopDTOMap" parameterType="long[]">
+	  <![CDATA[ select s.* from shop_info s where 1=1]]>
+		  <if test="entity.sellerId!= null and entity.sellerId !='' ">
+				<![CDATA[ and s.seller_id = #{entity.sellerId} ]]>
+		  </if>
+		  <if test="entity.shopIds!=null">
+		  		<![CDATA[ and s.shop_id in]]>
+			  <foreach collection="entity.shopIds" item="it" index="index" open="(" separator="," close=")">
+			   	<![CDATA[   #{it} ]]>
+			  </foreach>
+		  </if>
+		<if test="entity.sellerIds!=null">
+			<![CDATA[ and s.seller_id in]]>
+			<foreach collection="entity.sellerIds" item="it" index="index" open="(" separator="," close=")">
+				<![CDATA[   #{it} ]]>
+			</foreach>
+		</if>
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="selectListByCondition" resultMap="shopDTOMap" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+	<select id="selectCountByCondition" resultType="long">
+		<include refid="count_Tail" />
+		shop_info shop_info_
+		<include refid="where_fragement" />
+	</select>
+
+	<!-- 插入记录 -->
+	<insert id="insert" parameterType="cn.htd.storecenter.dto.ShopDTO" useGeneratedKeys="true" keyProperty="shopId">
+		<![CDATA[
+		insert into shop_info (
+		    	 shop_name
+		    	 ,seller_id
+		    	 ,status
+		    	 ,shop_url
+		    	 ,logo_url
+		    	 ,banner_url
+		    	 ,keyword
+		    	 ,introduce
+				 ,verify_id
+		    	 ,create_time
+		    	 ,modify_time
+		    	 ,end_time
+		    	 ,shop_type
+		    	 ,business_type
+		    	 ,disclaimer
+		    	 ,create_id
+		    	 ,create_name
+		    	 ,modify_id
+		    	 ,modify_name
+		    	 ,pass_time
+		   )values(
+		    	#{shopName}
+		    	,#{sellerId}
+		    	,#{status}
+		    	,#{shopUrl}
+		    	,#{logoUrl}
+		    	,#{bannerUrl}
+		    	,#{keyword}
+		    	,#{introduce}
+		    	,#{verifyId}
+		    	,now()
+		    	,now()
+		    	,now()
+		    	,#{shopType}
+		    	,#{businessType}
+		    	,#{disclaimer}
+		    	,#{createId}
+		    	,#{createName}
+		    	,#{createId}
+		    	,#{createName}
+				,now()
+		   )
+	    ]]>
+	</insert>
+
+	<!-- 根据id，修改记录 -->
+	<update id="update" parameterType="cn.htd.storecenter.dto.ShopDTO">
+		update shop_info set
+			modify_time = now()
+			<if test="shopName !=null " > ,shop_name = #{shopName} </if>
+   			<if test="sellerId !=null " > ,seller_id = #{sellerId} </if>
+   			<if test="status !=null " > ,status = #{status} </if>
+   			<if test="shopUrl !=null and shopUrl !='' " >,shop_url = #{shopUrl}</if>
+   			<if test="logoUrl !=null " > ,logo_url = #{logoUrl}</if>
+			<if test="bannerUrl !=null " > ,banner_url = #{bannerUrl}</if>
+   			<if test="keyword !=null " > ,keyword = #{keyword}</if>
+   			<if test="introduce !=null " > ,introduce = #{introduce}</if>
+			<if test="verifyId !=null " > ,verify_id = #{verifyId}</if>
+   			<if test="createTime !=null " > ,create_time = #{createTime}</if>
+   			<if test="passTime !=null " >,pass_time = #{passTime}</if>
+   			<if test="endTime !=null " >,end_time = #{endTime}</if>
+   			<if test="shopType !=null " > ,shop_type = #{shopType} </if>
+   			<if test="businessType !=null " >,business_type=#{businessType}</if>
+   			<if test="disclaimer !=null " > ,disclaimer = #{disclaimer} </if>
+			<if test="modifyId !=null " > ,modify_id = #{modifyId} </if>
+			<if test="modifyName !=null " > ,modify_name = #{modifyName} </if>
+		 where shop_id = #{shopId}
+	</update>
+	<update id="modifyShopInfostatus" parameterType="cn.htd.storecenter.dto.ShopDTO">
+		update  shop_info set
+   			status = #{status}
+   			,modify_time =now()
+			,modify_id = #{modifyId}
+			,modify_name = #{modifyName}
+   			<if test="status=='2' ">,pass_time =now()</if>
+		 where shop_id = #{shopId}
+	</update>
+
+
+	<update id="updateShopInfo" parameterType="cn.htd.storecenter.dto.ShopModifyDetailDTO">
+		update  shop_info set
+   			${propertiesColumn} = #{afterChange}
+   			,modify_time =now()
+		 where shop_id = #{shopId}
+	</update>
+
+	<select id="getShopId" resultType="long">
+		SELECT get_shop_no()
+	</select>
+
+	<select id="queryShopInfoByBrandId" resultMap="shopDTOMap" >
+	   select distinct s.* from  shop_brand sb,shop_info s
+			where sb.shop_id=s.shop_id
+			 and sb.brand_id=#{brandId}
+			 and sb.`status`='2'
+			  and s.`status`='2'
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	<select id="queryCountShopInfoByBrandId" resultType="long" >
+	  select count(1) from ( select distinct s.* from  shop_brand sb,shop_info s
+			where sb.shop_id=s.shop_id
+			 and sb.brand_id=#{brandId}
+			 and sb.`status`='2'
+			  and s.`status`='2') a
+	</select>
+	
+	<select id="queryShopInfoBySyncTime" resultMap="shopDTOMap" >
+		select * from shop_info where modify_time >= #{syncTime}
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+</mapper>

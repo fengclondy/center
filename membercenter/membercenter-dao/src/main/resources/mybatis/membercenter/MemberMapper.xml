@@ -1,0 +1,1600 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberBaseOperationDAO">
+    <!-- 查询审核通过会员基本信息-->
+	<select id="selectBaseMemberInfo" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+			m.status as status,
+			m.mall_account as mallAccount,
+			m.contact_name as contactName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			mc.company_code as companyCode,
+			mc.company_name as companyName,
+		    m.regist_time as registTime,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType,
+	        m.account_type as accountType,
+	        m.is_buyer as isBuyer,
+	        m.is_seller as isSeller,
+            m.can_mall_login  as canMallLogin,
+            m.has_guarantee_license as hasGuaranteeLicense,
+            m.has_business_license as hasBusinessLicense,
+            case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+	    <if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2' 
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		  	left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		</if>
+		left join member_status_info ms on ms.member_id=m.id and ms.info_type=13
+		where 
+		    1=1
+		and case when ms.status_id is not null then ms.verify_status='2' else 1=1 end
+		and m.status = #{memberBaseInfoDTO.status}
+		
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.accountType != null and memberBaseInfoDTO.accountType != ''">
+		    and m.account_type = #{memberBaseInfoDTO.accountType}
+		</if>
+		<if test="memberBaseInfoDTO.isSeller != null">
+		    and m.is_seller = #{memberBaseInfoDTO.isSeller}
+		</if>
+		 
+		<if test="memberBaseInfoDTO.artificialPersonName != null and memberBaseInfoDTO.artificialPersonName != ''">
+		    and mc.artificial_person_name = #{memberBaseInfoDTO.artificialPersonName}
+		</if>
+		<if test="memberBaseInfoDTO.companyCode != null and memberBaseInfoDTO.companyCode != ''">
+		    and mc.company_code = #{memberBaseInfoDTO.companyCode}
+		</if>
+		
+		<if test="memberBaseInfoDTO.memberCode != null and memberBaseInfoDTO.memberCode != ''">
+		    and m.member_code = #{memberBaseInfoDTO.memberCode}
+		</if>
+		<if test="memberBaseInfoDTO.locationProvince != null and memberBaseInfoDTO.locationProvince != ''">
+		    and mc.location_province = #{memberBaseInfoDTO.locationProvince}
+		</if>
+		<if test="memberBaseInfoDTO.locationCity != null and memberBaseInfoDTO.locationCity != ''">
+		    and mc.location_city = #{memberBaseInfoDTO.locationCity}
+		</if>
+		<if test="memberBaseInfoDTO.locationCounty != null and memberBaseInfoDTO.locationCounty != ''">
+		    and mc.location_county = #{memberBaseInfoDTO.locationCounty}
+		</if>
+		<if test="memberBaseInfoDTO.locationTown != null and memberBaseInfoDTO.locationTown != ''">
+		    and mc.location_town = #{memberBaseInfoDTO.locationTown}
+		</if>	
+		<if test="memberBaseInfoDTO.mallAccount != null and memberBaseInfoDTO.mallAccount != ''">
+		    and m.mall_account = #{memberBaseInfoDTO.mallAccount}
+		</if>	
+		<if test="memberBaseInfoDTO.startDate != null and memberBaseInfoDTO.startDate != '' and memberBaseInfoDTO.endDate != null and memberBaseInfoDTO.endDate != ''">
+            and m.regist_time between #{memberBaseInfoDTO.startDate} and #{memberBaseInfoDTO.endDate}
+		    
+		</if>			
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and  mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		    <![CDATA[ and mc1.company_name like concat('%', #{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[ and mc2.company_name like concat('%', #{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "1"'>
+			and m.can_mall_login=0
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "3"'>
+			and m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "2"'>
+			and m.can_mall_login=1 and m.has_business_license=1 
+		</if> 
+		order by m.modify_time desc,m.id
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 查询审核通过会员条数-->
+	<select id="selectMemberCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(m.id) from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2' 
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		  	left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		</if>
+	
+		left join member_status_info ms on ms.member_id=m.id and ms.info_type=13
+		where
+		    1=1
+		and case when ms.status_id is not null then ms.verify_status='2' else 1=1 end
+		and m.status = #{memberBaseInfoDTO.status}
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.accountType != null and memberBaseInfoDTO.accountType != ''">
+		    and m.account_type = #{memberBaseInfoDTO.accountType}
+		</if>
+		<if test="memberBaseInfoDTO.isSeller != null">
+		    and m.is_seller = #{memberBaseInfoDTO.isSeller}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonName != null and memberBaseInfoDTO.artificialPersonName != ''">
+		    and mc.artificial_person_name = #{memberBaseInfoDTO.artificialPersonName}
+		</if>
+		<if test="memberBaseInfoDTO.companyCode != null and memberBaseInfoDTO.companyCode != ''">
+		    and mc.company_code = #{memberBaseInfoDTO.companyCode}
+		</if>
+		<if test="memberBaseInfoDTO.memberCode != null and memberBaseInfoDTO.memberCode != ''">
+		    and m.member_code = #{memberBaseInfoDTO.memberCode}
+		</if>
+		<if test="memberBaseInfoDTO.locationProvince != null and memberBaseInfoDTO.locationProvince != ''">
+		    and mc.location_province = #{memberBaseInfoDTO.locationProvince}
+		</if>
+		<if test="memberBaseInfoDTO.locationCity != null and memberBaseInfoDTO.locationCity != ''">
+		    and mc.location_city = #{memberBaseInfoDTO.locationCity}
+		</if>
+		<if test="memberBaseInfoDTO.locationCounty != null and memberBaseInfoDTO.locationCounty != ''">
+		    and mc.location_county = #{memberBaseInfoDTO.locationCounty}
+		</if>
+		<if test="memberBaseInfoDTO.locationTown != null and memberBaseInfoDTO.locationTown != ''">
+		    and mc.location_town = #{memberBaseInfoDTO.locationTown}
+		</if>	
+		<if test="memberBaseInfoDTO.mallAccount != null and memberBaseInfoDTO.mallAccount != ''">
+		    and m.mall_account = #{memberBaseInfoDTO.mallAccount}
+		</if>	
+		<if test="memberBaseInfoDTO.startDate != null and memberBaseInfoDTO.startDate != '' and memberBaseInfoDTO.endDate != null and memberBaseInfoDTO.endDate != ''">
+            and m.regist_time between #{memberBaseInfoDTO.startDate} and #{memberBaseInfoDTO.endDate}
+		</if>			
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and  mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		    <![CDATA[ and mc1.company_name like concat('%', #{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[ and mc2.company_name like concat('%', #{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if>  
+		<if test='memberBaseInfoDTO.memberType == "1"'>
+			and m.can_mall_login=0
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "3"'>
+			and m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "2"'>
+			and m.can_mall_login=1 and m.has_business_license=1
+		</if> 
+	</select>
+	
+	<!-- 导入会员店设置为中心店 -->
+	<update id="updateMemberInfo" 
+		parameterType="Object">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+				update member_base_info m
+				  set
+				  m.is_center_store=1,
+				  m.upgrade_center_store_time=#{item.upgradeCenterStoreTime},
+				  m.modify_id=#{item.modifyId},
+		          m.modify_name = #{item.modifyName},
+		          m.modify_time = #{item.modifyTime}				  
+				where m.id = #{item.id}
+		 </foreach>
+	</update>
+	
+	<!-- 导出审核通过会员基本信息-->
+	<select id="getMemBaseInfoForExport" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,	
+			m.contact_mobile as contactMobile,
+			m.status as status,
+			mc.company_code as companyCode,
+			m.mall_account as mallAccount,
+			m.contact_name as contactName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			m.regist_time as registTime,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		where 1=1
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.accountType != null and memberBaseInfoDTO.accountType != ''">
+		    and m.account_type = #{memberBaseInfoDTO.accountType}
+		</if>
+		<if test="memberBaseInfoDTO.companyCode != null and memberBaseInfoDTO.companyCode != ''">
+		    and mc.company_code = #{memberBaseInfoDTO.companyCode}
+		</if>
+		<if test="memberBaseInfoDTO.status != null and memberBaseInfoDTO.status != ''">
+		    and m.status = #{memberBaseInfoDTO.status}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonName != null and memberBaseInfoDTO.artificialPersonName != ''">
+		    and mc.artificial_person_name = #{memberBaseInfoDTO.artificialPersonName}
+		</if>
+		<if test="memberBaseInfoDTO.memberCode != null and memberBaseInfoDTO.memberCode != ''">
+		    and m.member_code = #{memberBaseInfoDTO.memberCode}
+		</if>
+		<if test="memberBaseInfoDTO.locationProvince != null and memberBaseInfoDTO.locationProvince != ''">
+		    and mc.location_province = #{memberBaseInfoDTO.locationProvince}
+		</if>
+		<if test="memberBaseInfoDTO.locationCity != null and memberBaseInfoDTO.locationCity != ''">
+		    and mc.location_city = #{memberBaseInfoDTO.locationCity}
+		</if>
+		<if test="memberBaseInfoDTO.locationCounty != null and memberBaseInfoDTO.locationCounty != ''">
+		    and mc.location_county = #{memberBaseInfoDTO.locationCounty}
+		</if>
+		<if test="memberBaseInfoDTO.locationTown != null and memberBaseInfoDTO.locationTown != ''">
+		    and mc.location_town = #{memberBaseInfoDTO.locationTown}
+		</if>	
+		<if test="memberBaseInfoDTO.mallAccount != null and memberBaseInfoDTO.mallAccount != ''">
+		    and m.mall_account = #{memberBaseInfoDTO.mallAccount}
+		</if>	
+		<if test="memberBaseInfoDTO.startDate != null and memberBaseInfoDTO.startDate != '' and memberBaseInfoDTO.endDate != null and memberBaseInfoDTO.endDate != ''">
+		    and  #{memberBaseInfoDTO.startDate} &lt;= m.regist_time &gt;= #{memberBaseInfoDTO.endDate}
+		</if>			
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and  mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		    and mc1.company_name = #{memberBaseInfoDTO.belongCompanyName}
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    and mc2.company_name = #{memberBaseInfoDTO.curBelongCompanyName}
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "1"'>
+			and m.can_mall_login=0
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "3"'>
+			and m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0
+		</if> 
+		<if test='memberBaseInfoDTO.memberType == "2"'>
+			and m.can_mall_login=1 and m.has_business_license=1
+		</if> 
+	</select>
+	
+	<!-- 通过会员ID查询会员基本信息 -->
+	<select id="getMemberbaseById" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.recommender_code as recommenderCode,
+			mc.id as companyId,
+			m.cur_belong_seller_id as curBelongSellerId,
+			m.belong_seller_id as belongSellerId,
+			m.seller_type as sellerType,
+			m.is_seller as isSeller,
+			m.business_Type as businessType,
+			m.promotion_person as promotionPerson,
+			m.regist_from as registFrom,
+			m.create_time as createTime,
+			ml.business_license_id as businessLicenseId,
+			m.upgrade_center_store_time as upgradeCenterStoreTime,
+			m.contact_mobile as contactMobile,
+			m.contact_name as contactName,
+			m.contact_email as contactEmail,
+			br.buyer_feature as buyerFeature,
+			m.member_code as memberCode,
+			mp.birthday as birthday,
+			mc.account_no as accountNo,
+			mc.real_name_status as realNameStatus,
+			m.is_phone_authenticated as isPhoneAuthenticated,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,
+			m.account_type as accountType,
+			m.is_buyer as isBuyer,
+			m.can_mall_login as canMallLogin,
+			m.has_guarantee_license as hasGuaranteeLicense,
+			m.has_business_license as hasBusinessLicense,
+			m.industry_category as industryCategory,
+			mc1.company_name as belongCompanyName,
+			m.belong_manager_id as belongManagerId,
+			mc2.company_name as curBelongCompanyName,
+			m.cur_belong_manager_id as curBelongManagerId,
+			m.regist_time as registTime,
+			m.status as status,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			bg.buyer_grade as buyerGrade,
+			ms.modify_time as modifyTime,
+			ms.verify_status as verifyStatus,
+			m.is_center_store as isCenterStore,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc,
+			m.is_diff_industry as isDiffIndustry,
+			ml.buyer_guarantee_license_pic_src as buyerGuaranteeLicensePicSrc,
+			ml.buyer_business_license_id as buyerBusinessLicenseId,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType,
+			ml.buyer_business_license_pic_src as buyerBusinessLicensePicSrc	
+		from member_base_info m
+		left join member_status_info ms on ms.member_id=m.id and ms.info_type=5
+		left join belong_relationship br on m.id=br.buyer_id and br.status!='9'
+		left join member_company_info mc on m.id=mc.member_id 
+		left join member_person_info mp on mp.member_id=m.id
+		left join member_company_info mc1 on m.belong_seller_id=mc1.member_id and mc1.buyer_seller_type='2'
+		left join buyer_grade_info bg on m.id=bg.buyer_id
+		left join member_company_info mc2 on m.cur_belong_seller_id=mc2.member_id and mc2.buyer_seller_type='2'
+		left join member_licence_info ml on ml.member_id=m.id 
+		where 
+		    m.id=#{id}
+		and 
+		    mc.buyer_seller_type=#{buyerSellerType}
+	</select>
+	
+	<!-- 通过会员ID查询会员基本信息 -->
+	<select id="getMemberbaseBySellerId" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.seller_type as sellerType,
+			m.is_seller as isSeller,
+			ml.business_license_id as businessLicenseId,
+			m.upgrade_center_store_time as upgradeCenterStoreTime,
+			m.contact_mobile as contactMobile,
+			m.contact_name as contactName,
+			m.member_code as memberCode,
+			m.is_phone_authenticated as isPhoneAuthenticated,
+			mp.birthday as birthday,
+			mc.account_no as accountNo,
+			mc.real_name_status as realNameStatus,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,
+			m.account_type as accountType,
+			m.is_buyer as isBuyer,
+			m.can_mall_login as canMallLogin,
+			m.has_guarantee_license as hasGuaranteeLicense,
+			m.has_business_license as hasBusinessLicense,
+			m.industry_category as industryCategory,
+			m.belong_manager_id as belongManagerId,
+			m.cur_belong_manager_id as curBelongManagerId,
+			m.regist_time as registTime,
+			m.status as status,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			m.is_center_store as isCenterStore,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc,
+			m.is_diff_industry as isDiffIndustry,
+			ml.buyer_guarantee_license_pic_src as buyerGuaranteeLicensePicSrc,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType,
+			ml.buyer_guarantee_license_pic_src as buyerBusinessLicensePicSrc	
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_person_info mp on mp.member_id=m.id
+		left join member_licence_info ml on ml.member_id=m.id
+		where 
+		    m.id=#{id}
+		and 
+		    mc.buyer_seller_type=#{buyerSellerType}
+	</select>
+	
+	
+	<!-- 通过会员ID查询会员公司基本信息 -->
+	<select id="getMemberBaseInfoById" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.business_type as businessType,
+			m.belong_seller_id as belongSellerId,
+			m.cur_belong_seller_id as curBelongSellerId,
+			m.upgrade_center_store_time as upgradeCenterStoreTime,
+			m.contact_mobile as contactMobile,
+			m.contact_name as contactName,
+			mc.id as companyId,
+			m.member_code as memberCode,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,
+			m.account_type as accountType,
+			m.is_buyer as isBuyer,
+			m.can_mall_login as canMallLogin,
+			m.has_guarantee_license as hasGuaranteeLicense,
+			m.has_business_license as hasBusinessLicense,
+			m.industry_category as industryCategory,
+			m.belong_manager_id as belongManagerId,
+			m.cur_belong_manager_id as curBelongManagerId,
+			m.regist_time as registTime,
+			m.status as status,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			m.is_center_store as isCenterStore,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc,
+			m.is_diff_industry as isDiffIndustry,
+			m.cooperate_vendor as cooperateVendor,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+		where 
+		    m.id=#{id}
+        and 
+		    mc.buyer_seller_type=#{buyerSellerType}
+	</select>
+	
+	<!-- 通过会员ID获取金融联系备份人信息 -->
+    <select id="getBackupContactById" resultType="cn.htd.membercenter.domain.MemberBackupContactInfo"
+		parameterType="Object">
+		select 
+		    m.contact_id as contactId,
+		    m.contact_name as contactName,
+		    m.contact_mobile as contactMobile,
+			m.contact_idcard as contactIdcard,
+			m.contact_idcard_pic_src as contactIdcardPicSrc,
+			m.contact_idcard_pic_back_src as contactIdcardPicBackSrc,
+			m.contact_person_idcard_pic_src as contactPersonIdcardPicSrc,
+	    	m.status as status
+	    from member_backup_contact_info m  
+	    where m.member_id=#{id}
+	 </select>
+	 
+	 <!-- 通过联系人ID获取金融联系备份人信息 -->
+    <select id="getContactId" resultType="cn.htd.membercenter.domain.MemberBackupContactInfo"
+		parameterType="Object">
+		select 
+		    m.contact_id as contactId,
+		    m.contact_name as contactName,
+		    m.member_id as memberId,
+		    m.contact_mobile as contactMobile,
+			m.contact_idcard as contactIdcard,
+			m.contact_idcard_pic_src as contactIdcardPicSrc,
+			m.contact_idcard_pic_back_src as contactIdcardPicBackSrc,
+			m.contact_person_idcard_pic_src as contactPersonIdcardPicSrc,
+	    	m.status as status
+	    from member_backup_contact_info m  
+	    where m.contact_id=#{contactId}
+	 </select>
+
+    <!-- 通过会员ID查询发票信息 -->
+    <select id="getMemberInvoiceById" resultType="cn.htd.membercenter.dto.MemberInvoiceInfoDTO"
+		parameterType="Object">
+		select 
+		    m.invoice_id as invoiceId,
+		    m.tax_man_id as taxManId,
+		    m.invoice_notify as invoiceNotify,
+		    m.invoice_address as invoiceAddress,
+		    m.contact_phone as contactPhone,
+		    m.invoice_address_detail as invoiceAddressDetail,
+		    m.bank_name as bankName,
+		    m.bank_account as bankAccount,
+			m.invoice_company_name as invoiceCompanyName,
+		    m.invoice_address_province as invoiceAddressProvince,
+			m.invoice_address_city as invoiceAddressCity,
+			m.invoice_address_county as invoiceAddressCounty,
+			m.invoice_address_town as invoiceAddressTown,
+			ml.business_license_certificate_pic_src as businessLicenseCertificatePicSrc,
+			ml.tax_registration_certificate_pic_src as taxRegistrationCertificatePicSrc
+         from member_invoice_info m
+         left join member_licence_info ml on ml.member_id=m.member_id
+         where m.member_id=#{id} and m.channel_code='' 
+         and m.delete_flag=0 limit 1
+	 </select>
+
+    <!-- 通过会员ID查询会员信息更改履历 -->
+    <select id="getVerifyById" resultType="cn.htd.membercenter.domain.VerifyDetailInfo"
+		parameterType="Object">
+		select 
+		    v.id as id,
+		    v.operator_name as operatorName,
+		    v.content_name as contentName,
+		    v.before_change as beforeChange,
+		    v.after_change as afterChange,
+		    v.after_change_desc as afterChangeDesc,
+		    vi.remark remark,
+		    v.operate_time as operateTime
+		from verify_detail_info v 
+		left join verify_info vi on vi.id = v.verify_id
+		where 
+		v.record_id=#{id} 
+		and v.record_type='1'
+		and v.modify_type=#{infoType}
+		order by v.operate_time desc,v.id
+		limit #{pager.pageOffset},#{pager.rows}
+    </select>
+    
+    <!-- 通过会员ID获取会员更改履历条数 -->
+    <select id="getVerifyCountById" resultType="java.lang.Long"
+		parameterType="Object">
+		select 
+		    count(v.id)
+		from verify_detail_info v 
+		where 
+		v.record_id=#{id}
+		and v.modify_type=#{infoType}
+		and v.record_type='1'
+    </select>
+    
+    <!--  获取会员编码存在会员 -->
+    <select id="selectMemberExit" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.member_code as memberCode,
+			m.is_center_store as isCenterStore,
+			m.upgrade_center_store_time as 	upgradeCenterStoreTime
+		from member_base_info m
+		where m.member_code in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+		     #{item.memberCode}  
+		 </foreach>  
+	</select>
+	
+	<!-- 更改会员有效性 -->
+    <update id="updateMemberIsvalid" 
+		parameterType="Object">
+		update member_base_info 
+		<set>
+			<if test="dto.status != null and dto.status != ''">
+				status=#{dto.status},
+			</if>			
+			<if test="dto.modifyId != null and dto.modifyId != ''">
+				modify_id=#{dto.modifyId},
+			</if>
+			<if test="dto.modifyName != null and dto.modifyName != ''">
+				modify_name=#{dto.modifyName},
+			</if>
+			<if test="dto.canMallLogin != null and dto.canMallLogin != ''">
+				can_mall_login=#{dto.canMallLogin},
+			</if>
+			<if test="dto.curBelongSellerId != null and dto.curBelongSellerId != ''">
+				cur_belong_seller_id=#{dto.curBelongSellerId},
+			</if>
+			<if test="dto.belongSellerId != null and dto.belongSellerId != ''">
+				belong_seller_id=#{dto.belongSellerId},
+			</if>
+			<if test="dto.curBelongManagerId != null and dto.curBelongManagerId != ''">
+				cur_belong_manager_id=#{dto.curBelongManagerId},
+			</if>
+			<if test="dto.belongManagerId != null and dto.belongManagerId != ''">
+				belong_manager_id=#{dto.belongManagerId},
+			</if>
+			<if test="dto.becomeMemberTime != null">
+				become_member_time=now(),
+			</if>
+			<if test="dto.industryCategory != null and dto.industryCategory != ''">
+			    industry_category=#{dto.industryCategory},
+		    </if>
+		    <if test="dto.businessType != null and dto.businessType != ''">
+			    business_type=#{dto.businessType},
+		    </if>
+			modify_time = now(),account_type=1,is_buyer=1
+	    </set>
+		where 
+		id=#{dto.id}
+	 </update>
+	 
+	 <!-- 通过会员ID获取会员分组信息 -->
+    <select id="getMemberGroupInfo" resultType="cn.htd.membercenter.dto.BuyerGroupInfo"
+		parameterType="Object">
+		select 
+			b.group_id as groupId,
+			b.name as name,
+			b.seller_id as sellerId
+		from  buyer_group b
+	    where b.delete_flag=0 and b.group_id in
+	    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">  
+		     #{item}  
+		 </foreach>  
+		order by b.modify_time desc,b.group_id
+		limit #{pager.pageOffset},#{pager.rows}
+	 </select>
+	 
+	 <!-- 通过会员ID获取会员分组关系 -->
+	 <select id="getBuyerGroupRelation" resultType="cn.htd.membercenter.domain.BuyerGroupRelationship"
+		parameterType="Object">
+		select 
+			bg.group_id as groupId,
+			bg.buyer_group_id as buyerGroupId
+		from  buyer_group_relationship bg
+		where bg.buyer_id = #{id} and bg.delete_flag=0
+	 </select>
+	 
+	 <!-- 通过会员ID获取会员分组条数 -->
+	 <select id="selectMemberGroupCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(b.group_id)
+		from  buyer_group b
+	    where  b.delete_flag=0 and  b.group_id in
+	    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">  
+		     #{item}  
+		 </foreach>  
+	 </select>
+	 
+	 <!-- 通过会员ID获取会员积分历史 -->
+	 <select id="getBuyerPointHis" resultType="cn.htd.membercenter.domain.BuyerPointHistory"
+		parameterType="Object">
+		select
+			b.history_id as historyId,
+			b.buyer_id as buyerId,
+			b.point_type as pointType,
+			b.order_id as orderId,
+			b.provide_point as providePoint,
+			b.provide_time as provideTime
+		from  buyer_point_history b
+		where b.buyer_id = #{dto.memberId} and b.is_visible=1
+		<if test="dto.provideStartTime != null and dto.provideEndTime != null"  >
+			and b.provide_time between #{dto.provideStartTime} and #{dto.provideEndTime}	
+		</if> 
+		order by b.provide_time desc,b.history_id
+		limit #{pager.pageOffset},#{pager.rows}
+	  </select>
+	 
+	 <!-- 通过会员ID查询历史积分条数 -->
+	 <select id="selectBuyerPointCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(b.history_id)
+		from  buyer_point_history b
+		where b.buyer_id = #{dto.memberId} and b.is_visible=1
+		<if test="dto.provideStartTime != null and dto.provideEndTime != null"  >
+		    and b.provide_time between #{dto.provideStartTime} and #{dto.provideEndTime}
+		</if> 
+	 </select>
+	 
+	 <!-- 更改会员是否中心店 -->
+	 <update id="updateMemberCenter"
+		parameterType="Object">
+		update member_base_info m set m.is_center_store = #{dto.isCenterStore}, m.upgrade_center_store_time = #{dto.upgradeCenterStoreTime}, 
+		m.modify_id=#{dto.modifyId},
+		m.modify_name = #{dto.modifyName},m.modify_time = #{dto.modifyTime}
+		where m.id=#{dto.id}
+	 </update>
+	 
+	<!-- 查询注册审核会员基本信息列表-->
+	<select id="selectVerifyMember" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+			m.status as status,
+			m.contact_name as contactName,
+		    mc.company_name as companyName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+		    m.regist_time as registTime,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType,
+	        m.account_type as accountType,
+	        m.is_buyer as isBuyer,
+            m.can_mall_login  as canMallLogin,
+            m.has_guarantee_license as hasGuaranteeLicense,
+            m.has_business_license as hasBusinessLicense,
+            case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType,
+            ms.verify_status as cooperateVerifyStatus,
+            ms1.verify_status as verifyStatus
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id AND ms.info_type=12
+		left join member_status_info ms1 on m.id=ms1.member_id 
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		where 1=1
+		AND ms1.info_type=11
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		    <![CDATA[and mc1.company_name like concat('%', #{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[and mc2.company_name like concat('%', #{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "1"'>
+			and ms1.verify_status=1
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "2"'>
+			and ms1.verify_status=2 and ms.info_type=12 and ms.verify_status=1
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "3"'>
+			and ms1.verify_status=3
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "4"'>
+			and ms1.verify_status=2 and case when ms.info_type=12 then ms.verify_status !=1 else 1=1 end
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "5"'>
+			and ms1.verify_status=4 
+		</if> 
+		order by m.modify_time desc,m.id
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	 
+	<!-- 查询注册审核会员基本信息条数-->
+	<select id="selectVerifyMemberCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(m.id) from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id AND ms.info_type=12
+		left join member_status_info ms1 on m.id=ms1.member_id AND ms1.info_type=11
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		where 1=1
+		AND ms1.info_type=11
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		    <![CDATA[and mc1.company_name like concat('%', #{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[and mc2.company_name like concat('%', #{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "1"'>
+			and ms1.verify_status=1
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "2"'>
+			and ms1.verify_status=2 and ms.info_type=12 and ms.verify_status=1
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "3"'>
+			and ms1.verify_status=3
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "4"'>
+			and ms1.verify_status=2 and case when ms.info_type=12 then ms.verify_status !=1 else 1=1 end
+		</if> 
+		<if test='memberBaseInfoDTO.memberVerifyStatus == "5"'>
+			and ms1.verify_status=4 
+		</if> 
+	</select>
+	
+	<!-- 更新会员公司信息 -->
+	<update id="updateMemberCompanyInfo" 
+		parameterType="Object">
+		update member_company_info 
+		<set>
+			<if test="memberBaseInfoDTO.artificialPersonName != null and memberBaseInfoDTO.artificialPersonName != ''">
+				artificial_person_name=#{memberBaseInfoDTO.artificialPersonName},
+			</if>
+			<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+				company_name=#{memberBaseInfoDTO.companyName},
+			</if>
+			<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		       artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile},
+			</if>
+			<if test="memberBaseInfoDTO.artificialPersonIdcard != null and memberBaseInfoDTO.artificialPersonIdcard != ''">
+				artificial_person_idcard=#{memberBaseInfoDTO.artificialPersonIdcard},
+			</if>
+			<if test="memberBaseInfoDTO.modifyId != null and memberBaseInfoDTO.modifyId != ''">
+				modify_id=#{memberBaseInfoDTO.modifyId},
+			</if>
+			<if test="memberBaseInfoDTO.modifyName != null and memberBaseInfoDTO.modifyName != ''">
+				modify_name = #{memberBaseInfoDTO.modifyName},
+			</if>
+			<if test="memberBaseInfoDTO.realNameStatus != null and memberBaseInfoDTO.realNameStatus != ''">
+				real_name_status = #{memberBaseInfoDTO.realNameStatus},
+			</if>
+			<if test="memberBaseInfoDTO.accountNo != null and memberBaseInfoDTO.accountNo != ''">
+				account_no = #{memberBaseInfoDTO.accountNo},
+			</if>
+		    modify_time = now()
+		</set>
+		where 
+		   member_id=#{memberBaseInfoDTO.id}
+		and 
+		   buyer_seller_type=#{memberBaseInfoDTO.buyerSellerType}
+    </update>
+	
+	<!-- 更改会员基本信息 -->
+	<update id="updateMemberBaseInfo" 
+		parameterType="Object">
+		update member_base_info m set 
+		<if test="memberBaseInfoDTO.industryCategory != null and memberBaseInfoDTO.industryCategory != ''">
+			industry_category=#{memberBaseInfoDTO.industryCategory},
+		</if>
+		<if test="memberBaseInfoDTO.cooperateVendor != null and memberBaseInfoDTO.cooperateVendor != ''">
+			cooperate_vendor=#{memberBaseInfoDTO.cooperateVendor},
+		</if>
+		<if test="memberBaseInfoDTO.isDiffIndustry != null ">
+			is_diff_industry=#{memberBaseInfoDTO.isDiffIndustry},
+		</if>
+		<if test="memberBaseInfoDTO.hasGuaranteeLicense != null ">
+			has_guarantee_license=#{memberBaseInfoDTO.hasGuaranteeLicense},
+		</if>
+		<if test="memberBaseInfoDTO.hasBusinessLicense != null ">
+			has_business_license=#{memberBaseInfoDTO.hasBusinessLicense},
+		</if>
+		<if test="memberBaseInfoDTO.businessType != null and memberBaseInfoDTO.businessType != ''">
+			business_type=#{memberBaseInfoDTO.businessType},
+		</if>
+		m.modify_time=now()
+		where 
+		m.id=#{memberBaseInfoDTO.id}
+	</update>
+	
+	<!-- 插入会员更改履历 -->
+	<insert id="insertVerifyInfo" useGeneratedKeys="true" parameterType="java.util.List">
+	    insert into verify_detail_info
+	    (
+		    verify_id,
+		    modify_type,
+		    record_type,
+		    record_id,
+		    content_name,
+		    change_table_id,
+		    change_field_id,
+		    before_change,
+		    after_change,
+		    before_change_desc,
+		    after_change_desc,
+		    operator_id,
+		    operator_name,
+		    operate_time
+	    ) values
+	    <foreach item="item" collection="list" separator=",">
+	        (#{item.verifyId},#{item.modifyType},#{item.recordType},#{item.recordId},#{item.contentName},#{item.changeTableId},#{item.changeFieldId},
+	        #{item.beforeChange},#{item.afterChange},#{item.beforeChangeDesc},#{item.afterChangeDesc},#{item.operatorId},#{item.operatorName},#{item.operateTime})
+	    </foreach>
+	</insert>
+
+    <!-- 通过会员ID获取会员证件信息 -->
+    <select id="selectMemberLicenceInfoById" resultType="cn.htd.membercenter.domain.MemberLicenceInfo"
+		parameterType="Object">
+		select 
+		m.member_id as memberId,
+		
+		m.buyer_business_license_id as buyerBusinessLicenseId,
+
+	    m.buyer_guarantee_license_pic_src as buyerGuaranteeLicensePicSr,
+
+	    m.buyer_business_license_pic_src as buyerBusinessLicensePicSrc,
+
+		m.certificate_type as certificateType,
+	
+		m.unified_social_credit_code as unifiedSocialCreditCode,
+	
+		m.business_license_id as businessLicenseId,
+	
+		m.business_license_pic_src as businessLicensePicSrc,
+	
+		m.business_license_certificate_pic_src as businessLicenseCertificatePicSrc,
+	
+		m.organization_id as organizationId,
+	
+		m.organization_pic_src as organizationPicSrc,
+	
+		m.taxpayer_type as taxpayerType,
+	
+		m.tax_man_id as taxManId,
+	
+		m.taxpayer_code as taxpayerCode,
+	
+		m.tax_registration_certificate_pic_src as taxRegistrationCertificatePicSrc,
+	
+		m.taxpayer_certificate_pic_src as taxpayerCertificatePicSrc,
+	
+		m.create_id as createId,
+	
+		m.create_name as createName,
+	
+		m.create_time as createTime,
+	
+		m.modify_id as modifyId,
+	
+		m.modify_name as modifyName,
+	
+		m.modify_time as modifyTime
+	
+		from  member_licence_info m
+		
+		where m.member_id = #{id}
+	 </select>
+    
+    <!-- 通过会员ID获取会员拓展信息 -->
+    <select id="queryMemberExtendInfoById" resultType="cn.htd.membercenter.domain.MemberExtendInfo"
+		parameterType="Object">
+		select 
+		member_id as memberId,
+	
+		company_type as companyType,
+	
+		business_scope as businessScope,
+	
+		business_category as businessCategory,
+	
+		major_business_category as majorBusinessCategory,
+	
+		business_brand as businessBrand,
+	
+		operating_life as operatingLife,
+	
+		vendor_nature as vendorNature,
+	
+		chain_of_authorize as chainOfAuthorize,
+	
+		is_use_other_platform as isUseOtherPlatform,
+	
+		is_financing as isFinancing,
+	
+		financing_number as financingNumber,
+	
+		home_page as homePage,
+	
+		is_have_ebusiness as isHaveEbusiness,
+	
+		website_opertion_number as websiteOpertionNumber,
+	
+		has_erp as hasErp,
+	
+		sales_volumn as salesVolumn,
+	
+		create_id as createId,
+	
+		create_name as createName,
+	
+		create_time as createTime,
+	
+		modify_id as modifyId,
+	
+		modify_name as modifyName,
+	
+		modify_time as modifyTime
+	
+		from  member_extend_info m
+		
+		where m.member_id = #{id}
+	 </select>
+    
+    <!-- 更新会员审核状态信息 -->
+    <update id="saveMemberStatusInfo" 
+		parameterType="Object">
+		update member_status_info m set m.verify_status=#{dto.verifyStatus},m.modify_id=#{dto.modifyId},
+		m.modify_name = #{dto.modifyName},m.sync_error_msg=#{dto.syncErrorMsg},
+		<if test="dto.verifyId != null and dto.verifyId != ''">
+			verify_id=#{dto.verifyId},
+		</if>
+		<if test="dto.syncKey != null and dto.syncKey != ''">
+			m.sync_key = #{dto.syncKey},
+		</if>
+		m.modify_time = now()
+		where 
+		m.member_id=#{dto.memberId} 
+		and m.info_type = #{dto.infoType} 
+	</update>
+	
+	<!-- 保存会员审批信息 -->
+	<insert id="saveVerifyInfo" useGeneratedKeys="true"  parameterType="Object">
+		<!-- 使用这种方式要注意，resultType是要设置的，否则将抛异常，该值对应的dto类中的主键类型 -->
+		<!-- keyProperty对应的是dto类中的主键名，假设取名为id，则这边也要改成id -->
+		<selectKey keyProperty="dto.id" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into verify_info(
+		   modify_type,
+		   belong_seller_id,
+		   record_type,
+		   record_id,
+		   verifier_id ,
+		   verifier_name,
+		   verify_time,
+		   verify_status,
+		   remark,
+		   create_id,
+		   create_name,
+		   create_time,
+		   modify_id,
+		   modify_name,
+		   modify_time
+   ) values( 
+           #{dto.modifyType},
+           #{dto.belongSellerId},
+		   #{dto.recordType},
+		   #{dto.recordId},
+		   #{dto.verifierId},
+		   #{dto.verifierName},
+		   #{dto.verifyTime},
+		   #{dto.verifyStatus},
+		   #{dto.remark},
+		   #{dto.createId},
+		   #{dto.createName},
+		   #{dto.createTime},
+		   #{dto.modifyId},
+		   #{dto.modifyName},
+		   #{dto.modifyTime}
+		   )	
+	</insert>
+	
+	<!-- 通过审批ID获取会员审批信息 -->
+	<select id="selectVerifyResultById" resultType="cn.htd.membercenter.dto.VerifyResultDTO"
+		parameterType="Object">
+		select
+			vf.modify_name as operatorName,
+			vf.remark as remark,
+			vf.verify_status verifyStatus,
+			vf.modify_time as modifyTime
+		from verify_info vf
+		where vf.id=#{id}
+	</select>
+	
+	<!-- 通过审批ID获取会员状态信息 -->
+	<select id="selectVerifyResult" resultType="cn.htd.membercenter.dto.VerifyResultDTO"
+		parameterType="Object">
+		select
+			ms.verify_status as verifyStatus,
+			ms.verify_id as verifyId
+		from member_status_info ms
+		where 1=1
+			and ms.info_type=#{infoType}
+		    and ms.member_id=#{id}
+	</select>
+	
+	<!-- 通过审批ID和INFO_TTPE查询会员状态信息 -->
+	<select id="selectVerifyByIdAndInfoType" resultType="cn.htd.membercenter.dto.VerifyResultDTO"
+		parameterType="Object">
+		select
+			ms.verify_status as verifyStatus,
+			ms.verify_id as verifyId
+		from member_status_info ms
+		where 1=1
+			and ms.info_type=#{infoType}
+		    and ms.member_id=#{id}
+	</select>
+	
+	<!-- 获取供应商信息 -->
+	<select id="selectCooperateVerifyResult" resultType="cn.htd.membercenter.dto.VerifyResultDTO"
+		parameterType="Object">
+		select
+			ms.verify_id as verifyId,
+			ms.verify_status as verifyStatus
+		from  member_status_info ms
+		where 1=1
+			and ms.info_type=12
+		    and ms.member_id=#{id}
+	</select>
+	
+	<insert id="insertMemberStatus" useGeneratedKeys="true"  parameterType="Object">
+		insert into member_status_info(
+		    member_id,
+		    info_type, 
+		    verify_status,
+		    verify_time,
+		    verify_id,
+		    sync_error_msg,
+		    create_id,
+		    create_name,
+		    create_time,
+		    modify_id,
+		    modify_name,
+		    modify_time,
+		    sync_key     
+   ) values( 
+            #{dto.memberId},
+		    #{dto.infoType}, 
+		    #{dto.verifyStatus},
+		    #{dto.verifyTime},
+		    #{dto.verifyId},
+		    #{dto.syncErrorMsg},
+		    #{dto.createId},
+		    #{dto.createName},
+		    #{dto.createTime},
+		    #{dto.modifyId},
+		    #{dto.modifyName},
+		    #{dto.modifyTime},
+		    #{dto.syncKey}
+		   )	
+	</insert>
+	
+	<select id="selectCompanyInfoByName" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as id,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,			
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc
+		from member_company_info mc
+		where mc.company_name=#{name}
+	</select>
+	
+	 <update id="deleteMemberStatus" 
+		parameterType="Object">
+		delete from member_status_info
+		where 
+		member_id=#{dto.memberId} 
+		and info_type = #{dto.infoType} 
+	</update>
+	
+	<select id="selectMemberName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and m.status='1' and
+	 mc.buyer_seller_type='1' AND (mc.company_name LIKE CONCAT('%',#{memberName},'%') 
+	 OR mc.artificial_person_name LIKE CONCAT('%',#{memberName},'%')) 
+	 <if test="compid != null and compid != ''">
+		 AND m.cur_belong_seller_id = #{compid}
+	 </if>
+	</select>
+	
+	<select id="queryMemberNameAllStatus" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id  and
+	 mc.buyer_seller_type='1' AND (mc.company_name LIKE CONCAT('%',#{memberName},'%') 
+	 OR mc.artificial_person_name LIKE CONCAT('%',#{memberName},'%')) 
+	 <if test="compid != null and compid != ''">
+		 AND m.cur_belong_seller_id = #{compid}
+	 </if>
+	</select>
+	
+	<select id="selectAllMemberName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='1'   and m.status='1' AND 
+	(mc.company_name LIKE CONCAT('%',#{memberName},'%') OR
+	 m.member_code LIKE CONCAT('%',#{memberName},'%'))
+	 order by m.modify_time desc,m.id
+	 limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<select id="selectAllMemberNameCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0)
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='1'   and m.status='1' AND 
+	  (mc.company_name LIKE CONCAT('%',#{memberName},'%') OR
+	 m.member_code LIKE CONCAT('%',#{memberName},'%'))
+	</select>
+	
+	<select id="selectAllSupplierName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='2'   and m.status='1'
+ 	<if test='type != null and type == "1"'>
+	    AND mc.company_name LIKE CONCAT('%',#{memberName},'%')
+	</if>
+	<if test='type != null and type == "2"'>
+	    AND m.member_code LIKE CONCAT('%',#{memberName},'%')
+	</if> 
+	order by m.modify_time desc,m.id
+	 limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<select id="selectAllSupplierNameCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0)
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='2'   and m.status='1'
+  	<if test='type != null and type == "1"'>
+	    AND mc.company_name LIKE CONCAT('%',#{memberName},'%')
+	</if>
+	<if test='type != null and type == "2"'>
+	    AND m.member_code LIKE CONCAT('%',#{memberName},'%')
+	</if> 
+	</select>
+	
+	<select id="selectSellerName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='2' AND mc.member_id= #{sellerId}  and m.status='1'
+	</select>
+	<select id="selectMemberBaseInfoByMemberCode" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+			parameterType="Object">
+		select
+			mc.member_id as id,
+			mc.artificial_person_mobile AS  contactMobile
+		from member_company_info mc, member_base_info m
+		where
+		m.id = mc.member_id  AND
+	 mc.buyer_seller_type='2' AND m.member_code = #{memberCode}  and m.status='1'
+	</select>
+	
+	<select id="querySellerIdByName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and m.status='1' and
+	 mc.buyer_seller_type='2' AND mc.company_name = #{name}
+	</select>
+	
+	<select id="queryBuyerByCode" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.account_no as accountNo,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and m.status='1' and
+	 mc.buyer_seller_type='1' AND m.member_code= #{code}
+	</select>
+	
+	<select id="querySellerIdByCode" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.account_no as accountNo,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and m.status='1' and
+	 mc.buyer_seller_type='2' AND m.member_code= #{code}
+	</select>
+	
+	<select id="selectSupplierName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select
+			mc.member_id as memberId,
+			m.member_code as memberCode,
+			mc.company_name as memberName			
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='2'  and m.status='1' and m.seller_type = '1'
+	    AND (mc.company_name LIKE CONCAT('%',#{memberName},'%')
+	    OR m.member_code LIKE CONCAT('%',#{memberName},'%'))
+	    order by m.modify_time desc,m.id
+	 limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<select id="selectSupplierNameCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0)
+		from member_company_info mc, member_base_info m
+		where 
+		m.id = mc.member_id and
+	 mc.buyer_seller_type='2' and m.status='1'
+  	AND (mc.company_name LIKE CONCAT('%',#{memberName},'%')
+	    OR m.member_code LIKE CONCAT('%',#{memberName},'%'))
+	</select>
+	
+	<!-- 更改会员有效性 -->
+    <update id="updateMemberCompanyPayInfo" 
+		parameterType="Object">
+		update member_company_info m 
+		set 
+		m.real_name_status=#{dto.realNameStatus},
+		<if test="dto.accountNo != null">
+		    m.account_no=#{dto.accountNo},
+		</if>
+		<if test="dto.bindId != null">
+		    m.bind_id=#{dto.bindId},
+		</if>
+		m.modify_id=#{dto.modifyId},
+		m.modify_name = #{dto.modifyName},
+		m.modify_time = now()
+		where 
+		m.id=#{dto.companyId}
+	 </update>
+	
+	<!-- 查询包厢关系 --> 
+	<select id="selectBoxRelationByMemberId" resultType="cn.htd.membercenter.domain.BoxRelationship"
+		parameterType="Object">
+		select
+			box_id as boxId,
+			buyer_id as buyerId,
+			seller_id as sellerId,
+			erp_status as erpStatus,
+			erp_down_time as erpDownTime,
+			erp_error_msg as erpErrorMsg,
+			delete_flag as deleteFlag,
+			create_id as createId,
+			create_name as createName,
+			create_time as createTime,
+			modify_id as modifyId,
+			modify_name as modifyName,
+			modify_time as modifyTime
+		from box_relationship
+		    where 
+		    buyer_id=#{id} and delete_flag=0	
+	</select>
+	
+	<select id="selectSellerTypeList" resultType="cn.htd.membercenter.dto.SellerTypeInfoDTO">
+		select 
+		a.id  memberID,
+		b.company_code companyCode,
+		a.seller_type sellerType,
+		b.company_name companyName
+		from member_base_info a,member_company_info b
+		where a.id = b.member_id
+		and a.status = '1'
+		and b.buyer_seller_type='2'
+		and a.seller_type = #{sellerType}
+	</select>
+	
+	<select id="selectMemberbaseListByTime" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.member_id as memberId,
+			m.company_code as companyCode,
+			m.account_no as accountNo
+		from member_company_info m,member_base_info b
+		where b.status=1 and b.seller_type=1 and 
+			b.id=m.member_id and
+		    m.buyer_seller_type = '2'
+		    <![CDATA[and #{startTime} <=UNIX_TIMESTAMP(m.modify_time) and UNIX_TIMESTAMP(m.modify_time) <= #{endTime}]]>
+	</select>
+	
+	<!-- 通过公司code查询公司信息 -->
+	<select id="getMemberInfoByCompanyCode" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.seller_type as sellerType,
+			m.is_seller as isSeller,
+			m.belong_seller_id as belongSellerId,
+			m.upgrade_center_store_time as upgradeCenterStoreTime,
+			m.contact_mobile as contactMobile,
+			m.contact_name as contactName,
+			m.member_code as memberCode,
+			m.is_phone_authenticated as isPhoneAuthenticated,
+			mc.account_no as accountNo,
+			mc.real_name_status as realNameStatus,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,
+			m.account_type as accountType,
+			m.is_buyer as isBuyer,
+			m.can_mall_login as canMallLogin,
+			m.has_guarantee_license as hasGuaranteeLicense,
+			m.has_business_license as hasBusinessLicense,
+			m.industry_category as industryCategory,
+			m.belong_manager_id as belongManagerId,
+			m.cur_belong_manager_id as curBelongManagerId,
+			m.regist_time as registTime,
+			m.status as status,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			m.is_center_store as isCenterStore,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc,
+			m.is_diff_industry as isDiffIndustry,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
+		from member_company_info mc
+		left join member_base_info m on m.id=mc.member_id
+		where 
+		    mc.company_code=#{companyCode}
+		and 
+		    mc.buyer_seller_type=#{buyerSellerType}
+	</select>
+	
+	
+	<select id="getMemberIdByCode" resultType="java.lang.Long"
+		parameterType="Object">
+		select m.id
+		from   member_base_info m 
+		where 
+		    m.member_code=#{memberCode}
+	</select>
+	
+	<select id="getMemberCodeById" resultType="java.lang.String"
+		parameterType="Object">
+		select m.member_code
+		from  member_base_info m 
+		where 
+		    m.id=#{memberId}
+	</select>
+	<select id="getMemberCompanyInfoCodeById" resultType="java.lang.String"
+		parameterType="Object">
+		select m.company_code
+		from  member_company_info m 
+		where 
+		    m.member_id=#{memberId}
+		    and m.buyer_seller_type = '2'
+	</select>
+	
+	<!-- 查询审核通过会员条数-->
+	<select id="queryBusinessBrandCategory" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(business_id) from business_relationship 
+		where 
+		buyer_id = #{buyerId} and
+		seller_id = #{sellerId} and 
+		category_id = #{classCategoryCode} and 
+		brand_id = #{brandCode}
+	</select>
+	
+	
+	<select id="checkMemberMobile" resultType="cn.htd.membercenter.dto.MemberCompanyInfoDTO"
+		parameterType="Object">
+		SELECT member_id as memberId, buyer_seller_type as buyerSellerType, 
+		artificial_person_mobile as  artificialPersonMobile
+	FROM member_company_info
+	where buyer_seller_type='1' and artificial_person_mobile=#{mobile}
+	and member_id not in (#{memberId}) and artificial_person_mobile !=''
+	</select>
+	
+	<select id="queryAccountNoListByName" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		SELECT distinct account_no as accountNo
+		FROM member_company_info
+		where company_name like concat('%', #{companyName},'%')
+		and account_no!='0'
+		and account_no!=''
+		order by account_no
+	</select>
+	
+	<!-- 通过会员ID查询会员基本信息 -->
+	<select id="getInnerSellerInfoByName" resultType="java.lang.Long"
+		parameterType="Object">
+		select
+			count(m.id)	
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+		where 
+		    mc.company_name=#{companyName}
+		and m.seller_type=1
+		and mc.buyer_seller_type='2'
+	</select>
+	
+	<!-- 通过会员ID查询会员基本信息 -->
+	<select id="getInnerInfoByName" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.seller_type as sellerType,
+			m.is_seller as isSeller,
+			m.belong_seller_id as belongSellerId,
+			m.upgrade_center_store_time as upgradeCenterStoreTime,
+			m.contact_mobile as contactMobile,
+			m.contact_name as contactName,
+			m.member_code as memberCode,
+			m.is_phone_authenticated as isPhoneAuthenticated,
+			mc.account_no as accountNo,
+			mc.real_name_status as realNameStatus,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,
+			m.account_type as accountType,
+			m.is_buyer as isBuyer,
+			m.can_mall_login as canMallLogin,
+			m.has_guarantee_license as hasGuaranteeLicense,
+			m.has_business_license as hasBusinessLicense,
+			m.industry_category as industryCategory,
+			m.belong_manager_id as belongManagerId,
+			m.cur_belong_manager_id as curBelongManagerId,
+			m.regist_time as registTime,
+			m.status as status,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			m.is_center_store as isCenterStore,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc,
+			m.is_diff_industry as isDiffIndustry,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+		where 
+		    mc.company_name=#{companyName}
+		and m.seller_type=1
+		and mc.buyer_seller_type='2'
+		limit 0,1
+	</select>
+</mapper>

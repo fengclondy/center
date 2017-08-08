@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.MemberDownErpDAO">
+			
+	<!-- 查询会员下行 -->
+	<select id="selectErpDownListType1" resultType="cn.htd.membercenter.dto.MemberErpDTO"
+	parameterType="Object">
+		select 
+		    ms.status_id as id,
+			m.member_code as memberCode,
+			ms.modify_time as time,
+			ms.sync_error_msg as syncErrorMsg,
+			ms.verify_status as erpStatus
+		from member_status_info ms
+		left join member_base_info m on m.id=ms.member_id
+        where 
+        (ms.info_type='5' or ms.info_type='6')
+        and
+        (ms.verify_status=9 or (ms.verify_status=3 
+        <if test="dto.spaceTime != null and dto.spaceTime !='' ">
+			and TIMESTAMPDIFF(second,ms.modify_time,now()) > #{dto.spaceTime}
+		</if>
+		))
+		order by ms.modify_time desc
+		<if test="page != null and page != ''">
+    	    limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	
+	<!-- 查询会员下行 -->
+	<select id="selectErpDownListType1Count" resultType="java.lang.Long"
+		parameterType="Object">
+		select 
+			count(ms.status_id)
+		from member_status_info ms
+		left join member_base_info m on m.id=ms.member_id
+        where 
+        (ms.info_type='5' or ms.info_type='6')
+        and
+        (ms.verify_status=9 or (ms.verify_status=3 
+        <if test="dto.spaceTime != null and dto.spaceTime !='' ">
+			and TIMESTAMPDIFF(second,ms.modify_time,now()) > #{dto.spaceTime}
+		</if>
+		))
+		
+	</select>
+	
+	<!-- 单位往来关系下行 -->
+	<select id="selectErpDownListType2" resultType="cn.htd.membercenter.dto.MemberErpDTO"
+	parameterType="Object">
+		select 
+			b.box_id as id,
+			m.member_code as memberCode,
+			b.erp_down_time as time,
+			b.erp_error_msg as syncErrorMsg,
+			b.erp_status as erpStatus
+		from box_relationship b
+		left join member_base_info m on m.id = b.buyer_id  
+		where 
+		b.delete_flag=0 and
+		(b.erp_status=9 or (b.erp_status=3 
+        <if test="dto.spaceTime != null and dto.spaceTime !='' ">
+			and TIMESTAMPDIFF(second,b.erp_down_time,now()) > #{dto.spaceTime}
+		</if>
+		))
+		order by b.erp_down_time desc
+		<if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	
+	<!-- 单位往来关系下行 -->
+	<select id="selectErpDownListType2Count" resultType="java.lang.Long"
+	parameterType="Object">
+		select 
+			count(b.box_id)
+		from box_relationship b
+		left join member_base_info m on m.id = b.buyer_id  
+		where 
+		b.delete_flag=0 and
+		(b.erp_status=9 or (b.erp_status=3 
+        <if test="dto.spaceTime != null and dto.spaceTime !='' ">
+			and TIMESTAMPDIFF(second,b.erp_down_time,now()) > #{dto.spaceTime}
+		</if>
+		))
+	</select>
+	
+	<!-- 查询客商业务员下行 -->
+	<select id="selectErpDownListType3" resultType="cn.htd.membercenter.dto.MemberErpDTO"
+	parameterType="Object">
+		select 
+			b.business_id as id,
+			m.member_code as memberCode,
+			b.erp_down_time as time,
+			b.erp_error_msg as syncErrorMsg,
+			b.erp_status as erpStatus
+		from business_relationship b
+		left join member_base_info m on m.id = b.buyer_id  
+		where 
+		b.delete_flag=0 and
+		(b.erp_status=9 or (b.erp_status=3 
+        <if test="dto.spaceTime != null and dto.spaceTime !='' ">
+			and TIMESTAMPDIFF(second,b.erp_down_time,now()) > #{dto.spaceTime}
+		</if>
+		))
+		order by b.erp_down_time desc
+		<if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	
+	<!-- 查询客商业务员下行 -->
+	<select id="selectErpDownListType3Count" resultType="java.lang.Long"
+	parameterType="Object">
+		select 
+			count(b.business_id)
+		from business_relationship b
+		left join member_base_info m on m.id = b.buyer_id  
+		where 
+	    b.delete_flag=0 and
+		(b.erp_status=9 or (b.erp_status=3 
+        <if test="dto.spaceTime != null and dto.spaceTime !='' ">
+			and TIMESTAMPDIFF(second,b.erp_down_time,now()) > #{dto.spaceTime}
+		</if>
+		))
+	</select>
+	
+	<!-- 更新会员下行状态-->
+	<update id="updateMemberDownErp" 
+		parameterType="Object">
+		update member_status_info 
+		set
+		modify_time=now(),
+		verify_status='1'
+		where status_id=#{id}
+	</update>
+	
+	<!-- 更新会员下行状态-->
+	<update id="updateCompanyRelationDownErp" 
+		parameterType="Object">
+		update box_relationship 
+		set
+		modify_time=now(),
+		erp_status='1'
+		where box_id=#{id}
+	</update>
+	
+	<!-- 更新会员下行状态-->
+	<update id="updateSalesManDownErp" 
+		parameterType="Object">
+		update business_relationship 
+		set
+		modify_time=now(),
+		erp_status='1'
+		where business_id=#{id}
+	</update>	
+</mapper>

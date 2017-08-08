@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrderItemsDiscountDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDiscountDMO" >
+   <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+    <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
+    <result column="buyer_coupon_code" property="buyerCouponCode" jdbcType="VARCHAR" />
+    <result column="coupon_provider_type" property="couponProviderType" jdbcType="VARCHAR" />
+    <result column="coupon_type" property="couponType" jdbcType="VARCHAR" />
+    <result column="coupon_discount" property="couponDiscount" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_no, order_item_no, buyer_code, seller_code, shop_id, promotion_id, level_code,
+    buyer_coupon_code, coupon_provider_type, coupon_type, coupon_discount
+  </sql>
+
+  <select id="selectBuyerCouponCodeByOrderNo" resultMap="BaseResultMap" parameterType="String">
+  	select a.* from trade_order_items_discount a, trade_order_items b
+	  	where a.order_no = #{orderNo} and a.order_item_no = b.order_item_no 
+	    and (b.is_cancel_order_item = '0' or (b.is_cancel_order_item = '1' and b.order_item_status >= 30))
+  </select>
+  
+    <select id="selectBuyerCouponCodeByOrderItemNo" resultMap="BaseResultMap" parameterType="String">
+  	select * from trade_order_items_discount
+  	where order_item_no = #{orderItemNo}
+  </select>
+
+  <insert id="insertTradeOrderItemsDiscount" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDiscountDMO" >
+     insert into trade_order_items_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="orderItemNo != null" >
+        order_item_no,
+      </if>
+      <if test="buyerCode != null" >
+        buyer_code,
+      </if>
+      <if test="sellerCode != null" >
+        seller_code,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="promotionId != null" >
+        promotion_id,
+      </if>
+      <if test="levelCode != null" >
+        level_code,
+      </if>
+      <if test="buyerCouponCode != null" >
+        buyer_coupon_code,
+      </if>
+      <if test="couponProviderType != null" >
+        coupon_provider_type,
+      </if>
+      <if test="couponType != null" >
+        coupon_type,
+      </if>
+      <if test="couponDiscount != null" >
+        coupon_discount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNo != null" >
+        #{orderItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCode != null" >
+        #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="levelCode != null" >
+        #{levelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCouponCode != null" >
+        #{buyerCouponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="couponProviderType != null" >
+        #{couponProviderType,jdbcType=VARCHAR},
+      </if>
+      <if test="couponType != null" >
+        #{couponType,jdbcType=VARCHAR},
+      </if>
+      <if test="couponDiscount != null" >
+        #{couponDiscount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateTradeOrderItemsDiscount" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDiscountDMO" >
+    update trade_order_items_discount
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNo != null" >
+        order_item_no = #{orderItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCode != null" >
+        buyer_code = #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        seller_code = #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="promotionId != null" >
+        promotion_id = #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="levelCode != null" >
+        level_code = #{levelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCouponCode != null" >
+        buyer_coupon_code = #{buyerCouponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="couponProviderType != null" >
+        coupon_provider_type = #{couponProviderType,jdbcType=VARCHAR},
+      </if>
+      <if test="couponType != null" >
+        coupon_type = #{couponType,jdbcType=VARCHAR},
+      </if>
+      <if test="couponDiscount != null" >
+        coupon_discount = #{couponDiscount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+	AND order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

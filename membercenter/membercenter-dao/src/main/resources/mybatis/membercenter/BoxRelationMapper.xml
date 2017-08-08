@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.BoxRelationshipDAO">
+	<!-- 查询会员包厢关系 -->
+	<select id="selectBoxRelationList" resultType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+		SELECT 
+			b.box_id boxId,
+			co.company_name boxSellerName,
+			b.buyer_id memberId,
+			b.seller_id sellerId,
+			co.company_name boxSellerName,
+			c.company_name companyName,
+			c.artificial_person_mobile artificialPersonMobile,
+			m.belong_seller_id belongSellerId			
+		FROM member_base_info m
+		LEFT JOIN box_relationship b ON m.id = b.buyer_id
+		LEFT JOIN member_company_info c ON m.id = c.member_id AND c.buyer_seller_type='1' 
+		LEFT JOIN member_company_info co ON b.seller_id =co.member_id AND co.buyer_seller_type='2'
+		WHERE  b.delete_flag=0 and not exists
+		(select ms.status_id from member_status_info ms where ms.member_id=m.id and ms.info_type=13 and ms.verify_status='3')
+		<if test="companyName != null and companyName !='' ">
+			and c.company_name like CONCAT('%',#{companyName},'%')
+		</if>
+		<if test="artificialPersonMobile != null and artificialPersonMobile !='' ">
+			and c.artificial_person_mobile like CONCAT('%',#{artificialPersonMobile},'%')
+		</if>
+		<if test="boxSellerName != null and boxSellerName !='' ">
+			and co.company_name like CONCAT('%',#{boxSellerName},'%')
+		</if>
+		<if test="boxId != null and boxId !='' ">
+			and b.box_id = #{boxId}
+		</if>
+		<if test="page != null and page != ''">
+    	 	limit #{page.pageOffset},#{page.rows}
+    	</if>
+		
+	</select>
+	<!-- 查询会员经营关系 -->
+	<select id="selectBusiRelationList" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+		select 
+			b.buyer_id memberId,
+			b.category_id categoryId,
+			b.brand_id brandId	
+		from business_relationship b
+		where b.buyer_id =#{memberId} and b.seller_id=#{sellerId} and b.delete_flag = 0 and b.audit_status ='1'
+		and (b.category_id !=0 and b.brand_id !=0)
+	</select>
+	<!-- 通过买家ID查询所有卖家id -->
+	<select id="selectBusiRelationBuyerIdList" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+		select 
+			b.seller_id sellerId
+		from business_relationship b
+		where b.buyer_id =#{memberId} and b.delete_flag = 0 and b.audit_status ='1'
+		and (b.category_id !=0 and b.brand_id !=0)
+	</select>
+	<!-- 根据会员ID、商家ID、品类品牌Id查询当前归属客户经理-->
+	<select id="selectBusiRelation" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+		select 
+			b.seller_id sellerId,
+			b.buyer_id memberId,
+			b.customer_manager_id customerManagerId
+		from business_relationship b
+		where b.delete_flag = 0 and b.audit_status ='1'  and 
+		b.buyer_id =#{memberId} and b.seller_id=#{sellerId}
+		and b.category_id = #{categoryId} and b.brand_id = #{brandId}
+		and (b.category_id !=0 and b.brand_id !=0)
+	</select>
+	<!-- 查询会员公司ID关系 -->
+	<select id="selectCompanyID" resultType="Long">
+		select 
+			c.member_id  memberId
+		from member_company_info c,member_base_info m
+		where m.id=c.member_id and m.status='1' 
+		<if test="buyerSellerType != null and buyerSellerType =='2'.toString() ">
+			and m.seller_type='1' 
+		</if>
+		<if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
+			and (m.seller_type ='2' or m.seller_type='')
+		</if>
+		and c.company_name =#{companyName} and c.buyer_seller_type=#{buyerSellerType} 
+		</select>
+	
+	
+	<select id="selectBoxRelationListByMemberId" resultType="cn.htd.membercenter.domain.BoxRelationship"
+	parameterType="java.lang.Long" >
+		SELECT box_id boxId, buyer_id buyerId, seller_id sellerId, erp_status erpStatus, 
+		 delete_flag deleteFlag
+		FROM box_relationship
+		where delete_flag=0 and buyer_id=#{memberId}
+		
+	</select>
+	<select id="queryBoxRelationListBySellerId" resultType="cn.htd.membercenter.domain.BoxRelationship" parameterType="java.lang.Long" >
+		SELECT box_id boxId,
+			   buyer_id buyerId,
+			   seller_id sellerId
+		FROM box_relationship
+		where delete_flag = 0 
+		  and seller_id = #{_parameter}
+	</select>
+
+	<!-- 根据会员memberCode查询包厢关系基本信息 -->
+	<select id="selectBoxRelationshipList" resultType="cn.htd.membercenter.dto.MemberShipDTO">
+		select 
+		a.id memberId,
+		a.member_code memberCode,
+		m.company_name companyName
+		from member_company_info m
+		LEFT JOIN member_base_info a on m.member_id = a.id
+		where m.buyer_seller_type = '2'  and a.seller_type='1' and a.status='1'
+		and m.member_id in 
+		(select 
+			b.seller_id
+		from 
+		member_base_info a
+		left join box_relationship b on a.id = b.buyer_id and b.delete_flag = '0'
+		where 
+		a.status='1' 
+		and a.member_code = #{memberCode})
+	</select>
+	
+</mapper>

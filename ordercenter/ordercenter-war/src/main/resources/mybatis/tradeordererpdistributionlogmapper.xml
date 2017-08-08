@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrderErpDistributionLogDAO" >
+
+  <select id="selectErpDistributionLogByPrimaryKey" resultType="java.lang.Long">
+    select 
+    count(1)
+    from trade_order_erp_distribution_log
+    where erp_distribution_id = #{erpDistributionId}
+  </select>
+ 
+  <insert id="insertErpDistributionLog" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionLogDMO" >
+    insert into trade_order_erp_distribution_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="erpDistributionId != null" >
+        erp_distribution_id,
+      </if>
+      <if test="erpErrorMsg != null" >
+        erp_error_msg,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="erpDistributionId != null" >
+        #{erpDistributionId,jdbcType=BIGINT},
+      </if>
+      <if test="erpErrorMsg != null" >
+        #{erpErrorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateErpDistributionLogByPrimaryKey" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionLogDMO" >
+    update trade_order_erp_distribution_log
+    <set >
+      <if test="erpErrorMsg != null" >
+        erp_error_msg = #{erpErrorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where erp_distribution_id = #{erpDistributionId,jdbcType=BIGINT}
+  </update>
+</mapper>

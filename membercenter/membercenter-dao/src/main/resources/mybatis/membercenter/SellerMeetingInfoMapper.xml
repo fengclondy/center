@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.membercenter.dao.SellerMeetingInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.membercenter.dto.SellerMeetingInfoDTO" >
+    <id column="meeting_id" property="meetingId" jdbcType="BIGINT" />
+    <result column="meeting_no" property="meetingNo" jdbcType="VARCHAR" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="meeting_title" property="meetingTitle" jdbcType="VARCHAR" />
+    <result column="meeting_cont" property="meetingCont" jdbcType="VARCHAR" />
+    <result column="meeting_start_time" property="meetingStartTime" jdbcType="TIMESTAMP" />
+    <result column="meeting_end_time" property="meetingEndTime" jdbcType="TIMESTAMP" />
+    <result column="meeting_addr" property="meetingAddr" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    meeting_id, meeting_no, seller_id, seller_name, meeting_title, meeting_start_time, meeting_cont,
+    meeting_end_time, meeting_addr, delete_flag, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from seller_meeting_info
+    where meeting_id = #{meetingId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectSellerMeetingInfo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    meeting_id meetingId, meeting_no meetingNo, seller_id sellerId, 
+    seller_name sellerName, meeting_title meetingTitle, meeting_start_time meetingStartTime, 
+    meeting_cont meetingCont,
+    meeting_end_time meetingEndTime, meeting_addr meetingAddr, delete_flag deleteFlag
+    from seller_meeting_info
+    where meeting_no = #{meetingNo}
+  </select>
+  
+  
+  <select id="selectSellerMeetingInfoList" resultMap="BaseResultMap" parameterType="Object">
+    select 
+    meeting_id meetingId, meeting_no meetingNo, seller_id sellerId, 
+    seller_name sellerName, meeting_title meetingTitle, meeting_start_time meetingStartTime, 
+    meeting_cont meetingCont,
+    meeting_end_time meetingEndTime, meeting_addr meetingAddr, delete_flag deleteFlag
+    from seller_meeting_info
+    where seller_id = #{sellerId,jdbcType=BIGINT} and delete_flag=0
+    order by modify_time desc
+	limit #{page.pageOffset},#{page.rows}
+  </select>
+  
+   <select id="selectSellerMeetingInfoListCount" resultType="java.lang.Long" parameterType="Object">
+    select count(meeting_id)
+    from seller_meeting_info
+    where seller_id = #{sellerId,jdbcType=BIGINT} and delete_flag=0
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from seller_meeting_info
+    where meeting_id = #{meetingId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.membercenter.dto.SellerMeetingInfoDTO" >
+    insert into seller_meeting_info (meeting_id, meeting_no, seller_id, 
+      seller_name, meeting_title, meeting_start_time, meeting_cont,
+      meeting_end_time, meeting_addr, delete_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{meetingId,jdbcType=BIGINT}, #{meetingNo,jdbcType=VARCHAR}, #{sellerId,jdbcType=BIGINT}, 
+      #{sellerName,jdbcType=VARCHAR}, #{meetingTitle,jdbcType=VARCHAR}, #{meetingStartTime,jdbcType=TIMESTAMP},  #{meetingCont,jdbcType=VARCHAR},
+      #{meetingEndTime,jdbcType=TIMESTAMP}, #{meetingAddr,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.membercenter.dto.SellerMeetingInfoDTO" >
+  		<selectKey keyProperty="meetingId" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+    insert into seller_meeting_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="meetingNo != null" >
+        meeting_no,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="sellerName != null" >
+        seller_name,
+      </if>
+      <if test="meetingTitle != null" >
+        meeting_title,
+      </if>
+      <if test="meetingCont != null" >
+        meeting_cont,
+      </if>
+      <if test="meetingStartTime != null" >
+        meeting_start_time,
+      </if>
+      <if test="meetingEndTime != null" >
+        meeting_end_time,
+      </if>
+      <if test="meetingAddr != null" >
+        meeting_addr,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+       modify_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="meetingNo != null" >
+        #{meetingNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null" >
+        #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingTitle != null" >
+        #{meetingTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingCont != null" >
+        #{meetingCont,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingStartTime != null" >
+        #{meetingStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingEndTime != null" >
+        #{meetingEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingAddr != null" >
+        #{meetingAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.membercenter.dto.SellerMeetingInfoDTO" >
+    update seller_meeting_info
+    <set >
+      <if test="meetingNo != null" >
+        meeting_no = #{meetingNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null" >
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingTitle != null" >
+        meeting_title = #{meetingTitle,jdbcType=VARCHAR},
+      </if>
+       <if test="meetingCont != null" >
+        meeting_cont = #{meetingCont,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingStartTime != null" >
+        meeting_start_time = #{meetingStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingEndTime != null" >
+        meeting_end_time = #{meetingEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingAddr != null" >
+        meeting_addr = #{meetingAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      modify_time = now()
+    </set>
+    where meeting_id = #{meetingId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.membercenter.dto.SellerMeetingInfoDTO" >
+    update seller_meeting_info
+    set meeting_no = #{meetingNo,jdbcType=VARCHAR},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      seller_name = #{sellerName,jdbcType=VARCHAR},
+      meeting_title = #{meetingTitle,jdbcType=VARCHAR},
+      meeting_cont = #{meetingCont,jdbcType=VARCHAR},
+      meeting_start_time = #{meetingStartTime,jdbcType=TIMESTAMP},
+      meeting_end_time = #{meetingEndTime,jdbcType=TIMESTAMP},
+      meeting_addr = #{meetingAddr,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where meeting_id = #{meetingId,jdbcType=BIGINT}
+  </update>
+ 
+ <!-- 查询会议是否过期 -->
+  <select id="getMeetingByNo" resultMap="BaseResultMap" parameterType="Object" >
+    select 
+    <include refid="Base_Column_List" />
+    from seller_meeting_info
+    where meeting_no = #{meetingNo} 
+    and 
+    <![CDATA[ TIMESTAMPDIFF(second,meeting_start_time,now()) < 86400]]>
+  </select>  
+  
+  <!-- 获取自增长序列 -->
+  <select id="getMeetingCode"  resultType="java.lang.String" >
+      SELECT seq_nextval('MeetingCode')
+  </select>
+  
+</mapper>

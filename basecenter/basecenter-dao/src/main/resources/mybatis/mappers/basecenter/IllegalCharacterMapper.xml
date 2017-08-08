@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.basecenter.dao.IllegalCharacterDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.IllegalCharacter">
+		<id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="type" property="type" jdbcType="VARCHAR" />
+	    <result column="content" property="content" jdbcType="VARCHAR" />
+	    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+	    <result column="create_id" property="createId" jdbcType="BIGINT" />
+	    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+	    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+	    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+  	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+			id,
+			type,
+			content,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		from
+			illegal_character
+		]]>
+	</sql>
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity != null">
+			<if test="entity.id != null">
+				and id = #{entity.id}
+			</if>
+			<if test="entity.type != null and entity.type != ''">
+				and type = #{entity.type}
+			</if>
+			<if test="entity.content != null and entity.content != ''">
+				and content like CONCAT('%',#{entity.content},'%')
+			</if>
+			<if test="entity.deleteFlag != null">
+				and delete_flag = #{entity.deleteFlag}
+			</if>
+		</if>
+	</sql>
+	<!-- mysql 分页尾 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 插入记录 -->
+	<insert id="add" useGeneratedKeys="true">
+		insert into illegal_character(
+			type,
+			content,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{type},
+			#{content},
+			0,
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新记录 -->
+	<update id="update">
+		update illegal_character 
+		set 
+		<if test="type != null and type != ''">
+			type = #{type},
+		</if>
+		<if test="content != null and content != ''">
+			content = #{content},
+		</if>
+		<if test="deleteFlag != null">
+			delete_flag = #{deleteFlag},
+		</if>
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		where id = #{id}
+	</update>
+	<!-- 根据ID查询记录 -->
+	<select id="queryById" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where id = #{id}
+	</select>
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1) 
+		from illegal_character
+		<include refid="where_fragement" />
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		<include refid="where_fragement" />
+		order by modify_time desc
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<!-- 批量插入记录 -->
+	<insert id="addIllegalCharacterList" useGeneratedKeys="true" parameterType="java.util.List">
+		insert into illegal_character(
+			type,
+			content,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( 
+				#{item.type},
+				#{item.content},
+				0,
+				#{item.createId},
+				#{item.createName},
+				now(),
+				#{item.createId},
+				#{item.createName},
+				now()
+			)
+		</foreach>
+	</insert>
+	<!-- 校验非法字符唯一性(是否存在) -->
+	<select id="verifyIllegalCharacterExistence" resultType="java.lang.Integer">
+		select count(1)
+		from illegal_character
+		where delete_flag = 0 
+		  and content = #{content}
+		<if test="id != null">
+			and id != #{id}
+		</if>
+	</select>
+</mapper>

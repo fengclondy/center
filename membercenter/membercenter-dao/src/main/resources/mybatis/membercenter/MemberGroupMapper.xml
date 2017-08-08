@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberGroupDAO">
+
+	<!-- 查询商家会员已分组列表信息 -->
+	<select id="queryMemberGroupListInfo" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
+		parameterType="Object">
+	    select a.group_id groupId, a.name,a.comment,(select count(0) from 
+           buyer_group_relationship b where a.group_id = b.group_id) memberCount
+          from buyer_group a
+          where a.delete_flag = '0' and a.seller_id = #{memberGroupDTO.sellerId}
+        <if test="memberGroupDTO.groupId != null and memberGroupDTO.groupId != ''">
+          	and a.group_id = #{memberGroupDTO.groupId}
+        </if>
+        <if test="pager.pageOffset != null and pager != null ">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+	
+	<!-- 查询商家会员已分组列表信息 -->
+	<select id="queryMemberGroupListCount" resultType="java.lang.Long"
+		parameterType="Object">
+	    select count(0)
+          from buyer_group a
+          where a.delete_flag = '0' and a.seller_id = #{memberGroupDTO.sellerId}
+        <if test="memberGroupDTO.groupId != null and memberGroupDTO.groupId != ''">
+          	and a.group_id = #{memberGroupDTO.groupId}
+        </if>
+	</select>
+
+	<!-- 查询商家会员已分组列表信息 -->
+	<select id="queryMemberGroupListInfo4select" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
+		parameterType="Object">
+	    select a.group_id groupId, a.name,a.comment,(select count(0) from 
+           buyer_group_relationship b where a.group_id = b.group_id) memberCount
+          from buyer_group a
+          where a.delete_flag = '0' and a.seller_id = #{memberGroupDTO.sellerId}
+        <if test="memberGroupDTO.name != null and memberGroupDTO.name != ''">
+		     <![CDATA[ and a.name like concat('%', #{memberGroupDTO.name}, '%') ]]>
+		</if> 
+	</select>
+	
+	<!-- 查询商家会员未分组列表信息 -->
+	<select id="queryMemberNoneGroupListInfo" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
+		parameterType="Object">
+	     select a.buyer_id buyerId,d.company_name name,e.member_code memberCode from 
+		     box_relationship a,member_company_info d,member_base_info e where a.buyer_id not in (
+		      select c.buyer_id from buyer_group b, buyer_group_relationship c
+		   where b.group_id = c.group_id and b.seller_id = #{memberGroupDTO.sellerId}
+		   and b.delete_flag = '0')  and a.buyer_id = d.member_id and a.buyer_id = e.id
+		   and a.seller_id = #{memberGroupDTO.sellerId} and d.buyer_seller_type = '1'
+        <if test="memberGroupDTO.companyName != null and memberGroupDTO.companyName != ''">
+		     <![CDATA[ and d.company_name like concat('%', #{memberGroupDTO.companyName}, '%') ]]>
+		</if> 
+		<if test="memberGroupDTO.locationProvince != null and memberGroupDTO.locationProvince != ''">
+			 and d.location_province = #{memberGroupDTO.locationProvince}
+		</if>
+        <if test="memberGroupDTO.locationCity != null and memberGroupDTO.locationCity != ''">
+			 and d.location_city = #{memberGroupDTO.locationCity}
+		</if>
+		<if test="memberGroupDTO.locationCounty != null and memberGroupDTO.locationCounty != ''">
+			 and d.location_county = #{memberGroupDTO.locationCounty}
+		</if>  
+	</select>
+
+	
+	<!-- 查询商家会员分组信息 -->
+	<select id="queryMemberGroupInfo" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
+		parameterType="Object">
+	    select a.name,a.comment
+          from buyer_group a
+		where group_id = #{memberGroupDTO.groupId}
+	</select>
+	
+	<!-- 查询商家会员分组信息 -->
+	<select id="queryMemberGroupRelationListInfoByGroupId" resultType="cn.htd.membercenter.dto.MemberGroupRelationDTO"
+		parameterType="Object">
+	    select a.buyer_id buyerId,b.company_name name,c.member_code memberCode
+          from buyer_group_relationship a, member_company_info b, member_base_info c
+		where a.buyer_id = b.member_id and a.buyer_id = c.id and b.buyer_seller_type = '1'
+		and a.delete_flag = '0'
+		and a.group_id = #{memberGroupDTO.groupId}
+	</select>
+	
+	<!-- 删除会员分组信息 -->
+	<update id="deleteMemberGroupInfo" parameterType="Object">
+		update buyer_group set
+			delete_flag = #{memberGroupDTO.deleteFlag},
+			modify_id = #{memberGroupDTO.operateId},
+			modify_name = #{memberGroupDTO.operateName},
+			modify_time = now()
+		where group_id = #{memberGroupDTO.groupId}
+	</update>
+	
+	<!-- 保存会员分组信息  -->
+	<insert id="insertMemberGroupInfo" parameterType="cn.htd.membercenter.dto.MemberGroupDTO"
+		useGeneratedKeys="true" keyProperty="memberGroupDTO.groupId">
+		<![CDATA[
+		insert into buyer_group(
+			name,
+			comment,
+			seller_id,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberGroupDTO.name},
+			#{memberGroupDTO.comment},
+			#{memberGroupDTO.sellerId},
+			'0',
+			#{memberGroupDTO.operateId},
+			#{memberGroupDTO.operateName},
+			now(),
+			#{memberGroupDTO.operateId},
+			#{memberGroupDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 保存会员分组关系信息  -->
+	<insert id="insertMemberGroupRelationInfo" parameterType="Object"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into buyer_group_relationship(
+			group_id,
+			buyer_id,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberGroupRelationDTO.groupId},
+			#{memberGroupRelationDTO.buyerId},
+			'0',
+			#{memberGroupRelationDTO.operateId},
+			#{memberGroupRelationDTO.operateName},
+			now(),
+			#{memberGroupRelationDTO.operateId},
+			#{memberGroupRelationDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 修改会员分组信息 -->
+	<update id="updateMemberGroupInfo" parameterType="Object">
+		update buyer_group set
+			name = #{memberGroupDTO.name},
+			comment = #{memberGroupDTO.comment},
+			modify_id = #{memberGroupDTO.operateId},
+			modify_name = #{memberGroupDTO.operateName},
+			modify_time = now()
+		where group_id in (#{memberGroupDTO.groupIds})
+	</update>
+	
+	<!-- 删除会员分组关系  -->
+	<delete id="deleteMemberGroupRelationInfo" parameterType="Object">
+		<![CDATA[
+		delete from buyer_group_relationship 
+		where group_id = #{memberGroupDTO.groupId}
+		]]>
+	</delete>
+	
+	<!-- 查询商家会员分组和会员分级联合列表信息 -->
+	<select id="queryMemberGradeAndGroupList" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
+		parameterType="Object">
+	 select distinct(b.buyer_grade) id,b.buyer_grade name, 
+         "会员等级" type from box_relationship a,
+         buyer_grade_info b
+		where a.seller_id = #{memberGroupDTO.sellerId} and a.buyer_id = b.buyer_id
+         and a.delete_flag = '0'
+		union all select d.group_id id, d.name, 
+        "会员分组" type from buyer_group d where d.delete_flag = '0'
+         and d.seller_id = #{memberGroupDTO.sellerId}
+	</select>
+	
+	<!-- 根据商家编码查询有归属关系的会员编码集合 -->
+	<select id="querySubMemberIdBySellerId" resultType="java.lang.String"
+		parameterType="Object">
+		 select a.buyer_id from box_relationship a where a.seller_id = #{memberGroupDTO.sellerId}
+	</select>
+
+	<!-- 根据商家编码，会员等级查询有归属关系的会员编码集合 -->
+	<select id="querySubMemberIdByGradeId" resultType="java.lang.String"
+		parameterType="Object">
+        select b.buyer_id from box_relationship a, buyer_grade_info b
+	        where a.buyer_id = b.buyer_id and a.seller_id = #{memberGroupDTO.sellerId} 
+	        and b.buyer_grade in 
+         <foreach item="item" index="index" collection="memberGroupDTO.gradeList" open="(" separator="," close=")">  
+		    #{item} 
+		 </foreach>  
+	</select>
+	
+	<!-- 根据商家编码，分组编码查询有归属关系的会员编码集合 -->
+	<select id="querySubMemberIdByGroupId" resultType="java.lang.String"
+		parameterType="Object">
+		select b.buyer_id from buyer_group a,buyer_group_relationship b
+	        where a.group_id = b.group_id and a.seller_id = #{memberGroupDTO.sellerId} 
+	        and a.delete_flag=0 and b.delete_flag=0
+	        and b.group_id in 
+         <foreach item="item" index="index" collection="memberGroupDTO.groupList" open="(" separator="," close=")">  
+		    #{item} 
+		 </foreach> 
+	</select>
+	
+	<!-- 查询买家与卖家分组信息 -->
+	<select id="queryGroupInfoBySellerBuyerId" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
+		parameterType="Object">
+	    select 
+	    a.group_id as groupId,
+	    a.buyer_id as buyerId
+	    from buyer_group_relationship a
+	    left join buyer_group b on a.group_id=b.group_id
+	    where 
+	    a.buyer_id=#{buyerId}
+	    and b.seller_id=#{sellerId}
+	</select>
+	
+</mapper>

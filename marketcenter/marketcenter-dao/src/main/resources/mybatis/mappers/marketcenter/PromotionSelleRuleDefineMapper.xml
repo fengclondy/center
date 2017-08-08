@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.PromotionSellerRuleDefineDAO">
+    <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.PromotionSellerRuleDefineDTO">
+        <id column="rule_id" jdbcType="BIGINT" property="ruleId" />
+        <result column="rule_target_type" property="ruleTargetType" />
+        <result column="target_seller_type" property="targetSellerType" />
+        <result column="create_id" property="createId" />
+        <result column="create_name" property="createName" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modify_name" property="modifyName" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+		rule_id,
+		rule_target_type,
+		target_seller_type,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+    </sql>
+    <!-- 根据id查询 -->
+	<select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+	  select
+	  <include refid="Base_Column_List" />
+	  from promotion_seller_rule_define
+	  <![CDATA[ where rule_id = #{_parameter} ]]>
+	</select>
+    <!-- 插入记录 -->
+    <insert id="add">
+		insert into promotion_seller_rule_define 
+   		<trim prefix="(" suffix=")" suffixOverrides=",">
+            rule_id,
+ 	        rule_target_type,
+ 	        target_seller_type,
+ 			create_id,
+ 			create_name,
+ 			create_time,
+ 			modify_id,
+ 			modify_name,
+ 			modify_time,
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+		   	#{ruleId},
+		   	#{ruleTargetType},
+		   	#{targetSellerType},
+		   	#{createId},
+		   	#{createName},
+		   	now(),
+		   	#{createId},
+		   	#{createName},
+		   	now(),
+		</trim>
+    </insert>
+    <!-- 根据id，修改记录 -->
+    <update id="update">
+        update promotion_seller_rule_define
+        <set>
+        	rule_target_type = #{ruleTargetType},
+        	target_seller_type = #{targetSellerType},
+			modify_id = #{modifyId},
+		    modify_name = #{modifyName}, 
+		    modify_time = now(),
+	    </set> 
+	    where rule_id = #{ruleId}
+    </update>
+</mapper>

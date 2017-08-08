@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.MallRecfloorAdverDAO">
+	<!-- 定义页签resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="mallRecfloorAdverMapper" type="com.bjucloud.contentcenter.domain.MallRecfloorAdver">
+		<result property="id" column="id" />
+		<result property="sortNum" column="sort_num" /> <!--排序顺序 -->
+		<result property="title" column="title" /> <!--名称 -->
+		<result property="subTitle" column="sub_title" />
+		<result property="adKeyword" column="ad_keyword" />
+		<result property="url" column="url" /> <!--链接指向 -->
+		<result property="recId" column="rec_id" /> <!--mall_recommend商城推荐id，即楼层id。 -->
+		<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。 -->
+		<result property="created" column="created" /> <!--创建时间 -->
+		<result property="modified" column="modified" /> <!--改动时间 -->
+		<result property="picSrc" column="pic_src" /> <!--图片 -->
+		<result property="adType" column="ad_type" /> <!--导航类型 -->
+	</resultMap>
+	<resultMap id="mallRecfloorAdverDTOMapper" type="com.bjucloud.contentcenter.dto.MallRecfloorAdverDTO">
+		<result property="id" column="id" />
+		<result property="sortNum" column="sort_num" /> <!--排序顺序 -->
+		<result property="title" column="title" /> <!--名称 -->
+		<result property="subTitle" column="sub_title" />
+		<result property="adKeyword" column="ad_keyword" />
+		<result property="url" column="url" /> <!--链接指向 -->
+		<result property="recId" column="rec_id" /> <!--mall_recommend商城推荐id，即楼层id。 -->
+		<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。 -->
+		<result property="created" column="created" /> <!--创建时间 -->
+		<result property="modified" column="modified" /> <!--改动时间 -->
+		<result property="picSrc" column="pic_src" /> <!--图片 -->
+		<result property="adType" column="ad_type" /> <!--导航类型 -->
+		<result property="recommendName" column="recommend_name" /> <!--楼层名称 -->
+		<result property="themeId" column="theme_id" />
+	</resultMap>
+	
+	<sql id="selectAllColumns">
+	<![CDATA[
+		SELECT 
+			id
+			,sort_num
+			,title
+			,sub_title
+			,ad_keyword
+			,url
+			,rec_id
+			,ad_type
+			,pic_src
+			,STATUS
+			,created
+			,modified 
+		FROM 
+		mall_recommend_flooradver 
+		]]>
+	</sql>
+	
+	<sql id="queryList_where">
+		where 1=1
+		<if test="publishFlag!= null ">
+			and flooradv.status = #{publishFlag}
+		</if>
+		<if test="entity!=null">
+			<if test=" entity.id != null and entity.id != '' ">
+				and flooradv.id = #{entity.id}
+			</if>
+			<if test=" entity.title != null and  entity.title != '' ">
+				and flooradv.title like concat('%',#{entity.title},'%')
+			</if>
+			<if test=" entity.recId != null and entity.recId !='' ">
+				and flooradv.rec_id = #{entity.recId}
+			</if>
+			<if test=" entity.status != null ">
+				and flooradv.status = #{entity.status}
+			</if>
+			<if test=" entity.adType != null and entity.adType !='' ">
+				and flooradv.ad_type = #{entity.adType}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId !='' ">
+				and rec.theme_id = #{entity.themeId}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="queryById" resultMap="mallRecfloorAdverMapper">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+			where id = #{id}
+		]]>
+	</select>
+	
+	<select id="queryListDTO" resultMap="mallRecfloorAdverDTOMapper">
+		SELECT 
+			flooradv.id
+			,flooradv.sort_num
+			,flooradv.title
+			,flooradv.sub_title
+			,flooradv.ad_keyword
+			,flooradv.url
+			,flooradv.rec_id
+			,flooradv.ad_type
+			,flooradv.pic_src
+			,flooradv.STATUS
+			,flooradv.created
+			,flooradv.modified 
+			,rec.title as recommend_name 
+		FROM 
+		mall_recommend_flooradver flooradv
+		LEFT JOIN mall_recommend rec ON
+		flooradv.rec_id=rec.id
+		<include refid="queryList_where" />
+		order by flooradv.rec_id,flooradv.sort_num asc, flooradv.modified desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	<select id="queryCountDTO" resultType="long">
+		select count(0) from mall_recommend_flooradver flooradv
+		LEFT JOIN mall_recommend rec ON flooradv.rec_id=rec.id
+		<include refid="queryList_where" />
+	</select>
+	
+	<insert id="add">
+		insert into mall_recommend_flooradver(
+			sort_num,
+			title,
+			sub_title,
+			ad_keyword,
+			url,
+			rec_id,
+			status,
+			created,
+			modified,
+			pic_src,
+			ad_type
+		)values(
+			#{sortNum},
+			#{title},
+			#{subTitle},
+			#{adKeyword},
+			#{url},
+			#{recId},
+			#{status},
+			NOW(),
+			NOW(),
+			#{picSrc},
+			#{adType}
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<delete id="delete">
+		delete from mall_recommend_flooradver
+		where id = #{id}
+	</delete>
+	
+	<update id="update">
+		update mall_recommend_flooradver set
+		sort_num = #{sortNum},
+		title = #{title},
+		sub_title = #{subTitle},
+		ad_keyword = #{adKeyword},
+		url = #{url},
+		rec_id = #{recId},
+		status = #{status},
+		modified = NOW(),
+		pic_src = #{picSrc},
+		ad_type = #{adType}
+		where id = #{id}
+	</update>
+	
+	<update id="updateStatusById">
+		update mall_recommend_flooradver set
+		status = #{publishFlag}
+		where id = #{id}
+	</update>
+	
+</mapper>

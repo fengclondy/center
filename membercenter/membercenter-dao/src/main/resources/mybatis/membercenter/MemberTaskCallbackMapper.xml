@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberTaskCallbackDAO">
+	<!-- 更新ERP下行状态-->
+	<update id="updateErpStatus" parameterType="Object">
+		update 
+		    member_status_info 
+		set 
+		    verify_status=#{dto.status},
+		    modify_time=#{dto.modifyTime},
+		    sync_error_msg=#{dto.erpErrormessage}
+		    where sync_key=#{dto.syncKey}
+	</update>
+	
+	<!-- 更新会员ERPcode-->
+	<update id="updateCompanyCode" parameterType="Object">
+		update 
+		    member_company_info 
+		set  
+		    company_code=#{dto.erpMemberCode},
+		    modify_time=now()
+		where
+		buyer_seller_type='1' and member_id in 
+		(
+		    select id from member_base_info where member_code=#{dto.memberCode}
+		 )
+	</update>
+	
+	<!-- 更新包厢关系ERP下行状态-->
+	<update id="updateBoxErpStatus" parameterType="Object">
+		update 
+		    box_relationship
+		set 
+		    erp_status=#{dto.status},
+		    modify_time=#{dto.modifyTime},
+		    erp_error_msg=#{dto.errormessage}
+		    where box_id=#{dto.boxId}
+	</update>
+	
+	<!-- 更新经营关系ERP下行状态-->
+	<update id="updateBusinessErpStatus" parameterType="Object">
+		update 
+		    business_relationship 
+		set 
+		    erp_status=#{dto.status},
+		    modify_time=#{dto.modifyTime},
+		    erp_down_time=#{dto.modifyTime},
+		    erp_error_msg=#{dto.errormessage}
+		where
+            business_id=#{dto.businessId}
+	</update>	
+	
+	<update id="delNoUseBusinessErpStatus" parameterType="Object">
+		update business_relationship set delete_flag=1 where business_id=#{dto.businessId}
+		and category_id=0 and brand_id=0
+	</update>
+	
+	
+</mapper>

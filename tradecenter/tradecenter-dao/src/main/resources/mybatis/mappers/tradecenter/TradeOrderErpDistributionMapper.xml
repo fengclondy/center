@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderErpDistributionDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderErpDistributionDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="service_area" property="serviceArea" jdbcType="VARCHAR" />
+    <result column="customer_manager_code" property="customerManagerCode" jdbcType="VARCHAR" />
+    <result column="customer_manager_name" property="customerManagerName" jdbcType="VARCHAR" />
+    <result column="order_item_nos" property="orderItemNos" jdbcType="VARCHAR" />
+    <result column="erp_lock_balance_code" property="erpLockBalanceCode" jdbcType="VARCHAR" />
+    <result column="erp_status" property="erpStatus" jdbcType="VARCHAR" />
+    <result column="erp_down_times" property="erpDownTimes" jdbcType="TINYINT" />
+    <result column="erp_down_time" property="erpDownTime" jdbcType="TIMESTAMP" />
+    <result column="erp_sholesaler_code" property="erpSholesalerCode" jdbcType="VARCHAR" />
+    <result column="epr_strikea_balance_code" property="eprStrikeaBalanceCode" jdbcType="VARCHAR" />
+    <result column="erp_wholesale_payment_code" property="erpWholesalePaymentCode" jdbcType="VARCHAR" />
+    <result column="erp_create_record_code" property="erpCreateRecordCode" jdbcType="VARCHAR" />
+    <result column="erp_company_code" property="erpCompanyCode" jdbcType="VARCHAR" />
+    <result column="erp_sholesaler_status" property="erpSholesalerStatus" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,
+	order_no,
+	buyer_code,
+	seller_code,
+	erp_first_category_code,
+	brand_id,
+	service_area,
+	customer_manager_code,
+	customer_manager_name,
+	order_item_nos,
+	erp_lock_balance_code,
+	erp_status,
+	erp_down_times,
+	erp_down_time,
+	erp_sholesaler_code,
+	epr_strikea_balance_code,
+	erp_wholesale_payment_code,
+	erp_create_record_code,
+	erp_company_code,
+	erp_sholesaler_status,
+	delete_flag,
+	create_id,create_name,
+	create_time,
+	modify_id,
+	modify_name,
+	modify_time
+  </sql>
+  <select id="queryOrderErpDistributionByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_erp_distribution
+    where order_no = #{_parameter,jdbcType=VARCHAR}
+      and delete_flag = 0
+  </select>
+  <select id="queryOrderErpDistributionById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_erp_distribution
+    where id = #{_parameter,jdbcType=BIGINT}
+  </select>
+  <insert id="addErpDistributionInfo" useGeneratedKeys="true" keyProperty="id" parameterType="cn.htd.tradecenter.dto.TradeOrderErpDistributionDTO" >
+    insert into trade_order_erp_distribution
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null and orderNo != ''" >
+        order_no,
+      </if>
+      <if test="buyerCode != null and buyerCode != ''" >
+        buyer_code,
+      </if>
+      <if test="sellerCode != null and sellerCode != ''" >
+        seller_code,
+      </if>
+      <if test="erpFirstCategoryCode != null and erpFirstCategoryCode != ''" >
+        erp_first_category_code,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="serviceArea != null and serviceArea != ''" >
+        service_area,
+      </if>
+      <if test="customerManagerCode != null and customerManagerCode != ''" >
+        customer_manager_code,
+      </if>
+      <if test="customerManagerName != null and customerManagerName != ''" >
+        customer_manager_name,
+      </if>
+      <if test="orderItemNos != null and orderItemNos != ''" >
+        order_item_nos,
+      </if>
+      <if test="erpLockBalanceCode != null and erpLockBalanceCode != ''" >
+        erp_lock_balance_code,
+      </if>
+      <if test="erpStatus != null and erpStatus != ''" >
+        erp_status,
+      </if>
+      <if test="erpDownTimes != null" >
+        erp_down_times,
+      </if>
+      <if test="erpDownTime != null" >
+        erp_down_time,
+      </if>
+      <if test="erpSholesalerCode != null and erpSholesalerCode != ''" >
+        erp_sholesaler_code,
+      </if>
+      <if test="eprStrikeaBalanceCode != null and eprStrikeaBalanceCode != ''" >
+        epr_strikea_balance_code,
+      </if>
+      <if test="erpWholesalePaymentCode != null and erpWholesalePaymentCode != ''" >
+        erp_wholesale_payment_code,
+      </if>
+      <if test="erpCreateRecordCode != null and erpCreateRecordCode != ''" >
+        erp_create_record_code,
+      </if>
+      <if test="erpCompanyCode != null and erpCompanyCode != ''" >
+        erp_company_code,
+      </if>
+      <if test="erpSholesalerStatus != null and erpSholesalerStatus != ''" >
+        erp_sholesaler_status,
+      </if>
+      delete_flag,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null and orderNo != ''" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCode != null and buyerCode != ''" >
+        #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null and sellerCode != ''" >
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFirstCategoryCode != null and erpFirstCategoryCode != ''" >
+        #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceArea != null and serviceArea != ''" >
+        #{serviceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerCode != null and customerManagerCode != ''" >
+        #{customerManagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerName != null and customerManagerName != ''" >
+        #{customerManagerName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNos != null and orderItemNos != ''" >
+        #{orderItemNos,jdbcType=VARCHAR},
+      </if>
+      <if test="erpLockBalanceCode != null and erpLockBalanceCode != ''" >
+        #{erpLockBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpStatus != null and erpStatus != ''" >
+        #{erpStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="erpDownTimes != null" >
+        #{erpDownTimes,jdbcType=TINYINT},
+      </if>
+      <if test="erpDownTime != null" >
+        #{erpDownTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="erpSholesalerCode != null and erpSholesalerCode != ''" >
+        #{erpSholesalerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="eprStrikeaBalanceCode != null and eprStrikeaBalanceCode != ''" >
+        #{eprStrikeaBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpWholesalePaymentCode != null and erpWholesalePaymentCode != ''" >
+        #{erpWholesalePaymentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCreateRecordCode != null and erpCreateRecordCode != ''" >
+        #{erpCreateRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCompanyCode != null and erpCompanyCode != ''" >
+        #{erpCompanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpSholesalerStatus != null and erpSholesalerStatus != ''" >
+        #{erpSholesalerStatus,jdbcType=VARCHAR},
+      </if>
+      0,
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <update id="updateTradeOrdersErpDistributionStatusInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderErpDistributionDTO">
+    update trade_order_erp_distribution
+    <set >
+      <if test="erpLockBalanceCode != null and erpLockBalanceCode != ''" >
+      erp_lock_balance_code = #{erpLockBalanceCode,jdbcType=VARCHAR},
+      </if>
+      erp_status = #{erpStatus,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateTradeOrdersErpDistributionTimes" parameterType="cn.htd.tradecenter.dto.TradeOrderErpDistributionDTO">
+    update trade_order_erp_distribution
+    <set >
+      erp_status = #{erpStatus,jdbcType=VARCHAR},
+      erp_down_times = #{erpDownTimes,jdbcType=TINYINT},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

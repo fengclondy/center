@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.MallChannelsDAO">
+  <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.MallChannelsDTO">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="name_color" jdbcType="VARCHAR" property="nameColor" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, name_color, link_url, sort_num, status, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+
+  <sql id="selectAllColumns">
+    select
+    id, name, name_color, link_url, sort_num, status, create_id, create_name, create_time,
+    modify_id, modify_name, modify_time
+    from mall_channels
+  </sql>
+
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset}, #{page.rows}
+  </sql>
+  <!-- mysql 查询总数 -->
+  <sql id="count_Tail">
+    SELECT COUNT(1) FROM mall_channels
+  </sql>
+
+  <sql id="where_fragement">
+    WHERE 1=1
+    <if test="entity!=null">
+      <if test="entity.id != null and entity.id != '' ">
+        <![CDATA[ AND id = #{entity.id} ]]>
+      </if>
+      <if test="entity.name != null and entity.name != '' ">
+        <![CDATA[ and name like concat('%',#{entity.name},'%') ]]>
+      </if>
+      <if test="entity.status != null and entity.status != '' ">
+        <![CDATA[ AND status = #{entity.status} ]]>
+      </if>
+    </if>
+    order by sort_num,modify_time desc
+  </sql>
+
+  <select id="queryById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mall_channels
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="delete" parameterType="java.lang.Long">
+    delete from mall_channels
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="add" parameterType="com.bjucloud.contentcenter.dto.MallChannelsDTO" useGeneratedKeys="true" keyProperty="id">
+    insert into mall_channels ( name, name_color,
+      link_url, sort_num, status, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values ( #{name,jdbcType=VARCHAR}, #{nameColor,jdbcType=VARCHAR},
+      #{linkUrl,jdbcType=VARCHAR}, #{sortNum,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bjucloud.contentcenter.dto.MallChannelsDTO">
+    insert into mall_channels
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="nameColor != null">
+        name_color,
+      </if>
+      <if test="linkUrl != null">
+        link_url,
+      </if>
+      <if test="sortNum != null">
+        sort_num,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyId != null">
+        modify_id,
+      </if>
+      <if test="modifyName != null">
+        modify_name,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameColor != null">
+        #{nameColor,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null">
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        #{sortNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null">
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null">
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.bjucloud.contentcenter.dto.MallChannelsDTO">
+    update mall_channels
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameColor != null">
+        name_color = #{nameColor,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null">
+        link_url = #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        sort_num = #{sortNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null">
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null">
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = now(),
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bjucloud.contentcenter.dto.MallChannelsDTO">
+    update mall_channels
+    set name = #{name,jdbcType=VARCHAR},
+      name_color = #{nameColor,jdbcType=VARCHAR},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
+      sort_num = #{sortNum,jdbcType=BIGINT},
+      status = #{status,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectListByCondition" resultMap="BaseResultMap">
+    <include refid="selectAllColumns" />
+    <include refid="where_fragement" />
+    <if test="page!=null">
+      <include refid="pagination_tail" />
+    </if>
+  </select>
+
+  <select id="selectCountByCondition" resultType="java.lang.Long">
+    <include refid="count_Tail" />
+    <include refid="where_fragement" />
+  </select>
+  
+  
+  <update id="updateSortNumZero">
+	update mall_channels
+	set status = 0
+	where sort_num = #{sortNum}
+  </update>
+</mapper>

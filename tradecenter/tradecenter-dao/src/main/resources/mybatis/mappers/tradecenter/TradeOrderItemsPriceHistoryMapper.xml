@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderItemsPriceHistoryDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderItemsPriceHistoryDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="before_bargaining_goods_price" property="beforeBargainingGoodsPrice" jdbcType="DECIMAL" />
+    <result column="before_bargaining_goods_count" property="beforeBargainingGoodsCount" jdbcType="INTEGER" />
+    <result column="before_total_price" property="beforeTotalPrice" jdbcType="DECIMAL" />
+    <result column="before_freight" property="beforeFreight" jdbcType="DECIMAL" />
+    <result column="before_total_discount" property="beforeTotalDiscount" jdbcType="DECIMAL" />
+    <result column="before_shop_discount" property="beforeShopDiscount" jdbcType="DECIMAL" />
+    <result column="before_platform_discount" property="beforePlatformDiscount" jdbcType="DECIMAL" />
+    <result column="before_payment_price" property="beforePaymentPrice" jdbcType="DECIMAL" />
+    <result column="after_bargaining_goods_price" property="afterBargainingGoodsPrice" jdbcType="DECIMAL" />
+    <result column="after_bargaining_goods_count" property="afterBargainingGoodsCount" jdbcType="INTEGER" />
+    <result column="after_total_price" property="afterTotalPrice" jdbcType="DECIMAL" />
+    <result column="after_freight" property="afterFreight" jdbcType="DECIMAL" />
+    <result column="after_total_discount" property="afterTotalDiscount" jdbcType="DECIMAL" />
+    <result column="after_shop_discount" property="afterShopDiscount" jdbcType="DECIMAL" />
+    <result column="after_platform_discount" property="afterPlatformDiscount" jdbcType="DECIMAL" />
+    <result column="after_payment_price" property="afterPaymentPrice" jdbcType="DECIMAL" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,
+	order_no,
+	order_item_no,
+	channel_code,
+	item_code,
+	sku_code,
+	before_bargaining_goods_price,
+	before_bargaining_goods_count,
+	before_total_price,
+	before_freight,
+	before_total_discount,
+	before_shop_discount,
+	before_platform_discount,
+	before_payment_price,
+	after_bargaining_goods_price,
+	after_bargaining_goods_count,
+	after_total_price,
+	after_freight,
+	after_total_discount,
+	after_shop_discount,
+	after_platform_discount,
+	after_payment_price,
+	create_id,
+	create_name,
+	create_time
+  </sql>
+  <insert id="insertItemPriceHistoryInfo" useGeneratedKeys="true" keyProperty="id" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsPriceHistoryDTO" >
+    insert into trade_order_items_price_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        order_no,
+        order_item_no,
+        channel_code,
+        item_code,
+        sku_code,
+      <if test="beforeBargainingGoodsPrice != null" >
+        before_bargaining_goods_price,
+      </if>
+      <if test="beforeBargainingGoodsCount != null" >
+        before_bargaining_goods_count,
+      </if>
+      <if test="beforeTotalPrice != null" >
+        before_total_price,
+      </if>
+      <if test="beforeFreight != null" >
+        before_freight,
+      </if>
+      <if test="beforeTotalDiscount != null" >
+        before_total_discount,
+      </if>
+      <if test="beforeShopDiscount != null" >
+        before_shop_discount,
+      </if>
+      <if test="beforePlatformDiscount != null" >
+        before_platform_discount,
+      </if>
+      <if test="beforePaymentPrice != null" >
+        before_payment_price,
+      </if>
+      <if test="afterBargainingGoodsPrice != null" >
+        after_bargaining_goods_price,
+      </if>
+      <if test="afterBargainingGoodsCount != null" >
+        after_bargaining_goods_count,
+      </if>
+      <if test="afterTotalPrice != null" >
+        after_total_price,
+      </if>
+      <if test="afterFreight != null" >
+        after_freight,
+      </if>
+      <if test="afterTotalDiscount != null" >
+        after_total_discount,
+      </if>
+      <if test="afterShopDiscount != null" >
+        after_shop_discount,
+      </if>
+      <if test="afterPlatformDiscount != null" >
+        after_platform_discount,
+      </if>
+      <if test="afterPaymentPrice != null" >
+        after_payment_price,
+      </if>
+      create_id,
+      create_name,
+      create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{orderNo,jdbcType=VARCHAR},
+        #{orderItemNo,jdbcType=VARCHAR},
+        #{channelCode,jdbcType=VARCHAR},
+        #{itemCode,jdbcType=VARCHAR},
+        #{skuCode,jdbcType=VARCHAR},
+      <if test="beforeBargainingGoodsPrice != null" >
+        #{beforeBargainingGoodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="beforeBargainingGoodsCount != null" >
+        #{beforeBargainingGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="beforeTotalPrice != null" >
+        #{beforeTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="beforeFreight != null" >
+        #{beforeFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="beforeTotalDiscount != null" >
+        #{beforeTotalDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="beforeShopDiscount != null" >
+        #{beforeShopDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="beforePlatformDiscount != null" >
+        #{beforePlatformDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="beforePaymentPrice != null" >
+        #{beforePaymentPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="afterBargainingGoodsPrice != null" >
+        #{afterBargainingGoodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="afterBargainingGoodsCount != null" >
+        #{afterBargainingGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="afterTotalPrice != null" >
+        #{afterTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="afterFreight != null" >
+        #{afterFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="afterTotalDiscount != null" >
+        #{afterTotalDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="afterShopDiscount != null" >
+        #{afterShopDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="afterPlatformDiscount != null" >
+        #{afterPlatformDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="afterPaymentPrice != null" >
+        #{afterPaymentPrice,jdbcType=DECIMAL},
+      </if>
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+    </trim>
+  </insert>
+
+
+  <select id="queryItemPriceHistoryInfoByOrderItemNo" resultMap="BaseResultMap">
+
+    SELECT
+    after_total_price ,
+    order_no,
+    order_item_no
+    FROM
+    trade_order_items_price_history t
+    WHERE
+    t.order_item_no=#{orderItemNo}
+  </select>
+</mapper>

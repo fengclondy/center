@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<bean id="scheduleManagerFactory"
+		class="com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory"
+		init-method="init">
+		<property name="zkConfig">
+			<map>
+                <entry key="zkConnectString" value="${tbschedule.registry.address}" />
+                <entry key="rootPath" value="${tbschedule.rootPath}" />
+                <entry key="zkSessionTimeout" value="${tbschedule.timeout}" />
+                <entry key="userName" value="${tbschedule.userName}" />
+                <entry key="password" value="${tbschedule.password}" />
+                <entry key="isCheckParentPath" value="${tbschedule.isCheckParentPath}" />
+			</map>
+		</property>
+	</bean>
+	<!-- 公告处理定时任务 -->
+	<!-- 将定时任务转移到tradecenter by张丁 2017-02-04 开始 -->
+	<bean id="orderCompensateERPTask" class="cn.htd.zeus.tc.biz.task.OrderCompensateERPTask" />
+	<bean id="preSalesOrderDownJDCreateOrderTask"
+		class="cn.htd.zeus.tc.biz.task.PreSalesOrderDownERPJDCreateOrderTask" />
+	<bean id="jdCreateOrderTask" class="cn.htd.zeus.tc.biz.task.JDCreateOrderTask" />
+	<bean id="orderExpireReceiptTask" class="cn.htd.zeus.tc.biz.task.OrderExpireReceiptTask" />
+	<bean id="orderCancelTask" class="cn.htd.zeus.tc.biz.task.OrderCancelTask" />
+	<bean id="postStrikeaBalanceDownTask" class="cn.htd.zeus.tc.biz.task.PostStrikeaBalanceDownTask" />
+	<!-- 五合一下行失败邮件告警 -->
+	<bean id="fiveAndOneExceptionOrderNoticeTask" class="cn.htd.zeus.tc.biz.task.FiveAndOneExceptionOrderNoticeTask" />
+	<!-- 预售下行失败告警 -->
+	<bean id="preSalesOrderExceptionOrderNoticeTask" class="cn.htd.zeus.tc.biz.task.PreSalesOrderExceptionOrderNoticeTask" />
+	<!-- 收付款下行失败告警 -->
+	<bean id="postStrikeaExceptionOrderNoticeTask" class="cn.htd.zeus.tc.biz.task.PostStrikeaExceptionOrderNoticeTask" />
+	<!-- 将定时任务转移到tradecenter by张丁 2017-02-04 结束 -->
+	
+	
+	<bean id="orderManagementAnalysisTask"
+		class="cn.htd.zeus.tc.biz.task.OrderManagementAnalysisTask" />
+		
+	<bean id="orderSkuAnalysisiTask"
+		class="cn.htd.zeus.tc.biz.task.OrderSkuAnalysisiTask" />
+		
+	<bean id="orderMonthAnalysisTask"
+		class="cn.htd.zeus.tc.biz.task.OrderMonthAnalysisTask" />
+</beans>

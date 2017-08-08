@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberTaskDAO">
+    <!-- 查询需要下行到ERP的会员信息-->
+	<select id="selectMemberDownErp" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+		    m.id as id,
+		    m.is_seller as isSeller,
+		    m.is_buyer as isBuyer,
+		    m.member_code as memberCode,
+		    ms.info_type as infoType,
+			m.status as status,
+			m.create_time as createTime,
+			ms.sync_key as syncKey,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '2'
+            when  m.can_mall_login=1 and m.can_mall_login=1 then '3' else '1' end as memberType
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		left join member_status_info ms1 on m.id=ms1.member_id and ms1.info_type='5'
+		where 1=1
+		and ((ms.info_type='6' and ms1.verify_status=4) or ms.info_type='5')
+		and ms.verify_status=#{erpStatus}
+		and mod(m.id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 查询需要下行到支付的会员信息-->
+	<select id="selectMemberToYijifuTask" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+		     m.member_id as id,
+		     m.buyer_seller_type as buyerSellerType
+		from member_company_info m
+		left join member_base_info mb on mb.id=m.member_id
+		where
+		mb.can_mall_login = 1 and 
+		mb.status =1 and
+		(m.account_no='0' or m.account_no is null or m.account_no='')
+		and mod(m.member_id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+          order by m.modify_time
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>	
+	
+	<!-- 更新账号信息-->
+	<update id="updateMemberCompanyInfo" parameterType="Object">
+		update member_company_info set 
+			<if test="dto.accountNo != null and dto.accountNo != ''">
+				account_no=#{dto.accountNo},
+			</if>
+		    modify_time=now() 
+		where member_id=#{dto.id}
+	</update>
+	
+	
+	<!--通过会员ids查询公司信息-->
+	<select id="selectCompanyListByIds" resultType="cn.htd.membercenter.domain.MemberCompanyInfo"
+		parameterType="java.util.List">
+		select
+            mc.member_id as memberId,
+            mc.company_name as companyName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_addr as locationDetail,
+			mc.company_code as companyCode,
+		    mc.fax_number as faxNumber,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType
+		from member_company_info mc
+		where 
+		mc.buyer_seller_type ='1'
+		and
+		mc.member_id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	
+	<!--通过会员sellerIds查询公司信息-->
+	<select id="selectCompanyListBySellerIds" resultType="cn.htd.membercenter.domain.MemberCompanyInfo"
+		parameterType="java.util.List">
+		select
+            mc.member_id as memberId,
+            mc.company_name as companyName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.company_code as companyCode,
+		    mc.fax_number as faxNumber,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType
+		from member_company_info mc
+		where 
+		mc.buyer_seller_type ='2'
+		and
+		mc.member_id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	
+	<!-- 查询需要下行到ERP的发票信息-->
+	<select id="selectInvoiceListByIds" resultType="cn.htd.membercenter.domain.MemberInvoiceInfo"
+		parameterType="java.util.List">
+		select
+		    m.invoice_id as invoiceId,
+		    m.member_id as memberId,
+		    m.tax_man_id as taxManId,
+		    m.invoice_notify as invoiceNotify,
+		    m.invoice_address as invoiceAddress,
+		    m.contact_phone as contactPhone,
+		    m.invoice_address_detail as invoiceAddressDetail,
+		    m.bank_name as bankName,
+		    m.create_time as createTime,
+		    m.bank_account as bankAccount,
+			m.invoice_company_name as invoiceCompanyName,
+		    m.invoice_address_province as invoiceAddressProvince,
+			m.invoice_address_city as invoiceAddressCity,
+			m.invoice_address_county as invoiceAddressCounty,
+			m.invoice_address_town as invoiceAddressTown
+	    from member_invoice_info m
+		where m.member_id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	
+	<!-- 查询需要下行到ERP的归属关系信息-->
+	<select id="selectBelongRelationListByIds" resultType="cn.htd.membercenter.dto.BelongRelationshipDTO"
+		parameterType="java.util.List">
+		select
+		    m.belong_id as belongId,   
+			m.buyer_id as memberId,
+			m.seller_id as belongSellerId,
+			buyer_feature as buyerFeature
+	    from belong_relationship m
+		where 
+		m.status='3'
+		and 
+		    m.buyer_id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	
+	<!-- 更新ERP下行状态-->
+	<update id="updateErpStatus" parameterType="Object">
+		update member_status_info ms set ms.verify_status=#{status},ms.modify_time=#{date} where ms.member_id=#{id} and ms.info_type=#{infoType}
+		and ms.verify_status='1'
+	</update>
+	
+	<!-- 查询需要下行到ERP的客商信息-->
+	<select id="selectBusinessRelationDown" resultType="cn.htd.membercenter.dto.BusinessRelationshipDTO"
+		parameterType="Object">
+		select
+		   b.business_id as businessId,   
+           b.buyer_id as  buyerId,
+		   b.seller_id as sellerId ,          
+		   b.category_id as categoryId,      
+		   b.brand_id  as brandId,         
+		   b.customer_manager_id as customerManagerId,
+		   b.erp_status as erpStatus          
+		from business_relationship b
+		left join member_status_info ms on ms.member_id=b.buyer_id
+		where 
+		b.delete_flag=0 and 
+		ms.info_type='5' and ms.verify_status='4'
+		and
+		b.erp_status=#{erpStatus}
+		and mod(b.business_id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 通过ids查询会员信息-->
+	<select id="selectMemberByIds" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="java.util.List">
+		select 
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+		    m.cooperate_vendor as cooperateVendor,
+			m.status as status
+	    from member_base_info m
+	    where 
+	    m.id in 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>	
+	
+	<!-- 通过ids查询会员信息-->
+	<select id="selectMemberBySellerIds" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="java.util.List">
+		select 
+			m.id as id,
+			mc.company_code as companyCode,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+		    m.cooperate_vendor as cooperateVendor,
+			m.status as status
+	    from member_base_info m
+	    left join member_company_info mc on m.id=mc.member_id
+	    where 
+	    mc.buyer_seller_type='2'
+	    and m.id in 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>	
+	
+	
+	<!-- 更新ERP下行状态-->
+	<update id="updateBusinessErpStatus" parameterType="Object">
+		update business_relationship b set b.erp_status=#{status},b.modify_time=#{date} where b.business_id=#{id}
+	</update>
+	
+	
+	<!-- 查询需要下行到ERP的单位往来关系(包厢关系)信息-->
+	<select id="selectCompanyRelationDown" resultType="cn.htd.membercenter.domain.BoxRelationship"
+		parameterType="Object">
+		select
+		   box_id as boxId,
+           buyer_id as buyerId,
+           seller_id as sellerId
+		from box_relationship b
+		left join member_status_info ms on ms.member_id=b.buyer_id
+		where 
+		b.delete_flag=0 and 
+		ms.info_type='5' and ms.verify_status='4'
+		and
+		b.erp_status=#{erpStatus}
+		and mod(b.box_id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!--通过会员ids查询公司信息-->
+	<select id="selectMemberBaseListByIds" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="java.util.List">
+		select
+        m.id as id,
+		m.member_code as memberCode
+		from member_base_info m
+		where m.id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	
+	<!-- 更新ERP下行状态-->
+	<update id="updateBoxErpStatus" parameterType="Object">
+		update box_relationship b set b.erp_status=#{status},b.modify_time=#{date} where b.box_id=#{id}
+	</update>
+	
+	<!--通过会员ids查询收货地址信息-->
+	<select id="selectConsigAddressListByIds" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO"
+		parameterType="java.util.List">
+		select
+        m.member_id as memberId,
+		m.post_code as postcode
+		from member_consignee_address_info m
+		where m.member_id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	
+	<!--通过会员ids查询收货地址信息-->
+	<select id="selectBankListByIds" resultType="cn.htd.membercenter.domain.MemberBankInfo"
+		parameterType="java.util.List">
+		select
+	        m.member_id as memberId,
+			m.bank_account_name as bankAccountName,
+			m.bank_account as bankAccount,
+			m.bank_name as bankName,
+			m.create_time as createTime
+		from member_bank_info m
+		where m.member_id in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach> 
+	</select>
+	<!-- 查询会员待审批信息-->
+	<select id="selectVerifyInfoDowns" resultType="cn.htd.membercenter.dto.VerifyInfoDTO"
+		parameterType="Object">
+		select
+		v.id as id,
+		v.modify_type as modifyType,
+		v.belong_seller_id as belongSellerId,
+		v.record_type as recordType,
+		v.verify_status as verifyStatus
+		from verify_info v 
+		where v.verify_status = 1 and v.modify_type = #{modifyType} and v.belong_seller_id = #{belongSellerId}
+		and mod(v.id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		limit #{pager.pageOffset},#{pager.rows}	
+	</select>
+	
+	<!-- 根据belongSellerId分组查询会员待审批状态-->
+	<select id="selectBelongSellers" resultType="cn.htd.membercenter.dto.VerifyInfoDTO"
+		parameterType="object">
+		select
+		a.member_code belongSellerCode,
+		v.id as id,
+		v.modify_type as modifyType,
+		v.belong_seller_id as belongSellerId,
+		v.record_type as recordType,
+		v.verify_status as verifyStatus
+		from verify_info v
+		left JOIN member_base_info a ON a.id = v.belong_seller_id 
+	    where v.verify_status = 1 and v.modify_type in
+	    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+            #{item} 
+         </foreach>
+	    group by v.belong_seller_id
+	</select>
+	
+	<!-- 查询会员待审核卖家分组包厢关系表-->
+	<select id="selectBusinessRelation" resultType="cn.htd.membercenter.dto.BusinessRelationshipDTO"
+		parameterType="Object">
+		select
+		a.member_code sellerCode,
+		v.business_id as businessId,
+		v.buyer_id as buyerId,
+		count(v.seller_id) as sellerIdCount,
+		v.seller_id as sellerId
+		from business_relationship v
+		left JOIN member_base_info a ON a.id = v.seller_id 
+		where v.audit_status = '1' and v.delete_flag=0
+		group by v.seller_id
+	</select>
+	
+	<!-- 会员生日消息发送 -->
+	<select id="selectSendBirthday" resultType="cn.htd.membercenter.dto.MemberBuyerPersonalInfoDTO"
+		parameterType="Object">
+		select
+		v.id,
+		v.member_id as memberId,
+		v.birthday as birthday,  
+		v.birthday_year as birthdayYear,
+		v.birthday_month as birthdayMonth,
+		v.birthday_day as birthdayDay,
+		m.member_code as memberCode,
+		m.contact_name as artificialPersonName,
+		m.contact_mobile as artificialPersonMobile
+		from member_person_info v left join member_base_info m on v.member_id = m.id
+		where 1 = 1
+		and mod(v.id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		limit #{pager.pageOffset},#{pager.rows}	
+	</select>	
+	
+    <!-- 查询需要下行到ERP的会员信息-->
+	<select id="selectMemberToYijifu" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+		    m.id as id,
+		    m.is_seller as isSeller,
+		    m.is_buyer as isBuyer,
+		    m.member_code as memberCode,
+		    ms.info_type as infoType,
+			m.status as status,
+			ms.sync_key as syncKey,
+			case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '2'
+            when  m.can_mall_login=1 and m.can_mall_login=1 then '3' else '1' end as memberType
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		where 1=1
+		and ms.info_type='17'
+		and (ms.verify_status=#{erpStatus} or ms.verify_status='9')
+		and mod(m.id,#{entry.taskQueueNum}) in 
+		 <foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>	
+	
+	<!-- 查询会员下行 -->
+	<select id="selectErpDownListType1" resultType="cn.htd.membercenter.dto.MemberErpDTO"
+	parameterType="Object">
+		select 
+		    ms.status_id as id,
+			m.member_code as memberCode,
+			ms.modify_time as time,
+			ms.sync_error_msg as syncErrorMsg,
+			ms.verify_status as erpStatus
+		from member_status_info ms
+		left join member_base_info m on m.id=ms.member_id
+        where 
+        (ms.info_type='5' or ms.info_type='6')
+        and mod(ms.status_id,#{entry.taskQueueNum}) in 
+		<foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+        </foreach> 
+        and
+        (ms.verify_status=9 or (ms.verify_status=3 and TIMESTAMPDIFF(second,ms.modify_time,now()) > 900))
+		order by ms.modify_time
+		<if test="pager != null and pager != ''">
+    	    limit #{pager.pageOffset},#{pager.rows}
+    	</if>
+	</select>
+	
+	<!-- 单位往来关系下行 -->
+	<select id="selectErpDownListType2" resultType="cn.htd.membercenter.dto.MemberErpDTO"
+	parameterType="Object">
+		select 
+			b.box_id as id,
+			m.member_code as memberCode,
+			b.erp_down_time as time,
+			b.erp_error_msg as syncErrorMsg,
+			b.erp_status as erpStatus
+		from box_relationship b
+		left join member_base_info m on m.id = b.buyer_id  
+		where 
+		b.delete_flag=0 and
+		mod(b.box_id,#{entry.taskQueueNum}) in 
+		<foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+        </foreach> 
+        and
+		(b.erp_status=9 or (b.erp_status=3 and TIMESTAMPDIFF(second,b.erp_down_time,now()) > 900))
+		order by b.erp_down_time desc
+		<if test="pager != null and pager != ''">
+    	    limit #{pager.pageOffset},#{pager.rows}
+    	</if>
+	</select>
+	
+	<!-- 查询客商业务员下行 -->
+	<select id="selectErpDownListType3" resultType="cn.htd.membercenter.dto.MemberErpDTO"
+	parameterType="Object">
+		select 
+			b.business_id as id,
+			m.member_code as memberCode,
+			b.erp_down_time as time,
+			b.erp_error_msg as syncErrorMsg,
+			b.erp_status as erpStatus
+		from business_relationship b
+		left join member_base_info m on m.id = b.buyer_id  
+		where 
+		b.delete_flag=0 and
+		mod(b.business_id,#{entry.taskQueueNum}) in 
+		<foreach collection="entry.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+        </foreach>    
+        and
+		(b.erp_status=9 or (b.erp_status=3 and TIMESTAMPDIFF(second,b.erp_down_time,now()) > 900))
+		order by b.erp_down_time desc
+		<if test="pager != null and pager != ''">
+    	 limit #{pager.pageOffset},#{pager.rows}
+    	</if>
+	</select>
+	
+	<!-- 查询需要下行到支付修改的会员信息-->
+	<select id="selectMemberModifyToYijifuTask" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+		     m.member_id as id,
+		     m.buyer_seller_type as buyerSellerType
+		from member_company_info m
+		left join member_base_info mb on mb.id=m.member_id
+		where
+		mb.status =1 and m.buyer_seller_type='1' and mb.member_code in('htd000853','htd022246','htd081388','htd1003000','htd1007010','htd1026031','htd1027199','htd1028031','htd1031084','htd1031126','htd103154','htd1033035','htd1036115','htd1046055','htd1048031','htd1051029','htd1053466','htd1056133','htd1057038','htd1058009','htd1059136','htd1063225','htd1068137','htd1071773','htd1071848','htd1073727','htd1085438','htd1092001','htd1093257','htd1097085','htd1098270','htd111132','htd1135310','htd1136241','htd1136393','htd1138789','htd1139400','htd1144107','htd1144401','htd115164','htd1168098','htd1169867','htd1187168','htd1188119','htd119873','htd120297','htd1221201','htd1224074','htd1270244','htd1272010','htd1272136','htd1272197','htd1274215','htd1297094','htd1298661','htd1299762','htd1300415','htd130362','htd1306085','htd1308256','htd1308334','htd1310072','htd1311365','htd1311372','htd1311397','htd1313016','htd1318130','htd1319122','htd1319126','htd1319129','htd1322931','htd1324244','htd1327329','htd1329109','htd1329161','htd1334401','htd1334791','htd135775','htd136060','htd149125','htd155826','htd162888','htd164408','htd177749','htd182378','htd192909','htd196245','htd197562','htd20070030','htd20070161','htd20070196','htd200878','htd207114','htd208565','htd214097','htd214886','htd216249','htd216511','htd221054','htd222142','htd225459','htd228286','htd236433','htd246191','htd257571','htd258063','htd258813','htd260523','htd267626','htd268173','htd277492','htd282752','htd291456','htd293276','htd294531','htd30070001','htd312934','htd314438','htd315149','htd317461','htd325730','htd328582','htd339242','htd345472','htd347532','htd348889','htd352180','htd356943','htd363631','htd373327','htd381966','htd382558','htd386421','htd387076','htd392526','htd393633','htd398542','htd405794','htd409405','htd434674','htd434972','htd438758','htd440625','htd442683','htd444894','htd450198','htd454521','htd454543','htd464188','htd466983','htd472607','htd481476','htd481786','htd496728','htd496857','htd500001','htd500101','htd501814','htd511066','htd516668','htd541342','htd542614','htd544110','htd546264','htd553224','htd553863','htd575274','htd578351','htd591637','htd600155','htd600910','htd604335','htd618901','htd620822','htd621327','htd624629','htd627340','htd634995','htd637217','htd638802','htd640005','htd642822','htd643250','htd644168','htd648159','htd652882','htd664533','htd678793','htd684562','htd693379','htd700627','htd705366','htd706730','htd714354','htd714877','htd718727','htd738355','htd740584','htd760535','htd760557','htd761763','htd765261','htd775544','htd775585','htd779785','htd786626','htd787824','htd791447','htd794375','htd797104','htd806602','htd807475','htd827643','htd837308','htd844172','htd854079','htd854415','htd857862','htd863568','htd866000','htd881469','htd885995','htd891973','htd907365','htd925003','htd928341','htd935034','htd936632','htd939613','htd943558','htd947552','htd953007','htd966342','htd968244','htd985458','htd986318','htd987455','htd989503','htd990370','htd996936')
+		</select>
+</mapper>

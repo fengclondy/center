@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.searchcenter.dao.SyncTimeDAO">
+	<!-- =========================================================== -->
+	<!-- 定义resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="resultMap" type="cn.htd.searchcenter.domain.SyncTime">
+		<result property="id" column="id" jdbcType="BIGINT" />
+		<result property="type" column="type" jdbcType="BIGINT" />
+		<result property="startTime" column="start_time" jdbcType="TIMESTAMP" />
+		<result property="lastSyncTime" column="last_sync_time"	jdbcType="TIMESTAMP" />
+		<result property="description" column="description" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	
+	<sql id="columns">
+		id,type,start_time,DATE_SUB(last_sync_time, interval 2 minute) as last_sync_time,description
+	</sql>
+
+	<insert id="insert" parameterType="cn.htd.searchcenter.domain.SyncTime" keyProperty="id" useGeneratedKeys="true">
+		insert into sync_time (
+			<trim suffix="" suffixOverrides=",">
+			<if test="type != null">
+				type,
+			</if>
+			<if test="startTime != null">
+				start_time,
+			</if>
+			<if test="lastSyncTime != null">
+				last_sync_time,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+		) values (
+			<if test="type != null">
+				#{type},
+			</if>
+			<if test="startTime != null">
+				#{startTime},
+			</if>
+			<if test="lastSyncTime != null">
+				#{lastSyncTime},
+			</if>
+			<if test="description != null">
+				#{description},
+			</if>
+			</trim>
+		)
+	</insert>
+
+	<update id="updateById" parameterType="cn.htd.searchcenter.domain.SyncTime">
+		update sync_time set 
+		<trim suffix="" suffixOverrides=",">
+			<if test="type != null">
+				type=#{type},
+			</if>
+			<if test="startTime != null">
+				start_time=#{startTime},
+			</if>
+			<if test="lastSyncTime != null">
+				last_sync_time=#{lastSyncTime},
+			</if>
+			<if test="description != null">
+				description=#{description},
+			</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+	<!-- 根据type查询 -->
+	<select id="getSyncTimeByType" resultMap="resultMap" parameterType="int">
+		select <include refid="columns" /> from sync_time where type=#{type}
+	</select>
+	
+	<update id="updateSyncTime">
+		update sync_time 
+		set last_sync_time = #{date}
+		where type != 7
+	</update>
+</mapper>

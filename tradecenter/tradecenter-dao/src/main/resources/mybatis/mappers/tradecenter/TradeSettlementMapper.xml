@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeSettlementDAO" >
+	<resultMap id="tradeSettlementMap" type="cn.htd.tradecenter.dto.bill.TradeSettlementDTO"></resultMap>
+	<resultMap id="map" type="java.util.HashMap"></resultMap>
+
+	<resultMap id="base_resultMap_tradeSettlementDTO" type="cn.htd.tradecenter.dto.bill.TradeSettlementDTO">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="settlement_no" property="settlementNo" jdbcType="VARCHAR" />
+		<result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+		<result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+		<result column="seller_type" property="sellerType" jdbcType="VARCHAR" />
+		<result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+		<result column="shop_id" property="shopId" jdbcType="BIGINT" />
+		<result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+		<result column="channel_code" property="productChannelCode" jdbcType="VARCHAR" />
+		<result column="channel_name" property="productChannelName" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="settlement_time" property="settlementTime" jdbcType="TIMESTAMP" />
+		<result column="total_commission_Amount" property="totalCommissionAmount" jdbcType="DECIMAL" />
+		<result column="total_settlement_amount" property="totalSettlementAmount" jdbcType="DECIMAL" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	
+
+	<select id="queryTradeSettlementsForPage" parameterType="hashmap" resultMap="tradeSettlementMap">
+		<include refid = "queryAllTradeSet" />
+		<if test="params.status!=null and params.status!=''">
+    		and ts.status = #{params.status}
+    	</if>
+		<if test="params.statusList!=null">
+			and ts.status in
+			<foreach item="item" index="index" collection="params.statusList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+    	<if test="params.createStartDate!=null and params.createStartDate!=''">
+    		and date_format(ts.create_time , '%Y-%m-%d') &gt;= date_format(#{params.createStartDate} , '%Y-%m-%d')
+    	</if>
+    	<if test="params.createEndDate!=null and params.createEndDate!=''">
+    		and date_format(ts.create_time , '%Y-%m-%d') &lt; date_format(#{params.createEndDate} , '%Y-%m-%d')
+    	</if>
+    	<if test="params.startDate!=null and params.startDate!=''">
+    		and date_format(ts.modify_time , '%Y-%m-%d') &gt;= date_format(#{params.startDate} , '%Y-%m-%d')
+    	</if>
+    	<if test="params.endDate!=null and params.endDate!=''">
+    		and date_format(ts.modify_time , '%Y-%m-%d') &lt; date_format(#{params.endDate} , '%Y-%m-%d')
+    	</if>
+    	<if test="params.sellerName!=null and params.sellerName!=''">
+    		and ts.seller_name like concat('%', #{params.sellerName} ,'%')
+		</if>
+    	<if test="params.settlementNo!=null and params.settlementNo != ''">
+    		and ts.settlement_no like  concat('%', #{params.settlementNo} ,'%')
+    	</if>
+    	<if test="params.channelCode!=null and params.channelCode != ''">
+    		and ts.channel_code = #{params.channelCode}
+    	</if>
+		<if test="params.sellerCode!=null and params.sellerCode != ''">
+			and ts.seller_code = #{params.sellerCode}
+		</if>
+		<if test="page!=null">
+        	<include refid="pagination_tail" />
+    	</if>
+	</select>
+	
+	<select id="queryTradeSettlementsByParams" parameterType="hashmap" resultMap="tradeSettlementMap">
+		<include refid = "queryAllTradeSet" />
+		<if test="params.settlementNo!=null and params.settlementNo != ''">
+    		and ts.settlement_no = #{params.settlementNo}
+    	</if>
+	</select>
+	
+	<select id="countTradeSettlement" parameterType="hashmap" resultType="int">
+    	select count(1) from trade_settlement ts where 1 = 1
+    	<if test="params.settlementNo!=null and params.settlementNo != ''">
+    		and ts.settlement_no = #{params.settlementNo}
+    	</if>
+    	<if test="params.channelCode!=null and params.channelCode != ''">
+    		and ts.channel_code = #{params.channelCode}
+    	</if>
+    </select>
+
+	<sql id="queryAllTradeSet">
+		select distinct ts.seller_name sellerName , ts.seller_code sellerCode, ts.create_time createTime , ts.settlement_no  settlementNo,
+		ts.status,ts.modify_time modifyTime , ts.total_commission_Amount totalCommissionAmount, ts.total_settlement_amount totalSettlementAmount
+		from trade_settlement ts where 1 = 1
+	</sql>
+	
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+    	limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	
+	<select id="getTradeSetStatus" parameterType="map" resultMap="map">
+	SELECT const_key CODE , const_value NAME FROM trade_settlement_const WHERE 1 = 1
+	<if test="params.status !=null and params.status !=''">
+	and const_status = #{params.status}
+	</if>
+	<if test="params.code!=null and params.code != ''">
+	and const_key = #{params.code}
+	</if>
+	</select>
+	
+	<update id="updateTradeSetStatus" parameterType="hashmap">
+	update trade_settlement t 
+	set t.status = #{params.status,jdbcType=VARCHAR},
+	t.modify_time = now()
+	where t.settlement_no = #{params.settlementNo,jdbcType=VARCHAR} 
+	</update>
+	
+	
+	
+	
+	<!-- 生成结算单号 -->
+	<select id="generateTheBillingNumber" resultType="string">
+	   select get_settlement_no()
+	</select>
+	
+	<select id="getTradeSettlementBySettlementNo" resultMap="base_resultMap_tradeSettlementDTO">
+		select 	id,
+		settlement_no,
+		seller_id,
+		seller_code,
+		seller_type,
+		seller_name,
+		shop_id,
+		shop_name,
+		channel_code,
+		channel_name,
+		total_commission_Amount,
+		total_settlement_amount,
+		status,
+		settlement_time,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time 
+		from trade_settlement ts where ts.settlement_no = #{settlementNo,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addTradeSettlement" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementDTO">
+		INSERT INTO trade_settlement (
+		settlement_no,
+		seller_id,
+		seller_code,
+		seller_type,
+		seller_name,
+		shop_id,
+		shop_name,
+		channel_code,
+		channel_name,
+		total_commission_Amount,
+		total_settlement_amount,
+		status,
+		settlement_time,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+		)values(
+		#{settlementNo,jdbcType=VARCHAR},
+		#{sellerId,jdbcType=BIGINT},
+		#{sellerCode,jdbcType=VARCHAR},
+		#{sellerType,jdbcType=VARCHAR},
+		#{sellerName,jdbcType=VARCHAR},
+		#{shopId,jdbcType=BIGINT},
+		#{shopName,jdbcType=VARCHAR},
+		#{productChannelCode,jdbcType=VARCHAR},
+		#{productChannelName,jdbcType=VARCHAR},
+		#{totalCommissionAmount,jdbcType=DECIMAL},
+		#{totalSettlementAmount,jdbcType=DECIMAL},
+		#{status,jdbcType=VARCHAR},
+		#{settlementTime,jdbcType=TIMESTAMP},
+		#{createId,jdbcType=BIGINT},
+		#{createName,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{modifyId,jdbcType=BIGINT},
+		#{modifyName,jdbcType=VARCHAR},
+		#{modifyTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<update id="updateTradeSetStatusByParams" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementDTO">
+	update trade_settlement ts  
+	set ts.status = #{status,jdbcType=VARCHAR} ,
+		ts.modify_id = #{modifyId,jdbcType=BIGINT},
+	    ts.modify_name = #{modifyName,jdbcType=VARCHAR},
+	    ts.modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+	where ts.settlement_no = #{settlementNo,jdbcType=VARCHAR} 
+	</update>
+	
+	<!--  add by jytang for 未结算的结算单数量 on 2017-02-22 -->    
+    <select id="queryUnSettlementCount" resultType="int">
+    	select count(1) from trade_settlement ts where ts.status = '10'
+    	<if test="productChannelCode !=null and productChannelCode != ''">
+    		and ts.channel_code = #{productChannelCode,jdbcType=VARCHAR}  
+    	</if>
+    
+    </select>
+    <select id="queryUnSettlementCountBySellerCode" resultType="int">
+    	select count(1) from trade_settlement ts where 1 = 1
+    	<if test="sellerCode !=null and sellerCode != ''">
+    		and ts.seller_code = #{sellerCode,jdbcType=VARCHAR}  
+    	</if>
+    	<if test="status !=null and status != ''">
+    		and ts.status = #{status,jdbcType=VARCHAR}  
+    	</if>
+    
+    </select>
+
+	<select id="getMerchantOrderNoList" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementWithdrawDTO" resultType="string">
+		SELECT DISTINCT order_no orderNo from trade_settlement_detail t 
+		where 1 = 1
+		<if test="settlementNo !=null and settlementNo !=''">
+		and t.settlement_no = #{settlementNo}
+		</if>
+		<if test="payTypeList !=null and payTypeList !=''">
+		and t.pay_type in 
+		<foreach collection="payTypeList" item="list" open="(" close=")" separator=",">
+		#{list}
+		</foreach>
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.ConsigneeAddressDAO">
+  	
+  <!-- 查询收货地址列表总数 -->
+  <select id="selectConsigAddressCount" resultType="java.lang.Long">
+    select 
+    count(*) count
+    from member_consignee_address_info a,member_invoice_info v
+    where a.member_id = v.member_id and v.delete_flag =0  and a.delete_flag=0 and a.member_id = #{memberId}
+    and a.channel_code=v.channel_code and a.channel_code='' and v.channel_code=''
+  </select>
+  <!-- 查询收货地址列表-->
+   <select id="selectConsigAddressList" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+    select 
+    a.member_id memberId,
+    a.address_id addressId,
+    v.invoice_id invoiceId,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,
+    v.invoice_company_name invoiceCompanyName,
+    v.tax_man_id taxManId,
+    v.invoice_person invoicePerson,
+    v.contact_phone contactPhone,
+    v.bank_name bankName,
+    v.bank_account bankAccount,
+    a.channel_code channelCode,
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    v.invoice_address_province invoiceAddressProvince,
+    v.invoice_address_city invoiceAddressCity,
+    v.invoice_address_county invoiceAddressCounty,
+    v.invoice_address_town invoiceAddressTown,
+    v.invoice_address_detail invoiceAddressDetail,
+    v.invoice_address invoiceAddress,
+    a.post_code postCode,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a,member_invoice_info v
+    where a.member_id = v.member_id and v.delete_flag =0  and a.delete_flag=0 and a.member_id = #{memberId}
+      and a.channel_code=v.channel_code and a.channel_code='' and v.channel_code=''
+      	order by a.default_flag desc,a.modify_time desc,a.create_time desc
+    <if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    </if>
+  </select>
+  
+  <!-- 超级会员 查询收货地址信息总数 -->
+  <select id="selectConsigAddressIdsCount" resultType="java.lang.Long">
+    select 
+   	count(*) count
+    from member_consignee_address_info a
+    where a.delete_flag=0 and a.member_id = #{memberId} and a.channel_code=''
+  </select>
+  <!-- 超级会员 查询收货地址信息列表 -->
+  <select id="selectConsigAddressIds" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+    select 
+    a.member_id memberId,
+    a.address_id addressId,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,
+    a.channel_code channelCode,
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    a.post_code postCode,
+    a.consignee_area_code consigneeAreaCode, 
+    a.consignee_landline consigneeLandline,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a
+    where a.delete_flag=0 and a.member_id = #{memberId} and a.channel_code=''
+   	order by a.default_flag desc,a.modify_time desc,a.create_time desc
+    <if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    </if>
+  </select>
+	<!-- 查询收货表信息-->
+   <select id="selectConsigList" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+    select 
+    a.member_id memberId,
+    a.address_id addressId,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,  
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    a.post_code postCode,
+    a.consignee_area_code consigneeAreaCode,
+    a.consignee_landline consigneeLandline,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a
+    where a.member_id = #{memberId} and a.delete_flag=0
+    </select>
+   <!-- 查询发票信息列表-->
+   <select id="selectInvoiceList" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+    select 
+    v.invoice_id invoiceId,
+    v.invoice_company_name invoiceCompanyName,
+    v.tax_man_id taxManId,
+    v.invoice_person invoicePerson,
+    v.contact_phone contactPhone,
+    v.bank_name bankName,
+    v.bank_account bankAccount,
+    v.channel_code channelCode,
+    v.invoice_address_province invoiceAddressProvince,
+    v.invoice_address_city invoiceAddressCity,
+    v.invoice_address_county invoiceAddressCounty,
+    v.invoice_address_town invoiceAddressTown,
+    v.invoice_address_detail invoiceAddressDetail,
+    v.invoice_address invoiceAddress
+    from member_invoice_info v
+    where v.member_id = #{memberId} and v.delete_flag =0 
+    
+  </select>
+<!-- 根据收货地址ID查询收货地址信息   -->
+	<select id="selectConsigAddressID" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO" parameterType="Object">
+	select 
+    a.member_id memberId,
+    a.address_id addressId,
+    a.channel_code channelCode,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,  
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    a.post_code postCode,
+    a.consignee_area_code consigneeAreaCode, 
+    a.consignee_landline consigneeLandline,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a
+    where a.address_id = #{addressId} and a.delete_flag=0
+	</select>
+	<!-- 修改收货地址信息表-->
+	<update id="updateConsigAddressInfo" parameterType="Object">
+		update member_consignee_address_info 
+			<set>
+				<if test="consigneeName != null and consigneeName != ''">
+					consignee_name = #{consigneeName},
+			   </if>
+			   <if test="consigneeAreaCode !=null ">
+		   		consignee_area_code = #{consigneeAreaCode},
+		   		</if>
+		   		<if test="consigneeLandline !=null ">
+		   		consignee_landline = #{consigneeLandline},
+		   		</if>
+			   	<if test="consigneeMobile != null and consigneeMobile != ''">
+					consignee_mobile = #{consigneeMobile},
+			   </if>
+			   <if test="consigneeEmail != null and consigneeEmail != ''">
+					consignee_email = #{consigneeEmail},
+			   </if>
+			   <if test="channelCode != null ">
+					channel_code = #{channelCode},
+			   </if>	
+			   <if test="consigneeAddressProvince != null and consigneeAddressProvince != ''">
+					consignee_address_province = #{consigneeAddressProvince},
+			   </if>
+			   	<if test="consigneeAddressCity != null and consigneeAddressCity != ''">
+					consignee_address_city = #{consigneeAddressCity},
+			   </if>
+			   <if test="consigneeAddressDistrict != null and consigneeAddressDistrict != ''">
+					consignee_address_district = #{consigneeAddressDistrict},
+			   </if>
+			   <if test="consigneeAddressTown != null and consigneeAddressTown != ''">
+					consignee_address_town = #{consigneeAddressTown},
+			   </if>			   	
+   		       <if test="consigneeAddressDetail != null and consigneeAddressDetail != ''">
+					consignee_address_detail = #{consigneeAddressDetail},
+			   </if>	   		   	
+			   <if test="consigneeAddress != null and consigneeAddress != ''">
+					consignee_address = #{consigneeAddress},
+			   </if>	  
+   		       <if test="modifyId != null and modifyId != ''">
+					modify_id = #{modifyId},
+			   </if>
+			   	<if test="modifyName != null and modifyName != ''">
+					modify_name = #{modifyName},
+			   </if>
+			   <if test="postCode != null ">
+					post_code = #{postCode},
+			   </if>
+			   <if test="defaultFlag != null and defaultFlag != ''">
+					default_flag = #{defaultFlag},
+			   </if>   
+			   	modify_time = now()
+			</set>		   
+			where 1=1 
+			<if test="memberId != null and memberId != ''">
+				and member_id = #{memberId}
+			</if>
+			<if test = "addressId != null and addressId !=''">
+				and address_id = #{addressId}
+			</if>
+	</update>
+	<!-- 查询默认收货地址 -->
+	<select id="selectDefaultAddress" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+		select 
+    a.member_id memberId,
+    a.address_id addressId,
+    a.channel_code channelCode,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,  
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    a.post_code postCode,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a
+    where a.member_id = #{memberId} and a.delete_flag=0 and  a.default_flag=1
+	</select>
+<!-- 修改默认收货收货地址信息表-->
+	<update id="updateConsigAddressInfoDefault" parameterType="Object">
+		update member_consignee_address_info set default_flag = 0 
+		where member_id = #{memberId}
+	</update>
+	<!-- 修改发票信息表-->
+	<update id="updatInvoiceInfo" parameterType="Object">
+		update member_invoice_info 
+			<set>
+				<if test="invoiceCompanyName != null and invoiceCompanyName != ''">
+					invoice_company_name = #{invoiceCompanyName},
+			   </if>
+			   	<if test="taxManId != null and taxManId != ''">
+					tax_man_id = #{taxManId},
+			   </if>
+			   <if test="invoicePerson != null and invoicePerson != ''">
+					invoice_person = #{invoicePerson},
+			   </if>
+			   <if test="contactPhone != null and contactPhone != ''">
+					contact_phone = #{contactPhone},
+			   </if>
+			   <if test="bankName != null and bankName != ''">
+					bank_name = #{bankName},
+			   </if>
+			   <if test="bankAccount != null and bankAccount != ''">
+					bank_account = #{bankAccount},
+			   </if>	
+  		       <if test="invoiceAddressProvince != null and invoiceAddressProvince != ''">
+					invoice_address_province = #{invoiceAddressProvince},
+			   </if>
+			   	<if test="invoiceAddressCity != null and invoiceAddressCity != ''">
+					invoice_address_city = #{invoiceAddressCity},
+			   </if>
+			   <if test="invoiceAddressCounty != null and invoiceAddressCounty != ''">
+					invoice_address_county = #{invoiceAddressCounty},
+			   </if>
+			   <if test="invoiceAddressTown != null and invoiceAddressTown != ''">
+					invoice_address_town = #{invoiceAddressTown},
+			   </if>			   	
+   		       <if test="invoiceAddressDetail != null and invoiceAddressDetail != ''">
+					invoice_address_detail = #{invoiceAddressDetail},
+			   </if>
+			   <if test="invoiceAddress != null and invoiceAddress != ''">
+					invoice_address = #{invoiceAddress},
+			   </if>	   		   	
+   		       <if test="modifyId != null and modifyId != ''">
+					modify_id = #{modifyId},
+			   </if>
+			   	<if test="modifyName != null and modifyName != ''">
+					modify_name = #{modifyName},
+			   </if>   
+			   	modify_time = now()
+			</set>   
+			where invoice_id = #{invoiceId}
+	</update>
+	<!-- 收货地址保存-》新增发票信息表 -->
+	 <insert id="insertInvoiceInfo" parameterType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+	  insert into member_invoice_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				member_id,
+			</if>
+			<if test="invoiceCompanyName != null and invoiceCompanyName != ''">
+				invoice_company_name,
+			</if>
+			<if test="invoiceNotify != null and invoiceNotify != ''">
+				invoice_notify,
+			</if>
+			<if test="taxManId != null and taxManId != ''">
+				tax_man_id,
+			</if>
+			<if test="invoicePerson != null and invoicePerson != ''">
+				invoice_person,
+			 </if>
+			<if test="contactPhone != null and contactPhone != ''">
+				contact_phone,
+			</if>
+			<if test="bankName != null and bankName != ''">
+				bank_name,
+			</if>
+			<if test="bankAccount != null and bankAccount != ''">
+				bank_account,
+			</if>
+			<if test="invoiceAddressProvince != null and invoiceAddressProvince != ''">
+				invoice_address_province,
+		   </if>
+		   	<if test="invoiceAddressCity != null and invoiceAddressCity != ''">
+				invoice_address_city,
+		   </if>
+		   <if test="invoiceAddressCounty != null and invoiceAddressCounty != ''">
+				invoice_address_county,
+		   </if>
+		   <if test="invoiceAddressTown != null and invoiceAddressTown != ''">
+				invoice_address_town,
+		   </if>			   	
+  		       <if test="invoiceAddressDetail != null and invoiceAddressDetail != ''">
+				invoice_address_detail,
+		   </if>
+		   <if test="invoiceAddress != null and invoiceAddress != ''">
+				invoice_address,
+			</if>
+			<if test="modifyId != null and modifyId != ''">
+				create_id,
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				create_name,
+			</if>
+			<if test="channelCode != null and channelCode != ''">
+				channel_code,
+			</if>
+			
+				create_time,
+				delete_flag
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="invoiceCompanyName != null and invoiceCompanyName != ''">
+				#{invoiceCompanyName},
+			</if>
+			<if test="invoiceNotify != null and invoiceNotify != ''">
+				#{invoiceNotify},
+			</if>
+			<if test="taxManId != null and taxManId != ''">
+				#{taxManId},
+			</if>
+			<if test="invoicePerson != null and invoicePerson != ''">
+				#{invoicePerson},
+			 </if>
+			<if test="contactPhone != null and contactPhone != ''">
+				#{contactPhone},
+			</if>
+			<if test="bankName != null and bankName != ''">
+				#{bankName},
+			</if>
+			<if test="bankAccount != null and bankAccount != ''">
+				#{bankAccount},
+			</if>
+			<if test="invoiceAddressProvince != null and invoiceAddressProvince != ''">
+				#{invoiceAddressProvince},
+		   </if>
+		   	<if test="invoiceAddressCity != null and invoiceAddressCity != ''">
+				#{invoiceAddressCity},
+		   </if>
+		   <if test="invoiceAddressCounty != null and invoiceAddressCounty != ''">
+				#{invoiceAddressCounty},
+		   </if>
+		   <if test="invoiceAddressTown != null and invoiceAddressTown != ''">
+				#{invoiceAddressTown},
+		   </if>			   	
+  		   <if test="invoiceAddressDetail != null and invoiceAddressDetail != ''">
+				#{invoiceAddressDetail},
+		   </if>
+		    <if test="invoiceAddress != null and invoiceAddress != ''">
+				#{invoiceAddress},
+			 </if>
+			<if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+			</if>
+			<if test="channelCode != null and channelCode != ''">
+				#{channelCode},
+			</if>
+			
+				now(),
+				0
+		</trim>
+	  </insert>
+  	<!-- 收货地址保存-》新增收货地址信息表 -->
+	 <insert id="insertConsigAddressInfo" parameterType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+	  insert into member_consignee_address_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				member_id,
+			</if>
+			<if test="consigneeName != null and consigneeName != ''">
+				consignee_name,
+		   </if>
+		   <if test="consigneeAreaCode !=null and consigneeAreaCode != ''">
+		   		consignee_area_code,
+		   </if>
+		   <if test="consigneeLandline !=null and consigneeLandline != ''">
+		   		consignee_landline,
+		   </if>
+		   	<if test="consigneeMobile != null and consigneeMobile != ''">
+				consignee_mobile,
+		   </if>
+		   <if test="consigneeEmail != null and consigneeEmail != ''">
+				consignee_email,
+		   </if>
+		   <if test="channelCode != null and channelCode != ''">
+				channel_code,
+		   </if>	
+		   <if test="consigneeAddressProvince != null and consigneeAddressProvince != ''">
+				consignee_address_province,
+		   </if>
+		   	<if test="consigneeAddressCity != null and consigneeAddressCity != ''">
+				consignee_address_city,
+		   </if>
+		   <if test="consigneeAddressDistrict != null and consigneeAddressDistrict != ''">
+				consignee_address_district,
+		   </if>
+		   <if test="consigneeAddressTown != null and consigneeAddressTown != ''">
+				consignee_address_town,
+		   </if>			   	
+  		   <if test="consigneeAddressDetail != null and consigneeAddressDetail != ''">
+				consignee_address_detail,
+		   </if>	   		   	
+  		   <if test="modifyId != null and modifyId != ''">
+				create_id,
+				modify_id,
+		   </if>
+		   	<if test="modifyName != null and modifyName != ''">
+				create_name,
+				modify_name,
+		   </if>
+		   <if test="postCode != null ">
+				post_code,
+		   </if>
+		   <if test="defaultFlag != null and defaultFlag != ''">
+				default_flag,
+		   </if> 
+		   <if test="consigneeAddress != null and consigneeAddress != ''">
+				consignee_address,
+		   </if> 
+			   	modify_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="consigneeName != null and consigneeName != ''">
+				#{consigneeName},
+		   </if>
+		   <if test="consigneeAreaCode !=null and consigneeAreaCode != ''">
+		   		#{consigneeAreaCode},
+		   </if>
+		   <if test="consigneeLandline !=null and consigneeLandline != ''">
+		   		#{consigneeLandline},
+		   </if>
+		   	<if test="consigneeMobile != null and consigneeMobile != ''">
+				#{consigneeMobile},
+		   </if>
+		   <if test="consigneeEmail != null and consigneeEmail != ''">
+				#{consigneeEmail},
+		   </if>
+		   <if test="channelCode != null and channelCode != ''">
+				#{channelCode},
+		   </if>	
+		   <if test="consigneeAddressProvince != null and consigneeAddressProvince != ''">
+				#{consigneeAddressProvince},
+		   </if>
+		   	<if test="consigneeAddressCity != null and consigneeAddressCity != ''">
+				#{consigneeAddressCity},
+		   </if>
+		   <if test="consigneeAddressDistrict != null and consigneeAddressDistrict != ''">
+				#{consigneeAddressDistrict},
+		   </if>
+		   <if test="consigneeAddressTown != null and consigneeAddressTown != ''">
+				#{consigneeAddressTown},
+		   </if>			   	
+  		   <if test="consigneeAddressDetail != null and consigneeAddressDetail != ''">
+				#{consigneeAddressDetail},
+		   </if>	 		   	
+  		   <if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+				#{modifyId},
+		   </if>
+		   	<if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+				#{modifyName},
+		   </if>
+		   <if test="postCode != null ">
+				#{postCode},
+		   </if>  
+		   <if test="defaultFlag != null and defaultFlag != ''">
+				#{defaultFlag},
+		   </if> 
+		   <if test="consigneeAddress != null and consigneeAddress != ''">
+				#{consigneeAddress},
+		   </if> 
+				now()
+		</trim>
+	  </insert>
+	  <!-- 删除收货地址信息  -->
+	<update id="deleteConsigAddressInfo" parameterType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+		update member_consignee_address_info 
+		set delete_flag = 1,
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		where address_id = #{addressId}
+	</update>
+	<!-- 批量删除收货地址信息 -->
+	<update id="deleteConsigAddressInfoBatch" parameterType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+		update member_consignee_address_info set 
+			delete_flag = 1,
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		where address_id in 
+		<foreach collection="strList" item="addressId" index="index"
+            open="(" close=")" separator=",">
+            #{addressId}
+        </foreach>
+	</update>
+	<!-- 通过会员Code和外部渠道编码查询地址信息 -->
+	<select id="selectChannelAddressDTO" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+		select 
+    a.member_id memberId,
+    a.address_id addressId,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,
+    a.channel_code channelCode,
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    a.post_code postCode,
+   	a.consignee_area_code consigneeAreaCode,
+    a.consignee_landline consigneeLandline,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a
+    where a.delete_flag=0 and a.member_id = (select d.id from member_base_info d where d.member_code=#{memberCode})
+    and channel_code = #{channelCode}
+	</select>
+	<!-- 根据memberId,城市，省code返回地址集合list -->
+	<select id="searchAddressCityList" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+		select 
+	    member_id memberId,
+	    address_id addressId,
+	    consignee_name consigneeName,
+	    consignee_mobile consigneeMobile,
+	    consignee_email consigneeEmail,
+	    channel_code channelCode,
+	    consignee_address_province consigneeAddressProvince,
+	    consignee_address_city consigneeAddressCity,
+	    consignee_address_district consigneeAddressDistrict,
+	    consignee_address_town consigneeAddressTown,
+	    consignee_address_detail consigneeAddressDetail,
+	    consignee_address consigneeAddress,
+	    post_code postCode,
+	    consignee_area_code consigneeAreaCode, 
+	    consignee_landline consigneeLandline,
+	    default_flag defaultFlag
+    from member_consignee_address_info 
+    where delete_flag=0 
+    and member_id = #{memberId}
+    and consignee_address_city = #{consigneeAddressCity}
+    and consignee_address_province = #{consigneeAddressProvince}
+	<if test="sort !=null and sort !=''">
+		 order by ${sort}
+	</if>
+	<if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    </if>
+	</select>
+	<!-- 根据会员id和发票外部渠道编码或发票id查询发票信息 -->
+	<select id="selectInvoiceInfoDto" resultType="cn.htd.membercenter.dto.MemberInvoiceDTO">
+		select 
+		   invoice_id invoiceId,
+	   	   member_id memberId,
+	   	   channel_code channelCode,
+	       invoice_notify invoiceNotify,
+		   invoice_company_name invoiceCompanyName,
+		   tax_man_id taxManId,
+		   bank_name bankName,
+		   bank_account bankAccount,
+		   contact_phone invoicePerson,
+		   invoice_address invoiceAddress,
+		   invoice_address_province invoiceAddressProvince,
+		   invoice_address_city invoiceAddressCity,
+		   invoice_address_county invoiceAddressCounty,
+		   invoice_address_town invoiceAddressTown,
+		   invoice_address_detail invoiceAddressDetail,
+		   erp_status erpStatus,
+		   erp_down_time erpDownTime,
+		   erp_error_msg erpErrorMsg,
+		   invoice_person invoicePerson
+		from 
+		member_invoice_info 
+		where delete_flag = '0'
+			and member_id = #{memberId}
+			<if test="channelCode != null ">
+			and channel_code = #{channelCode}
+			</if>
+		<if test="invoiceId != null and invoiceId != ''">
+			and invoice_id = #{invoiceId}
+		</if>
+		limit 1
+	</select>
+	
+	<!-- 查询收货地址列表-->
+   <select id="selectConsigAddressListByPlus" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+    select 
+    a.member_id memberId,
+    a.address_id addressId,
+    v.invoice_id invoiceId,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,
+    v.invoice_company_name invoiceCompanyName,
+    v.tax_man_id taxManId,
+    v.invoice_person invoicePerson,
+    v.contact_phone contactPhone,
+    v.bank_name bankName,
+    v.bank_account bankAccount,
+    a.channel_code channelCode,
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    v.invoice_address_province invoiceAddressProvince,
+    v.invoice_address_city invoiceAddressCity,
+    v.invoice_address_county invoiceAddressCounty,
+    v.invoice_address_town invoiceAddressTown,
+    v.invoice_address_detail invoiceAddressDetail,
+    v.invoice_address invoiceAddress,
+    a.post_code postCode,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a,member_invoice_info v
+    where a.member_id = v.member_id and v.delete_flag =0  and a.delete_flag=0 and a.member_id = #{memberId}
+      and a.channel_code != '' and v.channel_code !='' 
+      and a.channel_code=v.channel_code
+      	order by a.default_flag desc,a.modify_time desc,a.create_time desc
+    <if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    </if>
+  </select>
+  
+  <!-- 查询收货地址列表总数 -->
+  <select id="selectConsigAddressListByPlusCount" resultType="java.lang.Long">
+    select 
+    count(*) count
+    from member_consignee_address_info a,member_invoice_info v
+    where a.member_id = v.member_id and v.delete_flag =0  and a.delete_flag=0 and a.member_id = #{memberId}
+    and a.channel_code=v.channel_code
+    and a.channel_code != '' and v.channel_code !='' 
+  </select>
+    <!-- 查询所有收货地址列表总数 -->
+  <select id="getAllVendorAddProductPlusCount" resultType="java.lang.Long">
+    SELECT 
+   		 COUNT(1)
+	FROM
+    (SELECT DISTINCT
+  			a.member_id memberID,
+       		c.company_name companyName,
+            b.member_code memberCode,
+            a.consignee_name consigneeName,
+            a.consignee_mobile consigneeMobile
+    FROM
+        member_consignee_address_info a , member_base_info b, member_company_info c
+    WHERE
+             a.delete_flag = 0
+            AND b.status != 0
+            AND a.channel_code != ''
+            AND a.member_id = b.id
+            AND a.member_id = c.member_id 
+            and c.buyer_seller_type = '2' 
+            <if test="dto.companyName != null and dto.companyName != ''">
+		    	 and c.company_name like CONCAT('%',#{dto.companyName},'%')  
+		    </if>
+		    <if test="dto.memberCode != null and dto.memberCode != ''">
+		    	 and b.member_code like CONCAT('%',#{dto.memberCode},'%')  
+		    </if>
+		    <if test="dto.consigneeName != null and dto.consigneeName != ''">
+		    	 and a.consignee_name like CONCAT('%',#{dto.consigneeName},'%')  
+		    </if>
+		    <if test="dto.consigneeMobile!= null and dto.consigneeMobile != ''">
+		    	 and a.consignee_mobile like CONCAT('%',#{dto.consigneeMobile},'%')  
+		    </if>
+            ) t
+
+  </select>
+  <select id="getAllVendorAddProductPlus" resultType="cn.htd.membercenter.dto.MemberJDAddress">
+    select distinct
+    a.member_id memberID,
+	c.company_name companyName,
+	b.member_code memberCode,
+	a.consignee_name consigneeName,
+	a.consignee_mobile consigneeMobile
+    from member_consignee_address_info a,member_invoice_info v,member_base_info b,member_company_info c
+    where a.member_id = v.member_id and v.delete_flag =0  and a.delete_flag=0 and b.status !=0 
+      and a.channel_code != '' and v.channel_code !='' 
+      and a.channel_code=v.channel_code 
+      and a.member_id = b.id 
+      and a.member_id = c.member_id 
+      and c.buyer_seller_type = '2' 
+   	<if test="dto.companyName != null and dto.companyName != ''">
+    	 and c.company_name like CONCAT('%',#{dto.companyName},'%')  
+    </if>
+    <if test="dto.memberCode != null and dto.memberCode != ''">
+    	 and b.member_code like CONCAT('%',#{dto.memberCode},'%')  
+    </if>
+    <if test="dto.consigneeName != null and dto.consigneeName != ''">
+    	 and a.consignee_name like CONCAT('%',#{dto.consigneeName},'%')  
+    </if>
+    <if test="dto.consigneeMobile!= null and dto.consigneeMobile != ''">
+    	 and a.consignee_mobile like CONCAT('%',#{dto.consigneeMobile},'%')  
+    </if>
+      order by a.default_flag desc,a.modify_time desc,a.create_time desc
+    <if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    </if>
+  </select>
+</mapper>

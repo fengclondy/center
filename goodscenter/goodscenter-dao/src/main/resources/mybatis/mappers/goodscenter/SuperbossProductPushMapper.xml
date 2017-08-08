@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.SuperbossProductPushDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.SuperbossProductPush" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+  	<result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="category_code" property="categoryCode" jdbcType="VARCHAR" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="brand_code" property="brandCode" jdbcType="VARCHAR" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="recommend_class" property="recommendClass" jdbcType="VARCHAR" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="htd_flag" property="htdFlag" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, sku_code, company_name, recommend_class, sort_num, htd_flag, deleteFlag,
+    create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  
+   <sql id="pagination_tail">
+        <if test="page != null ">
+            limit #{page.pageOffset} , #{page.rows}
+        </if>
+    </sql>
+  
+  <select id="querySuperbossProductPushListCount" resultType="Long">
+  	select count(0) from superboss_product_push a, item_sku b, item c,
+		item_category d,item_brand e
+	where a.sku_code = b.sku_code and b.item_id = c.item_id
+		and c.cid = d.cid and c.brand = e.brand_id and a.delete_flag = '0'
+		  <if test="skuCode != null and skuCode != ''" >
+	        and a.sku_code like CONCAT(#{skuCode,jdbcType=VARCHAR},'%')
+	      </if>
+	      <if test="productName != null and recommendClass != ''" >
+	        and c.item_name like CONCAT('%',#{productName},'%') 
+	      </if>
+          <if test="recommendClass != null and recommendClass != ''" >
+	        and a.recommend_class = #{recommendClass,jdbcType=VARCHAR}
+	      </if> 
+  </select>
+  
+  <select id="querySuperbossProductPushList" resultMap="BaseResultMap">
+   select a.sku_code skuCode,a.company_name companyName,a.recommend_class recommendClass,
+		a.sort_num sortNum,a.htd_flag htdFlag,a.delete_flag deleteFlag,c.item_name productName,
+		d.c_name categoryName,e.brand_name brandName 
+	from superboss_product_push a, item_sku b, item c,
+		item_category d,item_brand e
+	where a.sku_code = b.sku_code and b.item_id = c.item_id
+		and c.cid = d.cid and c.brand = e.brand_id and a.delete_flag = '0'
+		  <if test="superbossProductPushDTO.skuCode != null and superbossProductPushDTO.skuCode != ''" >
+	        and a.sku_code like CONCAT(#{superbossProductPushDTO.skuCode,jdbcType=VARCHAR},'%')
+	      </if>
+	      <if test="superbossProductPushDTO.productName != null and superbossProductPushDTO.productName != ''" >
+	        and c.item_name like CONCAT('%',#{superbossProductPushDTO.productName},'%') 
+	      </if>
+          <if test="superbossProductPushDTO.recommendClass != null and superbossProductPushDTO.recommendClass != ''" >
+	        and a.recommend_class = #{superbossProductPushDTO.recommendClass,jdbcType=VARCHAR}
+	      </if>
+	    order by a.recommend_class, a.sort_num desc
+        <include refid="pagination_tail"/>
+  </select>
+  
+   <select id="querySuperbossProductPushInfo" resultMap="BaseResultMap">
+   select a.sku_code skuCode,a.company_name companyName,a.recommend_class recommendClass,
+		a.sort_num sortNum,a.htd_flag htdFlag,a.delete_flag deleteFlag,c.item_name productName,
+		d.c_name categoryName,e.brand_name brandName 
+	from superboss_product_push a, item_sku b, item c,
+		item_category d,item_brand e
+	where a.sku_code = b.sku_code and b.item_id = c.item_id
+		and c.cid = d.cid and c.brand = e.brand_id and a.delete_flag = '0'
+		  <if test="superbossProductPushDTO.skuCode != null and superbossProductPushDTO.skuCode != ''" >
+	        and a.sku_code = #{superbossProductPushDTO.skuCode,jdbcType=VARCHAR}
+	      </if>
+          <if test="superbossProductPushDTO.recommendClass != null and superbossProductPushDTO.recommendClass != ''" >
+	        and a.recommend_class = #{superbossProductPushDTO.recommendClass,jdbcType=VARCHAR}
+	      </if>
+  </select>
+  
+  
+  <insert id="insertSuperbossProductPush" parameterType="cn.htd.goodscenter.domain.SuperbossProductPush" >
+    insert into superboss_product_push
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="recommendClass != null" >
+        recommend_class,
+      </if>
+      <if test="sortNum != null" >
+        sort_num,
+      </if>
+      <if test="htdFlag != null" >
+        htd_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="recommendClass != null" >
+        #{recommendClass,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null" >
+        #{sortNum,jdbcType=INTEGER},
+      </if>
+      <if test="htdFlag != null" >
+        #{htdFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSuperbossProductPush" parameterType="cn.htd.goodscenter.domain.SuperbossProductPush" >
+    update superboss_product_push
+    <set >
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="recommendClass != null" >
+        recommend_class = #{recommendClass,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null" >
+        sort_num = #{sortNum,jdbcType=INTEGER},
+      </if>
+      <if test="htdFlag != null" >
+        htd_flag = #{htdFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sku_code = #{skuCode,jdbcType=VARCHAR} and delete_flag = '0'
+  </update>
+  <update id="deleteSuperbossProductPush" parameterType="cn.htd.goodscenter.domain.SuperbossProductPush" >
+    update superboss_product_push
+    set delete_flag = #{deleteFlag,jdbcType=VARCHAR}
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    where sku_code = #{skuCode,jdbcType=VARCHAR} and delete_flag = '0'
+    	and recommend_class = #{recommendClass,jdbcType=VARCHAR}
+  </update>
+
+  <select id="queryHtdRecommendProduct" resultType="map">
+    SELECT
+        item.item_code,
+        spp.htd_flag
+    FROM
+        superboss_product_push spp
+    JOIN item_sku sku ON spp.sku_code = sku.sku_code
+    JOIN item item ON sku.item_id = item.item_id
+    WHERE
+        1 = 1
+--     AND spp.htd_flag = 1
+    AND spp.delete_flag = 0
+    ORDER BY
+        sort_num DESC
+    LIMIT 1
+  </select>
+</mapper>

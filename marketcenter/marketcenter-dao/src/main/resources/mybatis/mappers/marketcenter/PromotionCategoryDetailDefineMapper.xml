@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.PromotionCategoryDetailDefineDAO">
+    <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.PromotionCategoryDetailDefineDTO">
+        <id column="id" property="id" />
+        <result column="rule_id" property="ruleId" />
+        <result column="category_id" property="categoryId" />
+        <result column="brand_id_list" property="brandIdList" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="create_id" property="createId" />
+        <result column="create_name" property="createName" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modify_name" property="modifyName" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <sql id="Base_Column_List">
+	    id,
+        rule_id,
+        category_id,
+        brand_id_list,
+        delete_flag,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time
+    </sql>
+    <!-- =========================================================== -->
+    <!-- DAO方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+    <select id="queryCategoryDetailList" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+    	select 
+        <include refid="Base_Column_List"/>
+        from promotion_category_detail_define
+        where rule_id = #{_parameter}
+          and delete_flag = 0
+        order by category_id
+    </select>
+    <!-- 插入记录 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into promotion_category_detail_define
+    	<trim prefix="(" suffix=")" suffixOverrides=",">
+            rule_id,
+            category_id,
+            brand_id_list,
+ 	        delete_flag,
+ 			create_id,
+ 			create_name,
+ 			create_time,
+ 			modify_id,
+ 			modify_name,
+ 			modify_time,
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+	    	#{ruleId},
+	    	#{categoryId},
+	    	#{brandIdList},
+	    	0,
+	    	#{createId},
+	    	#{createName},
+	    	now(),
+	    	#{createId},
+	    	#{createName},
+	    	now(),
+		</trim>
+    </insert>
+    <update id="deleteByRuleId" parameterType = "cn.htd.marketcenter.dto.PromotionCategoryItemRuleDefineDTO">
+   		update promotion_category_detail_define 
+        <set>
+	    	delete_flag = 1,
+	  		modify_name = #{modifyName},
+	  		modify_id = #{modifyId},
+	  		modify_time = now(),
+		</set>
+		where rule_id = #{ruleId}
+		  and delete_flag = 0
+    </update>
+</mapper>

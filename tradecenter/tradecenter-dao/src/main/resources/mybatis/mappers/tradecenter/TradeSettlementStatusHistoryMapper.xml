@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeSettlementStatusHistoryDAO">
+    <resultMap id="base_resultMap_tradeSettlementDTO" type="cn.htd.tradecenter.dto.bill.TradeSettlementStatusHistoryDTO">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="settlement_no" property="settlementNo" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="BIGINT"/>
+        <result column="status_text" property="statusText" jdbcType="VARCHAR"/>
+        <result column="create_id" property="createId" jdbcType="BIGINT"/>
+        <result column="create_name" property="createName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_id" property="modifyId" jdbcType="BIGINT"/>
+        <result column="modify_name" property="modifyName" jdbcType="VARCHAR"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryHistoryById" resultType="cn.htd.tradecenter.dto.bill.TradeSettlementStatusHistoryDTO">
+        <include refid = "baseSelect" />
+        <if test="id!=null">
+            and id=#{id,jdbcType=BIGINT}
+        </if>
+    </select>
+    
+    <sql id="baseSelect" >
+        SELECT settlement_no,status,status_text,create_id,create_name,create_time,modify_id,modify_name,modify_time
+        FROM trade_settlement_status_history ts WHERE 1 = 1
+    </sql>
+
+
+    <select id="getTradeSetStatusHistoryBySetNo">
+        SELECT settlement_no,status,status_text,create_id,create_name,create_time,
+        modify_id,modify_name,modify_time
+        FROM trade_settlement ts WHERE ts.settlement_no = #{settlementNo,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="addTradeSetStatusHistory" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementStatusHistoryDTO">
+      INSERT INTO trade_settlement_status_history(
+        settlement_no,
+        status,
+        status_text,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time
+      )VALUES(
+        #{settlementNo,jdbcType=VARCHAR},
+        #{status,jdbcType=BIGINT},
+        #{statusText,jdbcType=VARCHAR},
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{modifyId,jdbcType=BIGINT},
+        #{modifyName,jdbcType=VARCHAR},
+        #{modifyTime,jdbcType=TIMESTAMP}
+      )
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.ContentCenterDAO">
+    <resultMap id="HotWordResultMap" type="cn.htd.membercenter.domain.HotWord">
+	    <id column="id" jdbcType="BIGINT" property="id" />
+	    <result column="name" jdbcType="VARCHAR" property="name" />
+	    <result column="color" jdbcType="VARCHAR" property="color" />
+	    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+	    <result column="status" jdbcType="VARCHAR" property="status" />
+	    <result column="create_id" jdbcType="BIGINT" property="createId" />
+	    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+	    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+	    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+	    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="HotWord_Column_List">
+    id, name, color, sort_num, status, create_id, create_name, create_time, modify_id, 
+    modify_name, modify_time
+  </sql>
+  <select id="selectHotWord" parameterType="java.lang.Long" resultMap="HotWordResultMap">
+    select 
+    <include refid="HotWord_Column_List" />
+    from hot_word 
+    where status='1'
+    order by sort_num
+  </select>
+  
+  <resultMap id="MallChannelsResultMap" type="cn.htd.membercenter.domain.MallChannels">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="name_color" jdbcType="VARCHAR" property="nameColor" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="MallChannels_Column_List">
+    id, name, name_color, link_url, sort_num, status, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectMallChannels" parameterType="java.lang.Long" resultMap="MallChannelsResultMap">
+    select 
+    <include refid="MallChannels_Column_List" />
+    from mall_channels
+    where status='1'
+    order by sort_num
+  </select>
+  
+  <resultMap id="MallTypeResultMap" type="cn.htd.membercenter.domain.MallType">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="MallType_Column_List">
+    id, name, icon_url, status, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectMallType" parameterType="java.lang.Long" resultMap="MallTypeResultMap">
+    select 
+    <include refid="MallType_Column_List" />
+    from mall_type
+    where 
+    status='1'
+    order by create_time asc
+  </select>
+  
+  <resultMap id="MallTypeSubResultMap" type="cn.htd.membercenter.domain.MallTypeSub">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type_id" jdbcType="BIGINT" property="typeId" />
+    <result column="type1_name" jdbcType="VARCHAR" property="type1Name" />
+    <result column="type1" jdbcType="VARCHAR" property="type1" />
+    <result column="type2_name" jdbcType="VARCHAR" property="type2Name" />
+    <result column="type2" jdbcType="VARCHAR" property="type2" />
+    <result column="type3_name" jdbcType="VARCHAR" property="type3Name" />
+    <result column="type3" jdbcType="VARCHAR" property="type3" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="name_color" jdbcType="VARCHAR" property="nameColor" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="MallTypeSub_Column_List">
+    id, type_id, type1_name, type1, type2_name, type2, type3_name, type3, name, name_color, 
+    sort_num, status
+  </sql>
+  <select id="selectMallTypeSub" parameterType="java.lang.Long" resultMap="MallTypeSubResultMap">
+    select 
+    <include refid="MallTypeSub_Column_List" />
+    from mall_type_sub
+    where 
+    status='1' order by sort_num
+  </select>
+  
+  <select id="selectMallTypeSubById" parameterType="java.lang.Long" resultMap="MallTypeSubResultMap">
+    select 
+    <include refid="MallTypeSub_Column_List" />
+    from mall_type_sub where type_id=#{id}
+    order by sort_num
+  </select>
+  
+   <resultMap id="SiteLogoResultMap" type="cn.htd.membercenter.domain.SiteLogo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="SiteLogo_Column_List">
+    id, pic_url, link_url, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectSiteLogo" parameterType="java.lang.Long" resultMap="SiteLogoResultMap">
+    select 
+    <include refid="SiteLogo_Column_List" />
+    from site_logo
+    order by create_time desc
+  </select>
+  
+   <resultMap id="SiteSloganResultMap" type="cn.htd.membercenter.domain.SiteSlogan">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="SiteSlogan_Column_List">
+    id, pic_url, link_url, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectSiteSlogan" parameterType="java.lang.Long" resultMap="SiteSloganResultMap">
+    select 
+    <include refid="SiteSlogan_Column_List" />
+    from site_slogan
+    order by create_time desc
+  </select>
+  
+  <resultMap id="TopAdResultMap" type="cn.htd.membercenter.domain.TopAd">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="TopAd_Column_List">
+    id, pic_url, link_url, start_time, end_time, status, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectTopAd" parameterType="java.lang.Long" resultMap="TopAdResultMap">
+    select 
+    <include refid="TopAd_Column_List" />
+    from top_ad
+    where 
+    status='1' and now() between start_time and end_time;
+  </select>
+
+	<resultMap id="LoginPageResultMap" type="cn.htd.membercenter.domain.LoginPage">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="LoginPage_Column_List">
+    id, pic_url, link_url, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectLoginPage" parameterType="java.lang.Long" resultMap="LoginPageResultMap">
+    select 
+    <include refid="LoginPage_Column_List" />
+    from login_page
+    order by create_time desc
+  </select>
+  
+  <resultMap id="StaticAdResultMap" type="cn.htd.membercenter.domain.StaticAd">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="StaticAd_Column_List">
+    id, pic_url, link_url, start_time, end_time, sort_num, status, create_id, 
+    create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectStaticAd" parameterType="java.lang.Long" resultMap="StaticAdResultMap">
+    select 
+    <include refid="StaticAd_Column_List" />
+    from static_ad where status='1'
+    order by sort_num
+  </select>
+  
+   <resultMap id="FloorResultMap" type="cn.htd.membercenter.domain.Floor" >
+    <id column="id" jdbcType="BIGINT" property="Infoid" />
+    <result column="name" jdbcType="VARCHAR" property="Infoname" />
+    <result column="sort_num" jdbcType="BIGINT" property="InfosortNum" />
+    <result column="status" jdbcType="VARCHAR" property="Infostatus" />
+    <result column="id" jdbcType="BIGINT" property="Navid" />
+    <result column="name" jdbcType="VARCHAR" property="NavName" />
+    <result column="nav_temp" jdbcType="VARCHAR" property="NavNavTemp" />
+    <result column="nav_temp_src" jdbcType="VARCHAR" property="NavNavTempSrc" />
+    <result column="sort_num" jdbcType="BIGINT" property="NavSortNum" />
+    <result column="status" jdbcType="VARCHAR" property="NavStatus" />
+    <result column="id" jdbcType="BIGINT" property="contentId" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="show_brand" jdbcType="BIGINT" property="showBrand" />
+    <result column="id" jdbcType="BIGINT" property="contentPicSubId" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="sort_num" jdbcType="BIGINT" property="contentPicSubsortNum" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Floor_Column_List" >
+    a.id Infoid,a.name Infoname,a.sort_num InfosortNum,a.status Infostatus,
+    b.id Navid,b.name NavName,b.nav_temp NavNavTemp,b.nav_temp_src NavNavTempSrc,b.sort_num NavSortNum,b.status NavStatus,
+    c.id contentId,c.start_time startTime,c.end_time endTime,c.show_brand showBrand,
+    d.id contentPicSubId,d.pic_url picUrl,d.link_url linkUrl,d.sort_num contentPicSubsortNum,
+    a.create_id createId, a.create_name createName, 
+    a.create_time createTime, a.modify_id modifyId, a.modify_name modifyName, a.modify_time modifyTime
+  </sql>
+  
+  <select id="selectFloor" resultMap="FloorResultMap" parameterType="cn.htd.membercenter.domain.Floor" >
+    select 
+    <include refid="Floor_Column_List" />
+    from floor_info a,floor_nav b,floor_content c,floor_content_pic_sub d
+    where a.id=b.floor_id 
+    and b.id=c.nav_id 
+    and c.id=d.content_id
+    and a.status='1'
+    and b.status='1'
+    and b.id=#{navId}
+    order by d.sort_num
+  </select>
+  
+  <resultMap id="FloorContentSubResultMap" type="cn.htd.membercenter.domain.Floor" >
+    <id column="id" jdbcType="BIGINT" property="Infoid" />
+    <result column="name" jdbcType="VARCHAR" property="Infoname" />
+    <result column="sort_num" jdbcType="BIGINT" property="InfosortNum" />
+    <result column="status" jdbcType="VARCHAR" property="Infostatus" />
+    <result column="id" jdbcType="BIGINT" property="Navid" />
+    <result column="name" jdbcType="VARCHAR" property="NavName" />
+    <result column="nav_temp" jdbcType="VARCHAR" property="NavNavTemp" />
+    <result column="nav_temp_src" jdbcType="VARCHAR" property="NavNavTempSrc" />
+    <result column="sort_num" jdbcType="BIGINT" property="NavSortNum" />
+    <result column="status" jdbcType="VARCHAR" property="NavStatus" />
+    <result column="id" jdbcType="BIGINT" property="contentId" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="show_brand" jdbcType="BIGINT" property="showBrand" />
+    <result column="id" jdbcType="BIGINT" property="contentSubId" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="FloorContentSub_Column_List" >
+    a.id Infoid,a.name Infoname,a.sort_num InfosortNum,a.status Infostatus,
+    b.id Navid,b.name NavName,b.nav_temp NavNavTemp,b.nav_temp_src NavNavTempSrc,b.sort_num NavSortNum,b.status NavStatus,
+    c.id contentId,c.start_time startTime,c.end_time endTime,c.show_brand showBrand,
+    d.id contentSubId,d.brand_name brandName,d.brand_id brandId,d.sort_num sortNum,
+    a.create_id createId, a.create_name createName, 
+    a.create_time createTime, a.modify_id modifyId, a.modify_name modifyName, a.modify_time modifyTime
+  </sql>
+  
+  <select id="selectFloorContentSub" resultMap="FloorContentSubResultMap" parameterType="cn.htd.membercenter.domain.Floor" >
+    select 
+    <include refid="FloorContentSub_Column_List" />
+    from floor_info a,floor_nav b,floor_content c,floor_content_sub d
+    where a.id=b.floor_id 
+    and b.id=c.nav_id 
+    and c.id=d.content_id
+    and a.status='1'
+    and b.status='1'
+    and b.id=#{navId}
+    order by d.sort_num
+  </select>
+  
+  <resultMap id="HeadAdResultMap" type="cn.htd.membercenter.domain.HeadAd" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="sort_num" property="sortNum" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="HeadAd_Column_List" >
+    id, type, pic_url, link_url, start_time, end_time, sort_num, status, create_id, create_name, 
+    create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectHeadAd" resultMap="HeadAdResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="HeadAd_Column_List" />
+    from head_ad where status = '1'
+    order by sort_num
+  </select>
+  
+   <resultMap id="SubCarouselAdResultMap" type="cn.htd.membercenter.domain.SubCarouselAd" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sub_id" property="subId" jdbcType="VARCHAR" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="sort_num" property="sortNum" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="SubCarouselAd_Column_List" >
+    id, sub_id, pic_url, link_url, start_time, end_time, sort_num, status, create_id, 
+    create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectSubCarouselAd" resultMap="SubCarouselAdResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="SubCarouselAd_Column_List" />
+    from sub_carousel_ad where status = '1'
+    <if test="subId !=null and subId !=''">
+    	and sub_id = #{subId}
+    </if>
+    order by sort_num
+  </select>
+  
+  <resultMap id="StoreSubAdResultMap" type="cn.htd.membercenter.domain.SubAd" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sub_id" property="subId" jdbcType="VARCHAR" />
+    <result column="sub_ad_id" property="subAdId" jdbcType="BIGINT" />
+    <result column="sub_content_id" property="subContentId" jdbcType="BIGINT" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="sort_num" property="SubContentSubSortNum" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="nav_temp" property="navTemp" jdbcType="VARCHAR" />
+    <result column="nav_temp_src" property="navTempSrc" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" /> 
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="StoreSubAd_Column_List" >
+    a.id, a.sub_id,b.sub_ad_id,b.start_time,
+    b.end_time, a.name, a.nav_temp, a.nav_temp_src,
+    d.seller_name, d.seller_code, d.sort_num, 
+    a.status, a.create_id, a.create_name, a.create_time, 
+    a.modify_id, a.modify_name, a.modify_time
+  </sql>
+  
+   <select id="selectStoreSubAd" resultMap="StoreSubAdResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="StoreSubAd_Column_List" />
+    from sub_ad a,sub_content b,sub_content_sub d
+    where a.id=b.sub_ad_id 
+    and b.id = d.sub_content_id 
+    and a.status = '1'
+    and a.sub_id = #{subId} 
+    order by d.sort_num 
+  </select>
+  
+  <resultMap id="SubAdResultMap" type="cn.htd.membercenter.domain.SubAd" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sub_id" property="subId" jdbcType="VARCHAR" />
+    <result column="sub_ad_id" property="subAdId" jdbcType="BIGINT" />
+    <result column="sub_content_id" property="subContentId" jdbcType="BIGINT" />
+   	<result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="sort_num" property="SubContentPicSubSortNum" jdbcType="BIGINT" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="nav_temp" property="navTemp" jdbcType="VARCHAR" />
+    <result column="nav_temp_src" property="navTempSrc" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" /> 
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="SubAd_Column_List" >
+    a.id, a.sub_id,b.sub_ad_id,c.sub_content_id, b.start_time,
+    b.end_time, a.name, a.nav_temp, a.nav_temp_src,
+    c.pic_url, c.link_url, c.sort_num,
+    a.status, a.create_id, a.create_name, a.create_time, 
+    a.modify_id, a.modify_name, a.modify_time
+  </sql>
+  
+  <select id="selectSubAd" resultMap="SubAdResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="SubAd_Column_List" />
+    from sub_ad a,sub_content b,sub_content_pic_sub c
+    where a.id=b.sub_ad_id 
+    and b.id = c.sub_content_id
+    and a.status = '1' 
+    and a.sub_id = #{subId}
+    order by c.sort_num
+  </select>
+  
+  <resultMap id="FloorNavResultMap" type="cn.htd.membercenter.domain.FloorNav">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="floor_id" jdbcType="BIGINT" property="floorId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nav_temp" jdbcType="VARCHAR" property="navTemp" />
+    <result column="nav_temp_src" jdbcType="VARCHAR" property="navTempSrc" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="FloorNav_Column_List">
+    id, floor_id, name, nav_temp, nav_temp_src, sort_num, status, create_id, create_name, 
+    create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectFloorNav" parameterType="java.lang.Long" resultMap="FloorNavResultMap">
+    select 
+    <include refid="FloorNav_Column_List" />
+    from floor_nav 
+    where status='1'
+    and floor_id=#{floorId}
+    order by sort_num
+  </select>
+  
+  <resultMap id="FloorInfoResultMap" type="cn.htd.membercenter.domain.FloorInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="FloorInfo_Column_List">
+    id, name, sort_num, status, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectFloorInfo" parameterType="java.lang.Long" resultMap="FloorInfoResultMap">
+    select 
+    <include refid="FloorInfo_Column_List"/>
+    from floor_info
+    where status='1'
+    order by sort_num
+  </select>
+  
+  
+  	
+  	<resultMap id="base_resultMap_floorInfoDO" type="cn.htd.membercenter.domain.FloorInfoDO">
+  	<id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+    <result column="left_pic_title" jdbcType="VARCHAR" property="leftPicTitle" />
+    <result column="left_pic_url" jdbcType="VARCHAR" property="leftPicUrl" />
+    <result column="left_pic_link_url" jdbcType="VARCHAR" property="leftPicLinkUrl" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="show_brand" jdbcType="VARCHAR" property="showBrand" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  	</resultMap>
+    
+  	<resultMap id="base_resultMap_floorNavDO" type="cn.htd.membercenter.domain.FloorNavDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="floor_id" jdbcType="BIGINT" property="floorId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nav_temp" jdbcType="VARCHAR" property="navTemp" />
+    <result column="nav_temp_src" jdbcType="VARCHAR" property="navTempSrc" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  	</resultMap>
+  	
+  	<resultMap id="base_resultMap_floorBrandDO" type="cn.htd.membercenter.domain.FloorBrandDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="floor_id" jdbcType="BIGINT" property="floorId" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+  	</resultMap>
+  	
+  	<resultMap id="base_resultMap_floorPicDO" type="cn.htd.membercenter.domain.FloorPicDO">
+  	<id column="id" jdbcType="BIGINT" property="id" />
+  	<result column="floor_nav_id" jdbcType="BIGINT" property="floorNavId" />
+   	<result column="pic_url" jdbcType="VARCHAR"  property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl"  />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+  	</resultMap>
+  	
+  <select id="getBaseAllFloors" resultMap="base_resultMap_floorInfoDO">
+    select  id,name,icon_url,left_pic_title,left_pic_url,left_pic_link_url,sort_num,status,show_brand,
+            create_id,create_name,create_time,modify_id,modify_name,modify_time  
+    from floor_info
+    where status = '1' 
+    order by sort_num
+   </select>
+  
+   <select id="getBaseFloorNavsByFloorId" parameterType="java.lang.Long" resultMap="base_resultMap_floorNavDO">
+    select  id,floor_id,name,nav_temp,nav_temp_src,sort_num,status,
+            create_id,create_name,create_time,modify_id,modify_name,modify_time  
+    from floor_nav 
+    where floor_id = #{floorId,jdbcType=BIGINT} and status = '1'  
+    order by sort_num
+  </select>
+  
+  <select id="getBaseFloorBrandsByFloorId" parameterType="java.lang.Long" resultMap="base_resultMap_floorBrandDO">
+    select  id,floor_id,brand_id,brand_name,sort_num 
+    from floor_content_sub  
+    where floor_id = #{floorId,jdbcType=BIGINT}   
+    order by sort_num
+  </select>
+  
+   <select id="getBaseFloorPicsByFloorNavId" parameterType="java.lang.Long" resultMap="base_resultMap_floorPicDO">
+    select  id,floor_nav_id,pic_url,link_url,sort_num 
+    from floor_content_pic_sub  
+    where floor_nav_id = #{floorNavId,jdbcType=BIGINT} 
+    order by sort_num
+  </select>
+  	
+  	
+</mapper>

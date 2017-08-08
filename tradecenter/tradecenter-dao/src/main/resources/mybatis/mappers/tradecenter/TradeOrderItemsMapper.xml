@@ -1,0 +1,1373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderItemsDAO" >
+	<resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="site" property="site" jdbcType="VARCHAR" />
+		<result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+		<result column="buyer_type" property="buyerType" jdbcType="VARCHAR" />
+		<result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+		<result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+		<result column="seller_type" property="sellerType" jdbcType="VARCHAR" />
+		<result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+		<result column="shop_id" property="shopId" jdbcType="BIGINT" />
+		<result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+		<result column="order_from" property="orderFrom" jdbcType="VARCHAR" />
+		<result column="sales_type" property="salesType" jdbcType="VARCHAR" />
+		<result column="sales_department_code" property="salesDepartmentCode" jdbcType="VARCHAR" />
+		<result column="has_productplus_flag" property="hasProductplusFlag" jdbcType="TINYINT" />
+		<result column="total_goods_count" property="totalGoodsCount" jdbcType="INTEGER" />
+		<result column="total_goods_amount" property="totalGoodsAmount" jdbcType="DECIMAL" />
+		<result column="total_freight" property="totalFreight" jdbcType="DECIMAL" />
+		<result column="total_discount_amount" property="totalDiscountAmount" jdbcType="DECIMAL" />
+		<result column="shop_discount_amount" property="shopDiscountAmount" jdbcType="DECIMAL" />
+		<result column="platform_discount_amount" property="platformDiscountAmount" jdbcType="DECIMAL" />
+		<result column="used_rebate_amount" property="usedRebateAmount" jdbcType="DECIMAL" />
+		<result column="bargaining_order_amount" property="bargainingOrderAmount" jdbcType="DECIMAL" />
+		<result column="bargaining_order_freight" property="bargainingOrderFreight" jdbcType="DECIMAL" />
+		<result column="order_total_amount" property="orderTotalAmount" jdbcType="DECIMAL" />
+		<result column="order_pay_amount" property="orderPayAmount" jdbcType="DECIMAL" />
+		<result column="create_order_time" property="createOrderTime" jdbcType="TIMESTAMP" />
+		<result column="has_used_coupon" property="hasUsedCoupon" jdbcType="TINYINT" />
+		<result column="is_change_price" property="isChangePrice" jdbcType="TINYINT" />
+		<result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="order_receipt_time" property="orderReceiptTime" jdbcType="TIMESTAMP" />
+		<result column="order_error_status" property="orderErrorStatus" jdbcType="VARCHAR" />
+		<result column="order_error_time" property="orderErrorTime" jdbcType="TIMESTAMP" />
+		<result column="order_error_reason" property="orderErrorReason" jdbcType="VARCHAR" />
+		<result column="is_cancel_order" property="isCancelOrder" jdbcType="TINYINT" />
+		<result column="order_cancel_time" property="orderCancelTime" jdbcType="TIMESTAMP" />
+		<result column="order_cancel_member_id" property="orderCancelMemberId" jdbcType="BIGINT" />
+		<result column="order_cancel_member_name" property="orderCancelMemberName" jdbcType="VARCHAR" />
+		<result column="order_cancel_reason" property="orderCancelReason" jdbcType="VARCHAR" />
+		<result column="pay_type" property="payType" jdbcType="VARCHAR" />
+		<result column="pay_time_limit" property="payTimeLimit" jdbcType="TIMESTAMP" />
+		<result column="pay_order_time" property="payOrderTime" jdbcType="TIMESTAMP" />
+		<result column="pay_status" property="payStatus" jdbcType="VARCHAR" />
+		<result column="erp_pay_code" property="erpPayCode" jdbcType="VARCHAR" />
+		<result column="is_out_distribtion" property="isOutDistribtion" jdbcType="TINYINT" />
+		<result column="is_timelimited_order" property="isTimelimitedOrder" jdbcType="TINYINT" />
+		<result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+		<result column="buyer_remarks" property="buyerRemarks" jdbcType="VARCHAR" />
+		<result column="order_remarks" property="orderRemarks" jdbcType="VARCHAR" />
+		<result column="is_need_invoice" property="isNeedInvoice" jdbcType="TINYINT" />
+		<result column="invoice_type" property="invoiceType" jdbcType="VARCHAR" />
+		<result column="invoice_notify" property="invoiceNotify" jdbcType="VARCHAR" />
+		<result column="invoice_company_name" property="invoiceCompanyName" jdbcType="VARCHAR" />
+		<result column="tax_man_id" property="taxManId" jdbcType="VARCHAR" />
+		<result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+		<result column="invoice_address" property="invoiceAddress" jdbcType="VARCHAR" />
+		<result column="delivery_type" property="deliveryType" jdbcType="VARCHAR" />
+		<result column="consignee_name" property="consigneeName" jdbcType="VARCHAR" />
+		<result column="consignee_phone_num" property="consigneePhoneNum" jdbcType="VARCHAR" />
+		<result column="consignee_address" property="consigneeAddress" jdbcType="VARCHAR" />
+		<result column="consignee_address_province" property="consigneeAddressProvince" jdbcType="VARCHAR" />
+		<result column="consignee_address_city" property="consigneeAddressCity" jdbcType="VARCHAR" />
+		<result column="consignee_address_district" property="consigneeAddressDistrict" jdbcType="VARCHAR" />
+		<result column="consignee_address_town" property="consigneeAddressTown" jdbcType="VARCHAR" />
+		<result column="consignee_address_detail" property="consigneeAddressDetail" jdbcType="VARCHAR" />
+		<result column="post_code" property="postCode" jdbcType="VARCHAR" />
+		<result column="logistics_status" property="logisticsStatus" jdbcType="VARCHAR" />
+		<result column="logistics_company" property="logisticsCompany" jdbcType="VARCHAR" />
+		<result column="logistics_no" property="logisticsNo" jdbcType="VARCHAR" />
+		<result column="used_activity_account_amount" property="usedActivityAccountAmount" jdbcType="DECIMAL" />
+    	<result column="order_delete_status" property="orderDeleteStatus" jdbcType="TINYINT" />
+		<result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+		<result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+		<result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+		<result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+		<result column="outer_sku_code" property="outerSkuCode" jdbcType="VARCHAR" />
+		<result column="sku_erp_code" property="skuErpCode" jdbcType="VARCHAR" />
+		<result column="sku_ean_code" property="skuEanCode" jdbcType="VARCHAR" />
+		<result column="sku_picture_url" property="skuPictureUrl" jdbcType="VARCHAR" />
+		<result column="item_spu_code" property="itemSpuCode" jdbcType="VARCHAR" />
+		<result column="first_category_id" property="firstCategoryId" jdbcType="BIGINT" />
+		<result column="first_category_name" property="firstCategoryName" jdbcType="VARCHAR" />
+		<result column="second_category_id" property="secondCategoryId" jdbcType="BIGINT" />
+		<result column="second_category_name" property="secondCategoryName" jdbcType="VARCHAR" />
+		<result column="third_category_id" property="thirdCategoryId" jdbcType="BIGINT" />
+		<result column="third_category_name" property="thirdCategoryName" jdbcType="VARCHAR" />
+		<result column="category_id_list" property="categoryIdList" jdbcType="VARCHAR" />
+		<result column="category_name_list" property="categoryNameList" jdbcType="VARCHAR" />
+		<result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+		<result column="erp_five_category_code" property="erpFiveCategoryCode" jdbcType="VARCHAR" />
+		<result column="brand_id" property="brandId" jdbcType="BIGINT" />
+		<result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+		<result column="customer_manager_code" property="customerManagerCode" jdbcType="VARCHAR" />
+		<result column="customer_manager_name" property="customerManagerName" jdbcType="VARCHAR" />
+		<result column="is_vip_item" property="isVipItem" jdbcType="TINYINT" />
+		<result column="vip_item_type" property="vipItemType" jdbcType="VARCHAR" />
+		<result column="vip_sync_flag" property="vipSyncFlag" jdbcType="TINYINT" />
+		<result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+		<result column="cost_price" property="costPrice" jdbcType="DECIMAL" />
+		<result column="price_floating_ratio" property="priceFloatingRatio" jdbcType="DECIMAL" />
+		<result column="commission_ratio" property="commissionRatio" jdbcType="DECIMAL" />
+		<result column="commission_amount" property="commissionAmount" jdbcType="DECIMAL" />
+		<result column="is_box_flag" property="isBoxFlag" jdbcType="TINYINT" />
+		<result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+		<result column="goods_price_type" property="goodsPriceType" jdbcType="VARCHAR" />
+		<result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+		<result column="bargaining_goods_price" property="bargainingGoodsPrice" jdbcType="DECIMAL" />
+		<result column="bargaining_goods_count" property="bargainingGoodsCount" jdbcType="INTEGER" />
+		<result column="shop_freight_template_id" property="shopFreightTemplateId" jdbcType="BIGINT" />
+		<result column="delivery_area_code" property="deliveryAreaCode" jdbcType="VARCHAR" />
+		<result column="goods_amount" property="goodsAmount" jdbcType="DECIMAL" />
+		<result column="goods_freight" property="goodsFreight" jdbcType="DECIMAL" />
+		<result column="bargaining_goods_amount" property="bargainingGoodsAmount" jdbcType="DECIMAL" />
+		<result column="bargaining_goods_freight" property="bargainingGoodsFreight" jdbcType="DECIMAL" />
+		<result column="order_item_total_amount" property="orderItemTotalAmount" jdbcType="DECIMAL" />
+		<result column="order_item_pay_amount" property="orderItemPayAmount" jdbcType="DECIMAL" />
+		<result column="goods_real_price" property="goodsRealPrice" jdbcType="DECIMAL" />
+		<result column="outer_channel_order_no" property="outerChannelOrderNo" jdbcType="VARCHAR" />
+		<result column="outer_channel_puchase_status" property="outerChannelPuchaseStatus" jdbcType="VARCHAR" />
+		<result column="outer_channel_status" property="outerChannelStatus" jdbcType="VARCHAR" />
+		<result column="order_item_status" property="orderItemStatus" jdbcType="VARCHAR" />
+		<result column="order_item_receipt_time" property="orderItemReceiptTime" jdbcType="TIMESTAMP" />
+		<result column="order_item_error_status" property="orderItemErrorStatus" jdbcType="VARCHAR" />
+		<result column="order_item_error_time" property="orderItemErrorTime" jdbcType="TIMESTAMP" />
+		<result column="order_item_error_reason" property="orderItemErrorReason" jdbcType="VARCHAR" />
+		<result column="is_add_order_item" property="isAddOrderItem" jdbcType="TINYINT" />
+		<result column="is_cancel_order_item" property="isCancelOrderItem" jdbcType="TINYINT" />
+		<result column="order_item_cancel_time" property="orderItemCancelTime" jdbcType="TIMESTAMP" />
+		<result column="order_item_cancel_operator_id" property="orderItemCancelOperatorId" jdbcType="BIGINT" />
+		<result column="order_item_cancel_operator_name" property="orderItemCancelOperatorName" jdbcType="VARCHAR" />
+		<result column="order_item_cancel_reason" property="orderItemCancelReason" jdbcType="VARCHAR" />
+		<result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+		<result column="is_out_distribtion" property="isOutDistribtion" jdbcType="TINYINT" />
+		<result column="erp_distribution_id" property="erpDistributionId" jdbcType="BIGINT" />
+		<result column="erp_sholesaler_code" property="erpSholesalerCode" jdbcType="VARCHAR" />
+		<result column="erp_rebate_no" property="erpRebateNo" jdbcType="VARCHAR" />
+		<result column="erp_rebate_code" property="erpRebateCode" jdbcType="VARCHAR" />
+		<result column="is_settled" property="isSettled" jdbcType="TINYINT" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+  	<sql id="Base_Column_List" >
+	   	id,
+		order_no,
+		order_item_no,
+		channel_code,
+		item_code,
+		goods_name,
+		sku_code,
+		outer_sku_code,
+		sku_erp_code,
+		sku_ean_code,
+		sku_picture_url,
+		item_spu_code,
+		first_category_id,
+		first_category_name,
+		second_category_id,
+		second_category_name,
+		third_category_id,
+		third_category_name,
+		category_id_list,
+		category_name_list,
+		erp_first_category_code,
+		erp_five_category_code,
+		brand_id,
+		brand_name,
+		customer_manager_code,
+		customer_manager_name,
+		is_vip_item,
+		vip_item_type,
+		vip_sync_flag,
+		goods_count,
+		cost_price,
+		price_floating_ratio,
+		commission_ratio,
+		commission_amount,
+		is_box_flag,
+		sale_price,
+		goods_price_type,
+		goods_price,
+		bargaining_goods_price,
+		bargaining_goods_count,
+		shop_freight_template_id,
+		delivery_area_code,
+		goods_amount,
+		goods_freight,
+		total_discount_amount,
+		shop_discount_amount,
+		platform_discount_amount,
+		used_rebate_amount,
+		bargaining_goods_amount,
+		bargaining_goods_freight,
+		order_item_total_amount,
+		order_item_pay_amount,
+		goods_real_price,
+		has_used_coupon,
+		is_change_price,
+		outer_channel_order_no,
+		outer_channel_puchase_status,
+		outer_channel_status,
+		order_item_status,
+		order_item_receipt_time,
+		order_item_error_status,
+		order_item_error_time,
+		order_item_error_reason,
+		is_add_order_item,
+		is_cancel_order_item,
+		order_item_cancel_time,
+		order_item_cancel_operator_id,
+		order_item_cancel_operator_name,
+		order_item_cancel_reason,
+		refund_status,
+		is_out_distribtion,
+		erp_distribution_id,
+		erp_sholesaler_code,
+		erp_rebate_no,
+		erp_rebate_code,
+		is_settled,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+	</sql>
+	<sql id="pagination_tail">
+	 	limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<sql id="where_fragement">
+		<if test="entity!=null">
+	        <if test="entity.tradeNo != null and entity.tradeNo != ''">
+	            <![CDATA[ and trade_orders.trade_no like concat('%', #{entity.tradeNo}, '%') ]]>
+	        </if>
+	        <if test="entity.orderNo != null and entity.orderNo != ''">
+	            <![CDATA[ and trade_orders.order_no like concat('%', #{entity.orderNo}, '%') ]]>
+	        </if>
+	        <if test="entity.orderItemNo != null and entity.orderItemNo != ''">
+	            <![CDATA[ and trade_order_items.order_item_no like concat('%', #{entity.orderItemNo}, '%') ]]>
+	        </if>
+	        <if test="entity.sellerCode != null and entity.sellerCode != ''">
+	            <![CDATA[ and trade_orders.seller_code = #{entity.sellerCode} ]]>
+	        </if>
+	        <if test="entity.buyerName != null and entity.buyerName != ''">
+	            <![CDATA[ and trade_orders.buyer_name like concat('%', #{entity.buyerName }, '%') ]]>
+	        </if>
+	        <if test="entity.sellerName != null and entity.sellerName != ''">
+	            <![CDATA[ and trade_orders.seller_name like concat('%', #{entity.sellerName }, '%') ]]>
+	        </if>
+	        <if test="entity.sellerType != null and entity.sellerType != ''">
+	            <![CDATA[ and trade_orders.seller_type = #{entity.sellerType } ]]>
+	        </if>
+	        <if test="entity.payStatus != null and entity.payStatus != ''">
+	            <![CDATA[ and trade_orders.pay_status = #{entity.payStatus} ]]>
+	        </if>
+	        <if test="entity.createStart != null">
+	            <![CDATA[ and trade_orders.create_order_time >= #{entity.createStart} ]]>
+	        </if>
+	        <if test="entity.createEnd != null">
+	            <![CDATA[ and trade_orders.create_order_time <= #{entity.createEnd} ]]>
+	        </if>
+	        <if test="entity.erpSholesalerCode != null and entity.erpSholesalerCode != ''">
+	            <![CDATA[ and trade_order_items.erp_sholesaler_code like concat('%', #{entity.erpSholesalerCode}) ]]>
+	        </if>
+	        <if test="entity.outerChannelPuchaseStatus != null and entity.outerChannelPuchaseStatus != ''">
+	            <![CDATA[ and trade_order_items.outer_channel_puchase_status = #{entity.outerChannelPuchaseStatus} ]]>
+	        </if>
+	        <if test="entity.outerChannelStatus != null and entity.outerChannelStatus != ''">
+	            <![CDATA[ and trade_order_items.outer_channel_status = #{entity.outerChannelStatus} ]]>
+	        </if>
+	        <if test="entity.outerChannelOrderNo != null and entity.outerChannelOrderNo != ''">
+	            <![CDATA[ and trade_order_items.outer_channel_order_no like concat('%', #{entity.outerChannelOrderNo}, '%')]]>
+	        </if>
+	        <if test="entity.orderStatusList != null and entity.orderStatusList.size > 0 ">
+	            <![CDATA[ and trade_order_items.order_item_status in ]]>
+	            <foreach collection="entity.orderStatusList" item="status" index="index" open="(" separator="," close=")">
+	                #{status}
+	            </foreach>
+	        </if>
+	        <if test="entity.isCancelFlag != null and entity.isCancelFlag != -1 ">
+	            <![CDATA[ and trade_order_items.is_cancel_order_item = #{entity.isCancelFlag} ]]>
+	        </if>
+	        <if test="entity.isErrorFlag != null and entity.isErrorFlag == 0 ">
+	            <![CDATA[ and trade_order_items.order_item_error_status = '' ]]>
+	        </if>
+	        <if test="entity.isErrorFlag != null and entity.isErrorFlag == 1 ">
+	            <![CDATA[ and trade_order_items.order_item_error_status <> '' ]]>
+	        </if>
+	        <if test="entity.orderItemErrorStatus != null and entity.orderItemErrorStatus != ''">
+	            <![CDATA[ and trade_order_items.order_item_error_status = #{entity.orderItemErrorStatus} ]]>
+	        </if>
+			<if test="entity.channelCode != null and entity.channelCode !=''">
+	            <![CDATA[ and trade_order_items.channel_code = #{entity.channelCode} ]]>
+	        </if>
+	        <if test="entity.isCancelOrderItem != null and entity.isCancelOrderItem !=''">
+	            <![CDATA[ and trade_order_items.is_cancel_order_item != #{entity.isCancelOrderItem} ]]>
+	        </if>
+	        <if test="entity.productPlusChannelCodeList != null and entity.productPlusChannelCodeList.size > 0 ">
+	            <![CDATA[ and trade_order_items.channel_code in ]]>
+	            <foreach collection="entity.productPlusChannelCodeList" item="channel" index="index" open="(" separator="," close=")">
+	                #{channel}
+	            </foreach>
+	        </if>
+	        <if test="entity.orderType != null and entity.orderType == 0 ">
+	        	<![CDATA[ and trade_orders.is_timelimited_order = 0 ]]>
+	            <![CDATA[ and trade_order_items.has_used_coupon = 0 ]]>
+	        </if>
+	        <if test="entity.orderType != null and entity.orderType == 1 ">
+	        	<![CDATA[ and trade_orders.is_timelimited_order = 1 ]]>
+	        </if>
+	        <if test="entity.orderType != null and entity.orderType == 2 ">
+	        	<![CDATA[ and trade_order_items.has_used_coupon = 1 ]]>
+	        </if>
+	        <![CDATA[ and trade_order_items.is_cancel_order_item != 2 ]]>
+	    </if>
+	</sql>
+	<select id="queryTradeOrderCountByCondition" resultType="java.lang.Long" parameterType="cn.htd.tradecenter.dto.TradeOrdersQueryInDTO" >
+  		select count(1)
+  		from trade_orders inner join trade_order_items on (trade_orders.order_no = trade_order_items.order_no)
+  		where 1 = 1 and trade_orders.order_delete_status != 2
+   			<include refid="where_fragement"/>
+   </select>
+   
+   <select id="queryTradeOrderCountItemCodeAndBoxFlag" resultType="java.lang.Long" parameterType="cn.htd.tradecenter.dto.TradeOrdersQueryInDTO" >
+  		select count(1)
+  		from trade_orders inner join trade_order_items on (trade_orders.order_no = trade_order_items.order_no)
+  		where trade_order_items.order_item_status in (10,20,21,22,30,311,312,32,33)
+  		and trade_order_items.is_cancel_order_item =0
+		<if test="entity.isBoxFlag != null">
+            <![CDATA[ and trade_order_items.is_box_flag = #{entity.isBoxFlag} ]]>
+        </if>
+        <if test="entity.itemCode != null and entity.itemCode !=''">
+            <![CDATA[ and trade_order_items.item_code = #{entity.itemCode} ]]>
+        </if>
+   </select>
+   
+   <select id="queryErpErrorTradeOrderListByCondition" resultType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" parameterType="cn.htd.tradecenter.dto.TradeOrdersQueryInDTO" >
+		select 
+			trade_order_items.id id,
+			trade_orders.trade_no tradeNo,
+			trade_orders.order_no orderNo,
+			trade_orders.site site,
+			trade_orders.buyer_code buyerCode,
+			trade_orders.buyer_type buyerType,
+			trade_orders.buyer_name buyerName,
+			trade_orders.seller_code sellerCode,
+			trade_orders.seller_type sellerType,
+			trade_orders.seller_name sellerName,
+			trade_orders.shop_id shopId,
+			trade_orders.shop_name shopName,
+			trade_orders.order_from orderFrom,
+			trade_orders.sales_type salesType,
+			trade_orders.create_order_time createOrderTime,
+			trade_orders.pay_type payType,
+			trade_orders.pay_order_time payOrderTime,
+			trade_orders.pay_status payStatus,
+			trade_orders.pay_serial_no paySerialNo,
+			trade_orders.is_timelimited_order isTimelimitedOrder,
+			trade_orders.promotion_id promotionId,
+			trade_orders.buyer_remarks buyerRemarks,
+			trade_orders.order_remarks orderRemarks,
+			trade_order_items.order_item_no orderItemNo,
+			trade_order_items.channel_code channelCode,
+			trade_order_items.item_code itemCode,
+			trade_order_items.goods_name goodsName,
+			trade_order_items.sku_code skuCode,
+			trade_order_items.outer_sku_code outerSkuCode,
+			trade_order_items.sku_erp_code skuErpCode,
+			trade_order_items.sku_ean_code skuEanCode,
+			trade_order_items.sku_picture_url skuPictureUrl,
+			trade_order_items.item_spu_code itemSpuCode,
+			trade_order_items.erp_first_category_code erpFirstCategoryCode,
+			trade_order_items.erp_five_category_code erpFiveCategoryCode,
+			trade_order_items.brand_id brandId,
+			trade_order_items.brand_name brandName,
+			trade_order_items.order_item_status orderItemStatus,
+			trade_order_items.order_item_receipt_time orderItemReceiptTime,
+			trade_order_items.order_item_error_status orderItemErrorStatus,
+			trade_order_items.order_item_error_time orderItemErrorTime,
+			trade_order_items.order_item_error_reason orderItemErrorReason,
+			trade_order_items.create_id createId,
+			trade_order_items.create_name createName,
+			trade_order_items.create_time createTime,
+			trade_order_items.modify_id modifyId,
+			trade_order_items.modify_name modifyName,
+			trade_orders.modify_time modifyTime
+	 		from trade_orders inner join trade_order_items on (trade_orders.order_no = trade_order_items.order_no)
+	 		where 1 = 1
+	  			<include refid="where_fragement"/>
+	  		order by trade_orders.modify_time desc, trade_order_items.order_item_no asc
+	    <if test="page!=null">
+	      <include refid="pagination_tail" />
+	    </if>
+   </select>
+   <select id="queryTradeOrderListByCondition" resultType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" parameterType="cn.htd.tradecenter.dto.TradeOrdersQueryInDTO" >
+  		select 
+			trade_order_items.id id,
+			trade_orders.trade_no tradeNo,
+			trade_orders.order_no orderNo,
+			trade_orders.site site,
+			trade_orders.buyer_code buyerCode,
+			trade_orders.buyer_type buyerType,
+			trade_orders.buyer_name buyerName,
+			trade_orders.seller_code sellerCode,
+			trade_orders.seller_type sellerType,
+			trade_orders.seller_name sellerName,
+			trade_orders.shop_id shopId,
+			trade_orders.shop_name shopName,
+			trade_orders.order_from orderFrom,
+			trade_orders.sales_type salesType,
+			trade_orders.sales_department_code salesDepartmentCode,
+			trade_orders.has_productplus_flag hasProductplusFlag,
+			trade_orders.total_goods_count totalGoodsCount,
+			trade_orders.total_goods_amount totalGoodsAmount,
+			trade_orders.total_freight totalFreight,
+			trade_order_items.total_discount_amount totalDiscountAmount,
+			trade_order_items.shop_discount_amount shopDiscountAmount,
+			trade_order_items.platform_discount_amount platformDiscountAmount,
+			trade_order_items.used_rebate_amount usedRebateAmount,
+			trade_orders.bargaining_order_amount bargainingOrderAmount,
+			trade_orders.bargaining_order_freight bargainingOrderFreight,
+			trade_orders.order_total_amount orderTotalAmount,
+			trade_orders.order_pay_amount orderPayAmount,
+			trade_orders.create_order_time createOrderTime,
+			trade_order_items.has_used_coupon hasUsedCoupon,
+			trade_order_items.is_change_price isChangePrice,
+			trade_orders.order_status orderStatus,
+			trade_orders.order_receipt_time orderReceiptTime,
+			trade_orders.order_error_status orderRrrorStatus,
+			trade_orders.order_error_time orderErrorTime,
+			trade_orders.order_error_reason orderErrorReason,
+			trade_orders.is_cancel_order isCancelOrder,
+			trade_orders.order_cancel_time orderCancelTime,
+			trade_orders.order_cancel_member_id orderCancelMemberId,
+			trade_orders.order_cancel_member_name orderCancelMemberName,
+			trade_orders.order_cancel_reason orderCancelReason,
+			trade_orders.pay_type payType,
+			trade_orders.pay_time_limit payTimeLimit,
+			trade_orders.pay_order_time payOrderTime,
+			trade_orders.pay_status payStatus,
+			trade_orders.pay_serial_no paySerialNo,
+			trade_orders.is_out_distribtion isOutDistribtion,
+			trade_orders.is_timelimited_order isTimelimitedOrder,
+			trade_orders.promotion_id promotionId,
+			trade_orders.buyer_remarks buyerRemarks,
+			trade_orders.order_remarks orderRemarks,
+			trade_orders.is_need_invoice isNeedInvoice,
+			trade_orders.invoice_type invoiceType,
+			trade_orders.invoice_notify invoiceNotify,
+			trade_orders.invoice_company_name invoiceCompanyName,
+			trade_orders.tax_man_id taxManId,
+			trade_orders.bank_name bankName,
+			trade_orders.bank_account bankAccount,
+			trade_orders.contact_phone contactPhone,
+			trade_orders.invoice_address invoiceAddress,
+			trade_orders.delivery_type deliveryType,
+			trade_orders.consignee_name consigneeName,
+			trade_orders.consignee_phone_num consigneePhoneNum,
+			trade_orders.consignee_address consigneeAddress,
+			trade_orders.consignee_address_province consigneeAddressProvince,
+			trade_orders.consignee_address_city consigneeAddressCity,
+			trade_orders.consignee_address_district consigneeAddressDistrict,
+			trade_orders.consignee_address_town consigneeAddressTown,
+			trade_orders.consignee_address_detail consigneeAddressDetail,
+			trade_orders.post_code postCode,
+			trade_orders.logistics_status logisticsStatus,
+			trade_orders.logistics_company logisticsCompany,
+			trade_orders.logistics_no logisticsNo,
+			trade_orders.used_activity_account_amount usedActivityAccountAmount,
+			trade_orders.order_delete_status orderDeleteStatus,
+			trade_order_items.order_item_no orderItemNo,
+			trade_order_items.channel_code channelCode,
+			trade_order_items.item_code itemCode,
+			trade_order_items.goods_name goodsName,
+			trade_order_items.sku_code skuCode,
+			trade_order_items.outer_sku_code outerSkuCode,
+			trade_order_items.sku_erp_code skuErpCode,
+			trade_order_items.sku_ean_code skuEanCode,
+			trade_order_items.sku_picture_url skuPictureUrl,
+			trade_order_items.item_spu_code itemSpuCode,
+			trade_order_items.first_category_id firstCategoryId,
+			trade_order_items.first_category_name firstCategoryName,
+			trade_order_items.second_category_id secondCategoryId,
+			trade_order_items.second_category_name secondCategoryName,
+			trade_order_items.third_category_id thirdCategoryId,
+			trade_order_items.third_category_name thirdCategoryName,
+			trade_order_items.erp_first_category_code erpFirstCategoryCode,
+			trade_order_items.erp_five_category_code erpFiveCategoryCode,
+			trade_order_items.brand_id brandId,
+			trade_order_items.brand_name brandName,
+	   		trade_order_items.customer_manager_code customerManagerCode,
+	        trade_order_items.customer_manager_name customerManagerName,
+			trade_order_items.is_vip_item isVipItem,
+			trade_order_items.vip_item_type vipItemType,
+			trade_order_items.vip_sync_flag vipSyncFlag,
+			trade_order_items.goods_count goodsCount,
+			trade_order_items.cost_price costPrice,
+			trade_order_items.price_floating_ratio priceFloatingRatio,
+			trade_order_items.commission_ratio commissionRatio,
+			trade_order_items.commission_amount commissionAmount,
+			trade_order_items.is_box_flag isBoxFlag,
+			trade_order_items.sale_price salePrice,
+			trade_order_items.goods_price_type goodsPriceType,
+			trade_order_items.goods_price goodsPrice,
+			trade_order_items.bargaining_goods_price bargainingGoodsPrice,
+			trade_order_items.bargaining_goods_count bargainingGoodsCount,
+			trade_order_items.shop_freight_template_id shopFreightTemplateId,
+			trade_order_items.delivery_area_code deliveryAreaCode,
+			trade_order_items.goods_amount goodsAmount,
+			trade_order_items.goods_freight goodsFreight,
+			trade_order_items.bargaining_goods_amount bargainingGoodsAmount,
+			trade_order_items.bargaining_goods_freight bargainingGoodsFreight,
+			trade_order_items.order_item_total_amount orderItemTotalAmount,
+			trade_order_items.order_item_pay_amount orderItemPayAmount,
+			trade_order_items.goods_real_price goodsRealPrice,
+			trade_order_items.outer_channel_order_no outerChannelOrderNo,
+			trade_order_items.outer_channel_puchase_status outerChannelPuchaseStatus,
+			trade_order_items.outer_channel_status outerChannelStatus,
+			trade_order_items.order_item_status orderItemStatus,
+			trade_order_items.order_item_receipt_time orderItemReceiptTime,
+			trade_order_items.order_item_error_status orderItemErrorStatus,
+			trade_order_items.order_item_error_time orderItemErrorTime,
+			trade_order_items.order_item_error_reason orderItemErrorReason,
+			trade_order_items.is_add_order_item isAddOrderItem,
+			trade_order_items.is_cancel_order_item isCancelOrderItem,
+			trade_order_items.order_item_cancel_time orderItemCancelTime,
+			trade_order_items.order_item_cancel_operator_id orderItemCancelOperatorId,
+			trade_order_items.order_item_cancel_operator_name orderItemCancelOperatorName,
+			trade_order_items.order_item_cancel_reason orderItemCancelReason,
+			trade_order_items.refund_status refundStatus,
+			trade_order_items.is_out_distribtion isOutDistribtion,
+			trade_order_items.erp_distribution_id erpDistributionId,
+			trade_order_items.erp_sholesaler_code erpSholesalerCode,
+			trade_order_items.erp_rebate_no erpRebateNo,
+			trade_order_items.erp_rebate_code erpRebateCode,
+			trade_order_items.is_settled isSettled,
+			trade_order_items.create_id createId,
+			trade_order_items.create_name createName,
+			trade_order_items.create_time createTime,
+			trade_order_items.modify_id modifyId,
+			trade_order_items.modify_name modifyName,
+			trade_order_items.modify_time modifyTime
+  		from trade_orders inner join trade_order_items on (trade_orders.order_no = trade_order_items.order_no)
+  		where 1 = 1 and trade_orders.order_delete_status != 2
+   			<include refid="where_fragement"/>
+   		order by trade_orders.modify_time desc
+	    <if test="page!=null">
+	      <include refid="pagination_tail" />
+	    </if>
+   </select>
+   
+   
+   <select id="queryTradeOrderListItemCodeAndBoxFlag" resultType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" parameterType="cn.htd.tradecenter.dto.TradeOrdersQueryInDTO" >
+  		select 
+			trade_orders.order_no orderNo,
+			trade_orders.buyer_code buyerCode,
+			trade_orders.buyer_name buyerName,
+			trade_order_items.order_item_no orderItemNo,
+			trade_order_items.item_code itemCode,
+			trade_order_items.goods_name goodsName,
+			trade_order_items.brand_name brandName,
+			trade_order_items.goods_count goodsCount,
+			trade_order_items.order_item_status orderItemStatus,
+			trade_order_items.category_name_list categoryNameList,
+			trade_order_items.create_id createId,
+			trade_order_items.create_name createName,
+			trade_order_items.create_time createTime,
+			trade_order_items.modify_id modifyId,
+			trade_order_items.modify_name modifyName,
+			trade_order_items.modify_time modifyTime
+  		from trade_orders inner join trade_order_items on (trade_orders.order_no = trade_order_items.order_no)
+  		where trade_order_items.order_item_status in (10,20,21,22,30,311,312,32,33)
+  		and trade_order_items.is_cancel_order_item =0
+		<if test="entity.isBoxFlag != null">
+            <![CDATA[ and trade_order_items.is_box_flag = #{entity.isBoxFlag} ]]>
+        </if>
+        <if test="entity.itemCode != null and entity.itemCode !=''">
+            <![CDATA[ and trade_order_items.item_code = #{entity.itemCode} ]]>
+        </if>
+   		order by trade_orders.modify_time desc
+	    <if test="page!=null">
+	      <include refid="pagination_tail" />
+	    </if>
+   </select>
+   
+   
+   <select id="queryTradeOrderItemsByOrderNo" resultMap="BaseResultMap" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_items
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+    <if test="isCancelOrderItem != null and isCancelOrderItem != ''">
+		<![CDATA[and is_cancel_order_item <> #{isCancelOrderItem,jdbcType=TINYINT}]]>
+	</if>
+	order by is_cancel_order_item asc, modify_time desc
+  </select>
+  <select id="queryTradeOrderItemsByOrderItemNo" resultMap="BaseResultMap" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_items
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+  </select>
+  <select id="queryCustomerManagerOrderItems4Task" resultMap="BaseResultMap" >
+	select
+	  trade_orders.trade_no tradeNo,
+	  trade_orders.order_no orderNo,
+	  trade_orders.site site,
+	  trade_orders.buyer_code buyerCode,
+	  trade_orders.buyer_type buyerType,
+	  trade_orders.buyer_name buyerName,
+	  trade_orders.seller_code sellerCode,
+	  trade_orders.seller_type sellerType,
+	  trade_orders.seller_name sellerName,
+	  trade_orders.shop_id shopId,
+	  trade_orders.shop_name shopName,
+	  trade_orders.order_from orderFrom,
+	  trade_orders.sales_type salesType,
+	  trade_orders.sales_department_code salesDepartmentCode,
+	  trade_orders.has_productplus_flag hasProductplusFlag,
+	  trade_orders.total_goods_count totalGoodsCount,
+	  trade_orders.total_goods_amount totalGoodsAmount,
+	  trade_orders.total_freight totalFreight,
+	  trade_order_items.total_discount_amount totalDiscountAmount,
+	  trade_order_items.shop_discount_amount shopDiscountAmount,
+	  trade_order_items.platform_discount_amount platformDiscountAmount,
+	  trade_order_items.used_rebate_amount usedRebateAmount,
+	  trade_orders.bargaining_order_amount bargainingOrderAmount,
+	  trade_orders.bargaining_order_freight bargainingOrderFreight,
+	  trade_orders.order_total_amount orderTotalAmount,
+	  trade_orders.order_pay_amount orderPayAmount,
+	  trade_orders.create_order_time createOrderTime,
+	  trade_order_items.has_used_coupon hasUsedCoupon,
+	  trade_order_items.is_change_price isChangePrice,
+	  trade_orders.order_status orderStatus,
+	  trade_orders.order_receipt_time orderReceiptTime,
+	  trade_orders.order_error_status orderRrrorStatus,
+	  trade_orders.order_error_time orderErrorTime,
+	  trade_orders.order_error_reason orderErrorReason,
+	  trade_orders.is_cancel_order isCancelOrder,
+	  trade_orders.order_cancel_time orderCancelTime,
+	  trade_orders.order_cancel_member_id orderCancelMemberId,
+	  trade_orders.order_cancel_member_name orderCancelMemberName,
+	  trade_orders.order_cancel_reason orderCancelReason,
+	  trade_orders.pay_type payType,
+	  trade_orders.pay_time_limit payTimeLimit,
+	  trade_orders.pay_order_time payOrderTime,
+	  trade_orders.pay_status payStatus,
+	  trade_orders.pay_serial_no paySerialNo,
+	  trade_orders.is_out_distribtion isOutDistribtion,
+	  trade_orders.is_timelimited_order isTimelimitedOrder,
+	  trade_orders.promotion_id promotionId,
+	  trade_orders.buyer_remarks buyerRemarks,
+	  trade_orders.order_remarks orderRemarks,
+	  trade_orders.is_need_invoice isNeedInvoice,
+	  trade_orders.invoice_type invoiceType,
+	  trade_orders.invoice_notify invoiceNotify,
+	  trade_orders.invoice_company_name invoiceCompanyName,
+	  trade_orders.tax_man_id taxManId,
+	  trade_orders.bank_name bankName,
+	  trade_orders.bank_account bankAccount,
+	  trade_orders.contact_phone contactPhone,
+	  trade_orders.invoice_address invoiceAddress,
+	  trade_orders.delivery_type deliveryType,
+	  trade_orders.consignee_name consigneeName,
+	  trade_orders.consignee_phone_num consigneePhoneNum,
+	  trade_orders.consignee_address consigneeAddress,
+	  trade_orders.consignee_address_province consigneeAddressProvince,
+	  trade_orders.consignee_address_city consigneeAddressCity,
+	  trade_orders.consignee_address_district consigneeAddressDistrict,
+	  trade_orders.consignee_address_town consigneeAddressTown,
+	  trade_orders.consignee_address_detail consigneeAddressDetail,
+	  trade_orders.post_code postCode,
+	  trade_orders.logistics_status logisticsStatus,
+	  trade_orders.logistics_company logisticsCompany,
+	  trade_orders.logistics_no logisticsNo,
+	  trade_orders.used_activity_account_amount usedActivityAccountAmount,
+	  trade_orders.order_delete_status orderDeleteStatus,
+	  trade_order_items.order_item_no orderItemNo,
+	  trade_order_items.channel_code channelCode,
+	  trade_order_items.item_code itemCode,
+	  trade_order_items.goods_name goodsName,
+	  trade_order_items.sku_code skuCode,
+	  trade_order_items.outer_sku_code outerSkuCode,
+	  trade_order_items.sku_erp_code skuErpCode,
+	  trade_order_items.sku_ean_code skuEanCode,
+	  trade_order_items.sku_picture_url skuPictureUrl,
+	  trade_order_items.item_spu_code itemSpuCode,
+	  trade_order_items.first_category_id firstCategoryId,
+	  trade_order_items.first_category_name firstCategoryName,
+	  trade_order_items.second_category_id secondCategoryId,
+	  trade_order_items.second_category_name secondCategoryName,
+	  trade_order_items.third_category_id thirdCategoryId,
+	  trade_order_items.third_category_name thirdCategoryName,
+	  trade_order_items.erp_first_category_code erpFirstCategoryCode,
+	  trade_order_items.erp_five_category_code erpFiveCategoryCode,
+	  trade_order_items.brand_id brandId,
+	  trade_order_items.brand_name brandName,
+	  trade_order_items.customer_manager_code customerManagerCode,
+	  trade_order_items.customer_manager_name customerManagerName,
+	  trade_order_items.is_vip_item isVipItem,
+	  trade_order_items.vip_item_type vipItemType,
+	  trade_order_items.vip_sync_flag vipSyncFlag,
+	  trade_order_items.goods_count goodsCount,
+	  trade_order_items.cost_price costPrice,
+	  trade_order_items.price_floating_ratio priceFloatingRatio,
+	  trade_order_items.commission_ratio commissionRatio,
+	  trade_order_items.commission_amount commissionAmount,
+	  trade_order_items.is_box_flag isBoxFlag,
+	  trade_order_items.sale_price salePrice,
+	  trade_order_items.goods_price_type goodsPriceType,
+	  trade_order_items.goods_price goodsPrice,
+	  trade_order_items.bargaining_goods_price bargainingGoodsPrice,
+	  trade_order_items.bargaining_goods_count bargainingGoodsCount,
+	  trade_order_items.shop_freight_template_id shopFreightTemplateId,
+	  trade_order_items.delivery_area_code deliveryAreaCode,
+	  trade_order_items.goods_amount goodsAmount,
+	  trade_order_items.goods_freight goodsFreight,
+	  trade_order_items.bargaining_goods_amount bargainingGoodsAmount,
+	  trade_order_items.bargaining_goods_freight bargainingGoodsFreight,
+	  trade_order_items.order_item_total_amount orderItemTotalAmount,
+	  trade_order_items.order_item_pay_amount orderItemPayAmount,
+	  trade_order_items.goods_real_price goodsRealPrice,
+	  trade_order_items.outer_channel_order_no outerChannelOrderNo,
+	  trade_order_items.outer_channel_puchase_status outerChannelPuchaseStatus,
+	  trade_order_items.outer_channel_status outerChannelStatus,
+	  trade_order_items.order_item_status orderItemStatus,
+	  trade_order_items.order_item_receipt_time orderItemReceiptTime,
+	  trade_order_items.order_item_error_status orderItemErrorStatus,
+	  trade_order_items.order_item_error_time orderItemErrorTime,
+	  trade_order_items.order_item_error_reason orderItemErrorReason,
+	  trade_order_items.is_add_order_item isAddOrderItem,
+	  trade_order_items.is_cancel_order_item isCancelOrderItem,
+	  trade_order_items.order_item_cancel_time orderItemCancelTime,
+	  trade_order_items.order_item_cancel_operator_id orderItemCancelOperatorId,
+	  trade_order_items.order_item_cancel_operator_name orderItemCancelOperatorName,
+	  trade_order_items.order_item_cancel_reason orderItemCancelReason,
+	  trade_order_items.refund_status refundStatus,
+	  trade_order_items.is_out_distribtion isOutDistribtion,
+	  trade_order_items.erp_distribution_id erpDistributionId,
+	  trade_order_items.erp_sholesaler_code erpSholesalerCode,
+	  trade_order_items.erp_rebate_no erpRebateNo,
+	  trade_order_items.erp_rebate_code erpRebateCode,
+	  trade_order_items.is_settled isSettled,
+	  trade_order_items.create_id createId,
+	  trade_order_items.create_name createName,
+	  trade_order_items.create_time createTime,
+	  trade_order_items.modify_id modifyId,
+	  trade_order_items.modify_name modifyName,
+	  trade_order_items.modify_time modifyTime
+	from trade_orders inner join trade_order_items on (trade_orders.order_no = trade_order_items.order_no)
+	where 1 = 1
+      <![CDATA[ and trade_orders.buyer_code <> '' ]]>
+      <![CDATA[ and trade_orders.buyer_code <> '0']]>
+      <![CDATA[ and trade_orders.seller_code <> '' ]]>
+      <![CDATA[ and trade_orders.seller_code <> '0']]>
+      <![CDATA[ and trade_order_items.brand_id <> 0 ]]>
+      <![CDATA[ and trade_order_items.third_category_id <> 0 ]]>
+	  and trade_order_items.customer_manager_code = ''
+	<if test="entity != null">
+	  <![CDATA[and trade_order_items.is_cancel_order_item <> #{entity.cancelStatus}]]>
+		  and mod(trade_order_items.id, #{entity.taskQueueNum}) in
+		  <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+			  #{taskId}
+		  </foreach>
+	</if>
+	order by trade_orders.create_order_time desc
+    <if test="page!=null">
+      <include refid="pagination_tail" />
+    </if>
+	</select>
+  <insert id="addTradeOrderItemInfo" useGeneratedKeys="true" keyProperty="id" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO">
+    insert into trade_order_items
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null and orderNo != ''" >
+        order_no,
+      </if>
+      <if test="orderItemNo != null and orderItemNo != ''" >
+        order_item_no,
+      </if>
+      <if test="channelCode != null and channelCode != ''" >
+        channel_code,
+      </if>
+      <if test="itemCode != null and itemCode != ''" >
+        item_code,
+      </if>
+      <if test="goodsName != null and goodsName != ''" >
+        goods_name,
+      </if>
+      <if test="skuCode != null and skuCode != ''" >
+        sku_code,
+      </if>
+      <if test="outerSkuCode != null and outerSkuCode != ''" >
+        outer_sku_code,
+      </if>
+      <if test="skuErpCode != null and skuErpCode != ''" >
+        sku_erp_code,
+      </if>
+      <if test="skuEanCode != null and skuEanCode != ''" >
+        sku_ean_code,
+      </if>
+      <if test="skuPictureUrl != null and skuPictureUrl != ''" >
+        sku_picture_url,
+      </if>
+      <if test="itemSpuCode != null and itemSpuCode != ''" >
+        item_spu_code,
+      </if>
+      <if test="firstCategoryId != null" >
+        first_category_id,
+      </if>
+      <if test="firstCategoryName != null and firstCategoryName != ''" >
+        first_category_name,
+      </if>
+      <if test="secondCategoryId != null" >
+        second_category_id,
+      </if>
+      <if test="secondCategoryName != null and secondCategoryName != ''" >
+        second_category_name,
+      </if>
+      <if test="thirdCategoryId != null" >
+        third_category_id,
+      </if>
+      <if test="thirdCategoryName != null and thirdCategoryName != ''" >
+        third_category_name,
+      </if>
+      <if test="categoryIdList != null and categoryIdList != ''" >
+        category_id_list,
+      </if>
+      <if test="categoryNameList != null and categoryNameList != ''" >
+        category_name_list,
+      </if>
+      <if test="erpFirstCategoryCode != null and erpFirstCategoryCode != ''" >
+        erp_first_category_code,
+      </if>
+      <if test="erpFiveCategoryCode != null and erpFiveCategoryCode != ''" >
+        erp_five_category_code,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="brandName != null and brandName != ''" >
+        brand_name,
+      </if>
+      <if test="isVipItem != null" >
+        is_vip_item,
+      </if>
+      <if test="vipItemType != null and vipItemType != ''" >
+        vip_item_type,
+      </if>
+      <if test="vipSyncFlag != null" >
+        vip_sync_flag,
+      </if>
+      <if test="goodsCount != null" >
+        goods_count,
+      </if>
+      <if test="costPrice != null" >
+        cost_price,
+      </if>
+      <if test="priceFloatingRatio != null" >
+        price_floating_ratio,
+      </if>
+      <if test="commissionRatio != null" >
+        commission_ratio,
+      </if>
+      <if test="commissionAmount != null" >
+        commission_amount,
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag,
+      </if>
+      <if test="salePrice != null" >
+        sale_price,
+      </if>
+      <if test="goodsPriceType != null" >
+        goods_price_type,
+      </if>
+      <if test="goodsPrice != null" >
+        goods_price,
+      </if>
+      <if test="bargainingGoodsPrice != null" >
+        bargaining_goods_price,
+      </if>
+      <if test="bargainingGoodsCount != null" >
+        bargaining_goods_count,
+      </if>
+      <if test="shopFreightTemplateId != null" >
+        shop_freight_template_id,
+      </if>
+      <if test="deliveryAreaCode != null and deliveryAreaCode != ''" >
+        delivery_area_code,
+      </if>
+      <if test="goodsAmount != null" >
+        goods_amount,
+      </if>
+      <if test="goodsFreight != null" >
+        goods_freight,
+      </if>
+      <if test="totalDiscountAmount != null" >
+        total_discount_amount,
+      </if>
+      <if test="shopDiscountAmount != null" >
+        shop_discount_amount,
+      </if>
+      <if test="platformDiscountAmount != null" >
+        platform_discount_amount,
+      </if>
+      <if test="usedRebateAmount != null" >
+        used_rebate_amount,
+      </if>
+      <if test="bargainingGoodsAmount != null" >
+        bargaining_goods_amount,
+      </if>
+      <if test="bargainingGoodsFreight != null" >
+        bargaining_goods_freight,
+      </if>
+      <if test="orderItemTotalAmount != null" >
+        order_item_total_amount,
+      </if>
+      <if test="orderItemPayAmount != null" >
+        order_item_pay_amount,
+      </if>
+      <if test="goodsRealPrice != null" >
+        goods_real_price,
+      </if>
+      <if test="hasUsedCoupon != null" >
+        has_used_coupon,
+      </if>
+      <if test="isChangePrice != null" >
+        is_change_price,
+      </if>
+      <if test="outerChannelOrderNo != null and outerChannelOrderNo != ''" >
+        outer_channel_order_no,
+      </if>
+      <if test="outerChannelPuchaseStatus != null and outerChannelPuchaseStatus != ''" >
+        outer_channel_puchase_status,
+      </if>
+      <if test="outerChannelStatus != null and outerChannelStatus != ''" >
+        outer_channel_status,
+      </if>
+      <if test="orderItemStatus != null and orderItemStatus != ''" >
+        order_item_status,
+      </if>
+      <if test="orderItemReceiptTime != null" >
+        order_item_receipt_time,
+      </if>
+      <if test="orderItemErrorStatus != null and orderItemErrorStatus != ''" >
+        order_item_error_status,
+      </if>
+      <if test="orderItemErrorTime != null" >
+        order_item_error_time,
+      </if>
+      <if test="orderItemErrorReason != null and orderItemErrorReason != ''" >
+        order_item_error_reason,
+      </if>
+      <if test="isAddOrderItem != null" >
+        is_add_order_item,
+      </if>
+      <if test="isCancelOrderItem != null" >
+        is_cancel_order_item,
+      </if>
+      <if test="orderItemCancelTime != null" >
+        order_item_cancel_time,
+      </if>
+      <if test="orderItemCancelOperatorId != null" >
+        order_item_cancel_operator_id,
+      </if>
+      <if test="orderItemCancelOperatorName != null and orderItemCancelOperatorName != ''" >
+        order_item_cancel_operator_name,
+      </if>
+      <if test="orderItemCancelReason != null and orderItemCancelReason != ''" >
+        order_item_cancel_reason,
+      </if>
+      <if test="refundStatus != null and refundStatus != ''" >
+        refund_status,
+      </if>
+      <if test="isOutDistribtion != null" >
+        is_out_distribtion,
+      </if>
+      <if test="erpDistributionId != null" >
+        erp_distribution_id,
+      </if>
+      <if test="erpSholesalerCode != null and erpSholesalerCode != ''" >
+        erp_sholesaler_code,
+      </if>
+      <if test="erpRebateNo != null and erpRebateNo != ''" >
+        erp_rebate_no,
+      </if>
+      <if test="erpRebateCode != null and erpRebateCode != ''" >
+        erp_rebate_code,
+      </if>
+      <if test="isSettled != null" >
+        is_settled,
+      </if>
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null and orderNo != ''" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNo != null and orderItemNo != ''" >
+        #{orderItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="channelCode != null and channelCode != ''" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCode != null and itemCode != ''" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null and goodsName != ''" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null and skuCode != ''" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outerSkuCode != null and outerSkuCode != ''" >
+        #{outerSkuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuErpCode != null and skuErpCode != ''" >
+        #{skuErpCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuEanCode != null and skuEanCode != ''" >
+        #{skuEanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuPictureUrl != null and skuPictureUrl != ''" >
+        #{skuPictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="itemSpuCode != null and itemSpuCode != ''" >
+        #{itemSpuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="firstCategoryId != null" >
+        #{firstCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="firstCategoryName != null and firstCategoryName != ''" >
+        #{firstCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="secondCategoryId != null" >
+        #{secondCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="secondCategoryName != null and secondCategoryName != ''" >
+        #{secondCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdCategoryId != null" >
+        #{thirdCategoryId,jdbcType=BIGINT},
+      </if>
+      <if test="thirdCategoryName != null and thirdCategoryName != ''" >
+        #{thirdCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryIdList != null and categoryIdList != ''" >
+        #{categoryIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryNameList != null and categoryNameList != ''" >
+        #{categoryNameList,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFirstCategoryCode != null and erpFirstCategoryCode != ''" >
+        #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFiveCategoryCode != null and erpFiveCategoryCode != ''" >
+        #{erpFiveCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="brandName != null and brandName != ''" >
+        #{brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="isVipItem != null" >
+        #{isVipItem,jdbcType=TINYINT},
+      </if>
+      <if test="vipItemType != null and vipItemType != ''" >
+        #{vipItemType,jdbcType=VARCHAR},
+      </if>
+      <if test="vipSyncFlag != null" >
+        #{vipSyncFlag,jdbcType=TINYINT},
+      </if>
+      <if test="goodsCount != null" >
+        #{goodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="costPrice != null" >
+        #{costPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceFloatingRatio != null" >
+        #{priceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="commissionRatio != null" >
+        #{commissionRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="commissionAmount != null" >
+        #{commissionAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="isBoxFlag != null" >
+        #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsPriceType != null and goodsPriceType != ''" >
+        #{goodsPriceType,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsPrice != null" >
+        #{goodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingGoodsPrice != null" >
+        #{bargainingGoodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingGoodsCount != null" >
+        #{bargainingGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="shopFreightTemplateId != null" >
+        #{shopFreightTemplateId,jdbcType=BIGINT},
+      </if>
+      <if test="deliveryAreaCode != null and deliveryAreaCode != ''" >
+        #{deliveryAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsAmount != null" >
+        #{goodsAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsFreight != null" >
+        #{goodsFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="totalDiscountAmount != null" >
+        #{totalDiscountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="shopDiscountAmount != null" >
+        #{shopDiscountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="platformDiscountAmount != null" >
+        #{platformDiscountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="usedRebateAmount != null" >
+        #{usedRebateAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingGoodsAmount != null" >
+        #{bargainingGoodsAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingGoodsFreight != null" >
+        #{bargainingGoodsFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="orderItemTotalAmount != null" >
+        #{orderItemTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderItemPayAmount != null" >
+        #{orderItemPayAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsRealPrice != null" >
+        #{goodsRealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="hasUsedCoupon != null" >
+        #{hasUsedCoupon,jdbcType=TINYINT},
+      </if>
+      <if test="isChangePrice != null" >
+        #{isChangePrice,jdbcType=TINYINT},
+      </if>
+      <if test="outerChannelOrderNo != null and outerChannelOrderNo != ''" >
+        #{outerChannelOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outerChannelPuchaseStatus != null and outerChannelPuchaseStatus != ''" >
+        #{outerChannelPuchaseStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="outerChannelStatus != null and outerChannelStatus != ''" >
+        #{outerChannelStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemStatus != null and orderItemStatus != ''" >
+        #{orderItemStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemReceiptTime != null" >
+        #{orderItemReceiptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderItemErrorStatus != null and orderItemErrorStatus != ''" >
+        #{orderItemErrorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemErrorTime != null" >
+        #{orderItemErrorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderItemErrorReason != null and orderItemErrorReason != ''" >
+        #{orderItemErrorReason,jdbcType=VARCHAR},
+      </if>
+      <if test="isAddOrderItem != null" >
+        #{isAddOrderItem,jdbcType=TINYINT},
+      </if>
+      <if test="isCancelOrderItem != null" >
+        #{isCancelOrderItem,jdbcType=TINYINT},
+      </if>
+      <if test="orderItemCancelTime != null" >
+        #{orderItemCancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderItemCancelOperatorId != null" >
+        #{orderItemCancelOperatorId,jdbcType=BIGINT},
+      </if>
+      <if test="orderItemCancelOperatorName != null and orderItemCancelOperatorName != ''" >
+        #{orderItemCancelOperatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemCancelReason != null and orderItemCancelReason != ''" >
+        #{orderItemCancelReason,jdbcType=VARCHAR},
+      </if>
+      <if test="refundStatus != null and refundStatus != ''" >
+        #{refundStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="isOutDistribtion != null" >
+        #{isOutDistribtion,jdbcType=TINYINT},
+      </if>
+      <if test="erpDistributionId != null" >
+        #{erpDistributionId,jdbcType=BIGINT},
+      </if>
+      <if test="erpSholesalerCode != null and erpSholesalerCode != ''" >
+        #{erpSholesalerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpRebateNo != null and erpRebateNo != ''" >
+        #{erpRebateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="erpRebateCode != null and erpRebateCode != ''" >
+        #{erpRebateCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isSettled != null" >
+        #{isSettled,jdbcType=TINYINT},
+      </if>
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <update id="updateTradeOrderItemsStatusInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items
+    <set >
+      <if test="customerManagerCode != null and customerManagerCode != ''">
+      customer_manager_code = #{customerManagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerName != null and customerManagerName != ''">
+      customer_manager_name = #{customerManagerName,jdbcType=VARCHAR},
+      </if>
+      order_item_status = #{orderItemStatus,jdbcType=VARCHAR},
+      <if test="orderItemErrorStatus != null and orderItemErrorStatus != ''">
+      order_item_error_status = #{orderItemErrorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemErrorReason != null and orderItemErrorReason != ''">
+      order_item_error_reason = #{orderItemErrorReason,jdbcType=VARCHAR},
+      </if>
+      <if test="erpDistributionId != null and erpDistributionId != 0">
+      erp_distribution_id = #{erpDistributionId,jdbcType=BIGINT},
+      </if>
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+  </update>
+  <update id="deleteTradeOrderItemsInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items
+    <set >
+      is_cancel_order_item = #{isCancelOrderItem,jdbcType=TINYINT},
+      order_item_cancel_time = now(),
+      order_item_cancel_operator_id =  #{orderItemCancelOperatorId,jdbcType=BIGINT},
+      order_item_cancel_operator_name =  #{orderItemCancelOperatorName,jdbcType=VARCHAR},
+      order_item_cancel_reason =  #{orderItemCancelReason,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateTradeOrderItemsNegotiateInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items
+    <set >
+      bargaining_goods_price = #{bargainingGoodsPrice,jdbcType=DECIMAL},
+      bargaining_goods_count = #{bargainingGoodsCount,jdbcType=INTEGER},
+      bargaining_goods_amount = #{bargainingGoodsAmount,jdbcType=DECIMAL},
+      bargaining_goods_freight = #{bargainingGoodsFreight,jdbcType=DECIMAL},
+      order_item_total_amount = #{orderItemTotalAmount,jdbcType=DECIMAL},
+      order_item_pay_amount = #{orderItemPayAmount,jdbcType=DECIMAL},
+      goods_real_price =  #{goodsRealPrice,jdbcType=DECIMAL},
+      is_change_price = #{isChangePrice,jdbcType=TINYINT},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateTradeOrderItemsCustomerManagerInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items
+    <set >
+      customer_manager_code = #{customerManagerCode,jdbcType=VARCHAR},
+      customer_manager_name = #{customerManagerName,jdbcType=VARCHAR},
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateTradeOrderItemsErpDownStatus" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items
+    <set >
+      order_item_error_status = #{orderItemErrorStatus,jdbcType=VARCHAR},
+      order_item_error_reason = #{orderItemErrorReason,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where erp_distribution_id = #{erpDistributionId,jdbcType=BIGINT}
+      and is_cancel_order_item = #{isCancelOrderItem,jdbcType=TINYINT}
+  </update>
+  <update id="updateTradeOrderItemsPreSaleDownStatus" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+	update trade_order_items
+	<set >
+	  order_item_error_status = #{orderItemErrorStatus,jdbcType=VARCHAR},
+	  order_item_error_reason = #{orderItemErrorReason,jdbcType=VARCHAR},
+	  modify_id = #{modifyId,jdbcType=BIGINT},
+	  modify_name = #{modifyName,jdbcType=VARCHAR},
+	  modify_time = now(),
+	</set>
+	where order_no = #{orderNo,jdbcType=VARCHAR}
+	  and is_cancel_order_item = #{isCancelOrderItem,jdbcType=TINYINT}
+	</update>
+  <update id="updateTradeOrderItemsPostStrikeaStatus" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items
+    <set >
+      order_item_error_status = #{orderItemErrorStatus,jdbcType=VARCHAR},
+      order_item_error_reason = #{orderItemErrorReason,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and erp_first_category_code = #{erpFirstCategoryCode,jdbcType=VARCHAR}
+      and brand_id = #{brandId,jdbcType=BIGINT}
+      and is_cancel_order_item = #{isCancelOrderItem,jdbcType=TINYINT}
+  </update>
+	<update id="changePrice" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+		update trade_order_items
+		<trim prefix="set" suffixOverrides=",">
+			<if test="bargainingGoodsAmount!=null">bargaining_goods_amount=#{bargainingGoodsAmount},</if>
+			<if test="bargainingGoodsFreight!=null">bargaining_goods_freight=#{bargainingGoodsFreight},</if>
+			<if test="orderItemPayAmount!=null">order_item_pay_amount=#{orderItemPayAmount},</if>
+			<if test="modifyId!=null">modify_id=#{modifyId},</if>
+			<if test="modifyName!=null">modify_name=#{modifyName},</if>
+			modify_time=now(),
+			is_change_price=1
+		</trim>
+		where order_item_no =#{orderItemNo}
+	</update>
+
+	<update id="confimDeliver" parameterType="cn.htd.tradecenter.dto.TradeOrdersDTO">
+		update trade_order_items
+		<trim prefix="set" suffixOverrides=",">
+			<if test="orderItemStatus!=null">order_item_status=#{orderItemStatus},</if>
+			<if test="modifyId!=null">modify_id=#{modifyId},</if>
+			<if test="modifyName!=null">modify_name=#{modifyName},</if>
+			modify_time=now(),
+		</trim>
+		WHERE order_item_no=#{orderItemNo}
+	</update>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeSettlementConstDAO">
+
+	<resultMap id="base_resultMap_tradeSettlementConst" type="cn.htd.tradecenter.dto.bill.TradeSettlementConstDTO">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="const_type" property="constType" jdbcType="VARCHAR" />
+    <result column="const_key" property="constKey" jdbcType="VARCHAR" />
+    <result column="const_value" property="constValue" jdbcType="VARCHAR" />
+    <result column="const_status" property="constStatus" jdbcType="VARCHAR" />
+    <result column="display_order" property="displayOrder" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+    <!-- 添加单条常量 -->
+    <insert id="addTradeSettlementConst" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementConstDTO">
+    INSERT INTO trade_settlement_const
+    (const_type,
+    const_key,
+    const_value,
+    const_status,
+    display_order,
+    create_id,
+    create_name,
+    create_time,
+    modify_id,
+    modify_name,
+    modify_time)
+    VALUES
+    (#{constType,jdbcType=VARCHAR},
+    #{constKey,jdbcType=VARCHAR},
+    #{constValue,jdbcType=VARCHAR},
+    #{constStatus,jdbcType=VARCHAR},
+    #{displayOrder,jdbcType=INTEGER},
+    #{createId,jdbcType=BIGINT},
+    #{createName,jdbcType=VARCHAR},
+	#{createTime,jdbcType=TIMESTAMP},
+	#{modifyId,jdbcType=BIGINT},
+	#{modifyName,jdbcType=VARCHAR},
+	#{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  
+  	<select id="getTradeSetConst" parameterType="map" resultType="map">
+	SELECT const_key constKey , const_value constValue FROM trade_settlement_const WHERE 1 = 1
+	<if test="params.status !=null and params.status !=''">
+	and const_status = #{params.status}
+	</if>
+	<if test="params.code!=null and params.code != ''">
+	and const_key = #{params.code}
+	</if>
+	<if test="params.type!=null and params.type != ''">
+	and const_type = #{params.type}
+	</if>
+    <if test="params.statusList!=null">
+        and const_key in
+        <foreach item="item" index="index" collection="params.statusList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </if>
+	
+	</select>
+
+  <!-- 根据type和key查询单条常量 -->
+  <select id="getSetConsByTypeAndKey" resultMap="base_resultMap_tradeSettlementConst" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementConstDTO">
+    SELECT id,const_type,const_key,const_value,const_status,display_order,
+           create_id,create_name,create_time,modify_id,modify_name,modify_time  
+    FROM trade_settlement_const 
+    WHERE const_type = #{constType,jdbcType=VARCHAR} and const_key = #{constKey,jdbcType=VARCHAR}  and const_status = #{constStatus,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 根据type查询多条常量 -->
+  <select id="getSetConsByType" resultMap="base_resultMap_tradeSettlementConst" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementConstDTO">
+    SELECT id,const_type,const_key,const_value,const_status,display_order,
+           create_id,create_name,create_time,modify_id,modify_name,modify_time  
+    FROM trade_settlement_const
+    WHERE const_type = #{constType,jdbcType=VARCHAR} and const_status = #{constStatus,jdbcType=VARCHAR} 
+  </select>
+  
+  
+  
+</mapper>

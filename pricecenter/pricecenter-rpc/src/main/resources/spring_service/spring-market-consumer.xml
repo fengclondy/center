@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+
+	<!-- <dubbo:reference id="promotionService"
+		interface="com.bjucloud.marketcenter.service.PromotionService"
+		version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:reference id="promotionFrExportService"
+		interface="com.bjucloud.marketcenter.service.PromotionFrExportService"
+		version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:reference id="promotionInfoExportService"
+		interface="com.bjucloud.marketcenter.service.PromotionInfoExportService"
+		version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:reference id="promotionMdExportService"
+		interface="com.bjucloud.marketcenter.service.PromotionMdExportService"
+		version="${dubbo.version}" timeout="60000" />
+
+	优惠券
+	<dubbo:reference id="couponExportService"
+		interface="com.bjucloud.marketcenter.service.CouponExportService"
+		version="${dubbo.version}" timeout="60000" /> -->
+
+</beans>

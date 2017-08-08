@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+
+	<dubbo:service interface="cn.htd.tradecenter.service.ExpressModelExportService" ref="expressModelExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.ShopDeliveryTypeExportService" ref="shopDeliveryTypeExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.ShopFreightTemplateExportService" ref="shopFreightTemplateExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.ShopPreferentialWayExportService" ref="shopPreferentialWayExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.TradeOrderExportService" ref="tradeOrderExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.TradeOrderService" ref="tradeOrderService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.TradeOrderTodoCountService" ref="tradeOrderTodoCountService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.ItemSkuSellReportExportService" ref="itemSkuSellReportExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.OrderDealReportExportService" ref="orderDealReportExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.tradecenter.service.TradeSettlementService" ref="tradeSettlementService" version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+
+	<dubbo:service interface="cn.htd.tradecenter.service.GroupBuyService" ref="groupBuyService" version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+
+</beans>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderItemsWarehouseDetailDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderItemsWarehouseDetailDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+    <result column="warehouse_code" property="warehouseCode" jdbcType="VARCHAR" />
+    <result column="warehouse_name" property="warehouseName" jdbcType="VARCHAR" />
+    <result column="supplier_code" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="supplier_name" property="supplierName" jdbcType="VARCHAR" />
+    <result column="purchase_department_code" property="purchaseDepartmentCode" jdbcType="VARCHAR" />
+    <result column="purchase_department_name" property="purchaseDepartmentName" jdbcType="VARCHAR" />
+    <result column="product_attribute" property="productAttribute" jdbcType="VARCHAR" />
+    <result column="available_inventory" property="availableInventory" jdbcType="INTEGER" />
+    <result column="is_agreement_sku" property="isAgreementSku" jdbcType="TINYINT" />
+    <result column="agreement_code" property="agreementCode" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,
+	order_no,
+	order_item_no,
+	sku_code,
+	goods_count,
+	warehouse_code,
+	warehouse_name,
+	supplier_code,
+	supplier_name,
+	purchase_department_code,
+	purchase_department_name,
+	product_attribute,
+	available_inventory,
+	is_agreement_sku,
+	agreement_code,
+	delete_flag,
+	create_id,
+	create_name,
+	create_time,
+	modify_id,
+	modify_name,
+	modify_time
+  </sql>
+  <select id="queryOrderItemWarehouseDetailByOrderItemNo" resultMap="BaseResultMap" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_items_warehouse_detail
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+      and delete_flag = 0
+  </select>
+  <insert id="addOrderItemsWarehouseDetail" useGeneratedKeys="true" keyProperty="id" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    insert into trade_order_items_warehouse_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null and orderNo != ''" >
+        order_no,
+      </if>
+      <if test="orderItemNo != null and orderItemNo != ''" >
+        order_item_no,
+      </if>
+      <if test="skuCode != null and skuCode != ''" >
+        sku_code,
+      </if>
+      <if test="goodsCount != null" >
+        goods_count,
+      </if>
+      <if test="warehouseCode != null and warehouseCode != ''" >
+        warehouse_code,
+      </if>
+      <if test="warehouseName != null and warehouseName != ''" >
+        warehouse_name,
+      </if>
+      <if test="supplierCode != null and supplierCode != ''" >
+        supplier_code,
+      </if>
+      <if test="supplierName != null and supplierName != ''" >
+        supplier_name,
+      </if>
+      <if test="purchaseDepartmentCode != null and purchaseDepartmentCode != ''" >
+        purchase_department_code,
+      </if>
+      <if test="purchaseDepartmentName != null and purchaseDepartmentName != ''" >
+        purchase_department_name,
+      </if>
+      <if test="productAttribute != null and productAttribute != ''" >
+        product_attribute,
+      </if>
+      <if test="availableInventory != null" >
+        available_inventory,
+      </if>
+      <if test="isAgreementSku != null" >
+        is_agreement_sku,
+      </if>
+      <if test="agreementCode != null and agreementCode != ''" >
+        agreement_code,
+      </if>
+      delete_flag,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null and orderNo != ''" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNo != null and orderItemNo != ''" >
+        #{orderItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null and skuCode != ''" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsCount != null" >
+        #{goodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="warehouseCode != null and warehouseCode != ''" >
+        #{warehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="warehouseName != null and warehouseName != ''" >
+        #{warehouseName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null and supplierCode != ''" >
+        #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierName != null and supplierName != ''" >
+        #{supplierName,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseDepartmentCode != null and purchaseDepartmentCode != ''" >
+        #{purchaseDepartmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseDepartmentName != null and purchaseDepartmentName != ''" >
+        #{purchaseDepartmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="productAttribute != null and productAttribute != ''" >
+        #{productAttribute,jdbcType=VARCHAR},
+      </if>
+      <if test="availableInventory != null" >
+        #{availableInventory,jdbcType=INTEGER},
+      </if>
+      <if test="isAgreementSku != null" >
+        #{isAgreementSku,jdbcType=TINYINT},
+      </if>
+      <if test="agreementCode != null and agreementCode != ''" >
+        #{agreementCode,jdbcType=VARCHAR},
+      </if>
+      0,
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <!-- 批量插入记录 -->
+  <insert id="addOrderItemsWarehouseDetailList" useGeneratedKeys="true" parameterType="java.util.List">
+  	insert into trade_order_items_warehouse_detail (
+	    order_no,
+		order_item_no,
+		sku_code,
+		goods_count,
+		warehouse_code,
+		warehouse_name,
+		supplier_code,
+		supplier_name,
+		purchase_department_code,
+		purchase_department_name,
+		product_attribute,
+		available_inventory,
+		is_agreement_sku,
+		agreement_code,
+		delete_flag,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+     ) values 
+     <foreach collection="list" item="item" index="index" separator=",">
+		(
+			#{item.orderNo},
+			#{item.orderItemNo},
+			#{item.skuCode},
+			#{item.goodsCount},
+			#{item.warehouseCode},
+			#{item.warehouseName},
+			#{item.supplierCode},
+			#{item.supplierName},
+			#{item.purchaseDepartmentCode},
+			#{item.purchaseDepartmentName},
+			#{item.productAttribute},
+			#{item.availableInventory},
+			#{item.isAgreementSku},
+			#{item.agreementCode},
+			0,
+			#{item.createId},
+			#{item.createName},
+			now(),
+			#{item.createId},
+			#{item.createName},
+			now()
+		)
+	 </foreach>
+  </insert>
+  <update id="deleteTradeOrderItemsWarehouseInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
+    update trade_order_items_warehouse_detail
+    <set >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+  </update>
+</mapper>

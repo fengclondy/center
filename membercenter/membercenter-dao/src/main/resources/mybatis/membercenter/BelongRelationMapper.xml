@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.BelongRelationshipDAO">
+  
+	
+	<!-- 查询会员归属关系，状态为3：审核通过且有效 -->
+	<select id="selectBelongRelationList" resultType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+		select 
+			b.buyer_id memberId,
+			c.company_name companyName,
+			c.artificial_person_mobile as artificialPersonMobile,
+			co.company_name curBelongSellerName,
+			m.contact_mobile contactMobile,
+			m.belong_seller_id belongSellerId,
+			m.belong_manager_id belongManagerId,
+			m.cur_belong_seller_id curBelongSellerId,
+			m.cur_belong_manager_id curBelongManagerId,
+			c.location_addr as locationAddr
+		from belong_relationship b
+		LEFT JOIN member_base_info m on m.id = b.buyer_id  
+		LEFT JOIN member_company_info c on m.id = c.member_id and c.buyer_seller_type='1'
+		LEFT JOIN member_company_info co on m.cur_belong_seller_id = co.member_id and  co.buyer_seller_type='2' 
+		where 1=1 and b.status = '3'
+		<if test="companyName != null and companyName !='' ">
+			and c.company_name like CONCAT('%',#{companyName},'%')
+		</if>
+		<if test="contactMobile != null and contactMobile !='' ">
+			and c.artificial_person_mobile like CONCAT('%',#{contactMobile},'%')
+		</if>
+		<if test="belongSellerName != null and belongSellerName !='' ">
+			and co.company_name like CONCAT('%',#{belongSellerName},'%')
+		</if>
+		<if test="page != null and page != ''">
+    	 limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	
+	<!-- 查询会员归属关系详细信息 -->
+	<select id="selectBelongRelationInfo" resultType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+		select 
+			b.buyer_id memberId,
+			c.company_name companyName,
+			m.contact_mobile contactMobile,
+			m.belong_seller_id belongSellerId,
+			m.belong_manager_id belongManagerId,
+			m.cur_belong_seller_id curBelongSellerId,
+			m.cur_belong_manager_id curBelongManagerId,
+			m.member_code as mallAccount,
+			c1.company_name belongSellerName,
+			c3.company_name curBelongSellerName,
+			c.location_addr as locationAddr
+		from member_base_info m
+		LEFT JOIN belong_relationship b on m.id = b.buyer_id and b.status = '3'
+		LEFT JOIN member_company_info c on m.id = c.member_id and c.buyer_seller_type = '1'
+		LEFT JOIN member_company_info c1 on m.belong_seller_id = c1.member_id and c1.buyer_seller_type = '2'
+		LEFT JOIN member_company_info c3 on m.cur_belong_seller_id  = c3.member_id and c3.buyer_seller_type = '2'
+		where m.id = #{memberId} and m.cur_belong_seller_id = #{sellerId}
+		
+	</select>
+
+	<!-- 查询会员归属关系历史记录 -->
+	<select id="selectBelongHistoryList" resultType="cn.htd.membercenter.domain.BelongRelationship">
+		select 
+			b.belong_id belongId,
+			b.buyer_id memberId,
+			b.seller_id sellerId,
+			b.customer_manager_id customerManagerId,
+			b.modify_name as modifyName,
+			b.modify_time as modifyTime,
+			b.belong_verify_time belongVerifyTime
+		from belong_relationship b
+		where b.buyer_id = #{memberId} and b.status = '9'
+		
+	</select>
+	
+	<!-- 根据会员ID修改会员基本信息表归属关系 -->
+	<update id="updateBaseInfo" parameterType="Object">
+		update member_base_info 
+			<set>
+				<if test="curBelongSellerId !=null and curBelongSellerId != '' ">
+					cur_belong_seller_id= #{curBelongSellerId},
+					
+				</if>
+				<if test="curBelongManagerId !=null and curBelongManagerId != '' ">
+					cur_belong_manager_id= #{curBelongManagerId},
+				</if>
+				<if test="modifyId !=null and modifyId != '' ">
+					modify_id= #{modifyId},
+				</if>
+				<if test="modifyName !=null and modifyName != '' ">
+					modify_name= #{modifyName},
+				</if>
+				modify_time = now()
+			</set>		   
+			where id = #{memberId}
+	</update>
+	<!-- 根据会员ID修改会员归属关系表信息 -->
+	<update id="updateBelongInfo" parameterType="Object">
+		update belong_relationship 
+			<set>			
+					status = '9',				
+				<if test="modifyId !=null and modifyId != '' ">
+					modify_id= #{modifyId},
+				</if>
+				<if test="modifyName !=null and modifyName != '' ">
+					modify_name= #{modifyName},
+				</if>
+				modify_time = now()
+			</set>		   
+			where buyer_id = #{memberId} and status ='3'
+	</update>
+	
+	<!-- 新增归属关系 -->
+  <insert id="insertBelongInfo" parameterType="Object">
+		insert into belong_relationship
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId !=null and memberId !=''">
+				buyer_id,
+			</if>
+			<if test="curBelongSellerId !=null and curBelongSellerId !=''">
+				seller_id,
+			</if>
+			<if test="curBelongManagerId !=null and curBelongManagerId !=''">
+				customer_manager_id,
+			</if>		
+			<if test="buyerFeature !=null and buyerFeature !=''">
+				buyer_feature,
+			</if>	
+			<if test="modifyId !=null and modifyId !=''">
+				create_id,
+			</if>
+			<if test="modifyName !=null and modifyName !=''">
+				create_name,
+			</if>
+			<if test="verifyStatus !=null and verifyStatus !=''">
+				status,
+			</if>
+			
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="memberId !=null and memberId !=''">
+				#{memberId},
+			</if>
+			<if test="curBelongSellerId !=null and curBelongSellerId !=''">
+				#{curBelongSellerId},
+			</if>
+			<if test="curBelongManagerId !=null and curBelongManagerId !=''">
+				#{curBelongManagerId},
+			</if>
+			<if test="buyerFeature !=null and buyerFeature !=''">
+				#{buyerFeature},
+			</if>
+			<if test="modifyId !=null and modifyId !=''">
+				#{modifyId},
+			</if>
+			<if test="modifyName !=null and modifyName !=''">
+				#{modifyName},
+			</if>
+			<if test="verifyStatus !=null and verifyStatus !=''">
+				#{verifyStatus},
+			</if>
+			now()
+		</trim>
+
+	</insert>
+	
+	<!-- 根据会员ID修改会员归属关系表信息 -->
+	<update id="updateBelongVerify" parameterType="Object">
+		update belong_relationship 
+			<set>					
+				<if test="dto.verifyStatus !=null and dto.verifyStatus != '' ">
+					status = #{dto.verifyStatus},
+				</if>				
+				<if test="dto.modifyId !=null and dto.modifyId != '' ">
+					modify_id= #{dto.modifyId},
+				</if>
+				<if test="dto.modifyName !=null and dto.modifyName != '' ">
+					modify_name= #{dto.modifyName},
+				</if>
+				belong_verify_time = now(),
+				modify_time = now()
+			</set>		   
+			where buyer_id = #{dto.memberId} and status ='1'
+	</update>
+	
+	
+	<!-- 根据买家ID和卖家ID查询是否有归属关系 -->
+	<select id="selectIsBelongRelation" resultType="java.lang.Long">
+		select 1 from belong_relationship where 
+		buyer_id=#{buyerId} 
+		and seller_id = #{sellerId}
+		and status != '9'
+	</select>
+</mapper>

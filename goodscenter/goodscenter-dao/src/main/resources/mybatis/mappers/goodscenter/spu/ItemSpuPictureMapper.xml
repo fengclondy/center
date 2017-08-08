@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.spu.ItemSpuPictureMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.spu.ItemSpuPicture" >
+    <id column="picture_id" property="pictureId" jdbcType="BIGINT" />
+    <result column="spu_id" property="spuId" jdbcType="BIGINT" />
+    <result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+    <result column="picture_size" property="pictureSize" jdbcType="VARCHAR" />
+    <result column="is_first" property="isFirst" jdbcType="TINYINT" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="pictureDTOMap" type="cn.htd.goodscenter.dto.ItemSpuPictureDTO" >
+    <id column="picture_id" property="pictureId" jdbcType="BIGINT" />
+    <result column="spu_id" property="spuId" jdbcType="BIGINT" />
+    <result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+    <result column="picture_size" property="pictureSize" jdbcType="VARCHAR" />
+    <result column="is_first" property="isFirst" jdbcType="TINYINT" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    picture_id, spu_id, picture_url, picture_size, is_first, sort_num, delete_flag, create_id, 
+    create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_spu_picture
+    where picture_id = #{pictureId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_spu_picture
+    where picture_id = #{pictureId,jdbcType=BIGINT}
+  </delete>
+  <insert id="add" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuPicture" useGeneratedKeys="true" keyProperty="pictureId">
+    insert into item_spu_picture (picture_id, spu_id, picture_url, 
+      picture_size, is_first, sort_num, 
+      delete_flag, create_id, create_name, 
+      create_time, modify_id, modify_name, 
+      modify_time)
+    values (#{pictureId,jdbcType=BIGINT}, #{spuId,jdbcType=BIGINT}, #{pictureUrl,jdbcType=VARCHAR}, 
+      #{pictureSize,jdbcType=VARCHAR}, #{isFirst,jdbcType=TINYINT}, #{sortNum,jdbcType=INTEGER}, 
+      0, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
+      now(), #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR},
+      now())
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuPicture" >
+    insert into item_spu_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pictureId != null" >
+        picture_id,
+      </if>
+      <if test="spuId != null" >
+        spu_id,
+      </if>
+      <if test="pictureUrl != null" >
+        picture_url,
+      </if>
+      <if test="pictureSize != null" >
+        picture_size,
+      </if>
+      <if test="isFirst != null" >
+        is_first,
+      </if>
+      <if test="sortNum != null" >
+        sort_num,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pictureId != null" >
+        #{pictureId,jdbcType=BIGINT},
+      </if>
+      <if test="spuId != null" >
+        #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureUrl != null" >
+        #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureSize != null" >
+        #{pictureSize,jdbcType=VARCHAR},
+      </if>
+      <if test="isFirst != null" >
+        #{isFirst,jdbcType=TINYINT},
+      </if>
+      <if test="sortNum != null" >
+        #{sortNum,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBySpuIdSelective" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuPicture" >
+    update item_spu_picture
+    <set >
+      <if test="spuId != null" >
+        spu_id = #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureUrl != null" >
+        picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureSize != null" >
+        picture_size = #{pictureSize,jdbcType=VARCHAR},
+      </if>
+      <if test="isFirst != null" >
+        is_first = #{isFirst,jdbcType=TINYINT},
+      </if>
+      <if test="sortNum != null" >
+        sort_num = #{sortNum,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where picture_id = #{pictureId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.spu.ItemSpuPicture" >
+    update item_spu_picture
+    set spu_id = #{spuId,jdbcType=BIGINT},
+      picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      picture_size = #{pictureSize,jdbcType=VARCHAR},
+      is_first = #{isFirst,jdbcType=TINYINT},
+      sort_num = #{sortNum,jdbcType=INTEGER},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where picture_id = #{pictureId,jdbcType=BIGINT}
+  </update>
+
+  <select id="queryBySpuId" resultMap="pictureDTOMap" parameterType="java.lang.Long">
+    select
+    <include refid="Base_Column_List" />
+    from item_spu_picture
+    where spu_id = #{spuId, jdbcType=BIGINT}
+    and delete_flag = 0
+  </select>
+  <!-- 删除商品模板图片信息 -->
+  <update id="updateDeleteFlag" parameterType="cn.htd.goodscenter.dto.SpuInfoDTO" >
+    UPDATE item_spu_picture
+    SET item_spu_picture.delete_flag = #{entity.deleteFlag}
+    WHERE spu_id = #{entity.spuId,jdbcType=BIGINT}
+  </update>
+  
+  <insert id="batchInsert">
+	insert into item_spu_picture(
+		spu_id,
+		picture_url, 
+        is_first,
+        sort_num, 
+        create_id,
+        create_name, 
+        create_time,
+        modify_id, 
+        modify_name, 
+        modify_time
+		)values
+		<foreach collection="list" item="obj" index="index" separator=",">
+				(#{obj.spuId},
+				#{obj.pictureUrl},
+				#{obj.isFirst},
+				#{obj.sortNum},
+				#{obj.createId},
+				#{obj.createName},
+				#{obj.createTime},
+				#{obj.modifyId},
+				#{obj.modifyName},
+				#{obj.modifyTime})
+		</foreach>
+  </insert>
+  
+   <select id="queryItemSpuPicsByErpcode" resultMap="BaseResultMap" parameterType="String">
+  	select spp.* from
+        item_spu_picture spp join 
+        item_spu sp on spp.spu_id =sp.spu_id and sp.delete_flag=0
+        where sp.erp_code=#{erpCode}
+  </select>
+  
+</mapper>

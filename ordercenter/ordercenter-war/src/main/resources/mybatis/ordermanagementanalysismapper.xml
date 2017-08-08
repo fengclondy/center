@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderManagementAnalysisDAO" >
+
+<select id="queryShopInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderManagementAnalysisDMO">
+        select a.shop_id shopId,b.member_code sellerCode from shop_info a 
+        inner join member_base_info b on a.seller_id = b.id
+</select>
+
+<select id="queryOrderManagermentInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderManagementAnalysisDMO"
+		parameterType="Object">
+     	SELECT ifnull(SUM(t.order_total_amount),0) payPriceTotal,
+        seller_code,
+        COUNT(DISTINCT buyer_code) buyPersonNum,
+        COUNT(DISTINCT t.order_no) tradeNum,
+        ifnull(SUM(s.num),0) payGoodsNum,
+        v.orderCount
+        FROM
+        (SELECT order_no,seller_code,buyer_code,order_total_amount,DATE_FORMAT(pay_order_time,'%Y-%m-%d')
+        dealDate
+        FROM trade_orders
+        WHERE order_status>=30 and DATE_FORMAT(pay_order_time,'%Y-%m-%d') = #{payOrderDate}
+        and seller_code = #{sellerCode} and is_cancel_order = '0'                                                        
+        ) t
+        INNER JOIN (SELECT order_no,sum(goods_count) num FROM trade_order_items
+        group by order_no) s
+        ON t.order_no=s.order_no
+        LEFT JOIN (SELECT DATE_FORMAT(create_order_time,'%Y-%m-%d')
+        dealDate,COUNT(order_no) orderCount FROM trade_orders where 
+        DATE_FORMAT(create_order_time,'%Y-%m-%d') = #{payOrderDate}
+        and seller_code = #{sellerCode}) v
+        on t.dealDate = v.dealDate
+</select>
+
+<insert id="insertOrderManagementInfo" parameterType="java.lang.Object">
+	<![CDATA[
+	insert into SHOP_ORDER_STATISTICS_DAY_REPORT (
+			shop_id,
+			sales_time,
+			sales_amount,
+			buyer_count,
+			statistics_good_count,
+			PAY_ORDER_COUNT,
+			order_count,
+			STATISTICS_TIME)
+		values (
+			#{orderManagementAnalysisDMO.shopId},
+			#{orderManagementAnalysisDMO.salesTime},
+			#{orderManagementAnalysisDMO.payPriceTotal},
+			#{orderManagementAnalysisDMO.buyPersonNum},
+			#{orderManagementAnalysisDMO.payGoodsNum},
+			#{orderManagementAnalysisDMO.tradeNum},
+			#{orderManagementAnalysisDMO.orderCount},
+			now()
+		)
+			
+	]]>
+</insert>
+
+<update id="updateOrderManagementInfo" parameterType="cn.htd.zeus.tc.biz.dmo.OrderManagementAnalysisDMO">
+	UPDATE SHOP_ORDER_STATISTICS_DAY_REPORT  SET
+   		sales_amount =  #{orderManagementAnalysisDMO.payPriceTotal},
+   		buyer_count =  #{orderManagementAnalysisDMO.buyPersonNum},
+   		statistics_good_count =  #{orderManagementAnalysisDMO.payGoodsNum},
+   		PAY_ORDER_COUNT =  #{orderManagementAnalysisDMO.tradeNum},
+   		order_count =  #{orderManagementAnalysisDMO.orderCount},
+  			STATISTICS_TIME = now()
+	where 1=1
+      	and shop_id=#{orderManagementAnalysisDMO.shopId} 
+      	and sales_time = #{orderManagementAnalysisDMO.salesTime}
+</update>
+</mapper>

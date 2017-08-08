@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.goodscenter.dao.ItemAttributeValueDAO">
+
+	<resultMap id="ItemAttrValueMap" type="cn.htd.goodscenter.dto.ItemAttrValueDTO">
+		<result property="id" column="value_id"/>
+		<result property="name" column="value_name"/>
+		<result property="attrId" column="attr_id"/>
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name" />
+		<result property="createTime" column="create_time" />
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name" />
+		<result property="modifyTime" column="modify_time" />
+	</resultMap>
+
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+ 			attr_id
+ 			,value_name
+ 			,value_id
+		FROM 
+		item_attribute_value item_attribute_value_
+		]]>
+	</sql>
+	
+	<sql id="where_fragement">
+		where  item_attribute_value_.status=1 
+	</sql>
+
+   <!-- 根据id查询 -->
+	<select id="queryById" resultMap="ItemAttrValueMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where item_attribute_value_.value_id = #{id}
+		]]>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="ItemAttrValueMap" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="queryCount" resultType="long">
+		<include refid="count_Tail" />
+		item_attribute_value item_attribute_value_
+		<include refid="where_fragement" />
+	</select>
+	
+	<!-- 插入记录 -->
+	<insert id="add" parameterType="cn.htd.goodscenter.dto.ItemAttrValueDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+		insert into item_attribute_value (
+		  attr_id,
+		  value_name,
+		  status,
+		  create_time,
+		  modify_time
+		) 
+		values
+		  (
+		    #{attrId}
+		    ,#{name}
+		    ,1
+		    ,now()
+		    ,now()
+		   )
+	    ]]>	
+	</insert>
+	
+	<!-- 根据id，修改记录 -->
+	<update id="update" parameterType="cn.htd.goodscenter.dto.ItemAttrValueDTO">
+		update
+		item_attribute_value
+		<trim prefix="set" suffixOverrides=",">
+		<if test="status != null">
+   			status = #{status},
+   		</if>
+   		<if test="name != null">
+   			value_name = #{name},
+   		</if>
+		modify_id = #{modifyId},
+		modify_name = #{modifyName},
+		modify_time = now()
+		</trim>
+		 where value_id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		<![CDATA[
+		update item_attribute_value set status = 0 where value_id = #{id}
+		]]>
+	</delete>
+	
+	<delete id="deleteByAttrId" parameterType="long">
+		<![CDATA[
+		update item_attribute_value set status = 0 where attr_id = #{attr_id}
+		]]>
+	</delete>
+
+	<select id="selectItemAttributeValueListTask" parameterType="map" resultMap="ItemAttrValueMap">
+		SELECT * FROM item_attribute_value
+		WHERE
+		status = 1
+		and mod(value_id, #{taskQueueNum}) in
+		<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+	</select>
+
+	<select id="selectByAttrId" parameterType="long" resultMap="ItemAttrValueMap">
+		<![CDATA[
+			select * from item_attribute_value
+			where attr_id = #{attrId}
+			and status = 1
+		]]>
+	</select>
+</mapper>

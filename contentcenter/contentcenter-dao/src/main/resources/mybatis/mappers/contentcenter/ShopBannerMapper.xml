@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.ShopBannerDAO">
+    <sql id="allColumn">
+        id,
+        `name`,
+        pic_src,
+        pic_link,
+        sort_num,
+        shop_id,
+        status,
+        flag,
+        start_time_enabled,
+        end_time_enabled,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time
+    </sql>
+
+    <sql id="ifColumn">
+        <if test="banner.id!=null and banner.id!=''">
+            id,
+        </if>
+        <if test="banner.name!=null and banner.name!=''">
+            name,
+        </if>
+        <if test="banner.picSrc!=null and banner.picSrc!=''">
+            pic_src,
+        </if>
+        <if test="banner.picLink!=null and banner.picLink!=''">
+            pic_link,
+        </if>
+        <if test="banner.sortNum!=null and banner.sortNum!=''">
+            sort_num,
+        </if>
+        <if test="banner.startTimeEnabled!=null and banner.startTimeEnabled!=''">
+            start_time_enabled,
+        </if>
+        <if test="banner.endTimeEnabled!=null and banner.endTimeEnabled!=''">
+            end_time_enabled,
+        </if>
+        <if test="banner.status!=null and banner.status!=''">
+            status,
+        </if>
+        <if test="banner.flag!=null and banner.flag!=''">
+            flag,
+        </if>
+        <if test="banner.shopId!=null and banner.shopId!=''">
+            shop_id,
+        </if>
+        <if test="banner.createId!=null and banner.createId!=''">
+            create_id,
+        </if>
+
+        <if test="banner.createName!=null and banner.createName!=''">
+            create_name,
+        </if>
+
+        <if test="banner.createTime!=null and banner.createTime!=''">
+            create_time,
+        </if>
+
+        <if test="banner.modifyId!=null and banner.modifyId!=''">
+            modify_id,
+        </if>
+
+        <if test="banner.modifyName!=null and banner.modifyName!=''">
+            modify_name,
+        </if>
+
+        <if test="banner.modifyTime!=null and banner.modifyTime!=''">
+            modify_time
+        </if>
+    </sql>
+
+    <sql id="whereIfParam">
+        <if test="banner.id!=null and banner.id!=''">
+            AND id = #{banner.id,jdbcType=BIGINT}
+        </if>
+        <if test="banner.name!=null and banner.name!=''">
+            AND `name` LIKE CONCAT('%',#{banner.name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="banner.picSrc!=null and banner.picSrc!=''">
+            AND pic_src = #{banner.picSrc,jdbcType=VARCHAR}
+        </if>
+        <if test="banner.picLink!=null and banner.picLink!=''">
+            AND pic_link = #{banner.picLink,jdbcType=VARCHAR}
+        </if>
+        <if test="banner.sortNum!=null and banner.sortNum!=''">
+            AND sort_num = #{banner.sortNum,jdbcType=BIGINT}
+        </if>
+        <if test="banner.shopId!=null and banner.shopId!=''">
+            AND shop_id= #{banner.shopId,jdbcType=VARCHAR}
+        </if>
+        <if test="banner.status!=null and banner.status!=''">
+            AND status= #{banner.status,jdbcType=INTEGER}
+        </if>
+        <if test="banner.flag!=null and banner.flag!=''">
+            AND flag= #{banner.flag,jdbcType=INTEGER}
+        </if>
+        <if test="banner.startTimeEnabled!=null and banner.startTimeEnabled!=''">
+            AND start_time_enabled= #{banner.startTimeEnabled,jdbcType=TIMESTAMP}
+        </if>
+        <if test="banner.endTimeEnabled!=null and banner.endTimeEnabled!=''">
+            AND end_time_enabled= #{banner.endTimeEnabled,jdbcType=TIMESTAMP}
+        </if>
+        <if test="banner.createId!=null and banner.createId!=''">
+            AND create_id= #{banner.createId,jdbcType=BIGINT}
+        </if>
+
+        <if test="banner.createName!=null and banner.createName!=''">
+            AND create_name= #{banner.createName,jdbcType=TIMESTAMP}
+        </if>
+
+        <if test="banner.createTime!=null and banner.createTime!=''">
+            AND create_time= #{banner.createTime,jdbcType=VARCHAR}
+        </if>
+
+        <if test="banner.modifyId!=null and banner.modifyId!=''">
+            AND modify_id= #{banner.modifyId,jdbcType=BIGINT}
+        </if>
+
+        <if test="banner.modifyName!=null and banner.modifyName!=''">
+            AND modify_name= #{banner.modifyName,jdbcType=VARCHAR}
+        </if>
+
+        <if test="banner.modifyTime!=null and banner.modifyTime!=''">
+            AND modify_time= #{banner.modifyTime,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+
+    <sql id="setIfColumn">
+        <if test="banner.id!=null and banner.id!=''">
+            id = #{banner.id,jdbcType=BIGINT},
+        </if>
+        <if test="banner.name!=null and banner.name!=''">
+            `name` = #{banner.name,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.picSrc!=null and banner.picSrc!=''">
+            pic_src = #{banner.picSrc,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.picLink!=null and banner.picLink!=''">
+            pic_link = #{banner.picLink,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.sortNum!=null and banner.sortNum!=''">
+            sort_num = #{banner.sortNum,jdbcType=BIGINT},
+        </if>
+        <if test="banner.startTimeEnabled!=null and banner.startTimeEnabled!=''">
+            start_time_enabled = #{banner.startTimeEnabled,jdbcType=TIMESTAMP},
+        </if>
+        <if test="banner.endTimeEnabled!=null and banner.endTimeEnabled!=''">
+            end_time_enabled = #{banner.endTimeEnabled,jdbcType=TIMESTAMP},
+        </if>
+        <if test="banner.status!=null and banner.status!=''">
+            status = #{banner.status,jdbcType=INTEGER},
+        </if>
+        <if test="banner.flag!=null and banner.flag!=''">
+            flag = #{banner.flag,jdbcType=INTEGER},
+        </if>
+        <if test="banner.shopId!=null and banner.shopId!=''">
+            shop_id = #{banner.shopId,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.createId!=null and banner.createId!=''">
+            create_id = #{banner.createId,jdbcType=BIGINT},
+        </if>
+
+        <if test="banner.createName!=null and banner.createName!=''">
+            create_name = #{banner.createName,jdbcType=VARCHAR},
+        </if>
+
+        <if test="banner.createTime!=null and banner.createTime!=''">
+            create_time = #{banner.createTime,jdbcType=TIMESTAMP},
+        </if>
+
+        <if test="banner.modifyId!=null and banner.modifyId!=''">
+            modify_id = #{banner.modifyId,jdbcType=BIGINT},
+        </if>
+
+        <if test="banner.modifyName!=null and banner.modifyName!=''">
+            modify_name = #{banner.modifyName,jdbcType=VARCHAR},
+        </if>
+
+        <if test="banner.modifyTime!=null and banner.modifyTime!=''">
+            modify_time = #{banner.modifyTime,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+
+    <sql id="valueIfColumn">
+        <if test="banner.id!=null and banner.id!=''">
+            #{banner.id,jdbcType=BIGINT},
+        </if>
+        <if test="banner.name!=null and banner.name!=''">
+            #{banner.name,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.picSrc!=null and banner.picSrc!=''">
+            #{banner.picSrc,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.picLink!=null and banner.picLink!=''">
+            #{banner.picLink,jdbcType=VARCHAR},
+        </if>
+        <if test="banner.sortNum!=null and banner.sortNum!=''">
+            #{banner.sortNum,jdbcType=BIGINT},
+        </if>
+        <if test="banner.startTimeEnabled!=null and banner.startTimeEnabled!=''">
+            #{banner.startTimeEnabled,jdbcType=TIMESTAMP},
+        </if>
+        <if test="banner.endTimeEnabled!=null and banner.endTimeEnabled!=''">
+            #{banner.endTimeEnabled,jdbcType=TIMESTAMP},
+        </if>
+        <if test="banner.status!=null and banner.status!=''">
+            #{banner.status,jdbcType=INTEGER},
+        </if>
+        <if test="banner.flag!=null and banner.flag!=''">
+            #{banner.flag,jdbcType=INTEGER},
+        </if>
+        <if test="banner.shopId!=null and banner.shopId!=''">
+            #{banner.shopId,jdbcType=VARCHAR},
+        </if>
+
+        <if test="banner.createId!=null and banner.createId!=''">
+            #{banner.createId,jdbcType=BIGINT},
+        </if>
+
+        <if test="banner.createName!=null and banner.createName!=''">
+            #{banner.createName,jdbcType=VARCHAR},
+        </if>
+
+        <if test="banner.createTime!=null and banner.createTime!=''">
+            #{banner.createTime,jdbcType=TIMESTAMP},
+        </if>
+
+        <if test="banner.modifyId!=null and banner.modifyId!=''">
+            #{banner.modifyId,jdbcType=BIGINT},
+        </if>
+
+        <if test="banner.modifyName!=null and banner.modifyName!=''">
+            #{banner.modifyName,jdbcType=VARCHAR},
+        </if>
+
+        <if test="banner.modifyTime!=null and banner.modifyTime!=''">
+            #{banner.modifyTime,jdbcType=TIMESTAMP}
+        </if>
+    </sql>
+
+    <resultMap id="propMap" type="com.bjucloud.contentcenter.dto.ShopBannerDTO">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="picSrc" column="pic_src"/>
+        <result property="picLink" column="pic_link"/>
+        <result property="sortNum" column="sort_num"/>
+        <result property="startTimeEnabled" column="start_time_enabled"/>
+        <result property="endTimeEnabled" column="end_time_enabled"/>
+        <result property="status" column="status"/>
+        <result property="flag" column="flag"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyId" column="modify_id"/>
+        <result property="modifyName" column="modify_name"/>
+        <result property="modifyTime" column="modify_time"/>
+    </resultMap>
+
+    <select id="queryById" parameterType="java.lang.Long" resultMap="propMap">
+        SELECT
+        <include refid="allColumn"/>
+        FROM shop_banner
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryForPage" parameterType="java.lang.Long" resultMap="propMap">
+        SELECT
+        <include refid="allColumn"/>
+        FROM shop_banner
+        WHERE flag = 0
+        <include refid="whereIfParam"/>
+        order by sort_num DESC
+        <if test="page != null ">
+            limit #{page.pageOffset} , #{page.rows}
+        </if>
+    </select>
+
+    <select id="queryCount" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+        count(id)
+        FROM shop_banner
+        WHERE flag = 0
+    </select>
+
+
+    <select id="queryActiveForPage" parameterType="java.lang.Long" resultMap="propMap">
+        SELECT
+        <include refid="allColumn"/>
+        FROM shop_banner
+        WHERE flag=1
+        AND (now() BETWEEN  #{banner.startTimeEnabled,jdbcType=TIMESTAMP}
+        AND #{banner.endTimeEnabled,jdbcType=TIMESTAMP}
+        )
+        <include refid="whereIfParam"/>
+        order by sort_num DESC
+        limit #{page.pageOffset} , #{page.rows}
+    </select>
+
+    <insert id="addBanner" parameterType="com.bjucloud.contentcenter.dto.ShopBannerDTO">
+        insert into shop_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="ifColumn"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="valueIfColumn"/>
+        </trim>
+    </insert>
+
+
+    <update id="updateBanner" parameterType="com.bjucloud.contentcenter.dto.ShopBannerDTO">
+        update shop_banner
+        <set>
+            <include refid="setIfColumn"/>
+        </set>
+        where id = #{banner.id,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteById" parameterType="java.lang.String">
+        UPDATE shop_banner SET flag = 1 where id in
+        <foreach item="id" index="index" collection="array"  open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <!-- 根据供应商编码查询查询banner信息 -->
+	<select id="queryVMSBannerBySellerCode" parameterType="com.bjucloud.contentcenter.dto.ShopBannerDTO"
+		resultMap="propMap">
+		SELECT
+		<include refid="allColumn" />
+		from shop_banner
+        where flag = 0 and status= 1
+		<if test="entity != null">
+            and shop_id = #{entity.shopId,jdbcType=VARCHAR}
+		</if>
+		<![CDATA[ and now() <= end_time_enabled]]>
+		<![CDATA[ and now() >= start_time_enabled]]>
+		order by sort_num DESC
+		limit 0,3
+	</select>
+</mapper>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.RoleDAO">
+
+	<insert id="addRole" parameterType="cn.htd.usercenter.dto.RoleDTO"
+		useGeneratedKeys="true" keyProperty="roleDTO.roleId">
+		<![CDATA[
+		insert into role(
+			product_id,
+			name,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time	
+		) values (
+			#{roleDTO.productId},
+			#{roleDTO.name},
+			#{roleDTO.deletedFlag},
+			#{userId},
+			now(),
+			#{userId},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<insert id="addRolePermissionRelation" parameterType="Object"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into role_permission_mapping(
+			role_id,
+			product_id,
+			permission_id
+		) values (
+			#{roleId},
+			#{productId},
+			#{permissionId}
+		)
+		]]>
+	</insert>
+	
+	<delete id="deleteRolePermissionRelation" parameterType="Object">
+		<![CDATA[
+		delete from role_permission_mapping where role_id = #{roleDTO.roleId} and product_id = #{roleDTO.productId} 
+		]]>
+	</delete>
+	
+	<!-- 根据角色ID和角色名称查询角色信息 -->
+	<select id="queryRoleByIdAndName" resultType="cn.htd.usercenter.dto.RoleDTO"
+		parameterType="Object">
+		select
+			a.role_id roleId,
+			a.product_id productId,
+			b.name productName,
+			a.name name,
+			a.deleted_flag deletedFlag,
+			a.created_id createdId,
+			a.created_time creteadTime,
+			a.last_updated_id lastUpdatedId,
+			a.last_updated_time lastUpdatedTime	
+		from role a, product b
+		where a.deleted_flag = 0 and a.product_id = b.product_id
+		<if test="roleDTO.name != null and roleDTO.name != ''">
+		      and a.name like concat('%', #{roleDTO.name}, '%')
+		</if>
+		<if test="roleDTO.productName != null and roleDTO.productName != ''">
+		      and b.name like concat('%', #{roleDTO.productName}, '%')
+		</if>
+		order by a.last_updated_time desc
+		limit #{pager.pageOffset},#{pager.rows} 
+	</select>
+	
+	<!-- 根据产品ID查询角色信息 -->
+	<select id="queryRoleByProductId" resultType="cn.htd.usercenter.dto.RoleDTO"
+		parameterType="Object">
+		select
+			role_id roleId,
+			product_id productId,
+			name,
+			deleted_flag deletedFlag,
+			created_id createdId,
+			created_time creteadTime,
+			last_updated_id lastUpdatedId,
+			last_updated_time lastUpdatedTime	
+		from role
+		where deleted_flag = 0
+		<if test="role.productId != null and role.productId != ''">
+		      and product_id = #{role.productId}
+		</if> 
+	</select>
+	
+	<!-- 根据角色ID和角色名称查询角色条数 -->
+	<select id="queryRoleByIdAndNameCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0) from role a, product b
+		where a.deleted_flag = 0 and a.product_id = b.product_id
+		<if test="roleDTO.name != null and roleDTO.name != ''">
+		      and a.name like concat('%', #{roleDTO.name}, '%')
+		</if>
+		<if test="roleDTO.productName != null and roleDTO.productName != ''">
+		      and b.name like concat('%', #{roleDTO.productName}, '%')
+		</if>
+	</select>
+
+	<update id="updateRole" parameterType="Object">
+		update role set
+			name = #{roleDTO.name},
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where role_id = #{roleDTO.roleId}
+	</update>
+	
+	<insert id="addUserRolePermission" parameterType="Object"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into user_role_mapping(
+			user_id,
+			role_id
+		) values (
+			#{userId},
+			#{roleId}
+		)
+		]]>
+	</insert>
+	
+	<delete id="deleteUserRolePermissions" parameterType="Object">
+		<![CDATA[
+		delete from user_role_mapping where user_id = #{userRoleDTO.userId}
+		]]>
+	</delete>
+	
+	<!-- 根据产品ID查询总部角色信息 -->
+	<select id="queryTotalUserRolePermission" resultType="cn.htd.usercenter.dto.RoleDTO"
+		parameterType="Object">
+        select distinct(a.role_id) roleId,a.name name,a.product_id productId,
+        b.name productName,isnull(c.id) checkedFlag from role a inner join
+        product b on a.product_id = b.product_id
+        left join user_role_mapping c
+        on a.role_id = c.role_id and c.user_id = #{userId}
+        where a.deleted_flag = 0
+        order by a.product_id,a.role_id
+	</select>
+	
+	<!-- 根据产品ID查询分部角色信息 -->
+	<select id="queryBranchUserRolePermission" resultType="cn.htd.usercenter.dto.RoleDTO"
+		parameterType="Object">
+        select distinct(a.role_id) roleId,c.display_name name,a.product_id productId,
+        b.name productName,isnull(d.id) checkedFlag from role a inner join
+        product b on a.product_id = b.product_id
+        inner join branch_usable_role c on a.role_id = c.role_id
+        left join user_role_mapping d
+        on a.role_id = d.role_id and d.user_id = #{userId}
+        where a.deleted_flag = 0
+        order by a.product_id,a.role_id
+	</select>
+	
+	<update id="deleteRole" parameterType="Object">
+		<![CDATA[
+		update role set
+			deleted_flag = #{roleDTO.deletedFlag},
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where role_id = #{roleDTO.roleId}
+		]]>
+	</update>
+	
+	<select id="queryCount4RoleUsedByUser" resultType="java.lang.Integer"
+		parameterType="Object">
+		select count(*) from user_role_mapping where role_id = #{roleDTO.roleId}
+	</select>
+</mapper>

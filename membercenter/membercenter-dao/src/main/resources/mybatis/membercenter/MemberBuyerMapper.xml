@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.MemberBuyerDao">
+
+	<!-- 根据login_id (memberCode)查询会员id -->
+	<select id="getMemberIdByLoginId" resultType="Long">
+		SELECT
+			id memberId
+		FROM
+			member_base_info
+		WHERE
+			member_code = #{loginId}
+	</select>
+
+	<!-- 查询会员个人信息 -->
+	<select id="queryBuyerPersonalInfo" resultType="cn.htd.membercenter.dto.MemberBuyerPersonalInfoDTO">
+		SELECT
+			member_base_info.id memberId,
+		  	member_base_info.member_code memberCode,
+		  	member_base_info.can_mall_login,
+			member_base_info.has_business_license,
+			member_base_info.has_guarantee_license,
+			member_licence_info.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+			member_company_info.artificial_person_name artificialPersonName,
+			member_company_info.artificial_person_mobile artificialPersonMobile,
+			member_company_info.company_name companyName,
+			member_company_info.location_province locationProvince,
+			member_company_info.location_city locationCity,
+			member_company_info.location_county locationCounty,
+			member_company_info.location_town locationTown,
+			member_company_info.location_detail locationDetail,
+			member_person_info.birthday birthday,
+			member_person_info.birthday_year birthdayYear,
+			member_person_info.birthday_month birthdayMonth,
+			member_person_info.birthday_day birthdayDay,
+			member_licence_info.buyer_business_license_id buyerBusinessLicenseId,
+			member_licence_info.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+			member_licence_info.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+			m.verify_status verifyStatus
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_person_info ON member_base_info.id = member_person_info.member_id
+		LEFT JOIN member_licence_info ON member_base_info.id = member_licence_info.member_id
+		LEFT JOIN member_status_info m ON member_base_info.id = m.member_id and m.info_type='15' 
+		where 
+			member_base_info.is_buyer = 1
+		and member_base_info.can_mall_login = 1
+		and member_base_info.id = #{memberId}
+		and member_company_info.buyer_seller_type = 1
+	</select>
+	
+	<select id="getMemberVerifyStatus" resultType="string">
+		SELECT
+			verify_status
+		FROM
+			verify_info
+		WHERE
+			record_id = #{memberId}
+		and modify_type = #{modifyType}
+		ORDER BY
+			id DESC
+		LIMIT 0,
+		 1
+	</select>
+	<select id="getMemberVerifyRemark" resultType="string">
+		SELECT
+			remark
+		FROM
+			verify_info
+		WHERE
+			record_id = #{memberId}
+		and modify_type = #{modifyType}
+		ORDER BY
+			id DESC
+		LIMIT 0,
+		 1
+	</select>
+	
+	
+	<!-- 更新会员个人信息   begin-->
+	<update id="updateBuyerCompanyInfo" parameterType="cn.htd.membercenter.dto.MemberBuyerPersonalInfoDTO" >
+	    update member_company_info
+	      <set >
+		      <if test="artificialPersonName != null and artificialPersonName != ''" >
+		        artificial_person_name = #{artificialPersonName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="companyName != null and artificialPersonName != ''" >
+		        company_name = #{companyName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="locationProvince != null and locationProvince != ''" >
+		        location_province = #{locationProvince,jdbcType=VARCHAR},
+		      </if>
+		      <if test="locationCity != null and locationCity != ''" >
+		        location_city = #{locationCity,jdbcType=VARCHAR},
+		      </if>
+		      <if test="locationCounty != null and locationCounty != ''" >
+		        location_county = #{locationCounty,jdbcType=VARCHAR},
+		      </if>
+		      <if test="locationTown != null and locationTown != ''" >
+		        location_town = #{locationTown,jdbcType=VARCHAR},
+		      </if>
+		      <if test="locationDetail != null and locationDetail != ''" >
+		        location_detail = #{locationDetail,jdbcType=VARCHAR},
+		      </if>
+		       <if test="locationAddr != null and locationAddr != ''" >
+		        location_addr = #{locationAddr,jdbcType=VARCHAR},
+		      </if>
+		      <if test="modifyId != null and modifyId != ''" >
+		        modify_id = #{modifyId},
+		      </if>
+		      <if test="modifyName != null and modifyName != ''" >
+		       	modify_name = #{modifyName,jdbcType=VARCHAR},
+		      </if>
+		        modify_time = now()
+	   	  </set>
+	    where member_id = #{memberId}
+	    and buyer_seller_type = 1
+ 	</update>
+	<update id="updateBuyerPersonInfo" parameterType="cn.htd.membercenter.dto.MemberBuyerPersonalInfoDTO">
+		update member_person_info
+		<set>
+			<if test="birthdayYear != null and birthdayYear != ''">
+				birthday_year = #{birthdayYear},
+			</if>
+			<if test="birthdayMonth != null and birthdayMonth != ''">
+				birthday_month = #{birthdayMonth},
+			</if>
+			<if test="birthdayDay != null and birthdayDay != ''">
+				birthday_day = #{birthdayDay},
+			</if>
+			<if test="birthday != null and birthday != ''">
+				birthday = #{birthday},
+			</if>
+		    <if test="modifyId != null and modifyId != ''" >
+	            modify_id = #{modifyId},
+	        </if>
+	        <if test="modifyName != null and modifyName != ''" >
+	      	 	modify_name = #{modifyName,jdbcType=VARCHAR},
+	        </if>
+	     		modify_time = now()
+		</set>
+		 where member_id = #{memberId}
+	</update>
+	<update id="updatePersonInfo" parameterType="cn.htd.membercenter.dto.MemberBuyerPersonalInfoDTO">
+		update member_person_info set
+				birthday = #{birthday},
+		    <if test="modifyId != null and modifyId != ''" >
+	            modify_id = #{modifyId},
+	        </if>
+	        <if test="modifyName != null and modifyName != ''" >
+	      	 	modify_name = #{modifyName,jdbcType=VARCHAR},
+	        </if>
+	     		modify_time = now()
+		 where member_id = #{memberId}
+	</update>
+	
+	<update id="updateBuyerLicenceInfo" parameterType="cn.htd.membercenter.dto.MemberBuyerPersonalInfoDTO">
+		update member_licence_info
+		<set>
+			<if test="buyerBusinessLicenseId != null and buyerBusinessLicenseId != ''">
+				buyer_business_license_id = #{buyerBusinessLicenseId},
+			</if>
+			<if test="businessLicenseCertificatePicSrc != null and businessLicenseCertificatePicSrc != ''">
+				business_license_certificate_pic_src = #{businessLicenseCertificatePicSrc},
+			</if>
+			<if test="buyerGuaranteeLicensePicSrc != null and buyerGuaranteeLicensePicSrc != ''">
+				buyer_guarantee_license_pic_src = #{buyerGuaranteeLicensePicSrc},
+			</if>
+			<if test="buyerBusinessLicensePicSrc != null and buyerBusinessLicensePicSrc != ''">
+				buyer_business_license_pic_src = #{buyerBusinessLicensePicSrc},
+			</if>
+			 <if test="modifyId != null and modifyId != ''" >
+	            modify_id = #{modifyId},
+	        </if>
+	        <if test="modifyName != null and modifyName != ''" >
+	      	 	modify_name = #{modifyName,jdbcType=VARCHAR},
+	        </if>
+	     		modify_time = now()
+		</set>
+		where member_id = #{memberId}
+	</update>
+	<!-- 更新会员个人信息   end-->
+	
+	
+	<!-- 查询会员等级详细信息 -->
+	<select id="queryBuyerGradeInfo" resultType="cn.htd.membercenter.dto.MemberBuyerGradeInfoDTO">
+		SELECT
+			buyer_id memberId,
+			buyer_grade buyerGrade,
+			point_grade pointGrade,
+			year_exp yearExp
+			
+			,is_vip as isVip, 
+			is_upgrade as isUpgrade, is_sb_upgrade as isSbUpgrade, 
+			month_exp as monthExp, level_exp as  levelExp, 
+			year_order_level as yearOrderLevel, year_finance_level as yearFinanceLevel, 
+		    year_order_amount as yearOrderAmount, year_finance_avg as yearFinanceAvg, 
+		    month_order_amount as monthOrderAmount, month_finance_avg as monthFinanceAvg,
+		     month_order_exp as monthOrderExp, 
+		    month_finance_exp as monthFinanceExp
+			
+		FROM
+			buyer_grade_info
+		WHERE
+			buyer_id = #{memberId}
+	</select>
+	<select id="queryBuyerScoreIntervalMall" resultType="cn.htd.membercenter.dto.MemberBuyerGradeMatrixDTO">
+		SELECT
+			interval_type intervalType,
+			from_amount fromAmount,
+			to_amount toAmount,
+			score
+		FROM
+			buyer_score_interval
+		WHERE
+			interval_type = 1
+		and 
+			delete_flag = 0
+		ORDER BY
+			from_amount
+	</select>
+	<select id="queryBuyerScoreIntervalFinance" resultType="cn.htd.membercenter.dto.MemberBuyerGradeMatrixDTO">
+		SELECT
+			interval_type intervalType,
+			from_amount fromAmount,
+			to_amount toAmount,
+			score
+		FROM
+			buyer_score_interval
+		WHERE
+			interval_type = 2
+		and 
+			delete_flag = 0
+		ORDER BY
+			from_amount
+	</select>
+	<select id="queryBuyerGradeInterval" resultType="cn.htd.membercenter.dto.MemberBuyerGradeMatrixDTO">
+		SELECT
+			buyer_level buyerLevel,
+			from_score fromScore,
+			to_score toScore,
+			lowest_point lowestPoint
+		FROM
+			buyer_grade_interval
+		WHERE
+			delete_flag = 0
+		and 
+			buyer_level = #{buyerLevel}
+		ORDER BY
+			buyer_level
+	</select>
+	<select id="queryBuyerScoreWeight" resultType="cn.htd.membercenter.dto.MemberBuyerGradeMatrixDTO">
+		SELECT
+			buyer_grade_weight_json buyerGradeWeightJson
+		FROM
+			buyer_score_weight
+	</select>
+	<select id="queryBuyerGradeChangeHistory" resultType="cn.htd.membercenter.dto.MemberBuyerGradeChangeHistoryDTO">
+		SELECT
+			grade_history_id gradeHistoryId,
+			buyer_id buyerId,
+			change_grade changeGrade,
+			change_time changeTime,
+			is_upgrade isUpgrade,
+			delete_flag deleteFlag,
+			create_id createId,
+			create_name createName,
+			create_time createTime,
+			modify_id modifyId,
+			modify_name modifyName,
+			modify_time modifyTime
+		FROM
+			buyer_grade_change_history
+		WHERE
+			delete_flag = 0 and after_grade=''
+		AND buyer_id = #{dto.memberId}
+		<if test="dto.provideStartTime != null and dto.provideStartTime != '' 
+			and dto.provideEndTime != null and dto.provideEndTime != ''">
+			and change_time BETWEEN #{dto.provideStartTime} AND #{dto.provideEndTime}
+		</if>
+		order by grade_history_id desc
+		limit #{pager.pageOffset} , #{pager.rows}
+	</select>
+	
+	
+	
+	<!-- 查询供应商信息  begin -->
+	<select id="queryBuyerSupplier" resultType="cn.htd.membercenter.dto.MemberBuyerSupplierDTO">
+		SELECT
+			member_company_info.company_name companyName,
+			member_company_info.artificial_person_name contactName,
+			member_company_info.artificial_person_mobile contactMobile,
+			member_base_info.id supplierId,
+			member_base_info.member_code memberCode
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id
+		WHERE
+			member_base_info.id = (
+				SELECT cur_belong_seller_id
+				FROM member_base_info
+				WHERE id =  #{memberId}
+			)
+		AND member_company_info.buyer_seller_type = 2
+	</select>
+	<select id="queryBuyerCategory" resultType="long">
+		SELECT
+			category_id  categoryId
+		FROM
+			business_relationship
+		WHERE
+			buyer_id = #{memberId}
+		AND seller_id = #{supplierId}
+		and brand_id = #{brandId} and audit_status='1' and delete_flag=0
+		and (category_id !=0 and brand_id !=0)
+	</select>
+	
+	<select id="queryBuyerBrand" resultType="long">
+		SELECT
+			DISTINCT(brand_id)  brandId
+		FROM
+			business_relationship
+		WHERE
+			buyer_id = #{memberId}
+		AND seller_id = #{supplierId} and audit_status='1' and delete_flag=0
+		and (category_id !=0 and brand_id !=0)
+	</select>
+	
+	<select id="queryBuyerCategoryBySupplierId" resultType="long">
+		SELECT
+			DISTINCT(category_id)  categoryId
+		FROM
+			business_relationship
+		WHERE
+			 seller_id = #{supplierId}
+		and brand_id = #{brandId} and audit_status='1'
+		and (category_id !=0 and brand_id !=0)
+	</select>
+	
+	<select id="queryBuyerBrandBySupplierId" resultType="long">
+		SELECT
+			DISTINCT(brand_id)  brandId
+		FROM
+			business_relationship
+		WHERE
+			seller_id = #{supplierId} and audit_status='1'
+			and (category_id !=0 and brand_id !=0)
+	</select>
+	
+	<!-- 查询供应商信息  end -->
+	
+	<!-- 查询会员包厢关系供应商基本信息 -->
+	<select id="queryBuyerBusinessSupperlier" resultType="cn.htd.membercenter.dto.MemberBuyerSupplierDTO">
+		SELECT
+			member_company_info.company_name companyName,
+			member_company_info.artificial_person_name contactName,
+			member_company_info.artificial_person_mobile contactMobile,
+			member_base_info.id supplierId
+		FROM
+					member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id 
+			AND member_company_info.buyer_seller_type = 2
+		WHERE member_base_info.seller_type = '1' and 
+					member_base_info.id IN (
+		SELECT  seller_id
+		FROM box_relationship
+		WHERE buyer_id = #{memberId} and delete_flag = 0
+		AND seller_id != (
+		SELECT cur_belong_seller_id
+		FROM member_base_info
+		WHERE id = #{memberId}
+				)
+			)
+		
+		
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<!-- 插入审批信息表 -->
+	<insert id="addVerifyInfo" useGeneratedKeys="true" keyProperty="id"  parameterType="cn.htd.membercenter.dto.MemberBuyerVerifyInfoDTO">
+	    insert into verify_info
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	        modify_type,
+	        verify_status,record_type,
+	      <if test="createId != null and createId != ''" >
+	        create_id,
+	      </if>
+	      <if test="recordId != null and recordId != ''" >
+	        record_id,
+	      </if>
+	      <if test="createName != null and createName != ''" >
+	        create_name,
+	      </if>
+	        create_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	        #{recordType},
+	        1,'1',
+	      <if test="createId != null and createId != ''" >
+	        #{createId,jdbcType=BIGINT},
+	      </if>
+	      <if test="recordId != null and recordId != ''" >
+	        #{recordId},
+	      </if>
+	      <if test="createName != null and createName != ''" >
+	        #{createName,jdbcType=VARCHAR},
+	      </if>
+	        now()
+	    </trim>
+	  </insert>
+	
+	<!-- 插入审批详细信息表 -->
+	<insert id="addVerifyDetailInfo" parameterType="cn.htd.membercenter.dto.MemberBuyerVerifyDetailInfoDTO">
+		insert into verify_detail_info
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="verifyId != null and verifyId != ''" >
+	        verify_id,
+	      </if>
+	        modify_type,
+	      <if test="contentName != null and contentName != ''" >
+	        content_name,
+	      </if>
+	      <if test="changeTableId != null and changeTableId != ''" >
+	        change_table_id,
+	      </if>
+	      <if test="changeFieldId != null and changeFieldId != ''" >
+	        change_field_id,
+	      </if>
+	      <if test="beforeChange != null and beforeChange != ''" >
+	        before_change,
+	      </if>
+	      <if test="afterChange != null and afterChange != ''" >
+	        after_change,
+	      </if>
+	       <if test="beforeChangeDesc != null and beforeChangeDesc != ''" >
+	        before_change_desc,
+	      </if>
+	      <if test="afterChangeDesc != null and afterChangeDesc != ''" >
+	        after_change_desc,
+	      </if>
+	      <if test="operatorId != null and operatorId != ''" >
+	        operator_id,
+	      </if>
+	      <if test="operatorName != null and operatorName != ''" >
+	        operator_name,
+	      </if>
+	      <if test="recordId != null and recordId != ''" >
+	        record_id,
+	      </if>
+	        operate_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="verifyId != null and verifyId != ''" >
+	        #{verifyId,jdbcType=BIGINT},
+	      </if>
+	       #{modifyType},
+	      <if test="contentName != null  and contentName != ''" >
+	        #{contentName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="changeTableId != null  and changeTableId != ''" >
+	        #{changeTableId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="changeFieldId != null and changeFieldId != ''" >
+	        #{changeFieldId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="beforeChange != null and beforeChange != ''" >
+	        #{beforeChange,jdbcType=VARCHAR},
+	      </if>
+	      <if test="afterChange != null and afterChange != ''" >
+	        #{afterChange,jdbcType=VARCHAR},
+	      </if>
+	      <if test="beforeChangeDesc != null and beforeChangeDesc != ''" >
+	        #{beforeChangeDesc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="afterChangeDesc != null and afterChangeDesc != ''" >
+	        #{afterChangeDesc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="operatorId != null and operatorId != ''" >
+	        #{operatorId,jdbcType=BIGINT},
+	      </if>
+	      <if test="operatorName != null and operatorName != ''" >
+	        #{operatorName,jdbcType=VARCHAR},
+	      </if>
+	       <if test="recordId != null and recordId != ''" >
+	        #{recordId,jdbcType=VARCHAR},
+	      </if>
+	      now()
+	    </trim>
+	</insert>
+	
+	<select id="queryVerifyInfo" resultType="cn.htd.membercenter.dto.MemberBuyerVerifyDetailInfoDTO">
+		SELECT
+			id,
+			verify_id verifyId,
+			modify_type modifyType,
+			record_type recordType,
+			record_id recordId,
+			content_name contentName,
+			change_table_id changeTableId,
+			change_field_id changeFieldId,
+			before_change beforeChange,
+			after_change afterChange,
+			operator_id operatorId,
+			operator_name operatorName,
+			operate_time operateTime
+		FROM
+			verify_detail_info
+		WHERE
+			verify_id = (
+				SELECT
+					verify_id
+				FROM
+					member_status_info 
+				WHERE
+					member_status_info.info_type = #{modifyType}
+				AND member_status_info.member_id = #{memberId}
+				ORDER BY
+					status_id DESC
+				LIMIT 0,
+				1
+			)
+	</select>
+	
+	
+	<delete id="deleteVerifyInfoById" parameterType="int">
+		delete from verify_info where id = #{verifyId}
+	</delete>
+	
+	<!-- 根据品牌品类区域查询供应商列表总数 -->
+	<select id="queryBuyerSupplierListByBCIDCount" resultType="java.lang.Long">
+		SELECT count(distinct  
+			b.member_id) count
+		FROM member_base_info m,
+			member_company_info b
+			left join business_relationship c on b.member_id =c.seller_id and c.audit_status = '1' AND c.delete_flag = 0
+		WHERE	m.id=b.member_id   and m.seller_type='1' 
+		 AND b.buyer_seller_type = 2
+		<if test="categoryId != null and categoryId != ''">
+			AND c.category_id in 
+			<foreach collection="categoryId" item="categoryIds" index="index" open="(" separator="," close=")">
+				#{categoryIds}
+			</foreach>
+		</if>
+		<if test="brandId != null and brandId != ''">
+		AND c.brand_id in 
+			<foreach collection="brandId" item="brandId" index="index" open="(" separator="," close=")">
+					#{brandId}
+			</foreach>
+		</if>
+		<if test="locationProvince != null and locationProvince != ''">
+		AND b.location_province in 
+			<foreach collection="locationProvince" item="locationProvince" index="index" open="(" separator="," close=")">
+					#{locationProvince}
+			</foreach>
+		</if>
+		<if test="companyName != null and companyName != ''">
+		AND b.company_name like CONCAT('%',#{companyName},'%')
+		</if>
+		AND b.buyer_seller_type = 2	
+		order by b.member_id
+	</select>
+	<!-- 根据品牌品类区域查询供应商列表 -->
+	<select id="queryBuyerSupplierListByBCID" resultType="cn.htd.membercenter.dto.MemberBuyerSupplierDTO">
+		SELECT distinct  
+			b.member_id supplierId,
+			b.company_name companyName,
+			b.artificial_person_name contactName,
+			b.artificial_person_mobile contactMobile
+		FROM member_base_info m,
+			member_company_info b
+			left join business_relationship c on b.member_id =c.seller_id and c.audit_status = '1' AND c.delete_flag = 0
+		WHERE	m.id=b.member_id   and m.seller_type='1' 
+		AND b.buyer_seller_type = 2
+		<if test="categoryId != null and categoryId != ''">
+			AND c.category_id in 
+			<foreach collection="categoryId" item="categoryIds" index="index" open="(" separator="," close=")">
+				#{categoryIds}
+			</foreach>
+		</if>
+		<if test="brandId != null and brandId != ''">
+		AND c.brand_id in 
+			<foreach collection="brandId" item="brandId" index="index" open="(" separator="," close=")">
+					#{brandId}
+			</foreach>
+		</if>
+		<if test="locationProvince != null and locationProvince != ''">
+		AND b.location_province in 
+			<foreach collection="locationProvince" item="locationProvince" index="index" open="(" separator="," close=")">
+					#{locationProvince}
+			</foreach>
+		</if>
+		<if test="companyName != null and companyName != ''">
+		AND b.company_name like CONCAT('%',#{companyName},'%')
+		</if>
+		AND b.buyer_seller_type = 2	
+		order by b.member_id
+		limit #{page.pageOffset} , #{page.rows}		
+	</select>
+	<!-- 查询会员金融法人信息 -->
+	<select id="queryBuyerFinance" resultType="cn.htd.membercenter.dto.MemberBuyerFinanceDTO">
+		SELECT
+			m.member_id memberId,
+			m.artificial_person_name artificialPersonName,
+			m.artificial_person_idcard artificialPersonIdcard,
+			m.artificial_person_pic_src artificialPersonPicSrc,
+			m.artificial_person_pic_back_src artificialPersonPicBackSrc,
+			m.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
+			ms.verify_status STATUS,
+			v.remark remark
+		FROM
+			member_company_info m
+		LEFT JOIN member_status_info ms on m.member_id = ms.member_id and ms.info_type='16' and ms.verify_status!='9'
+		LEFT JOIN verify_info v ON ms.verify_id = v.id
+		WHERE
+			m.buyer_seller_type = 1
+		AND m.member_id = #{memberId}
+	</select>
+	
+	<!-- 查询会员金融备用联系人列表 -->
+	<select id="queryBuyerBackupContactList"  resultType="cn.htd.membercenter.dto.MemberBuyerFinanceDTO">
+		SELECT
+			member_id memberId,
+			contact_id contactId,
+			contact_name contactName,
+			contact_mobile contactMobile,
+			contact_idcard_pic_src contactIdcardPicSrc,
+			contact_idcard_pic_back_src contactIdcardPicBackSrc,
+			contact_person_idcard_pic_src contactPersonIdcardPicSrc,
+			STATUS STATUS
+		FROM
+			member_backup_contact_info
+		WHERE
+			member_id = #{dto.memberId}
+			<if test="dto.status != null and dto.status != '' and '0'.toString() == dto.status">
+				and status in (1,2,4,9)
+			</if>
+			<if test="dto.status != null and dto.status != '' and '0'.toString() != dto.status">
+				and status = #{dto.status}
+			</if>
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<select id="queryBuyerBackupContactById" resultType="cn.htd.membercenter.dto.MemberBuyerFinanceDTO">
+		SELECT
+			member_id memberId,
+			contact_id contactId,
+			contact_name contactName,
+			contact_mobile contactMobile,
+			contact_idcard contactIdcard,
+			contact_idcard_pic_src contactIdcardPicSrc,
+			contact_idcard_pic_back_src contactIdcardPicBackSrc,
+			contact_person_idcard_pic_src contactPersonIdcardPicSrc,
+			STATUS STATUS
+		FROM
+			member_backup_contact_info
+		WHERE
+			contact_id = #{contactId}
+	</select>
+	
+	<!-- 添加金融备用联系人 -->
+	<insert id="addBuyerBackupContact" useGeneratedKeys="true" keyProperty="contactId" parameterType="cn.htd.membercenter.dto.MemberBuyerFinanceDTO">
+		 insert into member_backup_contact_info
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="contactId != null and contactId != ''" >
+	        contact_id,
+	      </if>
+	      <if test="memberId != null and memberId != ''" >
+	        member_id,
+	      </if>
+	      <if test="contactName != null and contactName != ''" >
+	        contact_name,
+	      </if>
+	      <if test="contactMobile != null and contactMobile != ''" >
+	        contact_mobile,
+	      </if>
+	      <if test="contactIdcard != null and contactIdcard != ''" >
+	        contact_idcard,
+	      </if>
+	      <if test="contactIdcardPicSrc != null and contactIdcardPicSrc != ''" >
+	        contact_idcard_pic_src,
+	      </if>
+	      <if test="contactIdcardPicBackSrc != null and contactIdcardPicBackSrc != ''" >
+	        contact_idcard_pic_back_src,
+	      </if>
+	      <if test="contactPersonIdcardPicSrc != null and contactPersonIdcardPicSrc != ''" >
+	        contact_person_idcard_pic_src,
+	      </if>
+	        status,
+	      <if test="createId != null and createId != ''" >
+	        create_id,
+	      </if>
+	      <if test="createName != null and createName != ''" >
+	        create_name,
+	      </if>
+	        create_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="contactId != null and contactId != ''" >
+	        #{contactId,jdbcType=BIGINT},
+	      </if>
+	      <if test="memberId != null and memberId != ''" >
+	        #{memberId,jdbcType=BIGINT},
+	      </if>
+	      <if test="contactName != null and contactName != ''" >
+	        #{contactName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactMobile != null and contactMobile != ''" >
+	        #{contactMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactIdcard != null and contactIdcard != ''" >
+	        #{contactIdcard,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactIdcardPicSrc != null and contactIdcardPicSrc != ''" >
+	        #{contactIdcardPicSrc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactIdcardPicBackSrc != null and contactIdcardPicBackSrc != ''" >
+	        #{contactIdcardPicBackSrc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactPersonIdcardPicSrc != null and contactPersonIdcardPicSrc != ''" >
+	        #{contactPersonIdcardPicSrc,jdbcType=VARCHAR},
+	      </if>
+	        1,
+	      <if test="createId != null and createId != ''" >
+	        #{createId,jdbcType=BIGINT},
+	      </if>
+	      <if test="createName != null and createName != ''" >
+	        #{createName,jdbcType=VARCHAR},
+	      </if>
+	        now()
+	    </trim>
+	</insert>
+	
+	<!-- 修改金融备用联系人 -->
+	<update id="updateBuyerBackupContact" parameterType="cn.htd.membercenter.dto.MemberBuyerFinanceDTO">
+		 update member_backup_contact_info
+	    <set >
+	      <if test="memberId != null and memberId != ''" >
+	        member_id = #{memberId,jdbcType=BIGINT},
+	      </if>
+	      <if test="contactName != null and contactName != ''" >
+	        contact_name = #{contactName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactMobile != null and contactMobile != ''" >
+	        contact_mobile = #{contactMobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactIdcard != null and contactIdcard != ''" >
+	        contact_idcard = #{contactIdcard,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactIdcardPicSrc != null and contactIdcardPicSrc != ''" >
+	        contact_idcard_pic_src = #{contactIdcardPicSrc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactIdcardPicBackSrc != null and contactIdcardPicBackSrc != ''" >
+	        contact_idcard_pic_back_src = #{contactIdcardPicBackSrc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactPersonIdcardPicSrc != null and contactPersonIdcardPicSrc != ''" >
+	        contact_person_idcard_pic_src = #{contactPersonIdcardPicSrc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="status != null and status != ''" >
+	        status = #{status,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyId != null and modifyId != ''" >
+	        modify_id = #{modifyId,jdbcType=BIGINT},
+	      </if>
+	      <if test="modifyName != null and modifyName != ''" >
+	        modify_name = #{modifyName,jdbcType=VARCHAR},
+	      </if>
+	        modify_time = now()
+	    </set>
+	    where contact_id = #{contactId,jdbcType=BIGINT}
+	</update>
+	
+	<!-- 查询会员联系人手机号码验证信息 
+	保存手机号码验证标记
+	查询会员实名认证信息
+	保存会员实名认证信息为待审核状态
+	-->
+	
+	<!--查询会员联系人手机号码验证信息  -->
+	<select id="queryBuyerTELAuthenticate" resultType="cn.htd.membercenter.dto.MemberBuyerAuthenticationDTO">
+		SELECT
+			member_base_info.is_phone_authenticated isPhoneAuthenticated,
+			member_company_info.artificial_person_mobile artificialPersonMobile
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id
+		WHERE
+			member_base_info.id = #{memberId}
+		AND member_base_info.is_buyer = 1
+		AND member_company_info.buyer_seller_type = 1
+	</select>
+	<!-- 修改会员法人手机号 -->
+	<update id="updateBuyerTELAuthNumber" parameterType="cn.htd.membercenter.dto.MemberBuyerAuthenticationDTO">
+		UPDATE member_company_info
+		SET artificial_person_mobile = #{artificialPersonMobile}
+		WHERE
+			member_id = #{memberId}
+		AND buyer_seller_type = 1
+	</update>
+	<update id="updateBuyerTELAuthStatus" parameterType="cn.htd.membercenter.dto.MemberBuyerAuthenticationDTO">
+		UPDATE member_base_info
+		SET is_phone_authenticated = #{isPhoneAuthenticated}
+		WHERE
+			id = #{memberId}
+	</update>
+	<!-- 查询会员实名认证信息 -->
+	<select id="queryBuyerRealNameAuthenticate" resultType="cn.htd.membercenter.dto.MemberBuyerAuthenticationDTO">
+		SELECT
+			real_name_status realNameStatus,
+			artificial_person_name artificialPersonName,
+			artificial_person_idcard artificialPersonIdcard
+		FROM
+			member_company_info
+		WHERE
+			member_id = #{memberId}
+		AND buyer_seller_type = 1
+	</select>
+	
+	<!--  -->
+	<update id="updateBuyerRealNameBeVerified" parameterType="long">
+		update 
+	</update>
+</mapper>

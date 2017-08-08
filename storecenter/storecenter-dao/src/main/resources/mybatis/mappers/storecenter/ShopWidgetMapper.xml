@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.storecenter.dao.ShopWidgetDAO">
+
+    <!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <resultMap id="shopWidgetDTOMap" type="cn.htd.storecenter.dto.ShopWidgetDTO">
+    	<result property="frameId" column="frame_id"/>
+        <result property="widgetId" column="widget_id"/>
+        <result property="layout" column="layout"/>
+        <result property="showTitle" column="show_title"/>
+        <result property="title" column="title"/>
+        <result property="width" column="width"/>
+        <result property="val" column="val"/>
+    </resultMap>
+
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                        -->
+    <!-- =========================================================== -->
+    <sql id="selectAllColumns">
+		<![CDATA[
+		select
+			shop_widget_.frame_id,
+			shop_widget_.widget_id,
+			shop_widget_.layout,
+			shop_widget_.show_title,
+			shop_widget_.title,
+			shop_widget_.width,
+			shop_widget_.val
+		from shop_widget shop_widget_
+        ]]>
+	</sql>
+
+    <sql id="where_fragement">
+        where 1=1
+        <if test="entity!=null">
+            <if test="entity.frameId != null">
+                <![CDATA[ and shop_widget_.frame_id  =#{entity.frameId} ]]>
+            </if>
+            <if test="entity.widgetId != null">
+                <![CDATA[ and shop_widget_.widget_id  =#{entity.widgetId} ]]>
+            </if>
+        </if>
+    </sql>
+
+    <!-- mysql 分页尾 -->
+    <sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+    <!-- =========================================================== -->
+    <!-- Dao方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+
+    <!-- 分页查询 -->
+    <select id="selectListByCondition" resultMap="shopWidgetDTOMap">
+        <include refid="selectAllColumns"/>
+        <include refid="where_fragement"/>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+    
+    <!-- <select id="selectById" resultMap="shopWidgetDTOMap">
+      <include refid="selectAllColumns"/> where id=#{id}
+    </select> -->
+
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="cn.htd.storecenter.dto.ShopWidgetDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+		insert into shop_widget(
+			frame_id,
+			widget_id,
+			layout,
+			show_title,
+			title,
+			width,
+			val
+		)values(
+	        #{frameId},
+	        #{widgetId},
+	  		#{layout},
+	  		#{showTitle},
+	  		#{title},
+	  		#{width},
+	  		#{val}
+		)
+        ]]>
+	</insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="cn.htd.storecenter.dto.ShopWidgetDTO">
+		update shop_widget set 
+			layout = #{layout},
+			show_title = #{showTitle},
+			title = #{title},
+			width = #{width},
+			val = #{val}
+	 	where frame_id = #{frameId} and widget_id = #{widgetId}
+	</update>
+	
+	<!-- 删除记录 -->
+	<delete id="delete" >
+		<![CDATA[
+		delete from shop_widget where frame_id = #{frameId} and widget_id = #{widgetId}
+        ]]>
+	</delete>
+	<delete id="deleteByFrameId" >
+		<![CDATA[
+		delete from shop_widget where frame_id = #{frameId}
+        ]]>
+	</delete>
+</mapper>

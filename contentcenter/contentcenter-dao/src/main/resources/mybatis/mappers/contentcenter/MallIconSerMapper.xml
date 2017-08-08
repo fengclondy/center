@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 小图标、服务 -->
+
+<mapper namespace="com.bjucloud.contentcenter.dao.MallIconSerDAO">
+	<resultMap id="mallIconSerMapper" type="com.bjucloud.contentcenter.domain.MallIconSer">
+			<result property="id" column="id" />
+			<result property="title" column="title" />
+			<result property="imgPath" column="img_path" />
+			<result property="iconLink" column="icon_link" />
+			<result property="iconType" column="icon_type" />
+			<result property="status" column="status" />
+			<result property="sortNum" column="sort_num" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="sugSize" column="sug_size" />
+	</resultMap>
+	<resultMap id="mallIconSerDTO" type="com.bjucloud.contentcenter.dto.MallIconSerDTO">
+			<result property="id" column="id" />
+			<result property="title" column="title" />
+			<result property="imgPath" column="img_path" />
+			<result property="iconLink" column="icon_link" />
+			<result property="iconType" column="icon_type" />
+			<result property="status" column="status" />
+			<result property="sortNum" column="sort_num" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="sugSize" column="sug_size" />
+	</resultMap>
+	
+	<sql id="selectIconSerColumns">
+		<![CDATA[
+		select
+ 			 mall_ad_count_.id
+ 			,mall_ad_count_.mall_ad_id
+ 			,mall_ad_count_.ad_count
+ 			,mall_ad_count_.click_date
+ 			,mall_banner.title
+		FROM 
+		mall_icon_ser mall_icon_ser LEFT JOIN  mall_ad_count mall_ad_count_ ON mall_ad_count_.mall_ad_id=mall_banner.id
+		]]>
+	</sql>
+	<select id="queryById" resultMap="mallIconSerMapper" >
+		select * from mall_icon_ser
+		where id = #{id}
+	</select>
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	<insert id="add">
+		insert into mall_icon_ser(
+				title,
+				img_path,
+				icon_link,
+				icon_type,
+				status,
+				sort_num,
+				created,
+				modified,
+				sug_size
+		)values(
+				#{title},
+				#{imgPath},
+				#{iconLink},
+				#{iconType},
+				#{status},
+				#{sortNum},
+				NOW(),
+				NOW(),
+				#{sugSize}
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<update id="update">
+		update mall_icon_ser set
+				title = #{title},
+				img_path = #{imgPath},
+				icon_link = #{iconLink},
+				icon_type = #{iconType},
+				status = #{status},
+				sort_num = #{sortNum},
+				created = #{created},
+				modified = NOW(),
+				sug_size = #{sugSize}
+		where id = #{id}
+	</update>
+	<update id="updateStatusById">
+		update mall_icon_ser set
+			status = #{publishFlag}
+		where id = #{id}
+	</update>
+	<update id="updateSortNumberById">
+		update mall_icon_ser set
+			sort_num = #{sortNum}
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from mall_icon_ser
+		where id = #{id}
+	</delete>
+
+	<select id="queryCountDTO" resultType="long">
+		select count(0) from mall_icon_ser where 1=1
+		<if test="publishFlag!= null ">
+				and status = #{publishFlag}
+		</if>
+	</select>
+	<select id="queryListDTO" resultMap="mallIconSerDTO">
+		select * from mall_icon_ser where 1=1
+		<if test="publishFlag!= null ">
+				and status = #{publishFlag}
+		</if>
+		
+		order by sort_num asc, modified desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<select id="queryCountDTOToAdmin" resultType="long">
+		select count(0) from mall_icon_ser
+		<include refid="queryList_where"/>
+	</select>
+	<select id="queryListDTOToAdmin" resultMap="mallIconSerDTO">
+		select * from mall_icon_ser
+		<include refid="queryList_where"/>
+		order by sort_num asc, modified desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	<sql id="queryList_where">
+			where 1=1
+			<if test="publishFlag!= null ">
+				and status = #{publishFlag}
+			</if>
+			<if test="entity!=null">
+				<if test=" entity.id != null and entity.id != '' ">
+					and id = #{entity.id}
+				</if>
+				<if test=" entity.title != null ">
+					and title like concat('%',#{entity.title},'%')
+				</if>
+				<if test="entity.iconType != null">
+					and icon_type = #{entity.iconType}
+				</if>
+			</if>
+	</sql>
+
+	<select id="queryMallIconSerByTitle" resultMap="mallIconSerDTO">
+		select * from mall_icon_ser
+		<where>
+			<if test="title!=null and title!=''">
+				and title =#{title}
+			</if>
+			<if test="id != null ">
+				and id != #{id}
+			</if>
+		</where>
+	</select>
+</mapper>

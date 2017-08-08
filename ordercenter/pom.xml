@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>cn.htd.zeus.tc</groupId>
+	<artifactId>ordercenter</artifactId>
+	<version>1.1.0-RELEASE</version>
+	<packaging>pom</packaging>
+
+	<name>ordercenter-parent</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<slf4j.version>1.6.0</slf4j.version>
+		<junit.version>4.7</junit.version>
+		<eventcenter.client.version>1.0.0</eventcenter.client.version>
+		<maven.compiler.plugin.version>2.3</maven.compiler.plugin.version>
+		<maven.surefire.plugin.version>2.5</maven.surefire.plugin.version>
+		<maven.resources.plugin.version>2.4.2</maven.resources.plugin.version>
+		<maven.clean.plugin.version>2.4</maven.clean.plugin.version>
+		<maven.install.plugin.version>2.3</maven.install.plugin.version>
+		<maven.deploy.plugin.version>2.5</maven.deploy.plugin.version>
+		<maven.eclipse.plugin.version>2.8</maven.eclipse.plugin.version>
+		<maven.war.plugin.version>2.1-beta-1</maven.war.plugin.version>
+		<maven.jar.plugin.version>2.3</maven.jar.plugin.version>
+		<maven.source.plugin.version>2.1.1</maven.source.plugin.version>
+		<maven.dependency.plugin.version>2.1</maven.dependency.plugin.version>
+		<maven.antrun.plugin.version>1.3</maven.antrun.plugin.version>
+		<cobertura.maven.plugin.version>2.4</cobertura.maven.plugin.version>
+		<maven.eclipse.plugin.wtpversion.version>2.0
+		</maven.eclipse.plugin.wtpversion.version>
+		<maven.jetty.plugin.version>7.6.16.v20140903</maven.jetty.plugin.version>
+		<logback.classic.version>1.0.0</logback.classic.version>
+		<maven.javadoc.plugin.version>2.8.1</maven.javadoc.plugin.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		  <groupId>redis.clients</groupId>
+		  <artifactId>jedis</artifactId>
+		  <version>2.9.0</version>
+		</dependency>
+	</dependencies>
+	<modules>
+		<module>ordercenter-biz</module>
+		<module>ordercenter-dto</module>
+		<module>ordercenter-war</module>
+		<module>ordercenter-common</module>
+		<module>ordercenter-api</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>test</id>
+			<build>
+				<filters>
+					<filter>../ordercenter-deploy/dev/application-env.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>dev</id>
+		    <activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<epp_env>dev</epp_env>
+				<comm_env>common</comm_env>
+			</properties>
+			<build>
+				<filters>
+					<filter>../ordercenter-deploy/dev/application-env.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>sit</id>
+			
+			<properties>
+				<epp_env>sit</epp_env>
+				<comm_env>common</comm_env>
+			</properties>
+			<build>
+				<filters>
+					<filter>../ordercenter-deploy/sit/application-env.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>prep</id>
+		
+			<properties>
+				<epp_env>prep</epp_env>
+				<comm_env>common</comm_env>
+			</properties>
+			<build>
+				<filters>
+					<filter>../ordercenter-deploy/prep/application-env.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+		    
+			<properties>
+				<epp_env>prod</epp_env>
+				<comm_env>common</comm_env>
+			</properties>
+			<build>
+				<filters>
+					<filter>../ordercenter-deploy/prod/application-env.properties</filter>
+				</filters>
+			</build>
+		</profile>
+	</profiles>
+	<!-- 替换资源 -->
+	<build>
+		<finalName>ordercenter-war</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>../ordercenter-deploy/${epp_env}</directory>
+			</resource>
+			<resource>
+				<directory>../ordercenter-deploy/${comm_env}</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<!-- update by 张丁 20161101 开始 -->
+				<!-- <version>2.3</version> -->
+				<version>2.5</version>
+				<!-- update by 张丁 20161101 开始 -->
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<webResources>
+						<resource>
+							<!-- 元配置文件的目录，相对于pom.xml文件的路径 -->
+							<directory>src/main/webapp/WEB-INF</directory>
+							<!-- 是否过滤文件，也就是是否启动auto-config的功能 -->
+							<filtering>true</filtering>
+							<!-- 目标路径 -->
+							<targetPath>WEB-INF</targetPath>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Releases</name>
+			<url>http://171.16.46.6:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots</name>
+			<url>http://171.16.46.6:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
+	
+</project>

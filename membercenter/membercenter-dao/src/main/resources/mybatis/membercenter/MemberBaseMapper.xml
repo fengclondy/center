@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberBaseDAO">
+	
+	<!-- 根据会员编码查询会员信息 -->
+	<select id="queryMemberLoginInfo" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+		parameterType="Object">
+		select
+			b.company_name companyName,
+            b.member_id memberId
+           from member_base_info a,member_company_info b
+		where a.id = b.member_id
+		<if test="memberBaseDTO.memberId != null and memberBaseDTO.memberId != ''">
+		    and a.id = #{memberBaseDTO.memberId}
+		</if> 
+	</select>
+
+
+	<!-- 根据会员编码查询会员信息 -->
+	<select id="queryMemberBaseInfoById" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+		parameterType="Object">
+		select
+			d.company_name companyName,
+			c.company_type companyType,
+			b.taxman_flag taxmanFlag,
+			c.company_work_address companyWorkAddress,
+			d.location_province locationProvince,
+			d.location_city locationCity,
+			d.location_county locationCounty,
+			d.location_town locationTown,
+			d.location_detail locationDetail,
+			c.sales_volumn salesVolumn,
+			c.business_scope businessScope,
+			d.company_code companyCode,
+			d.artificial_person_name artificialPersonName,
+			d.artificial_person_mobile artificialPersonMobile,
+			a.contact_name contactName,
+			a.contact_mobile contactMobile,
+			a.contact_email contactEmail,
+			a.member_code memberCode,
+			a.seller_type sellerType,
+			a.can_mall_login canMallLogin,
+			a.has_guarantee_license hasGuaranteeLicense,
+			a.has_business_license hasBusinessLicense,
+			c.business_category businessCategory,
+			c.major_business_category majorBusinessCategory,
+			c.business_brand businessBrand,
+			c.operating_life operatingLife,
+			c.vendor_nature vendorNature,
+			c.chain_of_authorize chainOfAuthorize,
+			c.is_use_other_platform isUseOtherPlatform,
+            b.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+			b.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+			b.business_license_pic_src businessLicensePicSrc,
+			b.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+			b.organization_pic_src organizationPicSrc,
+			b.tax_registration_certificate_pic_src taxRegistrationCertificatePicSrc,
+			b.taxpayer_certificate_pic_src taxpayerCertificatePicSrc,
+            c.member_id memberId
+           from member_base_info a
+           left join member_licence_info b on b.member_id=a.id
+           left join member_extend_info c on c.member_id=a.id
+           left join member_company_info d on d.member_id=a.id
+		where
+		1=1
+		<if test="memberBaseDTO.buyerSellerType != null and memberBaseDTO.buyerSellerType != ''">
+			and d.buyer_seller_type = #{memberBaseDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseDTO.memberId != null and memberBaseDTO.memberId != ''">
+		    and a.id = #{memberBaseDTO.memberId}
+		</if> 
+		<if test="memberBaseDTO.memberCode != null and memberBaseDTO.memberCode != ''">
+		    and a.member_code = #{memberBaseDTO.memberCode}
+		</if> 
+	</select>
+	
+	
+   	<select id="queryMemberInfoBySellerId" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+		parameterType="Object">
+		 select a.buyer_id memberId,b.company_name companyName from box_relationship a,
+		 member_company_info b
+        where a.buyer_id = b.member_id and a.seller_id = #{memberBaseDTO.sellerId}
+        	and b.buyer_seller_type = '1'
+		<if test="memberBaseDTO.searchCondition != null and memberBaseDTO.searchCondition != '' and memberBaseDTO.searchType == 1">
+		     <![CDATA[ and b.company_name like concat('%', #{memberBaseDTO.searchCondition}, '%') ]]>
+		</if> 
+		<if test="memberBaseDTO.searchCondition != null and memberBaseDTO.searchCondition != '' and memberBaseDTO.searchType == 2">
+		     <![CDATA[ and a.buyer_id like concat('%', #{memberBaseDTO.searchCondition}, '%') ]]>
+		</if> 
+		<if test="memberBaseDTO.searchCondition != null and memberBaseDTO.searchCondition != '' and memberBaseDTO.searchType == 3">
+		    <![CDATA[ and b.artificial_person_name like concat('%', #{memberBaseDTO.searchCondition}, '%') ]]>
+		</if> 
+	    <if test="pager.pageOffset != null and pager != null">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+
+	<select id="queryMemberInfoBySellerIdCount" resultType="java.lang.Long"
+		parameterType="Object">
+		 select count(0) from box_relationship a,member_company_info b
+        where a.buyer_id = b.member_id and a.seller_id = #{memberBaseDTO.sellerId}
+        	and b.buyer_seller_type = '1'
+		<if test="memberBaseDTO.searchCondition != null and memberBaseDTO.searchCondition != '' and memberBaseDTO.searchType == 1">
+		     <![CDATA[ and b.company_name like concat('%', #{memberBaseDTO.searchCondition}, '%') ]]>
+		</if> 
+		<if test="memberBaseDTO.searchCondition != null and memberBaseDTO.searchCondition != '' and memberBaseDTO.searchType == 2">
+		     <![CDATA[ and a.buyer_id like concat('%', #{memberBaseDTO.searchCondition}, '%') ]]>
+		</if> 
+		<if test="memberBaseDTO.searchCondition != null and memberBaseDTO.searchCondition != '' and memberBaseDTO.searchType == 3">
+		    <![CDATA[ and artificial_person_name like concat('%', #{memberBaseDTO.searchCondition}, '%') ]]>
+		</if> 
+	</select>
+
+	<!-- 根据会员编码查询会员信息 -->
+	<select id="queryMemberBaseInfo4order" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+		parameterType="Object">
+		select
+			b.member_id memberId,
+			b.company_name companyName,
+			a.contact_name contactName,
+			a.contact_mobile contactMobile,
+			c.consignee_address_province locationProvince,
+			c.consignee_address_city locationCity,
+			c.consignee_address_district locationCounty,
+			c.consignee_address_town locationTown,
+			c.consignee_address_detail locationDetail
+           from member_base_info a,member_company_info b,member_consignee_address_info c
+		where a.id = b.member_id and a.id = c.member_id 
+			and b.buyer_seller_type = '1'
+			and a.status = '1'
+			and c.channel_code =''
+		<if test="memberBaseDTO.memberId != null and memberBaseDTO.memberId != ''">
+		    and a.id = #{memberBaseDTO.memberId}
+		</if> 
+		order by c.default_flag desc,c.address_id limit 1
+		
+	</select>
+	
+	<!-- 根据会员ID查询会员信息 -->
+	<select id="queryMemberBaseInfo" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+		parameterType="Object">
+		select
+			d.company_name companyName,
+			b.taxman_flag taxmanFlag,
+			d.location_province locationProvince,
+			d.location_city locationCity,
+			d.location_county locationCounty,
+			d.location_town locationTown,
+			d.location_detail locationDetail,
+			d.company_code companyCode,
+			d.artificial_person_name artificialPersonName,
+			d.artificial_person_mobile artificialPersonMobile,
+			a.seller_type sellerType,			
+            b.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+			b.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+			b.business_license_pic_src businessLicensePicSrc,
+			b.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+			b.organization_pic_src organizationPicSrc,
+			b.tax_registration_certificate_pic_src taxRegistrationCertificatePicSrc,
+			b.taxpayer_certificate_pic_src taxpayerCertificatePicSrc
+           from member_base_info a,member_licence_info b,member_company_info d
+		where a.id = b.member_id  and a.id = d.member_id
+		<if test="memberBaseDTO.buyerSellerType != null and memberBaseDTO.buyerSellerType != ''">
+			and d.buyer_seller_type = #{memberBaseDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseDTO.memberId != null and memberBaseDTO.memberId != ''">
+		    and a.id = #{memberBaseDTO.memberId}
+		</if>  
+	</select>
+	<!-- 根据公司code查询是否实名验证 -->
+	<select id="getRealNameStatus" resultType="java.lang.Integer">
+		select 
+			real_name_status realNameStatus
+		from member_base_info a,member_company_info b
+		where a.id = b.member_id
+		and b.buyer_seller_type = '1'
+		and a.status = '1'
+		and a.id = #{memberId} 
+	</select>
+	<select id="selectBooleanCompanyName" resultType="java.lang.Long">
+		select a.member_id memberID from member_company_info a,member_base_info b  where a.member_id=b.id and a.buyer_seller_type='1' 
+		and b.status='1' 
+		and b.can_mall_login=1 and b.is_seller=0 
+		and a.company_name=#{companyName} group by a.company_name 
+	</select>
+	
+	<select id="queryMemberBelongInfo" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+		parameterType="Object">
+		select a.id memberId,a.member_code memberCode,
+			b.artificial_person_name artificialPersonName,
+			b.company_name companyName,
+			a.cur_belong_seller_id curBelongSellerId,
+			(select member_code from member_base_info where id=a.cur_belong_seller_id) as curBelongMemberCode,
+			(select d.company_name from member_base_info c, 
+			member_company_info d where d.member_id= cur_belong_seller_id 
+			and c.member_code = #{memberCode}
+			and d.buyer_seller_type = '1') curBelongSellerName,
+			b.artificial_person_mobile artificialPersonMobile 
+		from member_base_info a, member_company_info b
+		where a.id = b.member_id and b.buyer_seller_type = '1'
+			and a.member_code = #{memberCode}
+	</select>
+	
+	<select id="queryMemberInfoByCellPhone" resultType="java.lang.Long" parameterType="Object">
+		select count(0) from member_base_info a,member_company_info b
+		where a.id = b.member_id and b.artificial_person_mobile = #{artificialPersonMobile}
+	</select>
+</mapper>

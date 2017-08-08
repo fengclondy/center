@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/rabbit
+		http://www.springframework.org/schema/rabbit/spring-rabbit-1.3.xsd">
+
+	<rabbit:connection-factory id="connectionFactory"
+		host="${mq.host}" port="${mq.port}" username="${mq.username}" password="${mq.password}" />
+
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	<!-- 定义template start -->
+	<rabbit:template id="commonRabbitMqTemplate" connection-factory="connectionFactory" exchange="goodscenter.direct.exchange"
+					 message-converter="jackson2JsonMessageConverter"/>
+	<!-- 定义template end -->
+
+	<!-- 定义queue start -->
+	<rabbit:queue name="item.down.erp.queue"/>
+
+	<rabbit:queue name="brand.down.erp.queue"/>
+	<!-- 京东全量导入商品队列 -->
+	<rabbit:queue name="middleware-jd.sku"/>
+	<!-- 京东增量导入商品队列 -->
+	<rabbit:queue name="middleware-jd.skuAdd"/>
+	<!-- 京东增量价格队列-->
+	<rabbit:queue name="middleware-jd.skuPrice"/>
+	<!-- 京东增量上下架队列-->
+	<rabbit:queue name="middleware-jd.skuStatus"/>
+	<!-- 定义queue end -->
+
+	<!-- exchange重新定义并与上边的模本中保持一致，binding中的queue和key也要用自己重新定义的 start -->
+	<rabbit:direct-exchange name="goodscenter.direct.exchange">
+		<rabbit:bindings>
+			<rabbit:binding queue="item.down.erp.queue" key="itemDownErpKey"/>
+			<rabbit:binding queue="brand.down.erp.queue" key="brandDownErpKey"/>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	<!--exchange重新定义 end -->
+
+	<!-- mq listener configuration -->
+	 <rabbit:listener-container connection-factory="connectionFactory" concurrency="10" prefetch="5">
+		<!--<rabbit:listener ref="hybrisCategoryListener" method="listen" queue-names="JD.Category.Hybris.queue" />-->
+		<!--<rabbit:listener ref="hybrisBrandListener" method="listen" queue-names="JD.Brand.Hybris.queue" />-->
+		 <rabbit:listener queue-names="middleware-jd.sku" ref="jdProductDataImportServiceImp" />
+		 <rabbit:listener queue-names="middleware-jd.skuAdd" ref="jdSupplyProductDataImportService" />
+		 <rabbit:listener queue-names="middleware-jd.skuPrice" ref="jdSupplyProductPriceService" />
+		 <rabbit:listener queue-names="middleware-jd.skuStatus" ref="jdSupplyProductStatusService" />
+		 <rabbit:listener queue-names="middleware-erp.productRelationship" ref="erp2MiddleItemAndSellerRelationshipListener" />
+		 <rabbit:listener queue-names="middleware-erp.product" ref="erp2MiddleItemListener" />
+	</rabbit:listener-container>
+
+	<bean id="jackson2JsonMessageConverter"
+		  class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
+
+
+	<bean id="mqSendItem" class="cn.htd.common.mq.MQSendUtil">
+		<property name="amqpTemplate" ref="commonRabbitMqTemplate"></property>
+	</bean>
+
+	<!-- 京东全量商品导入 -->
+	<bean id="jdProductDataImportServiceImp" class="cn.htd.goodscenter.service.listener.JdProductDataImportServiceImpl"/>
+
+	<!-- 京东增量商品导入-->
+	<bean id="jdSupplyProductDataImportService" class="cn.htd.goodscenter.service.listener.JdSupplyProductDataImportServiceImpl"/>
+
+	<!-- 京东增量价格导入-->
+	<bean id="jdSupplyProductPriceService" class="cn.htd.goodscenter.service.listener.JdSupplyProductPriceServiceImpl"/>
+
+	<!-- 京东增量商品上下架状态导入-->
+	<bean id="jdSupplyProductStatusService" class="cn.htd.goodscenter.service.listener.JdSupplyProductStatusServiceImpl"/>
+	
+	<!-- ERP商品关系上行 -->
+	<bean id="erp2MiddleItemAndSellerRelationshipListener" class="cn.htd.goodscenter.service.listener.Erp2MiddleItemRelationshipListener"></bean>
+	
+	<!-- ERP商品上行 -->
+	<bean id="erp2MiddleItemListener" class="cn.htd.goodscenter.service.listener.Erp2MiddleItemListener"></bean>
+	
+</beans>

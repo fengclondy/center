@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.goodscenter.dao.ItemAttributeDAO">
+	
+	<!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<resultMap id="itemAttrMap" type="cn.htd.goodscenter.dto.ItemAttrDTO">
+		<result property="id" column="attr_id"/>
+		<result property="name" column="attr_name"/>
+		<result property="status" column="status"/>
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name" />
+		<result property="createTime" column="create_time" />
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name" />
+		<result property="modifyTime" column="modify_time" />
+	</resultMap>
+	<!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+ 			attr_id
+ 			,attr_name
+		FROM 
+		item_attribute item_attribute_
+		]]>
+	</sql>
+	
+	<sql id="where_fragement">
+		where  item_attribute_.status=1 
+		<![CDATA[ ORDER BY item_attribute_.sort_number  ]]>
+	</sql>
+	
+	<!-- =========================================================== -->
+    <!-- DAO方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+   <!-- 根据id查询 -->
+	<select id="queryById" resultMap="itemAttrMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where item_attribute_.attr_id = #{id}
+		]]>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="itemAttrMap" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="queryCount" resultType="long">
+		<include refid="count_Tail" />
+		item_attribute item_attribute_
+		<include refid="where_fragement" />
+	</select>
+	
+	<!-- 插入记录 -->
+	<insert id="add" parameterType="cn.htd.goodscenter.dto.ItemAttrDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+		insert into item_attribute (
+		    	 attr_name
+		    	 ,status
+		    	 ,create_id
+		    	 ,create_name
+		    	 ,create_time
+		    	 ,modify_id
+		    	 ,modify_name
+		    	 ,modify_time
+		   )values(
+		    	#{name}
+		    	,1
+		    	,#{createId}
+		    	,#{createName}
+		    	,now()
+		    	,#{modifyId}
+		    	,#{modifyName}
+		    	,now()
+		   )
+	    ]]>	
+	</insert>
+	
+	<!-- 根据id，修改记录 -->
+	<update id="update" parameterType="cn.htd.goodscenter.dto.ItemAttrDTO">
+		update
+			item_attribute
+		<trim prefix="set" suffixOverrides=",">
+		<if test="status != null">
+   			status = #{status},
+   		</if>
+   		<if test="name != null">
+   			attr_name = #{name},
+   		</if>
+		modify_id = #{modifyId},
+		modify_name = #{modifyName},
+		modify_time = now()
+		</trim>
+		 where attr_id = #{id}
+	</update>
+	
+	<update id="delete" parameterType="long">
+		<![CDATA[
+		update item_attribute set status = 0 where attr_id = #{id}
+		]]>
+	</update>
+
+	<select id="selectItemAttributeListTask" parameterType="map" resultMap="itemAttrMap">
+		SELECT * FROM item_attribute
+		WHERE
+		status = 1
+		and mod(attr_id, #{taskQueueNum}) in
+		<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+	</select>
+
+
+	<delete id="delteItemAttrByAttrId">
+		update item_attr
+		set attr_status = 1
+		where
+		attr_id=#{attrId}
+		and category_id = #{cid}
+		and shop_id = #{shopId}
+	</delete>
+</mapper>

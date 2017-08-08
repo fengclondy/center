@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.HelpDocCategoryDAO">
+
+	<resultMap id="base_resultMap_helpDocCategory" type="com.bjucloud.contentcenter.domain.HelpDocCategory">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="category_code" property="categoryCode" jdbcType="VARCHAR" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="parent_category_code" property="parentCategoryCode" jdbcType="VARCHAR" />
+    <result column="parent_category_name" property="parentCategoryName" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="is_publish" property="isPublish" jdbcType="TINYINT" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<insert id="addHelpDocCategory" parameterType="com.bjucloud.contentcenter.dto.HelpDocCategoryDTO">
+	INSERT INTO help_doc_category    
+    (category_code,
+    category_name,
+    parent_category_code,
+    parent_category_name,
+    level,
+    is_publish,
+    sort_num,
+    create_id,
+    create_name,
+    create_time,
+    modify_id,
+    modify_name,
+    modify_time)
+    VALUES
+    (#{categoryCode,jdbcType=VARCHAR},
+    #{categoryName,jdbcType=VARCHAR},
+    #{parentCategoryCode,jdbcType=VARCHAR},
+    #{parentCategoryName,jdbcType=VARCHAR},
+    #{level,jdbcType=INTEGER},
+    #{isPublish,jdbcType=TINYINT},
+    #{sortNum,jdbcType=INTEGER},
+    #{createId,jdbcType=BIGINT},
+    #{createName,jdbcType=VARCHAR},
+	#{createTime,jdbcType=TIMESTAMP},
+	#{modifyId,jdbcType=BIGINT},
+	#{modifyName,jdbcType=VARCHAR},
+	#{modifyTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<delete id="deleteHelpDocCategoryByParams"  parameterType="com.bjucloud.contentcenter.dto.HelpDocCategoryDTO">
+	 delete from help_doc_category  
+	 where 
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT} 
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+            category_code = #{categoryCode,jdbcType=VARCHAR} 
+		</if>
+	</delete>
+	
+	<delete id="deleteAllTopicsByCategoryCode">
+	 delete from help_doc_topic  
+	 where second_category_code = #{categoryCode,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="updateHelpDocCategory" parameterType="com.bjucloud.contentcenter.dto.HelpDocCategoryDTO">
+	update help_doc_category 
+	set 
+	<if test="categoryCode != null and categoryCode != ''">
+		category_code = #{categoryCode,jdbcType=VARCHAR},
+	</if>
+	<if test="categoryName != null and categoryName != ''">
+		category_name = #{categoryName,jdbcType=VARCHAR},
+	</if>
+	<if test="parentCategoryCode != null and parentCategoryCode != ''">
+		parent_category_code = #{parentCategoryCode,jdbcType=VARCHAR},
+	</if>
+	<if test="parentCategoryName != null and parentCategoryName != ''">
+		parent_category_name = #{parentCategoryName,jdbcType=VARCHAR},
+	</if>
+	<if test="sortNum != null">
+		sort_num = #{sortNum,jdbcType=INTEGER},
+	</if>
+	    is_publish = #{isPublish,jdbcType=VARCHAR},
+		modify_id = #{modifyId,jdbcType=BIGINT},
+	    modify_name = #{modifyName,jdbcType=VARCHAR},
+	    modify_time = #{modifyTime,jdbcType=TIMESTAMP}  
+	 where  category_code = #{categoryCode,jdbcType=VARCHAR} 
+	</update>
+	
+	
+	<sql id="dynamic_fragment_docCategory">
+		<if test="dto.id != null">
+			and id = #{dto.id,jdbcType=BIGINT} 
+		</if>
+		<if test="dto.categoryCode != null and dto.categoryCode != ''">
+			and category_code = #{dto.categoryCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="dto.categoryName != null and dto.categoryName != ''">
+		    and category_name = #{dto.categoryName,jdbcType=VARCHAR}  
+	    </if>
+		<if test="dto.parentCategoryCode != null and dto.parentCategoryCode != ''">
+			and parent_category_code = #{dto.parentCategoryCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="dto.parentCategoryName != null and dto.parentCategoryName != ''">
+		    and parent_category_name = #{dto.parentCategoryName,jdbcType=VARCHAR}  
+	    </if>
+	    <if test="dto.isPublish != null">
+			and is_publish = #{dto.isPublish,jdbcType=TINYINT}  
+		</if>
+		<if test="dto.sortNum != null">
+			and sort_num = #{dto.sortNum,jdbcType=INTEGER} 
+		</if>
+		<if test="dto.level != null">
+			and level = #{dto.level,jdbcType=INTEGER} 
+		</if>
+		<if test="dto.startTime != null and dto.startTime != ''">
+		 <![CDATA[ 
+			and date_format(create_time,'%Y-%m-%d %H:%m:%s') >= #{dto.startTime,jdbcType=VARCHAR} 
+		  ]]> 
+		</if>
+		<if test="dto.endTime != null and dto.endTime != ''">
+		 <![CDATA[ 
+			and date_format(create_time,'%Y-%m-%d %H:%m:%s') <= #{dto.endTime,jdbcType=VARCHAR} 
+		 ]]>
+		</if>
+	</sql>
+
+	<select id="getHelpDocCategoriesCount" resultType="java.lang.Integer">
+		select count(1) from help_doc_category
+		WHERE 1 = 1 
+		 <include refid="dynamic_fragment_docCategory"/>
+	</select>
+
+	<select id="getHelpDocCategoriesForPage" resultMap="base_resultMap_helpDocCategory">
+		SELECT id,category_code,category_name,parent_category_code,parent_category_name,
+			level,is_publish,sort_num,create_id,create_name, create_time,modify_id,modify_name,modify_time  
+		FROM help_doc_category  
+		WHERE 1 = 1 
+        <include refid="dynamic_fragment_docCategory"/>
+		ORDER BY sort_num 
+		LIMIT #{page.pageOffset},#{page.rows}
+	</select>
+
+	<select id="getHelpDocCategoriesByParams" resultMap="base_resultMap_helpDocCategory">
+		SELECT id,category_code,category_name,parent_category_code,parent_category_name,
+			level,is_publish,sort_num,create_id,create_name, create_time,modify_id,modify_name,modify_time
+		FROM help_doc_category
+		WHERE 1 = 1 
+        <include refid="dynamic_fragment_docCategory"/>
+		ORDER BY sort_num 
+	</select>
+
+	<select id="getSingleHelpDocCategoryByParams" resultMap="base_resultMap_helpDocCategory">
+	  SELECT id,category_code,category_name,parent_category_code,parent_category_name,
+       level,is_publish,sort_num,create_id,create_name, create_time,modify_id,modify_name,modify_time  
+	   FROM help_doc_category  
+	  WHERE 1 = 1  
+      <include refid="dynamic_fragment_docCategory"/>
+	</select>
+
+
+
+
+<!-- 		<if test="dto.id != null and dto.id != ''">
+			and id != #{dto.id}
+		</if> -->
+
+</mapper>

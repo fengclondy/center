@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderItemsStatusHistoryDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderItemsStatusHistoryDTO">
+	<id column="id" property="id" jdbcType="BIGINT" />
+	<result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+	<result column="order_item_status" property="orderItemStatus" jdbcType="VARCHAR" />
+	<result column="order_item_status_text" property="orderItemStatusText" jdbcType="VARCHAR" />
+	<result column="create_id" property="createId" jdbcType="BIGINT" />
+	<result column="create_name" property="createName" jdbcType="VARCHAR" />
+	<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,
+	order_item_no,
+	order_item_status,
+	order_item_status_text,
+	create_id,
+	create_name,
+	create_time
+  </sql>
+  <select id="queryStatusHistoryByOrderItemNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_items_status_history
+    where order_item_no = #{_parameter,jdbcType=VARCHAR}
+  </select>
+  <select id="queryStatusHistoryByOrderItemStatus" resultMap="BaseResultMap" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsStatusHistoryDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_items_status_history
+    where order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+      and order_item_status = #{orderItemStatus,jdbcType=VARCHAR}
+  </select>
+  <insert id="addOrderItemsStatusHistory" useGeneratedKeys="true" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsStatusHistoryDTO">
+  	insert into trade_order_items_status_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+	    order_item_no,
+	    order_item_status,
+	    order_item_status_text,
+	    create_id,
+	    create_name,
+	    create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		#{orderItemNo},
+		#{orderItemStatus},
+		#{orderItemStatusText},
+		#{createId},
+		#{createName},
+		now(),
+    </trim>
+  </insert>
+  <!-- 批量插入记录 -->
+  <insert id="addOrderItemsStatusHistoryList" useGeneratedKeys="true" parameterType="java.util.List">
+  	insert into trade_order_items_status_history (
+	    order_item_no,
+	    order_item_status,
+	    order_item_status_text,
+	    create_id,
+	    create_name,
+	    create_time
+     ) values 
+     <foreach collection="list" item="item" index="index"
+		separator=",">
+		(
+			#{item.orderItemNo},
+			#{item.orderItemStatus},
+			#{item.orderItemStatusText},
+			#{item.createId},
+			#{item.createName},
+			now()
+		)
+	 </foreach>
+  </insert>
+</mapper>

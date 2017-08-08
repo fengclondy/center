@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.pricecenter.dao.InnerItemSkuPriceMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.pricecenter.domain.InnerItemSkuPrice" >
+    <id column="grade_price_id" property="gradePriceId" jdbcType="BIGINT" />
+    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="is_box_flag" property="isBoxFlag" jdbcType="TINYINT" />
+    <result column="price_type" property="priceType" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="BIGINT" />
+    <result column="buyer_grade" property="buyerGrade" jdbcType="VARCHAR" />
+    <result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    grade_price_id, sku_id, item_id, seller_id, shop_id, is_box_flag, price_type, group_id, 
+    buyer_grade, area_code, price, delete_flag, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from inner_item_sku_price
+    where grade_price_id = #{gradePriceId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from inner_item_sku_price
+    where grade_price_id = #{gradePriceId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.pricecenter.domain.InnerItemSkuPrice" >
+    insert into inner_item_sku_price (grade_price_id, sku_id, item_id, 
+      seller_id, shop_id, is_box_flag, 
+      price_type, group_id, buyer_grade, 
+      area_code, price, delete_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{gradePriceId,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, 
+      #{sellerId,jdbcType=BIGINT}, #{shopId,jdbcType=BIGINT}, #{isBoxFlag,jdbcType=TINYINT}, 
+      #{priceType,jdbcType=VARCHAR}, #{groupId,jdbcType=BIGINT}, #{buyerGrade,jdbcType=VARCHAR}, 
+      #{areaCode,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.pricecenter.domain.InnerItemSkuPrice" >
+    insert into inner_item_sku_price
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gradePriceId != null" >
+        grade_price_id,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag,
+      </if>
+      <if test="priceType != null" >
+        price_type,
+      </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="buyerGrade != null" >
+        buyer_grade,
+      </if>
+      <if test="areaCode != null" >
+        area_code,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gradePriceId != null" >
+        #{gradePriceId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="isBoxFlag != null" >
+        #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="priceType != null" >
+        #{priceType,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="buyerGrade != null" >
+        #{buyerGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null" >
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.pricecenter.domain.InnerItemSkuPrice" >
+    update inner_item_sku_price
+    <set >
+      <if test="skuId != null" >
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="priceType != null" >
+        price_type = #{priceType,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="buyerGrade != null" >
+        buyer_grade = #{buyerGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null" >
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where grade_price_id = #{gradePriceId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.pricecenter.domain.InnerItemSkuPrice" >
+    update inner_item_sku_price
+    set sku_id = #{skuId,jdbcType=BIGINT},
+      item_id = #{itemId,jdbcType=BIGINT},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      shop_id = #{shopId,jdbcType=BIGINT},
+      is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+      price_type = #{priceType,jdbcType=VARCHAR},
+      group_id = #{groupId,jdbcType=BIGINT},
+      buyer_grade = #{buyerGrade,jdbcType=VARCHAR},
+      area_code = #{areaCode,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where grade_price_id = #{gradePriceId,jdbcType=BIGINT}
+  </update>
+  
+   <insert id="insertBatch">
+    insert into inner_item_sku_price (sku_id, item_id, 
+      seller_id, shop_id, is_box_flag, 
+      price_type, group_id, buyer_grade, 
+      area_code, price, delete_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values 
+    <foreach collection="list" item="innerItemSkuPrice" separator=",">
+      ( #{innerItemSkuPrice.skuId,jdbcType=BIGINT}, #{innerItemSkuPrice.itemId,jdbcType=BIGINT}, 
+      #{innerItemSkuPrice.sellerId,jdbcType=BIGINT}, #{innerItemSkuPrice.shopId,jdbcType=BIGINT},
+      #{innerItemSkuPrice.isBoxFlag,jdbcType=TINYINT},#{innerItemSkuPrice.priceType,jdbcType=VARCHAR}, 
+      #{innerItemSkuPrice.groupId,jdbcType=BIGINT},#{innerItemSkuPrice.buyerGrade,jdbcType=VARCHAR}, 
+      #{innerItemSkuPrice.areaCode,jdbcType=VARCHAR},#{innerItemSkuPrice.price,jdbcType=DECIMAL},
+      #{innerItemSkuPrice.deleteFlag,jdbcType=TINYINT}, #{innerItemSkuPrice.createId,jdbcType=BIGINT}, 
+      #{innerItemSkuPrice.createName,jdbcType=VARCHAR}, NOW(), 
+      #{innerItemSkuPrice.modifyId,jdbcType=BIGINT}, #{innerItemSkuPrice.modifyName,jdbcType=VARCHAR},NOW()
+      )
+      </foreach>
+  </insert>
+
+  <select id="selectAllInnerItemSkuPriceBySkuId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from inner_item_sku_price
+    where
+    sku_id = #{skuId,jdbcType=BIGINT}
+    and delete_flag='0'
+  </select>
+
+  <select id="selectInnerItemSkuPriceBySkuId" resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from inner_item_sku_price
+    where
+    sku_id = #{skuId,jdbcType=BIGINT}
+    and is_box_flag = #{isBoxFlag,jdbcType=TINYINT}
+    and delete_flag='0'
+  </select>
+  
+  <update id="txDeleteInnerItemSkuAreaPrice">
+	update   inner_item_sku_price set delete_flag=1 where area_code=#{areaCode} and sku_id=#{skuId} and price_type='1'
+  </update>
+  
+  <update id="txDeleteInnerItemSkuPrice">
+	update   inner_item_sku_price set delete_flag=1 where sku_id=#{skuId}
+	and is_box_flag=#{isBoxFlag}
+  </update>
+
+  <select id="select" resultMap="BaseResultMap" parameterType="cn.htd.pricecenter.domain.InnerItemSkuPrice">
+    select
+    <include refid="Base_Column_List" />
+    from inner_item_sku_price
+    where
+    1 = 1
+    <if test="skuId != null" >
+      and sku_id = #{skuId,jdbcType=BIGINT}
+    </if>
+    <if test="itemId != null" >
+      and item_id = #{itemId,jdbcType=BIGINT}
+    </if>
+    <if test="sellerId != null" >
+      and seller_id = #{sellerId,jdbcType=BIGINT}
+    </if>
+    <if test="shopId != null" >
+      and shop_id = #{shopId,jdbcType=BIGINT}
+    </if>
+    <if test="isBoxFlag != null" >
+      and is_box_flag = #{isBoxFlag,jdbcType=TINYINT}
+    </if>
+    <if test="priceType != null" >
+      and price_type = #{priceType,jdbcType=VARCHAR}
+    </if>
+    <if test="groupId != null" >
+      and group_id = #{groupId,jdbcType=BIGINT}
+    </if>
+    <if test="buyerGrade != null" >
+      and buyer_grade = #{buyerGrade,jdbcType=VARCHAR}
+    </if>
+    <if test="areaCode != null" >
+      and area_code = #{areaCode,jdbcType=VARCHAR}
+    </if>
+    <if test="price != null" >
+      and price = #{price,jdbcType=DECIMAL}
+    </if>
+    <if test="deleteFlag != null" >
+      and delete_flag = #{deleteFlag,jdbcType=TINYINT}
+    </if>
+  </select>
+
+ </mapper>

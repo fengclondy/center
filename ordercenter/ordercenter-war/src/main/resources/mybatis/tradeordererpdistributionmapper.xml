@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrderErpDistributionDAO">
+
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="service_area" property="serviceArea" jdbcType="VARCHAR" />
+    <result column="customer_manager_code" property="customerManagerCode" jdbcType="VARCHAR" />
+    <result column="customer_manager_name" property="customerManagerName" jdbcType="VARCHAR" />
+    <result column="order_item_nos" property="orderItemNos" jdbcType="VARCHAR" />
+    <result column="erp_status" property="erpStatus" jdbcType="VARCHAR" />
+    <result column="erp_sholesaler_code" property="erpSholesalerCode" jdbcType="VARCHAR" />
+    <result column="epr_strikea_balance_code" property="eprStrikeaBalanceCode" jdbcType="VARCHAR" />
+    <result column="erp_wholesale_payment_code" property="erpWholesalePaymentCode" jdbcType="VARCHAR" />
+    <result column="erp_create_record_code" property="erpCreateRecordCode" jdbcType="VARCHAR" />
+    <result column="erp_company_code" property="erpCompanyCode" jdbcType="VARCHAR" />
+    <result column="erp_sholesaler_status" property="erpSholesalerStatus" jdbcType="VARCHAR" />
+    <result column="erp_lock_balance_code" property="erpLockBalanceCode" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="erp_down_times" property="erpDownTimes" jdbcType="TINYINT" />
+    <result column="erp_down_time" property="erpDownTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <!-- 此方法是更新下行ERP订单补偿专用接口 -->
+  <update id="updateTradeOrderErpDistributionByPrimaryKey" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+     update trade_order_erp_distribution
+    <set >
+      <if test="erpStatus != null" >
+        erp_status = #{erpStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+        erp_down_times = erp_down_times+1,
+      <if test="erpDownTime != null" >
+        erp_down_time = #{erpDownTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateTradeOrderErpDistribution" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+     update trade_order_erp_distribution
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCode != null" >
+        buyer_Code = #{buyerCode,jdbcType=BIGINT},
+      </if>
+      <if test="sellerCode != null" >
+        seller_code = #{sellerCode,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceArea != null" >
+        service_area = #{serviceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerCode != null" >
+        customer_manager_code = #{customerManagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerName != null" >
+        customer_manager_name = #{customerManagerName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNos != null" >
+        order_item_nos = #{orderItemNos,jdbcType=VARCHAR},
+      </if>
+      <if test="erpStatus != null" >
+        erp_status = #{erpStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="erpSholesalerCode != null" >
+        erp_sholesaler_code = #{erpSholesalerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="eprStrikeaBalanceCode != null" >
+        epr_strikea_balance_code = #{eprStrikeaBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpWholesalePaymentCode != null" >
+        erp_wholesale_payment_code = #{erpWholesalePaymentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCreateRecordCode != null" >
+        erp_create_record_code = #{erpCreateRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCompanyCode != null" >
+        erp_company_code = #{erpCompanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpSholesalerStatus != null" >
+        erp_sholesaler_status = #{erpSholesalerStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        erp_first_category_code = #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="erpDownTimes != null">
+        erp_down_times = #{erpDownTimes},
+      </if>
+      <if test="erpDownTime != null" >
+        erp_down_time = #{erpDownTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where 1=1
+    and erp_lock_balance_code = #{erpLockBalanceCode}
+    and erp_first_category_code = #{erpFirstCategoryCode}
+    and brand_id = #{brandId}
+  </update>
+
+ <update id="updateTradeOrderErpDistributionByErpSholesalerCode" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+     update trade_order_erp_distribution
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCode != null" >
+        buyer_Code = #{buyerCode,jdbcType=BIGINT},
+      </if>
+      <if test="sellerCode != null" >
+        seller_code = #{sellerCode,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceArea != null" >
+        service_area = #{serviceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerCode != null" >
+        customer_manager_code = #{customerManagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerName != null" >
+        customer_manager_name = #{customerManagerName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNos != null" >
+        order_item_nos = #{orderItemNos,jdbcType=VARCHAR},
+      </if>
+      <if test="erpStatus != null" >
+        erp_status = #{erpStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="erpSholesalerCode != null" >
+        erp_sholesaler_code = #{erpSholesalerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="eprStrikeaBalanceCode != null" >
+        epr_strikea_balance_code = #{eprStrikeaBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpWholesalePaymentCode != null" >
+        erp_wholesale_payment_code = #{erpWholesalePaymentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCreateRecordCode != null" >
+        erp_create_record_code = #{erpCreateRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCompanyCode != null" >
+        erp_company_code = #{erpCompanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpSholesalerStatus != null" >
+        erp_sholesaler_status = #{erpSholesalerStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        erp_first_category_code = #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="erpDownTimes != null">
+        erp_down_times = #{erpDownTimes},
+      </if>
+      <if test="erpDownTime != null" >
+        erp_down_time = #{erpDownTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where 1=1
+    and erp_sholesaler_code = #{erpSholesalerCode}
+  </update>
+
+  <select id="selectTradeOrderErpDistributionByErpSholesalerCode" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+    select
+    order_item_nos,order_no
+    from trade_order_erp_distribution
+    where erp_sholesaler_code = #{erpSholesalerCode}
+  </select>
+
+  <insert id="insertSelective" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+    insert into trade_order_erp_distribution
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="buyerCode != null" >
+        buyer_code,
+      </if>
+      <if test="sellerCode != null" >
+        seller_code,
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        erp_first_category_code,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="serviceArea != null" >
+        service_area,
+      </if>
+      <if test="customerManagerCode != null" >
+        customer_manager_code,
+      </if>
+      <if test="customerManagerName != null" >
+        customer_manager_name,
+      </if>
+      <if test="orderItemNos != null" >
+        order_item_nos,
+      </if>
+      <if test="erpLockBalanceCode != null" >
+        erp_lock_balance_code,
+      </if>
+      <if test="erpStatus != null" >
+        erp_status,
+      </if>
+      <if test="erpDownTimes != null" >
+        erp_down_times,
+      </if>
+      <if test="erpDownTime != null" >
+        erp_down_time,
+      </if>
+      <if test="erpSholesalerCode != null" >
+        erp_sholesaler_code,
+      </if>
+      <if test="eprStrikeaBalanceCode != null" >
+        epr_strikea_balance_code,
+      </if>
+      <if test="erpWholesalePaymentCode != null" >
+        erp_wholesale_payment_code,
+      </if>
+      <if test="erpCreateRecordCode != null" >
+        erp_create_record_code,
+      </if>
+      <if test="erpCompanyCode != null" >
+        erp_company_code,
+      </if>
+      <if test="erpSholesalerStatus != null" >
+        erp_sholesaler_status,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerCode != null" >
+        #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceArea != null" >
+        #{serviceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerCode != null" >
+        #{customerManagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerManagerName != null" >
+        #{customerManagerName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNos != null" >
+        #{orderItemNos,jdbcType=VARCHAR},
+      </if>
+      <if test="erpLockBalanceCode != null" >
+        #{erpLockBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpStatus != null" >
+        #{erpStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="erpDownTimes != null" >
+        #{erpDownTimes,jdbcType=TINYINT},
+      </if>
+      <if test="erpDownTime != null" >
+        #{erpDownTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="erpSholesalerCode != null" >
+        #{erpSholesalerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="eprStrikeaBalanceCode != null" >
+        #{eprStrikeaBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpWholesalePaymentCode != null" >
+        #{erpWholesalePaymentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCreateRecordCode != null" >
+        #{erpCreateRecordCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpCompanyCode != null" >
+        #{erpCompanyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpSholesalerStatus != null" >
+        #{erpSholesalerStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="selectOrderItemNosBySelective" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+    select
+    order_item_nos,order_no,ID
+    from trade_order_erp_distribution
+    where erp_lock_balance_code = #{erpLockBalanceCode}
+    and brand_id = #{brandId}
+    and erp_first_category_code = #{erpFirstCategoryCode}
+  </select>
+
+  <update id="updateOrderItemNosBySelective" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+	update
+    trade_order_erp_distribution
+    <trim prefix="set" suffixOverrides=",">
+        <if test="orderItemNos != null">
+            order_item_nos = #{orderItemNos},
+        </if>
+        <if test="modifyId != null">
+            modify_id = #{modifyId},
+        </if>
+        <if test="modifyName != null">
+            modify_name = #{modifyName},
+        </if>
+        <if test="modifyTime != null">
+            modify_time = #{modifyTime},
+        </if>
+        <if test="erpStatus != null" >
+           erp_status = #{erpStatus},
+        </if>
+        <if test="deleteFlag != null" >
+           delete_flag = #{deleteFlag,jdbcType=TINYINT},
+        </if>
+    </trim>
+    where order_no = #{orderNo}
+    and brand_id = #{brandId}
+    and erp_first_category_code = #{erpFirstCategoryCode}
+  </update>
+
+</mapper>

@@ -1,0 +1,1674 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrdersDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="site" property="site" jdbcType="VARCHAR" />
+		<result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+		<result column="buyer_type" property="buyerType" jdbcType="VARCHAR" />
+		<result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+		<result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+		<result column="seller_type" property="sellerType" jdbcType="VARCHAR" />
+		<result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+		<result column="shop_id" property="shopId" jdbcType="BIGINT" />
+		<result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+		<result column="order_from" property="orderFrom" jdbcType="VARCHAR" />
+		<result column="sales_type" property="salesType" jdbcType="VARCHAR" />
+		<result column="sales_department_code" property="salesDepartmentCode"
+			jdbcType="VARCHAR" />
+		<result column="has_productplus_flag" property="hasProductplusFlag"
+			jdbcType="TINYINT" />
+		<result column="is_vip_member" property="isVipMember"
+			jdbcType="TINYINT" />
+		<result column="total_goods_count" property="totalGoodsCount"
+			jdbcType="INTEGER" />
+		<result column="total_goods_amount" property="totalGoodsAmount"
+			jdbcType="DECIMAL" />
+		<result column="total_freight" property="totalFreight"
+			jdbcType="DECIMAL" />
+		<result column="total_discount_amount" property="totalDiscountAmount"
+			jdbcType="DECIMAL" />
+		<result column="shop_discount_amount" property="shopDiscountAmount"
+			jdbcType="DECIMAL" />
+		<result column="platform_discount_amount" property="platformDiscountAmount"
+			jdbcType="DECIMAL" />
+		<result column="used_rebate_amount" property="usedRebateAmount"
+			jdbcType="DECIMAL" />
+		<result column="bargaining_order_amount" property="bargainingOrderAmount"
+			jdbcType="DECIMAL" />
+		<result column="bargaining_order_freight" property="bargainingOrderFreight"
+			jdbcType="DECIMAL" />
+		<result column="order_total_amount" property="orderTotalAmount"
+			jdbcType="DECIMAL" />
+		<result column="order_pay_amount" property="orderPayAmount"
+			jdbcType="DECIMAL" />
+		<result column="create_order_time" property="createOrderTime"
+			jdbcType="TIMESTAMP" />
+		<result column="has_used_coupon" property="hasUsedCoupon"
+			jdbcType="TINYINT" />
+		<result column="is_change_price" property="isChangePrice"
+			jdbcType="TINYINT" />
+		<result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="order_receipt_time" property="orderReceiptTime"
+			jdbcType="TIMESTAMP" />
+		<result column="order_error_status" property="orderErrorStatus"
+			jdbcType="VARCHAR" />
+		<result column="order_error_time" property="orderErrorTime"
+			jdbcType="TIMESTAMP" />
+		<result column="order_error_reason" property="orderErrorReason"
+			jdbcType="VARCHAR" />
+		<result column="is_cancel_order" property="isCancelOrder"
+			jdbcType="TINYINT" />
+		<result column="order_cancel_time" property="orderCancelTime"
+			jdbcType="TIMESTAMP" />
+		<result column="order_cancel_member_id" property="orderCancelMemberId"
+			jdbcType="BIGINT" />
+		<result column="order_cancel_member_name" property="orderCancelMemberName"
+			jdbcType="VARCHAR" />
+		<result column="order_cancel_reason" property="orderCancelReason"
+			jdbcType="VARCHAR" />
+		<result column="pay_type" property="payType" jdbcType="VARCHAR" />
+		<result column="pay_time_limit" property="payTimeLimit"
+			jdbcType="TIMESTAMP" />
+		<result column="pay_order_time" property="payOrderTime"
+			jdbcType="TIMESTAMP" />
+		<result column="pay_status" property="payStatus" jdbcType="VARCHAR" />
+		<result column="pay_serial_no" property="paySerialNo" jdbcType="VARCHAR" />
+		<result column="is_out_distribtion" property="isOutDistribtion"
+			jdbcType="TINYINT" />
+		<result column="is_timelimited_order" property="isTimelimitedOrder"
+			jdbcType="TINYINT" />
+		<result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+		<result column="buyer_remarks" property="buyerRemarks"
+			jdbcType="VARCHAR" />
+		<result column="order_remarks" property="orderRemarks"
+			jdbcType="VARCHAR" />
+		<result column="is_need_invoice" property="isNeedInvoice"
+			jdbcType="TINYINT" />
+		<result column="invoice_type" property="invoiceType" jdbcType="VARCHAR" />
+		<result column="invoice_notify" property="invoiceNotify"
+			jdbcType="VARCHAR" />
+		<result column="invoice_company_name" property="invoiceCompanyName"
+			jdbcType="VARCHAR" />
+		<result column="tax_man_id" property="taxManId" jdbcType="VARCHAR" />
+		<result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="contact_phone" property="contactPhone"
+			jdbcType="VARCHAR" />
+		<result column="invoice_address" property="invoiceAddress"
+			jdbcType="VARCHAR" />
+		<result column="delivery_type" property="deliveryType"
+			jdbcType="VARCHAR" />
+		<result column="consignee_name" property="consigneeName"
+			jdbcType="VARCHAR" />
+		<result column="consignee_phone_num" property="consigneePhoneNum"
+			jdbcType="VARCHAR" />
+		<result column="consignee_address" property="consigneeAddress"
+			jdbcType="VARCHAR" />
+		<result column="consignee_address_province" property="consigneeAddressProvince"
+			jdbcType="VARCHAR" />
+		<result column="consignee_address_city" property="consigneeAddressCity"
+			jdbcType="VARCHAR" />
+		<result column="consignee_address_district" property="consigneeAddressDistrict"
+			jdbcType="VARCHAR" />
+		<result column="consignee_address_town" property="consigneeAddressTown"
+			jdbcType="VARCHAR" />
+		<result column="consignee_address_detail" property="consigneeAddressDetail"
+			jdbcType="VARCHAR" />
+		<result column="post_code" property="postCode" jdbcType="VARCHAR" />
+		<result column="logistics_status" property="logisticsStatus"
+			jdbcType="VARCHAR" />
+		<result column="logistics_company" property="logisticsCompany"
+			jdbcType="VARCHAR" />
+		<result column="logistics_no" property="logisticsNo" jdbcType="VARCHAR" />
+		<result column="used_activity_account_amount" property="usedActivityAccountAmount"
+			jdbcType="DECIMAL" />
+		<result column="order_delete_status" property="orderDeleteStatus"
+			jdbcType="TINYINT" />
+		<result column="PK" property="pk" jdbcType="VARCHAR" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="itemResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+	    <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+	    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+	    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+	    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+	    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+	    <result column="outer_sku_code" property="outerSkuCode" jdbcType="VARCHAR" />
+	    <result column="sku_erp_code" property="skuErpCode" jdbcType="VARCHAR" />
+	    <result column="sku_ean_code" property="skuEanCode" jdbcType="VARCHAR" />
+	    <result column="sku_picture_url" property="skuPictureUrl" jdbcType="VARCHAR" />
+	    <result column="item_spu_code" property="itemSpuCode" jdbcType="VARCHAR" />
+	    <result column="first_category_id" property="firstCategoryId" jdbcType="BIGINT" />
+	    <result column="first_category_name" property="firstCategoryName" jdbcType="VARCHAR" />
+	    <result column="second_category_id" property="secondCategoryId" jdbcType="BIGINT" />
+	    <result column="second_category_name" property="secondCategoryName" jdbcType="VARCHAR" />
+	    <result column="third_category_id" property="thirdCategoryId" jdbcType="BIGINT" />
+	    <result column="third_category_name" property="thirdCategoryName" jdbcType="VARCHAR" />
+	    <result column="category_id_list" property="categoryIdList" jdbcType="VARCHAR" />
+	    <result column="category_name_list" property="categoryNameList" jdbcType="VARCHAR" />
+	    <result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+	    <result column="erp_five_category_code" property="erpFiveCategoryCode" jdbcType="VARCHAR" />
+	    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+	    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+	    <result column="is_vip_item" property="isVipItem" jdbcType="TINYINT" />
+	    <result column="vip_item_type" property="vipItemType" jdbcType="VARCHAR" />
+	    <result column="vip_sync_flag" property="vipSyncFlag" jdbcType="TINYINT" />
+	    <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+	    <result column="cost_price" property="costPrice" jdbcType="DECIMAL" />
+	    <result column="price_floating_ratio" property="priceFloatingRatio" jdbcType="DECIMAL" />
+	    <result column="commission_ratio" property="commissionRatio" jdbcType="DECIMAL" />
+	    <result column="commission_amount" property="commissionAmount" jdbcType="DECIMAL" />
+	    <result column="is_box_flag" property="isBoxFlag" jdbcType="TINYINT" />
+	    <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+	    <result column="goods_price_type" property="goodsPriceType" jdbcType="VARCHAR" />
+	    <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+	    <result column="bargaining_goods_price" property="bargainingGoodsPrice" jdbcType="DECIMAL" />
+	    <result column="bargaining_goods_count" property="bargainingGoodsCount" jdbcType="INTEGER" />
+	    <result column="shop_freight_template_id" property="shopFreightTemplateId" jdbcType="BIGINT" />
+	    <result column="delivery_area_code" property="deliveryAreaCode" jdbcType="VARCHAR" />
+	    <result column="goods_amount" property="goodsAmount" jdbcType="DECIMAL" />
+	    <result column="goods_freight" property="goodsFreight" jdbcType="DECIMAL" />
+	    <result column="total_discount_amount" property="totalDiscountAmount" jdbcType="DECIMAL" />
+	    <result column="shop_discount_amount" property="shopDiscountAmount" jdbcType="DECIMAL" />
+	    <result column="platform_discount_amount" property="platformDiscountAmount" jdbcType="DECIMAL" />
+	    <result column="used_rebate_amount" property="usedRebateAmount" jdbcType="DECIMAL" />
+	    <result column="bargaining_goods_amount" property="bargainingGoodsAmount" jdbcType="DECIMAL" />
+	    <result column="bargaining_goods_freight" property="bargainingGoodsFreight" jdbcType="DECIMAL" />
+	    <result column="order_item_total_amount" property="orderItemTotalAmount" jdbcType="DECIMAL" />
+	    <result column="order_item_pay_amount" property="orderItemPayAmount" jdbcType="DECIMAL" />
+	    <result column="goods_real_price" property="goodsRealPrice" jdbcType="DECIMAL" />
+	    <result column="has_used_coupon" property="hasUsedCoupon" jdbcType="TINYINT" />
+	    <result column="is_change_price" property="isChangePrice" jdbcType="TINYINT" />
+	    <result column="outer_channel_order_no" property="outerChannelOrderNo" jdbcType="VARCHAR" />
+	    <result column="outer_channel_puchase_status" property="outerChannelPuchaseStatus" jdbcType="VARCHAR" />
+	    <result column="outer_channel_status" property="outerChannelStatus" jdbcType="VARCHAR" />
+	    <result column="order_item_status" property="orderItemStatus" jdbcType="VARCHAR" />
+	    <result column="order_item_receipt_time" property="orderItemReceiptTime" jdbcType="TIMESTAMP" />
+	    <result column="order_item_error_status" property="orderItemErrorStatus" jdbcType="VARCHAR" />
+	    <result column="order_item_error_time" property="orderItemErrorTime" jdbcType="TIMESTAMP" />
+	    <result column="order_item_error_reason" property="orderItemErrorReason" jdbcType="VARCHAR" />
+	    <result column="is_add_order_item" property="isAddOrderItem" jdbcType="TINYINT" />
+	    <result column="is_cancel_order_item" property="isCancelOrderItem" jdbcType="TINYINT" />
+	    <result column="order_item_cancel_time" property="orderItemCancelTime" jdbcType="TIMESTAMP" />
+	    <result column="order_item_cancel_operator_id" property="orderItemCancelOperatorId" jdbcType="BIGINT" />
+	    <result column="order_item_cancel_operator_name" property="orderItemCancelOperatorName" jdbcType="VARCHAR" />
+	    <result column="order_item_cancel_reason" property="orderItemCancelReason" jdbcType="VARCHAR" />
+	    <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+	    <result column="is_out_distribtion" property="isOutDistribtion" jdbcType="TINYINT" />
+	    <result column="erp_distribution_id" property="erpDistributionId" jdbcType="BIGINT" />
+	    <result column="erp_sholesaler_code" property="erpSholesalerCode" jdbcType="VARCHAR" />
+	    <result column="erp_rebate_no" property="erpRebateNo" jdbcType="VARCHAR" />
+	    <result column="erp_rebate_code" property="erpRebateCode" jdbcType="VARCHAR" />
+	    <result column="is_settled" property="isSettled" jdbcType="TINYINT" />
+	    <result column="create_id" property="createId" jdbcType="BIGINT" />
+	    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+	    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+	    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, trade_no, order_no, site, buyer_code, buyer_type, buyer_name,
+		seller_code, seller_type,
+		seller_name, shop_id, shop_name, order_from, sales_type, sales_department_code,
+		has_productplus_flag,is_vip_member,
+		total_goods_count, total_goods_amount, total_freight, total_discount_amount,
+		shop_discount_amount,
+		platform_discount_amount, used_rebate_amount, bargaining_order_amount,
+		bargaining_order_freight,
+		order_total_amount, order_pay_amount, create_order_time, has_used_coupon,
+		is_change_price,
+		order_status, order_receipt_time, order_error_status, order_error_time,
+		order_error_reason,
+		is_cancel_order, order_cancel_time, order_cancel_member_id, order_cancel_member_name,
+		order_cancel_reason, pay_type, pay_time_limit, pay_order_time,
+		pay_status, pay_serial_no,
+		is_out_distribtion, is_timelimited_order, promotion_id, buyer_remarks, order_remarks,
+		is_need_invoice, invoice_type, invoice_notify, invoice_company_name,
+		tax_man_id,
+		bank_name, bank_account, contact_phone, invoice_address, delivery_type,
+		consignee_name,
+		consignee_phone_num, consignee_address, consignee_address_province,
+		consignee_address_city,
+		consignee_address_district, consignee_address_town, consignee_address_detail, post_code,
+		logistics_status, logistics_company, logistics_no,
+		used_activity_account_amount,
+		order_delete_status, PK, create_id, create_name, create_time, modify_id, modify_name,
+		modify_time
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from trade_orders
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="selectOrderByOrderNo" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from trade_orders
+		where order_no = #{orderNo}
+	</select>
+	
+	<select id="selectOrderByOrderNoAndBuyerCode" resultMap="BaseResultMap"
+		parameterType="cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO">
+		select
+		<include refid="Base_Column_List" />
+		from trade_orders
+		where order_no = #{orderNo} and buyer_code = #{buyerCode}
+	</select>
+	
+	
+	<select id="selectOrderItemByOrderNo" resultMap="itemResultMap"
+		parameterType="java.lang.String">
+		select
+		   t.*
+		from trade_order_items t
+		where t.order_no = #{orderNo}
+		and is_cancel_order_item != 2
+	</select>
+
+	<select id="queryOrderBySellerIdAndBuyerId" resultMap="BaseResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+		select
+		trade_no,order_no,create_order_time
+		from trade_orders
+		where 1=1
+		and buyer_code = #{buyerCode}
+		and seller_code = #{sellerCode}
+		order by create_order_time DESC LIMIT 1
+	</select>
+
+
+	<update id="updateTradeOrdersByOrderNo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+		update trade_orders
+		<set>
+			<if test="tradeNo != null">
+				trade_no = #{tradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				order_no = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="site != null">
+				site = #{site,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerCode != null">
+				buyer_code = #{buyerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerType != null">
+				buyer_type = #{buyerType,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerName != null">
+				buyer_name = #{buyerName,jdbcType=VARCHAR},
+			</if>
+			<if test="sellerCode != null">
+				seller_code = #{sellerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="sellerType != null">
+				seller_type = #{sellerType,jdbcType=VARCHAR},
+			</if>
+			<if test="sellerName != null">
+				seller_name = #{sellerName,jdbcType=VARCHAR},
+			</if>
+			<if test="shopId != null">
+				shop_id = #{shopId,jdbcType=BIGINT},
+			</if>
+			<if test="shopName != null">
+				shop_name = #{shopName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderFrom != null">
+				order_from = #{orderFrom,jdbcType=VARCHAR},
+			</if>
+			<if test="salesType != null">
+				sales_type = #{salesType,jdbcType=VARCHAR},
+			</if>
+			<if test="salesDepartmentCode != null">
+				sales_department_code = #{salesDepartmentCode,jdbcType=VARCHAR},
+			</if>
+			<if test="hasProductplusFlag != null">
+				has_productplus_flag = #{hasProductplusFlag,jdbcType=TINYINT},
+			</if>
+			<if test="isVipMember != null">
+				is_vip_member = #{isVipMember,jdbcType=TINYINT},
+			</if>
+			<if test="totalGoodsCount != null">
+				total_goods_count = #{totalGoodsCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalGoodsAmount != null">
+				total_goods_amount = #{totalGoodsAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalFreight != null">
+				total_freight = #{totalFreight,jdbcType=DECIMAL},
+			</if>
+			<if test="totalDiscountAmount != null">
+				total_discount_amount = #{totalDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="shopDiscountAmount != null">
+				shop_discount_amount = #{shopDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="platformDiscountAmount != null">
+				platform_discount_amount =
+				#{platformDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="usedRebateAmount != null">
+				used_rebate_amount = #{usedRebateAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="bargainingOrderAmount != null">
+				bargaining_order_amount = #{bargainingOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="bargainingOrderFreight != null">
+				bargaining_order_freight =
+				#{bargainingOrderFreight,jdbcType=DECIMAL},
+			</if>
+			<if test="orderTotalAmount != null">
+				order_total_amount = #{orderTotalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderPayAmount != null">
+				order_pay_amount = #{orderPayAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="createOrderTime != null">
+				create_order_time = #{createOrderTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="hasUsedCoupon != null">
+				has_used_coupon = #{hasUsedCoupon,jdbcType=TINYINT},
+			</if>
+			<if test="isChangePrice != null">
+				is_change_price = #{isChangePrice,jdbcType=TINYINT},
+			</if>
+			<if test="orderStatus != null">
+				order_status = #{orderStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="orderReceiptTime != null">
+				order_receipt_time = #{orderReceiptTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderErrorStatus != null">
+				order_error_status = #{orderErrorStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="orderErrorTime != null">
+				order_error_time = #{orderErrorTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderErrorReason != null">
+				order_error_reason = #{orderErrorReason,jdbcType=VARCHAR},
+			</if>
+			<if test="isCancelOrder != null">
+				is_cancel_order = #{isCancelOrder,jdbcType=TINYINT},
+			</if>
+			<if test="orderCancelTime != null">
+				order_cancel_time = #{orderCancelTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderCancelMemberId != null">
+				order_cancel_member_id = #{orderCancelMemberId,jdbcType=BIGINT},
+			</if>
+			<if test="orderCancelMemberName != null">
+				order_cancel_member_name = #{orderCancelMemberName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderCancelReason != null">
+				order_cancel_reason = #{orderCancelReason,jdbcType=VARCHAR},
+			</if>
+			<if test="payType != null">
+				pay_type = #{payType,jdbcType=VARCHAR},
+			</if>
+			<if test="payTimeLimit != null">
+				pay_time_limit = #{payTimeLimit,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payOrderTime != null">
+				pay_order_time = #{payOrderTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payStatus != null">
+				pay_status = #{payStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="paySerialNo != null">
+				pay_serial_no = #{paySerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="isOutDistribtion != null">
+				is_out_distribtion = #{isOutDistribtion,jdbcType=TINYINT},
+			</if>
+			<if test="isTimelimitedOrder != null">
+				is_timelimited_order = #{isTimelimitedOrder,jdbcType=TINYINT},
+			</if>
+			<if test="promotionId != null">
+				promotion_id = #{promotionId,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerRemarks != null">
+				buyer_remarks = #{buyerRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="orderRemarks != null">
+				order_remarks = #{orderRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="isNeedInvoice != null">
+				is_need_invoice = #{isNeedInvoice,jdbcType=TINYINT},
+			</if>
+			<if test="invoiceType != null">
+				invoice_type = #{invoiceType,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceNotify != null">
+				invoice_notify = #{invoiceNotify,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceCompanyName != null">
+				invoice_company_name = #{invoiceCompanyName,jdbcType=VARCHAR},
+			</if>
+			<if test="taxManId != null">
+				tax_man_id = #{taxManId,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName != null">
+				bank_name = #{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount != null">
+				bank_account = #{bankAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="contactPhone != null">
+				contact_phone = #{contactPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceAddress != null">
+				invoice_address = #{invoiceAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryType != null">
+				delivery_type = #{deliveryType,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeName != null">
+				consignee_name = #{consigneeName,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneePhoneNum != null">
+				consignee_phone_num = #{consigneePhoneNum,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddress != null">
+				consignee_address = #{consigneeAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressProvince != null">
+				consignee_address_province =
+				#{consigneeAddressProvince,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressCity != null">
+				consignee_address_city = #{consigneeAddressCity,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressDistrict != null">
+				consignee_address_district =
+				#{consigneeAddressDistrict,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressTown != null">
+				consignee_address_town = #{consigneeAddressTown,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressDetail != null">
+				consignee_address_detail =
+				#{consigneeAddressDetail,jdbcType=VARCHAR},
+			</if>
+			<if test="postCode != null">
+				post_code = #{postCode,jdbcType=VARCHAR},
+			</if>
+			<if test="logisticsStatus != null">
+				logistics_status = #{logisticsStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="logisticsCompany != null">
+				logistics_company = #{logisticsCompany,jdbcType=VARCHAR},
+			</if>
+			<if test="logisticsNo != null">
+				logistics_no = #{logisticsNo,jdbcType=VARCHAR},
+			</if>
+			<if test="usedActivityAccountAmount != null">
+				used_activity_account_amount =
+				#{usedActivityAccountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderDeleteStatus != null">
+				order_delete_status = #{orderDeleteStatus,jdbcType=TINYINT},
+			</if>
+			<if test="pk != null">
+				PK = #{pk,jdbcType=VARCHAR},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=BIGINT},
+			</if>
+			<if test="createName != null">
+				create_name = #{createName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyId != null">
+				modify_id = #{modifyId,jdbcType=BIGINT},
+			</if>
+			<if test="modifyName != null">
+				modify_name = #{modifyName,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyTime != null">
+				modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where order_no = #{orderNo,jdbcType=VARCHAR}
+	</update>
+
+
+	<resultMap id="OrderItemsResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO"
+		extends="BaseResultMap">
+		<collection property="orderItemsList" javaType="ArrayList"
+			ofType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
+			<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		    <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+		    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+		    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+		    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+		    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+		    <result column="outer_sku_code" property="outerSkuCode" jdbcType="VARCHAR" />
+		    <result column="sku_erp_code" property="skuErpCode" jdbcType="VARCHAR" />
+		    <result column="sku_ean_code" property="skuEanCode" jdbcType="VARCHAR" />
+		    <result column="sku_picture_url" property="skuPictureUrl" jdbcType="VARCHAR" />
+		    <result column="item_spu_code" property="itemSpuCode" jdbcType="VARCHAR" />
+		    <result column="first_category_id" property="firstCategoryId" jdbcType="BIGINT" />
+		    <result column="first_category_name" property="firstCategoryName" jdbcType="VARCHAR" />
+		    <result column="second_category_id" property="secondCategoryId" jdbcType="BIGINT" />
+		    <result column="second_category_name" property="secondCategoryName" jdbcType="VARCHAR" />
+		    <result column="third_category_id" property="thirdCategoryId" jdbcType="BIGINT" />
+		    <result column="third_category_name" property="thirdCategoryName" jdbcType="VARCHAR" />
+		    <result column="category_id_list" property="categoryIdList" jdbcType="VARCHAR" />
+		    <result column="category_name_list" property="categoryNameList" jdbcType="VARCHAR" />
+		    <result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+		    <result column="erp_five_category_code" property="erpFiveCategoryCode" jdbcType="VARCHAR" />
+		    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+		    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+		    <result column="is_vip_item" property="isVipItem" jdbcType="TINYINT" />
+		    <result column="vip_item_type" property="vipItemType" jdbcType="VARCHAR" />
+		    <result column="vip_sync_flag" property="vipSyncFlag" jdbcType="TINYINT" />
+		    <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+		    <result column="cost_price" property="costPrice" jdbcType="DECIMAL" />
+		    <result column="price_floating_ratio" property="priceFloatingRatio" jdbcType="DECIMAL" />
+		    <result column="commission_ratio" property="commissionRatio" jdbcType="DECIMAL" />
+		    <result column="commission_amount" property="commissionAmount" jdbcType="DECIMAL" />
+		    <result column="is_box_flag" property="isBoxFlag" jdbcType="TINYINT" />
+		    <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+		    <result column="goods_price_type" property="goodsPriceType" jdbcType="VARCHAR" />
+		    <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+		    <result column="bargaining_goods_price" property="bargainingGoodsPrice" jdbcType="DECIMAL" />
+		    <result column="bargaining_goods_count" property="bargainingGoodsCount" jdbcType="INTEGER" />
+		    <result column="shop_freight_template_id" property="shopFreightTemplateId" jdbcType="BIGINT" />
+		    <result column="delivery_area_code" property="deliveryAreaCode" jdbcType="VARCHAR" />
+		    <result column="goods_amount" property="goodsAmount" jdbcType="DECIMAL" />
+		    <result column="goods_freight" property="goodsFreight" jdbcType="DECIMAL" />
+		    <result column="total_discount_amount" property="totalDiscountAmount" jdbcType="DECIMAL" />
+		    <result column="shop_discount_amount" property="shopDiscountAmount" jdbcType="DECIMAL" />
+		    <result column="platform_discount_amount" property="platformDiscountAmount" jdbcType="DECIMAL" />
+		    <result column="used_rebate_amount" property="usedRebateAmount" jdbcType="DECIMAL" />
+		    <result column="bargaining_goods_amount" property="bargainingGoodsAmount" jdbcType="DECIMAL" />
+		    <result column="bargaining_goods_freight" property="bargainingGoodsFreight" jdbcType="DECIMAL" />
+		    <result column="order_item_total_amount" property="orderItemTotalAmount" jdbcType="DECIMAL" />
+		    <result column="order_item_pay_amount" property="orderItemPayAmount" jdbcType="DECIMAL" />
+		    <result column="goods_real_price" property="goodsRealPrice" jdbcType="DECIMAL" />
+		    <result column="has_used_coupon" property="hasUsedCoupon" jdbcType="TINYINT" />
+		    <result column="is_change_price" property="isChangePrice" jdbcType="TINYINT" />
+		    <result column="outer_channel_order_no" property="outerChannelOrderNo" jdbcType="VARCHAR" />
+		    <result column="outer_channel_puchase_status" property="outerChannelPuchaseStatus" jdbcType="VARCHAR" />
+		    <result column="outer_channel_status" property="outerChannelStatus" jdbcType="VARCHAR" />
+		    <result column="order_item_status" property="orderItemStatus" jdbcType="VARCHAR" />
+		    <result column="order_item_receipt_time" property="orderItemReceiptTime" jdbcType="TIMESTAMP" />
+		    <result column="order_item_error_status" property="orderItemErrorStatus" jdbcType="VARCHAR" />
+		    <result column="order_item_error_time" property="orderItemErrorTime" jdbcType="TIMESTAMP" />
+		    <result column="order_item_error_reason" property="orderItemErrorReason" jdbcType="VARCHAR" />
+		    <result column="is_add_order_item" property="isAddOrderItem" jdbcType="TINYINT" />
+		    <result column="is_cancel_order_item" property="isCancelOrderItem" jdbcType="TINYINT" />
+		    <result column="order_item_cancel_time" property="orderItemCancelTime" jdbcType="TIMESTAMP" />
+		    <result column="order_item_cancel_operator_id" property="orderItemCancelOperatorId" jdbcType="BIGINT" />
+		    <result column="order_item_cancel_operator_name" property="orderItemCancelOperatorName" jdbcType="VARCHAR" />
+		    <result column="order_item_cancel_reason" property="orderItemCancelReason" jdbcType="VARCHAR" />
+		    <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+		    <result column="is_out_distribtion" property="isOutDistribtion" jdbcType="TINYINT" />
+		    <result column="erp_distribution_id" property="erpDistributionId" jdbcType="BIGINT" />
+		    <result column="erp_sholesaler_code" property="erpSholesalerCode" jdbcType="VARCHAR" />
+		    <result column="erp_rebate_no" property="erpRebateNo" jdbcType="VARCHAR" />
+		    <result column="erp_rebate_code" property="erpRebateCode" jdbcType="VARCHAR" />
+		    <result column="is_settled" property="isSettled" jdbcType="TINYINT" />
+		    <result column="create_id" property="createId" jdbcType="BIGINT" />
+		    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+		    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+		</collection>
+		<collection property="orderTail" javaType="ArrayList"
+			ofType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO">
+			<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+			<result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+			<result column="order_status_text" property="orderStatusText"
+				jdbcType="VARCHAR" />
+			<result column="create_id" property="createId" jdbcType="BIGINT" />
+			<result column="create_name" property="createName" jdbcType="VARCHAR" />
+			<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		</collection>
+	</resultMap>
+
+	<select id="queryListOrderByCondition" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+	select
+		too.*,
+		toi.*
+		from (SELECT t.* FROM trade_orders t
+				left join trade_order_erp_distribution d
+				on t.order_no = d.order_no
+			WHERE 1=1
+			<if test="sellerName != null">
+				and t.seller_name = #{sellerName}
+			</if>
+			<if test="sellerCode != null">
+				and t.seller_code = #{sellerCode}
+			</if>
+			<if test="orderStatus != null">
+				<foreach collection="orderStatus" item="orderStatus"
+				open=" and t.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+			</if>
+			<if test="customerManagerID != null">
+				and d.customer_manager_code = #{customerManagerID}
+			</if>
+			<if test="createOrderTimeFrom != null">
+				and t.create_order_time >= #{createOrderTimeFrom}
+			</if>
+			ORDER BY t.create_order_time DESC
+			<if test="start != null">
+			LIMIT #{start},#{rows}
+			</if>) too
+		left join trade_order_items toi ON too.order_no= toi.order_no
+	</select>
+	
+	<select id="queryListOrderByCondition4SuperManager" resultMap="BaseResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+	SELECT t.* from trade_orders t where exists (select 1 from
+	trade_order_items b where t.order_no = b.order_no
+
+<if test="customerManagerID != null">
+and b.customer_manager_code = #{customerManagerID}
+</if>
+<![CDATA[	
+ and b.is_cancel_order_item <> '2') ]]>
+	<if test="sellerName != null">
+		and t.seller_name = #{sellerName}
+	</if>
+	<if test="sellerCode != null">
+		and t.seller_code = #{sellerCode}
+	</if>
+	<if test="orderStatus != null">
+		<foreach collection="orderStatus" item="orderStatus"
+			open=" and t.order_status in(" close=")" separator=",">
+			#{orderStatus}
+		</foreach>
+	</if>
+	<if test="createOrderTimeFrom != null">
+		and t.create_order_time >= #{createOrderTimeFrom}
+	</if>
+	ORDER BY t.create_order_time DESC
+
+	<if test="start != null">
+			LIMIT #{start},#{rows}
+	</if>
+	</select>
+	
+	
+	<select id="queryListOrderByCondition4SuperManagerCount" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+	      SELECT count(1) from trade_orders t where exists (select 1 from
+		trade_order_items b where t.order_no = b.order_no
+	
+	<if test="customerManagerID != null">
+	    and b.customer_manager_code = #{customerManagerID} 
+	</if>
+		<![CDATA[
+	and b.is_cancel_order_item <> '2') ]]>
+		<if test="sellerName != null">
+			and t.seller_name = #{sellerName}
+		</if>
+		<if test="sellerCode != null">
+			and t.seller_code = #{sellerCode}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and t.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="createOrderTimeFrom != null">
+			and t.create_order_time >= #{createOrderTimeFrom}
+		</if>		
+	</select>
+	
+	<select id="queryListOrderByConditionSupper3MonthCount" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+       SELECT count(1) FROM trade_orders t
+			left join trade_order_erp_distribution d
+			on t.order_no = d.order_no
+		WHERE 1=1
+		<if test="sellerName != null">
+			and t.seller_name = #{sellerName}
+		</if>
+		<if test="sellerCode != null">
+			and t.seller_code = #{sellerCode}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+			open=" and t.order_status in(" close=")" separator=",">
+			#{orderStatus}
+		</foreach>
+		</if>
+		<if test="customerManagerID != null">
+			and d.customer_manager_code = #{customerManagerID}
+		</if>
+		<if test="createOrderTimeFrom != null">
+			and t.create_order_time >= #{createOrderTimeFrom}
+		</if>
+	</select>
+
+	<select id="selectOrderByPrimaryKey" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		too.*,toi.*
+		FROM trade_orders too
+		LEFT JOIN trade_order_items toi ON too.order_no= toi.order_no
+		where too.order_no = #{orderNo}
+		and toi.is_cancel_order_item != 2
+	</select>
+
+    <select id="selectVipOrder" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		too.*,toi.*
+		FROM trade_orders too
+		LEFT JOIN trade_order_items toi ON too.order_no= toi.order_no
+		where 1=1
+		<if test="null != isVipItem">
+		  and toi.is_vip_item = #{isVipItem}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and too.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="createOrderTimeFrom != null">
+			and too.create_order_time >= #{createOrderTimeFrom}
+		</if>
+		<if test="createOrderTimeTo != null">
+			and too.create_order_time <![CDATA[ <=  ]]>
+			#{createOrderTimeTo}
+		</if>
+		<if test="skuCode != null">
+		    and toi.sku_code = #{skuCode}
+		</if>
+		order by too.create_time desc
+		<if test="start != null">
+			LIMIT #{start},#{rows}
+		</if>
+	</select>
+	
+	<select id="selectVipOrderCount" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		count(1)
+		FROM trade_orders too
+		LEFT JOIN trade_order_items toi ON too.order_no= toi.order_no
+		where 1=1
+		<if test="null != isVipItem">
+		  and toi.is_vip_item = #{isVipItem}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and too.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="createOrderTimeFrom != null">
+			and too.create_order_time >= #{createOrderTimeFrom}
+		</if>
+		<if test="createOrderTimeTo != null">
+			and too.create_order_time <![CDATA[ <=  ]]>
+			#{createOrderTimeTo}
+		</if>
+		<if test="skuCode != null">
+		    and toi.sku_code = #{skuCode}
+		</if>
+	</select>
+	
+	<select id="selectOrderByOrderNoANDOrderItemNo" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		too.*,toi.*
+		FROM trade_orders too
+		LEFT JOIN trade_order_items toi ON too.order_no= toi.order_no
+		where 1=1
+		and too.order_no = #{orderNo}
+		<if test="orderItemNoList != null">
+			<foreach collection="orderItemNoList" item="orderItemNoTemp"
+				open=" and toi.order_item_no in(" close=")" separator=",">
+				#{orderItemNoTemp}
+			</foreach>
+		</if>
+		
+	</select>
+
+	<select id="queryListOrder" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		too.*,
+		toi.*,
+		tosh.*
+		from (SELECT * FROM trade_orders
+			WHERE 1=1
+			<if test="buyerCode != null">
+				and buyer_code = #{buyerCode}
+			</if>
+			<if test="buyerName != null">
+				and buyer_name = #{buyerName}
+			</if>
+			and order_delete_status = 0
+			ORDER BY create_order_time DESC
+			<if test="start != null">
+			LIMIT #{start},#{rows}
+			</if>) too
+		left join trade_order_items toi ON too.order_no= toi.order_no
+		left join trade_order_status_history tosh on too.order_no = tosh.order_no
+	</select>
+
+	<!-- jiaop 根据会员id查询订单 -->
+	<select id="selectOrderByBuyerId" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		SELECT * FROM trade_orders
+			WHERE buyer_code = #{buyerCode}
+			<if test="orderDeleteStatus != null">
+				and order_delete_status = #{orderDeleteStatus}
+			</if>
+			and order_delete_status != 2
+			and (order_from != 2 or (order_from = 2 and order_status >= 40))
+			ORDER BY create_order_time DESC
+			LIMIT #{start},#{rows}
+	</select>
+
+	<!-- jiaop -->
+	<select id="selectOrderCountByBuyerId" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		count(0)
+		from trade_orders t
+		where 1=1
+		<if test="sellerName != null">
+			and t.seller_name = #{sellerName}
+		</if>
+		<if test="sellerCode != null">
+			and t.seller_code = #{sellerCode}
+		</if>
+		<if test="buyerCode != null">
+			and t.buyer_code = #{buyerCode}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and t.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="isCancelOrder != null">
+			and t.is_cancel_order = #{isCancelOrder}
+		</if>
+		<if test="orderNo != null">
+			and t.order_no = #{orderNo}
+		</if>
+		<if test="shopName != null">
+			and t.shop_name like CONCAT(CONCAT('%', #{shopName}), '%')
+		</if>
+		<if test="createOrderTimeFrom != null">
+			and t.create_order_time >= #{createOrderTimeFrom}
+		</if>
+		<if test="createOrderTimeTo != null">
+			and t.create_order_time <![CDATA[ <=  ]]>
+			#{createOrderTimeTo}
+		</if>
+		<if test="orderDeleteStatus != null">
+			and t.order_delete_status = #{orderDeleteStatus}
+		</if>
+		and (order_from != 2 or (order_from = 2 and order_status >= 40))
+		and t.order_delete_status != 2
+	</select>
+	
+	
+	<select id="selectOrderCountBySupperBoss" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		count(0)
+		from trade_orders t
+		where 1=1
+		<if test="buyerCode != null">
+			and t.buyer_code = #{buyerCode}
+		</if>
+		<if test="sellerCode != null">
+			and seller_code = #{sellerCode}
+		</if>
+		<if test="sellerName != null">
+			and seller_name like CONCAT(CONCAT('%', #{sellerName}), '%')
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and t.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="isCancelOrder != null">
+			and t.is_cancel_order = #{isCancelOrder}
+		</if>
+		<if test="orderDeleteStatus != null">
+			and t.order_delete_status = #{orderDeleteStatus}
+		</if>
+		<if test="orderFrom != null">
+		    and order_from = #{orderFrom}
+		</if>
+		and t.order_delete_status != 2
+	</select>
+
+	<!-- jiaop 根据条件查询订单 -->
+	<select id="selectOrderByTradeOrdersParam" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		SELECT * FROM trade_orders
+			WHERE 1=1
+			<if test="buyerCode != null">
+				and buyer_code = #{buyerCode}
+			</if>
+			<if test="orderStatus != null">
+				<foreach collection="orderStatus" item="orderStatus"
+					open=" and order_status in(" close=")" separator=",">
+					#{orderStatus}
+				</foreach>
+			</if>
+			<if test="isCancelOrder != null">
+				and is_cancel_order = #{isCancelOrder}
+			</if>
+			<if test="orderNo != null">
+				and order_no = #{orderNo}
+			</if>
+			<if test="shopName != null">
+				and shop_name like CONCAT(CONCAT('%', #{shopName}), '%')
+			</if>
+			<if test="createOrderTimeFrom != null">
+				and create_order_time >= #{createOrderTimeFrom}
+			</if>
+			<if test="payTimeLimit != null">
+			     and  pay_time_limit<![CDATA[<= ]]> #{payTimeLimit}
+			</if>
+			<if test="createOrderTimeTo != null">
+				and create_order_time <![CDATA[ <=  ]]>#{createOrderTimeTo}
+			</if>
+			<if test="orderDeleteStatus != null">
+				and order_delete_status = #{orderDeleteStatus}
+			</if>
+				and order_delete_status != 2
+				and (order_from != 2 or (order_from = 2 and order_status >= 40))
+			ORDER BY create_order_time DESC
+			<if test="start !=null and rows != null ">
+	 			LIMIT #{start},#{rows}
+            </if>
+	</select>
+	
+		<!-- jiaop 根据条件查询订单 -->
+	<select id="selectOrderByTradeOrdersParamByCancel" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		SELECT
+		too.*,toi.*
+		FROM (SELECT * FROM trade_orders
+			WHERE 1=1
+			<if test="buyerCode != null">
+				and buyer_code = #{buyerCode}
+			</if>
+			<if test="orderStatus != null">
+				<foreach collection="orderStatus" item="orderStatus"
+					open=" and order_status in(" close=")" separator=",">
+					#{orderStatus}
+				</foreach>
+			</if>
+			<if test="isCancelOrder != null">
+				and is_cancel_order = #{isCancelOrder}
+			</if>
+			<if test="orderNo != null">
+				and order_no = #{orderNo}
+			</if>
+			<if test="shopName != null">
+				and shop_name like CONCAT(CONCAT('%', #{shopName}), '%')
+			</if>
+			<if test="createOrderTimeFrom != null">
+				and create_order_time >= #{createOrderTimeFrom}
+			</if>
+			<if test="payTimeLimit != null">
+			     and  pay_time_limit<![CDATA[<= ]]> #{payTimeLimit}
+			</if>
+			<if test="createOrderTimeTo != null">
+				and create_order_time <![CDATA[ <=  ]]>#{createOrderTimeTo}
+			</if>
+			<if test="orderDeleteStatus != null">
+				and order_delete_status = #{orderDeleteStatus}
+			</if>
+				and order_delete_status != 2
+			ORDER BY create_order_time DESC
+			<if test="start !=null and rows != null ">
+	 			LIMIT #{start},#{rows}
+            </if>
+			) too
+		LEFT JOIN
+		trade_order_items toi ON too.order_no= toi.order_no
+		and toi.is_cancel_order_item != 2
+			ORDER BY too.create_order_time DESC
+	</select>
+	
+	<!-- jiaop 根据条件查询订单 -->
+	<select id="selectSupperBossOrderByTradeOrdersParam" resultMap="OrderItemsResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		SELECT
+		too.*,toi.*
+		FROM (SELECT * FROM trade_orders
+			WHERE 1=1
+			<if test="buyerCode != null">
+				and buyer_code = #{buyerCode}
+			</if>
+			<if test="sellerCode != null">
+				and seller_code = #{sellerCode}
+			</if>
+			<if test="sellerName != null">
+				and seller_name like CONCAT(CONCAT('%', #{sellerName}), '%')
+			</if>
+			<if test="orderStatus != null">
+				<foreach collection="orderStatus" item="orderStatus"
+					open=" and order_status in(" close=")" separator=",">
+					#{orderStatus}
+				</foreach>
+			</if>
+			<if test="isCancelOrder != null">
+				and is_cancel_order = #{isCancelOrder}
+			</if>
+			<if test="orderDeleteStatus != null">
+				and order_delete_status = #{orderDeleteStatus}
+			</if>
+				and order_delete_status != 2
+			ORDER BY create_order_time DESC
+			<if test="start !=null and rows != null ">
+	 			LIMIT #{start},#{rows}
+            </if>
+			) too
+		LEFT JOIN
+		trade_order_items toi ON too.order_no= toi.order_no
+			ORDER BY too.create_order_time DESC
+	</select>
+
+	<insert id="insertTradeOrders" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+		insert into trade_orders
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="tradeNo != null">
+				trade_no,
+			</if>
+			<if test="orderNo != null">
+				order_no,
+			</if>
+			<if test="site != null">
+				site,
+			</if>
+			<if test="buyerCode != null">
+				buyer_code,
+			</if>
+			<if test="buyerType != null">
+				buyer_type,
+			</if>
+			<if test="buyerName != null">
+				buyer_name,
+			</if>
+			<if test="sellerCode != null">
+				seller_code,
+			</if>
+			<if test="sellerType != null">
+				seller_type,
+			</if>
+			<if test="sellerName != null">
+				seller_name,
+			</if>
+			<if test="shopId != null">
+				shop_id,
+			</if>
+			<if test="shopName != null">
+				shop_name,
+			</if>
+			<if test="orderFrom != null">
+				order_from,
+			</if>
+			<if test="salesType != null">
+				sales_type,
+			</if>
+			<if test="salesDepartmentCode != null">
+				sales_department_code,
+			</if>
+			<if test="hasProductplusFlag != null">
+				has_productplus_flag,
+			</if>
+			<if test="isVipMember != null">
+				is_vip_member,
+			</if>
+			<if test="totalGoodsCount != null">
+				total_goods_count,
+			</if>
+			<if test="totalGoodsAmount != null">
+				total_goods_amount,
+			</if>
+			<if test="totalFreight != null">
+				total_freight,
+			</if>
+			<if test="totalDiscountAmount != null">
+				total_discount_amount,
+			</if>
+			<if test="shopDiscountAmount != null">
+				shop_discount_amount,
+			</if>
+			<if test="platformDiscountAmount != null">
+				platform_discount_amount,
+			</if>
+			<if test="usedRebateAmount != null">
+				used_rebate_amount,
+			</if>
+			<if test="bargainingOrderAmount != null">
+				bargaining_order_amount,
+			</if>
+			<if test="bargainingOrderFreight != null">
+				bargaining_order_freight,
+			</if>
+			<if test="orderTotalAmount != null">
+				order_total_amount,
+			</if>
+			<if test="orderPayAmount != null">
+				order_pay_amount,
+			</if>
+			<if test="createOrderTime != null">
+				create_order_time,
+			</if>
+			<if test="hasUsedCoupon != null">
+				has_used_coupon,
+			</if>
+			<if test="isChangePrice != null">
+				is_change_price,
+			</if>
+			<if test="orderStatus != null">
+				order_status,
+			</if>
+			<if test="orderReceiptTime != null">
+				order_receipt_time,
+			</if>
+			<if test="orderErrorStatus != null">
+				order_error_status,
+			</if>
+			<if test="orderErrorTime != null">
+				order_error_time,
+			</if>
+			<if test="orderErrorReason != null">
+				order_error_reason,
+			</if>
+			<if test="isCancelOrder != null">
+				is_cancel_order,
+			</if>
+			<if test="orderCancelTime != null">
+				order_cancel_time,
+			</if>
+			<if test="orderCancelMemberId != null">
+				order_cancel_member_id,
+			</if>
+			<if test="orderCancelMemberName != null">
+				order_cancel_member_name,
+			</if>
+			<if test="orderCancelReason != null">
+				order_cancel_reason,
+			</if>
+			<if test="payType != null">
+				pay_type,
+			</if>
+			<if test="payTimeLimit != null">
+				pay_time_limit,
+			</if>
+			<if test="payOrderTime != null">
+				pay_order_time,
+			</if>
+			<if test="payStatus != null">
+				pay_status,
+			</if>
+			<if test="paySerialNo != null">
+				pay_serial_no,
+			</if>
+			<if test="isOutDistribtion != null">
+				is_out_distribtion,
+			</if>
+			<if test="isTimelimitedOrder != null">
+				is_timelimited_order,
+			</if>
+			<if test="promotionId != null">
+				promotion_id,
+			</if>
+			<if test="buyerRemarks != null">
+				buyer_remarks,
+			</if>
+			<if test="orderRemarks != null">
+				order_remarks,
+			</if>
+			<if test="isNeedInvoice != null">
+				is_need_invoice,
+			</if>
+			<if test="invoiceType != null">
+				invoice_type,
+			</if>
+			<if test="invoiceNotify != null">
+				invoice_notify,
+			</if>
+			<if test="invoiceCompanyName != null">
+				invoice_company_name,
+			</if>
+			<if test="taxManId != null">
+				tax_man_id,
+			</if>
+			<if test="bankName != null">
+				bank_name,
+			</if>
+			<if test="bankAccount != null">
+				bank_account,
+			</if>
+			<if test="contactPhone != null">
+				contact_phone,
+			</if>
+			<if test="invoiceAddress != null">
+				invoice_address,
+			</if>
+			<if test="deliveryType != null">
+				delivery_type,
+			</if>
+			<if test="consigneeName != null">
+				consignee_name,
+			</if>
+			<if test="consigneePhoneNum != null">
+				consignee_phone_num,
+			</if>
+			<if test="consigneeAddress != null">
+				consignee_address,
+			</if>
+			<if test="consigneeAddressProvince != null">
+				consignee_address_province,
+			</if>
+			<if test="consigneeAddressCity != null">
+				consignee_address_city,
+			</if>
+			<if test="consigneeAddressDistrict != null">
+				consignee_address_district,
+			</if>
+			<if test="consigneeAddressTown != null">
+				consignee_address_town,
+			</if>
+			<if test="consigneeAddressDetail != null">
+				consignee_address_detail,
+			</if>
+			<if test="postCode != null">
+				post_code,
+			</if>
+			<if test="logisticsStatus != null">
+				logistics_status,
+			</if>
+			<if test="logisticsCompany != null">
+				logistics_company,
+			</if>
+			<if test="logisticsNo != null">
+				logistics_no,
+			</if>
+			<if test="usedActivityAccountAmount != null">
+				used_activity_account_amount,
+			</if>
+			<if test="orderDeleteStatus != null">
+				order_delete_status,
+			</if>
+			<if test="pk != null">
+				PK,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createName != null">
+				create_name,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="modifyId != null">
+				modify_id,
+			</if>
+			<if test="modifyName != null">
+				modify_name,
+			</if>
+			<if test="modifyTime != null">
+				modify_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="tradeNo != null">
+				#{tradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				#{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="site != null">
+				#{site,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerCode != null">
+				#{buyerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerType != null">
+				#{buyerType,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerName != null">
+				#{buyerName,jdbcType=VARCHAR},
+			</if>
+			<if test="sellerCode != null">
+				#{sellerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="sellerType != null">
+				#{sellerType,jdbcType=VARCHAR},
+			</if>
+			<if test="sellerName != null">
+				#{sellerName,jdbcType=VARCHAR},
+			</if>
+			<if test="shopId != null">
+				#{shopId,jdbcType=BIGINT},
+			</if>
+			<if test="shopName != null">
+				#{shopName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderFrom != null">
+				#{orderFrom,jdbcType=VARCHAR},
+			</if>
+			<if test="salesType != null">
+				#{salesType,jdbcType=VARCHAR},
+			</if>
+			<if test="salesDepartmentCode != null">
+				#{salesDepartmentCode,jdbcType=VARCHAR},
+			</if>
+			<if test="hasProductplusFlag != null">
+				#{hasProductplusFlag,jdbcType=TINYINT},
+			</if>
+			<if test="isVipMember != null">
+				#{isVipMember,jdbcType=TINYINT},
+			</if>
+			<if test="totalGoodsCount != null">
+				#{totalGoodsCount,jdbcType=INTEGER},
+			</if>
+			<if test="totalGoodsAmount != null">
+				#{totalGoodsAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalFreight != null">
+				#{totalFreight,jdbcType=DECIMAL},
+			</if>
+			<if test="totalDiscountAmount != null">
+				#{totalDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="shopDiscountAmount != null">
+				#{shopDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="platformDiscountAmount != null">
+				#{platformDiscountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="usedRebateAmount != null">
+				#{usedRebateAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="bargainingOrderAmount != null">
+				#{bargainingOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="bargainingOrderFreight != null">
+				#{bargainingOrderFreight,jdbcType=DECIMAL},
+			</if>
+			<if test="orderTotalAmount != null">
+				#{orderTotalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderPayAmount != null">
+				#{orderPayAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="createOrderTime != null">
+				#{createOrderTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="hasUsedCoupon != null">
+				#{hasUsedCoupon,jdbcType=TINYINT},
+			</if>
+			<if test="isChangePrice != null">
+				#{isChangePrice,jdbcType=TINYINT},
+			</if>
+			<if test="orderStatus != null">
+				#{orderStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="orderReceiptTime != null">
+				#{orderReceiptTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderErrorStatus != null">
+				#{orderErrorStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="orderErrorTime != null">
+				#{orderErrorTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderErrorReason != null">
+				#{orderErrorReason,jdbcType=VARCHAR},
+			</if>
+			<if test="isCancelOrder != null">
+				#{isCancelOrder,jdbcType=TINYINT},
+			</if>
+			<if test="orderCancelTime != null">
+				#{orderCancelTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderCancelMemberId != null">
+				#{orderCancelMemberId,jdbcType=BIGINT},
+			</if>
+			<if test="orderCancelMemberName != null">
+				#{orderCancelMemberName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderCancelReason != null">
+				#{orderCancelReason,jdbcType=VARCHAR},
+			</if>
+			<if test="payType != null">
+				#{payType,jdbcType=VARCHAR},
+			</if>
+			<if test="payTimeLimit != null">
+				#{payTimeLimit,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payOrderTime != null">
+				#{payOrderTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payStatus != null">
+				#{payStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="paySerialNo != null">
+				#{paySerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="isOutDistribtion != null">
+				#{isOutDistribtion,jdbcType=TINYINT},
+			</if>
+			<if test="isTimelimitedOrder != null">
+				#{isTimelimitedOrder,jdbcType=TINYINT},
+			</if>
+			<if test="promotionId != null">
+				#{promotionId,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerRemarks != null">
+				#{buyerRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="orderRemarks != null">
+				#{orderRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="isNeedInvoice != null">
+				#{isNeedInvoice,jdbcType=TINYINT},
+			</if>
+			<if test="invoiceType != null">
+				#{invoiceType,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceNotify != null">
+				#{invoiceNotify,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceCompanyName != null">
+				#{invoiceCompanyName,jdbcType=VARCHAR},
+			</if>
+			<if test="taxManId != null">
+				#{taxManId,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName != null">
+				#{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount != null">
+				#{bankAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="contactPhone != null">
+				#{contactPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceAddress != null">
+				#{invoiceAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryType != null">
+				#{deliveryType,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeName != null">
+				#{consigneeName,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneePhoneNum != null">
+				#{consigneePhoneNum,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddress != null">
+				#{consigneeAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressProvince != null">
+				#{consigneeAddressProvince,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressCity != null">
+				#{consigneeAddressCity,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressDistrict != null">
+				#{consigneeAddressDistrict,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressTown != null">
+				#{consigneeAddressTown,jdbcType=VARCHAR},
+			</if>
+			<if test="consigneeAddressDetail != null">
+				#{consigneeAddressDetail,jdbcType=VARCHAR},
+			</if>
+			<if test="postCode != null">
+				#{postCode,jdbcType=VARCHAR},
+			</if>
+			<if test="logisticsStatus != null">
+				#{logisticsStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="logisticsCompany != null">
+				#{logisticsCompany,jdbcType=VARCHAR},
+			</if>
+			<if test="logisticsNo != null">
+				#{logisticsNo,jdbcType=VARCHAR},
+			</if>
+			<if test="usedActivityAccountAmount != null">
+				#{usedActivityAccountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="orderDeleteStatus != null">
+				#{orderDeleteStatus,jdbcType=TINYINT},
+			</if>
+			<if test="pk != null">
+				#{pk,jdbcType=VARCHAR},
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=BIGINT},
+			</if>
+			<if test="createName != null">
+				#{createName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyId != null">
+				#{modifyId,jdbcType=BIGINT},
+			</if>
+			<if test="modifyName != null">
+				#{modifyName,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="selectOrderByOrderStatusAndTime" parameterType="java.util.Map"
+		resultMap="OrderItemsResultMap">
+		SELECT
+		t.id,t.order_no,t.modify_time
+		FROM trade_orders t
+		WHERE 1=1
+		AND t.order_status = 50
+	    AND t.is_cancel_order = '0'
+	    AND t.order_error_status = ''
+		AND mod(t.id,#{taskQueueNum})in
+		<foreach collection="taskIdList" index="index" item="taskId"
+			open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+		and t.modify_time <![CDATA[ <=  ]]> #{createTime}
+		limit #{startLine},#{endLine}
+	</select>
+	
+	<select id="queryOrderPayAmt" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+	SELECT order_pay_amount from trade_orders where 1=1
+	and order_no = #{orderNo}
+	</select>
+
+	<select id="selectSellerCodeWithPurchaseRecordByBuyerCode" resultType="String">
+		SELECT
+			seller_code
+		FROM
+			trade_orders
+		WHERE
+			buyer_code = #{buyerCode}
+		AND order_status IN (61, 62)
+		AND is_cancel_order = 0
+		AND modify_time > #{timeLimit}
+		AND seller_code IN
+		<foreach collection="boxSellerCodeList" open="(" close=")" separator="," item="sellerCode">
+			#{sellerCode}
+		</foreach>
+		ORDER BY
+			create_time DESC
+		LIMIT 1
+	</select>
+
+	<resultMap id="orderRecentQueryPurchaseRecordOutResultMapper" type="cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO">
+		<result property="sellerCode" column="seller_code"/>
+		<result property="itemCode" column="item_code"/>
+		<result property="skuCode" column="sku_code"/>
+		<result property="isBoxFlag" column="is_box_flag"/>
+		<result property="salesVolume" column="sales_volume"/>
+	</resultMap>
+
+	<select id="queryPurchaseRecordsByBuyerCodeAndSellerCode" resultMap="orderRecentQueryPurchaseRecordOutResultMapper">
+	SELECT
+		DISTINCT
+		trade_orders.seller_code,
+		trade_order_items.item_code,
+		trade_order_items.sku_code,
+		trade_order_items.is_box_flag,
+		(SELECT SUM(a.ORDER_GOODS_COUNT) FROM shop_sales_analysis_day_report a WHERE a.SKU_CODE = trade_order_items.sku_code) as sales_volume
+		FROM
+		trade_orders trade_orders
+		LEFT JOIN trade_order_items trade_order_items
+		ON trade_orders.order_no = trade_order_items.order_no
+		WHERE
+		trade_orders.order_status IN (61, 62)
+		AND trade_orders.is_cancel_order = 0
+		AND trade_orders.buyer_code = #{buyerCode}
+		AND trade_orders.seller_code IN
+		<foreach collection="boxSellerCodeList"	 open="(" close=")" separator="," item="sellerCode">
+			#{sellerCode}
+		</foreach>
+		AND trade_order_items.modify_time > #{timeLimit}
+		ORDER BY trade_order_items.modify_time  DESC
+	</select>
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.basecenter.dao.BasePlacardMemberDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BasePlacardMember">
+		<id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="placard_id" property="placardId" jdbcType="BIGINT" />
+	    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+	    <result column="create_id" property="createId" jdbcType="BIGINT" />
+	    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+	    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+	    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into base_placard_member (
+			placard_id,
+			member_id,
+			status,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values (
+			#{placardId},
+			#{memberId},
+			#{status},
+			0,
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新会员已读状态 -->
+	<update id="update">
+		update base_placard_member
+		<set>
+			delete_flag = #{deleteFlag},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where placard_id = #{placardId}
+		  and delete_flag != #{deleteFlag}
+	</update>
+	<!-- 删除会员公告 -->
+	<update id="delete">
+		update base_placard_member
+		<set>
+			delete_flag = 1,
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where placard_id = #{placardId}
+		  and member_id = #{memberId}
+		  and delete_flag = 0
+	</update>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<!-- 更新会员已读状态 -->
+	<update id="updatePlacardReadStatus" parameterType="cn.htd.basecenter.domain.BasePlacardMember">
+		update base_placard_member
+		<set>
+			status = #{status},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where placard_id = #{placardId}
+		  and member_id = #{memberId}
+		  and delete_flag = #{deleteFlag}
+	</update>
+	<!-- 更新会员已读状态 -->
+	<update id="updateAllPlacardReadStatus" parameterType="cn.htd.basecenter.domain.BasePlacardMember">
+		update base_placard_member
+		<set>
+			status = #{status},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where member_id = #{memberId}
+		  and delete_flag = #{deleteFlag}
+		  and <![CDATA[ status <> #{status} ]]>
+	</update>
+	<!-- 更新公告的状态为删除 -->
+	<update id="deletePlacardMemberByIdList">
+		update base_placard_member
+		<set>
+			delete_flag = #{deleteFlag},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where <![CDATA[ delete_flag <> #{deleteFlag} ]]>
+		  and placard_id in
+		 <foreach collection="placardIdList" index="index" item="placardId" open="(" separator="," close=")"> 
+            #{placardId} 
+        </foreach> 
+	</update>
+	<!-- 批量插入记录 -->
+	<insert id="addBasePlacardMemberList" useGeneratedKeys="true" parameterType="java.util.List">
+		insert into base_placard_member(
+			placard_id,
+			member_id,
+			status,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( 
+				#{item.placardId},
+				#{item.memberId},
+				#{item.status},
+				0,
+				#{item.createId},
+				#{item.createName},
+				now(),
+				#{item.createId},
+				#{item.createName},
+				now()
+			)
+		</foreach>
+	</insert>
+</mapper>

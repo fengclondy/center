@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<!-- 1-定时调用搜索引擎内部大厅数据导入定时job。 -->
+	<bean id="htdPublicItemDumpJob" class="cn.htd.searchcenter.dump.job.HTDPublicItemDumpJob" />
+	<bean id="htdBoxItemDumpJob" class="cn.htd.searchcenter.dump.job.HTDBoxItemDumpJob" />
+	<bean id="jdItemDumpJob" class="cn.htd.searchcenter.dump.job.JDItemDumpJob" />
+	<bean id="externalItemDumpJob" class="cn.htd.searchcenter.dump.job.ExternalItemDumpJob" />
+	<bean id="seckillItemDumpJob" class="cn.htd.searchcenter.dump.job.SeckillItemDumpJob" />
+	<bean id="itemAllDumJob" class="cn.htd.searchcenter.dump.job.ItemAllDumpJob"></bean>
+	<bean id="itemAttrDumJob" class="cn.htd.searchcenter.dump.job.ItemAttrDumpJob"></bean>
+
+	<!-- 2-定时调用搜索引擎店铺数据导入定时job。 -->
+	<bean id="shopDumpJob" class="cn.htd.searchcenter.dump.job.ShopDumpJob" />
+
+	<bean id="htdPublicItemDumpJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="htdPublicItemDumpJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="htdBoxItemDumpJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="htdBoxItemDumpJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="jdItemDumpJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="jdItemDumpJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="externalItemDumpJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="externalItemDumpJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="seckillItemDumpJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="seckillItemDumpJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="itemAllDumJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="itemAllDumJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="itemAttrDumJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="itemAttrDumJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<bean id="htdPublicItemDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="htdPublicItemDumpJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<bean id="htdBoxItemDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="htdBoxItemDumpJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<bean id="jdItemDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="jdItemDumpJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<bean id="externalItemDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="externalItemDumpJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<bean id="seckillItemDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="seckillItemDumpJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<bean id="itemAllDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="itemAllDumJobBean" />
+		<property name="cronExpression" value="0 0 1 * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+	
+	<bean id="itemAttrDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="itemAttrDumJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每1分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<!-- 2-定时调用搜索引擎店铺数据导入定时job。 -->
+	<bean id="shopDumpJobCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="shopDumpJobBean" />
+		<property name="cronExpression" value="0 0/1 * * * ?" /><!--每30分钟运行一次,起点0分 -->
+		<property name="group" value="App_TRIGGER_GROUP" />
+	</bean>
+
+	<bean id="shopDumpJobBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="shopDumpJob" />
+		</property>
+		<property name="targetMethod">
+			<value>dump</value>
+		</property>
+	</bean>
+
+	<!-- 任务调度管理器 -->
+	<bean id="clusterQuartzScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="APP_SCHEDULER" />
+		<!-- Job接受applicationContext的成员变量名 -->
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+		<!-- 是否覆盖已有的任务 -->
+		<property name="overwriteExistingJobs" value="false" />
+		<property name="triggers">
+			<list>
+				<!-- 1-定时调用搜索引擎SKU数据导入定时job。 -->
+				<ref bean="htdPublicItemDumpJobCronTriggerBean" />
+				<ref bean="htdBoxItemDumpJobCronTriggerBean" />
+				<!-- <ref bean="jdItemDumpJobCronTriggerBean" /> -->
+				<ref bean="externalItemDumpJobCronTriggerBean" />
+				<ref bean="seckillItemDumpJobCronTriggerBean" />
+				<ref bean="shopDumpJobCronTriggerBean" />
+				<ref bean="itemAllDumpJobCronTriggerBean" />
+				<ref bean="itemAttrDumpJobCronTriggerBean" />
+			</list>
+		</property>
+	</bean>
+</beans>

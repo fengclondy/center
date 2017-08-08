@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderCompensateERPDAO">
+	
+	<resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.OrderCompensateERPDMO" >
+		<result column="erp_first_category_code" property="categroyCode" />
+		<result column="brand_id" property="brandCode" />
+		<result column="order_item_nos" property="orderItemNos" />
+		<result column="customer_manager_code" property="saleAssistantCode" />
+		<result column="customer_manager_name" property="salesMan" />
+		<result column="service_area" property="serviceArea" />
+		<result column="seller_code" property="supplierCode" />
+		<result column="buyer_code" property="memberCode" />
+		<result column="sales_department_code" property="salesDepartmentCode" />
+		<result column="sales_type" property="saleType" />
+		<result column="pay_type" property="paymentMethod" />
+		<result column="invoice_type" property="invoiceType" />
+		<result column="consignee_address" property="recieverAddress" />
+		<result column="consignee_phone_num" property="recieverPhone" />
+		<result column="consignee_name" property="recieverName" />
+		<result column="order_from" property="sourceId" />
+		<result column="is_timelimited_order" property="isTimelimitedOrder" />
+		<result column="promotion_id" property="promotionId" />
+		<result column="order_from" property="orderFrom" />
+		<result column="erp_lock_balance_code" property="erpLockBalanceCode"/>
+		<result column="buyer_remarks" property="buyerRemarks"/>
+		<result column="order_remarks" property="orderRemarks"/>
+		<result column="modify_time" property="modifyTime" />
+		<result column="erp_status" property="erpStatus" />
+	</resultMap>
+	<select id="selectErpDistributionOrdersList" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+		    e.id,
+		    e.order_no,
+		    e.erp_first_category_code,
+		    e.brand_id,
+	  		e.order_item_nos,
+			e.customer_manager_code,
+			e.customer_manager_name,
+	  		e.service_area,
+	  		e.erp_lock_balance_code,
+	  		t.seller_code,
+	  		t.buyer_code,
+			t.sales_department_code,
+	  		t.sales_type,
+	  		t.pay_type,
+	  		t.order_remarks,
+	  		t.invoice_type,
+	  		t.consignee_address,
+	  		t.consignee_phone_num,
+	  		t.consignee_name,
+	  		t.order_from,
+			t.is_timelimited_order,
+			t.promotion_id,
+			t.order_from,
+            t.buyer_remarks
+		FROM
+			trade_order_erp_distribution e
+		INNER JOIN 
+		    trade_orders t ON e.order_no = t.order_no
+		where 1=1
+		AND mod(e.id,#{taskQueueNum})in
+		<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+        </foreach> 
+		AND e.delete_flag=0 AND (e.erp_status=1 or e.erp_status=9)
+		AND e.erp_down_times = #{erpDownTimes}
+		limit #{startLine},#{endLine}
+	</select>
+	
+	
+	<select id="selectErpDistributionExceptionOrdersList" parameterType="java.util.Map" resultMap="BaseResultMap">
+	SELECT
+	e.id,
+	e.order_no,
+	e.erp_status,
+	e.modify_time
+	FROM
+	trade_order_erp_distribution e
+	INNER JOIN 
+	trade_orders t
+	on e.order_no=t.order_no
+	where 1=1
+	and t.is_cancel_order = 0
+	and e.erp_status='3'
+	and e.delete_flag=0
+	<![CDATA[ and e.modify_time < #{minutes} ]]>
+	UNION ALL
+	SELECT
+	e.id,
+	e.order_no,
+	e.erp_status,
+	e.modify_time
+	FROM
+	trade_order_erp_distribution e
+	INNER JOIN 
+	trade_orders t
+	on e.order_no=t.order_no
+	where 1=1
+	and t.is_cancel_order = 0
+	and e.erp_status='9'
+	and e.delete_flag=0
+	</select>
+	
+	
+	<select id="selectTradeOrderItemsInfo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO" resultType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
+		SELECT
+			goods_price,
+			goods_count,
+			bargaining_goods_price,
+			bargaining_goods_count,
+			is_change_price,
+			used_rebate_amount,
+			erp_rebate_code,
+			erp_rebate_no,
+			total_discount_amount,
+			erp_five_category_code,
+			erp_first_category_code,
+			brand_id,
+			item_spu_code,
+			order_item_total_amount,
+			has_used_coupon
+		FROM
+			trade_order_items
+		WHERE 1=1
+		AND	order_no = #{orderNo}
+		AND order_item_no = #{orderItemNo}
+	</select>
+	
+	<select id="selectTradeOrderItemsWarehouseDetailList" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsWarehouseDetailDMO" resultType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsWarehouseDetailDMO">
+		SELECT
+			warehouse_code,
+			goods_count,
+			product_attribute,
+			supplier_code,
+			purchase_department_code
+		FROM
+			trade_order_items_warehouse_detail
+		WHERE 1=1
+		AND order_no=#{orderNo}
+		AND order_item_no=#{orderItemNo}
+	</select>
+		
+</mapper>

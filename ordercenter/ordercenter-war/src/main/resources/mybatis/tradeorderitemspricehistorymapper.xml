@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrderItemsPriceHistoryDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsPriceHistoryDMO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="before_bargaining_goods_price" property="beforeBargainingGoodsPrice" jdbcType="DECIMAL" />
+    <result column="before_bargaining_goods_count" property="beforeBargainingGoodsCount" jdbcType="INTEGER" />
+    <result column="before_total_price" property="beforeTotalPrice" jdbcType="DECIMAL" />
+    <result column="before_freight" property="beforeFreight" jdbcType="DECIMAL" />
+    <result column="before_total_discount" property="beforeTotalDiscount" jdbcType="DECIMAL" />
+    <result column="before_shop_discount" property="beforeShopDiscount" jdbcType="DECIMAL" />
+    <result column="before_platform_discount" property="beforePlatformDiscount" jdbcType="DECIMAL" />
+    <result column="before_payment_price" property="beforePaymentPrice" jdbcType="DECIMAL" />
+    <result column="after_bargaining_goods_price" property="afterBargainingGoodsPrice" jdbcType="DECIMAL" />
+    <result column="after_bargaining_goods_count" property="afterBargainingGoodsCount" jdbcType="INTEGER" />
+    <result column="after_total_price" property="afterTotalPrice" jdbcType="DECIMAL" />
+    <result column="after_freight" property="afterFreight" jdbcType="DECIMAL" />
+    <result column="after_total_discount" property="afterTotalDiscount" jdbcType="DECIMAL" />
+    <result column="after_shop_discount" property="afterShopDiscount" jdbcType="DECIMAL" />
+    <result column="after_platform_discount" property="afterPlatformDiscount" jdbcType="DECIMAL" />
+    <result column="after_payment_price" property="afterPaymentPrice" jdbcType="DECIMAL" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_no, order_item_no, channel_code, item_code, sku_code, before_bargaining_goods_price, 
+    before_bargaining_goods_count, before_total_price, before_freight, before_total_discount, 
+    before_shop_discount, before_platform_discount, before_payment_price, after_bargaining_goods_price, 
+    after_bargaining_goods_count, after_total_price, after_freight, after_total_discount, 
+    after_shop_discount, after_platform_discount, after_payment_price, create_id, create_name, 
+    create_time
+  </sql>
+  
+  <select id="queryOrderItemsPriceHistoryCount"  resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsPriceHistoryDMO">
+    select count(1) from trade_order_items_price_history
+    where 1=1 
+    and order_no = #{orderNo}
+    <![CDATA[ and create_time >= #{createTime} ]]>
+  </select>
+  
+</mapper>

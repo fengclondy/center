@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.TimelimitedInfoDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.TimelimitedInfoDTO">
+		<id column="timelimited_id" jdbcType="BIGINT" property="timelimitedId" />
+		<result column="promotion_id" jdbcType="VARCHAR" property="promotionId" />
+		<result column="promotion_name" jdbcType="VARCHAR" property="promotionName" />
+		<result column="promotion_describe" jdbcType="VARCHAR"
+			property="promotionDescribe" />
+		<result column="promotion_provider_type" jdbcType="VARCHAR"
+			property="promotionProviderType" />
+		<result column="promotion_provider_seller_code" jdbcType="VARCHAR"
+			property="promotionProviderSellerCode" />
+		<result column="promotion_provider_shop_id" jdbcType="BIGINT"
+			property="promotionProviderShopId" />
+		<result column="cost_allocation_type" jdbcType="VARCHAR"
+			property="costAllocationType" />
+		<result column="promotion_type" jdbcType="VARCHAR" property="promotionType" />
+		<result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime" />
+		<result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime" />
+		<result column="is_vip" jdbcType="TINYINT" property="isVip" />
+		<result column="status" jdbcType="VARCHAR" property="status" />
+		<result column="show_status" jdbcType="VARCHAR" property="showStatus" />
+		<result column="level_number" jdbcType="INTEGER" property="levelNumber" />
+		<result column="level_code" jdbcType="VARCHAR" property="levelCode" />
+		<result column="addup_type" jdbcType="VARCHAR" property="addupType" />
+		<result column="level_amount" jdbcType="VARCHAR" property="levelAmount" />
+		<result column="quantifier_type" jdbcType="VARCHAR" property="quantifierType" />
+		<result column="seller_code" jdbcType="VARCHAR" property="sellerCode" />
+		<result column="item_id" jdbcType="BIGINT" property="itemId" />
+		<result column="sku_code" jdbcType="VARCHAR" property="skuCode" />
+		<result column="sku_name" jdbcType="VARCHAR" property="skuName" />
+		<result column="sku_pic_url" jdbcType="VARCHAR" property="skuPicUrl" />
+		<result column="sku_timelimited_price" jdbcType="DECIMAL"
+			property="skuTimelimitedPrice" />
+		<result column="timelimited_sku_count" jdbcType="INTEGER"
+			property="timelimitedSkuCount" />
+		<result column="timelimited_threshold" jdbcType="INTEGER"
+			property="timelimitedThreshold" />
+		<result column="timelimited_valid_interval" jdbcType="INTEGER"
+			property="timelimitedValidInterval" />
+		<result column="create_id" jdbcType="BIGINT" property="createId" />
+		<result column="create_name" jdbcType="VARCHAR" property="createName" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+		<result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+		<result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="item_category_brand" jdbcType="VARCHAR" property="itemCategoryBrand" />
+		<result column="item_code" jdbcType="VARCHAR" property="itemCode" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		timelimited_id,
+		promotion_id,
+		level_code,
+		seller_code,
+		item_id,
+		sku_code,
+		sku_name,
+		sku_pic_url,
+		sku_timelimited_price,
+		timelimited_sku_count,
+		timelimited_threshold,
+		timelimited_valid_interval,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+	</sql>
+	<!-- 查询条件 -->
+	<sql id="where_fragement">
+		<if test="entity!=null">
+			<if test="entity.promotionType != null and entity.promotionType != ''">
+      	<![CDATA[ and promotion_info.promotion_type = #{entity.promotionType} ]]>
+			</if>
+			<if test="entity.skuCode != null and entity.skuCode != ''">
+        <![CDATA[ and timelimited_info.sku_code = #{entity.skuCode}]]>
+			</if>
+			<if test="entity.skuName != null and entity.skuName != ''">
+        <![CDATA[ and timelimited_info.sku_name like concat ('%', #{entity.skuName}, '%') ]]>
+			</if>
+			<if test="entity.status != null and entity.status != ''">
+        <![CDATA[ and promotion_info.status = #{entity.status}]]>
+			</if>
+			<if test="entity.deleteStatus != null and entity.deleteStatus != ''">
+        <![CDATA[ and promotion_info.status <> #{entity.deleteStatus}]]>
+			</if>
+			<if
+				test="entity.promotionProviderSellerCode!= null and entity.promotionProviderSellerCode != ''">
+        <![CDATA[ and promotion_info.promotion_provider_seller_code = #{entity.promotionProviderSellerCode}]]>
+			</if>
+			<if
+				test="entity.promotionProviderSellerCode == null or entity.promotionProviderSellerCode == ''">
+        <![CDATA[ and promotion_info.promotion_provider_seller_code ='' ]]>
+			</if>
+		</if>
+	</sql>
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1)
+		from promotion_info inner join promotion_accumulaty on
+		(promotion_info.promotion_id = promotion_accumulaty.promotion_id)
+		inner join timelimited_info on (promotion_accumulaty.promotion_id =
+		timelimited_info.promotion_id and promotion_accumulaty.level_code =
+		timelimited_info.level_code)
+		where 1 = 1
+		<include refid="where_fragement" />
+		and promotion_accumulaty.delete_flag = 0
+	</select>
+	<select id="queryList" resultMap="BaseResultMap">
+		select promotion_info.promotion_id promotionId,
+		promotion_info.promotion_name promotionName,
+		promotion_info.promotion_describe promotionDescribe,
+		promotion_info.promotion_provider_type promotionProviderType,
+		promotion_info.promotion_provider_seller_code
+		promotionProviderSellerCode,
+		promotion_info.promotion_provider_shop_id promotionProviderShopId,
+		promotion_info.cost_allocation_type costAllocationType,
+		promotion_info.promotion_type promotionType,
+		promotion_info.effective_time effectiveTime,
+		promotion_info.invalid_time invalidTime,
+		promotion_info.is_vip isVip,
+		promotion_info.status status,
+		promotion_info.show_status showStatus,
+		promotion_accumulaty.level_number levelNumber,
+		promotion_accumulaty.level_code levelCode,
+		promotion_accumulaty.addup_type addupType,
+		promotion_accumulaty.level_amount levelAmount,
+		promotion_accumulaty.quantifier_type quantifierType,
+		timelimited_info.timelimited_id timelimitedId,
+		timelimited_info.seller_code sellerCode,
+		timelimited_info.item_id itemId,
+		timelimited_info.sku_code skuCode,
+		timelimited_info.sku_name skuName,
+		timelimited_info.sku_pic_url skuPicUrl,
+		timelimited_info.sku_timelimited_price skuTimelimitedPrice,
+		timelimited_info.timelimited_sku_count timelimitedSkuCount,
+		timelimited_info.timelimited_threshold timelimitedThreshold,
+		timelimited_info.timelimited_valid_interval timelimitedValidInterval,
+		promotion_info.create_id createId,
+		promotion_info.create_name createName,
+		promotion_info.create_time createTime,
+		promotion_info.modify_id modifyId,
+		promotion_info.modify_name modifyName,
+		promotion_info.modify_time modifyTime,
+		timelimited_info.item_category_brand,
+		timelimited_info.item_code
+		from promotion_info inner join promotion_accumulaty on
+		(promotion_info.promotion_id = promotion_accumulaty.promotion_id)
+		inner join timelimited_info on (promotion_accumulaty.promotion_id =
+		timelimited_info.promotion_id and promotion_accumulaty.level_code =
+		timelimited_info.level_code)
+		where 1 = 1
+		<include refid="where_fragement" />
+		and promotion_accumulaty.delete_flag = 0
+		order by promotion_info.modify_time desc
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<select id="queryTimelimitedInfoById" parameterType="cn.htd.marketcenter.dto.PromotionAccumulatyDTO"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from timelimited_info
+		where promotion_id = #{promotionId, jdbcType=VARCHAR}
+		and level_code = #{levelCode, jdbcType=VARCHAR}
+	</select>
+	<select id="queryTimelimitedInfoByPromotionId" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from timelimited_info
+		where promotion_id = #{_parameter, jdbcType=VARCHAR}
+		order by level_code asc
+	</select>
+	<insert id="add" useGeneratedKeys="true" keyProperty="timelimitedId">
+		insert into timelimited_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			promotion_id,
+			level_code,
+			seller_code,
+			item_id,
+			sku_code,
+			sku_name,
+			sku_pic_url,
+			sku_timelimited_price,
+			timelimited_sku_count,
+			timelimited_threshold,
+			timelimited_valid_interval,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time,
+			<if test="itemCategoryBrand != null and itemCategoryBrand != ''">
+			item_category_brand,
+			</if>
+			<if test="itemCode != null and itemCode != ''">
+			item_code,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{promotionId,jdbcType=VARCHAR},
+			#{levelCode,jdbcType=VARCHAR},
+			#{sellerCode,jdbcType=VARCHAR},
+			#{itemId,jdbcType=BIGINT},
+			#{skuCode,jdbcType=VARCHAR},
+			#{skuName,jdbcType=VARCHAR},
+			#{skuPicUrl,jdbcType=VARCHAR},
+			#{skuTimelimitedPrice,jdbcType=DECIMAL},
+			#{timelimitedSkuCount,jdbcType=INTEGER},
+			#{timelimitedThreshold,jdbcType=INTEGER},
+			#{timelimitedValidInterval,jdbcType=INTEGER},
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+			<if test="itemCategoryBrand != null and itemCategoryBrand != ''">
+			    #{itemCategoryBrand,jdbcType=VARCHAR},
+			</if>
+			<if test="itemCode != null and itemCode != ''">
+			    #{itemCode,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="update">
+		update timelimited_info
+		<set>
+			<if test="itemId != null and itemId != ''">
+				item_id = #{itemId,jdbcType=VARCHAR},
+			</if>
+			<if test="skuCode != null and skuCode != ''">
+				sku_code=#{skuCode,jdbcType=VARCHAR},
+			</if>
+			<if test="skuName != null and skuName != ''">
+				sku_name=#{skuName,jdbcType=VARCHAR},
+			</if>
+			<if test="skuPicUrl != null and skuPicUrl != ''">
+				sku_pic_url=#{skuPicUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="skuTimelimitedPrice != null and skuTimelimitedPrice != ''">
+				sku_timelimited_price = #{skuTimelimitedPrice,jdbcType=VARCHAR},
+			</if>
+			<if test="timelimitedSkuCount != null and timelimitedSkuCount != ''">
+				timelimited_sku_count = #{timelimitedSkuCount,jdbcType=VARCHAR},
+			</if>
+			<if test="timelimitedThreshold != null and timelimitedThreshold != ''">
+				timelimited_threshold = #{timelimitedThreshold,jdbcType=VARCHAR},
+			</if>
+			modify_id = #{modifyId,jdbcType=BIGINT},
+			modify_name =
+			#{modifyName,jdbcType=VARCHAR},
+			modify_time = now(),
+		   <if test="itemCategoryBrand != null and itemCategoryBrand != ''">
+				item_category_brand = #{itemCategoryBrand,jdbcType=VARCHAR},
+		   </if>
+		  <if test="itemCode != null and itemCode != ''">
+				item_code = #{itemCode,jdbcType=VARCHAR},
+		   </if>
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+		and level_code = #{levelCode,jdbcType=VARCHAR}
+	</update>
+</mapper>

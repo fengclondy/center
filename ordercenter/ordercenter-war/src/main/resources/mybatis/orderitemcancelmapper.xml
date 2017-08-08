@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderItemCancelDAO">
+
+	<update id="updateOrderItemCancelInfoByOrderNo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
+		UPDATE TRADE_ORDER_ITEMS 
+		<set >
+		   	<if test="isCancelOrderItem != null" >
+		   		IS_CANCEL_ORDER_ITEM =  #{isCancelOrderItem},
+      		</if>
+      		<if test="refundStatus != null" >
+		   		REFUND_STATUS =  #{refundStatus},
+      		</if>
+      		<if test="orderItemCancelOperatorId != null" >
+		   		ORDER_ITEM_CANCEL_OPERATOR_ID =  #{orderItemCancelOperatorId},
+      		</if>
+      		<if test="orderItemCancelTime != null" >
+		   		ORDER_ITEM_CANCEL_TIME =  #{orderItemCancelTime},
+      		</if>
+      		 <if test="orderItemCancelReason != null" >
+		   		ORDER_ITEM_CANCEL_REASON =  #{orderItemCancelReason},
+      		</if>
+      		 <if test="orderItemCancelOperatorName != null" >
+		   		ORDER_ITEM_CANCEL_OPERATOR_NAME =  #{orderItemCancelOperatorName},
+      		</if>
+      	    <if test="modifyTime != null" >
+       		 	MODIFY_TIME = #{modifyTime}
+      		</if>
+		</set>
+		where 1=1
+       	and ORDER_NO=#{orderNo}
+	</update>
+	
+	<update id="updateOrderItemCancelInfoByOrderItemNo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
+		UPDATE TRADE_ORDER_ITEMS 
+		<set >
+		   	<if test="isCancelOrderItem != null" >
+		   		IS_CANCEL_ORDER_ITEM =  #{isCancelOrderItem},
+      		</if>
+      		<if test="refundStatus != null" >
+		   		REFUND_STATUS =  #{refundStatus},
+      		</if>
+      		<if test="orderItemCancelOperatorId != null" >
+		   		ORDER_ITEM_CANCEL_OPERATOR_ID =  #{orderItemCancelOperatorId},
+      		</if>
+      		<if test="orderItemCancelTime != null" >
+		   		ORDER_ITEM_CANCEL_TIME =  #{orderItemCancelTime},
+      		</if>
+      		 <if test="orderItemCancelReason != null" >
+		   		ORDER_ITEM_CANCEL_REASON =  #{orderItemCancelReason},
+      		</if>
+      		 <if test="orderItemCancelOperatorName != null" >
+		   		ORDER_ITEM_CANCEL_OPERATOR_NAME =  #{orderItemCancelOperatorName},
+      		</if>
+      		 <if test="modifyTime != null" >
+       		 	MODIFY_TIME = #{modifyTime}
+      		</if>
+		</set>
+		where 1=1
+		<choose>
+			<when test="orderItemNo != null and orderItemNo != '' ">
+			   and ORDER_ITEM_NO=#{orderItemNo}
+			</when>
+			<otherwise>
+			   and brand_id = #{brandId}
+			   and erp_first_category_code = #{erpFirstCategoryCode}
+			   and order_no = #{orderNo}
+			</otherwise>
+		</choose>
+       
+	</update>
+	
+	<select id="selectTradeCancelOrderItemByOrderNo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO" resultType="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
+		SELECT
+			ORDER_NO,
+			REFUND_STATUS
+		FROM
+			TRADE_ORDER_ITEMS
+		WHERE 1=1
+		AND	ORDER_ITEM_NO = #{orderItemNo}
+	</select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderPaymentResultDAO" >
+<resultMap type="cn.htd.zeus.tc.biz.dmo.OrderPaymentResultDMO" id="BaseResultMap">
+    <id column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="buyer_id" property="buyerId" jdbcType="BIGINT" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="order_pay_amount" property="orderPayAmount" jdbcType="DECIMAL" />
+    <result column="delivery_type" property="deliveryType" jdbcType="VARCHAR" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="pay_status" property="payStatus" jdbcType="VARCHAR" />
+    <result column="pay_type" property="payType" jdbcType="VARCHAR" />
+    <result column="pay_channel" property="payChannel" jdbcType="VARCHAR" />
+    <result column="pay_order_time" property="payOrderTime" jdbcType="TIMESTAMP" />
+</resultMap>
+
+<select id="seleteCountByTradeNo" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderPaymentResultDMO">
+	select COUNT(1)
+	from trade_orders
+	where 1 = 1
+	<if test="orderNoList != null">
+      <foreach collection="orderNoList" item="orderNoList" open=" and order_no in(" close=")" separator=",">
+	   #{orderNoList}
+	  </foreach>
+	</if>
+</select>
+
+<select id="selectPaymentResultByOrderNo" resultMap="BaseResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderPaymentResultDMO">
+	select order_no,order_pay_amount,delivery_type,seller_name,shop_name,pay_status
+	from trade_orders
+	where 1 = 1
+   <if test="orderNoList != null">
+      <foreach collection="orderNoList" item="orderNoList" open=" and order_no in(" close=")" separator=",">
+	   #{orderNoList}
+	  </foreach>
+	</if>
+</select>
+
+<select id="selectSumOrderPayAmountByOrderNo" resultType="java.math.BigDecimal">
+	select order_pay_amount
+	from trade_orders
+	where 1 = 1
+	and order_no = #{orderNo}
+</select>
+
+<update id="updateOrderStatusByTradeNo">
+	update trade_orders
+	<set >
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus},
+      </if>
+      <if test="payStatus != null" >
+        pay_status = #{payStatus},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType},
+      </if>
+      <if test="payChannel != null">
+      	pay_channel = #{payChannel},
+      </if>
+      <if test="orderReceiptTime != null">
+      	order_receipt_time = #{orderReceiptTime},
+      </if>
+      <if test="payOrderTime != null" >
+        pay_order_time = #{payOrderTime},
+      </if>
+      <if test="orderErrorStatus != null">
+      	order_error_status = #{orderErrorStatus},
+      </if>
+      <if test="orderErrorTime != null">
+      	order_error_time = now(),
+      </if>
+      <if test="orderErrorReason != null">
+      	order_error_reason = #{orderErrorReason},
+      </if>
+      <if test="isCancelOrder != null">
+      	 is_cancel_order = #{isCancelOrder},
+      </if>
+      <if test="modifyTime != null">
+      	 modify_time = #{modifyTime},
+      </if>
+    </set>
+	where 1 = 1
+	<if test="tradeNo != null">
+		and trade_no = #{tradeNo}
+	</if>
+	<if test="orderNo != null">
+		and order_no = #{orderNo}
+	</if>
+</update>
+
+</mapper>

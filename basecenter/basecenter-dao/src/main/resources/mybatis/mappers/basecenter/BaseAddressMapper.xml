@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.basecenter.dao.BaseAddressDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BaseAddress">
+	 	<id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="parent_code" property="parentCode" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="level" property="level" jdbcType="TINYINT" />
+	    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+	    <result column="erp_status" property="erpStatus" jdbcType="VARCHAR" />
+	    <result column="erp_down_time" property="erpDownTime" jdbcType="TIMESTAMP" />
+   		<result column="erp_error_msg" property="erpErrorMsg" jdbcType="VARCHAR" />
+	    <result column="erp_down_times" property="erpDownTimes" jdbcType="TINYINT" />
+	    <result column="has_up_redis" property="hasUpRedis" jdbcType="TINYINT" />
+	    <result column="create_id" property="createId" jdbcType="BIGINT" />
+	    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+	    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+	    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+			id,
+			code,
+			parent_code,
+			name,
+			level,
+			delete_flag,
+			erp_status,
+			erp_down_time,
+			erp_error_msg,
+			erp_down_times,
+			has_up_redis,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		from
+			base_address
+		]]>
+	</sql>
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity != null">
+			<if test="entity.id != null">
+				and id = #{entity.id}
+			</if>
+			<if test="entity.code != null and entity.code != ''">
+				and code = #{entity.code}
+			</if>
+			<if test="entity.parentCode != null and entity.parentCode != ''">
+				and parent_code = #{entity.parentCode}
+			</if>
+			<if test="entity.level != null and entity.level != 0">
+				and level = #{entity.level}
+			</if>
+			<if test="entity.deleteFlag != null">
+				and delete_flag = #{entity.deleteFlag}
+			</if>
+		</if>
+	</sql>
+	<!-- mysql 分页尾 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 插入记录 -->
+	<insert id="add" useGeneratedKeys="true">
+		insert into base_address(
+			code,
+			parent_code,
+			name,
+			level,
+			delete_flag,
+			erp_status,
+			erp_down_times,
+			has_up_redis,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{code},
+			#{parentCode},
+			#{name},
+			#{level},
+			0,
+			#{erpStatus},
+			0,
+			0,
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新记录 -->
+	<update id="update">
+		update base_address 
+		<set> 
+			<if test="code != null and code != ''">
+				code = #{code},
+			</if>
+			<if test="parentCode != null and parentCode != ''">
+				parent_code = #{parentCode},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="level != null and level != 0">
+				level = #{level},
+			</if>
+			<if test="erpStatus != null and erpStatus != ''">
+				erp_status = #{erpStatus},
+			</if>
+			<if test="deleteFlag != null">
+				delete_flag = #{deleteFlag},
+			</if>
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now(),
+			has_up_redis = 0,
+			erp_down_times = 0,
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 根据ID查询记录 -->
+	<select id="queryById" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where id = #{id}
+	</select>
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1) 
+		from base_address
+		<include refid="where_fragement" />
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		<include refid="where_fragement" />
+		order by code asc
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<!-- 根据编码查询地址信息 -->
+	<select id="queryBaseAddressByCode" resultMap="BaseResultMap">
+		<include refid="selectAllColumns"/> 
+		where delete_flag = 0 
+		  and code = #{_parameter}
+	</select>
+	<!-- 根据编码上级地址编码查询下级地址列表 -->
+	<select id="queryBaseAddressListByParentCode" resultMap="BaseResultMap">
+		<include refid="selectAllColumns"/> 
+		where delete_flag = 0 
+		  and parent_code = #{_parameter}
+		order by code
+	</select>
+	<!-- 查询定时任务处理地址列表 -->
+	<select id="queryAddressList4Task" resultMap="BaseResultMap">
+		<include refid="selectAllColumns"/> 
+		where has_up_redis = 0
+		  and mod(id, #{entity.taskQueueNum}) in 
+		  <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- 更新记录Redis更新状态 -->
+	<update id="updateRedisFlagById">
+		update base_address 
+		<set> 
+			has_up_redis = 1
+		</set>
+		where id in 
+		<foreach collection="list" index="index" item="addressId" open="(" separator="," close=")"> 
+            #{addressId} 
+        </foreach> 
+	</update>
+	<select id="queryAddressList4Erp" resultMap="BaseResultMap">
+		<include refid="selectAllColumns"/> 
+		where 1 = 1 
+		  and (erp_status = #{entity.erpStatus}
+		  	or <![CDATA[(erp_status = #{entity.erpStatus1} and erp_down_times <= 3)) ]]>
+		  and delete_flag = 0
+		  and mod(id, #{entity.taskQueueNum}) in 
+		  <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- 更新地址信息下行状态 -->
+	<update id="updateAddressStatusById">
+		update base_address 
+		<set>
+			erp_status = #{entity.erpStatus},
+			erp_error_msg = #{entity.erpErrorMsg},
+			<if test="entity.erpDownTime != null">
+			erp_down_time = now(),
+			</if>
+			<if test="entity.erpDownTimes != null">
+			erp_down_times = #{entity.erpDownTimes},
+			</if>
+		</set>
+		where id = #{entity.id}
+	</update>
+	<!-- 查询总数 -->
+	<select id="queryCount4Superboss" resultType="java.lang.Long">
+		select count(1) 
+		from base_address
+		where modify_time >= str_to_date(#{_parameter, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')
+	</select>
+	<!-- 查询总数 -->
+	<select id="queryList4Superboss" resultMap="BaseResultMap">
+		<include refid="selectAllColumns"/> 
+		where modify_time >= str_to_date(#{startTimeStr, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+	<select id="queryAddressList4ErpException" resultMap="BaseResultMap">
+		<include refid="selectAllColumns"/>
+		where
+		erp_status = #{entity.erpStatus}
+		or erp_status = #{entity.erpStatus1}
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+	<select id="queryAddressCount4ErpException" resultType="Long">
+		select count(1) from base_address
+		where
+		erp_status = #{entity.erpStatus}
+		or erp_status = #{entity.erpStatus1}
+	</select>
+
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <bean id="scheduleManagerFactory"
+        class="com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory"
+        init-method="init">
+        <property name="zkConfig">
+            <map>
+                <entry key="zkConnectString" value="${tbschedule.registry.address}" />
+                <entry key="rootPath" value="${tbschedule.rootPath}" />
+                <entry key="zkSessionTimeout" value="${tbschedule.timeout}" />
+                <entry key="userName" value="${tbschedule.userName}" />
+                <entry key="password" value="${tbschedule.password}" />
+                <entry key="isCheckParentPath" value="${tbschedule.isCheckParentPath}" />
+            </map>
+        </property>
+    </bean>
+    <!-- 公告处理定时任务 -->
+	<!--     <bean id="publisPlacardScheduleTask" class="cn.htd.basecenter.service.task.PublishPlacardScheduleTask"/> -->
+	<!--     地址信息更新到Redis定时任务 -->
+	<!--    <bean id="updateAddress2RedisScheduleTask" class="cn.htd.basecenter.service.task.UpdateAddress2RedisScheduleTask"/> -->
+	<!--     字典信息更新到Redis定时任务 -->
+	<!--     <bean id="updateDictionary2RedisScheduleTask" class="cn.htd.basecenter.service.task.UpdateDictionary2RedisScheduleTask"/> -->
+	
+	<!-- 会员下行任务 -->
+    <bean id="memberDownErpTask" class="cn.htd.membercenter.service.task.MemberDownErpTask"/>
+	
+	<!-- 客商业务员下行任务 -->
+    <bean id="salesmanDownErpTask" class="cn.htd.membercenter.service.task.SalesmanDownErpTask"/>
+    
+    <!-- 单位往来关系下行任务 -->
+    <bean id="companyRelationDownErpTask" class="cn.htd.membercenter.service.task.CompanyRelationDownErpTask"/>
+	
+	<!-- 会员信息审批任务 -->
+<!-- 	<bean id="verifyInfoErpTask" class="cn.htd.membercenter.service.task.VerifyInfoErpTask"/> -->
+	
+	<!-- 同步到支付 -->
+    <bean id="dataSysToYijifuTask" class="cn.htd.membercenter.service.task.DataSysToYijifuTask"/>
+    
+   <!-- 修改同步到支付 -->
+    <bean id="dataModifySysTask" class="cn.htd.membercenter.service.task.DataModifySysTask"/>
+     
+    <!-- 发邮件 -->
+    <bean id="memberExceptionSendMail" class="cn.htd.membercenter.service.task.MemberExceptionSendMail"/>
+	
+
+	<!-- 会员生日消息发送 -->
+<!-- 	<bean id="sendPersonBirthdayTask" class="cn.htd.membercenter.service.task.SendPersonBirthdayTask"/> -->
+	
+	<!-- 会员等级计算 -->
+	<bean id="hTDUserGradeDailyTask" class="cn.htd.membercenter.service.task.HTDUserGradeDailyTask"/>
+	<bean id="hTDUserGradeMonthlyTask" class="cn.htd.membercenter.service.task.HTDUserGradeMonthlyTask"/>
+	<bean id="hTDUserGradeYearlyTask" class="cn.htd.membercenter.service.task.HTDUserGradeYearlyTask"/>
+	
+</beans>

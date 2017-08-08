@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.OMeetingEvaluateDAO">
+
+	<resultMap id="base_resultMap_oMeetingEvaluate" type="cn.htd.membercenter.domain.OMeetingEvaluate">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="meeting_no" property="meetingNo" jdbcType="VARCHAR" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="meeting_title" property="meetingTitle" jdbcType="VARCHAR" />
+    <result column="meeting_start_time" property="meetingStateTime" jdbcType="TIMESTAMP" />
+    <result column="meeting_end_time" property="meetingEndTime" jdbcType="TIMESTAMP" />
+    <result column="meeting_addr" property="meetingAddr" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="member_code" property="memberCode" jdbcType="VARCHAR" />
+    <result column="member_name" property="memberName" jdbcType="VARCHAR" />
+    <result column="artificial_person_name" property="artificialPersonName" jdbcType="VARCHAR" />
+    <result column="evaluate1" property="evaluate1" jdbcType="TINYINT" />
+    <result column="evaluate2" property="evaluate2" jdbcType="TINYINT" />
+    <result column="evaluate3" property="evaluate3" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	
+	<select id="queryOMeetingEvaluateForPage" parameterType="cn.htd.membercenter.dto.OMeetingEvaluateDTO" resultMap="base_resultMap_oMeetingEvaluate">
+	select id,meeting_no,seller_id,seller_name,seller_code,meeting_title,meeting_start_time,
+    meeting_end_time,meeting_addr,member_id,member_code,member_name,artificial_person_name,evaluate1,evaluate2,evaluate3,create_id,create_name,create_time 
+	from seller_meeting_evaluate   
+	where 1 = 1  
+ 	  <include refid="dynamic_fragment_oMeetingEvaluate"/>
+	  order by create_time desc
+	  LIMIT #{page.pageOffset},#{page.rows}
+	</select>
+	
+	<select id="queryOMeetingEvaluate" parameterType="cn.htd.membercenter.dto.OMeetingEvaluateDTO" resultMap="base_resultMap_oMeetingEvaluate">
+	select id,meeting_no,seller_id,seller_name,seller_code,meeting_title,meeting_start_time,
+    meeting_end_time,meeting_addr,member_id,member_code,member_name,artificial_person_name,evaluate1,evaluate2,evaluate3,create_id,create_name,create_time 
+	from seller_meeting_evaluate   
+	where 1 = 1  
+ 	  <include refid="dynamic_fragment_oMeetingEvaluate"/>
+	  order by create_time desc
+	</select>
+
+	<select id="getOMeetingEvaluateCount" resultType="java.lang.Integer">
+		select count(1) from seller_meeting_evaluate
+		WHERE 1 = 1 
+		 <include refid="dynamic_fragment_oMeetingEvaluate"/>
+	</select>
+
+	<sql id="dynamic_fragment_oMeetingEvaluate">
+		<if test="dto.meetingTitle != null and dto.meetingTitle != ''">
+		<!-- 	and meeting_title = #{dto.meetingTitle,jdbcType=VARCHAR}   -->
+			and meeting_title like CONCAT('%',#{dto.meetingTitle},'%')
+		</if>
+		<if test="dto.sellerCode != null and dto.sellerCode != ''">
+			and seller_code = #{dto.sellerCode,jdbcType=VARCHAR}  
+		</if>
+		<if test="dto.sellerName != null and dto.sellerName != ''">
+		<!-- 	and seller_name = #{dto.sellerName,jdbcType=VARCHAR}  -->
+			and seller_name like CONCAT('%',#{dto.sellerName},'%')
+		</if>
+		<if test="dto.meetingStateTime != null and dto.meetingStateTime != ''">
+		 <![CDATA[ 
+			and date_format(meeting_start_time,'%Y-%m-%d %H:%m:%s') >= #{dto.meetingStateTime,jdbcType=VARCHAR} 
+		  ]]> 
+		</if>
+	</sql>
+	
+	<select id="queryOMeetingEvaluateCountByMeetingNo" resultType="java.lang.Integer">
+		select count(1) from seller_meeting_evaluate
+		WHERE 1 = 1 
+		and meeting_no=#{meetingNo}
+	</select>
+	
+	<select id="queryOMeetingEvaluateByMeetingNo" parameterType="cn.htd.membercenter.dto.OMeetingEvaluateDTO" resultMap="base_resultMap_oMeetingEvaluate">
+		select id,meeting_no,seller_id,seller_name,seller_code,meeting_title,meeting_start_time,
+	    meeting_end_time,meeting_addr,member_id,member_code,member_name,artificial_person_name,evaluate1,evaluate2,evaluate3,create_id,create_name,create_time 
+		from seller_meeting_evaluate   
+		where 1 = 1  
+	 	and meeting_no=#{meetingNo}
+	 	order by create_time desc,id
+		limit #{page.pageOffset},#{page.rows}
+	</select>
+	
+</mapper>

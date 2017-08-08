@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.MemberVerifySaveDAO">
+     
+  <update id="saveMemberVerifyInfo">
+    update verify_info
+    <set>
+    	verify_status = #{verifyStatus},
+    	<if test="modifyId != null and modifyId != ''">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name =#{modifyName},
+			</if>
+				modify_time = now()
+    </set>
+        
+    where record_id = #{memberId} and verify_status='1' and record_type='1' and modify_type='12'
+  </update>
+  <update id="saveStatusInfoTypeByMemberId">
+    update member_status_info
+    <set>
+    	verify_status = #{verifyStatus},
+    	<if test="modifyId != null and modifyId != ''">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name =#{modifyName},
+			</if>
+			<if test="verifyId != null and verifyId != ''">
+				verify_id=#{verifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name =#{modifyName},
+			</if>
+				modify_time = now()
+    </set> 
+    where member_id = #{memberId} and info_type='12'
+  </update>
+  
+   <!-- 保存通过审核的会员的经营关系 -->
+  <insert id="insertBusinessRelationInfo" parameterType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+		insert into business_relationship
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId !=null and memberId !=''">
+				buyer_id,
+			</if>
+			<if test="sellerId !=null and sellerId !=''">
+				seller_id,
+			</if>
+			<if test="categoryId !=null and categoryId !=''">
+				category_id,
+			</if>
+			<if test="brandId !=null and brandId !=''">
+				brand_id,
+			</if>
+			<if test="auditStatus !=null and auditStatus !=''">
+				audit_status,
+			</if>
+			<if test="customerManagerId !=null and customerManagerId !=''">
+				customer_manager_id,
+			</if>
+			<if test="erpStatus  !=null and erpStatus  !=''">
+				erp_status,
+			</if>
+			<if test="createId !=null and createId !=''">
+				create_id,
+			</if>
+			<if test="createName !=null and createName !=''">
+				create_name,
+			</if>
+			<if test="modifyId !=null and modifyId !=''">
+				modify_id,
+			</if>
+			<if test="modifyName !=null and modifyName !=''">
+				modify_name,
+			</if>
+			erp_down_time,
+			modify_time,
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="memberId !=null and memberId !=''">
+				#{memberId},
+			</if>
+			<if test="sellerId !=null and sellerId !=''">
+				#{sellerId},
+			</if>
+			<if test="categoryId !=null and categoryId !=''">
+				#{categoryId},
+			</if>
+			<if test="brandId !=null and brandId !=''">
+				#{brandId},
+			</if>
+			<if test="auditStatus !=null and auditStatus !=''">
+				#{auditStatus},
+			</if>
+			<if test="customerManagerId !=null and customerManagerId !=''">
+				#{customerManagerId},
+			</if>
+			<if test="erpStatus  !=null and erpStatus  !=''">
+				#{erpStatus},
+			</if>
+			<if test="createId !=null and createId !=''">
+				#{createId},
+			</if>
+			<if test="createName !=null and createName !=''">
+				#{createName},
+			</if>
+			<if test="modifyId !=null and modifyId !=''">
+				#{modifyId},
+			</if>
+			<if test="modifyName !=null and modifyName !=''">
+				#{modifyName},
+			</if>
+			now(),
+			now(),
+			now()
+		</trim>
+	</insert>
+	<update id="updateBelongRelationInfo" parameterType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+    update belong_relationship
+    <set>
+    		<if test="buyerFeature != null and buyerFeature != ''">
+				buyer_feature = #{buyerFeature},
+			</if>
+    		<if test="modifyId != null and modifyId != ''">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name =#{modifyName},
+			</if>
+			<if test="customerManagerId != null and customerManagerId != ''">
+				customer_manager_id = #{customerManagerId},
+			</if>
+    		<if test="auditStatus != null and auditStatus != ''">
+				status =#{auditStatus},
+			</if>
+				belong_verify_time = now(),
+				modify_time = now()
+    </set>
+        
+    where buyer_id = #{memberId} and seller_id=#{sellerId} and status ='1'
+  </update>
+ 
+ <update id="updateBelongRelationRebut">
+	update member_base_info
+	<set>
+		<if test="curBelongSellerId != null and curBelongSellerId != ''">
+			cur_belong_seller_id = #{curBelongSellerId},
+		</if>
+		<if test="modifyId != null and modifyId != ''">
+			modify_id = #{modifyId},
+		</if>
+		<if test="modifyName != null and modifyName != ''">
+			modify_name = #{modifyName},
+		</if>
+			modify_time = now()
+	</set>
+	where id = #{id}
+
+</update>
+
+<update id="updateShowIdMsg">
+	update member_company_info
+	<set>
+			is_show_id_msg = #{show}
+	</set>
+	where member_id = #{memberId}
+	and buyer_seller_type='1'
+
+</update>
+
+
+	<select id="queryShowIdMsg" resultType="java.lang.Integer">
+	SELECT m.is_show_id_msg
+	FROM member_company_info m
+	where m.member_id=#{memberId}  and m.buyer_seller_type='1'
+	</select>
+	
+</mapper>

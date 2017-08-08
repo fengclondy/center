@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.ModifyDetailInfoMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ModifyDetailInfo" >
+    <id column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_info_id" property="modifyInfoId" jdbcType="BIGINT" />
+    <result column="modify_record_type" property="modifyRecordType" jdbcType="VARCHAR" />
+    <result column="modify_record_id" property="modifyRecordId" jdbcType="BIGINT" />
+    <result column="modify_table_id" property="modifyTableId" jdbcType="VARCHAR" />
+    <result column="modify_field_id" property="modifyFieldId" jdbcType="VARCHAR" />
+    <result column="before_change" property="beforeChange" jdbcType="VARCHAR" />
+    <result column="after_change" property="afterChange" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    modify_id, modify_info_id, modify_record_type, modify_record_id, modify_table_id, 
+    modify_field_id, before_change, after_change, create_id, create_name, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from modify_detail_info
+    where modify_id = #{modifyId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from modify_detail_info
+    where modify_id = #{modifyId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.ModifyDetailInfo" >
+    insert into modify_detail_info (modify_id, modify_info_id, modify_record_type, 
+      modify_record_id, modify_table_id, modify_field_id, 
+      before_change, after_change, create_id, 
+      create_name, create_time)
+    values (#{modifyId,jdbcType=BIGINT}, #{modifyInfoId,jdbcType=BIGINT}, #{modifyRecordType,jdbcType=VARCHAR}, 
+      #{modifyRecordId,jdbcType=BIGINT}, #{modifyTableId,jdbcType=VARCHAR}, #{modifyFieldId,jdbcType=VARCHAR}, 
+      #{beforeChange,jdbcType=VARCHAR}, #{afterChange,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ModifyDetailInfo" >
+    insert into modify_detail_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyInfoId != null" >
+        modify_info_id,
+      </if>
+      <if test="modifyRecordType != null" >
+        modify_record_type,
+      </if>
+      <if test="modifyRecordId != null" >
+        modify_record_id,
+      </if>
+      <if test="modifyTableId != null" >
+        modify_table_id,
+      </if>
+      <if test="modifyFieldId != null" >
+        modify_field_id,
+      </if>
+      <if test="beforeChange != null" >
+        before_change,
+      </if>
+      <if test="afterChange != null" >
+        after_change,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyInfoId != null" >
+        #{modifyInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyRecordType != null" >
+        #{modifyRecordType,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyRecordId != null" >
+        #{modifyRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTableId != null" >
+        #{modifyTableId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyFieldId != null" >
+        #{modifyFieldId,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeChange != null" >
+        #{beforeChange,jdbcType=VARCHAR},
+      </if>
+      <if test="afterChange != null" >
+        #{afterChange,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ModifyDetailInfo" >
+    update modify_detail_info
+    <set >
+      <if test="modifyInfoId != null" >
+        modify_info_id = #{modifyInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyRecordType != null" >
+        modify_record_type = #{modifyRecordType,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyRecordId != null" >
+        modify_record_id = #{modifyRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTableId != null" >
+        modify_table_id = #{modifyTableId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyFieldId != null" >
+        modify_field_id = #{modifyFieldId,jdbcType=VARCHAR},
+      </if>
+      <if test="beforeChange != null" >
+        before_change = #{beforeChange,jdbcType=VARCHAR},
+      </if>
+      <if test="afterChange != null" >
+        after_change = #{afterChange,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where modify_id = #{modifyId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ModifyDetailInfo" >
+    update modify_detail_info
+    set modify_info_id = #{modifyInfoId,jdbcType=BIGINT},
+      modify_record_type = #{modifyRecordType,jdbcType=VARCHAR},
+      modify_record_id = #{modifyRecordId,jdbcType=BIGINT},
+      modify_table_id = #{modifyTableId,jdbcType=VARCHAR},
+      modify_field_id = #{modifyFieldId,jdbcType=VARCHAR},
+      before_change = #{beforeChange,jdbcType=VARCHAR},
+      after_change = #{afterChange,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where modify_id = #{modifyId,jdbcType=BIGINT}
+  </update>
+</mapper>

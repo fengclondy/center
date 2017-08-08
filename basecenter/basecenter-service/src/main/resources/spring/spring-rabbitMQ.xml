@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/rabbit
+                http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+   <!-- 连接服务配置  -->
+   <rabbit:connection-factory id="connectionFactory" host="${rabbitmq.host}" username="${rabbitmq.username}"
+        password="${rabbitmq.password}" port="${rabbitmq.port}"  />
+   <rabbit:admin connection-factory="connectionFactory"/>
+   <!-- message转换声明-->
+   <bean id="jackson2JsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
+   <!-- spring template声明-->
+   <rabbit:template exchange="basecenter-exchange" id="amqpTemplate" connection-factory="connectionFactory" message-converter="jackson2JsonMessageConverter"/>
+   <!-- queue 队列声明-->
+   <rabbit:queue id="middleware-erp.baseaddress.basecenter" durable="true" auto-delete="false" exclusive="false" name="middleware-erp.baseaddress.basecenter"/>
+    
+   <!-- exchange queue binging key 绑定 -->
+   <rabbit:direct-exchange name="basecenter-exchange" durable="true" auto-delete="false" id="basecenter-exchange">
+   	<rabbit:bindings>
+    	<rabbit:binding queue="middleware-erp.baseaddress.basecenter" key="middleware-erp.baseaddress.basecenter.key"/>
+    </rabbit:bindings>
+   </rabbit:direct-exchange>
+</beans>

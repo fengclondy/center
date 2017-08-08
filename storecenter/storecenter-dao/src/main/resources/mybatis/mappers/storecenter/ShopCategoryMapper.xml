@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.storecenter.dao.ShopCategoryDAO">
+	
+	<!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<resultMap id="shopPlatformCategoryMap" type="cn.htd.storecenter.dto.ShopCategoryDTO">
+				<result property="id" column="id"/>
+				<result property="shopId" column="shop_id"/>
+				<result property="cid" column="cid"/>
+				<result property="parentCid" column="parent_cid"/>
+				<result property="categoryLevel" column="category_level"/>
+				<result property="sellerId" column="seller_id"/>
+				<result property="status" column="status"/>
+				<result property="comment" column="comment"/>
+				<result property="created" column="create_time"/>
+				<result property="createId" column="create_id"/>
+				<result property="createName" column="create_name"/>
+				<result property="modifyId" column="modify_id"/>
+				<result property="modifyName" column="modify_name"/>
+				<result property="modified" column="modify_time"/>
+				<result property="passTime" column="pass_time"/>
+	</resultMap>
+	
+	<!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+	 <![CDATA[ limit #{page.pageOffset} , #{page.rows} ]]>
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+ 			shop_platform_category_.id
+ 			,shop_platform_category_.shop_id
+ 			,shop_platform_category_.cid
+ 			,shop_platform_category_.parent_cid
+ 			,shop_platform_category_.category_level
+ 			,shop_platform_category_.seller_id
+ 			,shop_platform_category_.status
+ 			,shop_platform_category_.comment
+ 			,shop_platform_category_.create_id
+ 			,shop_platform_category_.create_name
+ 			,shop_platform_category_.create_time
+ 			,shop_platform_category_.modify_id
+ 			,shop_platform_category_.modify_name
+ 			,shop_platform_category_.modify_time
+ 			,shop_platform_category_.pass_time
+		FROM 
+		shop_platform_category shop_platform_category_,shop_info shop_info_ 
+		]]>
+	</sql>
+	<sql id="selectAllColumnsAll">
+		<![CDATA[
+		select
+ 			shop_platform_category_.id
+ 			,shop_platform_category_.shop_id
+ 			,shop_platform_category_.cid
+ 			,shop_platform_category_.parent_cid
+ 			,shop_platform_category_.category_level
+ 			,shop_platform_category_.seller_id
+ 			,shop_platform_category_.status
+ 			,shop_platform_category_.comment
+ 			,shop_platform_category_.create_id
+ 			,shop_platform_category_.create_name
+ 			,shop_platform_category_.create_time
+ 			,shop_platform_category_.modify_id
+ 			,shop_platform_category_.modify_name
+ 			,shop_platform_category_.modify_time
+ 			,shop_platform_category_.pass_time
+		FROM 
+		shop_platform_category shop_platform_category_
+		]]>
+	</sql>
+	
+	<sql id="where_fragement">
+		where shop_info_.shop_id=shop_platform_category_.shop_id and shop_info_.status = 2
+		<if test="entity!=null">
+			<if test="entity.id != null  and entity.id !=''">
+				<![CDATA[ and shop_platform_category_.id  = #{entity.id} ]]>
+			</if>
+			<if test="entity.shopIds != null ">
+				<![CDATA[ and shop_platform_category_.shop_id in ]]>
+				<foreach collection="entity.shopIds" item="item" index="index"  open="(" separator="," close=")">
+				<![CDATA[ #{item} ]]>
+				</foreach>
+			</if>
+			<if test="entity.shopId != null  and entity.shopId !=''">
+				<![CDATA[ and shop_platform_category_.shop_id  = #{entity.shopId} ]]>
+			</if>
+			<if test="entity.cid != null  and entity.cid !=''">
+				<![CDATA[ and shop_platform_category_.cid  = #{entity.cid} ]]>
+			</if>
+			<if test="entity.parentCid != null  and entity.parentCid !=''">
+				<![CDATA[ and shop_platform_category_.parent_cid  = #{entity.parentCid} ]]>
+			</if>
+			<if test="entity.categoryLevel != null  and entity.categoryLevel !=''">
+				<![CDATA[ and shop_platform_category_.category_level  = #{entity.categoryLevel} ]]>
+			</if>
+			<if test="entity.sellerId != null  and entity.sellerId !=''">
+				<![CDATA[ and shop_platform_category_.seller_id  = #{entity.sellerId} ]]>
+			</if>
+			<if test="entity.status != null  and entity.status !=''">
+				<![CDATA[ and shop_platform_category_.status  = #{entity.status} ]]>
+			</if>
+			<if test="entity.comment != null  and entity.comment !=''">
+				<![CDATA[ and shop_platform_category_.comment  = #{entity.comment} ]]>
+			</if>
+			<if test="entity.createId != null  and entity.createId !=''">
+				<![CDATA[ and shop_platform_category_.create_id  = #{entity.createId} ]]>
+			</if>
+			<if test="entity.createName != null  and entity.createName !=''">
+				<![CDATA[ and shop_platform_category_.create_name  = #{entity.createName} ]]>
+			</if>
+			<if test="entity.created != null  and entity.created !=''">
+				<![CDATA[ and shop_platform_category_.create_time  = #{entity.created} ]]>
+			</if>
+			<if test="entity.modifyId != null  and entity.modifyId !=''">
+				<![CDATA[ and shop_platform_category_.modify_id  = #{entity.modifyId} ]]>
+			</if>
+			<if test="entity.modifyName != null  and entity.modifyName !=''">
+				<![CDATA[ and shop_platform_category_.modify_name  = #{entity.modifyName} ]]>
+			</if>
+			<if test="entity.modified != null  and entity.modified !=''">
+				<![CDATA[ and shop_platform_category_.modify_time  = #{entity.modified} ]]>
+			</if>
+			<if test="entity.passTime != null  and entity.passTime !=''">
+				<![CDATA[ and shop_platform_category_.pass_time  = #{entity.passTime} ]]>
+			</if>
+		</if>
+	</sql>
+	<sql id="where_fragementAll">
+		where 1=1
+		<if test="entity!=null">
+			<if test="entity.id != null  and entity.id !=''">
+				<![CDATA[ and shop_platform_category_.id  = #{entity.id} ]]>
+			</if>
+			<if test="entity.shopIds != null ">
+				<![CDATA[ and shop_platform_category_.shop_id in ]]>
+				<foreach collection="entity.shopIds" item="item" index="index"  open="(" separator="," close=")">
+				<![CDATA[ #{item} ]]>
+				</foreach>
+			</if>
+			<if test="entity.shopId != null  and entity.shopId !=''">
+				<![CDATA[ and shop_platform_category_.shop_id  = #{entity.shopId} ]]>
+			</if>
+			<if test="entity.cid != null  and entity.cid !=''">
+				<![CDATA[ and shop_platform_category_.cid  = #{entity.cid} ]]>
+			</if>
+			<if test="entity.parentCid != null  and entity.parentCid !=''">
+				<![CDATA[ and shop_platform_category_.parent_cid  = #{entity.parentCid} ]]>
+			</if>
+			<if test="entity.categoryLevel != null  and entity.categoryLevel !=''">
+				<![CDATA[ and shop_platform_category_.category_level  = #{entity.categoryLevel} ]]>
+			</if>
+			<if test="entity.sellerId != null  and entity.sellerId !=''">
+				<![CDATA[ and shop_platform_category_.seller_id  = #{entity.sellerId} ]]>
+			</if>
+			<if test="entity.status != null  and entity.status !=''">
+				<![CDATA[ and shop_platform_category_.status  = #{entity.status} ]]>
+			</if>
+			<if test="entity.comment != null  and entity.comment !=''">
+				<![CDATA[ and shop_platform_category_.comment  = #{entity.comment} ]]>
+			</if>
+			<if test="entity.createId != null  and entity.createId !=''">
+				<![CDATA[ and shop_platform_category_.create_id  = #{entity.createId} ]]>
+			</if>
+			<if test="entity.createName != null  and entity.createName !=''">
+				<![CDATA[ and shop_platform_category_.create_name  = #{entity.createName} ]]>
+			</if>
+			<if test="entity.created != null  and entity.created !=''">
+				<![CDATA[ and shop_platform_category_.create_time  = #{entity.created} ]]>
+			</if>
+			<if test="entity.modifyId != null  and entity.modifyId !=''">
+				<![CDATA[ and shop_platform_category_.modify_id  = #{entity.modifyId} ]]>
+			</if>
+			<if test="entity.modifyName != null  and entity.modifyName !=''">
+				<![CDATA[ and shop_platform_category_.modify_name  = #{entity.modifyName} ]]>
+			</if>
+			<if test="entity.modified != null  and entity.modified !=''">
+				<![CDATA[ and shop_platform_category_.modify_time  = #{entity.modified} ]]>
+			</if>
+			<if test="entity.passTime != null  and entity.passTime !=''">
+				<![CDATA[ and shop_platform_category_.pass_time  = #{entity.passTime} ]]>
+			</if>
+		</if>
+		<![CDATA[ ORDER BY shop_platform_category_.modify_time desc ]]>
+	</sql>
+
+	<sql id="groupBy">
+		<![CDATA[ GROUP BY shop_platform_category_.shop_id ]]>
+	</sql>
+	<!-- =========================================================== -->
+    <!-- DAO方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+   <!-- 根据id查询 -->
+	<select id="queryById" resultMap="shopPlatformCategoryMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where  shop_info_.shop_id=shop_platform_category_.shop_id and   shop_info_.status='2' and  shop_platform_category_.id = #{id} and shop_category_seller_.status='2'
+		]]>
+	</select>
+	
+		<!-- 根据shopid查询 -->
+	<select id="selectByShopId" resultMap="shopPlatformCategoryMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where  shop_info_.shop_id=shop_platform_category_.shop_id and   shop_info_.status='2' and shop_platform_category_.shop_id = #{shopId} and shop_platform_category_.status='2'
+		]]>
+	</select>
+	<!-- 分页查询所有-->
+	<select id="selectListByConditionAll" resultMap="shopPlatformCategoryMap" >
+		<include refid="selectAllColumnsAll"/>
+		<include refid="where_fragementAll" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="selectCountByConditionAll" resultType="long">
+		<include refid="count_Tail" />
+		shop_platform_category shop_platform_category_  
+		<include refid="where_fragementAll" />
+	</select>
+	<!-- 分页查询 -->
+	<select id="selectListByCondition" resultMap="shopPlatformCategoryMap" >
+		<include refid="selectAllColumns"/>
+		<include refid="where_fragement" />
+		<if test="entity.isGroupBy!=null and entity.isGroupBy!=''">
+			<include refid="groupBy" />
+		</if>
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="selectCountByCondition" resultType="long">
+		<include refid="count_Tail" />
+		 ( SELECT shop_platform_category_.shop_id FROM shop_platform_category shop_platform_category_  ,shop_info shop_info_
+		<include refid="where_fragement" />
+		<if test="entity.isGroupBy!=null and entity.isGroupBy!=''">
+			<include refid="groupBy" />
+		</if>
+		) aa
+	</select>
+	
+	<!-- 插入记录 -->
+	<insert id="insert" parameterType="cn.htd.storecenter.dto.ShopCategoryDTO">
+		<![CDATA[
+		insert into shop_platform_category (
+		    	 shop_id
+		    	 ,cid
+		    	 ,parent_cid
+		    	 ,category_level
+		    	 ,seller_id
+		    	 ,status
+		    	 ,comment
+		    	 ,create_id
+		    	 ,create_name
+		    	 ,create_time
+		    	 ,modify_id
+		    	 ,modify_name
+		    	 ,modify_time
+		    	 ,pass_time
+		   )values(
+		    	#{shopId}
+		    	,#{cid}
+		    	,#{parentCid}
+		    	,#{categoryLevel}
+		    	,#{sellerId}
+		    	,#{status}
+		    	,#{comment}
+		    	,#{createId}
+		    	,#{createName}
+		    	,now()
+		    	,#{modifyId}
+		    	,#{modifyName}
+		    	,now()
+		    	,now()
+		   )
+	    ]]>	
+	</insert>
+	
+	<!-- 根据id，修改记录 -->
+	<update id="update" parameterType="cn.htd.storecenter.dto.ShopCategoryDTO">
+		<![CDATA[
+		update shop_platform_category set
+   			shop_id = #{shopId}
+   			,cid = #{cid}
+   			,parent_cid = #{parentCid}
+   			,category_level = #{categoryLevel}
+   			,seller_id = #{sellerId}
+   			,status = #{status}
+   			,comment = #{comment}
+   			,create_id = #{createId}
+   			,create_name = #{createName}
+   			,modify_id = #{modifyId}
+   			,modify_name = #{modifyName}
+   			,modified = now()
+   			,pass_time = #{passTime}
+		 where id = #{id}
+		]]>
+	</update>
+	<!-- 修改状态 -->
+	<update id="modifyShopCategoryStatus" parameterType="cn.htd.storecenter.dto.ShopCategoryDTO">
+		update shop_platform_category set
+   			status = #{status}
+   			,modify_time = now()
+			,modify_id = #{modifyId}
+			,modify_name = #{modifyName}
+   			,comment = #{comment}
+   			<if test="status=='2'">
+   			,pass_time = now()
+   			</if>
+		 where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		<![CDATA[
+		delete from shop_platform_category where id = #{id}
+		]]>
+	</delete>
+
+	<update id="deleteByShopId" parameterType="cn.htd.storecenter.dto.ShopCategoryDTO">
+		<![CDATA[
+		update shop_platform_category SET
+		modify_time = now()
+		,modify_id = #{modifyId}
+		,modify_name = #{modifyName}
+		,status = '-1'
+		where shop_id = #{shopId}
+		]]>
+	</update>
+
+	<select id="selectShopIdById" resultMap="shopPlatformCategoryMap" parameterType="long">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where id = #{id}
+		]]>
+	</select>
+	<select id="getShopCategoryBysellerId" resultMap="shopPlatformCategoryMap" parameterType="long">
+		<include refid="selectAllColumnsAll" />
+		<![CDATA[
+		where seller_id = #{sellerId}
+		]]>
+	</select>
+	<update id="updateStatusByIdAndShopId" parameterType="cn.htd.storecenter.dto.ShopCategoryDTO">
+		<![CDATA[
+		update shop_platform_category set
+			status = '-1'
+			,modify_id = #{modifyId}
+			,modify_name = #{modifyName}
+			,modify_time = now()
+		where shop_id = #{shopId}
+		]]>
+	</update>
+</mapper>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 首页导航 -->
+<mapper namespace="com.bjucloud.contentcenter.dao.MallNavDAO">
+	<resultMap id="mallNavMapper" type="com.bjucloud.contentcenter.domain.MallNav">
+			<result property="id" column="id" />
+			<result property="navTitle" column="nav_title" />
+			<result property="navLink" column="nav_link" />
+			<result property="sortNum" column="sort_num" />
+			<result property="status" column="status" />
+			<result property="created" column="created"/>
+			<result property="modified" column="modified" />
+			<result property="themeId" column="theme_id"/>
+	</resultMap>
+	<resultMap id="mallNavDTO" type="com.bjucloud.contentcenter.dto.MallNavDTO">
+			<result property="id" column="id" />
+			<result property="navTitle" column="nav_title" />
+			<result property="navLink" column="nav_link" />
+			<result property="sortNum" column="sort_num" />
+			<result property="status" column="status" />
+			<result property="created" column="created"/>
+			<result property="modified" column="modified" />
+			<result property="themeId" column="theme_id"/>
+			<result property="themeName" column="themeName"/>
+			<result property="themeStatus" column="themeStatus"/>
+			<result property="themeType" column="themeType"/>
+			<result property="themeUId" column="themeUId"/>
+			<result property="cid" column="cid"/>
+			<result property="addressId" column="addressId"/>
+	</resultMap>
+	
+	<sql id="selectNavColumns">
+		<![CDATA[
+		select
+ 			 mall_ad_count_.id
+ 			,mall_ad_count_.mall_ad_id
+ 			,mall_ad_count_.ad_count
+ 			,mall_ad_count_.click_date
+ 			,mall_nav.title
+		FROM 
+		mall_nav mall_nav LEFT JOIN  mall_ad_count mall_ad_count_ ON mall_ad_count_.mall_ad_id=mall_nav.id
+		]]>
+	</sql>
+	<select id="queryById" resultMap="mallNavDTO" >
+		<include refid="queryList"/>
+		where mn.id = #{id}
+	</select>
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	<insert id="add">
+		insert into mall_nav(
+				nav_title,
+				nav_link,
+				sort_num,
+				status,
+				created,
+				modified,
+				theme_id
+		)values(
+				#{navTitle},
+				#{navLink},
+				#{sortNum},
+				#{status},
+				NOW(),
+				NOW(),
+				#{themeId}				
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<update id="update">
+		update mall_nav set
+				nav_title = #{navTitle},
+				nav_link = #{navLink},
+				sort_num = #{sortNum}
+				<if test="status!=null">
+				,status = #{status}
+				</if>
+				<if test="created!=null">
+				,created = #{created}
+				</if>
+				,modified = NOW()
+				<if test="themeId!=null">
+				,theme_id = #{themeId}
+				</if>
+		where id = #{id}
+	</update>
+	<update id="updateStatusById">
+		update mall_nav set
+			status = #{publishFlag},
+			modified = NOW()
+		where id = #{id}
+	</update>
+	<update id="updateSortNumberById">
+		update mall_nav set
+			sort_num = #{sortNum},
+			modified = NOW()
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from mall_nav
+		where id = #{id}
+	</delete>
+
+	<select id="queryCountDTO" resultType="long">
+		select count(0) from mall_nav where 1=1
+		<if test="publishFlag!= null ">
+				and status = #{publishFlag}
+		</if>
+	</select>
+	<select id="queryListDTO" resultMap="mallNavDTO">
+		select * from mall_nav where 1=1
+		<if test="publishFlag!= null ">
+				and status = #{publishFlag}
+		</if>
+		order by sort_num asc, modified desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<select id="queryCountDTOToAdmin" resultType="long">
+		<![CDATA[
+		select 
+		count(0)
+		from 
+		mall_nav mn INNER JOIN mall_theme mt ON mn.theme_id=mt.id
+		]]>
+		<include refid="queryList_where"/>
+	</select>
+	<select id="queryListDTOToAdmin" resultMap="mallNavDTO">
+		<!--select * from mall_nav-->
+		<include refid="queryList"/>
+		<include refid="queryList_where"/>
+		order by mn.sort_num asc, mn.modified desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	<sql id="queryList">
+		<![CDATA[
+		select 
+		mn.id,
+		mn.nav_title,
+		mn.nav_link,
+		mn.sort_num,
+		mn.status,
+		mn.created,
+		mn.modified,
+		mn.theme_id,
+		mt.theme_name themeName,
+		mt.cId cid,
+		mt.addressId addressId,
+		mt.status themeStatus,
+		mt.cId cid,
+		mt.addressId addressId, 
+		mt.type themeType,
+		mt.userId themeUId
+		from 
+		mall_nav mn INNER JOIN mall_theme mt ON mn.theme_id=mt.id
+		]]>
+	</sql>
+	<sql id="queryList_where">
+			where 1=1
+			<if test="publishFlag!= null ">
+				and mn.status = #{publishFlag}
+			</if>
+			
+			<if test="entity!=null">
+				<if test=" entity.id != null and entity.id != '' ">
+					and mn.id = #{entity.id}
+				</if>
+				<if test=" entity.navTitle != null ">
+					and mn.nav_title like concat('%',#{entity.navTitle},'%')
+				</if>
+				<if test="entity.themeId != null and entity.themeId != 0 and entity.themeStatus != ''">
+					and mn.theme_id = #{entity.themeId}
+				</if>
+				<if test=" entity.themeType != null and entity.themeType != 0 and entity.themeStatus != ''">
+					and mt.type = #{entity.themeType}
+				</if>
+				<if test=" entity.themeStatus != null and entity.themeStatus != 0 and entity.themeStatus != ''">
+					and mt.status = #{entity.themeStatus}
+				</if>
+				<if test=" entity.themeUId != null and entity.themeUId != '' ">
+					and mt.userId = #{entity.themeUId}
+				</if>
+			</if>
+		
+	</sql>
+	
+	<sql id="queryPage_where">
+		where 1=1 
+		<if test="entity!=null">
+			<if test="entity.ids != null">
+				<![CDATA[ and mall_ad_count_.id  in ]]>
+				<foreach collection="entity.ids" item="id" index="index"  open="(" close=")">  
+					#{id}
+				</foreach>
+			</if>
+			<if test="entity.mallAdId != null">
+				<![CDATA[ and mall_ad_count_.mall_ad_id =#{entity.mallAdId} ]]>
+			</if>
+			<if test="entity.mallAdName != null">
+				<![CDATA[ and mall_nav.title like concat('%',#{entity.mallAdName},'%') ]]>
+			</if>
+			<if test="entity.tableType != null">
+				<![CDATA[ and mall_ad_count_.table_type =#{entity.tableType} ]]>
+			</if>
+			<if test="entity.adCountMin != null">
+				<![CDATA[ and mall_ad_count_.ad_count >=#{entity.adCountMin} ]]>
+			</if>
+			<if test="entity.adCountMax != null">
+				<![CDATA[ and mall_ad_count_.ad_count<=#{entity.adCountMax} ]]>
+			</if>
+			<if test="entity.clickDateBegin != null  and entity.clickDateBegin !=''">
+				<![CDATA[ and mall_ad_count_.click_date >DATE_FORMAT(#{entity.clickDateBegin},'%Y-%m-%d') ]]>
+			</if>
+			<if test="entity.clickDateEnd != null  and entity.clickDateEnd !=''">
+				<![CDATA[ and mall_ad_count_.click_date <DATE_FORMAT(#{entity.clickDateEnd},'%Y-%m-%d')]]>
+			</if>
+		</if>
+	</sql>
+</mapper>

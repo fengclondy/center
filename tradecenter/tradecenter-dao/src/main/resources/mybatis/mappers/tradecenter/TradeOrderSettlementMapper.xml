@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderSettlementDAO">
+
+	<resultMap id="base_resultMap_tradeOrderSettlement" type="cn.htd.tradecenter.domain.order.TradeOrderSettlement">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="buyer_type" property="buyerType" jdbcType="VARCHAR" />
+    <result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="seller_type" property="sellerType" jdbcType="VARCHAR" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="has_productplus_flag" property="hasProductplusFlag" jdbcType="TINYINT" />
+    <result column="is_vip_member" property="isVipMember" jdbcType="TINYINT" />
+    <result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="pay_type" property="payType" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="resultMap_tradeOrderSettlement" type="cn.htd.tradecenter.domain.order.TradeOrderSettlement" extends="base_resultMap_tradeOrderSettlement">
+
+		<collection property="orderItemList" ofType="cn.htd.tradecenter.domain.order.TradeOrderSettlementItems">
+		<id column="id_2" property="id" jdbcType="BIGINT" />
+		<result column="order_no_2" property="orderNo" jdbcType="VARCHAR" />
+		<result column="order_item_no_2" property="orderItemNo" jdbcType="VARCHAR" />
+		<result column="trade_no_2" property="tradeNo" jdbcType="VARCHAR" />
+		<result column="channel_code_2" property="channelCode" jdbcType="VARCHAR" />
+		<result column="item_code_2" property="itemCode" jdbcType="VARCHAR" />
+		<result column="goods_name_2" property="goodsName" jdbcType="VARCHAR" />
+		<result column="sku_code_2" property="skuCode" jdbcType="VARCHAR" />
+		<result column="sku_erp_code_2" property="skuErpCode" jdbcType="VARCHAR" />
+		<result column="sku_ean_code_2" property="skuEanCode" jdbcType="VARCHAR" />
+		<result column="sku_picture_url_2" property="skuPictureUrl" jdbcType="VARCHAR" />
+		<result column="item_spu_code_2" property="itemSpuCode" jdbcType="VARCHAR" />
+		<result column="first_category_id_2" property="firstCategoryId" jdbcType="BIGINT" />
+		<result column="first_category_name_2" property="firstCategoryName" jdbcType="VARCHAR" />
+		<result column="second_category_id_2" property="secondCategoryId" jdbcType="BIGINT" />
+		<result column="second_category_name_2" property="secondCategoryName" jdbcType="VARCHAR" />
+		<result column="third_category_id_2" property="thirdCategoryId" jdbcType="BIGINT" />
+		<result column="third_category_name_2" property="thirdCategoryName" jdbcType="VARCHAR" />
+		<result column="category_id_list_2" property="categoryIdList" jdbcType="VARCHAR" />
+		<result column="category_name_list_2" property="categoryNameList" jdbcType="VARCHAR" />
+		<result column="brand_id_2" property="brandId" jdbcType="BIGINT" />
+		<result column="brand_name_2" property="brandName" jdbcType="VARCHAR" />
+		<result column="is_vip_item_2" property="isVipItem" jdbcType="TINYINT" />
+		<result column="vip_item_type_2" property="vipItemType" jdbcType="VARCHAR" />
+		<result column="goods_count_2" property="goodsCount" jdbcType="INTEGER" />
+		<result column="cost_price_2" property="costPrice" jdbcType="DECIMAL" />
+		<result column="price_floating_ratio_2" property="priceFloatingRatio" jdbcType="DECIMAL" />
+		<result column="commission_ratio_2" property="commissionRatio" jdbcType="DECIMAL" />
+		<result column="commission_amount_2" property="commissionAmount" jdbcType="DECIMAL" />
+		<result column="goods_amount_2" property="goodsAmount" jdbcType="DECIMAL" />
+		<result column="order_item_total_amount_2" property="orderItemTotalAmount" jdbcType="DECIMAL" />
+		<result column="order_item_pay_amount_2" property="orderItemPayAmount" jdbcType="DECIMAL" />
+		<result column="goods_real_price_2" property="goodsRealPrice" jdbcType="DECIMAL" />
+		</collection>
+	</resultMap>
+	
+	<resultMap id="base_resultMap_tradeSetSellerInfo" type="cn.htd.tradecenter.dto.bill.TradeSetSellerInfoDTO">
+   <!--  <id column="id" property="sellerId" jdbcType="BIGINT" /> -->
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <!-- <result column="seller_type" property="sellerType" jdbcType="VARCHAR" /> -->
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="channel_code" property="productChannelCode" jdbcType="VARCHAR" />
+    <result column="channel_name" property="productChannelName" jdbcType="VARCHAR" />
+    </resultMap>
+    
+	
+	<!-- 根据条件查询符合结算规则的订单 -->
+	<select id="getOrderSettlementsByParams" resultMap="resultMap_tradeOrderSettlement" parameterType="cn.htd.tradecenter.dto.TradeOrderSettlementDTO">
+		    
+		SELECT 
+			o.id,o.trade_no,o.order_no,o.buyer_code,o.buyer_type,o.buyer_name,o.seller_code,o.seller_type,o.seller_name,o.shop_id,o.shop_name,o.has_productplus_flag,o.is_vip_member,
+			o.order_status,o.pay_type,o.create_id,o.create_name,o.create_time,o.modify_id,o.modify_name,o.modify_time,
+	        i.id id_2,i.order_item_no order_item_no_2,i.order_no order_no_2,i.channel_code channel_code_2,i.item_code item_code_2,i.goods_name goods_name_2,i.sku_code sku_code_2,
+	        i.sku_erp_code sku_erp_code_2,i.sku_ean_code sku_ean_code_2,i.sku_picture_url sku_picture_url_2,i.item_spu_code item_spu_code_2,i.first_category_id first_category_id_2,
+	        i.first_category_name first_category_name_2,i.second_category_id second_category_id_2,i.second_category_name second_category_name_2,
+	        i.third_category_id third_category_id_2,i.third_category_name third_category_name_2,i.category_id_list category_id_list_2,i.category_name_list category_name_list_2,
+	        i.brand_id brand_id_2,i.brand_name brand_name_2,i.is_vip_item is_vip_item_2,i.vip_item_type vip_item_type_2,
+	        i.goods_count goods_count_2,i.cost_price cost_price_2,i.price_floating_ratio price_floating_ratio_2,
+	        i.commission_ratio commission_ratio_2,i.commission_amount commission_amount_2,
+	        i.goods_amount goods_amount_2,i.order_item_total_amount order_item_total_amount_2,
+	        i.order_item_pay_amount order_item_pay_amount_2,i.goods_real_price goods_real_price_2
+		FROM trade_orders o
+        left join trade_order_items i on i.order_no = o.order_no 
+        where o.seller_code = #{sellerCode,jdbcType=VARCHAR} and i.is_settled = #{isSettled,jdbcType=INTEGER}  and 
+        <foreach collection="useProductChannelCodeArray" item="useProductChannelCode" index="index" open=" (" separator="or" close=")">
+ 			i.channel_code = #{useProductChannelCode,jdbcType=VARCHAR}  
+		</foreach>
+       <![CDATA[ and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%m:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) >= #{startTime,jdbcType=VARCHAR}
+        and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%m:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) < #{endTime,jdbcType=VARCHAR}
+        ]]>  and (
+       <!--  <if test="null != orderStatusArray"> -->
+			<foreach collection="orderStatusArray" item="orderStatus" index="index" open=" (" separator="or" close=")">
+ 					o.order_status = #{orderStatus,jdbcType=VARCHAR}  
+			</foreach>
+		<!-- </if> -->
+		or (
+			<foreach collection="orderStatusCancelArray" item="orderStatusCancel" index="index" open=" (" separator="or" close=") ">
+ 					o.order_status = #{orderStatusCancel,jdbcType=VARCHAR}  
+			</foreach>
+			and o.is_cancel_order = #{isCancelOrder,jdbcType=VARCHAR}  
+		) )
+		<if test="null != sortName and '' != sortName">
+		      order by ${sortName}  
+		    <if test="null != sortDir and '' != sortDir">
+		         ${sortDir}
+		    </if>
+		</if>
+
+		limit #{startNum},#{pageSize}
+	</select>
+
+
+
+    <!-- 查询符合结算规则的订单数量 -->
+	<select id="getOrderSettlementCount" resultType="java.lang.Integer" parameterType="cn.htd.tradecenter.dto.TradeOrderSettlementDTO">
+		<![CDATA[
+		select count(distinct o.order_no)   FROM trade_orders o 
+		left join trade_order_items i on i.order_no = o.order_no 
+        where o.seller_code = #{sellerCode,jdbcType=VARCHAR} and  i.is_settled = #{isSettled,jdbcType=INTEGER}  
+        and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%m:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) >= #{startTime,jdbcType=VARCHAR}
+        and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%m:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) < #{endTime,jdbcType=VARCHAR} 
+		 ]]>  and ( 
+			<foreach collection="orderStatusArray" item="orderStatus" index="index" open=" (" separator="or" close=") ">
+ 			 o.order_status = #{orderStatus,jdbcType=VARCHAR}  
+			</foreach>
+		or (
+			<foreach collection="orderStatusCancelArray" item="orderStatusCancel" index="index" open=" (" separator="or" close=") ">
+ 					o.order_status = #{orderStatusCancel,jdbcType=VARCHAR}  
+			</foreach>
+			and o.is_cancel_order = #{isCancelOrder,jdbcType=VARCHAR}  
+		) ) 
+	</select>
+	
+	<!-- 查询符合结算规则的订单里的所有供应商（外部供应商和商品+的订单，筛选出供应商） productChannelCode[渠道编码: 10 内部供应商 20 外部供应商 3010 京东商品＋] -->
+	<select id="getTradeSetSellerInfos" resultMap="base_resultMap_tradeSetSellerInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderSettlementDTO">
+        select distinct o.seller_code,o.seller_name,i.channel_code  from  trade_orders o 
+        left join trade_order_items i on i.order_no = o.order_no 
+        where  i.is_settled = #{isSettled,jdbcType=INTEGER}  and 
+		<foreach collection="useProductChannelCodeArray" item="useProductChannelCode" index="index" open=" (" separator="or" close=")">
+ 			i.channel_code = #{useProductChannelCode,jdbcType=VARCHAR}  
+		</foreach>
+        <![CDATA[ 
+        and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%m:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) >= #{startTime,jdbcType=VARCHAR} 
+        and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%m:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) < #{endTime,jdbcType=VARCHAR}
+        ]]>   and ( 
+			<foreach collection="orderStatusArray" item="orderStatus" index="index" open=" (" separator="or" close=") ">
+ 			 o.order_status = #{orderStatus,jdbcType=VARCHAR}  
+			</foreach>
+		or (
+			<foreach collection="orderStatusCancelArray" item="orderStatusCancel" index="index" open=" (" separator="or" close=") ">
+ 					o.order_status = #{orderStatusCancel,jdbcType=VARCHAR}  
+			</foreach>
+			and o.is_cancel_order = #{isCancelOrder,jdbcType=VARCHAR}  
+		) )  
+		limit #{startNum},#{pageSize}
+	</select>
+	
+	
+	<update id="updateTradeOrderItem" parameterType="cn.htd.tradecenter.dto.bill.TradeOrderItemDTO">
+     update trade_order_items i   
+     <set >
+      <if test="modifyId != null" >
+        i.modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        i.modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        i.modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+       i.is_settled =  #{isSettled,jdbcType=INTEGER}
+     </set>
+     where i.order_no = #{orderNo,jdbcType=VARCHAR}   and i.order_item_no = #{orderItemNo,jdbcType=VARCHAR}  
+	</update>
+	
+	<insert id="addTradeOrderItemStatusHis" parameterType="cn.htd.tradecenter.dto.bill.TradeOrderItemDTO" >
+    insert into trade_order_items_status_history (order_item_no, order_item_status,order_item_status_text, create_id, create_name,create_time)
+    values (#{orderItemNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{statusText,jdbcType=VARCHAR}, 
+    #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+	
+	
+</mapper>

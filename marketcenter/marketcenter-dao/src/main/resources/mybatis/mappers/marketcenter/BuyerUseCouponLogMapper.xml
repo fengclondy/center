@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.BuyerUseCouponLogDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.domain.BuyerUseCouponLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode" />
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId" />
+    <result column="level_code" jdbcType="VARCHAR" property="levelCode" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="order_item_no" jdbcType="VARCHAR" property="orderItemNo" />
+    <result column="buyer_coupon_code" jdbcType="VARCHAR" property="buyerCouponCode" />
+    <result column="coupon_used_amount" jdbcType="DECIMAL" property="couponUsedAmount" />
+    <result column="use_type" jdbcType="VARCHAR" property="useType" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, 
+    buyer_code,
+    promotion_id,
+    level_code,
+	order_no,
+	order_item_no,
+	buyer_coupon_code,
+	coupon_used_amount,
+	use_type, 
+    create_id,
+	create_name,
+	create_time,
+    modify_id,
+	modify_name,
+	modify_time
+  </sql>
+  <select id="queryUseLogByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseCouponLog" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from buyer_use_coupon_log
+    where 1 = 1
+	  and buyer_code = #{buyerCode,jdbcType=VARCHAR} 
+      and buyer_coupon_code = #{buyerCouponCode,jdbcType=VARCHAR} 
+	  and order_no = #{orderNo,jdbcType=VARCHAR} 
+	  and order_item_no = #{orderItemNo,jdbcType=VARCHAR} 
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into buyer_use_coupon_log 
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+	    buyer_code,
+	    promotion_id,
+	    level_code,
+		order_no,
+		order_item_no,
+		buyer_coupon_code,
+		coupon_used_amount,
+		use_type, 
+	    create_id,
+		create_name,
+		create_time,
+	    modify_id,
+		modify_name,
+		modify_time,
+	</trim>
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+   		#{buyerCode,jdbcType=VARCHAR},
+		#{promotionId,jdbcType=VARCHAR},
+		#{levelCode,jdbcType=VARCHAR},
+		#{orderNo,jdbcType=VARCHAR},
+		#{orderItemNo,jdbcType=VARCHAR},
+		#{buyerCouponCode,jdbcType=VARCHAR},
+		#{couponUsedAmount,jdbcType=DECIMAL},
+      	#{useType,jdbcType=VARCHAR},
+		#{createId,jdbcType=BIGINT},
+		#{createName,jdbcType=VARCHAR},
+		now(),
+		#{createId,jdbcType=BIGINT},
+		#{createName,jdbcType=VARCHAR},
+		now(),
+	</trim>
+  </insert>
+  <update id="updateUseLogStatusByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseCouponLog">
+    update buyer_use_coupon_log
+    <set>
+        use_type = #{useType,jdbcType=VARCHAR},
+	    modify_id = #{modifyId,jdbcType=BIGINT},
+		modify_name = #{modifyName,jdbcType=VARCHAR},
+		modify_time = now(),
+    </set>
+    where 1 = 1
+      and buyer_code = #{buyerCode,jdbcType=VARCHAR}
+      and buyer_coupon_code = #{buyerCouponCode,jdbcType=VARCHAR}
+      and order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

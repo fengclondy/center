@@ -1,0 +1,1343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.MemberBaseInfoDao">
+<!-- mysql 分页 -->
+<sql id="pagination_tail">
+ 	limit #{page.pageOffset} , #{page.rows}
+</sql>
+<insert id="insertMemberBaseInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoVO">
+insert into member_base_info
+(id,
+company_leagal_persion_flag,
+is_buyer,
+is_seller,
+can_mall_login,
+has_guarantee_license,
+has_business_license,
+regist_time,
+account_type,
+become_member_time,
+is_center_store,
+upgrade_center_store_time,
+upgrade_seller_time,
+seller_type,
+is_generation,
+industry_category,
+is_diff_industry,
+contact_name,
+contact_mobile,
+contact_email,
+contact_idcard,
+contact_pic_src,
+contact_pic_back_src,
+is_phone_authenticated,
+is_real_name_authenticated,
+cooperate_vendor,
+regist_from,
+promotion_person,
+belong_seller_id,
+belong_manager_id,
+cur_belong_seller_id,
+cur_belong_manager_id,
+status,
+create_id,
+create_name,
+create_time,
+modify_id,
+modify_name,
+modify_time
+)
+values(
+#{company_leagal_persion_flag},
+#{is_buyer},
+#{is_seller},
+#{can_mall_login},
+#{has_guarantee_license},
+#{has_business_license},
+#{regist_time},
+#{account_type},
+#{become_member_time},
+#{is_center_store},
+#{upgrade_center_store_time},
+#{upgrade_seller_time},
+#{seller_type},
+#{is_generation},
+#{industry_category},
+#{is_diff_industry},
+#{contact_name},
+#{contact_mobile},
+#{contact_email},
+#{contact_idcard},
+#{contact_pic_src},
+#{contact_pic_back_src},
+#{is_phone_authenticated},
+#{is_real_name_authenticated},
+#{cooperate_vendor},
+#{regist_from},
+#{promotion_person},
+#{belong_seller_id},
+#{belong_manager_id},
+#{cur_belong_seller_id},
+#{cur_belong_manager_id},
+#{status},
+#{create_id},
+#{create_name},
+#{create_time},
+#{modify_id},
+#{modify_name},
+#{modify_time}
+)
+</insert>
+
+<update id="updateMemberBaseInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoVO">
+	update member_base_info
+	<set>
+		<if test="company_leagal_persion_flag != null">
+			company_leagal_persion_flag = #{company_leagal_persion_flag},
+		</if>
+		<if test="is_buyer != null">
+			is_buyer = #{is_buyer},
+		</if>
+		<if test="is_seller != null">
+			is_seller = #{is_seller},
+		</if>
+		<if test="can_mall_login != null">
+			can_mall_login = #{can_mall_login},
+		</if>
+		<if test="has_guarantee_license != null">
+			has_guarantee_license = #{has_guarantee_license},
+		</if>
+		<if test="has_business_license != null">
+			has_business_license = #{has_business_license},
+		</if>
+		<if test="regist_time != null">
+			regist_time = #{regist_time},
+		</if>
+		<if test="become_member_time != null">
+			become_member_time = #{become_member_time},
+		</if>
+		<if test="is_center_store != null">
+			is_center_store = #{is_center_store},
+		</if>
+		<if test="upgrade_center_store_time != null">
+			upgrade_center_store_time = #{upgrade_center_store_time},
+		</if>
+		<if test="upgrade_seller_time != null">
+			upgrade_seller_time = #{upgrade_seller_time},
+		</if>
+		<if test="seller_type != null">
+			seller_type = #{seller_type},
+		</if>
+		<if test="is_generation != null">
+			is_generation = #{is_generation},
+		</if>
+		<if test="industry_category != null">
+			industry_category = #{industry_category},
+		</if>
+		<if test="is_diff_industry != null">
+			is_diff_industry = #{is_diff_industry},
+		</if>
+		<if test="contact_name != null">
+			contact_name = #{contact_name},
+		</if>
+		<if test="contact_mobile != null">
+			contact_mobile = #{contact_mobile},
+		</if>
+		<if test="contact_email != null">
+			contact_email = #{contact_email},
+		</if>
+		<if test="contact_idcard != null">
+			contact_idcard = #{contact_idcard},
+		</if>
+		<if test="contact_pic_src != null">
+			contact_pic_src = #{contact_pic_src},
+		</if>
+		<if test="contact_pic_back_src != null">
+			contact_pic_back_src = #{contact_pic_back_src},
+		</if>
+		<if test="is_phone_authenticated != null">
+			is_phone_authenticated = #{is_phone_authenticated},
+		</if>
+		<if test="is_real_name_authenticated != null">
+			is_real_name_authenticated = #{is_real_name_authenticated},
+		</if>
+		<if test="cooperate_vendor != null">
+			cooperate_vendor = #{cooperate_vendor},
+		</if>
+		<if test="regist_from != null">
+			regist_from = #{regist_from},
+		</if>
+		<if test="promotion_person != null">
+			promotion_person = #{promotion_person},
+		</if>
+		<if test="status != null">
+			status = #{status},
+		</if>
+		<if test="create_id != null">
+			create_id = #{create_id},
+		</if>
+		<if test="create_name != null">
+			create_name = #{create_name},
+		</if>
+		<if test="create_time != null">
+			create_time = #{create_time},
+		</if>
+		<if test="modify_id != null">
+			modify_id = #{modify_id},
+		</if>
+		<if test="modify_name != null">
+			modify_name = #{modify_name},
+		</if>
+		<if test="member_code != null">
+			member_code = #{member_code},
+		</if>
+			modify_time = now()
+	</set>
+	where id = #{id}
+
+</update>
+
+	<select id="searchMemberBaseInfoById" resultType="cn.htd.membercenter.domain.MemberBaseInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoVO">
+		select
+		    id,
+			company_leagal_persion_flag,
+			is_buyer,
+			is_seller,
+			can_mall_login,
+			has_guarantee_license,
+			has_business_license,
+			regist_time,
+			become_member_time,
+			is_center_store,
+			upgrade_center_store_time,
+			upgrade_seller_time,
+			seller_type,
+			is_generation,
+			industry_category,
+			is_diff_industry,
+			contact_name,
+			contact_mobile,
+			contact_email,
+			contact_idcard,
+			contact_pic_src,
+			contact_pic_back_src,
+			is_phone_authenticated,
+			is_real_name_authenticated,
+			cooperate_vendor,
+			regist_from,
+			promotion_person,
+			STATUS,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time,
+			member_code
+		from 
+			member_base_info
+		where 
+			id=#{id}
+
+	</select>
+
+
+	<!--copy-->
+	<!-- 根据会员编码查询会员信息 -->
+	<select id="queryMemberBaseInfo" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+			parameterType="Object">
+		select
+		a.id id,
+		a.company_leagal_persion_flag companyLeagalPersionFlag,
+		a.is_buyer isBuyer,
+		a.is_seller isSeller,
+		a.can_mall_login canMallLogin,
+		a.has_guarantee_license hasGuaranteeLicense,
+		a.has_business_license hasBusinessLicense,
+		a.regist_time registTime,
+		a.account_type accountType,
+		a.become_member_time becomeMemberTime,
+		a.is_center_store isCenterStore,
+		a.upgrade_center_store_time upgradeCenterStoreTime,
+		a.upgrade_seller_time upgradeSellerTime,
+		a.seller_type sellerType,
+		a.is_generation isGeneration,
+		a.industry_category industryCategory,
+		a.is_diff_industry isDiffIndustry,
+		a.contact_name contactName,
+		a.contact_mobile contactMobile,
+		a.contact_email contactEmail,
+		a.contact_idcard contactIdcard,
+		a.contact_pic_src contactPicSrc,
+		a.contact_pic_back_src contactPicBackSrc,
+		a.is_phone_authenticated isPhoneAuthenticated,
+		a.is_real_name_authenticated isRealNameAuthenticated,
+		a.cooperate_vendor cooperateVendor,
+		a.regist_from registFrom,
+		a.promotion_person promotionPerson,
+		a.belong_seller_id belongSellerId,
+		a.belong_manager_id belongManagerId,
+		a.cur_belong_seller_id curBelongSellerId,
+		a.cur_belong_manager_id curBelongManagerId,
+		a.status status,
+		d.company_name companyName,
+		b.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+		b.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+		b.certificate_type certificateType,
+		b.unified_social_credit_code unifiedSocialCreditCode,
+		b.business_license_id businessLicenseId,
+		b.business_license_pic_src businessLicensePicSrc,
+		b.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+		b.organization_id organizationId,
+		b.organization_pic_src organizationPicSrc,
+		b.taxpayer_type taxpayerType,
+		b.tax_man_id taxManId,
+		b.taxpayer_code taxpayerCode,
+		b.tax_registration_certificate_pic_src taxRegistrationCertificatePicSrc,
+		b.taxpayer_certificate_pic_src taxpayerCertificatePicSrc,
+		c.member_id memberId,
+		c.company_type companyType,
+		c.business_scope businessScope,
+		c.business_category businessCategory,
+		c.major_business_category majorBusinessCategory,
+		c.business_brand businessBrand,
+		c.operating_life operatingLife,
+		c.vendor_nature vendorNature,
+		c.chain_of_authorize chainOfAuthorize,
+		c.is_use_other_platform isUseOtherPlatform,
+		c.is_financing isFinancing,
+		c.financing_number financingNumber,
+		c.home_page homePage,
+		c.is_have_ebusiness isHaveEbusiness,
+		c.website_opertion_number websiteOpertionNumber,
+		c.has_erp hasErp,
+		c.sales_volumn salesVolumn
+		from member_base_info a,member_licence_info b,member_extend_info c,member_company_info d
+		where a.id = b.member_id and a.id = c.member_id and a.id = d.member_id
+		<if test="memberBaseDTO.id != null and memberBaseDTO.id != ''">
+			and a.id = #{memberBaseDTO.id}
+		</if>
+	</select>
+
+
+	<!-- 根据会员名称，手机号，会员类型，账号类型查询会员等级分页信息 -->
+	<select id="queryMemberGradeListInfo" resultType="cn.htd.membercenter.dto.MemberGradeDTO"
+			parameterType="Object">
+		select
+		a.buyer_id buyerId,
+		a.buyer_grade buyerGrade,
+		b.is_buyer isBuyer,
+		b.can_mall_login canMallLogin,
+		b.has_guarantee_license hasGuaranteeLicense,
+		b.has_business_license hasBusinessLicense,
+		b.account_type accountType,
+		c.company_name companyName,
+		c.artificial_person_mobile phoneNumber
+		from buyer_grade_info a,member_base_info b,member_company_info c
+		where b.id = a.buyer_id and b.id = c.member_id and c.buyer_seller_type='1'
+		<if test="memberBaseDTO.companyName != null and memberBaseDTO.companyName != ''">
+			<![CDATA[ and c.company_name like concat('%', #{memberBaseDTO.companyName}, '%') ]]>
+		</if>
+		<if test="memberBaseDTO.phoneNumber != null and memberBaseDTO.phoneNumber != ''">
+			and c.artificial_person_mobile = #{memberBaseDTO.phoneNumber}
+		</if>
+		<!-- 判断非会员的情况 -->
+		<if test="memberBaseDTO.memberType != null and memberBaseDTO.memberType == '1'">
+			and b.is_buyer = '1' and b.can_mall_login = '0'
+		</if>
+		<!-- 判断担保会员的情况 -->
+		<if test="memberBaseDTO.memberType != null and memberBaseDTO.memberType == '2'">
+			and b.is_buyer = '1' and b.can_mall_login = '1' and b.has_guarantee_license = '1'
+			and b.has_business_license = '0'
+		</if>
+		<!-- 判断正式会员的情况 -->
+		<if test="memberBaseDTO.memberType != null and memberBaseDTO.memberType == '3'">
+			and b.is_buyer = '1' and b.can_mall_login = '1' and b.has_business_license = '1'
+		</if>
+		<if test="memberBaseDTO.accountType != null and memberBaseDTO.accountType != ''">
+			and b.account_type = #{memberBaseDTO.accountType}
+		</if>
+		<if test="pager.pageOffset != null and pager != null">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+
+	<!-- 根据会员名称，手机号，会员类型，账号类型查询会员等级分页信息 -->
+	<select id="queryMemberGradeInfoCount" resultType="java.lang.Long" parameterType="Object">
+		select count(0)
+		from buyer_grade_info a,member_base_info b,member_company_info c
+		where b.id = a.buyer_id and b.id = c.member_id and c.buyer_seller_type='1'
+		<if test="memberBaseDTO.companyName != null and memberBaseDTO.companyName != ''">
+			<![CDATA[ and c.company_name like concat('%', #{memberBaseDTO.companyName}, '%') ]]>
+		</if>
+		<if test="memberBaseDTO.phoneNumber != null and memberBaseDTO.phoneNumber != ''">
+			and c.artificial_person_mobile = #{memberBaseDTO.phoneNumber}
+		</if>
+		<!-- 判断非会员的情况 -->
+		<if test="memberBaseDTO.memberType != null and memberBaseDTO.memberType == '1'">
+			and b.is_buyer = '1' and b.can_mall_login = '0'
+		</if>
+		<!-- 判断担保会员的情况 -->
+		<if test="memberBaseDTO.memberType != null and memberBaseDTO.memberType == '2'">
+			and b.is_buyer = '1' and b.can_mall_login = '1' and b.has_guarantee_license = '1'
+			and b.has_business_license = '0'
+		</if>
+		<!-- 判断正式会员的情况 -->
+		<if test="memberBaseDTO.memberType != null and memberBaseDTO.memberType == '3'">
+			and b.is_buyer = '1' and b.can_mall_login = '1' and b.has_business_license = '1'
+		</if>
+		<if test="memberBaseDTO.accountType != null and memberBaseDTO.accountType != ''">
+			and b.account_type = #{memberBaseDTO.accountType}
+		</if>
+	</select>
+
+
+	<!-- 根据会员名称，手机号，会员类型，账号类型查询会员等级分页信息 -->
+	<select id="queryMemberGradeInfo" resultType="cn.htd.membercenter.dto.MemberGradeDTO"
+			parameterType="Object">
+		select
+		a.buyer_id buyerId,
+		a.buyer_grade buyerGrade,
+		b.is_buyer isBuyer,
+		b.can_mall_login canMallLogin,
+		b.has_guarantee_license hasGuaranteeLicense,
+		b.has_business_license hasBusinessLicense,
+		b.account_type accountType,
+		c.company_name companyName,
+		c.artificial_person_mobile phoneNumber
+		from buyer_grade_info a,member_base_info b,member_company_info c
+		where b.id = a.buyer_id and b.id = c.member_id
+		and b.id = #{memberBaseDTO.memberId}
+	</select>
+	<!-- 添加会员公司信息 -->
+	<insert id="insertCompanyInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO" useGeneratedKeys="true" keyProperty="id">
+		insert into member_company_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				member_id,
+			</if>
+			<if test="buyerSellerType!=null and buyerSellerType!=''">
+				buyer_seller_type,
+			</if>
+			<if test="companyName != null and companyName != ''">
+				company_name,
+			</if>
+			<if test="companyCode != null and companyCode != ''">
+				company_code,
+			</if>
+			<if test="artificialPersonName != null and artificialPersonName != ''">
+				artificial_person_name,
+			</if>
+			<if test="artificialPersonMobile != null and artificialPersonMobile != ''">
+				artificial_person_mobile,
+			</if>
+			<if test="artificialPersonIdcard != null and artificialPersonIdcard != ''">
+				artificial_person_idcard,
+			</if>
+			<if test="artificialPersonPicSrc != null and artificialPersonPicSrc != ''">
+				artificial_person_pic_src,
+			</if>
+			<if test="artificialPersonPicBackSrc != null and artificialPersonPicBackSrc != ''">
+				artificial_person_pic_back_src,
+			</if>
+			<if test="artificialPersonIdcardPicSrc != null and artificialPersonIdcardPicSrc != ''">
+				artificial_person_idcard_pic_src,
+			</if>
+			<if test="locationProvince != null and locationProvince != ''">
+				location_province,
+			</if>
+			<if test="locationCity != null and locationCity != ''">
+				location_city,
+			</if>
+			<if test="locationCounty != null and locationCounty != ''">
+				location_county,
+			</if>
+			<if test="locationTown != null and locationTown != ''">
+				location_town,
+			</if>
+			<if test="locationDetail != null and locationDetail != ''">
+				location_detail,
+			</if>
+			<if test="locationAddr != null and locationAddr != ''">
+				location_addr,
+			</if>
+			<if test="createId != null and createId != ''">
+				create_id,
+			</if>
+			<if test="createName != null and createName != ''">
+				create_name,
+			</if>
+				create_time,
+			<if test="modifyId != null and modifyId != ''">
+				modify_id,
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name,
+			</if>
+				modify_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="buyerSellerType!=null and buyerSellerType!=''">
+				#{buyerSellerType},
+			</if>
+			<if test="companyName != null and companyName != ''">
+				#{companyName},
+			</if>
+			<if test="companyCode != null and companyCode != ''">
+				#{companyCode},
+			</if>
+			<if test="artificialPersonName != null and artificialPersonName != ''">
+				#{artificialPersonName},
+			</if>
+			<if test="artificialPersonMobile != null and artificialPersonMobile != ''">
+				#{artificialPersonMobile},
+			</if>
+			<if test="artificialPersonIdcard != null and artificialPersonIdcard != ''">
+				#{artificialPersonIdcard},
+			</if>
+			<if test="artificialPersonPicSrc != null and artificialPersonPicSrc != ''">
+				#{artificialPersonPicSrc},
+			</if>
+			<if test="artificialPersonPicBackSrc != null and artificialPersonPicBackSrc != ''">
+				#{artificialPersonPicBackSrc},
+			</if>
+			<if test="artificialPersonIdcardPicSrc != null and artificialPersonIdcardPicSrc != ''">
+				#{artificialPersonIdcardPicSrc},
+			</if>
+			<if test="locationProvince != null and locationProvince != ''">
+				#{locationProvince},
+			</if>
+			<if test="locationCity != null and locationCity != ''">
+				#{locationCity},
+			</if>
+			<if test="locationCounty != null and locationCounty != ''">
+				#{locationCounty},
+			</if>
+			<if test="locationTown != null and locationTown != ''">
+				#{locationTown},
+			</if>
+			<if test="locationDetail != null and locationDetail != ''">
+				#{locationDetail},
+			</if>
+			<if test="locationAddr != null and locationAddr != ''">
+				#{locationAddr},
+			</if>
+			<if test="createId != null and createId != ''">
+				#{createId},
+			</if>
+			<if test="createName != null and createName != ''">
+				#{createName},
+			</if>
+				now(),
+			<if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+			</if>
+				now()
+		</trim>
+	</insert>
+	<!-- 新增会员扩展信息表-->
+	<insert id="insertMemberExtendInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO" useGeneratedKeys="true" keyProperty="id">
+		insert into member_extend_info 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				member_id,
+			<if test="businessScope != null and businessScope != ''">
+				business_scope,
+			</if>	   	
+  		   <if test="createId != null and createId != ''">
+				create_id,
+		   </if>
+			<if test="createName != null and createName != ''">
+				create_name,
+			</if>
+				create_time,
+			<if test="modifyId != null and modifyId != ''">
+				modify_id,
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				modify_name,
+		   </if>
+				modify_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				#{memberId},
+			<if test="businessScope != null and businessScope != ''">
+				#{businessScope},
+			</if>	   	
+  		   <if test="createId != null and createId != ''">
+				#{createId},
+		   </if>
+			<if test="createName != null and createName != ''">
+				#{createName},
+			</if>
+				now(),
+			<if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+		   </if>
+				now()
+		</trim>
+	</insert>
+	<!-- 新增会员个人信息表 -->
+	<insert id = "insertMemberPersonInfo" parameterType = "cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+		insert into member_person_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				member_id,
+			</if>	
+  		   <if test="createId != null and createId != ''">
+				create_id,
+		   </if>
+			<if test="createName != null and createName != ''">
+				create_name,
+			</if>
+				create_time,
+			<if test="modifyId != null and modifyId != ''">
+				modify_id,
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				modify_name,
+		   </if>
+				modify_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		   <if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+  		   <if test="createId != null and createId != ''">
+				#{createId},
+		   </if>
+			<if test="createName != null and createName != ''">
+				#{createName},
+			</if>
+				now(),
+			<if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+		   </if>
+				now()
+		</trim>
+	</insert>
+	<!-- 新增会员信息表 -->
+	<insert id="insertMemberBaseInfoRegister" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+		<selectKey resultType="Long" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		insert into  member_base_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberCode != null and memberCode != ''">
+				member_code,mall_account,
+			</if>
+			<if test="businessScope != null and businessScope != ''">
+				industry_category,
+			</if>
+			<if test="isDiffIndustry != null and isDiffIndustry !=''">
+				is_diff_industry,
+			</if>
+			<if test="hasGuaranteeLicense != null and hasGuaranteeLicense != ''">
+				has_guarantee_license,
+			</if>
+			<if test="hasBusinessLicense != null and hasBusinessLicense != ''">
+				has_business_license,
+			</if>
+				regist_time,
+			<if test="registFrom != null and registFrom != ''">
+				regist_from,
+			</if>			
+			<if test="promotionPerson != null and promotionPerson != ''">
+				promotion_person,
+			</if>	
+			
+			<if test="cooperateVendor != null and cooperateVendor != ''">
+				cooperate_vendor,
+			</if>
+			<if test="belongSellerId != null and belongSellerId != ''">
+				belong_seller_id,
+			</if>
+			<if test="curBelongSellerId !=null and curBelongSellerId != ''">
+				cur_belong_seller_id,
+			</if>
+			<if test="recommendeCode !=null and recommendeCode != ''">
+				recommender_code,
+			</if>		
+  		   <if test="createId != null and createId != ''">
+				create_id,
+		   </if>
+			<if test="createName != null and createName != ''">
+				create_name,
+			</if>
+				create_time,
+			<if test="modifyId != null and modifyId != ''">
+				modify_id,
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				modify_name,
+		   </if>
+				modify_time,is_buyer,account_type,can_mall_login,business_type
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="memberCode != null and memberCode != ''">
+				#{memberCode},#{memberCode},
+			</if>
+			<if test="businessScope != null and businessScope != ''">
+				#{businessScope},
+			</if>
+			<if test="isDiffIndustry != null and isDiffIndustry !=''">
+				#{isDiffIndustry},
+			</if>
+			<if test="hasGuaranteeLicense != null and hasGuaranteeLicense != ''">
+				#{hasGuaranteeLicense},
+			</if>
+			<if test="hasBusinessLicense != null and hasBusinessLicense != ''">
+				#{hasBusinessLicense},
+			</if>
+				now(),
+			<if test="registFrom != null and registFrom != ''">
+				#{registFrom},
+			</if>
+			<if test="promotionPerson != null and promotionPerson != ''">
+				#{promotionPerson},
+			</if>	
+			<if test="cooperateVendor != null and cooperateVendor != ''">
+				#{cooperateVendor},
+			</if>
+			<if test="belongSellerId != null and belongSellerId != ''">
+				#{belongSellerId},
+			</if>
+			<if test="curBelongSellerId !=null and curBelongSellerId != ''">
+				#{curBelongSellerId},
+			</if>	
+			<if test="recommendeCode !=null and recommendeCode != ''">
+				#{recommendeCode},
+			</if>
+  		   <if test="createId != null and createId != ''">
+				#{createId},
+		   </if>
+			<if test="createName != null and createName != ''">
+				#{createName},
+			</if>
+				now(),
+			<if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+		   </if>
+				now(),1,1,1,'1'
+		</trim>
+	</insert>
+	<!-- 新增会员证照信息表-->
+	<insert id="insertMemberLicenceInfoRegister" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO" useGeneratedKeys="true" keyProperty="id">
+		insert into member_licence_info 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				member_id,
+			<if test="buyerBusinessLicenseId != null and buyerBusinessLicenseId != ''">
+				buyer_business_license_id,
+			</if>
+			<if test="buyerBusinessLicensePicSrc != null and buyerBusinessLicensePicSrc != ''">
+				buyer_business_license_pic_src,
+			</if>
+			<if test="buyerGuaranteeLicensePicSrc!=null and buyerGuaranteeLicensePicSrc!=''">
+				buyer_guarantee_license_pic_src,
+			</if>	
+			<if test="businessLicenseCertificatePicSrc!=null and businessLicenseCertificatePicSrc!=''">   
+				business_license_certificate_pic_src,
+			</if>	
+  		   <if test="createId != null and createId != ''">
+				create_id,
+		   </if>
+			<if test="createName != null and createName != ''">
+				create_name,
+			</if>
+				create_time,
+			<if test="modifyId != null and modifyId != ''">
+				modify_id,
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				modify_name,
+		   </if>
+				modify_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				#{memberId},
+			<if test="buyerBusinessLicenseId != null and buyerBusinessLicenseId != ''">
+				#{buyerBusinessLicenseId},
+			</if>
+			<if test="buyerBusinessLicensePicSrc != null and buyerBusinessLicensePicSrc != ''">
+				#{buyerBusinessLicensePicSrc},
+			</if>
+			<if test="buyerGuaranteeLicensePicSrc!=null and buyerGuaranteeLicensePicSrc!=''">
+				#{buyerGuaranteeLicensePicSrc},
+			</if>	
+			<if test="businessLicenseCertificatePicSrc!=null and businessLicenseCertificatePicSrc!=''">   
+				#{businessLicenseCertificatePicSrc},
+			</if>	   	
+  		   <if test="createId != null and createId != ''">
+				#{createId},
+		   </if>
+			<if test="createName != null and createName != ''">
+				#{createName},
+			</if>
+				now(),
+			<if test="modifyId != null and modifyId != ''">
+				#{modifyId},
+		   </if>			   	
+  		   <if test="modifyName != null and modifyName != ''">
+				#{modifyName},
+		   </if>
+				now()
+		</trim>
+	</insert>
+	<!-- 注册会员member_status_info待审批状态 -->
+	<insert id="insertMemberStatusInfoRegister">
+		insert into member_status_info	
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId != null and memberId != ''">
+				member_id,
+			</if>
+			<if test="infoType!=null and infoType !=''">
+				info_type,
+			</if>
+			verify_status,
+			<if test="createId != null and createId != ''">
+				create_id,
+			</if>
+			<if test="createName != null and createName != ''">
+				create_name,
+			</if>
+			<if test="verifyId != null and verifyId != ''">
+				verify_id,
+			</if>
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="memberId != null and memberId != ''">
+				#{memberId},
+			</if>
+			<if test="infoType!=null and infoType !=''">
+				#{infoType},
+			</if>
+			'1',
+			<if test="createId != null and createId != ''">
+				#{createId},
+			</if>
+			<if test="createName != null and createName != ''">
+				#{createName},
+			</if>
+			<if test="verifyId != null and verifyId != ''">
+				#{verifyId},
+			</if>
+			now()
+		</trim>
+	</insert>
+	<!-- 注册审批状态 -->
+	<insert id="insertVerifyInfoRegister" parameterType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+     <selectKey resultType="Long" order="AFTER" keyProperty="dto.verifyId">
+		SELECT LAST_INSERT_ID() AS verifyId
+	 </selectKey>
+		insert into verify_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="dto.memberId !=null and dto.memberId !=''">
+				record_id,
+			</if>
+			<if test="dto.belongSellerId !=null and dto.belongSellerId !=''">
+				belong_seller_id,
+			</if>
+			<if test="dto.modifyId !=null and dto.modifyId !=''">
+				create_id,
+			</if>
+			<if test="dto.modifyName !=null and dto.modifyName !=''">
+				create_name,
+			</if>
+			<if test="modifyType !=null and modifyType !=''">
+				modify_type,
+			</if>
+			record_type,
+			verify_status,
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="dto.memberId !=null and dto.memberId !=''">
+				#{dto.memberId},
+			</if>
+			<if test="dto.belongSellerId !=null and dto.belongSellerId !=''">
+				#{dto.belongSellerId},
+			</if>
+			<if test="dto.modifyId !=null and dto.modifyId !=''">
+				#{dto.modifyId},
+			</if>
+			<if test="dto.modifyName !=null and dto.modifyName !=''">
+				#{dto.modifyName},
+			</if>
+			<if test="modifyType !=null and modifyType !=''">
+				#{modifyType},
+			</if>
+			"1",
+			"1",
+			now()
+		</trim>
+	</insert>
+	<!-- 新增一条数据到审批详细信息表-->
+	<insert id="insertVerifyDetailInfo" parameterType="cn.htd.membercenter.dto.VerifyDetailInfoDTO">
+     	insert into verify_detail_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="recordId !=null and recordId !=''">
+				record_id,
+			</if>
+			<if test="verifyId !=null and verifyId !=''">
+				verify_id,
+			</if>
+			<if test="contentName !=null and contentName !=''">
+				content_name,
+			</if>
+			<if test="changeTableId !=null and changeTableId !=''">
+				change_table_id,
+			</if>
+			<if test="changeFieldId !=null and changeFieldId !=''">
+				change_field_id,
+			</if>
+			<if test="beforeChange !=null and beforeChange !=''">
+				before_change,
+			</if>
+			<if test="beforeChangeDesc !=null and beforeChangeDesc !=''">
+				before_change_desc,
+			</if>
+			<if test="afterChange !=null and afterChange !=''">
+				after_change,
+			</if>
+			<if test="afterChangeDesc !=null and afterChangeDesc !=''">
+				after_change_desc,
+			</if>
+			<if test="operatorId !=null and operatorId !=''">
+				operator_id,
+			</if>
+			<if test="operatorName !=null and operatorName !=''">
+				operator_name,
+			</if>
+			<if test="modifyType !=null and modifyType !=''">
+				modify_type,
+			</if>
+			record_type,
+			operate_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="recordId !=null and recordId !=''">
+				#{recordId},
+			</if>
+			<if test="verifyId !=null and verifyId !=''">
+				#{verifyId},
+			</if>
+			<if test="contentName !=null and contentName !=''">
+				#{contentName},
+			</if>
+			<if test="changeTableId !=null and changeTableId !=''">
+				#{changeTableId},
+			</if>
+			<if test="changeFieldId !=null and changeFieldId !=''">
+				#{changeFieldId},
+			</if>
+			<if test="beforeChange !=null and beforeChange !=''">
+				#{beforeChange},
+			</if>
+			<if test="beforeChangeDesc !=null and beforeChangeDesc !=''">
+				#{beforeChangeDesc},
+			</if>
+			<if test="afterChange !=null and afterChange !=''">
+				#{afterChange},
+			</if>
+			<if test="afterChangeDesc !=null and afterChangeDesc !=''">
+				#{afterChangeDesc},
+			</if>
+			<if test="operatorId !=null and operatorId !=''">
+				#{operatorId},
+			</if>
+			<if test="operatorName !=null and operatorName !=''">
+				#{operatorName},
+			</if>
+			<if test="modifyType !=null and modifyType !=''">
+				#{modifyType},
+			</if>
+			'1',
+			now()
+		</trim>
+	</insert>
+	<!-- 修改手机号密码 -->
+	<update id="updateMemberCompanyInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+		update member_company_info
+		<set>
+			<if test="companyName!=null and companyName!=''">
+				company_name = #{companyName},
+			</if>
+			<if test="artificialPersonName!=null and artificialPersonName!=''">
+				artificial_person_name = #{artificialPersonName},
+			</if>
+			<if test="artificialPersonIdcard!=null and artificialPersonIdcard!=''">
+				artificial_person_idcard = #{artificialPersonIdcard},
+			</if>
+			<if test="artificialPersonPicSrc!=null and artificialPersonPicSrc!=''">
+				artificial_person_pic_src = #{artificialPersonPicSrc},
+			</if>
+			<if test="artificialPersonPicBackSrc!=null and artificialPersonPicBackSrc!=''">
+				artificial_person_pic_back_src = #{artificialPersonPicBackSrc},
+			</if>
+			<if test="artificialPersonIdcardPicSrc!=null and artificialPersonIdcardPicSrc!=''">
+				artificial_person_idcard_pic_src = #{artificialPersonIdcardPicSrc},
+			</if>
+			<if test="artificialPersonMobile!=null and artificialPersonMobile!=''">
+				artificial_person_mobile = #{artificialPersonMobile},
+			</if>
+			<if test="locationProvince != null and locationProvince != ''">
+				location_province = #{locationProvince},
+			</if>
+			<if test="locationCity != null and locationCity != ''">
+				location_city = #{locationCity},
+			</if>
+			<if test="locationCounty != null and locationCounty != ''">
+				location_county = #{locationCounty},
+			</if>
+			<if test="locationTown != null and locationTown != ''">
+				location_town = #{locationTown},
+			</if>
+			<if test="locationDetail != null and locationDetail != ''">
+				location_detail = #{locationDetail},
+			</if>
+			<if test="locationAddr != null and locationAddr != ''">
+				location_addr = #{locationAddr},
+			</if>
+			<if test="modifyId!=null and modifyId!=''">
+				modify_id =#{modifyId}, 
+			</if>
+			<if test="modifyName!=null and modifyName!=''">
+				modify_name = #{modifyName},
+			</if>
+				modify_time = now()
+		</set>
+		where member_id = #{memberId} 
+		<if test="buyerSellerType!=null and buyerSellerType!=''">
+			and buyer_seller_type = #{buyerSellerType}
+		</if>
+	</update>
+	<update id="updateMemberLicenceInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+		update member_licence_info
+		<set>
+			<if test="buyerGuaranteeLicensePicSrc!=null and buyerGuaranteeLicensePicSrc!=''">
+				buyer_guarantee_license_pic_src = #{buyerGuaranteeLicensePicSrc},
+			</if>
+			<if test="buyerBusinessLicensePicSrc!=null and buyerBusinessLicensePicSrc!=''">
+				buyer_business_license_pic_src = #{buyerBusinessLicensePicSrc},
+			</if>
+			<if test="buyerBusinessLicenseId!=null and buyerBusinessLicenseId!=''">
+				buyer_business_license_id = #{buyerBusinessLicenseId},
+			</if>
+			
+			<if test="businessLicenseCertificatePicSrc!=null and businessLicenseCertificatePicSrc!=''">
+				business_license_certificate_pic_src = #{businessLicenseCertificatePicSrc},
+			</if>
+			<if test="modifyId!=null and modifyId!=''">
+				modify_id =#{modifyId}, 
+			</if>
+			<if test="modifyName!=null and modifyName!=''">
+				modify_name = #{modifyName},
+			</if>
+				modify_time = now()
+		</set>
+		where member_id = #{memberId}
+	</update>
+	
+	<update id="updateMemberExtendInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+		update member_extend_info
+		<set>
+			<if test="businessScope != null and businessScope != ''">
+				business_scope = #{businessScope},
+			</if>
+			<if test="modifyId!=null and modifyId!=''">
+				modify_id =#{modifyId}, 
+			</if>
+			<if test="modifyName!=null and modifyName!=''">
+				modify_name = #{modifyName},
+			</if>
+				modify_time = now()	
+		</set>
+		where member_id = #{memberId}
+	</update>
+	
+	<update id="updateMemberBaseInfoPassword" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+		update member_base_info
+		<set>
+			<if test="hasBusinessLicense!=null">
+				has_business_license = #{hasBusinessLicense},
+			</if>
+			<if test="hasGuaranteeLicense!=null">
+				has_guarantee_license = #{hasGuaranteeLicense},
+			</if>
+			<if test="businessScope != null and businessScope != ''">
+				industry_category = #{businessScope},
+			</if>
+			<if test="isDiffIndustry != null and isDiffIndustry != ''">
+				is_diff_industry = #{isDiffIndustry},
+			</if>
+			<if test="cooperateVendor != null and cooperateVendor != ''">
+				cooperate_vendor = #{cooperateVendor},
+			</if>
+			<if test="belongSellerId != null and belongSellerId != ''">
+				belong_seller_id = #{belongSellerId},
+			</if>
+			<if test="curBelongSellerId !=null and curBelongSellerId != ''">
+				cur_belong_seller_id = #{curBelongSellerId},
+			</if>
+			<if test="modifyId!=null and modifyId!=''">
+				modify_id =#{modifyId}, 
+			</if>
+			<if test="modifyName!=null and modifyName!=''">
+				modify_name = #{modifyName},
+			</if>
+				modify_time = now()
+		</set>
+		where id = #{memberId}
+	</update>
+	<update id="updateMobilePhoneMemberStatusInfo" parameterType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+	 update member_status_info
+    <set>
+    		verify_status='1',
+    		<if test = "infoType!=null and infoType!=''">
+    			info_type = #{infoType},
+    		</if>
+    		<if test="dto.modifyId != null and dto.modifyId != ''">
+				modify_id = #{dto.modifyId},
+			</if>
+			<if test="dto.modifyName != null and dto.modifyName != ''">
+				modify_name =#{dto.modifyName},
+			</if>
+			<if test="dto.verifyInfoId != null and dto.verifyInfoId !=''">
+				verify_id = #{dto.verifyInfoId},
+			</if>
+				modify_time = now()
+    </set>   
+    	where member_id = #{dto.memberId} 
+    <if test = "infoType!=null and infoType!=''">
+    		and	info_type = #{infoType}
+    </if>
+	</update>
+	
+	<!-- 更新运营审批状态 -->
+	<update id="updateVerifyStatus" parameterType="cn.htd.membercenter.dto.MemberRemoveRelationshipDTO">
+		update verify_info
+		<set>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="modifyId != null and modifyId != ''">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name = #{modifyName},
+			</if>
+				verify_status = #{status}
+		</set>
+		where modify_type = '11'
+		and record_type = '1'
+		and record_id = #{memberId}	
+		and verify_status in ('1','3')
+	</update>
+	
+	<select id="selectMemberStatusInfo" resultType="cn.htd.membercenter.dto.VerifyInfoDTO">
+		select 
+			member_id recordId,
+			verify_id verifierId,
+			info_type recordType,
+			verify_status verifyStatus	
+		from member_status_info
+		where member_id = #{memberId}
+		and info_type = #{infoType}
+		<if test="verifyStatus !=null and verifyStatus != ''">
+			and verify_status in <foreach collection="verifyStatus" item="item" index="index" 
+open="(" separator="," close=")">#{item}</foreach>
+		</if>
+		
+	</select>
+	<select id="selectMobilePhoneMemberStatusInfo" resultType="cn.htd.membercenter.dto.VerifyInfoDTO">
+		select 
+		ms.verify_status as verifyStatus,
+		ms.id as id,
+		ms.remark as remark
+		from verify_info ms where ms.modify_type=#{modifyType}
+		and ms.record_type = '1'
+		and ms.record_id = #{memberId}
+		
+	</select>
+	<!-- 查询审批详细信息列表 -->
+	<select id="selectVerifyInfoList" resultType = "cn.htd.membercenter.dto.VerifyDetailInfoDTO">
+		select
+		v.content_name contentName,
+		v.change_table_id changeTableId,
+		v.change_field_id changeFieldId,
+		v.before_change beforeChange,
+		v.before_change_desc beforeChangeDesc,
+		v.after_change afterChange,
+		v.after_change_desc afterChangeDesc,
+		v.operator_name operatorName,
+		v.operate_time operateTime
+		from verify_detail_info v
+		where v.verify_id = #{verifyId}
+		and v.record_type = '1'
+		and v.record_id = #{memberId}
+		and v.modify_type = '3'
+	</select>
+	<!-- 查询会员审核详细信息公司名称是否已经审核过一遍了 -->
+	<select id="selectIsBooleanVerifyInfo" resultType="java.lang.Long">
+		select
+		1
+		from verify_info a LEFT JOIN verify_detail_info v ON a.id = v.verify_id
+		where
+		a.verify_status = '1'
+		and v.record_type = '1'
+		and v.change_field_id = 'company_name'
+		and v.record_id = #{memberId}
+		and v.modify_type = #{modifyType}
+		and v.after_change = #{afterChange}
+	</select>
+		<!-- 根据会员编码查询注册会员信息 -->
+	<select id="queryMemberRegisterInfo" resultType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO"
+			parameterType="Object">
+		select
+		a.id memberId,
+		d.company_name companyName,
+		d.location_province locationProvince,
+		d.location_city locationCity,
+		d.location_county locationCounty,
+		d.location_town locationTown,
+		d.location_detail locationDetail,
+		d.artificial_person_name artificialPersonName,
+		d.artificial_person_mobile artificialPersonMobile,
+		d.artificial_person_idcard artificialPersonIdcard,
+		d.artificial_person_pic_src artificialPersonPicSrc,
+		d.artificial_person_pic_back_src artificialPersonPicBackSrc,
+		d.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
+		a.has_business_license hasBusinessLicense, 
+		a.has_guarantee_license hasGuaranteeLicense,
+		a.cooperate_vendor cooperateVendor,
+		a.industry_category businessScope,
+		b.buyer_business_license_id buyerBusinessLicenseId,
+		b.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+		b.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+		b.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+		a.cur_belong_seller_id curBelongSellerId,
+		d.buyer_seller_type buyerSellerType,
+		v.info_type modifyType,
+		v.verify_id verifyInfoId,
+		v.verify_status status
+		from (member_base_info a,member_company_info d,member_status_info v)
+		LEFT JOIN member_extend_info c on a.id = c.member_id
+		LEFT JOIN member_licence_info b on a.id = b.member_id
+		where a.id = d.member_id and v.member_id = a.id 
+		<if test="buyerSellerType!=null and buyerSellerType!=''">
+			and d.buyer_seller_type=#{buyerSellerType}
+		</if>
+		and v.info_type = #{modifyType}
+		and a.id = #{memberId}	
+	</select>
+	<select id="selectMemberCountByBuyerIdList" resultType="java.lang.Long">
+		select count(1)
+		from member_base_info a inner join member_company_info b on (a.id = b.member_id)
+		where a.status = 1
+		  and b.buyer_seller_type = 1
+		<if test="buyerName != null and buyerName != ''">
+		  <![CDATA[ and b.company_name like concat('%', #{buyerName}, '%') ]]>
+		</if>
+		<if test="buyerIdList != null and buyerIdList.size > 0">
+			and a.id in 
+			<foreach collection="buyerIdList" item="buyerId" index="index" open="(" separator="," close=")">
+				#{buyerId}
+			</foreach>
+		</if>
+	</select>
+	<select id="selectMemberInfoListByBuyerIdList" resultType="cn.htd.membercenter.dto.MemberBaseDTO">
+		select 
+			a.id memberId,
+			a.member_code memberCode,
+			a.company_leagal_persion_flag companyLeagalPersionFlag,
+			a.is_buyer isBuyer,
+			a.is_seller isSeller,
+			a.can_mall_login canMallLogin,
+			a.has_guarantee_license hasGuaranteeLicense,
+			a.has_business_license hasBusinessLicense,
+			a.regist_time registTime,
+			a.account_type accountType,
+			a.become_member_time becomeMemberTime,
+			a.is_center_store isCenterStore,
+			a.upgrade_center_store_time upgradeCenterStoreTime,
+			a.contact_name contactName,
+			a.contact_mobile contactMobile,
+			a.contact_email contactEmail,
+			a.contact_idcard contactIdcard,
+			a.contact_pic_src contactPicSrc,
+			a.contact_pic_back_src contactPicBackSrc,
+			a.is_phone_authenticated isPhoneAuthenticated,
+			a.is_real_name_authenticated isRealNameAuthenticated,
+			a.cooperate_vendor cooperateVendor,
+			a.regist_from registFrom,
+			a.promotion_person promotionPerson,
+			a.belong_seller_id belongSellerId,
+			a.belong_manager_id belongManagerId,
+			a.cur_belong_seller_id curBelongSellerId,
+			a.cur_belong_manager_id curBelongManagerId,
+			b.company_name companyName,
+			b.company_code companyCode,
+			b.artificial_person_name artificialPersonName,
+			b.artificial_person_mobile artificialPersonMobile,
+			b.artificial_person_idcard artificialPersonIdcard,
+			b.artificial_person_pic_src artificialPersonPicSrc,
+			b.artificial_person_pic_back_src artificialPersonPicBackSrc,
+			b.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
+			b.area_code areaCode,
+			b.landline landline,
+			b.fax_number faxNumber,
+			b.location_province locationProvince,
+			b.location_city locationCity,
+			b.location_county locationCounty,
+			b.location_town locationTown,
+			b.location_detail locationDetail
+		from member_base_info a inner join member_company_info b on (a.id = b.member_id)
+		where a.status = 1
+		  and b.buyer_seller_type = 1
+		<if test="buyerName != null and buyerName != ''">
+		  <![CDATA[ and b.company_name like concat('%', #{buyerName}, '%') ]]>
+		</if>
+		<if test="buyerIdList != null and buyerIdList.size > 0">
+			and a.id in 
+			<foreach collection="buyerIdList" item="buyerId" index="index" open="(" separator="," close=")">
+				#{buyerId}
+			</foreach>
+		</if>
+		order by b.company_code asc 
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+	</select>
+	
+	<select id="selectSellerCodeByManager"  resultType="java.lang.String" >
+		select i.member_code from member_base_info i
+		where i.id = 
+		(
+		select r.seller_id from belong_relationship r
+		where r.customer_manager_id=#{managerCode}
+		union
+		select b.seller_id from business_relationship b
+		where b.customer_manager_id=#{managerCode}
+		union
+		select m.cur_belong_seller_id from member_base_info m
+		where m.cur_belong_manager_id=#{managerCode} limit 1)
+	</select>
+	
+</mapper>

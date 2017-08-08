@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TraSetComOpeDAO">
+    <resultMap id="traSetComOpeDTO" type="cn.htd.tradecenter.dto.bill.TraSetComOpeDTO">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="settlement_no" property="settlementNo" jdbcType="VARCHAR"/>
+        <result column="trade_no" property="tradeNo" jdbcType="VARCHAR"/>
+		<result column="interface_type" property="interfaceType" jdbcType="VARCHAR"/>
+        <result column="operate_type" property="operateType" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="BIGINT"/>
+        <result column="status_text" property="statusText" jdbcType="VARCHAR"/>
+        <result column="create_id" property="createId" jdbcType="BIGINT"/>
+        <result column="create_name" property="createName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_id" property="modifyId" jdbcType="BIGINT"/>
+        <result column="modify_name" property="modifyName" jdbcType="VARCHAR"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryTraSetComOpeByParams" resultType="cn.htd.tradecenter.dto.bill.TraSetComOpeDTO" parameterType="cn.htd.tradecenter.dto.bill.TraSetComOpeDTO">
+		SELECT t.settlement_no settlementNo ,t.trade_no tradeNo,t.operate_type operateType,t.interface_type interfaceType,
+		t.status,t.content FROM trade_settlement_company_operate t where 1 = 1  
+		<if test="interfaceType !=null and interfaceType !=''">
+            and t.interface_type=#{interfaceType,jdbcType=VARCHAR}
+        </if>
+        <if test="operateType !=null and operateType !=''">
+            and t.operate_type=#{operateType,jdbcType=VARCHAR}
+        </if>
+        <if test="tradeNo !=null and tradeNo !=''">
+            and t.trade_no=#{tradeNo,jdbcType=VARCHAR}
+        </if>
+        <if test="settlementNo !=null and settlementNo !=''">
+            and t.settlement_no=#{settlementNo,jdbcType=VARCHAR}
+        </if>
+        ORDER BY modify_time desc
+    </select>
+
+    <update id="updateTraSetComOpe" parameterType="cn.htd.tradecenter.dto.bill.TraSetComOpeDTO">
+        update trade_settlement_company_operate t 
+        set t.status = #{status,jdbcType=VARCHAR} ,
+        t.content = #{content,jdbcType=VARCHAR} ,
+        t.modify_id = #{modifyId,jdbcType=BIGINT},
+        t.modify_name = #{modifyName,jdbcType=VARCHAR},
+        t.modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where t.trade_no=#{tradeNo,jdbcType=VARCHAR}
+        and t.interface_type=#{interfaceType,jdbcType=VARCHAR}
+        and t.operate_type=#{operateType,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="addTraSetComOpe" parameterType="cn.htd.tradecenter.dto.bill.TraSetComOpeDTO">
+    	INSERT INTO trade_settlement_company_operate(
+        settlement_no,
+        trade_no,
+        interface_type,
+        operate_type,
+        content,
+        status,
+        status_text,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time
+      	)VALUES(
+        #{settlementNo,jdbcType=VARCHAR},
+        #{tradeNo,jdbcType=VARCHAR},
+        #{interfaceType,jdbcType=VARCHAR},
+        #{operateType,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR},
+        #{status,jdbcType=BIGINT},
+        #{statusText,jdbcType=VARCHAR},
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{modifyId,jdbcType=BIGINT},
+        #{modifyName,jdbcType=VARCHAR},
+        #{modifyTime,jdbcType=TIMESTAMP}
+      	)
+    </insert>
+
+
+</mapper>

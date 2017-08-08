@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+	<!-- 使用dubbo协议店铺客服 服务 -->
+	<dubbo:service interface="cn.htd.storecenter.service.QQCustomerService" ref="qqCustomerService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopDecorationService" ref="shopDecorationService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopFrameService" ref="shopFrameService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopFrameBackupService" ref="shopFrameBackupService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopWidgetService" ref="shopWidgetService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopFavouriteService" ref="shopFavouriteService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopExportService" ref="shopExportService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopAuditService" ref="shopAuditService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopBrandExportService" ref="shopBrandExportService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopCategoryExportService" ref="shopCategoryExportService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopCategorySellerExportService" ref="shopCategorySellerExportService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopDomainService" ref="shopDomainService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopModifyDetailExportService" ref="shopModifyDetailExportService" version="${dubbo.version}" timeout="60000" />
+	 
+	<dubbo:service interface="cn.htd.storecenter.service.ShopRenovationService" ref="shopRenovationService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.storecenter.service.ShopSearchExportService" ref="shopSearchExportService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopTemplatesService" ref="shopTemplatesService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.storecenter.service.ShopBrandCategoryService" ref="shopBrandCategoryService" version="${dubbo.version}" timeout="60000" />
+
+
+</beans>

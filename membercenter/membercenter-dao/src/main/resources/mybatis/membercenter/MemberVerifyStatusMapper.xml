@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.MemberVerifyStatusDAO">
+  <sql id="Base_Column_List">
+    status_id, member_id, info_type, verify_status, verify_time, verify_id, sync_error_msg, 
+    create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByStatusList"  resultType = "cn.htd.membercenter.dto.MemberVerifyStatusDTO">
+    select 
+    c.member_id memberId,
+    c.company_name companyName,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.location_province locationProvince,
+    c.location_city locationCity,
+    c.location_county locationCounty,
+    c.location_town locationTown,
+    c.location_detail locationDetail,
+    c.location_addr as locationAddr,
+    m.is_diff_industry isDiffIndustry,
+    m.industry_category industryCategory,
+    m.regist_time registTime
+    from member_base_info m, member_company_info c,member_status_info s
+    where s.member_id = m.id and m.id = c.member_id and s.info_type='12'
+     and c.buyer_seller_type ='1' and m.cur_belong_seller_id = #{sellerId} 
+    <if test="verifyStatus != null and verifyStatus != '' " >
+		and s.verify_status = #{verifyStatus}
+	</if>
+	<if test="name != null and name != '' " >
+		and (c.company_name like CONCAT('%',#{name},'%') or c.artificial_person_name like CONCAT('%',#{name},'%'))
+	</if>
+	<if test="isDiffIndustry != null and isDiffIndustry != '' " >
+		and m.is_diff_industry = #{isDiffIndustry}
+	</if>
+	<if test="startTime != null and endTime != null and startTime != '' and endTime != ''">
+		and (m.regist_time between #{startTime} and #{endTime})
+	</if>
+	<if test="startTime !=null and endTime == null">
+		<![CDATA[ and m.regist_time >= #{startTime} ]]>
+	</if>
+	<if test="startTime ==null and endTime != null">
+		<![CDATA[ and m.regist_time <= #{endTime} ]]>
+	</if>
+	<if test="page != null and page != '' " >
+		 limit #{page.pageOffset},#{page.rows}  
+	</if>
+   
+  </select>
+  <select id="queryInfoByMemberId" resultType="cn.htd.membercenter.dto.MemberVerifyInfoDTO">
+    select 
+    c.member_id memberId,
+    b.buyer_feature buyerFeature,
+    m.regist_time registTime,
+    c.company_name companyName,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.artificial_person_idcard artificialPersonIdcard,
+    c.location_province locationProvince,
+    c.location_city locationCity,
+    c.location_county locationCounty,
+    c.location_town locationTown,
+    c.location_detail locationDetail,
+    c.location_addr as locationAddr,
+    m.is_diff_industry isDiffIndustry, 
+    m.industry_category industryCategory,
+    m.belong_manager_id belongManagerId,
+    l.buyer_business_license_pic_src buyerBusinessLicensePicSrc
+    ,l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc
+    ,case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+    when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
+    from member_base_info m
+    left join  member_company_info c on m.id = c.member_id 
+    left join member_licence_info l on  m.id = l.member_id 
+    left join belong_relationship b on m.id = b.buyer_id and b.status='1'
+    where m.id = #{memberId} and c.buyer_seller_type = '1'
+  </select>
+  <select id="queryBrandByMemberId" resultType="cn.htd.membercenter.dto.CategoryBrandDTO">
+    select 
+    buyer_id memberId,
+    business_id businessId,
+    category_id categoryId,
+    brand_id brandId
+    from business_relationship
+    where buyer_id = #{memberId,jdbcType=BIGINT} and audit_status ='0' and delete_flag=0
+    and (category_id !=0 and brand_id !=0)
+    limit #{page.pageOffset},#{page.rows} 
+  </select>
+  
+</mapper>

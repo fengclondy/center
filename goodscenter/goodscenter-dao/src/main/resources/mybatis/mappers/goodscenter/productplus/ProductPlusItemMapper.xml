@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.productplus.ProductPlusItemMapper" >
+
+    <resultMap id="BaseResultMap" type="cn.htd.goodscenter.dto.productplus.ProductPlusItemDTO" >
+        <id property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="cid" column="cid"/>
+        <result property="brandId" column="brand"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="productChannelCode" column="product_channel_code"/>
+        <result property="itemStatus" column="item_status"/>
+        <result property="outerItemStatus" column="outer_item_status"/>
+        <result property="isPreSale" column="is_pre_sale"/>
+        <result property="preSaleStarttime" column="pre_sale_starttime"/>
+        <result property="preSaleEndtime" column="pre_sale_endtime"/>
+        <result property="ad" column="ad"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="outerSkuId" column="outer_sku_id"/>
+        <result property="categoryName" column="c_name"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="productChannelName" column="channel_name"/>
+        <result property="listtingTime" column="listting_time"/>
+    </resultMap>
+
+    <sql id="pagination_tail">
+        <if test="page != null ">
+            limit #{page.pageOffset} , #{page.rows}
+        </if>
+    </sql>
+
+    <sql id="Where_4_selectProductPlusItemList">
+        WHERE
+        1 = 1
+        <if test="entity.productChannelCode != null">
+            AND item.product_channel_code = #{entity.productChannelCode}
+        </if>
+        <if test="entity.itemStatus != null"> <!-- 上架状态 -->
+            AND item.item_status = #{entity.itemStatus}
+        </if>
+        <if test="entity.itemName != null and entity.itemName != ''">
+            AND item.item_name LIKE CONCAT('%', '${entity.itemName}','%' )
+        </if>
+        <if test="entity.itemCode != null and entity.itemCode != ''">
+            AND item.item_code LIKE CONCAT('%', '${entity.itemCode}','%' )
+        </if>
+        <if test="entity.categoryParam != null">
+            AND item.cid in
+            (
+            <foreach collection="entity.categoryParam" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="entity.brandName != null and entity.brandName != ''">
+            AND brand.brand_name LIKE CONCAT('%', '${entity.brandName}','%' )
+        </if>
+        <if test="entity.hasVipPrice != null">
+            AND item.has_vip_price = #{entity.hasVipPrice}
+        </if>
+    </sql>
+
+    <select id="selectProductPlusItemList" resultMap="BaseResultMap">
+        SELECT
+        item.item_id,
+        item.item_name,
+        item.item_code,
+        item.cid,
+        item.brand,
+        item.product_channel_code,
+        item.item_status,
+        item.outer_item_status,
+        item.is_pre_sale,
+        item.pre_sale_starttime,
+        item.pre_sale_endtime,
+        item.ad,
+        item.created,
+        sku.sku_id,
+        sku.sku_code,
+        sku.outer_sku_id,
+        category.c_name,
+        brand.brand_name,
+        channel.channel_name
+        FROM
+        item item
+        LEFT JOIN
+        item_sku sku
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        <include refid="Where_4_selectProductPlusItemList"/>
+        AND item.item_status IN  (${entity.itemStatusStr})
+        AND item.seller_id = 0
+        AND item.shop_id = 0
+        AND item.cid != 0
+        AND item.brand != 0
+        AND item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+        ORDER BY item.created DESC
+        <include refid="pagination_tail"/>
+    </select>
+
+    <select id="selectProductPlusItemListCount" resultType="Long">
+        SELECT
+          count(1)
+        FROM
+          item item
+        LEFT JOIN
+        item_sku sku
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        <include refid="Where_4_selectProductPlusItemList"/>
+        AND item.item_status IN (${entity.itemStatusStr})
+        AND item.seller_id = 0
+        AND item.shop_id = 0
+        AND item.cid != 0
+        AND item.brand != 0
+        AND item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+    </select>
+
+    <!-- 根据skuid查询商品详细 -->
+    <select id="selectProductPlusItem" resultMap="BaseResultMap" parameterType="Long">
+        SELECT
+        item.item_id,
+        item.item_name,
+        item.cid,
+        item.brand,
+        item.product_channel_code,
+        item.item_status,
+        item.outer_item_status,
+        item.is_pre_sale,
+        item.pre_sale_starttime,
+        item.pre_sale_endtime,
+        item.ad,
+        sku.sku_id,
+        sku.sku_code,
+        sku.outer_sku_id,
+        category.c_name,
+        brand.brand_name,
+        channel.channel_name
+        FROM
+        item_sku sku
+        LEFT JOIN
+        item item
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        WHERE
+        item.seller_id = 0
+        AND item.shop_id = 0
+        AND item.cid != 0
+        AND item.brand != 0
+        AND item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+        AND sku.sku_id = #{skuId}
+    </select>
+
+    <!-- 更新上下架和预售信息 -->
+    <update id="updateProductPlusItem" parameterType="cn.htd.goodscenter.dto.productplus.ProductPlusItemDTO">
+        UPDATE
+             item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemStatus != null">
+                item_status = #{itemStatus},
+            </if>
+            <if test="isPreSale != null">
+                is_pre_sale = #{isPreSale},
+            </if>
+            <if test="preSaleStarttime != null">
+                pre_sale_starttime = #{preSaleStarttime},
+            </if>
+            <if test="preSaleEndtime != null">
+                pre_sale_endtime = #{preSaleEndtime},
+            </if>
+            <if test="ad != null">
+                ad = #{ad},
+            </if>
+            <if test="updateShelfTimeFlag !=null and updateShelfTimeFlag == 0">
+            	delisting_time=now(),
+            </if>
+            <if test="updateShelfTimeFlag !=null and updateShelfTimeFlag == 1">
+            	listting_time=now(),
+            </if>
+            modified = now()
+        </trim>
+        WHERE
+           item_id = #{itemId}
+    </update>
+
+    <!-- 查询卖家外接商品列表 -->
+    <select id="selectSellerProductPlusItemList" resultMap="BaseResultMap">
+        SELECT
+        item.item_id,
+        item.item_name,
+        item.item_code,
+        item.cid,
+        item.brand,
+        item.product_channel_code,
+        item.item_status,
+        item.outer_item_status,
+        item.is_pre_sale,
+        item.pre_sale_starttime,
+        item.pre_sale_endtime,
+        item.ad,
+        item.listting_time,
+        sku.sku_id,
+        sku.sku_code,
+        sku.outer_sku_id,
+        category.c_name,
+        brand.brand_name,
+        channel.channel_name,
+        brand_shield.category_brand_shield_id
+        FROM
+        item item
+        LEFT JOIN
+        seller_category_brand_shield brand_shield
+        ON
+        brand_shield.third_category_id = item.cid
+        AND brand_shield.brand_id = item.brand
+        AND brand_shield.channel_code =  #{entity.productChannelCode}
+        AND brand_shield.seller_id = #{entity.sellerId}
+        and brand_shield.shield_flag = 1
+        LEFT JOIN
+        item_sku sku
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        WHERE
+         item.item_status = #{entity.itemStatus}
+        AND item.seller_id = 0
+        AND item.shop_id = 0
+        AND item.cid != 0
+        AND item.brand != 0
+        AND item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+        AND item.product_channel_code = #{entity.productChannelCode}
+        AND brand_shield.category_brand_shield_id is null
+        <if test="entity.itemName != null and entity.itemName != ''">
+            AND item.item_name LIKE CONCAT('%', '${entity.itemName}','%' )
+        </if>
+        <if test="entity.itemCode != null and entity.itemCode != ''">
+            AND item.item_code LIKE CONCAT('%', '${entity.itemCode}','%' )
+        </if>
+        <if test="entity.categoryParam != null">
+        AND item.cid in
+        <foreach collection="entity.categoryParam" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        </if>
+        <if test="entity.brandName != null and entity.brandName != ''">
+            AND brand.brand_name LIKE CONCAT('%', '${entity.brandName}','%' )
+        </if>
+        order by sku.sku_code desc
+        <include refid="pagination_tail"/>
+    </select>
+
+    <select id="selectSellerProductPlusItemListCount" resultType="Long">
+        SELECT
+        count(1)
+        FROM
+        item item
+        LEFT JOIN
+        seller_category_brand_shield brand_shield
+        ON
+        brand_shield.third_category_id = item.cid
+        AND brand_shield.brand_id = item.brand
+        AND brand_shield.channel_code =  #{entity.productChannelCode}
+        AND brand_shield.seller_id = #{entity.sellerId}
+        AND brand_shield.shield_flag = 1
+        LEFT JOIN
+        item_sku sku
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        WHERE
+        item.item_status = #{entity.itemStatus}
+        AND item.seller_id = 0
+        AND item.shop_id = 0
+        AND item.cid != 0
+        AND item.brand != 0
+        AND item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+        AND item.product_channel_code = #{entity.productChannelCode}
+        AND brand_shield.category_brand_shield_id is null
+        <if test="entity.itemName != null and entity.itemName != ''">
+            AND item.item_name LIKE CONCAT('%', '${entity.itemName}','%' )
+        </if>
+       <if test="entity.itemCode != null and entity.itemCode != ''">
+            AND item.item_code LIKE CONCAT('%', '${entity.itemCode}','%' )
+        </if>
+        <if test="entity.categoryParam != null">
+            AND item.cid in
+            (
+            <foreach collection="entity.categoryParam" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="entity.brandName != null and entity.brandName != ''">
+            AND brand.brand_name LIKE CONCAT('%', '${entity.brandName}','%' )
+        </if>
+    </select>
+
+    <select id="queryJdProductListCount" resultType="int">
+        SELECT
+        count(1)
+        FROM
+        item item
+        LEFT JOIN
+        item_sku sku
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        WHERE
+        item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+        AND item.product_channel_code = '3010'
+        <if test="isPreSale != null">
+            AND item.is_pre_sale = #{isPreSale}
+        </if>
+        <if test="startTime != null">
+            AND item.modified >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            <![CDATA[ AND item.modified <= #{endTime}]]>
+        </if>
+        <if test="skuCode != null">
+            AND sku.sku_code = #{skuCode}
+        </if>
+        ORDER BY item.created desc
+    </select>
+
+    <resultMap id="JdResultMap" type="cn.htd.goodscenter.dto.productplus.JdProductQueryItemDTO" >
+        <result property="skuCode" column="sku_code"/>
+        <result property="itemId" column="item_id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemName" column="item_name"/>
+        <result property="outSkuId" column="outer_sku_id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="isPreSale" column="is_pre_sale"/>
+        <result property="preSaleStartTime" column="pre_sale_starttime"/>
+        <result property="preSaleEndTime" column="pre_sale_endtime"/>
+        <result property="productChannelCode" column="channel_code"/>
+        <result property="productChannelName" column="channel_name"/>
+        <result property="itemCreateTime" column="itemCreateTime"/>
+        <result property="itemModifyTime" column="itemModifyTime"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="brandKey" column="brand_key"/>
+        <result property="brandCreateTime" column="brandCreateTime"/>
+        <result property="brandModifyTime" column="brandModifyTime"/>
+        <result property="categoryId" column="cid"/>
+        <result property="categoryName" column="c_name"/>
+        <result property="categoryCreateTime" column="categoryCreateTime"/>
+        <result property="categoryModifyTime" column="categoryModifyTime"/>
+    </resultMap>
+
+    <select id="queryJdProductList" resultMap="JdResultMap">
+        SELECT
+        sku.sku_code,
+        sku.sku_id,
+        item.item_code,
+        item.item_name,
+        item.item_id,
+        sku.outer_sku_id,
+        item.seller_id,
+        item.is_pre_sale,
+        item.pre_sale_starttime,
+        item.pre_sale_endtime,
+        CASE WHEN item.item_status = 5 THEN  1 ELSE 0 END as isUpShelf,
+        item.created as itemCreateTime,
+        item.modified as itemModifyTime,
+        channel.channel_code,
+        channel.channel_name,
+        brand.brand_id,
+        brand.brand_name,
+        brand.brand_key,
+        brand.create_time as brandCreateTime,
+        brand.modify_time as brandModifyTime,
+        category.cid,
+        category.c_name,
+        category.create_time as categoryCreateTime,
+        category.modify_time as categoryModifyTime
+        FROM
+        item item
+        LEFT JOIN
+        item_sku sku
+        ON
+        item.item_id = sku.item_id
+        LEFT JOIN
+        item_category category
+        ON
+        category.cid = item.cid
+        LEFT JOIN
+        item_brand brand
+        ON
+        brand.brand_id = item.brand
+        LEFT JOIN
+        product_channel channel
+        ON
+        channel.channel_code = item.product_channel_code
+        WHERE
+        item.outer_channel_brand_code IS NOT NULL
+        AND item.outer_channel_category_code IS NOT NULL
+        AND item.product_channel_code = '3010'
+        <if test="isPreSale != null">
+            AND item.is_pre_sale = #{isPreSale}
+        </if>
+        <if test="startTime != null">
+            AND item.modified >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            <![CDATA[ AND item.modified <= #{endTime}]]>
+        </if>
+        <if test="skuCode != null">
+            AND sku.sku_code = #{skuCode}
+        </if>
+        ORDER BY item.modified desc
+        <if test="page != null ">
+            limit #{page.pageOffset} , #{page.rows}
+        </if>
+    </select>
+
+    <select id="queryTotalProductPlusItemCount" resultType="Integer">
+		select count(1) from zeus.item t  
+		where t.product_channel_code='3010'
+    </select>
+    
+    <select id="queryPagedProductPlusItem" resultType="map" parameterType="map">
+		SELECT 
+		    t.item_id as itemId,
+		    sku.sku_code as skuCode,
+		   ifnull(
+            (SELECT 
+		            GROUP_CONCAT(sop.seller_id)
+		        FROM
+		            zeus.seller_outer_product_channel sop
+		        WHERE
+		            sop.access_status = 1
+		                AND sop.channel_code = '3010'
+		               
+		              <!--   AND NOT EXISTS( SELECT 
+		                    1
+		                FROM
+		                    zeus.seller_category_brand_shield scb
+		                WHERE
+		                    scb.shield_flag = 1
+		                        AND scb.third_category_id = t.cid
+		                        AND scb.brand_id = t.brand
+		                        AND sop.seller_id=scb.seller_id
+		                        ) -->
+		                        
+		                        )
+           ,'0') AS sellerId
+		FROM
+		     item t
+		join item_sku sku on t.item_id=sku.item_id
+		WHERE
+		    t.product_channel_code = '3010'
+		order by t.item_id asc
+		limit #{start},#{pageSize}
+    </select>
+    <select id="queryShieldSellerIdsByItemId" resultType="map" parameterType="map">
+    	select 
+    	 sku.sku_code as skuCode,
+    	 ifnull(GROUP_CONCAT(scb.seller_id),'') AS sellerId from item t
+    	join item_sku sku on t.item_id=sku.item_id
+		join seller_category_brand_shield scb  on scb.shield_flag = 1
+		                        AND scb.third_category_id = t.cid
+		                        AND scb.brand_id = t.brand
+		                       where 
+		                        t.product_channel_code = '3010' and
+		                       t.item_id in
+		                       <foreach collection="list" item="item" open="(" separator="," close=")">
+             					 #{item}
+            				   </foreach>
+                               group by sku.sku_code
+    </select>
+</mapper>

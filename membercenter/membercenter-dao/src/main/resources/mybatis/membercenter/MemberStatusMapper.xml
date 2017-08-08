@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.MemberStatusDao">
+
+	<!-- 非会员转会员待审列表数 
+		buyer_seller_type    1 会员
+		info_type    14非会员转会员 
+	-->
+	<select id="queryNonMemberToMemberListCount" parameterType="cn.htd.membercenter.dto.MemberUncheckedDTO"
+								resultType="int">
+		SELECT
+			count(0)
+		FROM
+			member_base_info member_base_info
+		LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id and member_company_info.buyer_seller_type=1
+		LEFT JOIN member_company_info member_company_info_2 ON member_base_info.belong_seller_id = member_company_info_2.member_id and member_company_info_2.buyer_seller_type=2
+		LEFT JOIN member_company_info member_company_info_3 ON member_base_info.cur_belong_seller_id = member_company_info_3.member_id and member_company_info_3.buyer_seller_type=2
+		WHERE
+			member_company_info.buyer_seller_type = 1
+		AND member_status_info.info_type = 14
+		<if test="dto.verify_status != null and dto.verify_status != ''">
+			AND member_status_info.verify_status = #{dto.verify_status}
+		</if>
+		<if test="dto.can_mall_login != null and dto.can_mall_login != ''">
+			AND member_base_info.can_mall_login = #{dto.can_mall_login}
+		</if>
+		<if test="dto.has_business_license != null and dto.has_business_license != ''">
+			AND member_base_info.has_business_license = #{dto.has_business_license}
+		</if>
+		<if test="dto.has_guarantee_license != null and dto.has_guarantee_license != ''">
+			AND member_base_info.has_guarantee_license = #{dto.has_guarantee_license}
+		</if>
+		<if test="dto.company_name != null and dto.company_name != ''">
+			<![CDATA[ AND member_company_info.company_name LIKE CONCAT('%',#{dto.company_name},'%')]]>
+		</if>
+		<if test="dto.belong_company_name != null and dto.belong_company_name != ''">
+			<![CDATA[ AND member_company_info_2.company_name LIKE CONCAT('%',#{dto.belong_company_name},'%')]]>
+		</if>
+		<if test="dto.belong_company_name_cur != null and dto.belong_company_name_cur != ''">
+			<![CDATA[ AND member_company_info_3.company_name LIKE CONCAT('%',#{dto.belong_company_name_cur},'%')]]>
+		</if>
+		<if test="dto.contact_mobile != null and dto.contact_mobile != ''">
+			AND member_company_info.artificial_person_mobile LIKE CONCAT('%',#{dto.contact_mobile},'%')
+		</if>
+	</select>
+	
+	<select id="queryNonMemberToMemberList" parameterType="cn.htd.membercenter.dto.MemberUncheckedDTO"
+								resultType="cn.htd.membercenter.dto.MemberUncheckedDTO">
+		SELECT
+			member_base_info.id member_id,
+			member_base_info.member_code,
+			member_company_info.artificial_person_mobile contact_mobile,
+			member_base_info.can_mall_login,
+			member_base_info.has_business_license,
+			member_base_info.has_guarantee_license,
+			member_status_info.verify_status,
+			member_company_info.company_name,
+			member_status_info.create_time
+		FROM
+			member_base_info member_base_info
+		LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id and member_company_info.buyer_seller_type=1
+		LEFT JOIN member_company_info member_company_info_2 ON member_base_info.belong_seller_id = member_company_info_2.member_id and member_company_info_2.buyer_seller_type=2
+		LEFT JOIN member_company_info member_company_info_3 ON member_base_info.cur_belong_seller_id = member_company_info_3.member_id and member_company_info_3.buyer_seller_type=2
+		WHERE
+			member_company_info.buyer_seller_type = 1
+		AND member_status_info.info_type = 14
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status != '0'.toString()">
+			AND member_status_info.verify_status = #{dto.verify_status}
+		</if>
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status == '0'.toString()">
+			
+		</if>
+		<if test="dto.can_mall_login != null and dto.can_mall_login != ''">
+			AND member_base_info.can_mall_login = #{dto.can_mall_login}
+		</if>
+		<if test="dto.has_business_license != null and dto.has_business_license != ''">
+			AND member_base_info.has_business_license = #{dto.has_business_license}
+		</if>
+		<if test="dto.has_guarantee_license != null and dto.has_guarantee_license != ''">
+			AND member_base_info.has_guarantee_license = #{dto.has_guarantee_license}
+		</if>
+		<if test="dto.company_name != null and dto.company_name != ''">
+			AND member_company_info.company_name LIKE CONCAT('%',#{dto.company_name},'%')
+		</if>
+		<if test="dto.belong_company_name != null and dto.belong_company_name != ''">
+			AND member_company_info_2.company_name LIKE CONCAT('%',#{dto.belong_company_name},'%')
+		</if>
+		<if test="dto.belong_company_name_cur != null and dto.belong_company_name_cur != ''">
+			AND member_company_info_3.company_name LIKE CONCAT('%',#{dto.belong_company_name_cur},'%')
+		</if>
+		<if test="dto.contact_mobile != null and dto.contact_mobile != ''">
+			AND member_company_info.artificial_person_mobile LIKE CONCAT('%',#{dto.contact_mobile},'%')
+		</if>
+		order by member_status_info.create_time desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+
+
+	<!-- 密码找回待审列表数 
+		buyer_seller_type    1 会员
+		info_type    1：找回密码未变更联系人信息审核，2：找回密码变更联系人信息审核
+	-->
+	<select id="queryPasswordRecoveryVerifyListCount" parameterType="cn.htd.membercenter.dto.MemberUncheckedDTO"
+								resultType="int">
+		SELECT
+			count(0)
+		FROM
+			member_base_info member_base_info
+		LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id and member_company_info.buyer_seller_type=1
+		LEFT JOIN member_company_info member_company_info_2 ON member_base_info.belong_seller_id = member_company_info_2.member_id and member_company_info_2.buyer_seller_type=2
+		LEFT JOIN member_company_info member_company_info_3 ON member_base_info.cur_belong_seller_id = member_company_info_3.member_id and member_company_info_3.buyer_seller_type=2
+		WHERE
+			member_company_info.buyer_seller_type = 1
+		AND member_status_info.info_type in (1,2)
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status != '0'.toString()">
+			AND member_status_info.verify_status = #{dto.verify_status}
+		</if>
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status == '0'.toString()">
+			
+		</if>
+		<if test="dto.can_mall_login != null and dto.can_mall_login != ''">
+			AND member_base_info.can_mall_login = #{dto.can_mall_login}
+		</if>
+		<if test="dto.has_business_license != null and dto.has_business_license != ''">
+			AND member_base_info.has_business_license = #{dto.has_business_license}
+		</if>
+		<if test="dto.has_guarantee_license != null and dto.has_guarantee_license != ''">
+			AND member_base_info.has_guarantee_license = #{dto.has_guarantee_license}
+		</if>
+		<if test="dto.company_name != null and dto.company_name != ''">
+			AND member_company_info.company_name LIKE CONCAT('%',#{dto.company_name},'%')
+		</if>
+		<if test="dto.belong_company_name != null and dto.belong_company_name != ''">
+			AND member_company_info_2.company_name LIKE CONCAT('%',#{dto.belong_company_name},'%')
+		</if>
+		<if test="dto.belong_company_name_cur != null and dto.belong_company_name_cur != ''">
+			AND member_company_info_3.company_name LIKE CONCAT('%',#{dto.belong_company_name_cur},'%')
+		</if>
+		<if test="dto.contact_mobile != null and dto.contact_mobile != ''">
+			AND member_company_info.artificial_person_mobile LIKE CONCAT('%',#{dto.contact_mobile},'%')
+		</if>
+	</select>
+	
+	<select id="queryPasswordRecoveryVerifyList" parameterType="cn.htd.membercenter.dto.MemberUncheckedDTO"
+								resultType="cn.htd.membercenter.dto.MemberUncheckedDTO">
+		SELECT
+			member_base_info.id member_id,
+			member_base_info.member_code,
+			member_company_info.artificial_person_mobile contact_mobile,
+			member_base_info.can_mall_login,
+			member_base_info.has_business_license,
+			member_base_info.has_guarantee_license,
+			member_company_info.company_name,
+			member_status_info.info_type,
+			member_status_info.verify_id,
+			member_status_info.verify_status,
+			member_status_info.create_time
+		FROM
+			member_base_info member_base_info
+		LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id and member_company_info.buyer_seller_type=1
+		LEFT JOIN member_company_info member_company_info_2 ON member_base_info.belong_seller_id = member_company_info_2.member_id and member_company_info_2.buyer_seller_type=2
+		LEFT JOIN member_company_info member_company_info_3 ON member_base_info.cur_belong_seller_id = member_company_info_3.member_id and member_company_info_3.buyer_seller_type=2
+		WHERE
+			member_company_info.buyer_seller_type = 1
+			AND member_status_info.info_type in (1,2)
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status != '0'.toString()">
+			AND member_status_info.verify_status = #{dto.verify_status}
+		</if>
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status == '0'.toString()">
+			
+		</if>
+		<if test="dto.can_mall_login != null and dto.can_mall_login != ''">
+			AND member_base_info.can_mall_login = #{dto.can_mall_login}
+		</if>
+		<if test="dto.has_business_license != null and dto.has_business_license != ''">
+			AND member_base_info.has_business_license = #{dto.has_business_license}
+		</if>
+		<if test="dto.has_guarantee_license != null and dto.has_guarantee_license != ''">
+			AND member_base_info.has_guarantee_license = #{dto.has_guarantee_license}
+		</if>
+		<if test="dto.company_name != null and dto.company_name != ''">
+			AND member_company_info.company_name LIKE CONCAT('%',#{dto.company_name},'%')
+		</if>
+		<if test="dto.belong_company_name != null and dto.belong_company_name != ''">
+			AND member_company_info_2.company_name LIKE CONCAT('%',#{dto.belong_company_name},'%')
+		</if>
+		<if test="dto.belong_company_name_cur != null and dto.belong_company_name_cur != ''">
+			AND member_company_info_3.company_name LIKE CONCAT('%',#{dto.belong_company_name_cur},'%')
+		</if>
+		<if test="dto.contact_mobile != null and dto.contact_mobile != ''">
+			AND member_company_info.artificial_person_mobile LIKE CONCAT('%',#{dto.contact_mobile},'%')
+		</if>
+		order by member_status_info.create_time desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+
+
+
+	<!-- 手机号更改待审列表数 
+		buyer_seller_type    1 会员
+		info_type    3：会员手机号码更改审核
+	-->
+	<select id="queryPhoneChangeVerifyListCount" parameterType="cn.htd.membercenter.dto.MemberUncheckedDTO"
+								resultType="int">
+		SELECT
+			count(0)
+		FROM
+			member_base_info member_base_info
+		LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id and member_company_info.buyer_seller_type=1
+		LEFT JOIN member_company_info member_company_info_2 ON member_base_info.belong_seller_id = member_company_info_2.member_id and member_company_info_2.buyer_seller_type=2
+		LEFT JOIN member_company_info member_company_info_3 ON member_base_info.cur_belong_seller_id = member_company_info_3.member_id and member_company_info_3.buyer_seller_type=2
+		WHERE
+			member_company_info.buyer_seller_type = 1
+		AND member_status_info.info_type = 3
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status != '0'.toString()">
+			AND member_status_info.verify_status = #{dto.verify_status}
+		</if>
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status == '0'.toString()">
+			
+		</if>
+		<if test="dto.can_mall_login != null and dto.can_mall_login != ''">
+			AND member_base_info.can_mall_login = #{dto.can_mall_login}
+		</if>
+		<if test="dto.has_business_license != null and dto.has_business_license != ''">
+			AND member_base_info.has_business_license = #{dto.has_business_license}
+		</if>
+		<if test="dto.has_guarantee_license != null and dto.has_guarantee_license != ''">
+			AND member_base_info.has_guarantee_license = #{dto.has_guarantee_license}
+		</if>
+		<if test="dto.company_name != null and dto.company_name != ''">
+			AND member_company_info.company_name LIKE CONCAT('%',#{dto.company_name},'%')
+		</if>
+		<if test="dto.belong_company_name != null and dto.belong_company_name != ''">
+			AND member_company_info_2.company_name LIKE CONCAT('%',#{dto.belong_company_name},'%')
+		</if>
+		<if test="dto.belong_company_name_cur != null and dto.belong_company_name_cur != ''">
+			AND member_company_info_3.company_name LIKE CONCAT('%',#{dto.belong_company_name_cur},'%')
+		</if>
+		<if test="dto.contact_mobile != null and dto.contact_mobile != ''">
+			AND member_company_info.artificial_person_mobile LIKE CONCAT('%',#{dto.contact_mobile},'%')
+		</if>
+	</select>
+	
+	<select id="queryPhoneChangeVerifyList" parameterType="cn.htd.membercenter.dto.MemberUncheckedDTO"
+								resultType="cn.htd.membercenter.dto.MemberUncheckedDTO">
+		SELECT
+			member_base_info.id member_id,
+			member_base_info.member_code,
+			member_company_info.artificial_person_mobile contact_mobile,
+			member_base_info.can_mall_login,
+			member_base_info.has_business_license,
+			member_base_info.has_guarantee_license,
+			member_status_info.verify_status,
+			member_company_info.company_name,
+			member_status_info.create_time
+		FROM
+			member_base_info member_base_info
+		LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id and member_company_info.buyer_seller_type=1
+		LEFT JOIN member_company_info member_company_info_2 ON member_base_info.belong_seller_id = member_company_info_2.member_id and member_company_info_2.buyer_seller_type=2
+		LEFT JOIN member_company_info member_company_info_3 ON member_base_info.cur_belong_seller_id = member_company_info_3.member_id and member_company_info_3.buyer_seller_type=2
+		WHERE
+			member_company_info.buyer_seller_type = 1
+		AND member_status_info.info_type = 3
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status != '0'.toString()">
+			AND member_status_info.verify_status = #{dto.verify_status}
+		</if>
+		<if test="dto.verify_status != null and dto.verify_status != '' and dto.verify_status == '0'.toString()">
+			
+		</if>
+		<if test="dto.can_mall_login != null and dto.can_mall_login != ''">
+			AND member_base_info.can_mall_login = #{dto.can_mall_login}
+		</if>
+		<if test="dto.has_business_license != null and dto.has_business_license != ''">
+			AND member_base_info.has_business_license = #{dto.has_business_license}
+		</if>
+		<if test="dto.has_guarantee_license != null and dto.has_guarantee_license != ''">
+			AND member_base_info.has_guarantee_license = #{dto.has_guarantee_license}
+		</if>
+		<if test="dto.company_name != null and dto.company_name != ''">
+			AND member_company_info.company_name LIKE CONCAT('%',#{dto.company_name},'%')
+		</if>
+		<if test="dto.belong_company_name != null and dto.belong_company_name != ''">
+			AND member_company_info_2.company_name LIKE CONCAT('%',#{dto.belong_company_name},'%')
+		</if>
+		<if test="dto.belong_company_name_cur != null and dto.belong_company_name_cur != ''">
+			AND member_company_info_3.company_name LIKE CONCAT('%',#{dto.belong_company_name_cur},'%')
+		</if>
+		<if test="dto.contact_mobile != null and dto.contact_mobile != ''">
+			AND member_company_info.artificial_person_mobile LIKE CONCAT('%',#{dto.contact_mobile},'%')
+		</if>
+		order by member_status_info.create_time desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	
+	<!-- 根据会员ID查询非会员转会员详细信息 -->
+	<select id="queryNonMemberToMemberDetail" resultType="cn.htd.membercenter.dto.MemberUncheckedDetailDTO"
+							parameterType="long">
+			SELECT
+				member_base_info.id member_id,
+				member_base_info.belong_manager_id,
+				member_base_info.belong_seller_id,
+				member_base_info.cur_belong_seller_id,
+				member_base_info.cur_belong_manager_id,
+				member_company_info.artificial_person_mobile contact_mobile,
+				member_base_info.contact_name,
+				member_base_info.industry_category,
+				member_base_info.contact_pic_src,
+				member_base_info.contact_pic_back_src,
+				member_company_info.artificial_person_name,
+				member_company_info.artificial_person_mobile,
+				member_company_info.company_name,
+				member_company_info.location_detail,
+				member_company_info.location_addr,
+				member_company_info.artificial_person_idcard artificial_person_idcard,
+			    member_company_info.artificial_person_pic_src artificial_person_pic_src,
+			    member_company_info.artificial_person_idcard_pic_src artificial_person_idcard_pic_src,
+			    member_company_info.artificial_person_pic_back_src artificial_person_pic_back_src,
+				member_invoice_info.invoice_notify,
+				member_invoice_info.tax_man_id,
+				member_invoice_info.bank_name,
+				member_invoice_info.bank_account,
+				member_licence_info.buyer_business_license_pic_src,
+				member_licence_info.buyer_guarantee_license_pic_src,
+				member_licence_info.buyer_business_license_id,
+				member_status_info.verify_status,
+				member_status_info.create_time,
+				member_status_info.status_id,
+				member_status_info.verify_id,
+				member_status_info.sync_error_msg,
+				member_status_info.modify_name
+			FROM
+				member_base_info member_base_info
+			LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+			LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id
+			LEFT JOIN member_invoice_info member_invoice_info on member_base_info.id = member_invoice_info.member_id
+			LEFT JOIN member_bank_info member_bank_info on member_base_info.id = member_bank_info.member_id
+			LEFT JOIN member_licence_info member_licence_info on member_base_info.id = member_licence_info.member_id
+			WHERE
+				member_base_info.id = #{member_id}	
+			AND	member_company_info.buyer_seller_type = 1
+			AND member_status_info.info_type = 14
+	</select>
+
+
+	<!-- 根据会员ID、信息类型 查询密码找回详细信息 -->
+	<select id="queryPasswordRecoveryVerifyDetail" resultType="cn.htd.membercenter.dto.MemberLicenceInfoDetailDTO">
+			SELECT
+				member_base_info.id member_id,
+				member_base_info.member_code,
+				member_company_info.company_name,
+				member_company_info.artificial_person_name,
+				member_company_info.artificial_person_mobile,
+				member_company_info.artificial_person_idcard,
+				member_company_info.artificial_person_pic_src,
+				member_company_info.artificial_person_pic_back_src,
+				member_company_info.artificial_person_idcard_pic_src,
+				member_base_info.mall_account,
+				member_status_info.create_time,
+				member_status_info.verify_id,
+				member_status_info.verify_status,
+				member_status_info.status_id,
+				member_status_info.info_type,
+				member_status_info.sync_error_msg,
+				member_status_info.modify_name,
+				member_licence_info.buyer_business_license_pic_src,
+				member_licence_info.buyer_guarantee_license_pic_src,
+				member_licence_info.business_license_certificate_pic_src
+			FROM
+				member_base_info member_base_info
+			LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+			LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id
+			LEFT JOIN member_licence_info member_licence_info on member_base_info.id = member_licence_info.member_id
+			WHERE
+				member_base_info.id = #{member_id}
+			AND 
+				member_status_info.info_type = #{info_type}
+			AND	member_company_info.buyer_seller_type = 1
+	</select>
+
+	
+	<!-- 根据会员ID查询手机号更改详细信息 -->
+	<select id="queryPhoneChangeVerifyDetail" resultType="cn.htd.membercenter.dto.MemberLicenceInfoDetailDTO"
+							parameterType="long">
+							
+			SELECT
+				member_base_info.id member_id,
+				member_base_info.member_code,
+				member_company_info.artificial_person_mobile contact_mobile,
+				member_company_info.company_name,
+				member_company_info.artificial_person_name,
+				member_status_info.create_time,
+				member_status_info.verify_id,
+				member_status_info.verify_status,
+				member_status_info.status_id,
+				member_status_info.sync_error_msg,
+				member_status_info.modify_name,
+				member_licence_info.buyer_guarantee_license_pic_src
+			FROM
+				member_base_info member_base_info
+			LEFT JOIN member_status_info member_status_info ON member_base_info.id = member_status_info.member_id
+			LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id
+			LEFT JOIN member_licence_info member_licence_info on member_base_info.id = member_licence_info.member_id
+			WHERE
+				member_base_info.id = #{member_id}
+			AND	member_company_info.buyer_seller_type = 1
+			AND member_status_info.info_type = 3
+	</select>
+
+
+	
+	<!-- 查询会员解除归属关系待审核列表 -->
+	<select id="queryRemoveRelationship" resultType="cn.htd.membercenter.dto.MemberRemoveRelationshipDTO">
+		SELECT
+			member_company_info.company_name companyName,
+			member_company_info.company_code companyCode,
+			member_company_info.artificial_person_mobile artificialPersonMobile,
+			member_base_info.id memberId,
+			member_company_info2.company_name belongCompanyName,
+			ms.verify_status as status
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_company_info member_company_info2 ON member_base_info.cur_belong_seller_id = member_company_info2.member_id
+		LEFT JOIN member_status_info ms on ms.member_id=member_base_info.id
+		WHERE
+			member_company_info.buyer_seller_type = 1
+	    AND ms.info_type=25
+		AND member_company_info2.buyer_seller_type = 2
+		AND member_base_info.cur_belong_seller_id = member_company_info2.member_id
+		AND ms.verify_status !='9'
+		<if test="dto.status !=null and dto.status != '' and '0'.toString() != dto.status">
+			AND ms.verify_status = #{dto.status}
+		</if>
+		<!-- <if test="dto.status !=null and dto.status != '' and '0'.toString() != dto.status">
+			AND ms.verify_status = #{dto.status}
+		</if>
+		<if test="dto.status !=null and dto.status != '' and '0'.toString() == dto.status">
+			AND ms.verify_status in (1,3)
+		</if> -->
+		<if test="dto.companyName != null and dto.companyName != ''">
+			AND member_company_info.company_name like CONCAT('%',#{dto.companyName},'%')
+		</if>
+		<if test="dto.artificialPersonMobile != null and dto.artificialPersonMobile != ''">
+			AND member_company_info.artificial_person_mobile like CONCAT('%',#{dto.artificialPersonMobile},'%')
+		</if>
+		<if test="dto.belongCompanyName != null and dto.belongCompanyName != ''">
+			AND member_company_info2.company_name like CONCAT('%',#{dto.belongCompanyName},'%')
+		</if>
+		<if test="dto.companyCode != null and dto.companyCode != ''">
+			AND member_company_info.company_code like CONCAT('%',#{dto.companyCode},'%')
+		</if>
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<!-- 查询会员解除归属关系待审核列表条数 -->
+	<select id="queryRemoveRelationshipCount" resultType="java.lang.Long">
+		SELECT
+			count(member_base_info.id)
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_company_info member_company_info2 ON member_base_info.cur_belong_seller_id = member_company_info2.member_id
+		LEFT JOIN member_status_info ms on ms.member_id=member_base_info.id
+		WHERE
+			member_company_info.buyer_seller_type = 1
+	    AND ms.info_type=25
+		AND member_company_info2.buyer_seller_type = 2
+		AND member_base_info.cur_belong_seller_id = member_company_info2.member_id
+		AND ms.verify_status !='9'
+		<if test="dto.status !=null and dto.status != '' and '0'.toString() != dto.status">
+			AND ms.verify_status = #{dto.status}
+		</if>
+		<!-- <if test="dto.status !=null and dto.status != '' and '0'.toString() != dto.status">
+			AND ms.verify_status = #{dto.status}
+		</if>
+		<if test="dto.status !=null and dto.status != '' and '0'.toString() == dto.status">
+			AND ms.verify_status in (1,3)
+		</if> -->
+		<if test="dto.companyName != null and dto.companyName != ''">
+			AND member_company_info.company_name like CONCAT('%',#{dto.companyName},'%')
+		</if>
+		<if test="dto.artificialPersonMobile != null and dto.artificialPersonMobile != ''">
+			AND member_company_info.artificial_person_mobile like CONCAT('%',#{dto.artificialPersonMobile},'%')
+		</if>
+		<if test="dto.belongCompanyName != null and dto.belongCompanyName != ''">
+			AND member_company_info2.company_name like CONCAT('%',#{dto.belongCompanyName},'%')
+		</if>
+		<if test="dto.companyCode != null and dto.companyCode != ''">
+			AND member_company_info.company_code like CONCAT('%',#{dto.companyCode},'%')
+		</if>
+	</select>
+	
+	
+	<select id="queryRemoveRelationshipDetail" resultType="cn.htd.membercenter.dto.MemberRemoveRelationshipDTO">
+		SELECT
+			member_company_info.company_name companyName,
+			member_company_info.company_code companyCode,
+			member_company_info2.company_code companyCodeDetail,
+			member_company_info2.member_id belongMemberId,
+			member_company_info.artificial_person_mobile artificialPersonMobile,
+			member_base_info.id memberId,
+			member_base_info.member_code memberCode,
+			member_company_info2.company_name belongCompanyName,
+			vi.id verifyInfoId,
+			vi.remark remark,
+			ms.verify_status as status
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_company_info member_company_info2 ON member_base_info.cur_belong_seller_id = member_company_info2.member_id
+		LEFT JOIN member_status_info ms on ms.member_id=member_base_info.id
+		LEFT JOIN verify_info vi on vi.id=ms.verify_id
+		WHERE
+			member_company_info.buyer_seller_type = 1
+	    AND ms.info_type=25
+		AND member_company_info2.buyer_seller_type = 2
+		AND member_base_info.cur_belong_seller_id = member_company_info2.member_id
+		and member_base_info.id = #{memberId}
+	</select>
+	
+	
+	<!-- 查询外部商家列表 -->
+	<select id="queryOutsideSupplier" resultType="cn.htd.membercenter.dto.MemberOutsideSupplierDTO">
+		SELECT
+			(
+				CASE
+				WHEN member_base_info.is_generation = 0 THEN
+					1
+				WHEN member_base_info.is_generation = 1 THEN
+					2
+				END
+			) AS sellerType,
+			member_base_info.id memberId,
+			member_company_info.real_name_status realNameStatus,
+			member_base_info.member_code companyCode,
+			member_company_info.company_name companyName,
+			member_company_info.location_province locationProvince,
+			member_company_info.location_city locationCity,
+			member_company_info.location_county locationCounty,
+			member_company_info.location_town locationTown,
+			member_bank_info.business_card_bind_status cardBindStatus
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_bank_info ON member_base_info.id = member_bank_info.member_id
+		where member_company_info.buyer_seller_type = 2
+		AND member_base_info.is_seller = 1
+		AND member_base_info.seller_type = 2
+		<if test="dto.sellerType != null and dto.sellerType != '' and '1'.toString() == dto.sellerType">
+			AND member_base_info.is_generation = 0
+		</if>
+		<if test="dto.sellerType != null and dto.sellerType != '' and '2'.toString() == dto.sellerType">
+			AND member_base_info.is_generation = 1
+		</if>
+		<if test="dto.companyName != null and dto.companyName != ''">
+			AND member_company_info.company_name like CONCAT('%',#{dto.companyName},'%')
+		</if>																																																																																																					
+		<if test="dto.companyCode != null and dto.companyCode != ''">
+			AND member_base_info.member_code = #{dto.companyCode}
+		</if>
+		<if test="dto.locationProvince != null and dto.locationProvince != ''">
+			AND member_company_info.location_province = #{dto.locationProvince}
+		</if>
+		<if test="dto.locationCity != null and dto.locationCity != ''">
+			AND member_company_info.location_city = #{dto.locationCity}
+		</if>
+		<if test="dto.locationCounty != null and dto.locationCounty != ''">
+			AND member_company_info.location_county = #{dto.locationCounty}
+		</if>
+		<if test="dto.cardBindStatus != null and dto.cardBindStatus != ''">
+			AND member_bank_info.business_card_bind_status = #{dto.cardBindStatus}	
+		</if>
+		order by member_base_info.id desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	<!-- 查询外部商家列表 -->
+	<select id="queryOutsideSupplierCount" resultType="java.lang.Long">
+		SELECT count(0)
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_bank_info ON member_base_info.id = member_bank_info.member_id
+		where member_company_info.buyer_seller_type = 2
+		AND member_base_info.is_seller = 1
+		AND member_base_info.seller_type = 2
+		<if test="dto.sellerType != null and dto.sellerType != '' and '1'.toString() == dto.sellerType">
+			AND member_base_info.is_generation = 0
+		</if>
+		<if test="dto.sellerType != null and dto.sellerType != '' and '2'.toString() == dto.sellerType">
+			AND member_base_info.is_generation = 1
+		</if>
+		<if test="dto.companyName != null and dto.companyName != ''">
+			AND member_company_info.company_name like CONCAT('%',#{dto.companyName},'%')
+		</if>																																																																																																					
+		<if test="dto.companyCode != null and dto.companyCode != ''">
+			AND member_base_info.member_code = #{dto.companyCode}
+		</if>
+		<if test="dto.locationProvince != null and dto.locationProvince != ''">
+			AND member_company_info.location_province = #{dto.locationProvince}
+		</if>
+		<if test="dto.locationCity != null and dto.locationCity != ''">
+			AND member_company_info.location_city = #{dto.locationCity}
+		</if>
+		<if test="dto.locationCounty != null and dto.locationCounty != ''">
+			AND member_company_info.location_county = #{dto.locationCounty}
+		</if>
+		<if test="dto.cardBindStatus != null and dto.cardBindStatus != ''">
+			AND member_bank_info.card_bind_status = #{dto.cardBindStatus}
+		</if>
+	</select>
+
+
+	<!-- 查询外部供应商公司信息 -->
+	<select id="queryOutsideSupplierCompany"  parameterType="long"
+					resultType="cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO">
+		SELECT
+			member_company_info.company_name companyName,
+			member_company_info.company_code companyCode,
+			(
+				CASE
+				WHEN member_base_info.is_generation = 0 THEN
+					1
+				WHEN member_base_info.is_generation = 1 THEN
+					2
+				END
+			) AS sellerType,
+			member_company_info.artificial_person_name artificialPersonName,
+			member_company_info.company_name companyName,
+			member_company_info.artificial_person_idcard artificialPersonIdcard,
+			member_company_info.location_province locationProvince,
+			member_company_info.location_city locationCity,
+			member_company_info.location_county locationCounty,
+			member_company_info.location_town locationTown,
+			member_company_info.account_no accountNo,
+			member_company_info.location_addr locationAddr,
+			member_company_info.location_detail locationDetail,
+			member_company_info.artificial_person_pic_src artificialPersonPicSrc,
+			member_company_info.artificial_person_pic_back_src artificialPersonPicBackSrc,
+			member_company_info.area_code areaCode,
+			member_company_info.landline landline,
+			member_company_info.artificial_person_mobile artificialPersonMobile,
+			member_company_info.real_name_status realNameStatus,
+			member_company_info.bind_id bindId,
+			member_base_info.contact_mobile contactMobile,
+			member_base_info.contact_name contactName,
+			member_base_info.member_code memberCode,
+			member_base_info.id memberId,
+			member_licence_info.certificate_type certificateType,
+			member_licence_info.business_license_id businessLicenseId,
+			member_licence_info.tax_man_id taxManId,
+			member_licence_info.taxpayer_type taxpayerType,
+			member_licence_info.business_license_pic_src businessLicensePicSrc,
+			member_licence_info.business_organization_pic_src organizationPicSrc,
+			member_licence_info.tax_registration_certificate_pic_src taxRegistrationCertificatePicSrc,
+			member_licence_info.taxpayer_certificate_pic_src taxpayerCertificatePicSrc,
+			member_licence_info.unified_social_credit_code unifiedSocialCreditCode,
+			member_extend_info.business_category businessCategory,
+			member_extend_info.business_scope businessScope,
+			member_extend_info.is_financing isFinancing,
+			member_extend_info.has_erp hasErp,
+			member_extend_info.sales_volumn salesVolumn,
+			member_extend_info.financing_number financingNumber,
+			member_extend_info.company_type companyType,
+			member_extend_info.home_page homePage,
+			member_extend_info.is_have_ebusiness isHaveEbusiness,
+			member_extend_info.website_opertion_number websiteOpertionNumber,
+			member_bank_info.business_bank_account_name bankAccountName,
+			member_bank_info.business_bank_account bankAccount,
+			member_bank_info.business_bank_name bankName,
+			member_bank_info.bank_code bankCode,
+			member_bank_info.business_bank_province bankProvince,
+			member_bank_info.business_bank_city bankCity,
+			member_bank_info.business_bank_county bankCounty,
+			member_bank_info.business_bank_branch_joint_line bankBranchJointLine,
+			member_bank_info.business_bank_branch_is_located bankBranchIsLocated,
+			member_bank_info.business_card_bind_status cardBindStatus
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.id = member_company_info.member_id
+		LEFT JOIN member_licence_info ON member_base_info.id = member_licence_info.member_id
+		LEFT JOIN member_extend_info ON member_base_info.id = member_extend_info.member_id
+		LEFT JOIN member_bank_info ON member_base_info.id = member_bank_info.member_id
+		WHERE
+			member_company_info.buyer_seller_type = 2
+		AND member_base_info.seller_type = 2
+		AND member_base_info.is_seller = 1
+		AND member_base_info.id = #{memberId}
+	</select>
+
+	<!-- 根据会员id获取当前所属公司名称 -->
+	<select id="getBelongCompanyName" parameterType="long" resultType="string">
+		SELECT
+			member_company_info.company_name
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.cur_belong_seller_id = member_company_info.member_id and member_company_info.buyer_seller_type='2'
+		
+		WHERE
+			member_base_info.id = #{memberId}
+	</select>
+	
+	<!-- 根据会员id获取原始所属公司名称 -->
+	<select id="getOriginalBelongCompanyName" parameterType="long" resultType="string">
+		SELECT
+			member_company_info.company_name
+		FROM
+			member_base_info
+		LEFT JOIN member_company_info ON member_base_info.belong_seller_id = member_company_info.member_id and member_company_Info.buyer_seller_type=2
+		WHERE
+			member_base_info.id = #{memberId}
+	</select>
+	
+	<select id="queryContractList" parameterType="long" resultType="cn.htd.membercenter.dto.MemberContractInfo">
+		SELECT
+			member_contract_info.contract_id contractId,
+			member_contract_info.contract_code contractCode,
+			member_contract_info.contract_type contractType,
+			member_contract_info.contract_jss_addr contractJssAddr,
+			member_contract_info.contract_starttime contractStarttime,
+			member_contract_info.contract_endtime contractEndtime
+		FROM
+			member_contract_info
+		WHERE
+			member_id = #{memberId}
+	</select>
+	
+	
+	<!-- 通过会员ID查询会员信息更改履历 -->
+    <select id="getVerifyById" resultType="cn.htd.membercenter.domain.VerifyDetailInfo"
+		parameterType="Object">
+		select 
+		    v.id as id,
+		    v.operator_name as operatorName,
+		    v.content_name as contentName,
+		    v.before_change as beforeChange,
+		    v.after_change as afterChange,
+		    v.before_change_desc as beforeChangeDesc,
+		    v.after_change_desc as afterChangeDesc,
+		    v.operate_time as operateTime
+		from verify_detail_info v 
+		where 
+		v.record_id=#{id} 
+		and v.record_type=#{recordType}
+		and v.modify_type=#{infoType}
+		order by v.operate_time desc
+		limit #{pager.pageOffset},#{pager.rows}
+    </select>
+    <!-- 通过会员ID查询会员信息更改履历 -->
+    <select id="getVerifyByIdCount" resultType="java.lang.Long">
+		select 
+		    count(*)
+		from verify_detail_info v 
+		where 
+		v.record_id=#{id} 
+		and v.record_type=#{recordType}
+		and v.modify_type=#{infoType}
+    </select>
+
+
+</mapper>

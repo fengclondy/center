@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.HTDStaticAdvertiseDAO">
+
+    <!-- 获取有效的id -->
+	<select id="getAvailableAdvId" resultType="long">
+		SELECT
+			IFNULL(id, 0) id
+		FROM
+			(
+				SELECT
+					id
+				FROM
+					static_ad
+				WHERE
+					(
+						SELECT
+							end_time
+						FROM
+							static_ad
+						WHERE
+							id = (
+								SELECT
+									id
+								FROM
+									static_ad
+								WHERE
+									sort_num = #{sortNum}
+								AND start_time  <![CDATA[ < ]]> NOW()
+								ORDER BY
+									start_time DESC
+								LIMIT 0,
+								1
+							)
+					)  <![CDATA[ > ]]> NOW()
+				AND is_handoff = #{is_handoff}
+				AND id = (
+					SELECT
+						id
+					FROM
+						static_ad
+					WHERE
+						sort_num = #{sortNum}
+					AND start_time  <![CDATA[ < ]]> NOW()
+					ORDER BY
+						start_time DESC
+					LIMIT 0,
+					1
+				)
+			) c
+	</select>
+
+	<update id="updateStaticAdvStatusInitZero" >
+		UPDATE static_ad
+		SET STATUS = 0
+		where 1 = 1
+		and sort_num = #{sortNum}
+		and id != #{advId}
+		and status != 2
+	</update>
+	
+	<update id="updateStaticAdvStatusInitOne">
+		UPDATE static_ad
+		SET STATUS = 1
+		where id = #{advId}
+	</update>
+	
+	<update id="updateAdvIsHandoffOne" >
+		UPDATE static_ad
+		SET is_handoff = 1
+		where 1 = 1
+		and (is_handoff = 2 or status = 1)
+		and id != #{advId}
+		and sort_num = #{sortNum}
+	</update>
+	
+	<update id="updateTimeOutAdv">
+		UPDATE static_ad
+		SET status = 2
+		where 1 = 1
+		and end_time <![CDATA[ < ]]> NOW()
+	</update>
+	
+	<update id="updateAdvStatusOneToTwo">
+		update static_ad
+		set status = 2
+		<!-- where status = 1 -->
+		where 
+			(
+				is_handoff = 1
+				OR id IN (
+					SELECT
+						id
+					FROM
+						(
+							SELECT
+								id
+							FROM
+								static_ad
+							WHERE
+								start_time <![CDATA[ < ]]> now()
+							AND id != #{advId}
+						) a
+				)
+			)
+		and sort_num = #{sortNum}
+	</update>
+	
+	<select id="queryWillBeUp" resultType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		SELECT
+			*
+		FROM
+			static_ad
+		WHERE
+			is_handoff = 0
+		and sort_num = #{sortNum}
+		and start_time <![CDATA[ < ]]>  NOW()
+		and end_time <![CDATA[ > ]]>  NOW()
+		ORDER BY
+			start_time DESC
+		LIMIT 0,
+		 1
+	</select>
+	
+	<select id="queryStaticAdvUp" resultType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		select *
+		from static_ad
+		where
+		id = (
+			SELECT
+				id
+			FROM
+				static_ad
+			where status = 1
+			and sort_num  = #{sortNum}
+			ORDER BY
+				start_time DESC
+			LIMIT 0,
+			1
+		)
+		OR id = (
+			SELECT
+				id
+			FROM
+				static_ad
+			WHERE
+				is_handoff = 2
+			and status = 1
+			and sort_num  = #{sortNum}
+		)
+	</select>
+	
+	<!-- 查询广告列表 -->
+	<select id="queryStaticAdvertisement" resultType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		SELECT
+			*
+		FROM
+			static_ad
+		WHERE
+			1 = 1
+		<if test="dto.status != null and dto.status != ''">
+			AND status = #{dto.status}
+		</if>
+		<if test="dto.link_url != null and dto.link_url != ''">
+			and link_url = #{dto.link_url}
+		</if>
+		<if test="dto.id != null and dto.id != ''">
+			and id != #{dto.id}
+		</if>
+		order by id desc
+		limit #{page.pageOffset},#{page.rows}
+	</select>
+	
+	
+	<update id="updateStaticAdvertisement" parameterType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		 update static_ad
+		 <set >
+		      <if test="pic_url != null and pic_url != ''" >
+		        pic_url = #{pic_url},
+		      </if>
+		      <if test="link_url != null and link_url != ''" >
+		        link_url = #{link_url},
+		      </if>
+		      <if test="is_handoff != null and is_handoff != ''" >
+		        is_handoff = #{is_handoff},
+		      </if>
+		      <if test="sort_num != null and sort_num != ''" >
+		        sort_num = #{sort_num},
+		      </if>
+		      <if test="startTimetemp != null and startTimetemp != ''" >
+		        start_time = #{startTimetemp},
+		      </if>
+		      <if test="endTimetemp != null and endTimetemp != ''" >
+		        end_time = #{endTimetemp},
+		      </if>
+		      <if test="status != null and status != ''" >
+		        status = #{status},
+		      </if>
+		      <if test="modify_id != null and modify_id != ''" >
+		        modify_id = #{modify_id},
+		      </if>
+		      <if test="modify_name != null and modify_name != ''" >
+		        modify_name = #{modify_name},
+		      </if>
+		      <if test="modify_id != null and modify_id != ''" >
+		         modify_time = now(),
+		      </if>
+	    </set>
+	    where id = #{id}
+	</update>
+	
+	<!-- 删除广告 -->
+	<delete id="deleteById" parameterType="long">
+		delete from static_ad
+		where id = #{advId}
+	</delete>
+	
+	<!-- 根据id查询广告 -->
+	<select id="queryStaticAdvById" resultType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		SELECT
+			*
+		FROM
+			static_ad
+		WHERE
+			id = #{advId}
+	</select>
+	
+	<!-- 增加广告 -->
+	<insert id="addStaticAdvertisement" useGeneratedKeys="true" keyProperty="id" 
+	 parameterType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		insert into static_ad
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="pic_url != null and pic_url != ''" >
+	        pic_url,
+	      </if>
+	      <if test="link_url != null and link_url != ''" >
+	        link_url,
+	      </if>
+	      <if test="sort_num != null and sort_num != ''" >
+	        sort_num,
+	      </if>
+	      <if test="startTimetemp != null and startTimetemp != ''" >
+	        start_time,
+	      </if>
+	      <if test="endTimetemp != null and endTimetemp != ''" >
+	        end_time,
+	      </if>
+	      <if test="create_id != null and create_id != ''" >
+	        create_id,
+	      </if>
+	      <if test="create_name != null and create_name != ''" >
+	        create_name,
+	      </if>
+	        create_time,
+	        status,
+	        is_handoff
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="pic_url != null and pic_url != ''" >
+	        #{pic_url},
+	      </if>
+	      <if test="link_url != null and link_url != ''" >
+	        #{link_url},
+	      </if>
+	      <if test="sort_num != null and sort_num != ''" >
+	        #{sort_num},
+	      </if>
+	      <if test="startTimetemp != null and startTimetemp != ''" >
+	        #{startTimetemp},
+	      </if>
+	      <if test="endTimetemp != null and endTimetemp != ''" >
+	        #{endTimetemp},
+	      </if>
+	      <if test="create_id != null and create_id != ''" >
+	        #{create_id},
+	      </if>
+	      <if test="create_name != null and create_name != ''" >
+	        #{create_name},
+	      </if>
+	        now(),
+	        0,
+	        0
+	    </trim>
+	</insert>
+
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+	<select id="queryStaticAdList4Task" resultType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		SELECT
+		*
+		FROM static_ad
+		where 1=1
+		and
+		status in ('0','1')
+		and is_handoff != '1'
+		<if test="entity != null">
+			and mod(id, #{entity.taskQueueNum}) in
+			<foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+				#{taskId}
+			</foreach>
+		</if>
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+	<update id="updateStaticAdStatusById" parameterType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		update static_ad
+		<set>
+			status = #{status,jdbcType=VARCHAR},
+			is_handoff = #{is_handoff,jdbcType=VARCHAR},
+			modify_id = #{modify_id,jdbcType=BIGINT},
+			modify_name = #{modify_name,jdbcType=VARCHAR},
+			modify_time = now()
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateBySortNum" parameterType="com.bjucloud.contentcenter.dto.HTDAdvertisementDTO">
+		update static_ad
+		set
+		is_handoff = #{is_handoff,jdbcType=VARCHAR},
+		status = #{status,jdbcType=VARCHAR},
+		modify_id = #{modify_id,jdbcType=BIGINT},
+		modify_name = #{modify_name,jdbcType=VARCHAR},
+		modify_time = now()
+		WHERE sort_num = #{sort_num,jdbcType=BIGINT}
+	</update>
+
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.JDOrderInfoDAO" >
+    <resultMap id="BaseResultMap" type="cn.htd.tradecenter.domain.JDOrderInfo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="order_item_no" property="orderItemNo" jdbcType="VARCHAR" />
+        <result column="jd_order_no" property="jdOrderNo" jdbcType="VARCHAR" />
+        <result column="erp_result_status" property="erpResultStatus" jdbcType="TINYINT" />
+        <result column="erp_result_code" property="erpResultCode" jdbcType="VARCHAR" />
+        <result column="erp_result_msg" property="erpResultMsg" jdbcType="VARCHAR" />
+        <result column="jd_result_status" property="jdResultStatus" jdbcType="TINYINT" />
+        <result column="jd_result_code" property="jdResultCode" jdbcType="VARCHAR" />
+        <result column="jd_result_msg" property="jdResultMsg" jdbcType="VARCHAR" />
+        <result column="erp_last_message_id" property="erpLastMessageId" jdbcType="VARCHAR" />
+        <result column="jd_last_essage_id" property="jdLastEssageId" jdbcType="VARCHAR" />
+        <result column="jd_send_count" property="jdSendCount" jdbcType="TINYINT" />
+        <result column="erp_book_send_count" property="erpBookSendCount" jdbcType="TINYINT" />
+        <result column="jd_last_send_time" property="jdLastSendTime" jdbcType="TIMESTAMP" />
+        <result column="erp_last_send_time" property="erpLastSendTime" jdbcType="TIMESTAMP" />
+        <result column="order_type" property="orderType" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        order_no,
+        order_item_no,
+        jd_order_no,
+        erp_result_status,
+        erp_result_code,
+        erp_result_msg,
+        jd_result_status,
+        jd_result_code,
+        jd_result_msg,
+        erp_last_message_id,
+        jd_last_essage_id,
+        jd_send_count,
+        erp_book_send_count,
+        jd_last_send_time,
+        erp_last_send_time,
+        order_type
+    </sql>
+    <update id="updateJDOrderErpInfoByOrderNo" parameterType="cn.htd.tradecenter.domain.JDOrderInfo" >
+        update tb_b_jdorderinfo
+        <set >
+            erp_result_status = #{erpResultStatus, jdbcType=TINYINT},
+            erp_result_code = #{erpResultCode, jdbcType=VARCHAR},
+            erp_result_msg = #{erpResultMsg, jdbcType=VARCHAR},
+            erp_book_send_count = #{erpBookSendCount, jdbcType=TINYINT},
+        </set>
+        where order_no = #{orderNo, jdbcType=VARCHAR}
+    </update>
+</mapper>

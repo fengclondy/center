@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+	<!-- 锁定优惠券接口 -->
+	<!-- <dubbo:reference id="buyerPromotion4OrderService"
+	interface="cn.htd.marketcenter.service.BuyerPromotion4OrderService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	 -->
+	
+	<dubbo:reference id="buyerInterestChangeService"
+		interface="cn.htd.marketcenter.service.BuyerInterestChangeService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+
+	<dubbo:reference id="buyerInterestValidService"
+		interface="cn.htd.marketcenter.service.BuyerInterestValidService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+
+	<dubbo:reference id="timelimitedInfoService"
+		interface="cn.htd.marketcenter.service.TimelimitedInfoService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+
+</beans>

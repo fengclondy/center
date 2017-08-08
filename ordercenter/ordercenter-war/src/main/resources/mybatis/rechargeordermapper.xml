@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.RechargeOrderDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="RECHARGE_ORDER_NO" property="rechargeOrderNo" jdbcType="VARCHAR" />
+    <result column="PAY_ORDER_NO" property="payOrderNo" jdbcType="VARCHAR" />
+    <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+    <result column="PAY_CODE" property="payCode" jdbcType="VARCHAR" />
+    <result column="PAY_STATUS" property="payStatus" jdbcType="VARCHAR" />
+    <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
+    <result column="MEMBER_NAME" property="memberName" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="PAYEE_ACCOUNT_NO" property="payeeAccountNo" jdbcType="VARCHAR" />
+    <result column="PAY_TIME" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="DEPARTMENT_CODE" property="departmentCode" jdbcType="VARCHAR" />
+    <result column="RECHARGE_CHANNEL_CODE" property="rechargeChannelCode" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, RECHARGE_ORDER_NO, PAY_ORDER_NO, AMOUNT, PAY_CODE, PAY_STATUS, MEMBER_CODE, MEMBER_NAME,
+    SUPPLIER_CODE, PAY_TIME, DEPARTMENT_CODE,PAYEE_ACCOUNT_NO,RECHARGE_CHANNEL_CODE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from recharge_order
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from recharge_order
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO" >
+    insert into recharge_order (ID, RECHARGE_ORDER_NO, PAY_ORDER_NO,
+      AMOUNT, PAY_CODE, PAY_STATUS,
+      MEMBER_CODE, MEMBER_NAME, SUPPLIER_CODE,
+      PAY_TIME, DEPARTMENT_CODE,PAYEE_ACCOUNT_NO,RECHARGE_CHANNEL_CODE)
+    values (#{id,jdbcType=BIGINT}, #{rechargeOrderNo,jdbcType=VARCHAR}, #{payOrderNo,jdbcType=VARCHAR},
+      #{amount,jdbcType=DECIMAL}, #{payCode,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR},
+      #{memberCode,jdbcType=VARCHAR}, #{memberName,jdbcType=VARCHAR}, #{supplierCode,jdbcType=VARCHAR},
+      #{payTime,jdbcType=TIMESTAMP}, #{departmentCode,jdbcType=VARCHAR},#{payeeAccountNo,jdbcType=VARCHAR},#{rechargeChannelCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO" >
+    insert into recharge_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="rechargeOrderNo != null" >
+        RECHARGE_ORDER_NO,
+      </if>
+      <if test="payOrderNo != null" >
+        PAY_ORDER_NO,
+      </if>
+      <if test="amount != null" >
+        AMOUNT,
+      </if>
+      <if test="rechargeChannelCode != null" >
+        RECHARGE_CHANNEL_CODE,
+      </if>
+      <if test="payeeAccountNo != null" >
+        PAYEE_ACCOUNT_NO,
+      </if>
+      <if test="payCode != null" >
+        PAY_CODE,
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS,
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE,
+      </if>
+      <if test="memberName != null" >
+        MEMBER_NAME,
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE,
+      </if>
+      <if test="payTime != null" >
+        PAY_TIME,
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="rechargeOrderNo != null" >
+        #{rechargeOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payOrderNo != null" >
+        #{payOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="rechargeChannelCode != null" >
+        #{rechargeChannelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payeeAccountNo != null" >
+        #{payeeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payCode != null" >
+        #{payCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="memberCode != null" >
+        #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="departmentCode != null" >
+        #{departmentCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO" >
+    update recharge_order
+    <set >
+      <if test="rechargeOrderNo != null" >
+        RECHARGE_ORDER_NO = #{rechargeOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payOrderNo != null" >
+        PAY_ORDER_NO = #{payOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="rechargeChannelCode != null" >
+        RECHARGE_CHANNEL_CODE = #{rechargeChannelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payeeAccountNo != null" >
+        PAYEE_ACCOUNT_NO = #{payeeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payCode != null" >
+        PAY_CODE = #{payCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        MEMBER_NAME = #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        PAY_TIME = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO" >
+    update recharge_order
+    set RECHARGE_ORDER_NO = #{rechargeOrderNo,jdbcType=VARCHAR},
+      PAY_ORDER_NO = #{payOrderNo,jdbcType=VARCHAR},
+      AMOUNT = #{amount,jdbcType=DECIMAL},
+      PAY_CODE = #{payCode,jdbcType=VARCHAR},
+      PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      RECHARGE_CHANNEL_CODE = #{rechargeChannelCode,jdbcType=VARCHAR},
+      MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      MEMBER_NAME = #{memberName,jdbcType=VARCHAR},
+      SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      PAY_TIME = #{payTime,jdbcType=TIMESTAMP},
+      DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      PAYEE_ACCOUNT_NO = #{payeeAccountNo,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateRechargeOrderByRechargeOrderNo" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO">
+  	update recharge_order
+    <set >
+      <if test="payOrderNo != null" >
+        PAY_ORDER_NO = #{payOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="rechargeChannelCode != null" >
+        RECHARGE_CHANNEL_CODE = #{rechargeChannelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payeeAccountNo != null" >
+        PAYEE_ACCOUNT_NO = #{payeeAccountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payCode != null" >
+        PAY_CODE = #{payCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        MEMBER_NAME = #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        PAY_TIME = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where RECHARGE_ORDER_NO = #{rechargeOrderNo,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectCountByRechargeOrderNo" resultType="java.lang.Integer">
+  	select count(0)
+  	from recharge_order
+  	where 1=1
+  	<if test="rechargeOrderNo != null">
+  		and RECHARGE_ORDER_NO = #{rechargeOrderNo}
+  	</if>
+  	<if test="memberCode != null">
+  		and member_code = #{memberCode}
+  	</if>
+  	<if test="payTimeFrom != null">
+    	and PAY_TIME >= #{payTimeFrom}
+    </if>
+    <if test="payTimeTo != null">
+    	and PAY_TIME <![CDATA[ <=  ]]> #{payTimeTo}
+    </if>
+    <if test="rechargeChannelCode != null">
+    	and RECHARGE_CHANNEL_CODE <![CDATA[ <=  ]]> #{rechargeChannelCode}
+    </if>
+  </select>
+
+  <select id="selectRechargeOrderByMemberCode" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO">
+  	select
+  	<include refid="Base_Column_List" />
+    from recharge_order
+    where 1=1
+    <if test="memberCode != null">
+    	and member_code = #{memberCode}
+    </if>
+    <if test="payTimeFrom != null">
+    	and PAY_TIME >= #{payTimeFrom}
+    </if>
+    <if test="payTimeTo != null">
+    	and PAY_TIME <![CDATA[ <=  ]]> #{payTimeTo}
+    </if>
+    <if test="rechargeChannelCode != null">
+    	and RECHARGE_CHANNEL_CODE <![CDATA[ <=  ]]> #{rechargeChannelCode}
+    </if>
+    order by PAY_TIME desc
+    <if test="start != null">
+    	limit #{start},#{rows}
+    </if>
+  </select>
+  
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.RechargeOrderDMO">
+  	select
+  	<include refid="Base_Column_List" />
+    from recharge_order
+    where 1=1
+    <if test="rechargeOrderNo != null">
+    	and recharge_order_no = #{rechargeOrderNo}
+    </if>
+  </select>
+</mapper>

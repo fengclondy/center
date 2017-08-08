@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.membercenter.dao.SellerMeetingEvaluateDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.membercenter.dto.SellerMeetingEvaluateDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="meeting_no" property="meetingNo" jdbcType="VARCHAR" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="meeting_title" property="meetingTitle" jdbcType="VARCHAR" />
+    <result column="meeting_start_time" property="meetingStartTime" jdbcType="TIMESTAMP" />
+    <result column="meeting_end_time" property="meetingEndTime" jdbcType="TIMESTAMP" />
+    <result column="meeting_addr" property="meetingAddr" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="member_code" property="memberCode" jdbcType="VARCHAR" />
+    <result column="member_name" property="memberName" jdbcType="VARCHAR" />
+    <result column="artificial_person_name" property="artificialPersonName" jdbcType="VARCHAR" />
+    <result column="evaluate1" property="evaluate1" jdbcType="TINYINT" />
+    <result column="evaluate2" property="evaluate2" jdbcType="TINYINT" />
+    <result column="evaluate3" property="evaluate3" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, meeting_no, seller_id, seller_name, seller_code, meeting_title, meeting_start_time, 
+    meeting_end_time, meeting_addr, member_id, member_code, member_name, artificial_person_name, 
+    evaluate1, evaluate2, evaluate3, create_id, create_name, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from seller_meeting_evaluate
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from seller_meeting_evaluate
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.membercenter.dto.SellerMeetingEvaluateDTO" >
+    insert into seller_meeting_evaluate (id, meeting_no, seller_id, 
+      seller_name, seller_code, meeting_title, 
+      meeting_start_time, meeting_end_time, meeting_addr, 
+      member_id, member_code, member_name, 
+      artificial_person_name, evaluate1, evaluate2, 
+      evaluate3, create_id, create_name, 
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{meetingNo,jdbcType=VARCHAR}, #{sellerId,jdbcType=BIGINT}, 
+      #{sellerName,jdbcType=VARCHAR}, #{sellerCode,jdbcType=VARCHAR}, #{meetingTitle,jdbcType=VARCHAR}, 
+      #{meetingStartTime,jdbcType=TIMESTAMP}, #{meetingEndTime,jdbcType=TIMESTAMP}, #{meetingAddr,jdbcType=VARCHAR}, 
+      #{memberId,jdbcType=BIGINT}, #{memberCode,jdbcType=VARCHAR}, #{memberName,jdbcType=VARCHAR}, 
+      #{artificialPersonName,jdbcType=VARCHAR}, #{evaluate1,jdbcType=TINYINT}, #{evaluate2,jdbcType=TINYINT}, 
+      #{evaluate3,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.membercenter.dto.SellerMeetingEvaluateDTO" >
+    insert into seller_meeting_evaluate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="meetingNo != null" >
+        meeting_no,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="sellerName != null" >
+        seller_name,
+      </if>
+      <if test="sellerCode != null" >
+        seller_code,
+      </if>
+      <if test="meetingTitle != null" >
+        meeting_title,
+      </if>
+      <if test="meetingStartTime != null" >
+        meeting_start_time,
+      </if>
+      <if test="meetingEndTime != null" >
+        meeting_end_time,
+      </if>
+      <if test="meetingAddr != null" >
+        meeting_addr,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="memberCode != null" >
+        member_code,
+      </if>
+      <if test="memberName != null" >
+        member_name,
+      </if>
+      <if test="artificialPersonName != null" >
+        artificial_person_name,
+      </if>
+      <if test="evaluate1 != null" >
+        evaluate1,
+      </if>
+      <if test="evaluate2 != null" >
+        evaluate2,
+      </if>
+      <if test="evaluate3 != null" >
+        evaluate3,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    
+      <if test="meetingNo != null" >
+        #{meetingNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null" >
+        #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingTitle != null" >
+        #{meetingTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingStartTime != null" >
+        #{meetingStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingEndTime != null" >
+        #{meetingEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingAddr != null" >
+        #{meetingAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="memberCode != null" >
+        #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="artificialPersonName != null" >
+        #{artificialPersonName,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluate1 != null" >
+        #{evaluate1,jdbcType=TINYINT},
+      </if>
+      <if test="evaluate2 != null" >
+        #{evaluate2,jdbcType=TINYINT},
+      </if>
+      <if test="evaluate3 != null" >
+        #{evaluate3,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.membercenter.dto.SellerMeetingEvaluateDTO" >
+    update seller_meeting_evaluate
+    <set >
+      <if test="meetingNo != null" >
+        meeting_no = #{meetingNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null" >
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        seller_code = #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingTitle != null" >
+        meeting_title = #{meetingTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="meetingStartTime != null" >
+        meeting_start_time = #{meetingStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingEndTime != null" >
+        meeting_end_time = #{meetingEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meetingAddr != null" >
+        meeting_addr = #{meetingAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="memberCode != null" >
+        member_code = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        member_name = #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="artificialPersonName != null" >
+        artificial_person_name = #{artificialPersonName,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluate1 != null" >
+        evaluate1 = #{evaluate1,jdbcType=TINYINT},
+      </if>
+      <if test="evaluate2 != null" >
+        evaluate2 = #{evaluate2,jdbcType=TINYINT},
+      </if>
+      <if test="evaluate3 != null" >
+        evaluate3 = #{evaluate3,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.membercenter.dto.SellerMeetingEvaluateDTO" >
+    update seller_meeting_evaluate
+    set meeting_no = #{meetingNo,jdbcType=VARCHAR},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      seller_name = #{sellerName,jdbcType=VARCHAR},
+      seller_code = #{sellerCode,jdbcType=VARCHAR},
+      meeting_title = #{meetingTitle,jdbcType=VARCHAR},
+      meeting_start_time = #{meetingStartTime,jdbcType=TIMESTAMP},
+      meeting_end_time = #{meetingEndTime,jdbcType=TIMESTAMP},
+      meeting_addr = #{meetingAddr,jdbcType=VARCHAR},
+      member_id = #{memberId,jdbcType=BIGINT},
+      member_code = #{memberCode,jdbcType=VARCHAR},
+      member_name = #{memberName,jdbcType=VARCHAR},
+      artificial_person_name = #{artificialPersonName,jdbcType=VARCHAR},
+      evaluate1 = #{evaluate1,jdbcType=TINYINT},
+      evaluate2 = #{evaluate2,jdbcType=TINYINT},
+      evaluate3 = #{evaluate3,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <!-- 查询会员是否已经签到 -->
+   <select id="getCountByMemberCodeAndMeetingNo" resultType="java.lang.Long" parameterType="Object" >
+    select 
+    count(id)
+    from seller_meeting_evaluate
+    where 
+    meeting_no = #{meetingNo} 
+    and 
+    member_code=#{memberCode}
+  </select>
+</mapper>

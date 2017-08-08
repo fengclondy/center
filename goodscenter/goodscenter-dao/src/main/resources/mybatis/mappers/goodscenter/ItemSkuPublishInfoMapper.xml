@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.ItemSkuPublishInfoMapper" >
+   <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ItemSkuPublishInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="is_box_flag" property="isBoxFlag" jdbcType="TINYINT" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="display_quantity" property="displayQuantity" jdbcType="INTEGER" />
+    <result column="reserve_quantity" property="reserveQuantity" jdbcType="INTEGER" />
+    <result column="mim_quantity" property="mimQuantity" jdbcType="INTEGER" />
+    <result column="is_purchase_limit" property="isPurchaseLimit" jdbcType="TINYINT" />
+    <result column="max_purchase_quantity" property="maxPurchaseQuantity" jdbcType="INTEGER" />
+    <result column="is_visable" property="isVisable" jdbcType="TINYINT" />
+    <result column="visable_time" property="visableTime" jdbcType="TIMESTAMP" />
+    <result column="invisable_time" property="invisableTime" jdbcType="TIMESTAMP" />
+    <result column="is_automatic_visable" property="isAutomaticVisable" jdbcType="TINYINT" />
+    <result column="automatic_visable_with_stock" property="automaticVisableWithStock" jdbcType="TINYINT" />
+    <result column="automatic_starttime" property="automaticStarttime" jdbcType="TIMESTAMP" />
+    <result column="automatic_endtime" property="automaticEndtime" jdbcType="TIMESTAMP" />
+    <result column="shipping_cost" property="shippingCost" jdbcType="DOUBLE" />
+    <result column="erp_sync" property="erpSync" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sku_id, item_id, sku_code, is_box_flag, note, display_quantity, reserve_quantity, 
+    mim_quantity, is_purchase_limit, max_purchase_quantity, is_visable, visable_time, 
+    invisable_time, is_automatic_visable, automatic_visable_with_stock, automatic_starttime, 
+    automatic_endtime, shipping_cost, erp_sync, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_sku_publish_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_sku_publish_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.ItemSkuPublishInfo" >
+    insert into item_sku_publish_info (id, sku_id, item_id, 
+      sku_code, is_box_flag, note, 
+      display_quantity, reserve_quantity, mim_quantity, 
+      is_purchase_limit, max_purchase_quantity, is_visable, 
+      visable_time, invisable_time, is_automatic_visable, 
+      automatic_visable_with_stock, automatic_starttime, 
+      automatic_endtime, shipping_cost, erp_sync, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, 
+      #{skuCode,jdbcType=VARCHAR}, #{isBoxFlag,jdbcType=TINYINT}, #{note,jdbcType=VARCHAR}, 
+      #{displayQuantity,jdbcType=INTEGER}, #{reserveQuantity,jdbcType=INTEGER}, #{mimQuantity,jdbcType=INTEGER}, 
+      #{isPurchaseLimit,jdbcType=TINYINT}, #{maxPurchaseQuantity,jdbcType=INTEGER}, #{isVisable,jdbcType=TINYINT}, 
+      #{visableTime,jdbcType=TIMESTAMP}, #{invisableTime,jdbcType=TIMESTAMP}, #{isAutomaticVisable,jdbcType=TINYINT}, 
+      #{automaticVisableWithStock,jdbcType=TINYINT}, #{automaticStarttime,jdbcType=TIMESTAMP}, 
+      #{automaticEndtime,jdbcType=TIMESTAMP}, #{shippingCost,jdbcType=DOUBLE}, #{erpSync,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+
+  <insert id="add" parameterType="cn.htd.goodscenter.domain.ItemSkuPublishInfo" keyProperty="id" useGeneratedKeys="true">
+    insert into item_sku_publish_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    <if test="skuId != null" >
+      sku_id,
+    </if>
+    <if test="itemId != null" >
+      item_id,
+    </if>
+    <if test="skuCode != null" >
+      sku_code,
+    </if>
+    <if test="isBoxFlag != null" >
+      is_box_flag,
+    </if>
+    <if test="note != null" >
+      note,
+    </if>
+    <if test="displayQuantity != null" >
+      display_quantity,
+    </if>
+    <if test="reserveQuantity != null" >
+      reserve_quantity,
+    </if>
+    <if test="mimQuantity != null" >
+      mim_quantity,
+    </if>
+    <if test="isPurchaseLimit != null" >
+      is_purchase_limit,
+    </if>
+    <if test="maxPurchaseQuantity != null" >
+      max_purchase_quantity,
+    </if>
+    <if test="isVisable != null" >
+      is_visable,
+    </if>
+    <if test="visableTime != null" >
+      visable_time,
+    </if>
+    <if test="invisableTime != null" >
+      invisable_time,
+    </if>
+    <if test="isAutomaticVisable != null" >
+      is_automatic_visable,
+    </if>
+    <if test="automaticVisableWithStock != null" >
+      automatic_visable_with_stock,
+    </if>
+    <if test="automaticStarttime != null" >
+      automatic_starttime,
+    </if>
+    <if test="automaticEndtime != null" >
+      automatic_endtime,
+    </if>
+    <if test="shippingCost != null" >
+      shipping_cost,
+    </if>
+    <if test="erpSync != null" >
+      erp_sync,
+    </if>
+    <if test="createId != null" >
+      create_id,
+    </if>
+    <if test="createName != null" >
+      create_name,
+    </if>
+      create_time,
+    <if test="modifyId != null" >
+      modify_id,
+    </if>
+    <if test="modifyName != null" >
+      modify_name,
+    </if>
+      modify_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    <if test="skuId != null" >
+      #{skuId},
+    </if>
+    <if test="itemId != null" >
+      #{itemId},
+    </if>
+    <if test="skuCode != null" >
+      #{skuCode},
+    </if>
+    <if test="isBoxFlag != null" >
+      #{isBoxFlag},
+    </if>
+    <if test="note != null" >
+      #{note},
+    </if>
+    <if test="displayQuantity != null" >
+      #{displayQuantity},
+    </if>
+    <if test="reserveQuantity != null" >
+      #{reserveQuantity},
+    </if>
+    <if test="mimQuantity != null" >
+      #{mimQuantity},
+    </if>
+    <if test="isPurchaseLimit != null" >
+      #{isPurchaseLimit},
+    </if>
+    <if test="maxPurchaseQuantity != null" >
+      #{maxPurchaseQuantity},
+    </if>
+    <if test="isVisable != null" >
+      #{isVisable},
+    </if>
+    <if test="visableTime != null" >
+      #{visableTime},
+    </if>
+    <if test="invisableTime != null" >
+      #{invisableTime},
+    </if>
+    <if test="isAutomaticVisable != null" >
+      #{isAutomaticVisable},
+    </if>
+    <if test="automaticVisableWithStock != null" >
+      #{automaticVisableWithStock},
+    </if>
+    <if test="automaticStarttime != null" >
+      #{automaticStarttime},
+    </if>
+    <if test="automaticEndtime != null" >
+      #{automaticEndtime},
+    </if>
+    <if test="shippingCost != null" >
+      #{shippingCost},
+    </if>
+    <if test="erpSync != null" >
+      #{erpSync},
+    </if>
+    <if test="createId != null" >
+      #{createId},
+    </if>
+    <if test="createName != null" >
+      #{createName},
+    </if>
+    now(),
+    <if test="modifyId != null" >
+      #{modifyId},
+    </if>
+    <if test="modifyName != null" >
+      #{modifyName},
+    </if>
+    now()
+    </trim>
+  </insert>
+
+
+
+
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ItemSkuPublishInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into item_sku_publish_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="displayQuantity != null" >
+        display_quantity,
+      </if>
+      <if test="reserveQuantity != null" >
+        reserve_quantity,
+      </if>
+      <if test="mimQuantity != null" >
+        mim_quantity,
+      </if>
+      <if test="isPurchaseLimit != null" >
+        is_purchase_limit,
+      </if>
+      <if test="maxPurchaseQuantity != null" >
+        max_purchase_quantity,
+      </if>
+      <if test="isVisable != null" >
+        is_visable,
+      </if>
+      <if test="visableTime != null" >
+        visable_time,
+      </if>
+      <if test="invisableTime != null" >
+        invisable_time,
+      </if>
+      <if test="isAutomaticVisable != null" >
+        is_automatic_visable,
+      </if>
+      <if test="automaticVisableWithStock != null" >
+        automatic_visable_with_stock,
+      </if>
+      <if test="automaticStarttime != null" >
+        automatic_starttime,
+      </if>
+      <if test="automaticEndtime != null" >
+        automatic_endtime,
+      </if>
+      <if test="shippingCost != null" >
+        shipping_cost,
+      </if>
+      <if test="erpSync != null" >
+        erp_sync,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isBoxFlag != null" >
+        #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="displayQuantity != null" >
+        #{displayQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="reserveQuantity != null" >
+        #{reserveQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="mimQuantity != null" >
+        #{mimQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="isPurchaseLimit != null" >
+        #{isPurchaseLimit,jdbcType=TINYINT},
+      </if>
+      <if test="maxPurchaseQuantity != null" >
+        #{maxPurchaseQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="isVisable != null" >
+        #{isVisable,jdbcType=TINYINT},
+      </if>
+      <if test="visableTime != null" >
+        #{visableTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invisableTime != null" >
+        #{invisableTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isAutomaticVisable != null" >
+        #{isAutomaticVisable,jdbcType=TINYINT},
+      </if>
+      <if test="automaticVisableWithStock != null" >
+        #{automaticVisableWithStock,jdbcType=TINYINT},
+      </if>
+      <if test="automaticStarttime != null" >
+        #{automaticStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="automaticEndtime != null" >
+        #{automaticEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shippingCost != null" >
+        #{shippingCost,jdbcType=DOUBLE},
+      </if>
+      <if test="erpSync != null" >
+        #{erpSync,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    ON DUPLICATE KEY UPDATE
+       modify_time = NOW()
+       <if test="note != null" >
+        ,note = #{note,jdbcType=VARCHAR}
+      </if>
+      <if test="displayQuantity != null" >
+        ,display_quantity = #{displayQuantity,jdbcType=INTEGER}
+      </if>
+      <if test="reserveQuantity != null" >
+        ,reserve_quantity = #{reserveQuantity,jdbcType=INTEGER}
+      </if>
+      <if test="mimQuantity != null" >
+        ,mim_quantity = #{mimQuantity,jdbcType=INTEGER}
+      </if>
+      <if test="isPurchaseLimit != null" >
+        ,is_purchase_limit = #{isPurchaseLimit,jdbcType=TINYINT}
+      </if>
+      <if test="maxPurchaseQuantity != null" >
+        ,max_purchase_quantity = #{maxPurchaseQuantity,jdbcType=INTEGER}
+      </if>
+      <if test="isVisable != null" >
+        ,is_visable = #{isVisable,jdbcType=TINYINT}
+      </if>
+      <if test="visableTime != null" >
+        ,visable_time = #{visableTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="invisableTime != null" >
+        ,invisable_time = #{invisableTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="isAutomaticVisable != null" >
+        ,is_automatic_visable = #{isAutomaticVisable,jdbcType=TINYINT}
+      </if>
+      <if test="automaticVisableWithStock != null" >
+        ,automatic_visable_with_stock = #{automaticVisableWithStock,jdbcType=TINYINT}
+      </if>
+      <if test="automaticStarttime != null" >
+        ,automatic_starttime = #{automaticStarttime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="automaticEndtime != null" >
+        ,automatic_endtime = #{automaticEndtime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="shippingCost != null" >
+        ,shipping_cost = #{shippingCost,jdbcType=DOUBLE}
+      </if>
+      <if test="erpSync != null" >
+        ,erp_sync = #{erpSync,jdbcType=TINYINT}
+      </if>
+      <if test="modifyId != null" >
+        ,modify_id = #{modifyId,jdbcType=BIGINT}
+      </if>
+      <if test="modifyName != null" >
+        ,modify_name = #{modifyName,jdbcType=VARCHAR}
+      </if>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ItemSkuPublishInfo" >
+    update item_sku_publish_info
+    <set >
+      <if test="skuId != null" >
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="displayQuantity != null" >
+        display_quantity = #{displayQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="reserveQuantity != null" >
+        reserve_quantity = #{reserveQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="mimQuantity != null" >
+        mim_quantity = #{mimQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="isPurchaseLimit != null" >
+        is_purchase_limit = #{isPurchaseLimit,jdbcType=TINYINT},
+      </if>
+      <if test="maxPurchaseQuantity != null" >
+        max_purchase_quantity = #{maxPurchaseQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="isVisable != null" >
+        is_visable = #{isVisable,jdbcType=TINYINT},
+      </if>
+      <if test="visableTime != null" >
+        visable_time = #{visableTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invisableTime != null" >
+        invisable_time = #{invisableTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isAutomaticVisable != null" >
+        is_automatic_visable = #{isAutomaticVisable,jdbcType=TINYINT},
+      </if>
+      <if test="automaticVisableWithStock != null" >
+        automatic_visable_with_stock = #{automaticVisableWithStock,jdbcType=TINYINT},
+      </if>
+      <if test="automaticStarttime != null" >
+        automatic_starttime = #{automaticStarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="automaticEndtime != null" >
+        automatic_endtime = #{automaticEndtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shippingCost != null" >
+        shipping_cost = #{shippingCost,jdbcType=DOUBLE},
+      </if>
+      <if test="erpSync != null" >
+        erp_sync = #{erpSync,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemSkuPublishInfo" >
+    update item_sku_publish_info
+    set sku_id = #{skuId,jdbcType=BIGINT},
+      item_id = #{itemId,jdbcType=BIGINT},
+      sku_code = #{skuCode,jdbcType=VARCHAR},
+      is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+      note = #{note,jdbcType=VARCHAR},
+      display_quantity = #{displayQuantity,jdbcType=INTEGER},
+      reserve_quantity = #{reserveQuantity,jdbcType=INTEGER},
+      mim_quantity = #{mimQuantity,jdbcType=INTEGER},
+      is_purchase_limit = #{isPurchaseLimit,jdbcType=TINYINT},
+      max_purchase_quantity = #{maxPurchaseQuantity,jdbcType=INTEGER},
+      is_visable = #{isVisable,jdbcType=TINYINT},
+      visable_time = #{visableTime,jdbcType=TIMESTAMP},
+      invisable_time = #{invisableTime,jdbcType=TIMESTAMP},
+      is_automatic_visable = #{isAutomaticVisable,jdbcType=TINYINT},
+      automatic_visable_with_stock = #{automaticVisableWithStock,jdbcType=TINYINT},
+      automatic_starttime = #{automaticStarttime,jdbcType=TIMESTAMP},
+      automatic_endtime = #{automaticEndtime,jdbcType=TIMESTAMP},
+      shipping_cost = #{shippingCost,jdbcType=DOUBLE},
+      erp_sync = #{erpSync,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="queryPublishInfoDetailBySkuId" parameterType="cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO" 
+   resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO">
+	  select 
+	  info.id as id,
+		t.item_id as itemId,
+		t.cid as categoryId, 
+		cat.c_name as categoryName,
+		t.item_name as itemName,
+		t.brand as brandId,
+		t.model_type as modelType,
+		brand.brand_name as brandName,
+		t.attributes as categoryAttr,
+		sku.sku_id as skuId,
+		sku.sku_code as skuCode,
+		sku.sub_title as subTitle,
+		info.note as note,
+		info.display_quantity as displayQty,
+		info.reserve_quantity as reserveQty,
+		(stock.inventory-stock.reserve_quantity) as totalStock,
+		info.erp_sync as erpSync,
+		(info.display_quantity-info.reserve_quantity) as avaliableQty,
+		info.mim_quantity as minBuyQty,
+		<if test="shelfType == 2">
+		ifnull(info2.display_quantity,0) as boxPublishQty,
+		</if>
+		<if test="shelfType == 1">
+		ifnull(info2.display_quantity,0) as areaPublishQty,
+		</if>
+		info.is_purchase_limit as isPurchaseLimit,
+		info.max_purchase_quantity as maxPurchaseQty,
+		info.shipping_cost as shippingCost,
+		ifnull(info.is_visable,0) as isVisible,
+		info.is_automatic_visable as isAutomaticVisible,
+		info.automatic_visable_with_stock as isAutomaticVisibleByStock,
+		info.automatic_starttime as automaticVisibleUpTime,
+		info.automatic_endtime as automaticVisibleDownTime,
+		spu.spu_code as spuCode,
+		t.item_code as itemCode
+		 from item_sku sku
+		join item t on sku.item_id=t.item_id
+		join item_category cat on cat.cid=t.cid
+		join item_brand brand on brand.brand_id=t.brand
+		left join item_sku_publish_info info on info.sku_id=sku.sku_id
+		<if test="shelfType == 1">
+		and info.is_box_flag='1'
+		</if>
+		<if test="shelfType == 2">
+		and info.is_box_flag='0'
+		</if>
+		left join item_spu spu on spu.spu_id=t.item_spu_id
+		left join item_sku_publish_info info2 on info2.sku_id=sku.sku_id
+		<if test="shelfType == 1">
+		and info2.is_box_flag='0' and info2.is_visable =1
+		</if>
+		<if test="shelfType == 2">
+		and info2.is_box_flag='1' and info2.is_visable =1
+		</if>
+		left join item_sku_total_stock stock on t.item_id=stock.item_id
+		where sku.sku_id=#{skuId} limit 1
+  </select>
+   
+   <select id="selectByItemSkuAndShelfType" resultMap="BaseResultMap" parameterType="Object" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_sku_publish_info
+    where sku_id= #{skuId,jdbcType=BIGINT} 
+    <if test="isVisible == 1 ">
+    AND is_visable='1'
+    </if>
+    <if test="shelfType == 1">
+    AND is_box_flag='1'
+    </if>
+    <if test="shelfType == 2">
+    AND is_box_flag='0'
+    </if>
+  </select>
+
+  <select id="selectBySkuCodeAndShelfType" resultMap="BaseResultMap" parameterType="Object" >
+    select
+    <include refid="Base_Column_List" />
+    from item_sku_publish_info
+    where
+    sku_code = #{skuCode,jdbcType=VARCHAR}
+    AND is_box_flag = #{isBoxFlag, jdbcType=TINYINT}
+  </select>
+
+
+  <select id="queryItemSkuShelfStatus" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" /> 
+  	from item_sku_publish_info
+  	where sku_id=#{skuId,jdbcType=BIGINT}
+  </select>
+  
+    <select id="queryBySkuId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from item_sku_publish_info
+    where sku_id = #{skuId,jdbcType=BIGINT}
+  </select>
+  <update id="updateBySkuId" parameterType="cn.htd.goodscenter.domain.ItemSkuPublishInfo" >
+    update item_sku_publish_info
+    set
+    modify_time = now(),
+    <if test="itemId !=null and itemId !='' ">
+      item_id = #{itemId,jdbcType=BIGINT},
+    </if>
+    <if test="skuCode !=null and skuCode !='' ">
+      sku_code = #{skuCode,jdbcType=VARCHAR},
+    </if>
+    <if test="isBoxFlag !=null and isBoxFlag !='' ">
+      is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+    </if>
+    <if test="note !=null and note !='' ">
+      note = #{note,jdbcType=VARCHAR},
+    </if>
+    <if test="displayQuantity !=null and displayQuantity !='' ">
+      display_quantity = #{displayQuantity,jdbcType=INTEGER},
+    </if>
+    <if test="reserveQuantity !=null and reserveQuantity !='' ">
+      reserve_quantity = #{reserveQuantity,jdbcType=INTEGER},
+    </if>
+    <if test="mimQuantity !=null and mimQuantity !='' ">
+      mim_quantity = #{mimQuantity,jdbcType=INTEGER},
+    </if>
+    <if test="isPurchaseLimit !=null and isPurchaseLimit !='' ">
+      is_purchase_limit = #{isPurchaseLimit,jdbcType=TINYINT},
+    </if>
+    <if test="maxPurchaseQuantity !=null and maxPurchaseQuantity !='' ">
+      max_purchase_quantity = #{maxPurchaseQuantity,jdbcType=INTEGER},
+    </if>
+    <if test="isVisable !=null and isVisable !='' ">
+      is_visable = #{isVisable,jdbcType=TINYINT},
+    </if>
+    <if test="visableTime !=null and visableTime !='' ">
+      visable_time = #{visableTime,jdbcType=TIMESTAMP},
+    </if>
+    <if test="invisableTime !=null and invisableTime !='' ">
+      invisable_time = #{invisableTime,jdbcType=TIMESTAMP},
+    </if>
+    <if test="isAutomaticVisable !=null and isAutomaticVisable !='' ">
+      is_automatic_visable = #{isAutomaticVisable,jdbcType=TINYINT},
+    </if>
+    <if test="automaticVisableWithStock !=null and automaticVisableWithStock !='' ">
+      automatic_visable_with_stock = #{automaticVisableWithStock,jdbcType=TINYINT},
+    </if>
+    <if test="automaticStarttime !=null and automaticStarttime !='' ">
+      automatic_starttime = #{automaticStarttime,jdbcType=TIMESTAMP},
+    </if>
+    <if test="automaticEndtime !=null and automaticEndtime !='' ">
+      automatic_endtime = #{automaticEndtime,jdbcType=TIMESTAMP},
+    </if>
+    <if test="shippingCost !=null and shippingCost !='' ">
+      shipping_cost = #{shippingCost,jdbcType=DOUBLE},
+    </if>
+    <if test="erpSync !=null and erpSync !='' ">
+      erp_sync = #{erpSync,jdbcType=TINYINT},
+    </if>
+    modify_id = #{modifyId,jdbcType=BIGINT},
+    modify_name = #{modifyName,jdbcType=VARCHAR}
+    where sku_id =  #{skuId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="queryItemSkuOnShelvedCount" resultType="Integer" parameterType="Long">
+  	select count(1) from item_sku_publish_info info where info.is_visable=1 and info.sku_id =  #{skuId}
+  </select>
+  
+  <select id="queryWaitingAutoUpShelfItem" parameterType="map" resultMap="BaseResultMap">
+	  SELECT 
+	      <include refid="Base_Column_List" />
+	      FROM item_sku_publish_info info
+		WHERE
+	   		info.is_visable = 0
+	        AND info.is_automatic_visable = 1
+	        AND info.automatic_starttime IS NOT NULL
+	        AND info.automatic_starttime between  DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00')  and NOW()
+	        AND mod(info.id, #{taskQueueNum}) in
+		<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+		LIMIT #{rows}
+  </select>
+  
+  <select id="queryWaitingAutoDownShelfItem" parameterType="map" resultMap="BaseResultMap">
+	  SELECT 
+	      <include refid="Base_Column_List" />
+	      FROM item_sku_publish_info info
+		WHERE
+	   		info.is_visable = 1
+	        AND info.is_automatic_visable = 1
+	        AND info.automatic_endtime IS NOT NULL
+	        AND info.automatic_endtime between  DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00')  and NOW()
+	        AND mod(info.id, #{taskQueueNum}) in
+		<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+		LIMIT #{rows}
+  </select>
+  
+  <update id="updateDisplayQuantityByPk" parameterType="map">
+	  update item_sku_publish_info
+	set display_quantity = display_quantity + #{moreStockQuantity},
+	modify_id = #{operatorId},
+	modify_name = #{operatorName},
+	modify_time=NOW()
+	where id=#{id}
+  </update>
+  
+  <update id="updateVisibleStateByPk" parameterType="map">
+	  update item_sku_publish_info
+	set 
+	modify_id = #{operatorId},
+	modify_name = #{operatorName},
+	modify_time=NOW(),
+	invisable_time=NOW(),
+	is_visable=0
+	where id=#{id}
+  </update>
+
+  <select id="queryItemStockDetailInDTO" resultType="cn.htd.goodscenter.dto.outdto.QueryItemStockDetailOutDTO">
+    SELECT
+	SUM(b.display_quantity) as displayQuantity,
+	SUM(b.reserve_quantity) as reserveQuantity
+    FROM
+        item a,
+        item_sku_publish_info b
+    WHERE
+        a.item_id = b.item_id
+    AND b.is_box_flag = #{param.isBoxFlag}
+    AND a.item_code =  #{param.itemCode}
+  </select>
+</mapper>

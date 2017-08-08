@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderStatusHistoryDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrderStatusHistoryDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="order_status_text" property="orderStatusText" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  	id,
+	order_no,
+	order_status,
+	order_status_text,
+	create_id,
+	create_name, 
+  	create_time	
+  </sql>
+  <insert id="addTradeOrderStatusHistory" useGeneratedKeys="true" keyProperty="id" parameterType="cn.htd.tradecenter.dto.TradeOrderStatusHistoryDTO">
+    insert into trade_order_status_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+	    order_no,
+	    order_status,
+	    order_status_text,
+	    create_id,
+	    create_name,
+	    create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	    #{orderNo,jdbcType=VARCHAR},
+	    #{orderStatus,jdbcType=VARCHAR},
+	    #{orderStatusText,jdbcType=VARCHAR},
+	    #{createId,jdbcType=BIGINT},
+	    #{createName,jdbcType=VARCHAR},
+	    now(),
+    </trim>
+  </insert>
+  <!-- 批量插入记录 -->
+  <insert id="addTradeOrderStatusHistoryList" useGeneratedKeys="true" parameterType="java.util.List">
+  	insert into trade_order_status_history (
+	    order_no,
+	    order_status,
+	    order_status_text,
+	    create_id,
+	    create_name,
+	    create_time
+     ) values 
+     <foreach collection="list" item="item" index="index"
+		separator=",">
+		(
+			#{item.orderNo},
+			#{item.orderStatus},
+			#{item.orderStatusText},
+			#{item.createId},
+			#{item.createName},
+			now()
+		)
+	 </foreach>
+  </insert>
+  <select id="queryStatusHistoryByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_status_history
+    where order_no = #{_parameter,jdbcType=VARCHAR}
+  </select>
+  <select id="queryStatusHistoryByOrderStatus" resultMap="BaseResultMap" parameterType="cn.htd.tradecenter.dto.TradeOrderStatusHistoryDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from trade_order_status_history
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+      and order_status = #{orderStatus,jdbcType=VARCHAR}
+  </select>
+</mapper>

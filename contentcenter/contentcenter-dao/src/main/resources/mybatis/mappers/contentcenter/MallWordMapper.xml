@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.MallWordDAO">
+	
+	<resultMap id="mallWordDTO" type="com.bjucloud.contentcenter.dto.MallWordDTO">
+			<result property="id" column="id" />
+			<result property="word" column="word" />
+			<result property="created" column="created" />
+			<result property="themeId" column="theme_id" />
+			<result property="themeName" column="themeName" />
+			<result property="themeStatus" column="themeStatus" />
+			<result property="themeType" column="themeType" />
+			<result property="themeUId" column="themeUId" />
+	</resultMap>
+	<sql id="queryPage_where">
+		<where>
+			<if test=" entity.id != null and entity.id != '' ">
+				and mw.id = #{entity.id}
+			</if>
+			<if test=" entity.word != null and entity.word != '' ">
+				and mw.word like concat('%',#{entity.word},'%')
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+					and mw.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.themeType != null and entity.themeType != '' and entity.themeStatus != 0">
+				and mt.type = #{entity.themeType}
+			</if>
+			<if test=" entity.themeStatus != null and entity.themeStatus != ''  and entity.themeStatus != 0">
+				and mt.status = #{entity.themeStatus}
+			</if>
+			<if test=" entity.themeUId != null and entity.themeUId != '' ">
+				and mt.userId = #{entity.themeUId}
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	
+	
+	<insert id="add">
+		insert into mall_word(
+				word,
+				created,
+				theme_id
+		)values(
+				#{word},
+				now(),
+				#{themeId}
+		)
+		<selectKey resultType="long" order="AFTER" keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<delete id="delete">
+		delete from mall_word
+		<if test=" id != null">
+			where id = #{id}
+		</if>
+		<if test=" id == null">
+			where 1 = 3
+		</if>
+	</delete>
+	
+	
+	<select id="queryCount" resultType="long">
+		<![CDATA[
+			select
+			count(0)
+			from 
+			mall_word mw INNER JOIN mall_theme mt ON mw.theme_id=mt.id
+		]]>
+		<!--select count(0) from mall_word-->
+		<include refid="queryPage_where"/>
+	</select>
+	
+	<select id="queryList" resultMap ="mallWordDTO">
+		<!--SELECT * FROM mall_word-->
+		<include refid="queryList"/>
+		<include refid="queryPage_where"/>
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	<sql id="queryList">
+		<![CDATA[
+			select
+			mw.id,
+			mw.word,
+			mw.created,
+			mw.theme_id themeId,
+			mt.theme_name themeName,
+			mt.status themeStatus,
+			mt.type themeType,
+			mt.userId themeUId
+			from 
+			mall_word mw INNER JOIN mall_theme mt ON mw.theme_id=mt.id
+		]]>
+	</sql>
+</mapper>

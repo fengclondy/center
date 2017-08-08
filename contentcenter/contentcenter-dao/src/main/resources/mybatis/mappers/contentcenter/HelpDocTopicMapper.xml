@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.HelpDocTopicDAO">
+
+	<resultMap id="base_resultMap_helpDocTopic" type="com.bjucloud.contentcenter.domain.HelpDocTopic">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="topict_code" property="topictCode" jdbcType="VARCHAR" />
+    <result column="topict_name" property="topictName" jdbcType="VARCHAR" />
+    <result column="category_code" property="categoryCode" jdbcType="VARCHAR" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="second_category_code" property="secondCategoryCode" jdbcType="VARCHAR" />
+    <result column="second_category_name" property="secondCategoryName" jdbcType="VARCHAR" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="BLOB" />
+    <result column="is_publish" property="isPublish" jdbcType="TINYINT" />
+    <result column="visit_url" property="visitUrl" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+
+	<insert id="addHelpDocTopic" parameterType="com.bjucloud.contentcenter.dto.HelpDocTopicDTO">
+	INSERT INTO help_doc_topic     
+    (topict_code,
+    topict_name,
+    category_code,
+    category_name,
+    second_category_code,
+    second_category_name,
+    sort_num,
+    content,
+    is_publish,
+    visit_url,
+    create_id,
+    create_name,
+    create_time,
+    modify_id,
+    modify_name,
+    modify_time)
+    VALUES
+    (#{topictCode,jdbcType=VARCHAR},
+    #{topictName,jdbcType=VARCHAR},
+    #{categoryCode,jdbcType=VARCHAR},
+    #{categoryName,jdbcType=VARCHAR},
+    #{secondCategoryCode,jdbcType=VARCHAR},
+    #{secondCategoryName,jdbcType=VARCHAR},
+    #{sortNum,jdbcType=INTEGER},
+    #{content,jdbcType=VARCHAR},
+    #{isPublish,jdbcType=TINYINT},
+    #{visitUrl,jdbcType=VARCHAR},
+    #{createId,jdbcType=BIGINT},
+    #{createName,jdbcType=VARCHAR},
+	#{createTime,jdbcType=TIMESTAMP},
+	#{modifyId,jdbcType=BIGINT},
+	#{modifyName,jdbcType=VARCHAR},
+	#{modifyTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<delete id="deleteHelpDocTopicByParams"  parameterType="com.bjucloud.contentcenter.dto.HelpDocTopicDTO">
+	 delete from help_doc_topic  
+	 <where>
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT}
+		</if>
+		<if test="topictCode != null and topictCode != ''">
+			topict_code = #{topictCode,jdbcType=VARCHAR}
+		</if>
+	 </where>
+	</delete>
+	
+	<update id="updateHelpDocTopic" parameterType="com.bjucloud.contentcenter.dto.HelpDocTopicDTO">
+	update help_doc_topic  
+	<set>
+		<if test="isPublish != null">
+			is_publish =  #{isPublish,jdbcType=TINYINT}  
+		</if>
+		<if test="modifyTime != null and modifyTime != ''">
+			,modify_time =  #{modifyTime,jdbcType=TIMESTAMP}  
+		</if>
+	</set>
+	<where>
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT} and 
+		</if>
+		<if test="topictCode != null and topictCode != ''">
+			topict_code = #{topictCode,jdbcType=VARCHAR}
+		</if>
+	 </where>
+	</update>
+	
+	<select id="getHelpDocTopicsCount" parameterType="com.bjucloud.contentcenter.dto.HelpDocTopicDTO" resultType="java.lang.Integer">
+		select count(1) from help_doc_topic  
+	   <where>
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT}
+		</if>
+		<if test="topictCode != null and topictCode != ''">
+			topict_code = #{topictCode,jdbcType=VARCHAR}
+		</if>
+	    </where>
+	</select>
+	
+	<select id="getHelpDocTopicsForPage" resultMap="base_resultMap_helpDocTopic">
+	select id,topict_code,topict_name,category_code,category_name,second_category_code,second_category_name,
+    sort_num,content,is_publish,visit_url,create_id,create_name,create_time,modify_id,modify_name,modify_time  
+	from help_doc_topic  
+	order by sort_num  
+	limit #{page.pageOffset},#{page.rows}
+	
+	</select>
+	
+	<select id="getSingleHelpDocTopicByParams" parameterType="com.bjucloud.contentcenter.dto.HelpDocTopicDTO" resultMap="base_resultMap_helpDocTopic">
+	select id,topict_code,topict_name,category_code,category_name,second_category_code,second_category_name,
+    sort_num,content,is_publish,visit_url,create_id,create_name,create_time,modify_id,modify_name,modify_time  
+	from help_doc_topic  
+	<where>
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT} and
+		</if>
+		<if test="topictCode != null and topictCode != ''">
+			topict_code = #{topictCode,jdbcType=VARCHAR}
+		</if>
+	 </where>
+	</select>
+
+	<select id="queryByContent" resultType="java.lang.Integer">
+		select count(1) from help_doc_topic  
+	   <where>
+		<if test="topictName != null and topictName != ''">
+			topict_name = #{topictName,jdbcType=VARCHAR}
+		</if>
+	    </where>
+	</select>
+	
+	<select id="queryByCount" resultType="java.lang.Integer">
+		select count(1) from help_doc_topic  
+	   <where>
+		<if test="sortNum != null">
+			sort_num = #{sortNum,jdbcType=INTEGER}
+		</if>
+		<if test="secondCategoryCode != null and secondCategoryCode != ''">
+			and second_category_code = #{secondCategoryCode,jdbcType=VARCHAR}
+		</if>
+	    </where>
+	</select>
+
+	<update id="editHelpDocTopic" parameterType="com.bjucloud.contentcenter.domain.HelpDocTopic">
+		update help_doc_topic set
+		
+		<if test="topictName != null and topictName != ''">
+			topict_name = #{topictName,jdbcType=VARCHAR},
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			category_code = #{categoryCode,jdbcType=VARCHAR},
+		</if>
+		<if test="categoryName != null and categoryName != ''">
+			category_name = #{categoryName,jdbcType=VARCHAR},
+		</if>
+		<if test="secondCategoryCode != null and secondCategoryCode != ''">
+			second_category_code = #{secondCategoryCode,jdbcType=VARCHAR},
+		</if>
+		<if test="secondCategoryName != null and secondCategoryName != ''">
+			second_category_name = #{secondCategoryName,jdbcType=VARCHAR},
+		</if>
+		<if test="sortNum != null">
+			sort_num = #{sortNum,jdbcType=INTEGER},
+		</if>
+		<if test="content != null and content != ''">
+			content = #{content,jdbcType=VARCHAR},
+		</if>
+		<if test="isPublish != null">
+			is_publish = #{isPublish,jdbcType=INTEGER},
+		</if>
+		<if test="visitUrl != null and visitUrl != ''">
+			visit_url = #{visitUrl,jdbcType=VARCHAR},
+		</if>
+			modify_id = #{modifyId,jdbcType=BIGINT},
+		    modify_name = #{modifyName,jdbcType=VARCHAR},
+		    modify_time = #{modifyTime,jdbcType=TIMESTAMP}  
+		    where  topict_code = #{topictCode,jdbcType=VARCHAR} 
+	</update>
+	
+	<delete id="deleteHelpDocTopic" parameterType="java.lang.String">
+	 delete from help_doc_topic  
+	 where 
+		<if test="topictCode != null and topictCode != ''">
+            topict_code = #{topictCode,jdbcType=VARCHAR} 
+		</if>
+	</delete>
+	
+	<select id="queryHelpDocByTopicCode"  resultMap="base_resultMap_helpDocTopic">
+	select id,topict_code,topict_name,category_code,category_name,second_category_code,second_category_name,
+    sort_num,content,is_publish,visit_url,create_id,create_name,create_time,modify_id,modify_name,modify_time  
+	from help_doc_topic  
+	<where>
+		<if test="topictCode != null and topictCode != ''">
+			topict_code = #{topictCode,jdbcType=VARCHAR}
+		</if>
+	 </where>
+	</select>
+	
+	<select id="queryHelpDocTopicForPage" resultMap="base_resultMap_helpDocTopic">
+	select id,topict_code,topict_name,category_code,category_name,second_category_code,second_category_name,
+    sort_num,content,is_publish,visit_url,create_id,create_name,create_time,modify_id,modify_name,modify_time  
+	from help_doc_topic  
+	where 1=1
+	<if test="dto.topictName != null and dto.topictName != ''">
+		and topict_name = #{dto.topictName,jdbcType=VARCHAR}
+	</if>
+	<if test="dto.categoryCode != null and dto.categoryCode != ''">
+		and category_code = #{dto.categoryCode,jdbcType=VARCHAR}
+	</if>
+	<if test="dto.secondCategoryCode != null and dto.secondCategoryCode != ''">
+		and second_category_code = #{dto.secondCategoryCode,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="dto.createStartTime != null and dto.createStartTime != ''">
+	 <![CDATA[ 
+		and date_format(create_time,'%Y-%m-%d %H:%m:%s') >= #{dto.createStartTime,jdbcType=VARCHAR} 
+	  ]]> 
+	</if>
+	<if test="dto.createEndTime != null and dto.createEndTime != ''">
+	 <![CDATA[ 
+		and date_format(create_time,'%Y-%m-%d %H:%m:%s') <= #{dto.createEndTime,jdbcType=VARCHAR} 
+	 ]]>
+	</if>
+	<if test="dto.modifyStartTime != null and dto.modifyStartTime != ''">
+	 <![CDATA[ 
+		and date_format(modify_time,'%Y-%m-%d %H:%m:%s') >= #{dto.modifyStartTime,jdbcType=VARCHAR} 
+	  ]]> 
+	</if>
+	<if test="dto.modifyEndTime != null and dto.modifyEndTime != ''">
+	 <![CDATA[ 
+		and date_format(modify_time,'%Y-%m-%d %H:%m:%s') <= #{dto.modifyEndTime,jdbcType=VARCHAR} 
+	 ]]>
+	</if>
+	order by sort_num  
+	limit #{page.pageOffset},#{page.rows}
+	</select>
+</mapper>

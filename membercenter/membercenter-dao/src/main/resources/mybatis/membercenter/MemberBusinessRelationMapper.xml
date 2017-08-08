@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberBusinessRelationDAO">
+	<!-- 查询会员经营关系列表信息 -->
+	<select id="queryMemberBusinessRelationListInfo" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select
+			a.business_id businessId,
+			a.buyer_id buyerId,
+			a.customer_manager_id customerManagerId,
+			a.seller_id sellerId,
+			a.category_id categoryId,
+			a.brand_id brandId,
+			a.erp_status erpStatus,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.create_time createTime,
+			a.modify_time modifyTime,
+			a.delete_time deleteTime,
+			a.audit_time auditTime
+           from business_relationship a
+		where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
+			and a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
+			<if test="memberBusinessRelationDTO.brandId != null and memberBusinessRelationDTO.brandId != ''">
+				and a.brand_id = #{memberBusinessRelationDTO.brandId}
+			</if>
+			<if test="memberBusinessRelationDTO.categoryId != null and memberBusinessRelationDTO.categoryId != ''">
+				and a.category_id = #{memberBusinessRelationDTO.categoryId}
+			</if>
+			and a.audit_status = #{memberBusinessRelationDTO.auditStatus}
+			and (a.category_id !=0 and a.brand_id !=0)
+
+		order by a.modify_time desc
+		<if test="pager.pageOffset != null and pager != null">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+	
+	<select id="queryMemberBusinessRelationDetail" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select
+			a.business_id businessId,
+			a.buyer_id buyerId,
+			a.customer_manager_id customerManagerId,
+			a.seller_id sellerId,
+			a.category_id categoryId,
+			a.brand_id brandId,
+			a.erp_status erpStatus,
+			a.audit_status auditStatus,
+			a.delete_flag deleteFlag,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.create_time createTime,
+			a.modify_time modifyTime,
+			a.delete_time deleteTime,
+			a.audit_time auditTime
+           from business_relationship a
+		where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
+			and a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.brand_id = #{memberBusinessRelationDTO.brandId}
+			and a.category_id = #{memberBusinessRelationDTO.categoryId}
+			and (a.category_id !=0 and a.brand_id !=0)
+			limit 0,1
+	</select>
+	
+	<!-- 查询会员经营关系记录数 -->
+	<select id="queryMemberBusinessRelationListInfoCount" resultType="java.lang.Long" parameterType="Object">
+		select count(0)
+            from business_relationship a
+        where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
+			and a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
+			<if test="memberBusinessRelationDTO.brandId != null and memberBusinessRelationDTO.brandId != ''">
+				and a.brand_id = #{memberBusinessRelationDTO.brandId}
+			</if>
+			and a.audit_status = #{memberBusinessRelationDTO.auditStatus}
+			and (a.category_id !=0 and a.brand_id !=0)
+	</select>
+	
+	<!-- 更新商家会员经营关系 -->
+	<update id="updateMemberBusinessRelationInfo" parameterType="Object">
+		update business_relationship set			
+	   	delete_flag = #{memberBusinessRelationDTO.deleteFlag},
+	   	customer_manager_id = #{memberBusinessRelationDTO.customerManagerId},
+	   	audit_status = #{memberBusinessRelationDTO.auditStatus}
+		where buyer_id = #{memberBusinessRelationDTO.buyerId}
+		and seller_id = #{memberBusinessRelationDTO.sellerId}
+		and brand_id = #{memberBusinessRelationDTO.brandId}
+		and category_id = #{memberBusinessRelationDTO.categoryId}
+	</update>
+	
+	<!-- 删除商家会员经营关系 -->
+	<update id="deleteMemberBusinessRelationInfo" parameterType="Object">
+		update business_relationship set			
+	   	delete_flag = #{memberBusinessRelationDTO.deleteFlag},
+	   	customer_manager_id = '',
+	   	delete_time = now()
+		where buyer_id = #{memberBusinessRelationDTO.buyerId}
+		and seller_id = #{memberBusinessRelationDTO.sellerId}
+		and brand_id = #{memberBusinessRelationDTO.brandId}
+		and category_id = #{memberBusinessRelationDTO.categoryId}
+	</update>
+	
+	<insert id="insertMemberBusinessRelationInfo" parameterType="Object"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into business_relationship(
+			buyer_id,
+			customer_manager_id,
+			seller_id,
+			category_id,
+			brand_id,
+			erp_status,
+			audit_status,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberBusinessRelationDTO.buyerId},
+			#{memberBusinessRelationDTO.customerManagerId},
+			#{memberBusinessRelationDTO.sellerId},
+			#{memberBusinessRelationDTO.categoryId},
+			#{memberBusinessRelationDTO.brandId},
+			'1',
+			#{memberBusinessRelationDTO.auditStatus},
+			'0',
+			#{memberBusinessRelationDTO.operateId},
+			#{memberBusinessRelationDTO.operateName},
+			now(),
+			#{memberBusinessRelationDTO.operateId},
+			#{memberBusinessRelationDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 查询会员经营关系列表信息 -->
+	<select id="queryMemberBusinessRelationPendingAudit" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select
+			a.business_id businessId,
+			a.buyer_id buyerId,
+			a.customer_manager_id customerManagerId,
+			a.seller_id sellerId,
+			a.category_id categoryId,
+			a.brand_id brandId,
+			a.erp_status erpStatus,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.create_time createTime,
+			a.modify_time modifyTime,
+			a.delete_time deleteTime,
+			a.audit_time auditTime
+           from business_relationship a
+		where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
+			and a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = 0
+			and a.audit_status = #{memberBusinessRelationDTO.auditStatus}
+			and (a.category_id !=0 and a.brand_id !=0)
+	</select>
+	
+	<!-- 查询会员经营关系记录数 -->
+	<select id="queryMemberBoxRelationInfo" resultType="java.lang.Long" parameterType="Object">
+		select count(0)
+            from box_relationship a
+		where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
+			and a.seller_id = #{memberBusinessRelationDTO.sellerId} and a.delete_flag = 0
+	</select>
+	
+	<insert id="insertMeberBoxRelationInfo" parameterType="Object"
+		useGeneratedKeys="true">
+		insert into box_relationship(
+			buyer_id,
+			seller_id,
+			<if test="memberBusinessRelationDTO.erpStatus !=null and memberBusinessRelationDTO.erpStatus !=''">
+				erp_status,
+			</if>
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberBusinessRelationDTO.buyerId},
+			#{memberBusinessRelationDTO.sellerId},
+			<if test="memberBusinessRelationDTO.erpStatus !=null and memberBusinessRelationDTO.erpStatus !=''">
+				#{memberBusinessRelationDTO.erpStatus},
+			</if>
+			0,
+			#{memberBusinessRelationDTO.operateId},
+			#{memberBusinessRelationDTO.operateName},
+			now(),
+			#{memberBusinessRelationDTO.operateId},
+			#{memberBusinessRelationDTO.operateName},
+			now()
+		)
+	</insert>
+	
+	<!-- 查询会员经营关系列表 -->
+	<select id="queryMemberBusinessRelationList" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select
+			a.business_id businessId,
+			a.buyer_id buyerId,
+			a.customer_manager_id customerManagerId,
+			a.seller_id sellerId,
+			a.category_id categoryId,
+			a.brand_id brandId,
+			a.erp_status erpStatus,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.create_time createTime,
+			a.modify_time modifyTime,
+			a.delete_time deleteTime,
+			a.audit_time auditTime
+           from business_relationship a,member_company_info m
+			where a.buyer_id = m.member_id
+			and m.member_id = #{buyerId}
+			and a.seller_id = #{sellerId}
+			and a.category_id = #{categoryId}
+			and a.brand_id = #{brandId}
+			and a.audit_status = '1'
+			and a.delete_flag = 0
+			and (a.category_id !=0 and a.brand_id !=0)
+	</select>
+	
+	
+	<!-- 删除商家会员经营关系 -->
+	<update id="removeBussinessRelation" parameterType="Object">
+		update business_relationship set			
+	   	delete_flag = 1,
+	   	modify_time = now()
+		where buyer_id = #{memberBusinessRelationDTO.buyerId}
+		and seller_id = #{memberBusinessRelationDTO.sellerId}
+	</update>
+	
+	<!-- 根据买家id查询经营关系 -->
+	<select id="selectMemberBussinsessRelationShip" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO">
+		select 
+		b.buyer_id buyerId,
+		b.seller_id sellerId,
+		b.category_id categoryId,
+		b.brand_id brandId
+		from business_relationship b 
+		where
+		b.delete_flag = 0
+		and b.buyer_id = #{memberId}
+		and (b.category_id !=0 and b.brand_id !=0)
+	</select>
+</mapper>

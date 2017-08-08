@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">  
+<properties>  
+	<comment>Analyzer 扩展配置</comment>
+	
+	<!--主词典路径 -->
+	<entry key="main_dict">/Users/yangxin/opt/search/dictionary/main.dic</entry> 
+	
+	<!--扩展词典路径 -->
+	<entry key="ext_dict">/Users/yangxin/opt/search/dictionary/ext.dic</entry>
+	
+	<!--数量词典路径 -->
+	<entry key="quantifier">/Users/yangxin/opt/search/dictionary/quantifier.dic</entry>
+	
+	<!--停用词典路径-->
+	<entry key="stopwords">/Users/yangxin/opt/search/dictionary/stopword.dic</entry> 
+	
+</properties>

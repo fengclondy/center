@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberScoreSetDAO">
+
+	<!-- 查询会员分级规则信息 -->
+	<select id="queryMemberScoreSetList" resultType="cn.htd.membercenter.dto.MemberScoreSetDTO"
+		parameterType="Object">
+	     select a.interval_type intervalType,
+			a.from_amount fromAmount,
+			a.to_amount toAmount,
+			a.score score from buyer_score_interval a 
+			where a.interval_type = #{memberScoreSetDTO.intervalType}
+			order by from_amount 
+	</select>
+
+	<!-- 查询会员升级规则信息 -->
+	<select id="queryMemberScoreRuleList" resultType="cn.htd.membercenter.dto.MemberScoreSetDTO"
+		parameterType="Object">
+	   select a.buyer_level buyerLevel,
+		a.from_score fromScore,
+		a.to_score toScore,
+		a.lowest_point lowestPoint  from buyer_grade_interval a
+		order by buyer_level
+	</select>
+	
+	
+	<!-- 保存会员分级规则信息  -->
+	<insert id="insertMemberScoreSet" parameterType="cn.htd.membercenter.dto.MemberScoreSetDTO"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into buyer_score_interval(
+			interval_type,
+			from_amount,
+			to_amount,
+			score,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberScoreSetDTO.intervalType},
+			#{memberScoreSetDTO.fromAmount},
+			#{memberScoreSetDTO.toAmount},
+			#{memberScoreSetDTO.score},
+			'0',
+			#{memberScoreSetDTO.operateId},
+			#{memberScoreSetDTO.operateName},
+			now(),
+			#{memberScoreSetDTO.operateId},
+			#{memberScoreSetDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 保存会员分组关系信息  -->
+	<insert id="insertMemberScoreRule" parameterType="cn.htd.membercenter.dto.MemberScoreSetDTO"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into buyer_grade_interval(
+			buyer_level,
+			from_score,
+			to_score,
+			lowest_point,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberScoreSetDTO.buyerLevel},
+			#{memberScoreSetDTO.fromScore},
+			#{memberScoreSetDTO.toScore},
+			#{memberScoreSetDTO.lowestPoint},
+			'0',
+			#{memberScoreSetDTO.operateId},
+			#{memberScoreSetDTO.operateName},
+			now(),
+			#{memberScoreSetDTO.operateId},
+			#{memberScoreSetDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 删除会员分组关系  -->
+	<delete id="deleteMemberScoreSet" parameterType="Object">
+		<![CDATA[
+		delete from buyer_score_interval 
+		where interval_type = #{memberScoreSetDTO.intervalType}		
+		]]>
+	</delete>
+	
+	<!-- 删除会员分组关系  -->
+	<delete id="deleteMemberScoreRule" parameterType="Object">
+		<![CDATA[
+		delete from buyer_grade_interval 
+		]]>
+	</delete>
+	
+	<select id="queryMemberScoreRuleHistory" resultType="cn.htd.membercenter.dto.MemberGradeRuleHistoryDTO"
+		parameterType="Object">
+		select a.interval_type intervalType,
+			a.operate_type operateType,
+			a.operate_id operateId,
+			a.operate_name operateName,
+			a.operate_time operateTime
+		from buyer_grade_rule_history a
+		order by a.operate_time desc
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<select id="queryMemberScoreRuleHistoryCount" resultType="java.lang.Long"
+		parameterType="Object">
+	select count(0)
+		from buyer_grade_rule_history a
+	</select>
+	
+	<!-- 保存会员经验规则履历信息  -->
+	<insert id="insertMemberScoreRuleHistory" parameterType="cn.htd.membercenter.dto.MemberGradeRuleHistoryDTO"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into buyer_grade_rule_history(
+			interval_type,
+			operate_type,
+			operate_id,
+			operate_name,
+			operate_time
+		) values (
+			#{memberGradeRuleHistoryDTO.intervalType},
+			#{memberGradeRuleHistoryDTO.operateType},
+			#{memberGradeRuleHistoryDTO.operateId},
+			#{memberGradeRuleHistoryDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 保存经验规则权重比例信息  -->
+	<insert id="insertMemberScoreWeight" parameterType="cn.htd.membercenter.dto.MemberScoreSetDTO"
+		useGeneratedKeys="true">
+		<![CDATA[
+		insert into buyer_score_weight(
+			buyer_grade_weight_json,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		) values (
+			#{memberScoreSetDTO.jsonStr},
+			#{memberScoreSetDTO.operateId},
+			#{memberScoreSetDTO.operateName},
+			now(),
+			#{memberScoreSetDTO.operateId},
+			#{memberScoreSetDTO.operateName},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 删除经验规则权重比例信息  -->
+	<delete id="deleteMemberScoreWeight" parameterType="Object">
+		<![CDATA[
+		delete from buyer_score_weight 
+		]]>
+	</delete>
+	
+	
+	<!-- 查询会员等级权重信息 -->
+	<select id="queryMemberScoreWeight" resultType="cn.htd.membercenter.dto.MemberScoreSetDTO"
+		parameterType="Object">
+	   select a.buyer_grade_weight_json jsonStr from buyer_score_weight a
+	</select>
+	
+</mapper>

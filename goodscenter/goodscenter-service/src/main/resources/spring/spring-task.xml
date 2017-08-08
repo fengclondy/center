@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="scheduleManagerFactory" class="com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory" init-method="init">
+        <property name="zkConfig">
+            <map>
+                <entry key="zkConnectString" value="${tbschedule.registry.address}" />
+                <entry key="rootPath" value="${tbschedule.rootPath}" />
+                <entry key="zkSessionTimeout" value="${tbschedule.timeout}" />
+                <entry key="userName" value="" />
+                <entry key="password" value="" />
+                <entry key="isCheckParentPath" value="${tbschedule.isCheckParentPath}" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="itemBrandDownErpSupplyTask" class="cn.htd.goodscenter.service.task.ItemBrandDownErpSupplyTask"/>
+   
+    <!-- 定时上架内部供应商商品 -->
+	<bean id="internalSupplyItemAuoUpShelfTask" class="cn.htd.goodscenter.service.task.InternalSupplyItemAuoUpShelfTask"></bean>
+	
+	<!-- 定时下架内部供应商商品 -->
+	<bean id="internalSupplyItemAuoDownShelfTask" class="cn.htd.goodscenter.service.task.InternalSupplyItemAuoDownShelfTask"></bean>
+	
+	<!-- 到货通知 -->
+	<bean id="itemArrivalNotifyTask" class="cn.htd.goodscenter.service.task.ItemArrivalNotifyTask"></bean>
+	
+	<!-- 商品下行补偿 -->
+	<bean id="makeUpItemDownErpTask" class="cn.htd.goodscenter.service.task.MakeUpItemDownErpTask"></bean>
+
+    <!-- 缓存品类信息 -->
+    <bean id="cacheItemBrandTask" class="cn.htd.goodscenter.service.task.CacheItemBrandTask"/>
+
+    <!-- 缓存属性信息 -->
+    <bean id="cacheItemAttributeTask" class="cn.htd.goodscenter.service.task.CacheItemAttributeTask"/>
+
+    <!-- 缓存属性信息 -->
+    <bean id="cacheItemAttributeValueTask" class="cn.htd.goodscenter.service.task.CacheItemAttributeValueTask"/>
+
+    <bean id="mailErpExceptionBrandTask" class="cn.htd.goodscenter.service.task.MailErpExceptionBrandTask"/>
+    
+    <!-- 商品下行异常通知 -->
+	<bean id="itemDownErpWarnTask" class="cn.htd.goodscenter.service.task.ItemDownErpWarnTask"></bean>
+    
+</beans>

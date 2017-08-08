@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+	<!-- 使用dubbo协议暴露服务 -->
+	<dubbo:service interface="cn.htd.usercenter.service.UserExportService" ref="userExportService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.RoleService" ref="roleService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.usercenter.service.ProductService" ref="productService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.PermissionService" ref="permissionService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.SubstationService" ref="substationService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.EmployeeService" ref="employeeService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.HTDCompanyService" ref="htdCompanyService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.UserSyncService" ref="userSyncService" version="${dubbo.version}" timeout="3600000" />
+    <dubbo:service interface="cn.htd.usercenter.service.CustomerService" ref="customerService" version="${dubbo.version}" timeout="60000" />
+    <dubbo:service interface="cn.htd.usercenter.service.UserStorePermissionExportService" ref="userStorePermissionExportService" version="${dubbo.version}" timeout="60000" />
+</beans>

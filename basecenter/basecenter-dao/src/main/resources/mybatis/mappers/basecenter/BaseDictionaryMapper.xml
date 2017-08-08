@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.basecenter.dao.BaseDictionaryDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BaseDictionary" >
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="BIGINT" />
+		<result column="type_name" property="typeName" jdbcType="VARCHAR" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="parent_code" property="parentCode" jdbcType="VARCHAR" />
+		<result column="parent_name" property="parentName" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+			id,
+			name,
+			code,
+			type,
+			value,
+			parent_code,
+			remark,
+			status,
+			sort_num,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		from
+			base_dictionary
+		]]>
+	</sql>
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity.name != null and entity.name != ''">
+			and bd1.name like CONCAT('%',#{entity.name},'%')
+		</if>
+		<if test="entity.code != null and entity.code !=''">
+			and bd1.code like CONCAT('%',#{entity.code},'%')
+		</if>
+		<if test="entity.type != null">
+			and bd1.type = #{entity.type}
+		</if>
+		<if test="entity.parentCode != null and entity.parentCode !='' ">
+			and bd1.parent_code = #{entity.parentCode}
+		</if>
+		<if test="entity.status != null and entity.status != -1 ">
+			and bd1.status = #{entity.status}
+		</if>
+		<if test="entity.parentName != null and entity.parentName !=''">
+			and bd2.name like CONCAT('%',#{entity.parentName},'%')
+		</if>
+		<if test="entity.remark != null and entity.remark !=''">
+			and bd1.remark like CONCAT('%',#{entity.remark},'%')
+		</if>
+	</sql>
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 通过id查询字典 -->
+	<select id="queryById" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where id = #{id}
+	</select>
+	<!-- 插入记录 -->
+	<insert id="add" useGeneratedKeys="true">
+		insert into base_dictionary(
+			name,
+			code,
+			type,
+			value,
+			parent_code,
+			remark,
+			status,
+			has_up_redis,
+			sort_num,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{name},
+			#{code},
+			#{type},
+			#{value},
+			#{parentCode},
+			#{remark},
+			#{status},
+			0,
+			#{sortNum},
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新记录 -->
+	<update id="update">
+		update base_dictionary
+		<set>
+			<if test="code != null and code !=''">
+				code = #{code},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="value != null and value !=''">
+				value = #{value},
+			</if>
+			<if test="type != null">
+				type = #{type},
+			</if>
+			<if test="parentCode != null and parentCode !=''">
+				parent_code = #{parentCode},
+			</if>
+			<if test="status != null ">
+				status = #{status},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="sortNum != null ">
+				sort_num = #{sortNum},
+			</if>
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now(),
+			has_up_redis = 0
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 查询列表 -->
+	<select id="queryList" resultMap="BaseResultMap">
+		select
+			bd1.id as id,
+			bd1.name as name,
+			bd1.code as code,
+			bd1.value as value,
+			bd1.type as type,
+			bd1.parent_code as parent_code,
+			bd1.status as status,
+			bd1.remark as remark,
+			bd1.sort_num as sort_num,
+			bd1.create_id as create_id,
+			bd1.create_name as create_name,
+			bd1.create_time as create_time,
+			bd1.modify_id as modify_id,
+			bd1.modify_name as modify_name,
+			bd1.modify_time as modify_time,
+			bd2.name as parent_name,
+			bt.name as type_name
+		from base_dictionary bd1
+		left join base_dictionary bd2 on (bd1.parent_code = bd2.code)
+		left join base_type bt on (bd1.type = bt.name)
+		<include refid="where_fragement" />
+		group by bd1.id
+		order by bd1.parent_code, bd1.sort_num
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1)
+		from base_dictionary bd1 
+		left join base_dictionary bd2 on (bd1.parent_code = bd2.code)
+		<include refid="where_fragement" />
+	</select>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<!-- 查询字典分组列表 -->
+	<select id="queryBaseDictionaryList" parameterType="cn.htd.basecenter.dto.BaseDictionaryDTO" resultMap="BaseResultMap">
+		select 
+			id,
+			code,
+			name,
+			value
+		from base_dictionary
+		where parent_code = #{parentCode} 
+		  and status = #{status}
+		order by sort_num 
+	</select>
+	<!-- 检查同一分组下字典编码和值不能重复 -->
+	<select id="checkBaseDictionaryUniqueness" parameterType="cn.htd.basecenter.dto.BaseDictionaryDTO" resultType="java.lang.Long">
+		select count(1) 
+		from base_dictionary
+		where parent_code = #{parentCode}
+		  and (
+			code = #{code}
+		  	<if test="parentCode != null and parentCode != '' ">
+	  			or value = #{value}
+			</if>
+		  )
+		<if test="id != null">
+			and <![CDATA[ id <> #{id} ]]>
+		</if>
+	</select>
+	<!-- 根据编码查询 -->
+	<select id="queryBaseDictionaryByCode" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where parent_code = #{parentCode}
+			<if test="code != null and code != '' ">
+		  		and code = #{code}
+		  	</if>
+		  	<if test="value != null and value != '' ">
+		  		and value = #{value}
+		  	</if>
+	</select>
+	<!-- 查询定时任务处理字典列表 -->
+	<select id="queryDictionaryList4Task" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where has_up_redis = 0
+		  and mod(id, #{entity.taskQueueNum}) in 
+		  <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- 更新记录Redis更新状态 -->
+	<update id="updateRedisFlagById">
+		update base_dictionary 
+		<set> 
+			has_up_redis = 1
+		</set>
+		where id in 
+		<foreach collection="list" index="index" item="dictId" open="(" separator="," close=")"> 
+            #{dictId} 
+        </foreach> 
+	</update>
+	
+	<select id="queryItemUnitByName" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where name=#{name}
+		and parent_code="ITEM_UNIT"
+	</select>
+	
+	<select id="queryMaxItemUnit" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		 where parent_code="ITEM_UNIT"
+		order by id desc limit 1
+	</select>
+	
+	<select id="queryByValue" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		 where value=#{v}
+		 limit 1
+	</select>
+	
+</mapper>

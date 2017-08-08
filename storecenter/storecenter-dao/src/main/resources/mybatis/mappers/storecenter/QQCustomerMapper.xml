@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.storecenter.dao.QQCustomerDAO">
+
+    <!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <resultMap id="QQCustomerDTOMap" type="QQCustomerDTO">
+    	<result property="id" column="id"/>
+        <result property="customerType" column="customer_type"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="customerQQNumber" column="customer_QQ_number"/>
+        <result property="customerSortNumber" column="customer_sort_number"/>
+        <result property="deleted" column="delete_flag"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="createId" column="create_id"/>
+        <result property="createName" column="create_name"/>
+        <result property="modifyId" column="modify_id"/>
+        <result property="modifyName" column="modify_name"/>
+    </resultMap>
+
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                        -->
+    <!-- =========================================================== -->
+    <sql id="selectAllColumns">
+		<![CDATA[
+		select
+			qqCustomer.id,
+			qqCustomer.customer_type,
+			qqCustomer.seller_id,
+			qqCustomer.shop_id,
+			qqCustomer.shop_name,
+			qqCustomer.customer_QQ_number,
+			qqCustomer.customer_sort_number,
+			qqCustomer.delete_flag,
+			qqCustomer.is_default,
+			qqCustomer.create_time,
+			qqCustomer.modify_time,
+			qqCustomer.create_id,
+			qqCustomer.create_name,
+			qqCustomer.modify_id,
+			qqCustomer.modify_name
+		from qq_customer qqCustomer
+        ]]>
+	</sql>
+
+    <sql id="where_fragement">
+        where 1=1
+        <if test="entity!=null">
+            <if test="entity.id != null">
+                <![CDATA[ and qqCustomer.id  =#{entity.id} ]]>
+            </if>
+            <if test="entity.customerType != null">
+                <![CDATA[ and qqCustomer.customer_type  =#{entity.customerType} ]]>
+            </if>
+            <if test="entity.sellerId != null">
+                <![CDATA[ and qqCustomer.seller_id  =#{entity.sellerId} ]]>
+            </if>
+            <if test="entity.shopId != null">
+                <![CDATA[ and qqCustomer.shop_id  =#{entity.shopId} ]]>
+            </if>
+            <if test="entity.shopName != null">
+                <![CDATA[ and qqCustomer.shop_name  =#{entity.shopName} ]]>
+            </if>
+            <if test="entity.customerQQNumber != null">
+                <![CDATA[ and qqCustomer.customer_QQ_number  =#{entity.customerQQNumber} ]]>
+            </if>
+            <if test="entity.customerSortNumber != null">
+                <![CDATA[ and qqCustomer.customer_sort_number =#{entity.customerSortNumber} ]]>
+            </if>
+            <if test="entity.deleted != null">
+                <![CDATA[ and qqCustomer.delete_flag =#{entity.deleted} ]]>
+            </if>
+            <if test="entity.isDefault != null">
+                <![CDATA[ and qqCustomer.is_default =#{entity.isDefault} ]]>
+            </if>
+            <if test="entity.createTime != null">
+                <![CDATA[ and qqCustomer.create_time =#{entity.createTime} ]]>
+            </if>
+            <if test="entity.modifyTime != null">
+                <![CDATA[ and qqCustomer.modify_time =#{entity.modifyTime} ]]>
+            </if>
+            <if test="entity.createId != null">
+                <![CDATA[ and qqCustomer.create_id  =#{entity.createId} ]]>
+            </if>
+            <if test="entity.createName != null">
+                <![CDATA[ and qqCustomer.create_name  =#{entity.createName} ]]>
+            </if>
+            <if test="entity.modifyId != null">
+                <![CDATA[ and qqCustomer.modify_id  =#{entity.modifyId} ]]>
+            </if>
+            <if test="entity.modifyName != null">
+                <![CDATA[ and qqCustomer.modify_name  =#{entity.modifyName} ]]>
+            </if>
+        </if>
+        AND qqCustomer.delete_flag = 0
+        order by qqCustomer.create_time desc
+    </sql>
+
+    <!-- mysql 分页尾 -->
+    <sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+    <!-- =========================================================== -->
+    <!-- Dao方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+
+    <!-- 分页查询 -->
+    <select id="selectListByCondition" resultMap="QQCustomerDTOMap">
+        <include refid="selectAllColumns"/>
+        <include refid="where_fragement"/>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+
+    <!-- 查询总数 -->
+    <select id="selectCountByCondition" resultType="java.lang.Long">
+        <include refid="count_Tail"/>
+        qq_customer qqCustomer
+        <include refid="where_fragement"/>
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="addQQCustomer" parameterType="Object" useGeneratedKeys="true" keyProperty="sellerId">
+		<![CDATA[
+		insert into qq_customer(
+	        customer_type,
+	  		seller_id,
+			shop_id,
+			shop_name,
+			customer_QQ_number,
+			customer_sort_number,
+			delete_flag,
+			is_default,
+			create_time,
+			modify_time,
+            create_id,
+            create_name,
+			modify_id,
+			modify_name
+		)values(
+	        #{customerType},
+	  		#{sellerId},
+			#{shopId},
+			#{shopName},
+			#{customerQQNumber},
+			#{customerSortNumber},
+			0,
+			#{isDefault},
+			now(),
+			now(),
+			#{createId},
+			#{createName},
+			#{modifyId},
+			#{modifyName}
+		)
+        ]]>
+	</insert>
+
+	 <!-- 删除记录 -->
+	<update id="deleteQQCustomer" parameterType="QQCustomerDTO">
+		<![CDATA[
+		update qq_customer SET
+		  delete_flag = 1
+		  ,modify_id = #{modifyId}
+		  ,modify_name = #{modifyName}
+		  ,modify_time = now()
+		where id = #{id}
+        ]]>
+	</update>
+
+    <!-- 修改记录 -->
+    <insert id="modifyQQCustomer" parameterType="QQCustomerDTO">
+    	<![CDATA[
+		update qq_customer
+		set
+			customer_QQ_number = #{customerQQNumber}
+			,modify_id = #{modifyId}
+		    ,modify_name = #{modifyName}
+		    ,modify_time = now()
+	 	where id = #{id}
+        ]]>
+	</insert>
+
+	<select id="verifyQQCustomer" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM qq_customer
+		WHERE customer_QQ_number = #{customerQQNumber}
+        <if test="customerId!=null">
+            and id !=#{customerId}
+        </if>
+	</select>
+
+    <update id="setDefaultCustomer" parameterType="QQCustomerDTO">
+        update qq_customer
+		set
+			is_default = #{isDefault}
+			,modify_id = #{modifyId}
+		    ,modify_name = #{modifyName}
+		    ,modify_time = now()
+	 	where id = #{id}
+    </update>
+
+    <update id="clearDefaultCustomer" parameterType="Object">
+        update qq_customer
+        set
+        is_default = 0
+        where 1=1
+         <if test="shopId !=null">
+            and  shop_id = #{shopId}
+         </if>
+        <if test="shopId ==null">
+            and  shop_id is NULL
+        </if>
+    </update>
+
+</mapper>

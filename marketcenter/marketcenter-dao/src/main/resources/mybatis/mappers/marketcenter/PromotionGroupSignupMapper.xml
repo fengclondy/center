@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.marketcenter.dao.PromotionGroupDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.domain.PromotionGroupSignup" >
+    <id column="group_id" property="groupId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="BIGINT" />
+    <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="product_num" property="productNum" jdbcType="INTEGER" />
+    <result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+    <result column="buyer_mobile" property="buyerMobile" jdbcType="VARCHAR" />
+    <result column="signup_channel" property="signupChannel" jdbcType="TINYINT" />
+    <result column="buyer_address_province" property="buyerAddressProvince" jdbcType="VARCHAR" />
+    <result column="buyer_address_city" property="buyerAddressCity" jdbcType="VARCHAR" />
+    <result column="buyer_address_district" property="buyerAddressDistrict" jdbcType="VARCHAR" />
+    <result column="buyer_address_town" property="buyerAddressTown" jdbcType="VARCHAR" />
+    <result column="buyer_address_detail" property="buyerAddressDetail" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="modify_time" property="modifyTime" jdbcType="VARCHAR" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    group_id, promotion_id, buyer_code, product_num, buyer_name, buyer_mobile, signup_channel, 
+    buyer_address_province, buyer_address_city, buyer_address_district, buyer_address_town, 
+    buyer_address_detail, create_time, create_id, modify_time, modify_id, remark
+  </sql>
+  <select id="queryPromotionGroupSignUpCount" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_group_sign_up
+    where promotion_id = #{promotionId,jdbcType=BIGINT}  
+   	and buyer_code = #{buyerCode,jdbcType=VARCHAR}
+  </select>
+   <select id="queryPromotionGroupSignUpList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_group_sign_up
+    where promotion_id = #{promotionId,jdbcType=BIGINT}  
+  </select>
+  <insert id="insertPromotionGroupSignUpInfo" parameterType="cn.htd.marketcenter.domain.PromotionGroupSignup" >
+    insert into promotion_group_sign_up
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="promotionId != null" >
+        promotion_id,
+      </if>
+      <if test="buyerCode != null" >
+        buyer_code,
+      </if>
+      <if test="productNum != null" >
+        product_num,
+      </if>
+      <if test="buyerName != null" >
+        buyer_name,
+      </if>
+      <if test="buyerMobile != null" >
+        buyer_mobile,
+      </if>
+      <if test="signupChannel != null" >
+        signup_channel,
+      </if>
+      <if test="buyerAddressProvince != null" >
+        buyer_address_province,
+      </if>
+      <if test="buyerAddressCity != null" >
+        buyer_address_city,
+      </if>
+      <if test="buyerAddressDistrict != null" >
+        buyer_address_district,
+      </if>
+      <if test="buyerAddressTown != null" >
+        buyer_address_town,
+      </if>
+      <if test="buyerAddressDetail != null" >
+        buyer_address_detail,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=BIGINT},
+      </if>
+      <if test="buyerCode != null" >
+        #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productNum != null" >
+        #{productNum,jdbcType=INTEGER},
+      </if>
+      <if test="buyerName != null" >
+        #{buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerMobile != null" >
+        #{buyerMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="signupChannel != null" >
+        #{signupChannel,jdbcType=TINYINT},
+      </if>
+      <if test="buyerAddressProvince != null" >
+        #{buyerAddressProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressCity != null" >
+        #{buyerAddressCity,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressDistrict != null" >
+        #{buyerAddressDistrict,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressTown != null" >
+        #{buyerAddressTown,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressDetail != null" >
+        #{buyerAddressDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.marketcenter.domain.PromotionGroupSignup">
+    update promotion_group_sign_up
+    <set >
+      <if test="promotionId != null" >
+        promotion_id = #{promotionId,jdbcType=BIGINT},
+      </if>
+      <if test="buyerCode != null" >
+        buyer_code = #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productNum != null" >
+        product_num = #{productNum,jdbcType=INTEGER},
+      </if>
+      <if test="buyerName != null" >
+        buyer_name = #{buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerMobile != null" >
+        buyer_mobile = #{buyerMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="signupChannel != null" >
+        signup_channel = #{signupChannel,jdbcType=TINYINT},
+      </if>
+      <if test="buyerAddressProvince != null" >
+        buyer_address_province = #{buyerAddressProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressCity != null" >
+        buyer_address_city = #{buyerAddressCity,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressDistrict != null" >
+        buyer_address_district = #{buyerAddressDistrict,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressTown != null" >
+        buyer_address_town = #{buyerAddressTown,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAddressDetail != null" >
+        buyer_address_detail = #{buyerAddressDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where group_id = #{groupId,jdbcType=BIGINT}
+  </update>
+  
+  <update id="repairPromotionGroupSignupInfo" parameterType="cn.htd.marketcenter.dto.PromotionGroupSignUpRepairDTO">
+	  update promotion_group_sign_up set buyer_code=#{memberCode},modify_time =now()
+	 where buyer_name=#{recevierName} and buyer_mobile=#{mobile}
+  </update>
+  
+</mapper>

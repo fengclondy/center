@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.vip.VipItemEntryInfoMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.vip.VipItemEntryInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="vip_item_id" property="vipItemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="base_price" property="basePrice" jdbcType="BIGINT" />
+    <result column="sale_price" property="salePrice" jdbcType="BIGINT" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="supplier_name" property="supplierName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, vip_item_id, sku_code, base_price, sale_price, delete_flag, create_id, create_name, 
+    create_time, modify_id, modify_name, modify_time, supplier_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from vip_item_entry_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vip_item_entry_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.vip.VipItemEntryInfo" >
+    insert into vip_item_entry_info (vip_item_id, sku_code,
+      base_price, sale_price, delete_flag, 
+      create_id, create_name, create_time,
+      supplier_name)
+    values (#{vipItemId,jdbcType=BIGINT}, #{skuCode,jdbcType=VARCHAR},
+      #{basePrice,jdbcType=BIGINT}, #{salePrice,jdbcType=BIGINT}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+      #{supplierName,jdbcType=VARCHAR})
+      ON DUPLICATE KEY UPDATE
+      delete_flag = 0,
+      base_price = #{basePrice,jdbcType=BIGINT},
+      sale_price = #{salePrice,jdbcType=BIGINT},
+      supplier_name = #{supplierName,jdbcType=VARCHAR},
+      create_time = now(),
+      modify_time = now()
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.vip.VipItemEntryInfo" >
+    insert into vip_item_entry_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="vipItemId != null" >
+        vip_item_id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="basePrice != null" >
+        base_price,
+      </if>
+      <if test="salePrice != null" >
+        sale_price,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="supplierName != null" >
+        supplier_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="vipItemId != null" >
+        #{vipItemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="basePrice != null" >
+        #{basePrice,jdbcType=BIGINT},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="supplierName != null" >
+        #{supplierName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.vip.VipItemEntryInfo" >
+    update vip_item_entry_info
+    <set >
+      <if test="vipItemId != null" >
+        vip_item_id = #{vipItemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="basePrice != null" >
+        base_price = #{basePrice,jdbcType=BIGINT},
+      </if>
+      <if test="salePrice != null" >
+        sale_price = #{salePrice,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="supplierName != null" >
+        supplier_name = #{supplierName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.vip.VipItemEntryInfo" >
+    update vip_item_entry_info
+    set vip_item_id = #{vipItemId,jdbcType=BIGINT},
+      sku_code = #{skuCode,jdbcType=VARCHAR},
+      base_price = #{basePrice,jdbcType=BIGINT},
+      sale_price = #{salePrice,jdbcType=BIGINT},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      supplier_name = #{supplierName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="deleteAllVipItemEntryInfo">
+   update vip_item_entry_info
+    set 
+      delete_flag = 1,
+      modify_time = NOW()
+      where vip_item_id=#{vipItemId}
+  </update>
+</mapper>

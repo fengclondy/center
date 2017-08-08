@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.MemberLicenceInfoDao">
+	
+	<!-- 根据verifyId 查询审批详细信息表
+	-->
+	<select id="queryVerifyDetailInfoByVerifyId" resultType="cn.htd.membercenter.domain.VerifyDetailInfo" >
+		SELECT
+			id,
+			verify_id verifyId,
+			modify_type modifyType,
+			record_type recordType,
+			record_id recordId,
+			content_name contentName,
+			change_table_id changeTableId,
+			change_field_id changeFieldId,
+			before_change beforeChange,
+			after_change afterChange,
+			operator_id operatorId,
+			operator_name operatorName,
+			operate_time operateTime
+		FROM
+			verify_detail_info
+		WHERE
+			verify_id = #{verifyId}		
+	</select>
+	
+	<update id="updateMemberStatusInfo" parameterType="cn.htd.membercenter.dto.MemberUncheckedDetailDTO">
+		UPDATE member_status_info
+		<set>
+			<if test="dto.verify_status != null and dto.verify_status != ''">
+				verify_status = #{dto.verify_status},
+			</if>
+			<if test="dto.verify_id != null and dto.verify_id != ''">
+				verify_id = #{dto.verify_id},
+			</if>
+			<if test="dto.modify_id != null and dto.modify_id != ''">
+				modify_id = #{dto.modify_id},
+			</if>
+			<if test="dto.modify_name != null and dto.modify_name">
+				modify_name = #{dto.modify_name},
+			</if>
+			<if test="dto.modify_time != null and dto.modify_time">
+				modify_time = #{dto.modify_time},
+			</if>
+			<if test="dto.sync_error_msg != null and dto.sync_error_msg != ''">
+				sync_error_msg = #{dto.sync_error_msg},
+			</if>
+			modify_time=now()
+		</set> where status_id=#{dto.status_id}
+	
+	</update>
+
+
+	<!--非会员转会员审核时更新状态信息-->
+	<update id="updateCheckMember" parameterType="cn.htd.membercenter.dto.MemberStatusVO">
+		UPDATE member_status_info
+		<set>
+			<if test="info_type!= null">
+				info_type = #{info_type},
+			</if>
+			<if test="verify_status!= null">
+				verify_status = #{verify_status},
+			</if>
+			<if test="verify_time!= null">
+			verify_time = #{verify_time},
+			</if>
+			<if test="verify_id!= null">
+				verify_id = #{verify_id},
+			</if>
+			<if test="sync_error_msg!= null">
+				sync_error_msg = #{sync_error_msg},
+			</if>
+			<if test="create_id!= null">
+				create_id = #{create_id},
+			</if>
+			<if test="create_id!= null">
+				create_id = #{create_id},
+			</if>
+			<if test="create_name!= null">
+				create_name = #{create_name},
+			</if>
+			<if test="create_time!= null">
+				create_time = #{create_time},
+			</if>
+			<if test="modify_id!= null">
+				modify_id = #{modify_id},
+			</if>
+			<if test="modify_name!= null">
+				modify_name = #{modify_name},
+			</if>
+			<if test="modify_time!= null">
+				modify_time = #{modify_time},
+			</if>
+		</set> where status_id=#{status_id}
+
+	</update>
+
+
+	<update id="updateMemberLicenceInfo" parameterType="cn.htd.membercenter.dto.MemberLicenceInfoVO" >
+	    update member_licence_info
+	    <set >
+	      <if test="buyer_guarantee_license_pic_src != null" >
+	        buyer_guarantee_license_pic_src = #{buyer_guarantee_license_pic_src},
+	      </if>
+	      <if test="buyer_business_license_pic_src != null" >
+	        buyer_business_license_pic_src = #{buyer_business_license_pic_src},
+	      </if>
+	      <if test="modify_id != null">
+			modify_id = #{modify_id},
+		  </if>
+		  <if test="modify_name != null">
+			modify_name = #{modify_name},
+		  </if>
+		  <if test="modify_time != null">
+			modify_time = #{modify_time},
+		  </if>
+	    </set>
+	    where member_id = #{member_id}
+	</update>
+	
+	<!-- 更新审批表 -->
+	<update id="updateVerifyInfo" parameterType="cn.htd.membercenter.dto.MemberRemoveRelationshipDTO">
+		update verify_info
+		<set>
+			<if test="status != null and status != ''">
+				verify_status = #{status},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="modifyId != null and modifyId != ''">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name = #{modifyName},
+			</if>
+		</set>
+		where id = #{verifyInfoId}	
+	</update>
+	
+
+	<update id="updateBelongRelationship" parameterType="cn.htd.membercenter.dto.MemberRemoveRelationshipDTO">
+		update belong_relationship
+		set status = #{status},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName}, 
+			belong_verify_time = now()
+		where 
+			buyer_id = #{memberId}	
+		and status = 3
+	</update>
+	
+	<update id="updateMemberBaseInfo" parameterType="cn.htd.membercenter.dto.MemberRemoveRelationshipDTO">
+		update member_base_info
+		set 
+		cur_belong_seller_id = #{belongMemberId},
+		cur_belong_manager_id = #{curBelongManagerId},
+		modify_time = now()
+		where 
+			id= #{memberId}
+	</update>
+	
+	<update id="updateMemberInvoiceInfo" parameterType="cn.htd.membercenter.dto.MemberInvoiceDTO">
+		 update member_invoice_info
+	    <set >
+	      <if test="invoiceNotify != null and invoiceNotify != ''" >
+	        invoice_notify = #{invoiceNotify,jdbcType=VARCHAR},
+	      </if>
+	      <if test="taxManId != null and taxManId != ''" >
+	        tax_man_id = #{taxManId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="bankName != null and bankName != ''" >
+	        bank_name = #{bankName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="bankAccount != null and bankAccount != ''" >
+	        bank_account = #{bankAccount,jdbcType=VARCHAR},
+	      </if>
+	      <if test="invoiceAddress != null and invoiceAddress != ''" >
+	        invoice_address = #{invoiceAddress,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactPhone != null and contactPhone != ''" >
+	        contact_phone = #{contactPhone,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyId != null and modifyId != ''" >
+	        modify_id = #{modifyId,jdbcType=BIGINT},
+	      </if>
+	      <if test="modifyName != null and modifyName != ''" >
+	        modify_name = #{modifyName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyTime == null or modifyTime == ''">
+	      	modify_time = now(),
+	      </if>
+	    </set>
+	    where invoice_id = #{invoiceId,jdbcType=BIGINT}
+	</update>
+
+
+</mapper>

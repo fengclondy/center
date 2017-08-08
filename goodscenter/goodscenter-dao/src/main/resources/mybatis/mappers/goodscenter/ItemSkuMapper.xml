@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.goodscenter.dao.ItemSkuDAO">
+	<resultMap id="itemSkuMapper" type="cn.htd.goodscenter.domain.ItemSku">
+		<result property="skuId" column="sku_id" />
+		<result property="itemId" column="item_id" />
+		<result property="skuCode" column="sku_code" />
+		<result property="sellerId" column="seller_id" />
+		<result property="shopId" column="shop_id" />
+		<result property="subTitle" column="sub_title"/>
+		<result property="skuStatus" column="sku_status" />
+		<result property="skuType" column="sku_type" />
+		<result property="ad" column="ad" />
+		<result property="attributes" column="attributes" />
+		<result property="skuErpCode" column="sku_erp_code" />
+		<result property="outerSkuId" column="outer_sku_id" />
+		<result property="created" column="created" />
+		<result property="createId" column="create_id" />
+		<result property="createName" column="create_name" />
+		<result property="modified" column="modified" />
+		<result property="modifyId" column="modify_id" />
+		<result property="modifyName" column="modify_name" />
+		<result property="eanCode" column="ean_code"/>
+	</resultMap>
+
+	
+	<resultMap id="itemSkuPictureMapper" type="cn.htd.goodscenter.domain.ItemSkuPicture">
+		<result property="pictureId" column="picture_id"/>
+		<result property="itemId" column="item_id"/>
+		<result property="saleAttribute" column="sale_attribute"/>
+		<result property="skuId" column="sku_id"/>
+		<result property="pictureUrl" column="picture_url"/>
+		<result property="isFirst" column="is_first"/>
+		<result property="sortNumber" column="sort_number"/>
+		<result property="pictureStatus" column="picture_status"/>
+		<result property="sellerId" column="seller_id"/>
+		<result property="shopId" column="shop_id"/>
+		<result property="deleteFlag" column="delete_flag"/>
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name"/>
+		<result property="created" column="created"/>
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name"/>
+		<result property="modified" column="modified"/>
+	</resultMap>
+
+	<resultMap id="itemSkuItemMapper" type="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuOutDTO">
+		<result property="itemId" column="item_id"/>
+		<result property="itemCode" column="item_code"/>
+		<result property="itemName" column="item_name"/>
+		<result property="sellerId" column="seller_id"/>
+		<result property="shopId" column="shop_id"/>
+		<result property="skuId" column="sku_id"/>
+		<result property="skuCode" column="sku_code"/>
+		<result property="subTitle" column="sub_title"/>
+		<result property="skuType" column="sku_type"/>
+		<result property="ad" column="ad"/>
+		<result property="attributes" column="attributes"/>
+		<result property="skuErpCode" column="sku_erp_code"/>
+		<result property="eanCode" column="ean_code"/>
+		<result property="displayQuantity" column="display_quantity"/>
+		<result property="mimQuantity" column="mim_quantity"/>
+		<result property="maxPurchaseQuantity" column="max_purchase_quantity"/>
+	</resultMap>
+	
+	
+	
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+		  *
+		from 
+			item_sku
+		]]>
+	</sql>
+	<!-- mysql 分页尾 -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	
+	<select id="queryById" resultMap="itemSkuMapper">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+			where sku_id = #{id}
+		]]>
+	</select>
+	
+	
+	<insert id="add" parameterType="cn.htd.goodscenter.domain.ItemSku" useGeneratedKeys="true" keyProperty="skuId">
+		 insert into item_sku
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="subTitle != null" >
+        sub_title,
+      </if>
+      <if test="skuStatus != null" >
+        sku_status,
+      </if>
+      <if test="skuType != null" >
+        sku_type,
+      </if>
+      <if test="ad != null" >
+        ad,
+      </if>
+      <if test="attributes != null" >
+        attributes,
+      </if>
+      <if test="skuErpCode != null" >
+        sku_erp_code,
+      </if>
+      <if test="outerSkuId != null" >
+        outer_sku_id,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="modified != null" >
+        modified,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+	  <if test="eanCode != null" >
+		ean_code
+	  </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="subTitle != null" >
+        #{subTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="skuStatus != null" >
+        #{skuStatus,jdbcType=INTEGER},
+      </if>
+      <if test="skuType != null" >
+        #{skuType,jdbcType=INTEGER},
+      </if>
+      <if test="ad != null" >
+        #{ad,jdbcType=VARCHAR},
+      </if>
+      <if test="attributes != null" >
+        #{attributes,jdbcType=VARCHAR},
+      </if>
+      <if test="skuErpCode != null" >
+        #{skuErpCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outerSkuId != null" >
+        #{outerSkuId,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+	  <if test="eanCode != null" >
+		#{eanCode,jdbcType=VARCHAR}
+	  </if>
+    </trim>
+	</insert>
+
+	<insert id="insertSkuPicture">
+		insert into item_sku_picture
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="pictureId != null" >
+			picture_id,
+		</if>
+		<if test="itemId != null" >
+			item_id,
+		</if>
+		<if test="saleAttribute != null" >
+			sale_attribute,
+		</if>
+		<if test="skuId != null" >
+			sku_id,
+		</if>
+		<if test="pictureUrl != null" >
+			picture_url,
+		</if>
+		<if test="isFirst != null" >
+			is_first,
+		</if>
+		<if test="sortNumber != null" >
+			sort_number,
+		</if>
+		<if test="pictureStatus != null" >
+			picture_status,
+		</if>
+		<if test="sellerId != null" >
+			seller_id,
+		</if>
+			created,
+			modified,
+		<if test="shopId != null" >
+			shop_id,
+		</if>
+		<if test="deleteFlag != null" >
+			delete_flag,
+		</if>
+		<if test="createId != null" >
+			create_id,
+		</if>
+		<if test="createName != null" >
+			create_name,
+		</if>
+		<if test="modifyId != null" >
+			modify_id,
+		</if>
+		<if test="modifyName != null" >
+			modify_name
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+		<if test="pictureId != null" >
+			#{pictureId},
+		</if>
+		<if test="itemId != null" >
+			#{itemId},
+		</if>
+		<if test="saleAttribute != null" >
+			#{saleAttribute},
+		</if>
+		<if test="skuId != null" >
+			#{skuId},
+		</if>
+		<if test="pictureUrl != null" >
+			#{pictureUrl},
+		</if>
+		<if test="isFirst != null" >
+			#{isFirst},
+		</if>
+		<if test="sortNumber != null" >
+			#{sortNumber},
+		</if>
+		<if test="pictureStatus != null" >
+			#{pictureStatus},
+		</if>
+		<if test="sellerId != null" >
+			#{sellerId},
+		</if>
+		now(),
+		now(),
+		<if test="shopId != null" >
+			#{shopId},
+		</if>
+		<if test="deleteFlag != null" >
+			#{deleteFlag},
+		</if>
+		<if test="createId != null" >
+			#{createId},
+		</if>
+		<if test="createName != null" >
+			#{createName},
+		</if>
+		<if test="modifyId != null" >
+			#{modifyId},
+		</if>
+		<if test="modifyName != null" >
+			#{modifyName}
+		</if>
+		</trim>
+	</insert>
+	
+	<insert id="insertItemSkuInventory">
+		<![CDATA[
+		INSERT INTO trade_inventory (
+		  shop_id,
+		  sku_id,
+		  seller_id,
+		  total_inventory,
+		  occupied_inventory,
+		  created,
+		  modified,
+		  state,
+		  yn,
+		  create_user,
+		  update_user
+		) 
+		VALUES
+		  (
+		    #{shopId},
+		    #{skuId},
+		    #{sellerId},
+		    #{totalInventory},
+		    #{occupiedInventory},
+		    now(),
+		    now(),
+		    1,
+		    2,
+		    #{sellerId},
+		    #{sellerId}
+		  )
+		]]>
+		
+	</insert>
+	
+	<select id="getSkuId" resultType="long">
+		SELECT get_item_sku_id()
+	</select>
+	
+	<update id="update">
+			UPDATE 
+			  item_sku 
+			SET
+			  <if test="itemId !=null and itemId !='' ">
+			  item_id = #{itemId},
+			  </if>
+			  <if test="skuCode !=null and skuCode !='' ">
+			  sku_code = #{skuCode},
+			  </if>
+			  <if test="sellerId !=null and sellerId !='' ">
+			  seller_id = #{sellerId},
+			  </if>
+			  <if test="shopId !=null and shopId !='' ">
+			  shop_id = #{shopId},
+			  </if>
+			  <if test="subTitle != null">
+			  sub_title = #{subTitle},
+			  </if>
+			  <if test="skuStatus !=null ">
+			  sku_status = #{skuStatus},
+			  </if>
+			  <if test="skuType !=null ">
+			  sku_type = #{skuType},
+			  </if>
+			  <if test="ad !=null ">
+			  ad = #{ad},
+			  </if>
+			  <if test="attributes !=null ">
+			  attributes = #{attributes},
+			  </if>
+			  <if test="skuErpCode !=null ">
+			  sku_erp_code = #{skuErpCode},
+			  </if>
+			  <if test="outerSkuId !=null ">
+			  outer_sku_id = #{outerSkuId},
+			  </if>
+				<if test="outerSkuId !=null ">
+					outer_sku_id = #{outerSkuId},
+				</if>
+				<if test="eanCode != null" >
+					ean_code = #{eanCode},
+				</if>
+			  modified = now(),
+			  modify_id = #{modifyId},
+			  modify_name = #{modifyName}
+			WHERE sku_id = #{skuId} 
+	</update>
+	
+	<delete id="deleteSkuPictures">
+		<![CDATA[
+			DELETE FROM item_sku_picture WHERE item_sku_picture.sku_id=#{skuId}
+		]]>
+	</delete>
+	
+	<update id="deleteSkuById">
+		<![CDATA[
+		UPDATE 
+		  item_sku 
+		SET
+		  sku_status = 0,
+		   modified = now(),
+		   modify_id = #{modifyId},
+		   modify_name = #{modifyName}
+		WHERE sku_id = #{skuId}
+		]]>
+	</update>
+	
+	<select id="queryItemSkuBySkuId" resultMap="itemSkuMapper">
+		<![CDATA[
+			select * from item_sku where sku_id = #{skuId}
+		]]>
+	</select>
+
+	<select id="selectItemSkuBySkuCode" parameterType="string" resultMap="itemSkuMapper">
+		<include refid="selectAllColumns" />
+		WHERE
+		    sku_code = #{skuCode}
+	</select>
+
+	<resultMap id="itemSkuDTOMapper" type="cn.htd.goodscenter.dto.ItemSkuDTO">
+		<result column="item_id" property="itemId"/>
+		<result column="item_code" property="itemCode"/>
+		<result column="item_name" property="itemName"/>
+		<result column="item_status" property="itemStatus"/>
+		<result column="seller_id" property="sellerId"/>
+		<result column="shop_id" property="shopId"/>
+		<result column="cid" property="cid"/>
+		<result column="shop_cid" property="shopCid"/>
+		<result column="brand" property="brand"/>
+		<result column="model_type" property="modelType"/>
+		<result column="weight_unit" property="weightUnit"/>
+		<result column="weight" property="weight"/>
+		<result column="net_weight" property="netWeight"/>
+		<result column="length" property="length"/>
+		<result column="width" property="width"/>
+		<result column="height" property="height"/>
+		<result column="ad" property="ad"/>
+		<result column="origin" property="origin"/>
+		<result column="attributes" property="attributesStr"/>
+		<result column="attr_sale" property="attrSaleStr"/>
+		<result column="item_qualification" property="itemQualification"/>
+		<result column="product_channel_code" property="productChannelCode"/>
+		<result column="is_spu" property="isSpu"/>
+		<result column="item_spu_id" property="spuId"/>
+		<result column="has_price" property="hasPrice"/>
+		<result column="has_vip_price" property="skuId"/>
+		<result column="packing_list" property="packingList"/>
+		<result column="after_service" property="skuId"/>
+		<!--<result column="timing_listing" property="skuId"/>-->
+		<!--<result column="listting_time" property="skuId"/>-->
+		<!--<result column="delisting_time" property="skuId"/>-->
+		<!--<result column="status_change_reason" property="skuId"/>-->
+		<!--<result column="keywords" property="skuId"/>-->
+		<result column="shop_freight_template_id" property="shopFreightTemplateId"/>
+		<result column="freight_amount" property="freightAmount"/>
+		<result column="pay_type" property="payType"/>
+		<result column="is_pre_sale" property="isPreSale"/>
+		<result column="pre_sale_starttime" property="preSaleStartTime"/>
+		<result column="pre_sale_endtime" property="preSaleEndTime"/>
+		<result column="erp_first_category_code" property="erpFirstCategoryCode"/>
+		<result column="erp_five_category_code" property="erpFiveCategoryCode"/>
+		<result column="erp_code" property="erpCode"/>
+		<!--<result column="erp_status" property="skuId"/>-->
+		<!--<result column="erp_down_time" property="skuId"/>-->
+		<!--<result column="erp_error_msg" property="skuId"/>-->
+		<result column="is_vip_item" property="isVipItem"/>
+		<result column="vip_item_type" property="vipItemType"/>
+		<result column="vip_sync_flag" property="vipSyncFlag"/>
+		<result column="sku_id" property="skuId"/>
+		<result column="sku_code" property="skuCode" />
+		<result column="sub_title" property="subTitle"/>
+		<!--<result column="sku_status" property="skuStatus" />-->
+		<!--<result column="sku_type" property="skuType" />-->
+		<result column="sku_attributes" property="skuAttributeStr" />
+		<result column="sku_erp_code" property="skuErpCode" />
+		<result column="outer_sku_id" property="outerSkuId" />
+		<!--<result column="created" property="created" />-->
+		<result column="create_id" property="createId" />
+		<result column="create_name" property="createName" />
+		<!--<result column="modified" property="modified" />-->
+		<result column="modify_id" property="modifyId" />
+		<result column="modify_name" property="modifyName" />
+		<result column="ean_code" property="eanCode"/>
+	</resultMap>
+
+	<select id="selectItemSkuListBySkuCodeList" resultMap="itemSkuDTOMapper">
+		select
+		t.item_id,
+		t.item_code,
+		t.item_name,
+		t.item_status,
+		t.seller_id,
+		t.shop_id,
+		t.cid,
+		t.shop_cid,
+		t.brand,
+		t.model_type,
+		t.weight_unit,
+		t.tax_rate,
+		t.weight,
+		t.net_weight,
+		t.length,
+		t.width,
+		t.height,
+		t.ad,
+		t.origin,
+		t.attributes,
+		t.attr_sale,
+		t.item_qualification,
+		t.product_channel_code,
+		t.outer_item_status,
+		t.outer_channel_category_code,
+		t.outer_channel_brand_code,
+		t.apply_in_spu,
+		t.is_spu,
+		t.item_spu_id,
+		t.item_picture_url,
+		t.has_price,
+		t.has_vip_price,
+		t.packing_list,
+		t.after_service,
+		t.timing_listing,
+		t.listting_time,
+		t.delisting_time,
+		t.status_change_reason,
+		t.keywords,
+		t.shop_freight_template_id,
+		t.freight_amount,
+		t.pay_type,
+		t.is_pre_sale,
+		t.pre_sale_starttime,
+		t.pre_sale_endtime,
+		t.erp_first_category_code,
+		t.erp_five_category_code,
+		t.erp_code,
+		t.erp_status,
+		t.erp_down_time,
+		t.erp_error_msg,
+		t.is_vip_item,
+		t.vip_item_type,
+		t.vip_sync_flag,
+		sku.sku_id,
+		sku.sku_code,
+		sku.seller_id,
+		sku.shop_id,
+		sku.sub_title,
+		sku.sku_status,
+		sku.sku_type,
+		sku.ad,
+		sku.attributes as sku_attributes,
+		sku.sku_erp_code,
+		sku.outer_sku_id,
+		sku.ean_code,
+		sku.created,
+		sku.create_id,
+		sku.create_name,
+		sku.modified,
+		sku.modify_id,
+		sku.modify_name
+		from
+			item_sku sku
+		join
+			item t
+		on  sku.item_id = t.item_id
+		where
+		    sku.sku_code in
+		    <foreach collection="skuCodeList" open="(" close=")" separator="," item="skuCode">
+				#{skuCode}
+		    </foreach>
+	</select>
+
+
+
+	<select id="queryByDate" resultMap="itemSkuMapper">
+		<include refid="selectAllColumns" /> where modified>=#{syncTime}
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="querySkuPictureBySyncTime" resultMap="itemSkuPictureMapper">
+		select sku_id,max(picture_url) picture_url from item_sku_picture where modified >= #{syncTime} group by sku_id
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+	<select id="selectSkuPictureBySkuId" resultMap="itemSkuPictureMapper">
+		select * from item_sku_picture where sku_id = #{skuId} and picture_status=1
+	</select>
+	
+	<select id="queryByItemId" resultMap="itemSkuMapper">
+		<include refid="selectAllColumns" />
+		where item_id = #{itemId} and sku_status = 1
+	</select>
+
+
+	
+	<select id="queryItemSkuList" parameterType="cn.htd.goodscenter.dto.venus.po.QueryVenusItemListParamDTO" 
+		resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemListStyleOutDTO">
+		select 
+			t.item_id as itemId,
+			t.item_code as itemCode,
+			sku.sku_id as skuId,
+			sku.sku_code as skuCode,
+			t.item_name as productName,
+			t.cid as categoryId,
+			cat.c_name as categoryName,
+			t.brand as brandId,
+			brand.brand_name as brandName,
+			t.model_type as serial,
+			sku.attributes as color,
+			t.weight_unit as unit,
+			t.weight as grossWeight,
+			t.net_weight as netWeight,
+			t.length,
+			t.width,
+			t.height,
+			t.item_status as productStatus,
+			t.erp_code as erpCode,
+			t.status_change_reason as statusChangeReason
+			 from item_sku sku 
+			 join item t on sku.item_id= t.item_id
+			 join item_category cat on t.cid=cat.cid
+			 join item_brand brand on t.brand=brand.brand_id
+			 left join item_draft d on d.item_id=sku.item_id
+			 where 
+			 1=1 and t.item_status !=6
+			 <if test="productCode !=null and productCode != '' ">
+			 	and sku.sku_code=#{productCode}
+			 </if>
+			 <if test="productName !=null and productName != '' ">
+			 	and (t.item_name  like concat('%',#{productName},'%') or sku.sku_code like concat('%',#{productName},'%'))
+			 </if>
+			 <if test="brandName != null and brandName != '' ">
+			 	and brand.brand_name=#{brandName}
+			 </if>
+			 <if test="categoryName !=null and categoryName != ''">
+			    and cat.c_name =#{categoryName}
+			 </if>
+			 <if test="serial !=null and serial !='' ">
+			 	and t.model_type =#{serial}
+			 </if>
+			  <!-- 待审核 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus == 0 ">
+				and d.status =#{productStatus}
+			 </if>
+			 <!-- 审核通过 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus == 1 ">
+				and t.item_status in (1,4,5) and (d.status=#{productStatus}  or d.status is null)
+			 </if>
+			 <!-- 审核驳回 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus == 2 ">
+				and d.status =#{productStatus}
+			 </if>
+			 <!-- 其他 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus != 0  and productStatus != 1 and productStatus !=2 ">
+				and t.item_status =#{productStatus}
+			 </if>
+			and sku.seller_id=#{htdVendorId}
+			order by t.modified desc
+			limit #{start},#{pageSize};
+	</select>
+	
+	<select id="queryItemSkuListCount" parameterType="cn.htd.goodscenter.dto.venus.po.QueryVenusItemListParamDTO" 
+		resultType="Long">
+		select 
+			count(1)
+			 from item_sku sku 
+			 join item t on sku.item_id= t.item_id
+			 join item_category cat on t.cid=cat.cid
+			 join item_brand brand on t.brand=brand.brand_id
+			 left join item_draft d on d.item_id=sku.item_id
+			 where 
+			 1=1 and t.item_status !=6
+			 <if test="productCode !=null and productCode != '' ">
+			 	and t.item_code=#{productCode}
+			 </if>
+			 <if test="productName !=null and productName != '' ">
+			 	and (t.item_name  like concat('%',#{productName},'%') or t.item_code like concat('%',#{productName},'%'))
+			 </if>
+			 <if test="brandName != null and brandName != '' ">
+			 	and brand.brand_name=#{brandName}
+			 </if>
+			  <if test="categoryName !=null and categoryName != ''">
+			    and cat.c_name =#{categoryName}
+			 </if>
+			  <if test="serial !=null and serial !='' ">
+			 	and t.model_type =#{serial}
+			 </if>
+			 <!-- 待审核 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus == 0 ">
+				and d.status =#{productStatus}
+			 </if>
+			 <!-- 审核通过 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus == 1 ">
+				and t.item_status in (1,4,5) and (d.status=#{productStatus}  or d.status is null)
+			 </if>
+			 <!-- 审核驳回 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus == 2 ">
+				and d.status =#{productStatus}
+			 </if>
+			 <!-- 其他 -->
+			 <if test="productStatus !=null and productStatus !='' and productStatus != 0  and productStatus != 1 and productStatus !=2 ">
+				and t.item_status =#{productStatus}
+			 </if>
+			 and sku.seller_id=#{htdVendorId}
+	</select>
+	
+	<select id="queryItemSkuDetail" parameterType="Long" resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO">
+		select
+		sku.sku_id as skuId,
+		sku.item_id as itemId,
+		cat.c_name as categoryName,
+		brand.brand_name as brandName,
+		t.brand as brandId,
+		t.model_type as modelType,
+		sku.attributes as color,
+		t.item_name as itemName,
+		t.cid as thirdCatId,
+		t.weight_unit as unit,
+		t.ad,
+		t.weight,
+		t.net_weight as netWeight,
+		t.width,
+		t.length,
+		t.height,
+		t.tax_rate as taxRate,
+		t.attributes,
+		t.origin,
+		t.item_status as itemStatus,
+		t.status_change_reason as statusChangeReason,
+		t.erp_code as erpCode
+		 from item_sku sku
+		join item t on sku.item_id=t.item_id
+		join item_category cat on cat.cid=t.cid
+		join item_brand brand on brand.brand_id=t.brand
+		where sku.sku_id=#{skuId}
+	</select>
+	
+	<!-- 查询venus上架信息列表 start-->
+	<select id="queryVenusItemSkuPublishInfoList" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInfoInDTO"
+	resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoOutDTO"
+	>
+		select 
+			t.item_id as itemId,
+			t.item_name as itemName,
+			sku.sku_id as skuId,
+			sku.sku_code as skuCode,
+			cat.cid as categoryId,
+			cat.c_name as categoryName,
+			brand.brand_id as brandId,
+			brand.brand_name as brandName,
+			0 as totalStock,
+			(publish.display_quantity - publish.reserve_quantity) as publishStock,
+			publish.mim_quantity as minPurchaseNum,
+			publish.max_purchase_quantity as maxPurchaseNum,
+			ifnull(publish.is_visable,0) as shelfStatus,
+			#{shelfType} as shelfType,
+			spu.spu_code as spuCode,
+		    t.item_code as itemCode
+			 from item_sku sku 
+			join item t on sku.item_id=t.item_id and t.item_status !=6
+			join item_category cat on t.cid=cat.cid
+			join item_brand brand on t.brand=brand.brand_id
+			left join item_sku_publish_info publish on sku.sku_id=publish.sku_id
+			 <if test="shelfType !=null and shelfType!='' ">
+				<if test="shelfType == 1">
+					and (publish.is_box_flag=1 or publish.is_box_flag is null)
+				</if>
+				<if test="shelfType == 2">
+					and (publish.is_box_flag=0 or publish.is_box_flag is null)
+				</if>
+			</if>
+			<!-- left join item_sku_total_stock total on total.sku_code=sku.sku_code -->
+			left join item_spu spu on spu.spu_id=t.item_spu_id
+			where 1=1 and t.item_status in (1,4,5)
+			<if test="productCode !=null and productCode != '' ">
+			and t.item_code=#{productCode}
+			</if>
+			<if test="productName !=null and productName != '' ">
+			and (t.item_name  like concat('%',#{productName},'%') or t.item_code like concat('%',#{productName},'%'))
+			</if>
+			<if test="categoryName !=null and categoryName !='' ">
+			and cat.c_name =#{categoryName}
+			</if>
+			<if test="brandName != null and brandName != '' ">
+			and brand.brand_name=#{brandName}
+			</if>
+			<if test="stockLevel != null and stockLevel !='' ">
+				<if test="stockLevel == 1">
+				 and (publish.display_quantity-publish.reserve_quantity) >0
+				</if>
+				<if test="stockLevel == 2">
+					 <![CDATA[ and ( (publish.display_quantity-publish.reserve_quantity) <=0 or publish.display_quantity is null ) ]]>
+				</if>
+			 </if> 
+			 <if test="shelfStatus !=null and shelfStatus !='' ">
+				  <if test="shelfStatus == 1">
+				   	and publish.is_visable=1
+				  </if>
+				   <if test="shelfStatus == 0">
+				   	and (publish.is_visable=0 or publish.sku_id is null) 
+				  </if>
+			 </if>
+			and t.seller_id=#{sellerId}
+			<if test="sortColumn != '' and sortColumn != null ">
+				ORDER BY ${sortColumn}
+				<if test="sortType == 1 ">
+				 asc
+				</if>
+				<if test="sortType == 2 ">
+				 desc
+				</if>
+			</if>
+			<if test="sortColumn == null or sortColumn =='' ">
+			ORDER BY sku.modified desc
+			</if>
+			limit #{start},#{pageSize};
+	</select>
+	
+	<select id="queryVenusItemSkuPublishInfoListCount" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInfoInDTO"
+	resultType="Long"
+	>
+		select 
+			count(1)
+			 from item_sku sku 
+			join item t on sku.item_id=t.item_id and t.item_status !=6
+			join item_category cat on t.cid=cat.cid
+			join item_brand brand on t.brand=brand.brand_id
+			left join item_sku_publish_info publish on sku.sku_id=publish.sku_id
+			<if test="shelfType !=null and shelfType!='' ">
+				<if test="shelfType == 1">
+					and (publish.is_box_flag=1 or publish.is_box_flag is null)
+				</if>
+				<if test="shelfType == 2">
+					and (publish.is_box_flag=0 or publish.is_box_flag is null)
+				</if>
+			</if>
+			<!-- left join item_sku_total_stock total on total.sku_code=sku.sku_code -->
+			left join item_spu spu on spu.spu_id=t.item_spu_id
+			where 1=1 and t.item_status in (1,4,5)
+			<if test="productCode !=null and productCode != '' ">
+			and t.item_code=#{productCode}
+			</if>
+			<if test="productName !=null and productName != '' ">
+			and (t.item_name  like concat('%',#{productName},'%') or t.item_code like concat('%',#{productName},'%'))
+			</if>
+			<if test="categoryName !=null and categoryName !='' ">
+			and cat.c_name =#{categoryName}
+			</if>
+			<if test="brandName != null and brandName != '' ">
+			and brand.brand_name=#{brandName}
+			</if>
+			<if test="stockLevel != null and stockLevel !='' ">
+				<if test="stockLevel == 1">
+				 and (publish.display_quantity-publish.reserve_quantity) > 0
+				</if>
+				<if test="stockLevel == 2">
+					 <![CDATA[ and ( (publish.display_quantity-publish.reserve_quantity) <=0 or publish.display_quantity is null ) ]]>
+				</if>
+			 </if>
+			 <if test="shelfStatus !=null and shelfStatus !='' ">
+				  <if test="shelfStatus == 1 ">
+				   	and publish.is_visable=1
+				  </if>
+				   <if test="shelfStatus == 0 ">
+				   	and (publish.is_visable=0 or publish.sku_id is null) 
+				  </if>
+			 </if>
+			and t.seller_id=#{sellerId}
+	</select>
+	<!-- 查询venus上架信息列表 end -->
+	
+	<!-- venus主数据  start-->
+	  <select id="queryItemMainDataForVenus" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO" 
+  	resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemMainDataOutDTO">
+  		select
+  			t.item_id as itemId,
+			sku.sku_id as skuId,
+			sku.sku_code as skuCode,
+			t.item_name as itemName,
+			cat.c_name as categoryName,
+			brand.brand_name as brandName,
+			t.model_type as serial,
+			sku.attributes as color,
+			t.weight_unit as unit,
+			t.weight as grossWeight,
+			t.net_weight as netWeight,
+			t.length,
+			t.width,
+			t.height,
+			t.erp_code as erpCode,
+			ifnull((select 1 from item t2 where t2.item_name=t.item_name and t2.seller_id=#{sellerId} and t2.item_status != 6  limit 1),0) as applyStatus
+			 from item_sku sku 
+			 join item t on sku.item_id=t.item_id  and t.item_status !=6
+			 join item_category cat on t.cid=cat.cid
+			 join item_brand brand on t.brand=brand.brand_id
+             where 1=1
+			 <if test="productName !=null and productName != '' ">
+			 	and (t.item_name  like concat('%',#{productName},'%') or sku.sku_code like concat('%',#{productName},'%'))
+			 </if>
+			 <if test="brandName != null and brandName != '' ">
+			 	and brand.brand_name=#{brandName}
+			 </if>
+			 <if test="categoryName !=null and categoryName != ''">
+			    and cat.c_name =#{categoryName}
+			 </if>
+			  <if test="modelType !=null and modelType !='' ">
+			    and t.model_type=#{modelType}
+			 </if>
+			 and t.seller_id!=#{sellerId}
+			limit #{start},#{pageSize};
+  </select>
+  
+  <select id="queryItemMainDataForVenusCount" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO"
+  	resultType="Long">
+  	select
+			count(1)
+			 from item_sku sku 
+			 join item t on sku.item_id=t.item_id  and t.item_status !=6
+			 join item_category cat on t.cid=cat.cid
+			 join item_brand brand on t.brand=brand.brand_id
+             where 1=1
+			 <if test="productName !=null and productName != '' ">
+			 	and (t.item_name like concat('%',#{productName},'%') 
+			 	     or 
+			 	     sku.sku_code like concat('%',#{productName},'%')
+			 	     )
+			 </if>
+			 <if test="brandName != null and brandName != '' ">
+			 	and brand.brand_name=#{brandName}
+			 </if>
+			 <if test="categoryName !=null and categoryName != ''">
+			    and cat.c_name =#{categoryName}
+			 </if>
+			 <if test="modelType !=null and modelType !='' ">
+			    and t.model_type=#{modelType}
+			 </if>
+			  and t.seller_id!=#{sellerId}
+  </select>
+	<!-- venus主数据  end -->
+	<!-- venus开单所需要的商品数据 start-->
+	<select id="queryVenusOrderItemSkuDetail" parameterType="Long" resultType="cn.htd.goodscenter.dto.venus.outdto.VenusOrderItemSkuDetailOutDTO">
+		select
+		sku.sku_id as skuId,
+		sku.item_id as itemId,
+		sku.ean_code as eanCode,
+		t.item_code as itemCode,
+        t.item_name as itemName,
+        sku.sku_code as skuCode,
+        t.erp_code as erpCode,
+        t.erp_first_category_code as erpFistCatCode,
+		t.erp_five_category_code as erpFiveCatCode,
+        t.product_channel_code as itemChannel,
+        t.cid as thirdCatId,
+        t.item_spu_id as itemSpuId,
+		cat.c_name as thirdCatName,
+        t.brand as brandId,
+		brand.brand_name as brandName,
+		t.model_type as modelType,
+		spu.spu_id as itemSpuId,
+		spu.spu_code as itemSpuCode
+		from item_sku sku
+		join item t on sku.item_id=t.item_id
+		join item_spu spu on spu.spu_id=t.item_spu_id
+		join item_category cat on cat.cid=t.cid
+		join item_brand brand on brand.brand_id=t.brand
+		where sku.sku_id=#{skuId}
+	</select>
+	<select id="querySkuInfoForCheckPromotionActivity" 
+		resultType="cn.htd.goodscenter.dto.outdto.CheckPromotionItemSkuOutDTO">
+	select 
+	t.item_id as itemId,
+	sku.sku_id as skuId,
+	t.item_name as  itemName,
+	sku.sku_code as skuCode,
+	t.item_code as itemCode
+	from item_sku sku join item t on t.item_id = sku.item_id
+	and t.item_status != '6'
+	where 1=1
+	<if test="skuCodeList !=null ">
+		AND sku.sku_code In
+		<foreach collection="skuCodeList" open="(" close=")" item="skuCode" separator=",">
+			#{skuCode}
+		</foreach>
+	</if>
+	</select>
+	<!-- venus开单所需要的商品数据 end  -->
+	<select id="queryFlashbuyItemSkuBySkuCode" resultType="cn.htd.goodscenter.dto.outdto.QueryFlashbuyItemSkuOutDTO" parameterType="String">
+		select 
+		sku.sku_code as skuCode,
+		t.item_code as itemCode,
+		t.item_id as itemId,
+		sku.sku_id as skuId,
+		t.seller_id as supplierId,
+		t.item_name as itemName,
+		t.product_channel_code as productChannelCode
+		 from item t join item_sku sku 
+		on t.item_id=sku.item_id 
+		where t.item_status !='6'
+		and sku.sku_code=#{skuCode}
+	</select>
+	 <select id="querySkuCodeSeq" resultType="String">
+	 select  seq_nextval('sku_code_seq')
+	 </select>
+
+
+	<select id="queryItemSkuByOuterSkuId" resultMap="itemSkuMapper" parameterType="string">
+		SELECT * FROM
+		item_sku
+		WHERE
+		outer_sku_id = #{outSkuId}
+	</select>
+
+	<update id="updateDeleteFlagBySkuId" parameterType="long">
+		UPDATE item_sku_picture set delete_flag = 1,picture_status = 2
+		where sku_id = #{skuId}
+	</update>
+
+	<select id="queryItemSkuListByCondition" parameterType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuOutDTO"
+	resultMap="itemSkuItemMapper">
+		<![CDATA[
+		SELECT
+			i.item_id,
+			i.item_code,
+			i.item_name,
+			i.seller_id,
+			i.shop_id,
+			sku.sku_id,
+			sku.sku_code,
+			sku.sub_title,
+			sku.sku_type,
+			sku.ad,
+			sku.attributes,
+			sku.sku_erp_code,
+			sku.ean_code,
+			ispi.display_quantity,
+			ispi.mim_quantity,
+			ispi.max_purchase_quantity
+		FROM item i,
+		item_sku sku,
+		item_sku_publish_info ispi
+		WHERE i.item_id = sku.item_id AND sku.sku_status=1 and sku.sku_id = ispi.sku_id
+		]]>
+		<if test="entity != null">
+			<if test="entity.itemId != null">
+				<![CDATA[ and i.item_id = #{entity.itemId} ]]>
+			</if>
+			<if test="entity.itemCode != null and entity.itemCode != ''">
+				<![CDATA[ and i.item_code = #{entity.itemCode} ]]>
+			</if>
+			<if test="entity.itemName != null and entity.itemName != ''">
+				<![CDATA[ and i.item_name  LIKE CONCAT('%',#{entity.itemName},'%') ]]>
+			</if>
+			<if test="entity.sellerId != null">
+				<![CDATA[ and i.seller_id = #{entity.sellerId} ]]>
+			</if>
+			<if test="entity.shopId != null">
+				<![CDATA[ and i.shop_id = #{entity.shopId} ]]>
+			</if>
+			<if test="entity.skuId != null">
+				<![CDATA[ and sku.sku_id = #{entity.skuId} ]]>
+			</if>
+			<if test="entity.skuCode != null and entity.skuCode != ''">
+				<![CDATA[ and sku.sku_code = #{entity.skuCode} ]]>
+			</if>
+			<if test="entity.subTitle != null and entity.subTitle != ''">
+				<![CDATA[ and sku.sub_title = #{entity.subTitle} ]]>
+			</if>
+			<if test="entity.skuType != null and entity.skuType != ''">
+				<![CDATA[ and sku.sku_type = #{entity.skuType} ]]>
+			</if>
+			<if test="entity.ad != null and entity.ad != ''">
+				<![CDATA[ and sku.ad  LIKE CONCAT('%',#{entity.ad},'%') ]]>
+			</if>
+			<if test="entity.skuErpCode != null and entity.skuErpCode != ''">
+				<![CDATA[ and sku.sku_erp_code = #{entity.skuErpCode} ]]>
+			</if>
+			<if test="entity.eanCode != null and entity.eanCode != ''">
+				<![CDATA[ and sku.ean_code = #{entity.eanCode} ]]>
+			</if>
+		</if>
+	</select>
+
+	<select id="queryItemSkuCountByCondition" parameterType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuOutDTO"
+			resultType="long">
+		<![CDATA[
+		SELECT
+			count(1)
+		FROM item i,
+		item_sku sku,
+		item_sku_publish_info ispi
+		WHERE i.item_id = sku.item_id AND sku.sku_status=1 and sku.sku_id = ispi.sku_id
+		]]>
+		<if test="entity != null">
+			<if test="entity.itemId != null">
+				<![CDATA[ and i.item_id = #{entity.itemId} ]]>
+			</if>
+			<if test="entity.itemCode != null and entity.itemCode != ''">
+				<![CDATA[ and i.item_code = #{entity.itemCode} ]]>
+			</if>
+			<if test="entity.itemName != null and entity.itemName != ''">
+				<![CDATA[ and i.item_name  LIKE CONCAT('%',#{entity.itemName},'%') ]]>
+			</if>
+			<if test="entity.sellerId != null">
+				<![CDATA[ and i.seller_id = #{entity.sellerId} ]]>
+			</if>
+			<if test="entity.shopId != null">
+				<![CDATA[ and i.shop_id = #{entity.shopId} ]]>
+			</if>
+			<if test="entity.skuId != null">
+				<![CDATA[ and sku.sku_id = #{entity.skuId} ]]>
+			</if>
+			<if test="entity.skuCode != null and entity.skuCode != ''">
+				<![CDATA[ and sku.sku_code = #{entity.skuCode} ]]>
+			</if>
+			<if test="entity.subTitle != null and entity.subTitle != ''">
+				<![CDATA[ and sku.sub_title = #{entity.subTitle} ]]>
+			</if>
+			<if test="entity.skuType != null and entity.skuType != ''">
+				<![CDATA[ and sku.sku_type = #{entity.skuType} ]]>
+			</if>
+			<if test="entity.ad != null and entity.ad != ''">
+				<![CDATA[ and sku.ad  LIKE CONCAT('%',#{entity.ad},'%') ]]>
+			</if>
+			<if test="entity.skuErpCode != null and entity.skuErpCode != ''">
+				<![CDATA[ and sku.sku_erp_code = #{entity.skuErpCode} ]]>
+			</if>
+			<if test="entity.eanCode != null and entity.eanCode != ''">
+				<![CDATA[ and sku.ean_code = #{entity.eanCode} ]]>
+			</if>
+		</if>
+	</select>
+
+	<select id="selectByItemIdAndSellerId" resultMap="itemSkuItemMapper">
+		select
+			sku_id,
+			sku_code,
+			sub_title,
+			sku_type,
+			ad,
+			attributes,
+			sku_erp_code,
+			ean_code
+			from item_sku
+			WHERE
+			item_id = #{itemId} and
+			seller_id = #{sellerId}
+			AND sku_status=1
+	</select>
+
+	<!-- TODO : 详情不够的请继续添加 -->
+	<select id="queryItemSkuDetailBySkuCode" parameterType="String" resultType="cn.htd.goodscenter.dto.ItemSkuDTO">
+		select
+		t.item_id as itemId,
+		t.item_code as itemCode,
+		t.item_name as itemName,
+		t.seller_id as sellerId,
+		t.shop_id as shopId,
+		t.item_status as itemStatus,
+		t.product_channel_code as productChannelCode,
+		t.freight_amount as freightAmount,
+		t.shop_freight_template_id as shopFreightTemplateId,
+		t.brand as brand,
+		brand.brand_name as brandName,
+		t.cid as cid,
+		category.c_name as cName,
+		sku.sku_id as skuId,
+		sku.sku_code as skuCode,
+		sku.outer_sku_id as outerSkuId
+		from item_sku sku
+		join item t on sku.item_id=t.item_id
+		LEFT JOIN item_brand brand
+		ON brand.brand_id = t.brand
+		LEFT JOIN item_category category
+		ON category.cid = t.cid
+		where sku.sku_code=#{skuCode}
+	</select>
+	  
+  <!-- 根据销售区域查询商品 -->
+  <select id="queryItemCountBySaleAreaCode" resultType="Long" parameterType="cn.htd.goodscenter.dto.indto.JudgeRecevieAddressInDTO">
+	select count(1) from item_sku sku
+	join item_sales_area sa on sa.item_id=sku.item_id and sa.delete_flag=0
+	<if test="isBoxFlag == '0' ">
+		and sa.is_box_flag='0'
+	</if>
+	join item_sales_area_detail sad on sad.sales_area_id=sa.sales_area_id and sad.delete_flag=0
+	AND (1=0
+		<if test="provinceCode !=null and provinceCode !='' ">
+		 OR (sad.sales_area_type =1 and sad.area_code=#{provinceCode}
+		  AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
+		  and ss.delete_flag=0
+		  and ss.area_code like concat(#{provinceCode}, '%')
+		  )
+		 )
+		</if>
+		<if test="cityCode !=null and cityCode !='' ">
+		 OR (sad.sales_area_type =2 and sad.area_code=#{cityCode}
+		  AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
+		  and ss.delete_flag=0
+		  and ss.area_code like concat(#{cityCode}, '%')
+		  )
+		 )
+		</if>
+		<if test="districtCode !=null and districtCode !='' ">
+		 OR (sad.sales_area_type =3 and sad.area_code=#{districtCode})
+		</if>
+	)
+	where sku.sku_code=#{skuCode}
+  </select>
+  <select id="queryItemSkuBySellerIdAndSpuId" resultMap="itemSkuMapper">
+  	select  sku.* from item_sku sku
+  	join item t on t.item_id=sku.item_id
+  	where t.seller_id=#{sellerId} and t.item_spu_id=#{itemSpuId}
+  </select>
+  <select id="queryVenusOrderImportItemInfo" resultType="cn.htd.goodscenter.dto.venus.outdto.VenusOrderImportItemOutDTO" parameterType="string">
+	  select
+	sku.sku_id as skuId,  
+	sku.sku_code as skuCode,
+	t.item_code as itemCode,
+	t.erp_code as erpCode,
+	t.cid,
+	(select c_name from item_category cat where cat.cid=t.cid limit 1) as catName,
+	t.brand as brandId,
+	(select brand_name from item_brand brand where brand.brand_id=t.brand limit 1) as brandName,
+	(select spu_code from item_spu p where p.spu_id = t.item_spu_id) as spuCode,
+	t.item_name itemName
+	 from item t join item_sku sku
+	on t.item_id = sku.item_id
+	where t.item_code=#{itemCode} and t.product_channel_code != '3010'
+  </select>
+</mapper>

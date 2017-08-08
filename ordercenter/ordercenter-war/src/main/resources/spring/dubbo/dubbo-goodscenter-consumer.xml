@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+    <!--查询商品接口-->
+	<dubbo:reference id="mallItemExportService"
+	interface="cn.htd.goodscenter.service.mall.MallItemExportService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	<!-- 锁定库存接口 -->
+	<dubbo:reference id="skuStockChangeExportService"
+	interface="cn.htd.goodscenter.service.stock.SkuStockChangeExportService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	<!-- 根据skuCode查询商品详情接口 -->
+	<dubbo:reference id="itemSkuExportService"
+	interface="cn.htd.goodscenter.service.ItemSkuExportService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+	<!-- 根据大B编码，商品类目品牌查询大B是否可售京东商品接口 -->
+	<dubbo:reference id="productPlusExportService"
+	interface="cn.htd.goodscenter.service.productplus.ProductPlusExportService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- 查询vip套餐  -->
+	 <dubbo:reference id="vipItemExportService"
+	interface="cn.htd.goodscenter.service.vip.VipItemExportService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+</beans>

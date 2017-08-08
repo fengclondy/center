@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.storecenter.dao.ShopFavouriteDAO">
+	
+	<!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<resultMap id="favouriteMapper" type="cn.htd.storecenter.dto.ShopFavouriteDTO">
+		<result property="id" column="id"/>
+		<result property="shopId" column="shop_id"/>
+		<result property="sellerId" column="seller_id"/>
+		<result property="buyerId" column="buyer_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="deleted" column="delete_flag"/>
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result property="shopName" column="shop_name"/>
+		<result property="logoUrl" column="logo_url"/>
+		<result property="shopUrl" column="shop_url"/>
+	</resultMap>
+	
+	<insert id="add" keyProperty="itemId" >
+		insert into shop_favourite(
+			shop_id,
+			seller_id,
+			buyer_id,
+			user_id,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{shopId},
+			#{sellerId},
+			#{buyerId},
+			#{userId},
+			#{deleted},
+			#{createId},
+			#{createName},
+			now(),
+			#{modifyId},
+			#{modifyName},
+			now()
+		)
+	</insert>
+	
+	
+	
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	
+	<sql id="where">
+		<if test="entity.shopName != null and entity.shopName != '' ">
+			and si.shop_name like concat('%',#{entity.shopName},"%")
+		</if>
+		<if test="entity.buyerId != null and entity.buyerId != '' ">
+			and sf.buyer_id = #{entity.buyerId}
+		</if>
+		<if test="entity.sellerId != null and entity.sellerId != '' ">
+			and si.seller_id = #{entity.sellerId}
+		</if>
+		<if test="entity.userId != null and entity.userId != '' ">
+			and sf.user_id = #{entity.userId}
+		</if>
+		<if test="entity.shopId!= null and entity.shopId!= '' ">
+			and sf.shop_id = #{entity.shopId}
+		</if>
+		<if test="entity.createId!= null and entity.createId!= '' ">
+			and sf.create_id = #{entity.createId}
+		</if>
+		<if test="entity.createName!= null and entity.createName!= '' ">
+			and sf.create_name = #{entity.createName}
+		</if>
+		<if test="entity.modifyId!= null and entity.modifyId!= '' ">
+			and sf.modify_id = #{entity.modifyId}
+		</if>
+		<if test="entity.modifyName!= null and entity.modifyName!= '' ">
+			and sf.modify_name = #{entity.modifyName}
+		</if>
+			and sf.delete_flag=0 order by sf.modify_time DESC
+	</sql>
+	
+	<select id="queryPage" resultMap="favouriteMapper">
+		select sf.id,
+		       sf.shop_id,
+		       si.seller_id,
+		       si.logo_url,
+		       si.shop_url,
+		       si.shop_name
+		from   shop_favourite sf,
+		       shop_info si
+		where  sf.shop_id = si.shop_id
+		<include refid="where"/>
+		<if test="page != null">
+		<include refid="pagination_tail"/>
+		</if>
+	</select>
+	
+	<select id="queryPageCount" resultType="int">
+		select count(0)
+		from   shop_favourite sf,
+		       shop_info si
+		where  sf.shop_id = si.shop_id
+		<include refid="where"/>
+	</select>
+
+
+	<update id="del" parameterType="cn.htd.storecenter.dto.ShopFavouriteDTO">
+		update shop_favourite SET
+		delete_flag = 1,
+		modify_time = now(),
+		modify_id = #{modifyId},
+		modify_name = #{modifyName}
+	  	where id = #{id}
+	</update>
+	
+	<select id="list" resultMap="favouriteMapper">
+		select sf.id,
+		       sf.shop_id,
+		       si.seller_id,
+		       si.logo_url,
+		       si.shop_url,
+		       si.shop_name
+		from   shop_favourite sf,
+		       shop_info si
+		where  sf.shop_id = si.shop_id
+		<include refid="where"/>
+	</select>
+
+	<update id="updateModifyTime" parameterType="long">
+		update  shop_favourite
+		set modify_time = now()
+		where id = #{id}
+	</update>
+
+</mapper>

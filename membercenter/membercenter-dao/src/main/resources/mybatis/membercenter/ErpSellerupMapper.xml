@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.ErpSellerupDAO">
+    <!-- 新增会员 -->
+    <insert id="saveErpToMemberBaseInfo"  useGeneratedKeys="true"  parameterType="Object">
+        <selectKey keyProperty="dto.id" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+        insert into member_base_info
+        (
+		    member_code,
+		    mall_account,
+		    company_leagal_persion_flag,
+		    is_buyer,
+		    is_seller,
+		    can_mall_login,
+		    has_guarantee_license,
+		    has_business_license,
+		    regist_time,
+		    account_type,
+		    become_member_time,
+		    is_center_store,
+		    upgrade_seller_time,
+		    seller_type,
+		    is_generation,
+		    industry_category,
+		    is_diff_industry,
+		    contact_name,
+		    contact_mobile,
+		    contact_email,
+		    contact_idcard,
+		    contact_pic_src,
+		    contact_pic_back_src,
+		    is_phone_authenticated,
+		    is_real_name_authenticated,
+		    cooperate_vendor,
+		    regist_from,
+		    promotion_person,
+		    belong_seller_id,
+		    belong_manager_id,
+		    cur_belong_seller_id,
+		    cur_belong_manager_id,
+		    status,
+		    create_id,
+		    create_name,
+		    create_time,
+		    modify_id,
+		    modify_name,
+		    modify_time,
+		    business_type
+	    )
+	    values
+	    (
+		    #{dto.memberCode},
+		    #{dto.memberCode},
+		    #{dto.companyLeagalPersionFlag},
+		    #{dto.isBuyer},
+		    #{dto.isSeller},
+		    #{dto.canMallLogin},
+		    #{dto.hasGuaranteeLicense},
+		    #{dto.hasBusinessLicense},
+		    #{dto.registTime},
+		    #{dto.accountType},
+		    #{dto.becomeMemberTime},
+		    #{dto.isCenterStore},
+		    #{dto.upgradeSellerTime},
+		    #{dto.sellerType},
+		    #{dto.isGeneration},
+		    #{dto.industryCategory},
+		    #{dto.isDiffIndustry},
+		    #{dto.contactName},
+		    #{dto.contactMobile},
+		    #{dto.contactEmail},
+		    #{dto.contactIdcard},
+		    #{dto.contactPicSrc},
+		    #{dto.contactPicBackSrc},
+		    #{dto.isPhoneAuthenticated},
+		    #{dto.isRealNameAuthenticated},
+		    #{dto.cooperateVendor},
+		    #{dto.registFrom},
+		    #{dto.promotionPerson},
+		    #{dto.belongSellerId},
+		    #{dto.belongManagerId},
+		    #{dto.curBelongSellerId},
+		    #{dto.curBelongManagerId},
+		    #{dto.status},
+		    #{dto.createId},
+		    #{dto.createName},
+		    #{dto.createTime},
+		    #{dto.modifyId},
+		    #{dto.modifyName},
+		    #{dto.modifyTime},
+		    #{dto.businessType}
+	    )
+	</insert>
+	
+	<!-- 更改会员信息-->
+    <update id="updateMemberInfo" 
+		parameterType="Object">
+		update member_base_info 
+		<set>
+			<if test="dto.status != null and dto.status != ''">
+				status=#{dto.status},
+			</if>			
+			<if test="dto.modifyId != null and dto.modifyId != ''">
+				modify_id=#{dto.modifyId},
+			</if>
+			<if test="dto.modifyName != null and dto.modifyName != ''">
+				modify_name=#{dto.modifyName},
+			</if>
+			<if test="dto.canMallLogin != null and dto.canMallLogin != ''">
+				can_mall_login=#{dto.canMallLogin},
+			</if>
+			<if test="dto.curBelongSellerId != null and dto.curBelongSellerId != ''">
+				cur_belong_seller_id=#{dto.curBelongSellerId},
+			</if>
+			<if test="dto.belongSellerId != null and dto.belongSellerId != ''">
+				belong_seller_id=#{dto.belongSellerId},
+			</if>
+			<if test="dto.curBelongManagerId != null and dto.curBelongManagerId != ''">
+				cur_belong_manager_id=#{dto.curBelongManagerId},
+			</if>
+			<if test="dto.belongManagerId != null and dto.belongManagerId != ''">
+				belong_manager_id=#{dto.belongManagerId},
+			</if>
+			modify_time = now()
+	    </set>
+		where 
+		id=#{dto.id}
+	</update>
+	
+	<!-- 新增公司 -->
+    <insert id="saveErpToMemberCompanyInfo" parameterType="Object">
+        <selectKey keyProperty="dto.id" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into member_company_info
+		(
+			member_id,
+		    buyer_seller_type,
+		    company_name,
+		    company_code,
+		    artificial_person_name,
+		    artificial_person_mobile,
+		    artificial_person_idcard,
+		    artificial_person_pic_src,
+		    artificial_person_pic_back_src,
+		    artificial_person_idcard_pic_src,
+		    area_code,
+		    landline,
+		    fax_number,
+		    location_province,
+		    location_city,
+		    location_county,
+		    location_town,
+		    location_detail,
+		    location_addr,
+		    create_id,
+		    create_name,
+		    create_time,
+		    modify_id,
+		    modify_name,
+		    modify_time,
+		    account_no,
+		    real_name_status
+        )
+		values
+		(
+		    #{dto.memberId},
+		    #{dto.buyerSellerType},
+		    #{dto.companyName},
+		    #{dto.companyCode},
+		    #{dto.artificialPersonName},
+		    #{dto.artificialPersonMobile},
+		    #{dto.artificialPersonIdcard},
+		    #{dto.artificialPersonPicSrc},
+		    #{dto.artificialPersonPicBackSrc},
+		    #{dto.artificialPersonIdcardPicSrc},
+		    #{dto.areaCode},
+		    #{dto.landline},
+		    #{dto.faxNumber},
+		    #{dto.locationProvince},
+		    #{dto.locationCity},
+		    #{dto.locationCounty},
+		    #{dto.locationTown},
+		    #{dto.locationDetail},
+		    #{dto.locationAddr},
+		    #{dto.createId},
+		    #{dto.createName},
+		    #{dto.createTime},
+		    #{dto.modifyId},
+		    #{dto.modifyName},
+		    #{dto.modifyTime},
+		    #{dto.accountNo},
+		    #{dto.realNameStatus}
+		)
+
+	</insert>
+	
+    <!-- 新增发票信息 -->
+    <insert id="saveErpToMemberInvoiceInfo" parameterType="Object">
+         <selectKey keyProperty="dto.invoiceId" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into member_invoice_info
+		(
+		    member_id,
+		    channel_code,
+		    invoice_notify,
+		    invoice_company_name,
+		    tax_man_id,
+		    bank_name,
+		    bank_account,
+		    contact_phone,
+		    invoice_address_province,
+		    invoice_address_city,
+		    invoice_address_county,
+		    invoice_address_town,
+		    invoice_address_detail,
+		    delete_flag,
+		    erp_status,
+		    erp_down_time,
+		    erp_error_msg,
+		    invoice_person,
+		    create_id,
+		    create_name,
+		    create_time,
+		    modify_id,
+		    modify_name,
+		    modify_time
+		)
+		values
+		(
+		    #{dto.memberId},
+		    #{dto.channelCode},
+		    #{dto.invoiceNotify},
+		    #{dto.invoiceCompanyName},
+		    #{dto.taxManId},
+		    #{dto.bankName},
+		    #{dto.bankAccount},
+		    #{dto.contactPhone},
+		    #{dto.invoiceAddressProvince},
+		    #{dto.invoiceAddressCity},
+		    #{dto.invoiceAddressCounty},
+		    #{dto.invoiceAddressTown},
+		    #{dto.invoiceAddressDetail},
+		    #{dto.deleteFlag},
+		    #{dto.erpStatus},
+		    #{dto.erpDownTime},
+		    #{dto.erpErrorMsg},
+		    #{dto.invoicePerson},
+		    #{dto.createId},
+		    #{dto.createName},
+		    #{dto.createTime},
+		    #{dto.modifyId},
+		    #{dto.modifyName},
+		    #{dto.modifyTime}
+		)
+	</insert>
+	
+	 <!-- 新增日志信息 -->
+    <insert id="saveErpToMemberErpLog" parameterType="Object">
+         <selectKey keyProperty="dto.id" resultType="java.lang.Long">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into erp_inner_vendor_up_log
+		(
+	        vendor_name,
+	        vendor_code,
+		    member_code,
+		    vendor_company_type,
+		    is_normal_taxpayer,
+		    registered_address_province,
+		    registered_address_city,
+		    registered_address_county,
+		    registered_address_detail,
+		    business_address_province,
+		    business_address_city,
+		    business_address_county,
+		    business_address_detail,
+		    company_sales_scale,
+		    business_scope,
+		    company_leagal_persion_flag,
+		    contact_name,
+		    contact_mobile,
+		    contact_email,
+		    business_category,
+		    major_business_category,
+		    business_brand,
+		    operating_life,
+		    vendor_nature,
+		    chain_of_authorize,
+		    business_license_id,
+		    organization_id,
+		    is_use_other_platform,
+		    tax_man_id,
+		    deposit_bank,
+		    financial_account,
+		    invoice_contact_phone,
+		    signing_bank,
+		    signing_bank_card,
+		    status,
+		    error_msg,
+		    member_id,
+		    create_id,
+		    create_name,
+		    create_time,
+		    modify_id,
+		    modify_name,
+	        modify_time
+		)
+		values
+		(
+		    #{dto.vendorName},
+		    #{dto.vendorCode},
+		    #{dto.memberCode},
+		    #{dto.vendorCompanyType},
+			#{dto.isNormaTaxpayer},
+			#{dto.registeredAddress},
+			#{dto.registeredAddressCity},
+			#{dto.registeredAddressCounty},
+			#{dto.registeredAddressDetail},
+			#{dto.businessAddressProvince},
+			#{dto.businessAddressCity},
+			#{dto.businessAddressCounty},
+			#{dto.businessAddressDetail},
+			#{dto.companySalesScale},
+			#{dto.businessScope},
+			#{dto.companyLeagalPersionFlag},
+			#{dto.contactName},
+			#{dto.contactMobile},
+			#{dto.contactEmail},
+			#{dto.businessCategory},
+			#{dto.majorBusinessCategory},
+			#{dto.businessBrand},
+			#{dto.operatingLife},
+			#{dto.vendorNature},
+			#{dto.chainOfAuthorize},
+			#{dto.businessLicenseId},
+			#{dto.organizationId},
+			#{dto.isUseOtherPlatform},
+			#{dto.taxManId},
+			#{dto.depositBank},
+			#{dto.financialAccount},
+			#{dto.invoiceContactPhone},
+			#{dto.signingBank},
+			#{dto.signingBankCard},
+			#{dto.status},
+			#{dto.errorMsg},
+			#{dto.memberId},
+			#{dto.createId},
+			#{dto.createName},
+			#{dto.createTime},
+			#{dto.modifyId},
+			#{dto.modifyName},
+			#{dto.modifyTime}
+		)
+	</insert>
+	
+	<update id="updateMemberBaseInfo" 
+		parameterType="Object">
+		update member_base_info 
+		<set>
+			<if test="dto.registTime != null and dto.registTime != ''">
+				regist_time=#{dto.registTime},
+			</if>			
+			<if test="dto.contactName != null and dto.contactName != ''">
+				contact_name=#{dto.contactName},
+			</if>
+			<if test="dto.contactEmail != null and dto.contactEmail != ''">
+				contact_email=#{dto.contactEmail},
+			</if>
+			<if test="dto.contactMobile != null and dto.contactMobile != ''">
+				contact_mobile=#{dto.contactMobile},
+			</if>
+			modify_time = now()
+	    </set>
+		where 
+		id=#{dto.memberId}
+	 </update>
+	 
+	 <update id="updateCompanyInfo" 
+		parameterType="Object">
+		update member_company_info 
+		<set>	
+		    <if test="dto.vendorName != null and dto.vendorName != ''">
+				company_name=#{dto.vendorName},
+			</if>	
+			<if test="dto.contactName != null and dto.contactName != ''">
+				artificial_person_name=#{dto.contactName},
+			</if>
+			<if test="dto.contactMobile != null and dto.contactMobile != ''">
+				artificial_person_mobile=#{dto.contactMobile},
+			</if>
+			<if test="dto.registeredAddressProvince != null and dto.registeredAddressProvince != ''">
+				location_province=#{dto.registeredAddressProvince},
+			</if>
+			<if test="dto.businessAddressCity != null and dto.businessAddressCity != ''">
+				location_city=#{dto.businessAddressCity},
+			</if>
+			<if test="dto.businessAddressCounty != null and dto.businessAddressCounty != ''">
+				location_county=#{dto.businessAddressCounty},
+			</if>
+			<if test="dto.businessAddressDetailAddress != null and dto.businessAddressDetailAddress != ''">
+				location_detail=#{dto.businessAddressDetailAddress},
+			</if>
+			<if test="dto.locationAddr != null and dto.locationAddr != ''">
+				location_addr=#{dto.locationAddr},
+			</if>
+			<if test="dto.accountNo != null and dto.accountNo != ''">
+				account_no=#{dto.accountNo},
+			</if>
+			<if test="dto.realNameStatus != null and dto.realNameStatus != ''">
+				real_name_status=#{dto.realNameStatus},
+			</if>
+			
+			modify_time = now()
+	    </set>
+		where 
+		member_id=#{dto.memberId} and buyer_seller_type='2'
+	 </update>	
+</mapper>

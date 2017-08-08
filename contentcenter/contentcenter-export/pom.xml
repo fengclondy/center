@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>contentcenter-parent</artifactId>
+		<groupId>com.bjucloud.contentcenter</groupId>
+		<version>1.1.0-RELEASE</version>
+		<relativePath>../contentcenter-parent/pom.xml</relativePath>
+	</parent>
+	<artifactId>contentcenter-export</artifactId>
+	<name>contentcenter-export</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+    <dependencies>
+		<dependency>
+			<groupId>com.bjucloud.contentcenter</groupId>
+			<artifactId>contentcenter-domain</artifactId>
+		</dependency>
+    </dependencies>
+
+	<!-- Maven私服配置 -->
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+    		<name>Releases</name>
+    		<url>http://171.16.46.6:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots</name>
+    		<url>http://171.16.46.6:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

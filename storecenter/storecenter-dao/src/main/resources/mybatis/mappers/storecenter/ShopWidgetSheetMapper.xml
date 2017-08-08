@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.storecenter.dao.ShopWidgetSheetDAO">
+
+    <!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <resultMap id="ShopWidgetSheetDTOMap" type="cn.htd.storecenter.dto.ShopWidgetSheetDTO">
+    	<result property="frameId" column="frame_id"/>
+        <result property="widgetId" column="widget_id"/>
+        <result property="picUrl" column="pic_url"/>
+        <result property="chainUrl" column="chain_url"/>
+        <result property="txt" column="txt"/>
+        <result property="itemId" column="item_id"/>
+        <result property="orderNo" column="order_no"/>
+    </resultMap>
+
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                        -->
+    <!-- =========================================================== -->
+    <sql id="selectAllColumns">
+		<![CDATA[
+		select
+			shop_widget_sheet_.frame_id,
+			shop_widget_sheet_.widget_id,
+			shop_widget_sheet_.pic_url,
+			shop_widget_sheet_.chain_url,
+			shop_widget_sheet_.txt,
+			shop_widget_sheet_.item_id,
+			shop_widget_sheet_.order_no
+		from shop_widget_sheet shop_widget_sheet_
+        ]]>
+	</sql>
+
+    <sql id="where_fragement">
+        where 1=1
+        <if test="entity!=null">
+            <if test="entity.frameId != null">
+                <![CDATA[ and shop_widget_sheet_.frame_id  =#{entity.frameId} ]]>
+            </if>
+            <if test="entity.widgetId != null">
+                <![CDATA[ and shop_widget_sheet_.widget_id  =#{entity.widgetId} ]]>
+            </if>
+        </if>
+          order by shop_widget_sheet_.order_no asc
+    </sql>
+
+    <!-- mysql 分页尾 -->
+    <sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+    <!-- =========================================================== -->
+    <!-- Dao方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+
+    <!-- 分页查询 -->
+    <select id="selectListByCondition" resultMap="ShopWidgetSheetDTOMap">
+        <include refid="selectAllColumns"/>
+        <include refid="where_fragement"/>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+    
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="cn.htd.storecenter.dto.ShopWidgetSheetDTO" useGeneratedKeys="false" >
+		<![CDATA[
+		insert into shop_widget_sheet(
+			frame_id,
+			widget_id,
+			pic_url,
+			chain_url,
+			txt,
+			item_id,
+			order_no
+		)values(
+	        #{frameId},
+	        #{widgetId},
+	  		#{picUrl},
+	  		#{chainUrl},
+	  		#{txt},
+	  		#{itemId},
+	  		#{orderNo}
+		)
+        ]]>
+	</insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="cn.htd.storecenter.dto.ShopWidgetSheetDTO">
+		update shop_widget_sheet set 
+			pic_url = #{picUrl},
+			chain_url = #{chainUrl},
+			txt = #{txt},
+			item_id = #{itemId},
+			order_no = #{orderNo}
+	 	where frame_id = #{frameId} and widget_id = #{widgetId}
+	</update>
+	
+	<!-- 删除记录 -->
+	<delete id="delete">
+		<![CDATA[
+		delete from shop_widget_sheet where frame_id = #{frameId} and widget_id = #{widgetId}
+        ]]>
+	</delete>
+	<delete id="deleteByFrameId">
+		<![CDATA[
+		delete from shop_widget_sheet where frame_id = #{frameId}
+        ]]>
+	</delete>
+</mapper>

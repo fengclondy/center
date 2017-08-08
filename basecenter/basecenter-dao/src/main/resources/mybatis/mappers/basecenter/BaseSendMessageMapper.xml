@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.basecenter.dao.BaseSendMessageDAO">
+	<!-- =========================================================== -->
+	<!-- 定义resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="baseSendMessage" type="cn.htd.basecenter.dto.BaseSendMessageDTO">
+		<result property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="address" column="address" />
+		<result property="content" column="content" />
+		<result property="type" column="type" />
+		<result property="isSend" column="is_send" />
+		<result property="sendResult" column="send_result" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<sql id="selectAllColumns">
+		select
+			id,
+			title,
+			address,
+			content,
+			type,
+			is_send,
+			send_result,
+			create_time
+	</sql>
+	<sql id="where_fragement">
+		where 1 = 1
+		<if test="entity.isSend!=null and entity.isSend!=''">
+			and is_send = #{entity.isSend}
+		</if>
+		<if test="entity.type!=null and entity.type!=''">
+			and type = #{entity.type}
+		</if>
+	</sql>
+	<!-- mysql 分页尾 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- =========================================================== -->
+	<!-- DAO方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 保存 -->
+	<insert id="add" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+		insert into base_send_message
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="title != null" >
+			title,
+		  </if>
+	      <if test="address != null" >
+			address,
+		  </if>
+	      <if test="content != null" >
+			content,
+		  </if>
+	      <if test="type != null" >
+			type,
+		  </if>
+	      <if test="isSend != null" >
+			is_send,
+		  </if>
+	      <if test="sendResult != null" >
+			send_result,
+		  </if>
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="title != null" >
+			#{title, jdbcType=VARCHAR},
+		  </if>
+	      <if test="address != null" >
+			#{address, jdbcType=VARCHAR},
+		  </if>
+	      <if test="content != null" >
+			#{content, jdbcType=VARCHAR},
+		  </if>
+	      <if test="type != null" >
+			#{type, jdbcType=VARCHAR},
+		  </if>
+	      <if test="isSend != null" >
+			#{isSend, jdbcType=TINYINT},
+		  </if>
+	      <if test="sendResult != null" >
+			#{sendResult, jdbcType=VARCHAR},
+		  </if>
+			now()
+    	</trim>
+	</insert>
+</mapper>

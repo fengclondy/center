@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.ItemDraftPictureMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ItemDraftPicture" >
+    <id column="item_draft_pic_id" property="itemDraftPicId" jdbcType="BIGINT" />
+    <result column="item_draft_id" property="itemDraftId" jdbcType="BIGINT" />
+    <result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+    <result column="is_first" property="isFirst" jdbcType="TINYINT" />
+    <result column="sort_number" property="sortNumber" jdbcType="TINYINT" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="picture_status" property="pictureStatus" jdbcType="TINYINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    item_draft_pic_id, item_draft_id, picture_url, is_first, sort_number, delete_flag, 
+    picture_status, seller_id, created, modified, shop_id, create_id, create_name, modify_id, 
+    modify_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_draft_picture
+    where item_draft_pic_id = #{itemDraftPicId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_draft_picture
+    where item_draft_pic_id = #{itemDraftPicId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.ItemDraftPicture" >
+    insert into item_draft_picture (item_draft_pic_id, item_draft_id, picture_url, 
+      is_first, sort_number, delete_flag, 
+      picture_status, seller_id, created, 
+      modified, shop_id, create_id, 
+      create_name, modify_id, modify_name
+      )
+    values (#{itemDraftPicId,jdbcType=BIGINT}, #{itemDraftId,jdbcType=BIGINT}, #{pictureUrl,jdbcType=VARCHAR}, 
+      #{isFirst,jdbcType=TINYINT}, #{sortNumber,jdbcType=TINYINT}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{pictureStatus,jdbcType=TINYINT}, #{sellerId,jdbcType=BIGINT}, #{created,jdbcType=TIMESTAMP}, 
+      #{modified,jdbcType=TIMESTAMP}, #{shopId,jdbcType=BIGINT}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ItemDraftPicture" >
+    insert into item_draft_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemDraftPicId != null" >
+        item_draft_pic_id,
+      </if>
+      <if test="itemDraftId != null" >
+        item_draft_id,
+      </if>
+      <if test="pictureUrl != null" >
+        picture_url,
+      </if>
+      <if test="isFirst != null" >
+        is_first,
+      </if>
+      <if test="sortNumber != null" >
+        sort_number,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="pictureStatus != null" >
+        picture_status,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+      <if test="modified != null" >
+        modified,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemDraftPicId != null" >
+        #{itemDraftPicId,jdbcType=BIGINT},
+      </if>
+      <if test="itemDraftId != null" >
+        #{itemDraftId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureUrl != null" >
+        #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isFirst != null" >
+        #{isFirst,jdbcType=TINYINT},
+      </if>
+      <if test="sortNumber != null" >
+        #{sortNumber,jdbcType=TINYINT},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="pictureStatus != null" >
+        #{pictureStatus,jdbcType=TINYINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modified != null" >
+        #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ItemDraftPicture" >
+    update item_draft_picture
+    <set >
+      <if test="itemDraftId != null" >
+        item_draft_id = #{itemDraftId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureUrl != null" >
+        picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isFirst != null" >
+        is_first = #{isFirst,jdbcType=TINYINT},
+      </if>
+      <if test="sortNumber != null" >
+        sort_number = #{sortNumber,jdbcType=TINYINT},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="pictureStatus != null" >
+        picture_status = #{pictureStatus,jdbcType=TINYINT},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modified != null" >
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where item_draft_pic_id = #{itemDraftPicId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemDraftPicture" >
+    update item_draft_picture
+    set item_draft_id = #{itemDraftId,jdbcType=BIGINT},
+      picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      is_first = #{isFirst,jdbcType=TINYINT},
+      sort_number = #{sortNumber,jdbcType=TINYINT},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      picture_status = #{pictureStatus,jdbcType=TINYINT},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      created = #{created,jdbcType=TIMESTAMP},
+      modified = #{modified,jdbcType=TIMESTAMP},
+      shop_id = #{shopId,jdbcType=BIGINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR}
+    where item_draft_pic_id = #{itemDraftPicId,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 删除商品模板图片信息 -->
+  <update id="deleteDraftPicByItemDraftId" parameterType="Long" >
+    UPDATE item_draft_picture
+    SET delete_flag = 1
+    WHERE item_draft_id = #{itemDraftId,jdbcType=BIGINT}
+  </update>
+  
+  <insert id="batchInsert">
+	insert into item_draft_picture(
+		 item_draft_id, 
+		 picture_url, 
+         is_first,
+         sort_number,
+         seller_id,
+         created, 
+         modified,
+         shop_id,
+         create_id, 
+         create_name,
+          modify_id,
+           modify_name
+		)values
+		<foreach collection="list" item="obj" index="index" separator=",">
+				(#{obj.itemDraftId},
+				#{obj.pictureUrl},
+				#{obj.isFirst},
+				#{obj.sortNumber},
+				#{obj.sellerId},
+				#{obj.created},
+				#{obj.modified},
+				#{obj.shopId},
+				#{obj.createId},
+				#{obj.createName},
+				#{obj.modifyId},
+				#{obj.modifyName})
+		</foreach>
+  </insert>
+  <!--根据itemDraftId查询图片信息-->
+  <select id="queryItemDraftPicsByDraftId" resultMap="BaseResultMap">
+    select *
+    from
+    item_draft_picture t
+    where t.item_draft_id=#{itemDraftId} and t.delete_flag !=1
+  </select>
+  <select id="queryItemDraftPicsByItemId" resultType="cn.htd.goodscenter.domain.ItemPicture" parameterType="Long">
+  select 
+   p.item_draft_pic_id as pictureId,
+   t.item_id as itemId,
+   p.picture_url as pictureUrl,
+   p.is_first as isFirst,
+   p.sort_number as sortNumber, 
+   p.delete_flag as deleteFlag, 
+   p.picture_status as pictureStatus, 
+   p.seller_id as sellerId, 
+    p.created, 
+    p.modified, 
+    p.shop_id as shopId, 
+    p.create_id as createId, 
+    p.create_name as createName,
+    p.modify_id as modifyId, 
+    p.modify_name as modifyName
+    from item_draft_picture p join item_draft t on p.item_draft_id=t.item_draft_id
+    where t.item_id=#{itemId} and p.delete_flag !=1
+  </select>
+</mapper>

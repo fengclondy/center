@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.TradeSettlementCompDAO">
+
+	<resultMap id="base_resultMap_tradeSettlementComp" type="cn.htd.tradecenter.domain.order.TradeSettlementComp">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="settlement_no" property="settlementNo" jdbcType="VARCHAR" />
+		<result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+		<result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+		<result column="seller_type" property="sellerType" jdbcType="VARCHAR" />
+		<result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+		<result column="shop_id" property="shopId" jdbcType="BIGINT" />
+		<result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+		<result column="channel_code" property="productChannelCode" jdbcType="VARCHAR" />
+		<result column="channel_name" property="productChannelName" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="status_text" property="statusText" jdbcType="VARCHAR" />
+		<result column="settlement_time" property="settlementTime" jdbcType="TIMESTAMP" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+
+	<insert id="addTradeSettlementComp" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementCompDTO">
+		INSERT INTO trade_settlement_compensate (
+		settlement_no,
+		seller_id,
+		seller_code,
+		seller_type,
+		seller_name,
+		shop_id,
+		shop_name,
+		channel_code,
+		channel_name,
+		status,
+		status_text,
+		settlement_time,
+		content,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+		)values(
+		#{settlementNo,jdbcType=VARCHAR},
+		#{sellerId,jdbcType=BIGINT},
+		#{sellerCode,jdbcType=VARCHAR},
+		#{sellerType,jdbcType=VARCHAR},
+		#{sellerName,jdbcType=VARCHAR},
+		#{shopId,jdbcType=BIGINT},
+		#{shopName,jdbcType=VARCHAR},
+		#{productChannelCode,jdbcType=VARCHAR},
+		#{productChannelName,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{statusText,jdbcType=VARCHAR},
+		#{settlementTime,jdbcType=TIMESTAMP},
+		#{content,jdbcType=VARCHAR},
+		#{createId,jdbcType=BIGINT},
+		#{createName,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{modifyId,jdbcType=BIGINT},
+		#{modifyName,jdbcType=VARCHAR},
+		#{modifyTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+		
+	<select id="getTradeSettlementCompsByParams" resultMap="base_resultMap_tradeSettlementComp" parameterType="cn.htd.tradecenter.dto.bill.TradeSettlementCompDTO">
+		select 	id,
+		settlement_no,
+		seller_id,
+		seller_code,
+		seller_type,
+		seller_name,
+		shop_id,
+		shop_name,
+		channel_code,
+		channel_name,
+		status,
+		status_text,
+		settlement_time,
+		content,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time 
+		from trade_settlement_compensate tsc 
+		where tsc.status = #{status,jdbcType=VARCHAR}  
+		limit #{startNum},#{pageSize}
+	</select>
+	
+</mapper>

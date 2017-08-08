@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.tradecenter.dao.ItemSkuSellReportDAO">
+    <resultMap id="itemSkuSellReportMap" type="cn.htd.tradecenter.dto.ItemSkuSellReportOutDTO">
+        <result property="goodsName" column="goodsName" />
+        <result property="goodsCode" column="goodsCode" />
+        <result property="sellPriceTotal" column="sellPriceTotal" />
+        <result property="orderNum" column="orderNum" />
+        <result property="orderPayNum" column="orderPayNum" />
+        <result property="dealDate" column="dealDate" />
+        <result property="goodSkuCode" column="goodSkuCode"/>
+    </resultMap>
+
+    <!-- 查询 销售分析表销售信息 -->
+    <select id="queryItemSkuSellReportList" resultMap="itemSkuSellReportMap">
+
+        SELECT
+        a.*,
+        b.orderPayNum
+        FROM
+        (
+        SELECT
+        trade_order_items.goods_name goodsName,
+        trade_order_items.sku_code goodSkuCode,
+        trade_orders.pay_order_time,
+        dealDate,
+        SUM(goods_count) orderNum,
+        SUM(goods_amount) sellPriceTotal
+        FROM
+        trade_order_items
+        LEFT JOIN trade_orders ON trade_order_items.order_no = trade_orders.order_no
+        WHERE trade_orders.pay_order_time>0
+        <include refid="order_condition" />
+        GROUP BY
+        trade_order_items.sku_code,
+        trade_orders.pay_order_time
+        ) a
+        LEFT JOIN
+        (
+        SELECT
+        sku_code skuCode,
+        SUM(goodsCount) orderPayNum,
+        trade_orders.pay_order_time,
+        dealDate
+        FROM
+        (
+        SELECT
+        sku_code,
+        order_no,
+        getGoodsCountByIsChangePrice (is_change_price,bargaining_goods_count,id) goodsCount
+        FROM
+        trade_order_items
+        ) trade_order_items
+        LEFT JOIN trade_orders ON trade_order_items.order_no = trade_orders.order_no
+        WHERE trade_orders.pay_order_time>0
+        <include refid="order_condition" />
+        GROUP BY trade_order_items.sku_code,
+        trade_orders.pay_order_time
+        ) b
+        ON (a.dealDate = b.dealDate	)
+        <include refid="sku_condition" />
+        <if test="page != null and page != '' ">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
+    <sql id="sku_condition">
+        <if test="reportIn!=null">
+            <if test="reportIn.goodsName != null  and reportIn.goodsName !=''">
+                <![CDATA[ where a.goods_name = #{reportIn.goodsName} ]]>
+            </if>
+            <if test="reportIn.goodSkuCode != null  and reportIn.goodSkuCode !=''">
+                <![CDATA[ where a.sku_code = #{reportIn.goodSkuCode} ]]>
+            </if>
+        </if>
+    </sql>
+
+    <sql id="order_condition">
+        <if test="reportIn!=null">
+            <if test="reportIn.sellerCode != null  and reportIn.sellerCode !=''">
+                <![CDATA[ AND trade_orders.seller_code = #{reportIn.sellerCode} ]]>
+            </if>
+            <if test="reportIn.startDate != null  and reportIn.startDate !=''">
+                <![CDATA[ AND trade_orders.pay_order_time>=#{reportIn.startDate} ]]>
+            </if>
+            <if test="reportIn.endDate != null  and reportIn.endDate !=''">
+                <![CDATA[ AND DATE_FORMAT(trade_orders.pay_order_time,'%Y%m%d')<=#{reportIn.endDate} ]]>
+            </if>
+            <if test="reportIn.goodsName != null  and reportIn.goodsName !=''">
+                <![CDATA[ AND trade_order_item.good_name = #{reportIn.goodsName} ]]>
+            </if>
+            <if test="reportIn.skuCode != null  and reportIn.skuCode !=''">
+                <![CDATA[ AND trade_order_item.sku_code = #{reportIn.skuCode} ]]>
+            </if>
+            <if test="reportIn.itemCode != null  and reportIn.itemCode !=''">
+                <![CDATA[ AND trade_order_item.item_code = #{reportIn.itemCode} ]]>
+            </if>
+        </if>
+    </sql>
+
+    <!-- mysql 分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset} , #{page.rows}
+    </sql>
+</mapper>

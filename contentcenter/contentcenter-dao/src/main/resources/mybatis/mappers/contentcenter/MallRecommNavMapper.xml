@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.MallRecommNavDAO">
+
+	<!-- =========================================================== -->
+	<!-- 定义页签resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="mallRecommNavMapper" type="com.bjucloud.contentcenter.domain.MallRecommNav">
+
+		<result property="id" column="id" />
+		<result property="sortNum" column="sort_num" /> <!--排序顺序 -->
+		<result property="title" column="title" /> <!--名称 -->
+		<result property="url" column="url" /> <!--链接指向 -->
+		<result property="recId" column="rec_id" /> <!--mall_recommend商城推荐id，即楼层id。 -->
+		<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。 -->
+		<result property="created" column="created" /> <!--创建时间 -->
+		<result property="modified" column="modified" /> <!--改动时间 -->
+		<result property="isImg" column="is_img" /> <!--是否是图片导航 0，不是；1，是smallint(6) -->
+		<result property="picSrc" column="pic_src" /> <!--图片 -->
+		<result property="nType" column="n_type" /> <!--导航类型 -->
+	</resultMap>
+	<resultMap id="mallRecommNavDTO" type="com.bjucloud.contentcenter.dto.MallRecommNavDTO">
+
+		<result property="id" column="id" />
+		<result property="sortNum" column="sort_num" /> <!--排序顺序 -->
+		<result property="title" column="title" /> <!--名称 -->
+		<result property="url" column="url" /> <!--链接指向 -->
+		<result property="recId" column="rec_id" /> <!--mall_recommend商城推荐id，即楼层id。 -->
+		<result property="recommendName" column="recommend_name" /> <!-- 楼层名称。 -->
+		<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。 -->
+		<result property="created" column="created" /> <!--创建时间 -->
+		<result property="modified" column="modified" /> <!--改动时间 -->
+		<result property="isImg" column="is_img" /> <!--是否是图片导航 0，不是；1，是smallint(6) -->
+		<result property="picSrc" column="pic_src" /> <!--图片 -->
+		<result property="nType" column="n_type" /> <!--导航类型 -->
+	</resultMap>
+	<resultMap id="mallRecommNavECMDTO"	type="com.bjucloud.contentcenter.dto.MallRecommNavECMDTO">
+		<result property="id" column="id" />
+		<result property="sortNum" column="sort_num" /> <!--排序顺序 -->
+		<result property="title" column="title" /> <!--名称 -->
+		<result property="url" column="url" /> <!--链接指向 -->
+		<result property="recId" column="rec_id" /> <!--mall_recommend商城推荐id，即楼层id。 -->
+		<result property="recommendName" column="recommend_name" /> <!-- 楼层名称。 -->
+		<result property="status" column="status" /> <!--启用状态。0，不启用；1，启用。 -->
+		<result property="created" column="created" /> <!--创建时间 -->
+		<result property="modified" column="modified" /> <!--改动时间 -->
+		<result property="isImg" column="is_img" /> <!--是否是图片导航 0，不是；1，是smallint(6) -->
+		<result property="picSrc" column="pic_src" /> <!--图片 -->
+		<result property="nType" column="n_type" /> <!--导航类型 -->
+		<result property="themeId" column="themeId" /> 
+		<result property="themeStatus" column="themeStatus" /> 
+		<result property="themeType" column="themeType" /> 
+		<result property="themeName" column="themeName" /> 
+		<result property="themeUId" column="themeUid" /> 
+		<result property="cid" column="cid"/>
+		<result property="addressId" column="addressId"/>
+	</resultMap>
+	<sql id="selectIconSerColumns">
+		<![CDATA[
+		select
+ 			 mall_ad_count_.id
+ 			,mall_ad_count_.mall_ad_id
+ 			,mall_ad_count_.ad_count
+ 			,mall_ad_count_.click_date
+ 			,mall_banner.title
+		FROM 
+		mall_icon_ser mall_icon_ser LEFT JOIN  mall_ad_count mall_ad_count_ ON mall_ad_count_.mall_ad_id=mall_banner.id
+		]]>
+	</sql>
+	<select id="queryById" resultMap="mallRecommNavMapper">
+		select *
+		from mall_recommend_nav
+		where id = #{id}
+	</select>
+	
+	<select id="queryRecNavECMById" resultMap="mallRecommNavECMDTO">
+		<include refid="queryList_ecm" />
+		where nav.id = #{id}
+	</select>
+	
+	
+	
+	<sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+	<insert id="add">
+
+		insert into mall_recommend_nav(
+		sort_num,
+		title,
+		url,
+		rec_id,
+		status,
+		created,
+		modified,
+		is_img,
+		pic_src,
+		n_type
+		)values(
+		#{sortNum},
+		#{title},
+		#{url},
+		#{recId},
+		#{status},
+		NOW(),
+		NOW(),
+		#{isImg},
+		#{picSrc},
+		#{nType}
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+
+	<update id="update">
+		update mall_recommend_nav set
+		sort_num = #{sortNum},
+		title = #{title},
+		url = #{url},
+		rec_id = #{recId},
+		status = #{status},
+		modified = NOW(),
+		is_img = #{isImg},
+		pic_src = #{picSrc},
+		n_type = #{nType}
+		where id = #{id}
+	</update>
+	<update id="updateStatusById">
+		update mall_recommend_nav set
+		status = #{publishFlag}
+		where id = #{id}
+	</update>
+	<update id="updateSortNumberById">
+		update mall_recommend_nav set
+		sort_num = #{sortNum}
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from mall_recommend_nav
+		where id = #{id}
+	</delete>
+
+	<select id="queryCountDTO" resultType="long">
+		select count(0) from mall_recommend_nav where 1=1
+		<if test="publishFlag!= null ">
+			and status = #{publishFlag}
+		</if>
+	</select>
+	<select id="queryListDTO" resultMap="mallRecommNavDTO">
+		select * from mall_recommend_nav where 1=1
+		<if test="publishFlag!= null ">
+			and status = #{publishFlag}
+		</if>
+
+		order by sort_num asc, modified desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+
+
+	<select id="queryCountDTOToAdmin" resultType="long">
+		select count(0) from mall_recommend_nav nav
+		<include refid="queryList_where" />
+	</select>
+	<select id="queryListDTOToAdmin" resultMap="mallRecommNavDTO">
+		SELECT nav.created,nav.is_img,nav.modified,nav.n_type,
+		nav.sort_num,nav.status,nav.title,nav.url,rec.title as recommend_name,nav.id,nav.pic_src,nav.rec_id
+		FROM mall_recommend_nav nav INNER JOIN mall_recommend rec ON
+		nav.rec_id=rec.id
+		<include refid="queryList_where" />
+		order by nav.sort_num asc, nav.modified desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	<select id="equeryListDTOToAdmin" resultMap="mallRecommNavECMDTO">
+		<include refid="queryList_ecm" />
+		<include refid="queryList_ecm_where" />
+		order by nav.sort_num asc, nav.modified desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	<select id="queryCountECMDTOToAdmin" resultType="Long">
+		SELECT
+		count(0)
+		FROM (mall_theme as mt inner join mall_recommend as rec on mt.id=rec.theme_id)inner join mall_recommend_nav nav  ON
+		nav.rec_id=rec.id
+		<include refid="queryList_ecm_where" />
+	</select>
+	<sql id="queryList_where">
+		where 1=1
+		<if test="publishFlag!= null ">
+			and nav.status = #{publishFlag}
+		</if>
+		<if test="entity!=null">
+			<if test=" entity.id != null and entity.id != '' ">
+				and nav.id = #{entity.id}
+			</if>
+			<if test=" entity.title != null ">
+				and nav.title like concat('%',#{entity.title},'%')
+			</if>
+			<if test=" entity.recId != null ">
+				and nav.rec_id = #{entity.recId}
+			</if>
+			<if test=" entity.isImg != null ">
+				and nav.is_img = #{entity.isImg}
+			</if>
+			<if test=" entity.status != null ">
+				and nav.status = #{entity.status}
+			</if>
+			<if test=" entity.nType != null ">
+				and nav.n_type = #{entity.nType}
+			</if>
+		</if>
+
+	</sql>
+	
+	<sql id="queryList_ecm">
+		SELECT
+		mt.id as themeId,
+		mt.theme_name as themeName,
+		mt.type as themeType,
+		mt.status as themeStatus,
+		mt.userId as themeUid, 
+		mt.cId as cid,
+		mt.addressId as addressId,
+		nav.created,
+		nav.is_img,
+		nav.modified,
+		nav.n_type,
+		nav.sort_num,
+		nav.status,
+		nav.title,
+		nav.url,
+		rec.title as recommend_name,
+		nav.id,
+		nav.pic_src,
+		nav.rec_id
+		FROM (mall_theme as mt inner join mall_recommend as rec on mt.id=rec.theme_id)inner join mall_recommend_nav nav  ON
+		nav.rec_id=rec.id
+	</sql>
+	
+	<sql id="queryList_ecm_where">
+		where 1=1
+		<if test="publishFlag!= null ">
+			and nav.status = #{publishFlag}
+		</if>
+		<if test="entity!=null">
+			<if test=" entity.id != null and entity.id != '' ">
+				and nav.id = #{entity.id}
+			</if>
+			<if test=" entity.title != null ">
+				and nav.title like concat('%',#{entity.title},'%')
+			</if>
+			<if test=" entity.recId != null ">
+				and nav.rec_id = #{entity.recId}
+			</if>
+			<if test=" entity.isImg != null ">
+				and nav.is_img = #{entity.isImg}
+			</if>
+			<if test=" entity.status != null ">
+				and nav.status = #{entity.status}
+			</if>
+			<if test=" entity.nType != null ">
+				and nav.n_type = #{entity.nType}
+			</if>
+			<if test=" entity.themeType != null and entity.themeType != '' and entity.themeStatus != 0">
+				and mt.type = #{entity.themeType}
+			</if>
+			<if test=" entity.themeStatus != null and entity.themeStatus != ''  and entity.themeStatus != 0">
+				and mt.status = #{entity.themeStatus}
+			</if>
+			<if test=" entity.themeUId != null and entity.themeUId != '' ">
+				and mt.userId = #{entity.themeUId}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' ">
+				and mt.id = #{entity.themeId}
+			</if>
+		</if>
+
+	</sql>
+
+
+</mapper>

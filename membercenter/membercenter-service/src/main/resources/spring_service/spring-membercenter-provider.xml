@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	<dubbo:service interface="cn.htd.membercenter.service.MemberBaseService" ref="memberBaseService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberGroupService" ref="memberGroupService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberGradeService" ref="memberGradeService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberInvoiceService" ref="memberInvoiceService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberBusinessRelationService" ref="memberBusinessRelationService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberScoreSetService" ref="memberScoreSetService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberBaseInfoService" ref="memberBaseInfoService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.membercenter.service.MemberModifyVerifyService" ref="memberModifyVerifyService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.membercenter.service.PayInfoService" ref="payInfoService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.membercenter.service.MemberErpCallbackService" ref="memberErpCallbackService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.membercenter.service.ContentCenterService" ref="contentCenterService" version="${dubbo.version}" timeout="60000" /> 
+	
+	<dubbo:service interface="cn.htd.membercenter.service.MemberStatusService" ref="memberStatusService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberLicenceService" ref="memberLicenceService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.membercenter.service.MemberVerifyInfoService" ref="memberVerifyInfoService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberVerifySaveService" ref="memberVerifySaveService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberVerifyStatusService" ref="memberVerifyStatusService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MyMemberInfoService" ref="myMemberInfoService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MyMemberService" ref="myMemberService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.ApplyRelationshipService" ref="applyRelationshipService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.BelongRelationshipService" ref="belongRelationshipService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.ConsigneeAddressService" ref="consigneeAddressService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.BoxRelationshipService" ref="boxRelationshipService" version="${dubbo.version}" timeout="60000" />
+	
+
+	<dubbo:service interface="cn.htd.membercenter.service.MemberImportService" ref="memberImportService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.membercenter.service.MemberSellerDepositService" ref="memberSellerDepositService" version="${dubbo.version}" timeout="60000" />
+	<dubbo:service interface="cn.htd.membercenter.service.MemberPlatformFeeInfoService" ref="memberPlatformFeeInfoService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.membercenter.service.MemberBuyerService" ref="memberBuyerService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.membercenter.service.MemberCallCenterService" ref="memberCallCenterService" version="${dubbo.version}" timeout="60000" />
+	
+	<dubbo:service interface="cn.htd.membercenter.service.SuperBossService" ref="superBossService" version="${dubbo.version}" timeout="60000" />
+	
+    <dubbo:service interface="cn.htd.membercenter.service.HelpDocumentService" ref="helpDocumentService" version="${dubbo.version}" timeout="60000" /> 
+
+    <dubbo:service interface="cn.htd.membercenter.service.MemberDownErpService" ref="memberDownErpService" version="${dubbo.version}" timeout="60000" /> 
+    
+	<dubbo:service interface="cn.htd.membercenter.service.OMeetingService" ref="oMeetingService" version="${dubbo.version}" timeout="60000" /> 
+	
+    <dubbo:service interface="cn.htd.membercenter.service.MemberMeetingService" ref="memberMeetingService" version="${dubbo.version}" timeout="60000" /> 
+    
+    <dubbo:service interface="cn.htd.membercenter.service.SellerMeetingVMSService" ref="sellerMeetingVMSService" version="${dubbo.version}" timeout="60000" /> 
+</beans>

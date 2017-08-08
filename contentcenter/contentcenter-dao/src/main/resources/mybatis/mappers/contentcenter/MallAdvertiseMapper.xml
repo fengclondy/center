@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.MallAdvertiseDAO">
+	<resultMap id="mallAdvertiseMapper" type="com.bjucloud.contentcenter.domain.MallAdvertise">
+			<result property="id" column="id" />
+			<result property="sortNum" column="sort_num" />
+			<result property="adType" column="ad_type" />
+			<result property="adTitle" column="ad_title" />
+			<result property="adSubTitle" column="ad_sub_title" />
+			<result property="adKeyword" column="ad_keyword" />
+			<result property="adUrl" column="ad_url" />
+			<result property="adSrc" column="ad_src" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="platformId" column="platform_id" />
+			<result property="status" column="status" />
+			<result property="cid" column="cid" />
+			<result property="close" column="close" />
+			<result property="themeId" column="theme_id"/>
+	</resultMap>
+	<resultMap id="mallAdvertiseDTO" type="com.bjucloud.contentcenter.dto.MallAdDTO">
+			<result property="id" column="id" />
+			<result property="sortNumber" column="sort_num" />
+			<result property="adType" column="ad_type" />
+			<result property="title" column="ad_title" />
+			<result property="adSubTitle" column="ad_sub_title" />
+			<result property="adKeyword" column="ad_keyword" />
+			<result property="adURL" column="ad_url" />
+			<result property="adSrc" column="ad_src" />
+			<result property="startTime" column="start_time" />
+			<result property="endTime" column="end_time" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="status" column="status" />
+			<result property="cid" column="cid" />
+			<result property="close" column="close" />
+			<result property="themeId" column="theme_id"/>
+			<result property="themeName" column="themeName"/>
+			<result property="themeStatus" column="themeStatus"/>
+			<result property="themeType" column="themeType"/>
+			<result property="themeUId" column="themeUId"/>
+			<result property="categoryId" column="categoryId"/>
+			<result property="addressId" column="addressId"/>
+		    <result property="platformId" column="platform_id" />
+	</resultMap>
+	<sql id="queryListsql">
+		<![CDATA[
+			SELECT 
+			   ma.id,
+		       ma.ad_src,
+		       ma.ad_url,
+		       ma.ad_title,
+		       ma.ad_sub_title,
+		       ma.ad_keyword,
+		       ma.sort_num,
+		       ma.created,
+		       ma.modified,
+		       ma.status,
+		       ma.start_time,
+		       ma.end_time,
+		       ma.ad_type,
+		       ma.close,
+		       ma.theme_id,
+		       ma.cid,
+		       mt.theme_name themeName,
+		       mt.cId categoryId,
+		       mt.addressId addressId,
+			   mt.status themeStatus,
+			   mt.type themeType,
+			   mt.userId themeUId
+		       
+		FROM   mall_advertise ma INNER JOIN mall_theme mt ON ma.theme_id=mt.id
+		]]>
+		
+	</sql>
+	<sql id="queryPage_where">
+		<where>
+			<if test=" entity.themeType != null and entity.themeType != '' and entity.themeStatus != 0">
+				and mt.type = #{entity.themeType}
+			</if>
+			<if test=" entity.themeStatus != null and entity.themeStatus != ''  and entity.themeStatus != 0">
+				and mt.status = #{entity.themeStatus}
+			</if>
+			<if test=" entity.themeUId != null and entity.themeUId != '' ">
+				and mt.userId = #{entity.themeUId}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+				and ma.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.cid != null and entity.cid != '' ">
+				and ma.cid = #{entity.cid}
+			</if>
+			<if test=" entity.adURL != null and entity.adURL != '' ">
+				and ma.ad_url = #{entity.adURL}
+			</if>
+			<if test=" entity.id != null and entity.id != '' ">
+				and ma.id = #{entity.id}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' ">
+				and ma.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.adTitle != null and entity.adTitle != '' ">
+				and ma.ad_title like concat('%',#{entity.adTitle},'%')
+			</if>
+			<if test=" entity.adType != null ">
+				and (ma.ad_type = #{entity.adType}
+				<if test=" entity.adType == 5 ">
+					 or ma.ad_type = 6
+				</if>
+				)
+			</if>
+			<if test="entity.adTypeList!=null and entity.adTypeList.size()>0">
+				<![CDATA[ and ma.ad_type  in ]]>
+				<foreach collection="entity.adTypeList" item="adType" open="(" separator="," close=")">
+					#{adType}
+				</foreach>
+			</if>
+			<if test=" entity.status != null and entity.status !=0">
+				and ma.status = #{entity.status} 
+			</if>
+			<if test="  entity.status == 0 ">
+				and ma.status = #{entity.status}  or ma.status is null
+			</if>
+			<if test=" entity.timeFlag == 1 ">
+				<if test=" entity.startTime != null ">
+					and ma.created >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.created < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag == 2 ">
+				<if test=" entity.startTime != null ">
+					and ma.start_time >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.start_time < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag == 3 ">
+				<if test=" entity.startTime != null ">
+					and ma.end_time >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.end_time < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	
+	<select id="queryToById" resultMap="mallAdvertiseDTO" >
+		<include refid="queryListsql"/>
+		<!--select * from mall_advertise-->
+		where ma.id = #{id}
+	</select>
+
+
+	<select id="queryMobileShopAdById" resultMap="mallAdvertiseDTO" >
+		select * from  mall_advertise ma
+		where ma.id = #{id}
+	</select>
+
+	<insert id="add">
+		insert into mall_advertise(
+				sort_num,
+				ad_type,
+				ad_title,
+				ad_sub_title,
+				ad_keyword,
+				ad_url,
+				ad_src,
+				start_time,
+				end_time,
+				created,
+				modified,
+				platform_id,
+				status,
+				close,
+				cid,
+				theme_id
+		)values(
+				#{sortNum},
+				#{adType},
+				#{adTitle},
+				#{adSubTitle},
+				#{adKeyword},
+				#{adUrl},
+				#{adSrc},
+				#{startTime},
+				#{endTime},
+				NOW(),
+				NOW(),
+				#{platformId},
+				#{status},
+				#{close},
+				#{cid},
+				#{themeId}
+		)
+		<selectKey resultType="long" order="AFTER" keyProperty="id">
+			select @@IDENTITY
+		</selectKey>
+	</insert>
+	
+	<update id="update">
+		update mall_advertise set
+				sort_num = #{sortNum},
+				ad_type = #{adType},
+				ad_title = #{adTitle},
+				ad_sub_title = #{adSubTitle},
+				ad_keyword = #{adKeyword},
+				ad_url = #{adUrl},
+				ad_src = #{adSrc},
+				start_time = #{startTime},
+				end_time = #{endTime},
+				modified = NOW(),
+				platform_id = #{platformId},
+				cid = #{cid},
+				close = #{close},
+				status = #{status}
+				<if test="themeId!=null">
+				,theme_id = #{themeId}
+				</if>
+		where id = #{id}
+		
+	</update>
+	<update id="updateBySelect">
+		update mall_advertise(sort_num) 
+		select sort_num from mall_advertise 
+		where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="Object">
+		<![CDATA[
+			delete from mall_advertise where id = #{id}
+		]]>
+	</delete>
+	
+	<select id="queryList" resultMap="mallAdvertiseMapper">
+		<include refid="queryListsql"/>
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+
+	<select id="queryMobileShopAdList" resultMap="mallAdvertiseMapper">
+		SELECT
+			*
+		FROM   mall_advertise ma
+		<where>
+			<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+				and ma.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.cid != null and entity.cid != '' ">
+				and ma.cid = #{entity.cid}
+			</if>
+			<if test=" entity.adURL != null and entity.adURL != '' ">
+				and ma.ad_url = #{entity.adURL}
+			</if>
+			<if test=" entity.id != null and entity.id != '' ">
+				and ma.id = #{entity.id}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' ">
+				and ma.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.adTitle != null and entity.adTitle != '' ">
+				and ma.ad_title like concat('%',#{entity.adTitle},'%')
+			</if>
+			<if test=" entity.platformId != null and entity.platformId != '' ">
+				and ma.platform_id =#{entity.platformId}
+			</if>
+			<if test=" entity.adType != null ">
+				and ma.ad_type = #{entity.adType}
+
+			</if>
+			<if test=" entity.adTypeList!=null and entity.adTypeList.size()>0">
+				<![CDATA[ and ma.ad_type  in ]]>
+				<foreach collection="entity.adTypeList" item="adType" open="(" separator="," close=")">
+					#{adType}
+				</foreach>
+			</if>
+			<if test=" entity.status != null and entity.status !=0">
+				and ma.status = #{entity.status}
+			</if>
+			<if test=" entity.status == 0 ">
+				and ma.status = #{entity.status}  or ma.status is null
+			</if>
+			<if test=" entity.timeFlag == 1 ">
+				<if test=" entity.startTime != null ">
+					and ma.created >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.created < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag == 2 ">
+				<if test=" entity.startTime != null ">
+					and ma.start_time >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.start_time < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag == 3 ">
+				<if test=" entity.startTime != null ">
+					and ma.end_time >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.end_time < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+		</where>
+		<if test="page !=null and page!=''">
+			limit #{page.pageOffset} , #{page.rows}
+		</if>
+
+	</select>
+
+
+	<select id="queryMobileShopAdCount" resultType="long">
+		SELECT
+		count(0)
+		FROM   mall_advertise ma
+		<where>
+			<if test=" entity.themeId != null and entity.themeId != '' and entity.themeStatus != 0">
+				and ma.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.cid != null and entity.cid != '' ">
+				and ma.cid = #{entity.cid}
+			</if>
+			<if test=" entity.adURL != null and entity.adURL != '' ">
+				and ma.ad_url = #{entity.adURL}
+			</if>
+			<if test=" entity.id != null and entity.id != '' ">
+				and ma.id = #{entity.id}
+			</if>
+			<if test=" entity.themeId != null and entity.themeId != '' ">
+				and ma.theme_id = #{entity.themeId}
+			</if>
+			<if test=" entity.adTitle != null and entity.adTitle != '' ">
+				and ma.ad_title like concat('%',#{entity.adTitle},'%')
+			</if>
+			<if test=" entity.platformId != null and entity.platformId != '' ">
+				and ma.platform_id =#{entity.platformId}
+			</if>
+			<if test=" entity.adType != null ">
+				and ma.ad_type = #{entity.adType}
+
+			</if>
+			<if test=" entity.adTypeList!=null and entity.adTypeList.size()>0">
+				<![CDATA[ and ma.ad_type  in ]]>
+				<foreach collection="entity.adTypeList" item="adType" open="(" separator="," close=")">
+					#{adType}
+				</foreach>
+			</if>
+			<if test=" entity.status != null and entity.status !=0">
+				and ma.status = #{entity.status}
+			</if>
+			<if test=" entity.status == 0 ">
+				and ma.status = #{entity.status}  or ma.status is null
+			</if>
+			<if test=" entity.timeFlag == 1 ">
+				<if test=" entity.startTime != null ">
+					and ma.created >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.created < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag == 2 ">
+				<if test=" entity.startTime != null ">
+					and ma.start_time >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.start_time < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+			<if test=" entity.timeFlag == 3 ">
+				<if test=" entity.startTime != null ">
+					and ma.end_time >= date_format(#{entity.startTime},'%Y-%m-%d')
+				</if>
+				<if test=" entity.endTime != null ">
+					<![CDATA[
+					and ma.end_time < DATE_ADD(date_format(#{entity.endTime},'%Y-%m-%d'), INTERVAL + 1 DAY)
+					]]>
+				</if>
+			</if>
+		</where>
+	</select>
+
+
+
+
+	<select id="queryCount" resultType="long">
+		<![CDATA[
+		select 
+		count(0) 
+		FROM   
+		mall_advertise as ma INNER JOIN mall_theme as mt ON ma.theme_id=mt.id
+		]]>
+		<include refid="queryPage_where"/>
+	</select>
+	
+	<select id="queryPage" resultMap="mallAdvertiseDTO">
+		<include refid="queryListsql"/>
+		<include refid="queryPage_where"/>
+		order by 
+		<if test="entity.adType == 5 ">
+				ma.ad_type desc,
+		</if>
+		 ma.sort_num ,ma.modified ,ma.created desc
+	  	limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	<update id="modifyMallAdStatus">
+		update mall_advertise set status = #{status}
+		where id = #{id}
+	</update>
+</mapper>

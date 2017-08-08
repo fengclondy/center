@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.ApplyRelationshipDAO">
+  
+	
+	<!-- 申请解除会员归属关系，变更归属关系表里的状态为待审核 -->
+	<update id="applyNoBelongRelationship" parameterType="Object">
+		update belong_relationship 
+			<set>
+				<if test="modifyId !=null and modifyId != '' ">
+					modify_id= #{modifyId},
+				</if>
+				<if test="modifyName !=null and modifyName != '' ">
+					modify_name= #{modifyName},
+				</if>
+				modify_time = now(),
+				status = '1'
+			</set>
+			   
+			where buyer_id = #{memberId} and seller_id=#{belongSellerId} and status='3'
+	</update>
+<!-- 解除会员归属关系，在审核信息表里添加一条数据 -->
+  <insert id="insertVerifyInfo" parameterType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+     <selectKey resultType="Long" order="AFTER" keyProperty="dto.verifyId">
+		SELECT LAST_INSERT_ID() AS verifyId
+	 </selectKey>
+		insert into verify_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="dto.memberId !=null and dto.memberId !=''">
+				record_id,
+			</if>
+			<if test="dto.belongSellerId !=null and dto.belongSellerId !=''">
+				belong_seller_id,
+			</if>
+			<if test="dto.modifyId !=null and dto.modifyId !=''">
+				create_id,
+			</if>
+			<if test="dto.modifyName !=null and dto.modifyName !=''">
+				create_name,
+			</if>
+			record_type,
+			verify_status,
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="dto.memberId !=null and dto.memberId !=''">
+				#{dto.memberId},
+			</if>
+			<if test="dto.belongSellerId !=null and dto.belongSellerId !=''">
+				#{dto.belongSellerId},
+			</if>
+			<if test="dto.modifyId !=null and dto.modifyId !=''">
+				#{dto.modifyId},
+			</if>
+			<if test="dto.modifyName !=null and dto.modifyName !=''">
+				#{dto.modifyName},
+			</if>
+			'2',
+			'1',
+			now()
+		</trim>
+	</insert>
+	<!-- 解除会员归属关系，新增一条数据到审批详细信息表-->
+	<insert id="insertVerifyDetailInfo" parameterType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+     	insert into verify_detail_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="dto.memberId !=null and dto.memberId !=''">
+				record_id,
+			</if>
+			<if test="dto.verifyId !=null and dto.verifyId !=''">
+				verify_id,
+			</if>
+			<if test="dto.belongSellerId !=null and dto.belongSellerId !=''">
+				content_name,
+			</if>
+			<if test="dto.modifyId !=null and dto.modifyId !=''">
+				operator_id,
+			</if>
+			<if test="dto.modifyName !=null and dto.modifyName !=''">
+				operator_name,
+			</if>
+			record_type,
+			operate_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="dto.memberId !=null and dto.memberId !=''">
+				#{dto.memberId},
+			</if>
+			<if test="dto.verifyId !=null and dto.verifyId !=''">
+				#{dto.verifyId},
+			</if>
+			<if test="dto.belongSellerId !=null and dto.belongSellerId !=''">
+				#{dto.belongSellerId},
+			</if>	
+			<if test="dto.modifyId !=null and dto.modifyId !=''">
+				#{dto.modifyId},
+			</if>
+			<if test="dto.modifyName !=null and dto.modifyName !=''">
+				#{dto.modifyName},
+			</if>
+			'2',
+			now()
+		</trim>
+	</insert>
+	<!-- 非会员转会员申请，变更会员状态信息表里会员信息类型为非会员转会员且为待审核-->
+	<update id="applynoMemberToMember" parameterType="Object">
+		update member_status_info 
+			<set>
+				<if test="modifyId !=null and modifyId != '' ">
+					modify_id= #{modifyId},
+				</if>
+				<if test="modifyName !=null and modifyName != '' ">
+					modify_name= #{modifyName},
+				</if>
+				modify_time = now(),
+				info_type = '14',
+			   	verify_status = '1'
+			</set>
+			   
+			where member_id = #{memberId}
+	</update>
+	<!--非会员转会员申请 更新审批 -->
+	<update id="updateMemberVerifyInfo">
+    update verify_info
+    <set>
+    		verify_status = #{verifyStatus},
+    	<if test="modifyType!=null and modifyType!=''">
+    		modify_type = #{modifyType},
+    	</if>
+    	<if test="modifyId != null and modifyId != ''">
+				modify_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				modify_name =#{modifyName},
+			</if>
+				modify_time = now()
+    </set>   
+    where record_id = #{memberId} and verify_status='1' and record_type='1'
+  </update>
+	<!--非会员转会员申请 更新审批信息状态 -->
+	<update id="updateVerifyDetailInfo">
+    update verify_detail_info
+    <set>
+    		modify_type = #{modifyType},
+    	<if test="modifyId != null and modifyId != ''">
+				operator_id = #{modifyId},
+			</if>
+			<if test="modifyName != null and modifyName != ''">
+				operator_name =#{modifyName},
+			</if>
+				operate_time = now()
+    </set>
+        
+    where record_id = #{memberId} and record_type='1' and modify_type='13'
+  </update>
+  <!-- 查询待审核的经营关系信息-->
+   <select id="selectBusinessRelationship" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+    select 
+    b.business_id businessId,
+    b.seller_id sellerId,
+    b.category_id categoryId,
+    b.brand_id brandId,
+    b.audit_status auditStatus,
+    m.id memberId,
+    c.company_name companyName,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    b.customer_manager_id customerManagerId,
+    c.location_addr as locationAddr,
+    b.create_time createTime
+    from member_company_info c,member_base_info m,business_relationship b 
+    where m.id = c.member_id and c.member_id = b.buyer_id and b.audit_status='0' and m.status='1'
+    and (b.category_id !=0 and b.brand_id !=0)
+    and c.buyer_seller_type = '1' and b.seller_id=#{curBelongSellerId}
+    <if test="companyName != null and companyName != ''">
+		and c.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="memberId != null and memberId != ''">
+		and m.id = #{memberId}
+	</if>
+	order by b.create_time asc
+  </select>
+   <!-- 查询待审核的经营关系信息会员分组个数-->
+   <select id="selectBusinessRelationshipCount" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+    select 
+    m.id memberId,
+    b.audit_status auditStatus,
+    c.company_name companyName,
+    b.customer_manager_id customerManagerId,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.location_addr as locationAddr
+    from member_company_info c,member_base_info m,business_relationship b 
+    where m.id = c.member_id and c.member_id = b.buyer_id and b.audit_status='0' and m.status='1'
+    and (b.category_id !=0 and b.brand_id !=0)
+    and c.buyer_seller_type = '1' and b.seller_id=#{curBelongSellerId}
+    <if test="companyName != null and companyName != ''">
+		and c.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	order by b.create_time
+  </select>
+  <!-- 注册进度查询-->
+   <select id="queryRegistProcess" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">
+    select 
+    m.id memberId,
+    c.company_name companyName,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.artificial_person_idcard artificialPersonIdcard,
+    c.artificial_person_pic_src artificialPersonPicSrc,
+    c.artificial_person_pic_back_src artificialPersonPicBackSrc,
+    m.industry_category industryCategory,
+    case when l.buyer_business_license_pic_src !='' then l.buyer_business_license_pic_src
+    else l.buyer_guarantee_license_pic_src end as buyerBusinessLicensePicSrc,
+     l.buyer_business_license_id buyerBusinessLicenseId,
+    s.verify_status verifyStatus,
+    c.location_addr as locationAddr,
+    s.info_type infoType,
+    s.sync_error_msg registProcess
+    from (member_base_info m,member_company_info c,member_status_info s)
+    left join member_licence_info l on m.id = l.member_id
+    where m.id = c.member_id and m.id = s.member_id and (s.info_type='11' or s.info_type='12' or s.info_type='13' or s.info_type='14')
+    and c.buyer_seller_type='1'
+    <if test="memberId != null and memberId != ''">
+		and m.id = #{memberId}
+	</if>
+    <if test="companyName != null and companyName != ''">
+		and c.company_name = #{companyName}
+	</if>
+	<if test="curBelongSellerId != null and  curBelongSellerId !=''">
+		and m.cur_belong_seller_id = #{curBelongSellerId}
+	</if>
+  </select>
+     
+  <!-- 查询是否有包厢关系 -->
+	<select id="queryBoxRelationInfo" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+		select
+			box_id boxId,
+			buyer_id buyerId,
+			erp_status erpStatus,
+			seller_id sellerId
+            from box_relationship
+		    where buyer_id = #{memberId} and seller_id = #{sellerId} and delete_flag = 0
+	</select>
+	
+  <!-- 保存包厢关系 -->
+  <insert id="insertBoxRelationInfo" parameterType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+     <selectKey resultType="Long" order="AFTER" keyProperty="boxId">
+		SELECT LAST_INSERT_ID() AS boxId
+	 </selectKey>
+		insert into box_relationship
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="memberId !=null and memberId !=''">
+				buyer_id,
+			</if>
+			<if test="sellerId !=null and sellerId !=''">
+				seller_id,
+			</if>
+			<if test="erpStatus !=null and erpStatus !=''">
+				erp_status,
+			</if>
+			<if test="createId !=null and createId !=''">
+				create_id,
+			</if>
+			<if test="createName !=null and createName !=''">
+				create_name,
+			</if>
+			<if test="modifyId !=null and modifyId !=''">
+				modify_id,
+			</if>
+			<if test="modifyName !=null and modifyName !=''">
+				modify_name,
+			</if>
+			delete_flag,
+			create_time,modify_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">	
+			<if test="memberId !=null and memberId !=''">
+				#{memberId},
+			</if>
+			<if test="sellerId !=null and sellerId !=''">
+				#{sellerId},
+			</if>
+			<if test="erpStatus !=null and erpStatus !=''">
+				#{erpStatus},
+			</if>
+			<if test="createId !=null and createId !=''">
+				#{createId},
+			</if>
+			<if test="createName !=null and createName !=''">
+				#{createName},
+			</if>
+			<if test="modifyId !=null and modifyId !=''">
+				#{modifyId},
+			</if>
+			<if test="modifyName !=null and modifyName !=''">
+				#{modifyName},
+			</if>
+			0,
+			now(),
+			now()
+		</trim>
+	</insert>
+	
+    <!-- 修改经营关系信息表中的状态-->
+	<update id="updatBusinessRelationship" parameterType="Object">
+		update business_relationship 
+			<set>
+				audit_status = #{auditStatus},
+				<if test="modifyId !=null and modifyId !='' ">
+					modify_id = #{modifyId},
+				</if>
+				<if test="modifyName !=null and modifyName !='' ">
+					modify_name = #{modifyName},
+				</if>
+				<if test="erpStatus !=null and erpStatus !='' ">
+					erp_status = #{erpStatus},
+				</if>
+				<if test="remark !=null and remark !='' ">
+					remark = #{remark},
+				</if>
+				<if test="customerManagerId !=null and customerManagerId !='' ">
+					customer_manager_id = #{customerManagerId},
+				</if>
+				erp_down_time = now(),
+				modify_time = now(),
+				audit_time = now()
+			</set>
+			   
+			where business_id = #{businessId}
+	</update>
+</mapper>

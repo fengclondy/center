@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.SellerCategoryBrandShieldDAO">
+
+	<insert id="addSellerShield" parameterType="Object"
+		useGeneratedKeys="true" keyProperty="category_brand_shield_id">
+		<![CDATA[
+		insert into seller_category_brand_shield(
+			category_brand_shield_id,
+			seller_id,
+			category_brand_id,
+			third_category_id,
+			brand_id,
+			product_channel_id,
+			shield_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time	
+		) values (
+			#{categoryBrandShieldId},
+			#{sellerId},
+			#{categoryBrandId},
+			#{thirdCategoryId},
+			#{brandId},
+			#{productChannelId},
+			#{shieldFlag},
+			#{userId},
+			#{userName},
+			now(),
+			#{userId},
+			#{userName},
+			now()	
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据品类品牌屏蔽ID更新品类品牌屏蔽标记-->
+	<update id="updateSellerShield" parameterType="Object">
+		update seller_category_brand_shield set
+		    category_brand_shield_id = #{categoryBrandShieldId},
+			seller_id = #{sellerId},
+			category_brand_id = #{categoryBrandId},
+			third_category_id = #{thirdCategoryId},
+			brand_id = #{brandId},
+			product_channel_id = #{productChannelId},
+			shield_flag = #{shieldFlag},
+			create_id = #{userId},
+			create_name = #{userName},
+			create_time = now(),
+			modify_id = #{userId},
+			modify_name = #{userName},
+			modify_time = now()
+		where category_brand_shield_id = #{categoryBrandShieldId}
+	</update>
+	
+	<!-- 根据商家外接ID查询外接信息 -->
+	<select id="selectSellerShieldById" resultType="cn.htd.membercenter.dto.SellerCategoryBrandShieldDTO"
+		parameterType="Object">
+		select
+			category_brand_shield_id as categoryBrandShieldId,
+			seller_id as sellerId,
+			category_brand_id as categoryBrandId,
+			third_category_id as thirdCategoryId,
+			brand_id as brandId,
+			product_channel_id as productChannelId,
+			shield_flag as shieldFlag,
+			create_id as userId,
+			create_name as userName,
+			create_time as createdTime,
+			modify_id as lastUpdatedId,
+			modify_name as lastUpdatedName,
+			modify_time as lastUpdatedTime
+		from seller_category_brand_shield
+		where category_brand_shield_id = #{categoryBrandShieldId}
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+</mapper>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.goodscenter.dao.ItemPictureDAO">
+	<resultMap id="itemPictureMapper" type="cn.htd.goodscenter.domain.ItemPicture">
+			<result property="pictureId" column="picture_id" />
+			<result property="itemId" column="item_id" />
+			<result property="pictureUrl" column="picture_url" />
+			<result property="sortNumber" column="sort_number" />
+			<result property="pictureStatus" column="picture_status" />
+			<result property="sellerId" column="seller_id" />
+			<result property="created" column="created" />
+			<result property="modified" column="modified" />
+			<result property="shopId" column="shop_id" />
+			<result property="isFirst" column="is_first" />
+			<result property="deleteFlag" column="delete_flag" />
+			<result property="createId" column="create_id" />
+			<result property="createName" column="create_name" />
+			<result property="modifyId" column="modify_id" />
+			<result property="modifyName" column="modify_name" />
+	</resultMap>
+	
+	<select id="queryPage" resultType="map">
+		select * from item_picture
+	</select>
+	
+	<select id="findById" resultMap="itemPictureMapper" >
+		select * from item_picture
+		where id = #{id}
+	</select>
+
+	<insert id="add" keyProperty="pictureId" useGeneratedKeys="true" parameterType="cn.htd.goodscenter.domain.ItemPicture">
+		insert into item_picture
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="itemId != null" >
+			item_id,
+		</if>
+		<if test="pictureUrl != null" >
+			picture_url,
+		</if>
+		<if test="isFirst != null" >
+			is_first,
+		</if>
+		<if test="sortNumber != null" >
+			sort_number,
+		</if>
+		<if test="deleteFlag != null" >
+			delete_flag,
+		</if>
+		<if test="pictureStatus != null" >
+			picture_status,
+		</if>
+		<if test="sellerId != null" >
+			seller_id,
+		</if>
+			created,
+			modified,
+		<if test="shopId != null" >
+			shop_id,
+		</if>
+		<if test="createId != null" >
+			create_id,
+		</if>
+		<if test="createName != null" >
+			create_name,
+		</if>
+		<if test="modifyId != null" >
+			modify_id,
+		</if>
+		<if test="modifyName != null" >
+			modify_name
+		</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+		<if test="itemId != null" >
+			#{itemId},
+		</if>
+		<if test="pictureUrl != null" >
+			#{pictureUrl},
+		</if>
+		<if test="isFirst != null" >
+			#{isFirst},
+		</if>
+		<if test="sortNumber != null" >
+			#{sortNumber},
+		</if>
+		<if test="deleteFlag != null" >
+			#{deleteFlag},
+		</if>
+		<if test="pictureStatus != null" >
+			#{pictureStatus},
+		</if>
+		<if test="sellerId != null" >
+			#{sellerId},
+		</if>
+		now(),
+		now(),
+		<if test="shopId != null" >
+			#{shopId},
+		</if>
+		<if test="createId != null" >
+			#{createId},
+		</if>
+		<if test="createName != null" >
+			#{createName},
+		</if>
+		<if test="modifyId != null" >
+			#{modifyId},
+		</if>
+		<if test="modifyName != null" >
+			#{modifyName}
+		</if>
+		</trim>
+	</insert>
+	
+	<update id="update">
+		update item_picture set
+
+				item_id = #{itemId},
+				picture_url = #{pictureUrl},
+				sort_number = #{sortNumber},
+				picture_status = #{pictureStatus},
+				seller_id = #{sellerId},
+				created = #{created},
+				modified = now(),
+				shop_id = #{shopId},
+				is_first = #{isFirst},
+				create_id = #{createId},
+				create_name = #{createName},
+				modify_id = #{modifyId},
+				modify_name = #{modifyName}
+		where picture_id = #{pictureId}
+	</update>
+	
+	<delete id="delete">
+		delete from item_picture
+		<if test=" codes != null and codes.size() > 0 ">
+			where id in
+			<foreach collection="codes" open="(" separator="," close=")" item="code">
+				#{code}
+			</foreach>
+		</if>
+		<if test=" codes == null or codes.size() == 0 ">
+			where 1 = 3
+		</if>
+	</delete>
+	
+	<select id="findAll" resultType="map">
+		select * from item_picture
+	</select>
+	
+	
+	<select id="queryItemPicsById" resultMap="itemPictureMapper">
+		select *
+		from 
+		item_picture t 
+		where t.item_id=#{itemId} AND picture_status = 1
+	</select>
+	
+	<delete id="deleteItemPicture">
+		<![CDATA[
+			DELETE FROM item_picture WHERE item_picture.item_id=#{itemId}
+		]]>
+	</delete>
+	
+	<insert id="batchInsert">
+	insert into item_picture(
+				item_id,
+				picture_url,
+				sort_number,
+				picture_status,
+				seller_id,
+				created,
+				modified,
+				shop_id,
+				is_first,
+				create_id,
+				create_name,
+				modify_id,
+				modify_name
+		)values
+		<foreach collection="list" item="obj" index="index" separator=",">
+				(#{obj.itemId},
+				#{obj.pictureUrl},
+				#{obj.sortNumber},
+				1,
+				#{obj.sellerId},
+				now(),
+				now(),
+				#{obj.shopId},
+				#{obj.isFirst},
+				#{obj.createId},
+				#{obj.createName},
+				#{obj.modifyId},
+				#{obj.modifyName})
+		</foreach>
+	</insert>
+
+	<update id="updateDeleteFlagByItemId" parameterType="long">
+		UPDATE item_picture set delete_flag = 1,picture_status = 2
+		where item_id = #{itemId}
+	</update>
+
+	<update id="updateDeleteFlagByItemIdAndSellerId">
+		UPDATE item_picture set delete_flag = 1,picture_status = 2
+		where item_id = #{itemId}
+		and seller_id = #{sellerId}
+	</update>
+
+	<select id="selectAllJdPic" resultMap="itemPictureMapper">
+		       select
+       p.*
+                from
+        item i, item_picture p
+                where
+       i.product_channel_code = '3010'
+       and i.item_id = p.item_id
+	</select>
+</mapper>

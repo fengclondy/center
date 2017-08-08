@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.goodscenter.dao.TradeInventoryDAO">
+	
+	<resultMap id="tradeInventoryOutMapper" type="cn.htd.goodscenter.dto.TradeInventoryOutDTO">
+	        <result property="pictureUrl" column="item_picture_url" />
+	        <result property="itemName" column="item_name" />
+	        <result property="skuId" column="sku_id" />
+	        <result property="itemId" column="item_id" />
+	        <result property="totalInventory" column="display_quantity" />
+	        <result property="itemStatus" column="item_status" />
+	        <result property="attrSale" column="attr_sale" />
+	        <result property="marketPrice" column="market_price" />
+	        <result property="attributes" column="attributes" />
+	        <result property="skuStatus" column="sku_status" />
+			<result property="itemCode" column="item_code" />
+			<result property="weightUnit" column="weight_unit" />
+	         
+	</resultMap>
+	<resultMap id="TradeInventoryDTOMapper" type="cn.htd.goodscenter.dto.TradeInventoryDTO" >
+	  <result property="shopId" column="shop_id" />
+	  <result property="skuId" column="sku_id" />
+	  <result property="sellerId" column="seller_id" />
+	  <result property="totalInventory" column="total_inventory" />
+	  <result property="occupieInventory" column="occupie_inventory" />
+	  <result property="created" column="created" />
+	   <result property="modified" column="modified" />
+	  <result property="state" column="state" />
+	  <result property="yn" column="yn" />
+	  <result property="createUser" column="create_user" />
+	  <result property="updateUser" column="update_user" />
+	</resultMap>
+	
+	<!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+	  limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from 
+	</sql>
+	
+	<sql id="where_fragement">
+	   item_sku_publish_info t
+         INNER JOIN item_sku s ON s.sku_id=t.sku_id
+         INNER JOIN item i ON i.item_id=s.item_id
+	  where s.sku_status=1 and i.item_status != 6
+	  <if test="entity!=null">
+	     <if test="entity.sellerId != null and entity.sellerId != 0">
+	       and i.seller_id=#{entity.sellerId}
+	     </if>
+	      <if test="entity.shopId != null and entity.shopId != 0">
+	       and t.shop_id=#{entity.shopId}
+	     </if>
+	     <if test="entity.itemName != null and entity.itemName != ''">
+	       and i.item_name like CONCAT('%',#{entity.itemName},'%')
+	     </if>
+	     <if test="entity.itemId != null and entity.itemId != 0">
+	        and s.item_id=#{entity.itemId}
+	     </if>
+		  <if test="entity.itemCode != null and entity.itemCode != ''">
+			  and i.item_code like CONCAT('%',#{entity.itemCode},'%')
+		  </if>
+	     <if test="entity.skuId != null and entity.skuId != 0">
+	        and t.sku_id=#{entity.skuId}
+	     </if>
+		  <if test="entity.skuCode != null and entity.skuCode != ''">
+			  and t.sku_code like CONCAT('%',#{entity.skuCode},'%')
+		  </if>
+		  <if test="entity.itemCode != null and entity.itemCode != 0">
+			  and t.item_code like CONCAT('%',#{entity.itemCode},'%')
+		  </if>
+	     <if test="entity.minInvetory != null and entity.minInvetory != 0">
+	        and t.display_quantity >=#{entity.minInvetory}
+	     </if>
+	     <if test="entity.maxInvetory != null and entity.maxInvetory !=0">
+	        <![CDATA[  and t.display_quantity <=#{entity.maxInvetory}]]>
+	     </if>
+	     <if test="entity.productId != null and entity.productId != 0">
+	        and i.product_id >=#{entity.productId}
+	     </if>
+	     <if test="entity.itemStatus != null and entity.itemStatus != 0">
+	        and i.item_status =#{entity.itemStatus}
+	     </if>
+	     <if test="entity.cid != null and entity.cid != 0">
+	        and i.cid =#{entity.cid}
+	     </if>
+	     <if test="entity.shopCid != null and entity.shopCid != 0">
+	        and i.shop_cid =#{entity.shopCid}
+	     </if>
+	  </if>
+	</sql>
+	
+	<select id="queryBySkuId" parameterType="long" resultMap="TradeInventoryDTOMapper">
+	  select * from item_sku_publish_info where sku_id=#{skuId}
+	</select>
+	
+	<select id="queryTradeInventoryList" resultMap="tradeInventoryOutMapper">
+		select	t.sku_id
+				,t.sku_code
+ 			   ,t.display_quantity
+			   ,i.weight_unit
+         FROM  
+        <include refid="where_fragement" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="queryItemBySkuId" parameterType="long" resultMap="tradeInventoryOutMapper">
+	   select s.item_id
+	          ,s.attributes
+	          ,i.market_price
+	          ,i.item_name
+	          ,i.item_code
+	          ,i.item_status
+	          ,i.cid
+	          ,i.attr_sale
+	          ,s.sku_status
+	   from  item_sku s
+       inner join item i
+        on i.item_id=s.item_id
+        where s.sku_id=#{skuId} 
+	</select>
+	<select id="queryCount" resultType="long">
+	 <include refid="count_Tail" />
+	 <include refid="where_fragement" />
+	</select>
+	
+	<update id="modifyInventoryBySkuIds">
+		update item_sku_publish_info 
+		set    modify_time = now(),
+			   display_quantity = #{inventory}
+	    where  sku_id=#{skuid}
+	</update>
+
+	
+	<select id="querySkuInventoryBySyncTime" resultMap="TradeInventoryDTOMapper">
+		select * from item_sku_publish_info where modified >= #{syncTime}
+	  	<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+</mapper>

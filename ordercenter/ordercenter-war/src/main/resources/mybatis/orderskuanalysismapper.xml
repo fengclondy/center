@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderSkuAnalysisDAO" >
+
+<select id="queryShopInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderSkuAnalysisDMO">
+        select a.shop_id shopId,b.member_code sellerCode from shop_info a 
+        inner join member_base_info b on a.seller_id = b.id
+</select>
+
+<select id="queryOrderSkuInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderSkuAnalysisDMO"
+		parameterType="Object">
+        SELECT s.skuCode,s.goodsName,s.itemCode,
+			s.salesAmount,s.salesGoodsCount,t.orderGoodsCount from
+        (SELECT b.sku_code skuCode,b.goods_name goodsName,b.item_code itemCode,
+        ifnull(sum(b.goods_amount),0) salesAmount,
+        ifnull(sum(b.goods_count),0) salesGoodsCount,
+        DATE_FORMAT(pay_order_time,'%Y-%m-%d') dealDate
+        FROM trade_orders a,trade_order_items b 
+        WHERE a.order_no = b.order_no
+        and a.order_status>=30 and a.seller_code = #{sellerCode}
+        and a.is_cancel_order = '0' 
+        and DATE_FORMAT(a.pay_order_time,'%Y-%m-%d') = #{payOrderDate}
+        group by b.sku_code) s
+        LEFT JOIN
+        (select ifnull(sum(b.goods_count),0) orderGoodsCount,
+        DATE_FORMAT(pay_order_time,'%Y-%m-%d') dealDate
+        from trade_orders a,trade_order_items b 
+        where a.order_no = b.order_no
+        and a.seller_code = #{sellerCode}
+        and DATE_FORMAT(a.create_order_time,'%Y-%m-%d') = #{payOrderDate}
+        group by b.sku_code) t
+        on t.dealDate = s.dealDate
+        
+</select>
+
+<insert id="insertOrderSkuInfo" parameterType="java.util.List">
+	<![CDATA[
+   		insert into SHOP_SALES_ANALYSIS_DAY_REPORT (
+			SHOP_ID,
+			SALES_TIME,
+			SKU_CODE,
+			GOODS_NAME,
+			ITEM_CODE,
+			SALES_AMOUNT,
+			SALES_GOODS_COUNT,
+			ORDER_GOODS_COUNT,
+			STATISTICS_TIME)
+		values (
+			#{orderSkuAnalysisDMO.shopId},
+			#{orderSkuAnalysisDMO.salesTime},
+			#{orderSkuAnalysisDMO.skuCode},
+			#{orderSkuAnalysisDMO.goodsName},
+			#{orderSkuAnalysisDMO.itemCode},
+			#{orderSkuAnalysisDMO.salesAmount},
+			#{orderSkuAnalysisDMO.salesGoodsCount},
+			#{orderSkuAnalysisDMO.orderGoodsCount},
+			now()
+		)
+   		]]>
+</insert>
+
+<update id="updateOrderSkuInfo" parameterType="cn.htd.zeus.tc.biz.dmo.OrderSkuAnalysisDMO">
+  UPDATE SHOP_SALES_ANALYSIS_DAY_REPORT SET
+      sales_amount =  #{orderSkuAnalysisDMO.salesAmount},
+      SALES_GOODS_COUNT =  #{orderSkuAnalysisDMO.salesGoodsCount},
+      ORDER_GOODS_COUNT =  #{orderSkuAnalysisDMO.orderGoodsCount},
+      STATISTICS_TIME = now()
+  where 1=1
+        and shop_id=#{orderSkuAnalysisDMO.shopId} 
+        and sales_time = #{orderSkuAnalysisDMO.salesTime}
+        and sku_code = #{orderSkuAnalysisDMO.skuCode}
+</update>	
+</mapper>

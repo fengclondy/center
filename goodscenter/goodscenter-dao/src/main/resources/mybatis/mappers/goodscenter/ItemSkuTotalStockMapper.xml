@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.ItemSkuTotalStockMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ItemSkuTotalStock" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="inventory" property="inventory" jdbcType="INTEGER" />
+    <result column="last_stock_sync_time" property="lastStockSyncTime" jdbcType="TIMESTAMP" />
+    <result column="reserve_quantity" property="reserveQuantity" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+     <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_id, sku_code, inventory, last_stock_sync_time, reserve_quantity, create_id, 
+    create_name, create_time, modify_id, modify_name, modify_time,seller_id
+  </sql>
+  <select id="queryByid" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_sku_total_stock
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_sku_total_stock
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.ItemSkuTotalStock" >
+    insert into item_sku_total_stock (id, item_id, sku_code, 
+      inventory, last_stock_sync_time, reserve_quantity, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time,seller_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{skuCode,jdbcType=VARCHAR}, 
+      #{inventory,jdbcType=INTEGER}, #{lastStockSyncTime,jdbcType=TIMESTAMP}, #{reserveQuantity,jdbcType=INTEGER}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP},#{sellerId}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ItemSkuTotalStock" >
+    insert into item_sku_total_stock
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="inventory != null" >
+        inventory,
+      </if>
+      <if test="lastStockSyncTime != null" >
+        last_stock_sync_time,
+      </if>
+      <if test="reserveQuantity != null" >
+        reserve_quantity,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="inventory != null" >
+        #{inventory,jdbcType=INTEGER},
+      </if>
+      <if test="lastStockSyncTime != null" >
+        #{lastStockSyncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reserveQuantity != null" >
+        #{reserveQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="sellerId != null" >
+        #{sellerId}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ItemSkuTotalStock" >
+    update item_sku_total_stock
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="inventory != null" >
+        inventory = #{inventory,jdbcType=INTEGER},
+      </if>
+      <if test="lastStockSyncTime != null" >
+        last_stock_sync_time = #{lastStockSyncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reserveQuantity != null" >
+        reserve_quantity = #{reserveQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="sellerId != null" >
+        seller_id = #{sellerId}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemSkuTotalStock" >
+    update item_sku_total_stock
+    set item_id = #{itemId,jdbcType=BIGINT},
+      sku_code = #{skuCode,jdbcType=VARCHAR},
+      inventory = #{inventory,jdbcType=INTEGER},
+      last_stock_sync_time = #{lastStockSyncTime,jdbcType=TIMESTAMP},
+      reserve_quantity = #{reserveQuantity,jdbcType=INTEGER},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      seller_id = #{sellerId}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateItemTotalStockBySkuCodeAndSellerId">
+  update item_sku_total_stock 
+   set inventory = #{inventory,jdbcType=INTEGER},
+       last_stock_sync_time = NOW(),
+       modify_id = #{modifyId,jdbcType=BIGINT},
+       modify_name = #{modifyName,jdbcType=VARCHAR},
+       modify_time = NOW()
+      where  sku_code = #{skuCode,jdbcType=VARCHAR} and seller_id =#{sellerId}
+  </update>
+  <select id="queryBySkuId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+   select stock.* from item_sku_total_stock stock join item_sku sku on 
+	stock.sku_code=sku.sku_code where sku.sku_id=#{skuId}
+  </select>
+  <select id="queryWarningStockLevelProductsData" parameterType="Long" resultType="Map">
+	  <![CDATA[
+	  SELECT 
+	    COUNT(tab.type) as cnu, tab.type
+	FROM
+	    (SELECT 
+	        CASE
+	                WHEN (stock.inventory - stock.reserve_quantity) <= 10 THEN 1
+	                ELSE 0
+	            END AS type
+	    FROM
+	        item_sku AS sku
+	    JOIN item t ON t.item_id = sku.item_id
+	    JOIN item_sku_total_stock stock ON stock.item_id = sku.item_id
+	    WHERE t.item_status NOT IN (4 , 6) AND sku.seller_id=#{sellerId}
+	        ) tab
+	GROUP BY tab.type
+	 ]]>
+  </select>
+  
+  <select id="queryWarningStockLevelProductsInfoList" parameterType="Long" 
+  resultType="cn.htd.goodscenter.dto.venus.outdto.VenusWarningStockLevelListOutDTO">
+	  <![CDATA[
+	  SELECT 
+	    sku.sku_id as skuId,
+	    sku.sku_code AS skuCode,
+	    t.item_name AS itemName,
+	    t.item_code AS itemCode,
+	    (stock.inventory - stock.reserve_quantity) AS erpAvaliableQty
+	FROM
+	    item_sku AS sku
+	        JOIN
+	    item AS t ON t.item_id = sku.item_id
+	        JOIN
+	    item_sku_total_stock stock ON stock.item_id = sku.item_id
+	WHERE
+	    (stock.inventory - stock.reserve_quantity) <= 10
+	        AND sku.seller_id = #{sellerId}
+	order by (stock.inventory - stock.reserve_quantity) asc
+        limit 6
+	 ]]>
+  </select>
+
+  <update id="updateItemInventoryByItemId">
+    UPDATE item_sku_total_stock
+    SET
+    modify_time = NOW(),
+    inventory = #{inventory,jdbcType=INTEGER}
+    WHERE item_id = #{itemId}
+  </update>
+</mapper>

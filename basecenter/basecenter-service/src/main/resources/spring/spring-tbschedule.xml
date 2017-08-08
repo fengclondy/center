@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <bean id="scheduleManagerFactory"
+        class="com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory"
+        init-method="init">
+        <property name="zkConfig">
+            <map>
+               	<entry key="zkConnectString" value="${tbschedule.registry.address}" />
+                <entry key="rootPath" value="${tbschedule.rootPath}" />
+                <entry key="zkSessionTimeout" value="${tbschedule.timeout}" />
+                <entry key="userName" value="${tbschedule.userName}" />
+                <entry key="password" value="${tbschedule.password}" />
+                <entry key="isCheckParentPath" value="${tbschedule.isCheckParentPath}" />
+            </map>
+        </property>
+    </bean>
+    <!-- 公告处理定时任务 -->
+    <bean id="publishPlacardScheduleTask" class="cn.htd.basecenter.service.task.PublishPlacardScheduleTask"/>
+    <!-- 地址信息更新到Redis定时任务 -->
+   <bean id="updateAddress2RedisScheduleTask" class="cn.htd.basecenter.service.task.UpdateAddress2RedisScheduleTask"/>
+    <!-- 字典信息更新到Redis定时任务 -->
+    <bean id="updateDictionary2RedisScheduleTask" class="cn.htd.basecenter.service.task.UpdateDictionary2RedisScheduleTask"/>
+    <!-- 地址信息下行到ERP定时任务 -->
+    <bean id="addressErpDownScheduleTask" class="cn.htd.basecenter.service.task.AddressErpDownScheduleTask"/>
+
+    <bean id="mailErpExceptionAddressScheduleTask" class="cn.htd.basecenter.service.task.MailErpExceptionAddressScheduleTask"/>
+</beans>

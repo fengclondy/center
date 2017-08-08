@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberInvoiceDAO">
+	<!-- 根据会员编码查询会员发票信息 -->
+	<select id="queryMemberInvoiceInfo" resultType="cn.htd.membercenter.dto.MemberInvoiceDTO"
+		parameterType="Object">
+		select
+			a.invoice_id invoiceId,
+			a.member_id memberId,
+			a.channel_code channelCode,
+			a.invoice_notify invoiceNotify,
+			a.invoice_company_name invoiceCompanyName,
+			a.tax_man_id taxManId,
+			a.bank_name bankName,
+			a.bank_account bankAccount,
+			a.invoice_person invoicePerson,
+			a.contact_phone contactPhone,
+			a.invoice_address invoiceAddress,
+			a.invoice_address_province invoiceAddressProvince,
+			a.invoice_address_city invoiceAddressCity,
+			a.invoice_address_county invoiceAddressCounty,
+			a.invoice_address_town invoiceAddressTown,
+			a.invoice_address_detail invoiceAddressDetail,
+			a.delete_flag deleteFlag,
+			a.erp_status erpStatus,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.create_time createTime,
+			a.modify_time modifyTime
+           from member_invoice_info a
+		where a.member_id = #{memberInvoiceDTO.memberId}
+		and a.delete_flag = '0' and a.channel_code=''
+	</select>
+	
+	<!-- 修改会员发票信息 -->
+	<update id="modifyMemberInoviceInfo" parameterType="Object">
+		update member_invoice_info set
+			<if test="memberInvoiceDTO.invoiceNotify != null and memberInvoiceDTO.invoiceNotify != ''">
+			   	invoice_notify = #{memberInvoiceDTO.invoiceNotify},
+			</if> 
+			<if test="memberInvoiceDTO.taxManId != null and memberInvoiceDTO.taxManId != ''">
+			   	tax_man_id = #{memberInvoiceDTO.taxManId},
+			</if> 
+			<if test="memberInvoiceDTO.contactPhone != null and memberInvoiceDTO.contactPhone != ''">
+			   	contact_phone = #{memberInvoiceDTO.contactPhone},
+			</if> 
+			<if test="memberInvoiceDTO.invoiceAddress != null and memberInvoiceDTO.invoiceAddress != ''">
+			   	invoice_address = #{memberInvoiceDTO.invoiceAddress},
+			</if> 
+			<if test="memberInvoiceDTO.bankName != null and memberInvoiceDTO.bankName != ''">
+			   	bank_name = #{memberInvoiceDTO.bankName},
+			</if> 
+			<if test="memberInvoiceDTO.bankAccount != null and memberInvoiceDTO.bankAccount != ''">
+			   	bank_account = #{memberInvoiceDTO.bankAccount},
+			</if> 
+			<if test="memberInvoiceDTO.invoiceNotify != null and memberInvoiceDTO.invoiceNotify !=''">
+				invoice_notify = #{memberInvoiceDTO.invoiceNotify},
+			</if>
+			<if test="memberInvoiceDTO.invoiceCompanyName != null and memberInvoiceDTO.invoiceCompanyName !=''">
+				invoice_company_name = #{memberInvoiceDTO.invoiceCompanyName},
+			</if>
+			modify_time = now(),
+			modify_id = #{memberInvoiceDTO.operateId},
+			modify_name = #{memberInvoiceDTO.operateName}
+		where member_id = #{memberInvoiceDTO.memberId}
+		<if test="memberInvoiceDTO.channelCode != null and memberInvoiceDTO.channelCode !=''">
+			and channel_code = #{memberInvoiceDTO.channelCode}
+		</if>
+	</update>
+	
+	<!-- 插入审批信息表 -->
+	<insert id="addVerifyInfo" useGeneratedKeys="true" keyProperty="id"  parameterType="cn.htd.membercenter.dto.MemberBuyerVerifyInfoDTO">
+	    insert into verify_info
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	        modify_type,
+	        verify_status,record_type,
+	      <if test="createId != null and createId != ''" >
+	        create_id,
+	      </if>
+	      <if test="recordId != null and recordId != ''" >
+	        record_id,
+	      </if>
+	      <if test="createName != null and createName != ''" >
+	        create_name,
+	      </if>
+	        create_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	        #{recordType},
+	        1,'1',
+	      <if test="createId != null and createId != ''" >
+	        #{createId,jdbcType=BIGINT},
+	      </if>
+	      <if test="recordId != null and recordId != ''" >
+	        #{recordId},
+	      </if>
+	      <if test="createName != null and createName != ''" >
+	        #{createName,jdbcType=VARCHAR},
+	      </if>
+	        now()
+	    </trim>
+	  </insert>
+	
+	<!-- 插入审批详细信息表 -->
+	<insert id="addVerifyDetailInfo" parameterType="cn.htd.membercenter.dto.MemberBuyerVerifyDetailInfoDTO">
+		insert into verify_detail_info
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="verifyId != null" >
+	        verify_id,
+	      </if>
+	        modify_type,
+	      <if test="contentName != null" >
+	        content_name,
+	      </if>
+	      <if test="recordId != null" >
+	        record_id,
+	      </if>
+	      <if test="recordType != null" >
+	        record_type,
+	      </if>
+	      <if test="changeTableId != null" >
+	        change_table_id,
+	      </if>
+	      <if test="changeFieldId != null" >
+	        change_field_id,
+	      </if>
+	      <if test="beforeChange != null" >
+	        before_change,
+	      </if>
+	      <if test="afterChange != null" >
+	        after_change,
+	      </if>
+	       <if test="beforeChangeDesc != null" >
+	        before_change_desc,
+	      </if>
+	      <if test="afterChangeDesc != null" >
+	        after_change_desc,
+	      </if>
+	      <if test="operatorId != null" >
+	        operator_id,
+	      </if>
+	      <if test="operatorName != null" >
+	        operator_name,
+	      </if>
+	        operate_time
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="verifyId != null" >
+	        #{verifyId,jdbcType=BIGINT},
+	      </if>
+	        #{modifyType},
+	      <if test="contentName != null" >
+	        #{contentName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="recordId != null" >
+	        #{recordId,jdbcType=BIGINT},
+	      </if>
+	      <if test="recordType != null" >
+	        #{recordType,jdbcType=VARCHAR},
+	      </if>
+	      <if test="changeTableId != null" >
+	        #{changeTableId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="changeFieldId != null" >
+	        #{changeFieldId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="beforeChange != null" >
+	        #{beforeChange,jdbcType=VARCHAR},
+	      </if>
+	      <if test="afterChange != null" >
+	        #{afterChange,jdbcType=VARCHAR},
+	      </if>
+	      <if test="beforeChangeDesc != null" >
+	        #{beforeChangeDesc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="afterChangeDesc != null" >
+	        #{afterChangeDesc,jdbcType=VARCHAR},
+	      </if>
+	      <if test="operatorId != null" >
+	        #{operatorId,jdbcType=BIGINT},
+	      </if>
+	      <if test="operatorName != null" >
+	        #{operatorName,jdbcType=VARCHAR},
+	      </if>
+	      now()
+	    </trim>
+	</insert>
+	
+</mapper>

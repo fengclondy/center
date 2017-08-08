@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.basecenter.dao.BasePlacardScopeDAO" >
+<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BasePlacardScope" >
+<id column="id" property="id" jdbcType="BIGINT" />
+<result column="placard_id" property="placardId" jdbcType="BIGINT" />
+<result column="scope_type" property="scopeType" jdbcType="VARCHAR" />
+<result column="part_type" property="partType" jdbcType="VARCHAR" />
+<result column="part_detail" property="partDetail" jdbcType="VARCHAR" />
+<result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+<result column="create_id" property="createId" jdbcType="BIGINT" />
+<result column="create_name" property="createName" jdbcType="VARCHAR" />
+<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+  <sql id="selectAllColumns">
+		<![CDATA[
+		select
+			id,
+			placard_id,
+			scope_type,
+			part_type,
+			part_detail,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		from
+			base_placard_scope
+		]]>
+	</sql>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 插入记录 -->
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into base_placard_scope(
+			placard_id,
+			scope_type,
+			part_type,
+			part_detail,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{placardId},
+			#{scopeType},
+			#{partType},
+			#{partDetail},
+			0,
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新记录 -->
+	<update id="update">
+		update base_placard_scope 
+		<set> 
+			delete_flag = #{deleteFlag},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where placard_id = #{placardId}
+		  and <![CDATA[ delete_flag <> #{deleteFlag} ]]>
+	</update>
+	<!-- 查询公告范围列表 -->
+	<select id="queryList" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where placard_id = #{entity.placardId}
+		  and delete_flag = #{entity.deleteFlag}
+		order by scope_type, part_type
+	</select>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<!-- 批量插入记录 -->
+	<insert id="addBasePlacardScopeList" useGeneratedKeys="true" parameterType="java.util.List">
+		insert into base_placard_scope(
+			placard_id,
+			scope_type,
+			part_type,
+			part_detail,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( 
+				#{item.placardId},
+				#{item.scopeType},
+				#{item.partType},
+				#{item.partDetail},
+				0,
+				#{item.createId},
+				#{item.createName},
+				now(),
+				#{item.createId},
+				#{item.createName},
+				now()
+			)
+		</foreach>
+	</insert>
+</mapper>

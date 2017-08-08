@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.goodscenter.dao.ItemArrivalNotifyDAO">
+    <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ItemArrivalNotify" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ctoken" property="ctoken" jdbcType="VARCHAR" />
+    <result column="buyer_id" property="buyerId" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+    <result column="notify_mobile" property="notifyMobile" jdbcType="BIGINT" />
+    <result column="notify_status" property="notifyStatus" jdbcType="VARCHAR" />
+    <result column="nofity_time" property="nofityTime" jdbcType="TIMESTAMP" />
+    <result column="is_box_flag" property="isBoxFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ctoken, buyer_id, seller_id, shop_id, item_id, sku_id, notify_mobile, notify_status, 
+    nofity_time, is_box_flag, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_arrival_notify
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_arrival_notify
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.ItemArrivalNotify" >
+    insert into item_arrival_notify ( 
+        ctoken, 
+        buyer_id,
+        seller_id,
+        shop_id,
+        item_id,
+        sku_id, 
+        notify_mobile, 
+        notify_status,
+        is_box_flag,
+        create_id, 
+        create_name,
+         create_time, 
+         modify_id, 
+         modify_name, 
+         modify_time)
+        values (
+        	#{ctoken,jdbcType=VARCHAR}, 
+        	#{buyerId,jdbcType=BIGINT},
+            #{sellerId,jdbcType=BIGINT}, 
+            #{shopId,jdbcType=BIGINT},
+            #{itemId,jdbcType=BIGINT},
+            #{skuId,jdbcType=BIGINT}, 
+            #{notifyMobile,jdbcType=BIGINT}, 
+            '0',
+            #{isBoxFlag},
+            #{createId,jdbcType=BIGINT}, 
+            #{createName,jdbcType=VARCHAR}, 
+            NOW(), 
+            #{modifyId,jdbcType=BIGINT}, 
+            #{modifyName,jdbcType=VARCHAR},
+            NOW()
+         )
+        ON DUPLICATE KEY UPDATE
+		buyer_id = VALUES(buyer_id),
+		seller_id = VALUES(seller_id),
+		shop_id = VALUES(shop_id),
+		item_id = VALUES(item_id),
+		sku_id = VALUES(sku_id),
+		notify_mobile = VALUES(notify_mobile),
+		notify_status = '0',
+		modify_id = VALUES(modify_id),
+		modify_name = VALUES(modify_name),
+		modify_time =NOW()
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ItemArrivalNotify" >
+    insert into item_arrival_notify
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ctoken != null" >
+        ctoken,
+      </if>
+      <if test="buyerId != null" >
+        buyer_id,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="notifyMobile != null" >
+        notify_mobile,
+      </if>
+      <if test="notifyStatus != null" >
+        notify_status,
+      </if>
+      <if test="nofityTime != null" >
+        nofity_time,
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="ctoken != null" >
+        #{ctoken,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerId != null" >
+        #{buyerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="notifyMobile != null" >
+        #{notifyMobile,jdbcType=BIGINT},
+      </if>
+      <if test="notifyStatus != null" >
+        #{notifyStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="nofityTime != null" >
+        #{nofityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isBoxFlag != null" >
+        #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ItemArrivalNotify" >
+    update item_arrival_notify
+    <set >
+      <if test="ctoken != null" >
+        ctoken = #{ctoken,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerId != null" >
+        buyer_id = #{buyerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="notifyMobile != null" >
+        notify_mobile = #{notifyMobile,jdbcType=BIGINT},
+      </if>
+      <if test="notifyStatus != null" >
+        notify_status = #{notifyStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="nofityTime != null" >
+        nofity_time = #{nofityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isBoxFlag != null" >
+        is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemArrivalNotify" >
+    update item_arrival_notify
+    set ctoken = #{ctoken,jdbcType=VARCHAR},
+      buyer_id = #{buyerId,jdbcType=BIGINT},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      shop_id = #{shopId,jdbcType=BIGINT},
+      item_id = #{itemId,jdbcType=BIGINT},
+      sku_id = #{skuId,jdbcType=BIGINT},
+      notify_mobile = #{notifyMobile,jdbcType=BIGINT},
+      notify_status = #{notifyStatus,jdbcType=VARCHAR},
+      nofity_time = #{nofityTime,jdbcType=TIMESTAMP},
+      is_box_flag = #{isBoxFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="queryWatingNotifyInfoList"  resultMap="BaseResultMap" parameterType="map">
+  	select * from item_arrival_notify ian where ian.notify_status=0
+  	AND mod(ian.id, #{taskQueueNum}) in
+	<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+		#{taskId}
+	</foreach>
+	LIMIT #{rows}
+  </select>
+  
+  <update id="updateItemArrivalNotifyStatus" parameterType="cn.htd.goodscenter.domain.ItemArrivalNotify">
+   update item_arrival_notify
+    set 
+      notify_status = '1',
+      nofity_time = NOW(),
+      modify_id = 0,
+      modify_name ='system',
+      modify_time = NOW()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.vip.VipChannelItemInfoMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.vip.VipChannelItemInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="VARCHAR" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="modify_id" property="modifyId" jdbcType="VARCHAR" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sku_code, delete_flag, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from vip_channel_item_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vip_channel_item_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.vip.VipChannelItemInfo" >
+    insert into vip_channel_item_info (id, sku_code, delete_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{skuCode,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=VARCHAR}, 
+      #{createId,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, 
+      #{modifyId,jdbcType=VARCHAR}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.vip.VipChannelItemInfo" >
+    insert into vip_channel_item_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.vip.VipChannelItemInfo" >
+    update vip_channel_item_info
+    <set >
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.vip.VipChannelItemInfo" >
+    update vip_channel_item_info
+    set sku_code = #{skuCode,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=VARCHAR},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=VARCHAR},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="deleteAll">
+    UPDATE vip_channel_item_info SET delete_flag = 1
+  </update>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into vip_channel_item_info (
+      sku_code, delete_flag,
+      create_id, create_name, create_time
+      )
+    values
+    <foreach collection="records" item="item" separator=",">
+    (
+      #{item.skuCode,jdbcType=VARCHAR}, #{item.deleteFlag,jdbcType=VARCHAR},
+      #{item.createId,jdbcType=VARCHAR}, #{item.createName,jdbcType=VARCHAR}, now()
+      )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    delete_flag = 0,
+    create_time = now(),
+    modify_time = now()
+  </insert>
+
+  <select id="selectListByPage" resultMap="BaseResultMap">
+    SELECT * FROM vip_channel_item_info
+    WHERE
+    delete_flag = 0
+    ORDER BY create_time DESC
+    <if test="page != null ">
+      limit #{page.pageOffset} , #{page.rows}
+    </if>
+  </select>
+
+  <select id="selectListCount" resultType="Long">
+    SELECT count(1) FROM vip_channel_item_info
+    WHERE
+    delete_flag = 0
+  </select>
+</mapper>

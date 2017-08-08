@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrderStatusHistoryDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="order_status_text" property="orderStatusText" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_no, order_status, order_status_text, create_id, create_name, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_order_status_history
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectCountByOrderNoAndOrderStatus" resultType="java.lang.Integer" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+  	select count(1) from trade_order_status_history
+  	where 1=1
+  	and order_no = #{orderNo}
+  	and order_status = #{orderStatus}
+  </select>
+
+  <select id="selectHistoryByOrderNo" resultMap="BaseResultMap"
+  				parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    select
+    <include refid="Base_Column_List" />
+    from trade_order_status_history
+    where 1=1
+    and order_no = #{orderNo}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from trade_order_status_history
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    insert into trade_order_status_history (id, order_no, order_status,
+      order_status_text, create_id, create_name,
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR},
+      #{orderStatusText,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    insert into trade_order_status_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="orderStatusText != null" >
+        order_status_text,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatusText != null" >
+        #{orderStatusText,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    update trade_order_status_history
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatusText != null" >
+        order_status_text = #{orderStatusText,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    update trade_order_status_history
+    set order_no = #{orderNo,jdbcType=VARCHAR},
+      order_status = #{orderStatus,jdbcType=VARCHAR},
+      order_status_text = #{orderStatusText,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+<!--
+   <insert id="insert" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO" >
+    insert into trade_order_status_history ( order_no, order_status,
+      order_status_text, create_id, create_name,
+      create_time)
+    values
+     <foreach collection="list" item="item" index="index" separator="," >
+        ( #{orderNo,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR},
+      #{orderStatusText,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP})
+    </foreach>
+
+  </insert> -->
+</mapper>

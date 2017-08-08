@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.FloorContentSubDAO">
+    <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.FloorContentSubDTO">
+        <result column="id" property="id" />
+        <result column="floor_id" property="floorId" />
+        <result column="brand_id" property="brandId" />
+        <result column="brand_name" property="brandName" />
+        <result column="sort_num" property="sortNum" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, floor_id, brand_id, brand_name, sort_num
+    </sql>
+
+    <sql id="selectAllColumns">
+        select
+        id, floor_id, brand_id, brand_name, sort_num
+        from floor_content_sub
+    </sql>
+
+    <!-- mysql 分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset}, #{page.rows}
+    </sql>
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+        SELECT COUNT(1) FROM floor_content_sub
+    </sql>
+
+    <sql id="where_fragement">
+        WHERE 1=1
+        <if test="entity!=null">
+            <if test="entity.id != null and entity.id != '' ">
+                <![CDATA[ AND id = #{entity.id} ]]>
+            </if>
+            <if test="entity.floorId != null and entity.floorId != '' ">
+                <![CDATA[ AND floor_id = #{entity.floorId} ]]>
+            </if>
+            <if test="entity.brandId != null and entity.brandId != '' ">
+                <![CDATA[ AND brand_id = #{entity.brandId} ]]>
+            </if>
+            <if test="entity.brandName != null and entity.brandName != '' ">
+                <![CDATA[ AND brand_name = #{entity.brandName} ]]>
+            </if>
+            <if test="entity.sortNum != null and entity.sortNum != '' ">
+                <![CDATA[ AND sort_num = #{entity.sortNum} ]]>
+            </if>
+            order by sort_num asc
+        </if>
+    </sql>
+
+    <select id="selectById" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from floor_content_sub
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+
+    <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.FloorContentSubDTO">
+        insert into floor_content_sub
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="floorId != null">
+                floor_id,
+            </if>
+            <if test="brandId != null">
+                brand_id,
+            </if>
+            <if test="brandName != null">
+                brand_name,
+            </if>
+            <if test="sortNum != null">
+                sort_num
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="floorId != null">
+                #{floorId,jdbcType=BIGINT},
+            </if>
+            <if test="brandId != null">
+                #{brandId,jdbcType=BIGINT},
+            </if>
+            <if test="brandName != null">
+                #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="sortNum != null">
+                #{sortNum,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByCondition" parameterType="com.bjucloud.contentcenter.dto.FloorContentSubDTO">
+        update floor_content_sub
+        <set>
+            <if test="floorId != null">
+                floor_id = #{floorId,jdbcType=BIGINT},
+            </if>
+            <if test="brandId != null">
+                brand_id = #{brandId,jdbcType=BIGINT},
+            </if>
+            <if test="brandName != null">
+                brand_name = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="sortNum != null">
+                sort_num = #{sortNum,jdbcType=BIGINT}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="selectListByCondition" resultMap="BaseResultMap">
+        <include refid="selectAllColumns" />
+        <include refid="where_fragement" />
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
+
+    <select id="selectCountByCondition" resultType="java.lang.Long">
+        <include refid="count_Tail" />
+        <include refid="where_fragement" />
+    </select>
+
+    <delete id="deleteByContentId" parameterType="long">
+        delete from floor_content_sub
+        where content_id = #{contentId}
+    </delete>
+
+    <delete id="deleteByFloorId" parameterType="long">
+        delete from floor_content_sub
+        where floor_id = #{floorId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.tradecenter.dao.ShopPreferentialWayDAO">
+	<resultMap id="shopPreferentialWayDTO" type="cn.htd.tradecenter.dto.ShopPreferentialWayDTO">
+		<id column="id" property="id" />
+		<result column="template_id" property="templateId" />
+		<result column="preferential_way" property="preferentialWay" />
+		<result column="strategy" property="strategy" />
+		<result column="full" property="full" />
+		<result column="reduce" property="reduce" />
+		<result column="shop_id" property="shopId" />
+		<result column="seller_id" property="sellerId" />
+		<result column="create_time" property="createTime" />
+		<result column="modify_time" property="modifyTime" />
+		<result column="delete_flag" property="deleteFlag" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<!--查询条件 -->
+	<sql id="where_shopPreferentialWay">
+		where 1=1
+		<if test="entity!=null">
+			<if test="entity.id != null  and entity.id !=''">
+				<![CDATA[ and id  = #{entity.id} ]]>
+			</if>
+			<if test="entity.templateId != null  and entity.templateId !=''">
+				<![CDATA[ and template_id  = #{entity.templateId} ]]>
+			</if>
+			<if test="entity.deleteFlag != null  and entity.deleteFlag !=''">
+				<![CDATA[ and delete_flag  = #{entity.deleteFlag} ]]>
+			</if>
+		</if>
+	</sql>
+	<sql id="Base_Column_List">
+		select id, template_id, delete_flag, strategy, full, reduce,
+		shop_id, seller_id, create_time,preferential_way,
+		modify_time from shop_preferential_way
+	</sql>
+
+	<select id="selectListByCondition" resultMap="shopPreferentialWayDTO">
+		<include refid="Base_Column_List" />
+		<include refid="where_shopPreferentialWay" />
+	</select>
+
+	<select id="queryById" parameterType="java.lang.Long" resultMap="shopPreferentialWayDTO">
+		<include refid="Base_Column_List" />
+		where id = #{id}
+	</select>
+	<delete id="delete">
+		delete from shop_preferential_way
+		where id = #{id}
+	</delete>
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into shop_preferential_way (template_id, preferential_way,
+		strategy, full, reduce,
+		shop_id, seller_id, create_time,
+		modify_time,delete_flag)
+		values (#{templateId}, #{preferentialWay},
+		#{strategy}, #{full}, #{reduce},
+		#{shopId}, #{sellerId}, now(),
+		#{modifyTime},#{deleteFlag})
+	</insert>
+	<update id="update">
+		update shop_preferential_way
+		<set>
+			<if test="templateId != null">
+				template_id = #{templateId},
+			</if>
+			<if test="preferentialWay != null">
+				preferential_way = #{preferentialWay},
+			</if>
+			<if test="strategy != null">
+				strategy = #{strategy},
+			</if>
+			<if test="full != null">
+				full = #{full},
+			</if>
+			<if test="reduce != null">
+				reduce = #{reduce},
+			</if>
+			<if test="shopId != null">
+				shop_id = #{shopId},
+			</if>
+			<if test="sellerId != null">
+				seller_id = #{sellerId},
+			</if>
+			<if test="modifyTime != null">
+				modify_time = #{modifyTime},
+			</if>
+			<if test="deleteFlag != null">
+				delete_flag = #{deleteFlag},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

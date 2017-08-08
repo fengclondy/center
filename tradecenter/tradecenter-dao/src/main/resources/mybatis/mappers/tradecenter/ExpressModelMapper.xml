@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.ExpressModelDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.tradecenter.domain.ExpressModel">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+		<result column="shop_id" property="shopId" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="delivery_code" property="deliveryCode" jdbcType="VARCHAR" />
+		<result column="delivery_name" property="deliveryName" jdbcType="VARCHAR" />
+		<result column="express_pic_url" property="expressPicUrl" jdbcType="VARCHAR" />
+		<result column="model_width" property="modelWidth" jdbcType="VARCHAR" />
+		<result column="model_heigh" property="modelHeigh" jdbcType="VARCHAR" />
+		<result column="express_print" property="expressPrint" jdbcType="VARCHAR" />
+		<result column="move_left" property="moveLeft" jdbcType="VARCHAR" />
+		<result column="is_default" property="isDefault" jdbcType="INTEGER" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="cn.htd.tradecenter.domain.ExpressModel" extends="BaseResultMap">
+		<result column="model" property="model" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, seller_id, shop_id, name, delivery_code, delivery_name, 
+		express_pic_url, model_width, model_heigh, express_print,
+		move_left, is_default,
+		create_time, create_id, create_name,
+		modify_time, modify_id, modify_name
+	</sql>
+	<sql id="Blob_Column_List">
+		model
+	</sql>
+	<sql id="where">
+		<where>
+			<if test="expressModel.isDefault != null and expressModel.isDefault != ''">
+			   <![CDATA[ and is_default = #{expressModel.isDefault,jdbcType=INTEGER}]]>
+			</if>
+			<if test="expressModel.name != null and expressModel.name != ''">
+			   <![CDATA[ and name like CONCAT("%",#{expressModel.name},"%" ) ]]>
+			</if>
+			<if test="expressModel.sellerId != null and expressModel.sellerId != 0">
+				<![CDATA[ and seller_id = #{expressModel.sellerId,jdbcType=BIGINT} ]]>
+			</if>
+			<if test="expressModel.shopId != null and expressModel.shopId != 0">
+				<![CDATA[ and shop_id = #{expressModel.shopId,jdbcType=BIGINT} ]]>
+			</if>
+			<if test="expressModel.startTime != null">
+				 <![CDATA[ and create_time >= #{startTime} ]]>
+			</if>
+			<if test="expressModel.endTime != null">
+				<![CDATA[ and create_time <= #{endTime} ]]>
+			</if>
+		</where>
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from express_model
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<select id="selectSystemModel" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from express_model
+		where is_default = 1 
+		  and delivery_code = #{deliveryCode,jdbcType=VARCHAR}
+	</select>
+	<select id="selectByName" resultMap="ResultMapWithBLOBs"
+		parameterType="cn.htd.tradecenter.domain.ExpressModel">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from express_model
+		where is_default = 1
+		<if test="sellerId != null and sellerId != 0">
+			<![CDATA[ and seller_id = #{sellerId,jdbcType=BIGINT} ]]>
+		</if>
+		<if test="shopId != null and shopId != 0">
+			<![CDATA[ and shop_id = #{shopId,jdbcType=BIGINT} ]]>
+		</if>
+		<if test="name != null and name != ''">
+		   <![CDATA[ and name = #{name,jdbcType=VARCHAR} ]]>
+		</if>
+	</select>
+	<select id="selectExpressModelList" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from express_model
+		<include refid="where" />
+		order by create_time desc
+		<if test="pager != null">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+	<select id="queryPageCount" resultType="long">
+		select count(1) from express_model
+		<include refid="where" />
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		express_model
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert">
+		insert into express_model
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				name,
+			</if>
+			<if test="deliveryCode != null">
+				delivery_code,
+			</if>
+			<if test="deliveryName != null">
+				delivery_name,
+			</if>
+			<if test="expressPicUrl != null">
+				express_pic_url,
+			</if>
+			<if test="modelWidth != null">
+				model_width,
+			</if>
+			<if test="modelHeigh != null">
+				model_heigh,
+			</if>
+			<if test="expressPrint != null">
+				express_print,
+			</if>
+			<if test="isDefault != null">
+				is_default,
+			</if>
+			<if test="sellerId != null">
+				seller_id,
+			</if>
+			<if test="shopId!= null">
+				shop_id,
+			</if>
+			<if test="model != null">
+				model,
+			</if>
+			<if test="moveLeft != null">
+				move_left,
+			</if>
+
+			create_id,
+			create_name
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryCode != null">
+				#{deliveryCode,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryName != null">
+				#{deliveryName,jdbcType=VARCHAR},
+			</if>
+			<if test="expressPicUrl != null">
+				#{expressPicUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="modelWidth != null">
+				#{modelWidth,jdbcType=VARCHAR},
+			</if>
+			<if test="modelHeigh != null">
+				#{modelHeigh,jdbcType=VARCHAR},
+			</if>
+			<if test="expressPrint != null">
+				#{expressPrint,jdbcType=VARCHAR},
+			</if>
+			<if test="isDefault != null">
+				#{isDefault,jdbcType=INTEGER},
+			</if>
+			<if test="sellerId != null">
+				#{sellerId,jdbcType=BIGINT},
+			</if>
+			<if test="shopId != null">
+				#{shopId,jdbcType=BIGINT},
+			</if>
+			<if test="model != null">
+				#{model,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="moveLeft != null">
+				#{moveLeft,jdbcType=VARCHAR},
+			</if>
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+		</trim>
+	</insert>
+	<update id="udpate">
+		update express_model
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryCode != null">
+				delivery_code = #{deliveryCode,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryName != null">
+				delivery_name = #{deliveryName,jdbcType=VARCHAR},
+			</if>
+			<if test="expressPicUrl != null">
+				express_pic_url = #{expressPicUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="modelWidth != null">
+				model_width = #{modelWidth,jdbcType=VARCHAR},
+			</if>
+			<if test="modelHeigh != null">
+				model_heigh = #{modelHeigh,jdbcType=VARCHAR},
+			</if>
+			<if test="expressPrint != null">
+				express_print = #{expressPrint,jdbcType=VARCHAR},
+			</if>
+			<if test="isDefault != null">
+				is_default = #{isDefault,jdbcType=INTEGER},
+			</if>
+			<if test="sellerId != null">
+				seller_id = #{sellerId,jdbcType=BIGINT},
+			</if>
+			<if test="shopId != null">
+				shop_id = #{shopId,jdbcType=BIGINT},
+			</if>
+			<if test="model != null">
+				model = #{model,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="moveLeft != null">
+				move_left = #{moveLeft,jdbcType=VARCHAR},
+			</if>
+			modify_id = #{modifyId,jdbcType=BIGINT},
+			modify_name = #{modifyName,jdbcType=VARCHAR},
+			modify_time = now(),
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+</mapper>

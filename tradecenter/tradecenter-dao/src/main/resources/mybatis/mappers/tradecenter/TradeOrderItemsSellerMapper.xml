@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.tradecenter.dao.TradeOrderItemsSellerDAO">
+	<resultMap id="BaseResultDTOMap" type="cn.htd.tradecenter.dto.TradeOrderItemsDTO">
+		<result property="id" column="id"/>
+		<result property="orderItemNo" column="order_item_no"/>
+		<result property="orderNo" column="order_no"/>
+		<result property="channelCode" column="channel_code"/>
+		<result property="skuId" column="sku_id"/>
+		<result property="itemId" column="item_id"/>
+		<result property="itemCode" column="item_code"/>
+		<result property="goodsName" column="goods_name"/>
+		<result property="skuCode" column="sku_code"/>
+		<result property="skuPictureUrl" column="sku_picture_url"/>
+		<result property="firstCategoryId" column="first_category_id"/>
+		<result property="firstCategoryName" column="first_category_name"/>
+		<result property="secondCategoryId" column="second_category_id"/>
+		<result property="secondCategoryName" column="second_category_name"/>
+		<result property="thirdCategoryId" column="third_category_id"/>
+		<result property="thirdCategoryName" column="third_category_name"/>
+		<result property="categoryIdList" column="category_id_list"/>
+		<result property="categoryNameList" column="category_name_list"/>
+		<result property="erpFirstCategoryCode" column="erp_first_category_code"/>
+		<result property="erpFiveCategoryCode" column="erp_five_category_code"/>
+		<result property="brandId" column="brand_id"/>
+		<result property="brandName" column="brand_name"/>
+		<result property="goodsCount" column="goods_count"/>
+		<result property="costPrice" column="cost_price"/>
+		<result property="priceFloatingRatio" column="price_floating_ratio"/>
+		<result property="commissionRatio" column="commission_ratio"/>
+		<result property="commissionAmount" column="commission_amount"/>
+		<result property="isBoxFlag" column="is_box_flag"/>
+		<result property="salePrice" column="sale_price"/>
+		<result property="goodsPriceType" column="goods_price_type"/>
+		<result property="goodsPriceInfo" column="goods_price_info"/>
+		<result property="goodsPrice" column="goods_price"/>
+		<result property="bargainingGoodsPrice" column="bargaining_goods_price"/>
+		<result property="bargainingGoodsCount" column="bargaining_goods_count"/>
+		<result property="goodsAmount" column="goods_amount"/>
+		<result property="totalDiscountAmount" column="total_discount_amount"/>
+		<result property="shopDiscountAmount" column="shop_discount_amount"/>
+		<result property="platformDiscountAmount" column="platform_discount_amount"/>
+		<result property="bargainingGoodsAmount" column="bargaining_goods_amount"/>
+		<result property="hasUsedCoupon" column="has_used_coupon"/>
+		<result property="isChangePrice" column="is_change_price"/>
+		<result property="goodsRealPrice" column="goods_real_price"/>
+		<result property="orderItemTotalAmount" column="order_item_total_amount"/><!--
+		<result property="orderFreight" column="goods_freight"/>-->
+		<result property="outerChannelOrderNo" column="outer_channel_order_no"/>
+		<result property="outerChannelPuchaseStatus" column="outer_channel_puchase_status"/>
+		<result property="outerChannelStatus" column="outer_channel_status"/>
+		<result property="orderItemStatus" column="order_item_status"/>
+		<result property="orderItemErrorStatus" column="order_item_error_status"/>
+		<result property="orderItemErrorTime" column="order_item_error_time"/>
+		<result property="isAddOrderItem" column="is_add_order_item"/>
+		<result property="isCancelOrderItem" column="is_cancel_order_item"/>
+		<result property="orderItemCancelTime" column="order_item_cancel_time"/>
+		<result property="orderItemCancelOperatorId" column="order_item_cancel_operator_id"/>
+		<result property="orderItemCancelOperatorName" column="order_item_cancel_operator_name"/>
+		<result property="orderItemCancelReason" column="order_item_cancel_reason"/>
+		<result property="orderItemReceiptTime" column="order_item_receipt_time"/>
+		<result property="refundStatus" column="refund_status"/>
+		<result property="isOutDistribtion" column="is_out_distribtion"/>
+		<result property="shopFreightTemplateId" column="shop_freight_template_id"/>
+		<result property="deliveryAreaCode" column="delivery_area_code"/>
+		<result property="erpDistributionId" column="erp_distribution_id"/>
+		<result property="isSettled" column="is_settled"/>
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name"/>
+		<result property="createTime" column="create_time"/>
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name"/>
+		<result property="modifyTime" column="modify_time"/>
+		<result column="sku_ean_code" property="skuEanCode" />
+	</resultMap>
+	<!--卖家中心查询订单行信息start-->
+	<select id="queryTradeOrderItemForSeller" resultMap="BaseResultDTOMap">
+		SELECT
+		*
+		FROM
+		trade_order_items t
+		WHERE
+		t.order_no=#{orderNo}
+	</select>
+	<!--卖家中心查询结束end-->
+	<update id="updateStatus" >
+		UPDATE trade_order_items
+		SET modify_time=now()
+			,order_status = #{orderStatus}
+		WHERE order_no=#{orderNo}
+	</update>
+
+</mapper>

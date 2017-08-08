@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.MallSpecialSubjectDAO">
+	
+	<sql id="querySubTitle">
+			from mall_subject
+			where 1=1
+			<if test="entity.sub_title != null and entity.sub_title != ''">
+				and sub_title like concat('%',#{entity.sub_title},'%')
+			</if>
+	</sql>
+
+	<select id="querySubjectList" resultType="com.bjucloud.contentcenter.dto.MallSpecialSubjectDTO">
+		select *
+		<include refid="querySubTitle"/>
+		order by id desc
+		limit #{page.pageOffset} , #{page.rows}
+	</select>
+	
+	
+	<select id="querySubjectCount" resultType="long">
+		select count(0) 
+		<include refid="querySubTitle"/>
+	</select>
+	
+	<select id="getSpecialSubjectById" resultType="com.bjucloud.contentcenter.dto.MallSpecialSubjectDTO">
+		select *
+		from mall_subject
+		where id = #{id}
+	</select>
+	
+	
+	<insert id="add">
+		insert into mall_subject(
+				sub_title,
+				subject_url,
+				image_url,
+				begin_date,
+				end_date,
+				create_user_name,
+				create_user_id,
+				update_user_name,
+				update_user_id,
+				sec_title,
+				bgimgUrl
+		)values(
+				#{sub_title},
+				#{subject_url},
+				#{image_url},
+				#{begin_date},
+				#{end_date},
+				#{create_user_name},
+				#{create_user_id},
+				#{update_user_name},
+				#{update_user_id},
+				#{sec_title},
+				#{bgimgUrl}
+		)
+	</insert>
+	
+	<update id="update">
+		update mall_subject set
+				sub_title=#{sub_title},
+				subject_url=#{subject_url},
+				image_url=#{image_url},
+				begin_date=#{begin_date},
+				end_date=#{end_date},
+				create_user_name=#{create_user_name},
+				create_user_id=#{create_user_id},
+				update_user_name=#{update_user_name},
+				update_user_id=#{update_user_id},
+				sec_title=#{sec_title},
+				bgimgUrl = #{bgimgUrl}
+		where id = #{id}
+	</update>
+</mapper>

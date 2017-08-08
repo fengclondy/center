@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.SubContentSubDAO">
+  <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.SubContentSubDTO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sub_content_id" jdbcType="BIGINT" property="subContentId" />
+    <result column="seller_name" jdbcType="VARCHAR" property="sellerName" />
+    <result column="seller_code" jdbcType="VARCHAR" property="sellerCode" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, sub_content_id, seller_name, seller_code, sort_num
+  </sql>
+  <select id="selectBySubcontentId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sub_content_sub
+    where sub_content_id = #{subContentId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteBySellerCode" parameterType="java.lang.String">
+    delete from sub_content_sub
+    where seller_code = #{sellerCode,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteBySubContentId" parameterType="java.lang.Long">
+    delete from sub_content_sub
+    where sub_content_id = #{subContentId,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.SubContentSubDTO">
+    insert into sub_content_sub
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="subContentId != null">
+        sub_content_id,
+      </if>
+      <if test="sellerName != null">
+        seller_name,
+      </if>
+      <if test="sellerCode != null">
+        seller_code,
+      </if>
+      <if test="sortNum != null">
+        sort_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="subContentId != null">
+        #{subContentId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null">
+        #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null">
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        #{sortNum,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bjucloud.contentcenter.dto.SubContentSubDTO">
+    update sub_content_sub
+    <set>
+      <if test="subContentId != null">
+        sub_content_id = #{subContentId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null">
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null">
+        seller_code = #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        sort_num = #{sortNum,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bjucloud.contentcenter.dto.SubContentSubDTO">
+    update sub_content_sub
+    set sub_content_id = #{subContentId,jdbcType=BIGINT},
+      seller_name = #{sellerName,jdbcType=VARCHAR},
+      seller_code = #{sellerCode,jdbcType=VARCHAR},
+      sort_num = #{sortNum,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

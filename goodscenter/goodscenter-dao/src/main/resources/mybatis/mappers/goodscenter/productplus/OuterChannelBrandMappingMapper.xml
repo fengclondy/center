@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.productplus.OuterChannelBrandMappingMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.productplus.OuterChannelBrandMapping" >
+    <id column="brand_mapping_id" property="brandMappingId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="outer_channel_brand_code" property="outerChannelBrandCode" jdbcType="VARCHAR" />
+    <result column="outer_channel_brand_name" property="outerChannelBrandName" jdbcType="VARCHAR" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="brand_name" property="brandName" jdbcType="BIGINT" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    brand_mapping_id, channel_code, outer_channel_brand_code, outer_channel_brand_name, 
+    brand_id, delete_flag, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+
+  <sql id="Combo_Column_List" >
+    brand_mapping.brand_mapping_id,
+    brand_mapping.channel_code,
+    brand_mapping.outer_channel_brand_code,
+    brand_mapping.outer_channel_brand_name,
+    brand_mapping.brand_id,
+    brand.brand_name,
+    brand_mapping.delete_flag,
+    brand_mapping.create_id,
+    brand_mapping.create_name,
+    brand_mapping.create_time,
+    brand_mapping.modify_id,
+    brand_mapping.modify_name,
+    brand_mapping.modify_time
+  </sql>
+
+  <sql id="Where_Param_With_Mapped">
+    where
+    1 = 1
+    <if test="entity != null">
+      <if test="entity.brandMappingId != null" >
+        and brand_mapping_id = #{entity.brandMappingId}
+      </if>
+      <if test="entity.channelCode != null" >
+        and channel_code = #{entity.channelCode}
+      </if>
+      <if test="entity.outerChannelBrandCode != null" >
+        and outer_channel_brand_code = #{entity.outerChannelBrandCode}
+      </if>
+      <if test="entity.outerChannelBrandName != null" >
+        and outer_channel_brand_name like CONCAT('%',#{entity.outerChannelBrandName},'%')
+      </if>
+      <if test="isMapped == null">
+        <if test="entity.brandId != null" >
+          and brand_id = #{entity.brandId}
+        </if>
+      </if>
+      <if test="isMapped != null">
+        <if test="isMapped == true" >
+          <if test="entity.brandId != null" >
+            and brand_id = #{entity.brandId}
+          </if>
+          <if test="entity.brandId == null" >
+            and brand_id != 0
+          </if>
+        </if>
+        <if test="isMapped == false" >
+          and brand_id = 0
+        </if>
+      </if>
+      <if test="entity.deleteFlag != null" >
+        and delete_flag = #{entity.deleteFlag}
+      </if>
+      <if test="entity.createId != null" >
+        and create_id = #{entity.createId}
+      </if>
+      <if test="entity.createName != null" >
+        and create_name = #{entity.createName}
+      </if>
+      <if test="entity.createTime != null" >
+        and create_time = #{entity.createTime}
+      </if>
+      <if test="entity.modifyId != null" >
+        and modify_id = #{entity.modifyId}
+      </if>
+      <if test="entity.modifyName != null" >
+        and modify_name = #{entity.modifyName}
+      </if>
+      <if test="entity.modifyTime != null" >
+        and modify_time = #{entity.modifyTime}
+      </if>
+    </if>
+  </sql>
+
+  <sql id="Where_Param">
+    where
+    1 = 1
+    <if test="entity != null">
+      <if test="entity.brandMappingId != null" >
+        and brand_mapping_id = #{entity.brandMappingId}
+      </if>
+      <if test="entity.channelCode != null" >
+        and channel_code = #{entity.channelCode}
+      </if>
+      <if test="entity.outerChannelBrandCode != null" >
+        and outer_channel_brand_code = #{entity.outerChannelBrandCode}
+      </if>
+      <if test="entity.outerChannelBrandName != null" >
+        and outer_channel_brand_name = #{entity.outerChannelBrandName}
+      </if>
+      <if test="entity.brandId != null" >
+        and brand_id = #{entity.brandId}
+      </if>
+      <if test="entity.deleteFlag != null" >
+        and delete_flag = #{entity.deleteFlag}
+      </if>
+      <if test="entity.createId != null" >
+        and create_id = #{entity.createId}
+      </if>
+      <if test="entity.createName != null" >
+        and create_name = #{entity.createName}
+      </if>
+      <if test="entity.createTime != null" >
+        and create_time = #{entity.createTime}
+      </if>
+      <if test="entity.modifyId != null" >
+        and modify_id = #{entity.modifyId}
+      </if>
+      <if test="entity.modifyName != null" >
+        and modify_name = #{entity.modifyName}
+      </if>
+      <if test="entity.modifyTime != null" >
+        and modify_time = #{entity.modifyTime}
+      </if>
+    </if>
+  </sql>
+
+  <!-- mysql 分页尾 -->
+  <sql id="pagination_tail">
+    <if test="page != null ">
+      limit #{page.pageOffset} , #{page.rows}
+    </if>
+  </sql>
+
+  <select id="selectOuterBrandCategoryMappingList" resultMap="BaseResultMap">
+    select
+      <include refid="Combo_Column_List" />
+    from
+    (
+      select
+      *
+      from outer_channel_brand_mapping
+      <include refid="Where_Param_With_Mapped" />
+    )  brand_mapping
+    left join
+    item_brand brand
+    on
+    brand_mapping.brand_id = brand.brand_id
+    where
+    1 = 1
+    <if test="entity.brandName != null">
+      and brand.brand_name like CONCAT('%',#{entity.brandName},'%')
+    </if>
+    order by brand_mapping.modify_time desc
+    <include refid="pagination_tail"/>
+  </select>
+
+  <select id="selectOuterChannelBrandMappingListCount"  resultType="java.lang.Long">
+    select
+    count(1)
+    from
+    (
+    select
+    *
+    from outer_channel_brand_mapping
+    <include refid="Where_Param_With_Mapped" />
+    )  brand_mapping
+    left join
+    item_brand brand
+    on
+    brand_mapping.brand_id = brand.brand_id
+    where
+    1 = 1
+    <if test="entity.brandName != null">
+      and brand.brand_name like CONCAT('%',#{entity.brandName},'%')
+    </if>
+  </select>
+
+  <select id="selectCountByOCCCodeAndChannelCode" parameterType="cn.htd.goodscenter.dao.productplus.OuterChannelBrandMappingMapper" resultType="Long">
+    select
+      count(1)
+    from outer_channel_brand_mapping
+    where
+        channel_code = #{channelCode}
+    and outer_channel_brand_code = #{outerChannelBrandCode}
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from outer_channel_brand_mapping
+    <include refid="Where_Param" />
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from outer_channel_brand_mapping
+    where brand_mapping_id = #{brandMappingId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from outer_channel_brand_mapping
+    where brand_mapping_id = #{brandMappingId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.productplus.OuterChannelBrandMapping" useGeneratedKeys="true" keyProperty="brandMappingId">
+    insert into outer_channel_brand_mapping (brand_mapping_id, channel_code, outer_channel_brand_code, 
+      outer_channel_brand_name, brand_id, delete_flag, 
+      create_id, create_name, create_time
+      )
+    values (#{brandMappingId,jdbcType=BIGINT}, #{channelCode,jdbcType=VARCHAR}, #{outerChannelBrandCode,jdbcType=VARCHAR}, 
+      #{outerChannelBrandName,jdbcType=VARCHAR}, #{brandId,jdbcType=BIGINT}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.productplus.OuterChannelBrandMapping" >
+    insert into outer_channel_brand_mapping
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="brandMappingId != null" >
+        brand_mapping_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="outerChannelBrandCode != null" >
+        outer_channel_brand_code,
+      </if>
+      <if test="outerChannelBrandName != null" >
+        outer_channel_brand_name,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="brandMappingId != null" >
+        #{brandMappingId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outerChannelBrandCode != null" >
+        #{outerChannelBrandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outerChannelBrandName != null" >
+        #{outerChannelBrandName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.productplus.OuterChannelBrandMapping" >
+    update outer_channel_brand_mapping
+    <set >
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outerChannelBrandCode != null" >
+        outer_channel_brand_code = #{outerChannelBrandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outerChannelBrandName != null" >
+        outer_channel_brand_name = #{outerChannelBrandName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+        modify_time = now()
+    </set>
+    where brand_mapping_id = #{brandMappingId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.productplus.OuterChannelBrandMapping" >
+    update outer_channel_brand_mapping
+    set channel_code = #{channelCode,jdbcType=VARCHAR},
+      outer_channel_brand_code = #{outerChannelBrandCode,jdbcType=VARCHAR},
+      outer_channel_brand_name = #{outerChannelBrandName,jdbcType=VARCHAR},
+      brand_id = #{brandId,jdbcType=BIGINT},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where brand_mapping_id = #{brandMappingId,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByOuterBrandCodeSelective" parameterType="cn.htd.goodscenter.domain.productplus.OuterChannelBrandMapping" >
+    update outer_channel_brand_mapping
+    <set >
+      <if test="outerChannelBrandName != null" >
+        outer_channel_brand_name = #{outerChannelBrandName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+      </if>
+    </set>
+    where
+    outer_channel_brand_code = #{outerChannelBrandCode,jdbcType=VARCHAR}
+    AND channel_code = #{channelCode,jdbcType=VARCHAR}
+  </update>
+</mapper>

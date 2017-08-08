@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.EmployeeDAO">
+
+	
+	<!-- 根据产品ID和产品名称查询产品信息 -->
+	<select id="selectSubstationMan" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+		parameterType="Object">
+		select
+			e.user_id as userId,
+			u.login_id as loginId,
+			u.name as name,
+			s.name as substationName,
+			u.mobile as mobile
+		from employee e
+		left join user u on u.id =e.user_id
+		left join substation s on s.substation_id = e.substation_id 
+		where e.deleted_flag = 0 and u.deleted_flag = 0 and s.deleted_flag = 0 
+		and e.substation_id = #{substationId}
+		<if test="name != null and name != ''">
+			<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+		</if> 
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 根据产品ID和产品名称查询产品条数 -->
+	<select id="selectSubstationManCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0) from employee e
+		left join user u on u.id =e.user_id
+		left join substation s on s.substation_id = e.substation_id 
+		where e.deleted_flag = 0 and u.deleted_flag = 0 and s.deleted_flag = 0 
+		and e.substation_id = #{substationId}
+       <if test="name != null and name != ''">
+			<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+		</if> 
+	</select>
+	
+	<select id="getEmployeeInfo" resultType="cn.htd.usercenter.dto.EmployeeDTO" parameterType="Object">
+		select e.substation_id as substationId,u.name as name,e.company_id as companyId,
+		u.login_id as loginId,u.mobile as mobile,e.emp_no as empNo,u.password as password from employee e 
+		left join user u on u.id = e.user_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0
+		      and e.user_id = #{userId}
+	</select>
+
+	<select id="isRepeatLoginId" resultType="cn.htd.usercenter.dto.EmployeeDTO" parameterType="Object">
+		select e.substation_id as substationId,u.name as name,e.company_id as companyId,
+		u.login_id as loginId,u.mobile as mobile,u.password as password from employee e 
+		left join user u on u.id = e.user_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0
+        <if test="loginId != null and loginId != ''">
+		      and u.login_id = #{loginId}
+		</if> 
+	</select>
+
+	<!-- 添加员工信息 -->
+    <insert id="addEmployee" parameterType="cn.htd.usercenter.dto.EmployeeDTO">
+        <![CDATA[
+        insert into employee (
+			user_id,
+			type,
+			substation_id,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time
+        ) values (
+            #{dto.userId},
+            #{dto.type},
+            #{dto.substationId},
+            0,
+            #{dto.createId},
+            now(),
+            #{dto.lastUpdateId},
+            now()
+        )
+        ]]>
+    </insert>
+	
+	<!-- 更新员工信息 -->
+    <update id="editEmployee" parameterType="cn.htd.usercenter.dto.EmployeeDTO">
+        <![CDATA[
+        update employee 
+        set 
+            substation_id = #{dto.substationId},
+            last_updated_id = #{dto.lastUpdateId},
+            last_updated_time = now()
+        where
+            user_id = #{dto.userId}
+        ]]>
+    </update>
+    
+    <!-- 根据分站id查询该分站下面的人员 -->
+	<select id="selectEmployeeBySubId" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+		parameterType="Object">
+		select
+			e.user_id as userId,
+			u.login_id as loginId,
+			e.substation_id as substationId,
+			u.name as name,
+			s.manager as manager,
+			s.`name` as substationName,
+			u.login_id as ioginId,
+			u.mobile as mobile
+		from employee e
+		left join user u on u.id =e.user_id
+		left join substation s on s.substation_id = e.substation_id 
+		where e.deleted_flag = 0 and u.deleted_flag = 0 and s.deleted_flag = 0 
+		<if test="substationId != null and substationId != ''">
+			and e.substation_id = #{substationId}
+		</if> 
+		<if test="name != null and name != ''">
+			<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+		</if> 
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 根据分站id查询该分站下面的人员条数 -->
+	<select id="selectEmployeeBySubIdCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0) from employee e
+		left join user u on u.id =e.user_id
+		left join substation s on s.substation_id = e.substation_id 
+		where e.deleted_flag = 0 and u.deleted_flag = 0 and s.deleted_flag = 0 
+        <if test="substationId != null and substationId != ''">
+			and e.substation_id = #{substationId}
+		</if> 
+		<if test="name != null and name != ''">
+			<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+		</if> 
+	</select>
+	
+	<!-- 查询所有人员 -->
+	<select id="selectAllMan" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+		parameterType="Object">
+		select e.user_id as userId,e.company_id as companyId,u.`name` as name,h.parent_company_id as parentCompanyId ,
+		e.incharge_companies as inchargeCompanies,e.emp_no as empNo ,h.type as companyType,h.`name` as companyName,
+		e.is_customer_manager as isCustomerManager,u.valid_flag as validFlag,e.gw
+		from employee e 
+		left join user u on e.user_id = u.id
+		left join htd_company h on e.company_id = h.company_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0 
+		and (e.status='0' or e.status='1')
+		<if test="htdDto.companyId != null and htdDto.companyId != ''">
+			and (h.parent_company_id = #{htdDto.companyId} or h.company_id = #{htdDto.companyId})
+		</if> 
+		<if test="dto.name != null and dto.name != ''">
+			<![CDATA[ and u.name like concat('%', #{dto.name}, '%') ]]>
+		</if> 
+		<if test="dto.companyName != null and dto.companyName != ''">
+			<![CDATA[ and h.name like concat('%', #{dto.companyName}, '%') ]]>
+		</if> 
+		<if test="dto.empNo != null and dto.empNo != ''">
+			and e.emp_no = #{dto.empNo}
+		</if> 
+		<if test="dto.isCustomerManager != null and dto.isCustomerManager != ''">
+			and e.is_customer_manager = #{dto.isCustomerManager}
+		</if>
+		<if test="dto.gw != null and dto.gw != ''">
+			and e.gw = #{dto.gw}
+		</if>
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 查询所有人员条数 -->
+	<select id="selectAllManCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0) from employee e
+		left join user u on e.user_id = u.id
+		left join htd_company h on e.company_id = h.company_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0 
+		and (e.status='0' or e.status='1')
+		<if test="htdDto.companyId != null and htdDto.companyId != ''">
+			and (h.parent_company_id = #{htdDto.companyId} or h.company_id = #{htdDto.companyId})
+		</if> 
+		<if test="dto.name != null and dto.name != ''">
+			<![CDATA[ and u.name like concat('%', #{dto.name}, '%') ]]>
+		</if> 
+		<if test="dto.companyName != null and dto.companyName != ''">
+			<![CDATA[ and h.name like concat('%', #{dto.companyName}, '%') ]]>
+		</if> 
+		<if test="dto.empNo != null and dto.empNo != ''">
+			and e.emp_no = #{dto.empNo}
+		</if> 
+		<if test="dto.isCustomerManager != null and dto.isCustomerManager != ''">
+			and e.is_customer_manager = #{dto.isCustomerManager}
+		</if> 
+		<if test="dto.gw != null and dto.gw != ''">
+			and e.gw = #{dto.gw}
+		</if>
+	</select>
+	
+	
+	<!-- 更新总部人员的数字权限 -->
+    <update id="updateTotalNumPower" parameterType="Object">
+        <![CDATA[
+        update employee 
+        set 
+            incharge_companies = #{inchargeCompanies},
+            last_updated_id = #{userId},
+            last_updated_time = now()
+        where
+            user_id = #{userid}
+        ]]>
+    </update>
+	 <!-- 删除分站人员 -->
+    <update id="deleteSubstationMan" parameterType="Object">
+        <![CDATA[
+        update employee 
+        set 
+        	deleted_flag = 1,
+            last_updated_id = #{userId},
+            last_updated_time = now()
+        where
+            user_id = #{userid}
+        ]]>
+    </update>
+    
+    <!-- 查询所有总部人员 -->
+	<select id="selectIsHasMan" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+		parameterType="Object">
+		select * from employee e 
+		where e.deleted_flag = 0 and e.substation_id = #{substationId}
+	</select>
+	
+    <!-- 查询指定公司下的所有员工 -->
+    <select id="selectEmployeeByCompanyId" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+        parameterType="Object">
+        select
+            e.user_id as userId,
+            e.emp_no as empNo,
+            u.name as name,
+            u.mobile as mobile,
+            e.is_customer_manager as isCustomerManager,
+            e.gw
+        from
+            employee e
+            left join user u on e.user_id = u.id
+        where
+            e.deleted_flag = 0
+        and u.deleted_flag = 0
+        and e.company_id = #{companyId}
+        and (e.status = '0' or e.status = '1')
+        order by
+            convert(name using gbk) asc,
+            userId asc
+    </select>
+    
+    <!-- 查询指定公司下的项目经理 -->
+    <select id="queryJlList" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+        parameterType="Object">
+        select
+            e.user_id as userId,
+            e.emp_no as empNo,
+            u.name as name,
+            e.is_customer_manager as isCustomerManager
+        from
+            employee e
+            left join user u on e.user_id = u.id
+        where
+            e.deleted_flag = 0
+        and u.deleted_flag = 0
+        and e.company_id = #{companyId}
+        and e.status != 7
+        and e.is_customer_manager = 1
+        order by e.emp_no
+    </select>
+    
+    <select id="getEmployeeInfoByMobile" resultType="cn.htd.usercenter.dto.EmployeeDTO" parameterType="Object">
+    select u.name as name,
+		u.mobile as mobile,
+		e.emp_no as empNo,
+		e.company_id as companyId,
+		u.login_id as loginId
+		from
+		user u,employee e
+		where u.id=e.user_id
+		and u.mobile=#{mobile}
+		and e.is_customer_manager=1
+		
+	</select>
+    <select id="getAllGw" resultType="java.lang.String" >
+		select distinct gw from employee e 
+		where gw !=''
+		order by gw
+	</select>
+	
+	
+	<select id="getEmployeeByName" resultType="cn.htd.usercenter.dto.EmployeeDTO"
+		parameterType="Object">
+		select e.user_id as userId,e.company_id as companyId,u.`name` as name,h.parent_company_id as parentCompanyId ,
+		e.incharge_companies as inchargeCompanies,e.emp_no as empNo ,h.type as companyType,h.`name` as companyName,
+		e.is_customer_manager as isCustomerManager,u.valid_flag as validFlag,e.gw,u.mobile
+		from employee e 
+		left join user u on e.user_id = u.id
+		left join htd_company h on e.company_id = h.company_id
+		where e.deleted_flag = 0 and u.deleted_flag = 0 
+		and (e.status='0' or e.status='1')
+		<if test="name != null and name != ''">
+			<![CDATA[ and u.name like concat('%', #{name}, '%') ]]>
+		</if> 
+	</select>
+</mapper>

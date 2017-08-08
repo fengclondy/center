@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.storecenter.dao.ShopFrameBackupDAO">
+
+    <!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <resultMap id="shopFrameBackupDTOMap" type="cn.htd.storecenter.dto.ShopFrameBackupDTO">
+    	<result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="frameId" column="frame_id"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                        -->
+    <!-- =========================================================== -->
+    <sql id="selectAllColumns">
+		<![CDATA[
+		select
+			shop_frame_backup_.id,
+			shop_frame_backup_.shop_id,
+			shop_frame_backup_.frame_id,
+			shop_frame_backup_.name,
+			shop_frame_backup_.remark,
+			shop_frame_backup_.create_time
+		from shop_frame_backup shop_frame_backup_
+        ]]>
+	</sql>
+
+    <sql id="where_fragement">
+        where 1=1
+        <if test="entity!=null">
+            <if test="entity.shopId != null">
+                <![CDATA[ and shop_frame_backup_.shop_id  =#{entity.shopId} ]]>
+            </if>
+            <if test="entity.frameId != null">
+                <![CDATA[ and shop_frame_backup_.frame_id  =#{entity.frameId} ]]>
+            </if>
+        </if>
+    </sql>
+
+    <!-- mysql 分页尾 -->
+    <sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+    <!-- =========================================================== -->
+    <!-- Dao方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+
+    <!-- 分页查询 -->
+    <select id="selectListByCondition" resultMap="shopFrameBackupDTOMap">
+        <include refid="selectAllColumns"/>
+        <include refid="where_fragement"/>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+    
+    <select id="selectById" resultMap="shopFrameBackupDTOMap">
+       <include refid="selectAllColumns"/> where shop_frame_backup_.id=#{id}
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="cn.htd.storecenter.dto.ShopFrameDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+		insert into shop_frame_backup(
+			shop_id,
+			frame_id,
+			name,
+			remark,
+			create_time
+		)values(
+	        #{shopId},
+	  		#{frameId},
+	  		#{name},
+	  		#{remark},
+	  		now()
+		)
+        ]]>
+	</insert>
+
+	<!-- 删除记录 -->
+	<delete id="delete" parameterType="long">
+		<![CDATA[
+		delete from shop_frame_backup where id = #{id}
+        ]]>
+	</delete>
+</mapper>

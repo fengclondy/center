@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.searchcenter.dao.SearchDictionaryDAO">
+	<!-- =========================================================== -->
+	<!-- 定义resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="resultMap" type="cn.htd.searchcenter.domain.SearchDictionary">
+		<result property="id" column="id" jdbcType="BIGINT" />
+		<result property="type" column="type" jdbcType="BIGINT" />
+		<result property="word" column="word" jdbcType="VARCHAR" />
+		<result property="status" column="status" jdbcType="BIGINT" />
+		<result property="created" column="created" jdbcType="TIMESTAMP" />
+		<result property="modified" column="modified" jdbcType="TIMESTAMP" />
+		<result property="creator" column="creator" jdbcType="BIGINT" />
+		<result property="editor" column="editor" jdbcType="BIGINT" />
+	</resultMap>
+
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	
+	<sql id="columns">
+		id,type,word,status,created,modified,creator,editor
+	</sql>
+	
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity != null">
+			<if test="entity.id != null and entity.id != ''">
+				and id = #{entity.id}
+			</if>
+			<if test="entity.type != null and entity.type != ''">
+				and type = #{entity.type}
+			</if>
+			<if test="entity.word != null and entity.word != ''">
+				and word =#{entity.word}
+			</if>
+			<if test="entity.status != null and entity.status != ''">
+				and status = #{entity.status}
+			</if>
+			<if test="entity.created != null and entity.created != ''">
+				and created = #{entity.created}
+			</if>
+			<if test="entity.modified != null and entity.modified != ''">
+				and modified = #{entity.modified}
+			</if>
+			<if test="entity.creator != null and entity.creator != ''">
+				and creator = #{entity.creator}
+			</if>
+			<if test="entity.editor != null and entity.editor != ''">
+				and editor = #{entity.editor}
+			</if>			
+		</if>
+	</sql>
+	
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1) from search_dictionary
+		<include refid="where_fragement" />
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="resultMap">
+		select <include refid="columns" /> from search_dictionary 
+		<include refid="where_fragement" />
+		order by id asc
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	
+	<select id="queryWordCount" resultType="java.lang.Integer">
+		select count(1) from search_dictionary where word=#{word};
+	</select>
+
+	<select id="getById" resultMap="resultMap">
+		select <include refid="columns" /> from search_dictionary where id=#{id};
+	</select>
+
+	<insert id="insert" parameterType="cn.htd.searchcenter.domain.SearchDictionary" keyProperty="id" useGeneratedKeys="true">
+		insert into search_dictionary (
+			<trim suffix="" suffixOverrides=",">
+			<if test="type != null">
+				type,
+			</if>
+			<if test="word != null">
+				word,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="created != null">
+				created,
+			</if>
+			<if test="modified != null">
+				modified,
+			</if>
+			<if test="creator != null">
+				creator,
+			</if>
+			<if test="editor != null">
+				editor,
+			</if>
+			</trim>
+		) values (
+			<trim suffix="" suffixOverrides=",">
+			<if test="type != null">
+				#{type},
+			</if>
+			<if test="word != null">
+				#{word},
+			</if>
+			<if test="status != null">
+				#{status},
+			</if>
+			<if test="created != null">
+				#{created},
+			</if>
+			<if test="modified != null">
+				#{modified},
+			</if>
+			<if test="creator != null">
+				#{creator},
+			</if>
+			<if test="editor != null">
+				#{editor},
+			</if>
+			</trim>
+		)
+	</insert>
+
+	<update id="updateById" parameterType="cn.htd.searchcenter.domain.SearchDictionary">
+		update search_dictionary set 
+		<trim suffix="" suffixOverrides=",">
+			<if test="type != null">
+				type = #{type},
+			</if>
+			<if test="word != null">
+				word = #{word},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="created != null">
+				created = #{created},
+			</if>
+			<if test="modified != null">
+				modified = #{modified},
+			</if>
+			<if test="creator != null">
+				creator = #{creator},
+			</if>
+			<if test="editor != null">
+				editor = #{editor},
+			</if>
+		</trim>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Object">
+		delete from search_dictionary where id = #{id}
+	</delete>
+</mapper>

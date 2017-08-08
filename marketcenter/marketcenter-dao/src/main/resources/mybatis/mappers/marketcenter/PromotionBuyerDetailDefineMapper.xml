@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.PromotionBuyerDetailDefineDAO">
+    <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.PromotionBuyerDetailDefineDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="rule_id" jdbcType="BIGINT" property="ruleId" />
+        <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode" />
+        <result column="buyer_name" jdbcType="VARCHAR" property="buyerName" />
+        <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" />
+	    <result column="create_id" jdbcType="BIGINT" property="createId" />
+	    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+	    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+	    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+	    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+	    id,
+        rule_id,
+        buyer_code,
+        buyer_name,
+        delete_flag,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+    </sql>
+    <select id="queryBuyerDetailList" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+    	select
+        <include refid="Base_Column_List"/>
+        from promotion_buyer_detail_define
+        where rule_id = #{_parameter}
+          and delete_flag = 0
+        order by buyer_code
+    </select>
+    <!-- 插入记录 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into promotion_buyer_detail_define
+    	<trim prefix="(" suffix=")" suffixOverrides=",">
+ 	        rule_id,
+ 	        buyer_code,
+ 	        buyer_name,
+ 	        delete_flag,
+ 			create_id,
+ 			create_name,
+ 			create_time,
+ 			modify_id,
+ 			modify_name,
+ 			modify_time,
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+	    	#{ruleId},
+	    	#{buyerCode},
+	    	#{buyerName},
+	    	0,
+	    	#{createId},
+	    	#{createName},
+	    	now(),
+	    	#{createId},
+	    	#{createName},
+	    	now(),
+		</trim>
+    </insert>
+    <!-- 删除记录 -->
+    <update id="deleteDetailList">
+   		update promotion_buyer_detail_define 
+        <set>
+	    	delete_flag = 1,
+	  		modify_name = #{modifyName},
+	  		modify_id = #{modifyId},
+	  		modify_time = now(),
+		</set>
+		where id in
+		<foreach item="detailId" index="index" collection="deleteDetailList"  open="(" separator="," close=")">
+			#{detailId}
+		</foreach>
+    </update>
+    <!-- 删除记录 -->
+    <update id="deleteByRuleId" parameterType = "cn.htd.marketcenter.dto.PromotionBuyerRuleDefineDTO">
+   		update promotion_buyer_detail_define 
+        <set>
+	    	delete_flag = 1,
+	  		modify_name = #{modifyName},
+	  		modify_id = #{modifyId},
+	  		modify_time = now(),
+		</set>
+		where rule_id = #{ruleId}
+		  and delete_flag = 0
+    </update>
+</mapper>

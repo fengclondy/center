@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.OrderFreightDAO">
+	
+	<select id="queryOrderFreightInfoByTemplateId" parameterType="java.lang.Long" resultType="cn.htd.zeus.tc.biz.dmo.OrderFreightInfoDMO">
+		select a.id templateId,
+			   a.postage_free postageFree,
+			   a.delivery_type deliveryType,
+			   a.valuation_way valuationWay
+		from shop_freight_template a where a.id = #{templateId}
+		and a.delete_flag = '0'
+	</select>
+	
+	<select id="queryOrderFreightPromotionInfoByTemplateId" parameterType="java.lang.Long" resultType="cn.htd.zeus.tc.biz.dmo.OrderFeightPromotionDMO">
+		select b.preferential_way preferentialWay,
+			   b.strategy,
+			   b.full,
+			   b.reduce
+		from shop_preferential_way b
+		where b.template_id = #{templateId}
+		and b.delete_flag = '0'
+	</select>
+	
+	
+	<select id="queryOrderFreightCalcuRuleByTemplateId" parameterType="java.lang.Long" resultType="cn.htd.zeus.tc.biz.dmo.OrderFreightCalcuRuleDMO">
+		select a.delivery_type deliveryType,
+			   a.first_part firstPart,
+			   a.first_price firstPrice,
+			   a.continue_part continuePart,
+			   a.continue_price continuePrice,
+			   a.delivery_to deliveryTo,
+			   a.delivery_address deliveryAddress
+		from shop_delivery_type a
+		where a.template_id = #{templateId}
+		and a.delete_flag = '0' 
+	</select>
+	
+	
+		
+</mapper>

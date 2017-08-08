@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.MemberSellerDepositDAO">
+<!-- 查询总商家多少 -->
+  <select id="depositInfoCount" resultType="java.lang.Long">
+    select count(1)
+    from member_base_info AS C
+    join member_company_info AS A
+    on C.id = A.member_id
+    and A.buyer_seller_type = '2'
+    left join seller_deposit_info AS B
+    on A.member_id = B.seller_id
+    where C.is_seller = '1' 
+    and C.seller_type = '2'
+    <if test="companyName != null and companyName != ''">
+		and A.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and C.member_code = #{companyCode}
+	</if>
+  </select>
+<!-- 查询商家保证金数据-->
+   <select id="searchDepositInfo" resultMap="memberResultMap">
+    select 
+    	A.member_id AS sellerId,
+	    A.company_name AS companyName,
+	    C.member_code AS companyCode,
+	    B.deposit_balance AS depositBalance
+    from member_base_info AS C
+      join member_company_info AS A
+      on C.id = A.member_id
+	    and A.buyer_seller_type = '2'
+      left join seller_deposit_info AS B
+      on A.member_id = B.seller_id
+    where C.is_seller = '1' 
+	    and C.seller_type = '2'
+    <if test="companyName != null and companyName != ''">
+		and A.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and C.member_code = #{companyCode}
+	</if>
+	<if test="page != null">
+		<include refid="pagination_tail" />
+	</if>
+  </select>
+  <resultMap id="memberResultMap" type="cn.htd.membercenter.dto.MemberSellerDepositDto">
+	    <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+	    <result column="companyCode" property="companyCode" jdbcType="VARCHAR" />
+	    <result column="depositBalance" property="depositBalance" jdbcType="VARCHAR" />
+	    <result column="sellerId" property="sellerId" jdbcType="BIGINT" />
+  </resultMap>
+  <!-- 查询商家详细信息-->
+  <select id="searchDepositChangeHistory" resultMap="CompanyResultMap">
+    select 
+    A.change_type AS changeType,
+    A.change_deposit AS changeDeposit,
+    A.deposit_balance AS depositBalanceBack,
+    A.comment AS remarks,
+    A.create_name AS createName,
+    A.create_time AS createTime
+    from seller_deposit_change_history AS A
+    where A.seller_id = #{sellerId}
+    <if test="startTime != null and startTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+	</if>
+	<if test="endTime != null and endTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+	</if>
+	order by createTime desc
+	<if test="page != null">
+		<include refid="pagination_tail" />
+	</if>
+  </select>
+  <resultMap id="CompanyResultMap" type="cn.htd.membercenter.dto.MemberSellerDepositDto">
+	    <result column="createName" property="createName" jdbcType="VARCHAR" />
+	    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="changeType" property="changeType" jdbcType="VARCHAR" />
+	    <result column="changeDeposit" property="changeDeposit" jdbcType="DECIMAL" />
+	    <result column="depositBalanceBack" property="depositBalanceBack" jdbcType="DECIMAL" />
+	    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="pagination_tail">
+	limit #{page.pageOffset} , #{page.rows}
+  </sql>
+  <!-- 查询商家保证金变动履历件数 -->
+  <select id="depositChangeHistoryCount" resultType="java.lang.Long">
+    select count(1)
+    from seller_deposit_change_history AS A
+    where A.seller_id = #{sellerId}
+    <if test="startTime != null and startTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+	</if>
+	<if test="endTime != null and endTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+	</if>
+  </select>
+  <!-- 商家保证金变动履历添加 -->
+  <insert id="addDepositChangeHistory" useGeneratedKeys="true">
+		insert into seller_deposit_change_history(
+			seller_id,
+			change_type,
+			change_deposit,
+			deposit_balance,
+			comment,
+			create_id,
+			create_name,
+			create_time
+		)values(
+			#{entity.sellerId},
+			#{entity.changeType},
+			#{entity.changeDeposit},
+			#{entity.depositBalanceBack},
+			#{entity.remarks},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime}
+		)
+	</insert>
+	<!-- 商家保证金信息更新记录 -->
+	<update id="updateDepositInfo">
+		update seller_deposit_info 
+		<set> 
+				deposit_balance = #{entity.depositBalanceBack},
+				modify_id = #{entity.createId},
+				modify_name = #{entity.createName},
+				modify_time = #{entity.createTime}
+		</set>
+		where seller_id = #{entity.sellerId}
+	</update>
+    <select id="sellerDepositInfoCount" resultType="java.lang.Long">
+	    select count(1)
+	    from seller_deposit_info AS A
+	    where A.seller_id = #{sellerId}
+	</select>
+	<!-- 商家保证金变动履历添加 -->
+    <insert id="addSellerDepositInfo" useGeneratedKeys="true">
+		insert into seller_deposit_info(
+			seller_id,
+			deposit_balance,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{entity.sellerId},
+			#{entity.depositBalanceBack},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime}
+		)
+	</insert>
+	
+<!-- 查询总商家(外接渠道)多少 -->
+  <select id="outerChannelDepositInfoCount" resultType="java.lang.Long">
+    select count(1)
+    from member_base_info AS C
+    join member_company_info AS A
+    on C.id = A.member_id
+    and A.buyer_seller_type = '2'
+    left join seller_outer_channel_deposit_info AS B
+    on A.member_id = B.seller_id
+    where C.is_seller = '1' 
+    and C.seller_type = '1'
+    <if test="companyName != null and companyName != ''">
+		and A.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and A.company_code = #{companyCode}
+	</if>
+  </select>
+<!-- 查询商家(外接渠道)保证金数据-->
+   <select id="searchOuterChannelDepositInfo" resultMap="memberResultMap">
+    select 
+    	A.member_id AS sellerId,
+	    A.company_name AS companyName,
+	    A.company_code AS companyCode,
+	    B.deposit_balance AS depositBalance
+    from member_base_info AS C
+      join member_company_info AS A
+      on C.id = A.member_id
+	    and A.buyer_seller_type = '2'
+      left join seller_outer_channel_deposit_info AS B
+      on A.member_id = B.seller_id
+    where C.is_seller = '1' 
+	    and C.seller_type = '1'
+    <if test="companyName != null and companyName != ''">
+		and A.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and A.company_code = #{companyCode}
+	</if>
+	<if test="page != null">
+		<include refid="pagination_tail" />
+	</if>
+  </select>
+  <!-- 查询商家(外接渠道)详细信息-->
+  <select id="searchOuterChannelDepositChangeHistory" resultMap="CompanyResultMap">
+    select 
+    A.change_type AS changeType,
+    A.change_deposit AS changeDeposit,
+    A.deposit_balance AS depositBalanceBack,
+    A.comment AS remarks,
+    A.create_name AS createName,
+    A.create_time AS createTime
+    from seller_outer_channel_deposit_history AS A
+    where A.seller_id = #{sellerId}
+    <if test="startTime != null and startTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+	</if>
+	<if test="endTime != null and endTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+	</if>
+	order by createTime desc
+	<if test="page != null">
+		<include refid="pagination_tail" />
+	</if>
+  </select>
+  <!-- 查询商家(外接渠道)保证金变动履历件数 -->
+  <select id="outerChanneldepositChangeHistoryCount" resultType="java.lang.Long">
+    select count(1)
+    from seller_outer_channel_deposit_history AS A
+    where A.seller_id = #{sellerId}
+    <if test="startTime != null and startTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+	</if>
+	<if test="endTime != null and endTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+	</if>
+  </select>
+  <!-- 商家(外接渠道)保证金变动履历添加 -->
+  <insert id="addOuterChannelDepositChangeHistory" useGeneratedKeys="true">
+		insert into seller_outer_channel_deposit_history(
+			seller_id,
+			change_type,
+			change_deposit,
+			deposit_balance,
+			comment,
+			create_id,
+			create_name,
+			create_time
+		)values(
+			#{entity.sellerId},
+			#{entity.changeType},
+			#{entity.changeDeposit},
+			#{entity.depositBalanceBack},
+			#{entity.remarks},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime}
+		)
+	</insert>
+	<!-- 商家(外接渠道)保证金信息更新记录 -->
+	<update id="updateOuterChannelDepositInfo">
+		update seller_outer_channel_deposit_info 
+		<set> 
+				deposit_balance = #{entity.depositBalanceBack},
+				modify_id = #{entity.createId},
+				modify_name = #{entity.createName},
+				modify_time = #{entity.createTime}
+		</set>
+		where seller_id = #{entity.sellerId}
+	</update>
+    <select id="sellerOuterChannelDepositInfoCount" resultType="java.lang.Long">
+	    select count(1)
+	    from seller_outer_channel_deposit_info AS A
+	    where A.seller_id = #{sellerId}
+	</select>
+	<!-- 商家(外接渠道)保证金变动履历添加 -->
+    <insert id="addSellerOuterChannelDepositInfo" useGeneratedKeys="true">
+		insert into seller_outer_channel_deposit_info(
+			seller_id,
+			deposit_balance,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{entity.sellerId},
+			#{entity.depositBalanceBack},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime}
+		)
+	</insert>
+</mapper>

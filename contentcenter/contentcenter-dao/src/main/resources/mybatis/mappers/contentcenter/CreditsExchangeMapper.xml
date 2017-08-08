@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.CreditsExchangeDAO">
+	
+	<!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <resultMap id="CreditsExchangeMap" type="com.bjucloud.contentcenter.dto.CreditsExchangeDTO" >
+        <id column="id" property="id"  />
+        <result column="sort_num" property="sortNum"  />
+        <result column="title" property="title"  />
+        <result column="point_num" property="pointNum"  />
+        <result column="item_type" property="itemType"  />
+        <result column="spu_id" property="spuId"  />
+        <result column="status" property="status"  />
+        <result column="create_time" property="createTime"  />
+        <result column="update_time" property="updateTime"  />
+    </resultMap>
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <!-- mysql 分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset} , #{page.rows}
+    </sql>
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+        select count(1) from
+    </sql>
+    <sql id="Base_Column_List" >
+       select id, sort_num, title, point_num, item_type, spu_id, status, create_time, update_time
+       from mall_credits_exchange
+    </sql>
+    <!--where条件-->
+    <sql id="where_creditsexchange">
+        where 1=1
+        <if test="entity!=null">
+            <if test="entity.id != null  and entity.id !=''">
+                <![CDATA[ and id  = #{entity.id} ]]>
+            </if>
+            <if test="entity.notIsId != null  and entity.notIsId !=''">
+                <![CDATA[ and id  <> #{entity.notIsId} ]]>
+            </if>
+            <if test="entity.title != null  and entity.title !=''">
+                <![CDATA[ and title  like CONCAT('%','${entity.title}','%' ) ]]>
+            </if>
+            <if test="entity.itemType != null  and entity.itemType !=''">
+                <![CDATA[ and item_type  = #{entity.itemType} ]]>
+            </if>
+            <if test="entity.notIsSpuId != null  and entity.notIsSpuId !=''">
+                <![CDATA[ and notIsSpuId  <> #{entity.notIsSpuId} ]]>
+            </if>
+            <if test="entity.spuId != null  and entity.spuId !=''">
+                <![CDATA[ and spu_id  = #{entity.spuId} ]]>
+            </if>
+            <if test="entity.createTime != null  and entity.createTime !=''">
+                <![CDATA[ and create_time  = #{entity.createTime} ]]>
+            </if>
+            <if test="entity.updateTime != null  and entity.updateTime !=''">
+                <![CDATA[ and update_time  = #{entity.updateTime} ]]>
+            </if>
+            <if test="entity.status != null  and entity.status !=''">
+                <![CDATA[ and status  = #{entity.status} ]]>
+            </if>
+            <if test="entity.startTime != null">
+                <![CDATA[
+				and DATE_FORMAT(create_time, '%Y-%m-%d') >=  DATE_FORMAT(#{entity.startTime}, '%Y-%m-%d')
+				]]>
+            </if>
+            <if test="entity.endTime != null">
+                <![CDATA[
+				and date_format(create_time,'%Y-%m-%d')  <= date_format(#{entity.endTime},'%Y-%m-%d')
+				]]>
+            </if>
+        </if>
+        ORDER BY sort_num ASC
+    </sql>
+
+    <select id="queryList" resultMap="CreditsExchangeMap">
+        <include refid="Base_Column_List" />
+        <include refid="where_creditsexchange"/>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+
+    <select id="queryCount" resultType="long">
+        <include refid="count_Tail" />
+        mall_credits_exchange
+        <include refid="where_creditsexchange" />
+    </select>
+
+    <select id="queryCreditsById" resultMap="CreditsExchangeMap">
+        <include refid="Base_Column_List" />
+        <include refid="where_creditsexchange" />
+    </select>
+
+    <select id="queryById" resultMap="CreditsExchangeMap" parameterType="java.lang.Long" >
+        <include refid="Base_Column_List" />
+        where id = #{id}
+    </select>
+    <delete id="delete" parameterType="java.lang.Long" >
+        delete from mall_credits_exchange
+        where id = #{id}
+    </delete>
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into mall_credits_exchange (id, sort_num, title,
+        point_num, item_type, spu_id,
+        status, create_time, update_time
+        )
+        values (#{id}, #{sortNum}, #{title},
+        #{pointNum}, #{itemType}, #{spuId},
+        #{status}, #{createTime}, #{updateTime}
+        )
+    </insert>
+    <update id="update">
+        update mall_credits_exchange
+        <set >
+            <if test="sortNum != null" >
+                sort_num = #{sortNum},
+            </if>
+            <if test="title != null" >
+                title = #{title},
+            </if>
+            <if test="pointNum != null" >
+                point_num = #{pointNum},
+            </if>
+            <if test="itemType != null" >
+                item_type = #{itemType},
+            </if>
+            <if test="spuId != null" >
+                spu_id = #{spuId},
+            </if>
+            <if test="status != null" >
+                status = #{status},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

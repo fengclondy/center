@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+    <dubbo:service interface="com.bjucloud.contentcenter.service.HTDAdvertisementExportService" ref="htdAdvertisementExportService" version="${esf.version}" timeout="60000" />
+    <dubbo:service interface="com.bjucloud.contentcenter.service.HTDStaticAdvertiseExportService" ref="htdStaticAdvertiseExportService" version="${esf.version}" timeout="60000" />
+    <dubbo:service interface="com.bjucloud.contentcenter.service.HTDHeadAdvertiseExportService" ref="htdHeadAdvertiseExportService" version="${esf.version}" timeout="60000" />
+    <dubbo:service interface="com.bjucloud.contentcenter.service.HTDCityCarouselAdvertiseExportService" ref="htdCityCarouselAdvertiseExportService" version="${esf.version}" timeout="60000" />
+          
+        
+	<!-- 使用dubbo协议暴露帮助文档服务 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallClassifyService" ref="mallClassifyService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallDocumentService" ref="mallDocumentService" version="${esf.version}" timeout="60000" />
+
+	<!-- 使用DUBBO协议暴露服务;商城广告 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallAdExportService" ref="mallAdExportService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallRecAttrExportService" ref="mallRecAttrExportService" version="${esf.version}" timeout="60000" />
+	<!-- 小图标and服务 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallIconSerService" ref="mallIconSerService" version="${esf.version}" timeout="60000" />
+	<!-- 首页导航 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallNavService" ref="mallNavService" version="${esf.version}" timeout="60000" />
+	<!-- 楼层导航 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallRecommNavService" ref="mallRecommNavService" version="${esf.version}" timeout="60000" />
+	<!-- 页签 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallSubTabService" ref="mallSubTabService" version="${esf.version}" timeout="60000" />
+	<!-- 楼层广告 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallRecfloorAdverService" ref="mallRecfloorAdverService" version="${esf.version}" timeout="60000" />
+	<!-- 使用dubbo协议暴露广告点击量服务 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallWordExportService" ref="mallWordExportService" version="${esf.version}" timeout="60000" />
+	<!-- 使用dubbo协议暴露积分兑换商城 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.CreditsExchangeService" ref="creditsExchangeService" version="${esf.version}" timeout="60000" />
+	
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallRecExportService" ref="mallRecExportService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.NoticeExportService" ref="noticeExportService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallThemeService" ref="mallThemeService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.LogoExportService" ref="logoExportService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallBannerExportService" ref="mallBannerExportService" version="${esf.version}" timeout="60000" />
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallSpecialSubjectExportService" ref="mallSpecialSubjectExportService" version="${esf.version}" timeout="60000"/>
+
+    <dubbo:service interface="com.bjucloud.contentcenter.service.ContentCenterService" ref="contentCenterService" version="${esf.version}" timeout="60000" />
+
+	<!-- add by lh 2017-01-16 暴露城市广告位 -->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SubAdService" ref="subAdService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-01018 暴露城市站内容-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SubContentService" ref="subContentService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0119 暴露热搜词-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.HotWordService" ref="hotWordService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0120 暴露楼层导航-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.HTDFloorNavService" ref="htdFloorNavService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0122 暴露楼层基本信息-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.FloorInfoService" ref="floorInfoService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0123 网站logo-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SiteLogoService" ref="siteLogoService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0123 网站slogan-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SiteSloganService" ref="siteSloganService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0124 静态资源管理-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.StaticResourceService" ref="staticResourceService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0214 商城频道导航-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallChannelsService" ref="mallChannelsService" version="${esf.version}" timeout="60000"/>
+	<!--add by lh 2017-0215 前台类目维护-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.MallTypeExportService" ref="mallTypeExportService" version="${esf.version}" timeout="60000"/>
+
+	<!--楼层内容信息设置-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.FloorContentExportService" ref="floorContentExportService" version="${esf.version}" timeout="60000"/>
+
+
+	<!--专题页面管理-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SpecialResourceService" ref="specialResourceService" version="${esf.version}" timeout="60000"/>
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.LoginPageService" ref="loginPageService" version="${esf.version}" timeout="60000"/>
+
+	<!--所搜推荐管理-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SearchRecommendService" ref="searchRecommendService" version="${esf.version}" timeout="60000"/>
+	
+    <!--帮助中心管理-->
+	<dubbo:service interface="com.bjucloud.contentcenter.service.HelpDocumentService" ref="helpDocumentService" version="${esf.version}" timeout="60000"/>
+	
+	<dubbo:service interface="com.bjucloud.contentcenter.service.TransactionRelationService" ref="transactionRelationService" version="${esf.version}" timeout="60000"/>
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.SubAdService" ref="subAdService" version="${esf.version}" timeout="60000"/>
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.ShopBannerService" ref="shopBannerService" version="${esf.version}" timeout="60000"/>
+</beans>

@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.basecenter.dao.BasePlacardDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BasePlacard" >
+		<id column="placard_id" property="placardId" jdbcType="BIGINT" />
+		<result column="send_type" property="sendType" jdbcType="CHAR" />
+		<result column="send_seller_id" property="sendSellerId" jdbcType="BIGINT" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="is_publish_immediately" property="isPublishImmediately" jdbcType="TINYINT" />
+		<result column="is_valid_forever" property="isValidForever" jdbcType="TINYINT" />
+		<result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
+		<result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" />
+		<result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+		<result column="comment" property="comment" jdbcType="VARCHAR" />
+		<result column="pic_attachment" property="picAttachment" jdbcType="VARCHAR" />
+		<result column="has_url" property="hasUrl" jdbcType="TINYINT" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="is_top" property="isTop" jdbcType="TINYINT" />
+		<result column="has_read" property="hasRead" jdbcType="TINYINT" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+			placard_id,
+			send_type,
+			send_seller_id,
+			title,
+			content,
+			is_publish_immediately,
+			is_valid_forever,
+			publish_time,
+			expire_time,
+			apply_time,
+			comment,
+			pic_attachment,
+			has_url,
+			url,
+			status,
+			is_top,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		from
+			base_placard
+		]]>
+	</sql>
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity != null">
+			<if test="entity.placardId != null">
+				and placard_id = #{entity.placardId}
+			</if>
+			<if test="entity.sendType != null and entity.sendType != ''">
+				and send_type = #{entity.sendType}
+			</if>
+			<if test="entity.sendSellerId != null">
+				and send_seller_id = #{entity.sendSellerId}
+			</if>
+			<if test="entity.status != null">
+				and status != #{entity.status}
+			</if>
+		</if>
+	</sql>
+	<!-- mysql 分页尾 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 插入记录 -->
+	<insert id="add" useGeneratedKeys="true" keyProperty="placardId">
+		insert into base_placard(
+			send_type,
+			<if test="sendSellerId != null">
+				send_seller_id,
+			</if>
+			title,
+			content,
+			is_publish_immediately,
+			is_valid_forever,
+			publish_time,
+			<if test="expireTime != null">
+				expire_time,
+			</if>
+			apply_time,
+			comment,
+			pic_attachment,
+			has_url,
+			url,
+			status,
+			is_top,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{sendType},
+			<if test="sendSellerId != null">
+				#{sendSellerId},
+			</if>
+			#{title},
+			#{content},
+			#{isPublishImmediately},
+			#{isValidForever},
+			#{publishTime},
+			<if test="expireTime != null">
+				#{expireTime},
+			</if>
+			now(),
+			#{comment},
+			#{picAttachment},
+			#{hasUrl},
+			#{url},
+			#{status},
+			#{isTop},
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新记录 -->
+	<update id="update">
+		update base_placard 
+		<set> 
+			<if test="title != null">
+			title = #{title},
+			</if>
+			<if test="content != null">
+			content = #{content},
+			</if>
+			<if test="isPublishImmediately != null">
+			is_publish_immediately = #{isPublishImmediately},
+			</if>
+			<if test="isValidForever != null">
+			is_valid_forever = #{isValidForever},
+			</if>
+			<if test="publishTime != null">
+			publish_time = #{publishTime},
+			</if>
+			<if test="expireTime != null">
+			expire_time = #{expireTime},
+			</if>
+			<if test="comment != null">
+			comment = #{comment,jdbcType=VARCHAR},
+			</if>
+			<if test="picAttachment != null">
+			pic_attachment = #{picAttachment},
+			</if>
+			<if test="hasUrl != null">
+			has_url = #{hasUrl},
+			</if>
+			<if test="url != null">
+			url = #{url},
+			</if>
+			<if test="status != null and status != ''">
+			status = #{status},
+			</if>
+			<if test="isTop != null">
+			is_top = #{isTop},
+			</if>
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where placard_id = #{placardId}
+	</update>
+	<!-- 根据ID查询记录 -->
+	<select id="queryById" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where placard_id = #{placardId}
+	</select>
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1) 
+		from base_placard
+		<include refid="where_fragement" />
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		<include refid="where_fragement" />
+		order by modify_time desc
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<sql id="seller_from_where_fragement">
+		from base_placard a1 
+		inner join base_placard_member b1 on (a1.placard_id = b1.placard_id) 
+		where <![CDATA[ a1.status <> #{entity.status} ]]>
+		  and a1.send_type = #{entity.sellerSendType}
+		  and <![CDATA[ a1.publish_time <= now() ]]>
+		  and b1.delete_flag = #{entity.deleteFlag}
+		  and b1.member_id = #{entity.memberId}
+		  <if test="entity.hasRead != null and entity.hasRead != ''">
+		  and b1.status = #{entity.hasRead}
+		  </if>
+	</sql>
+	<sql id="platform_from_where_fragement">
+		from base_placard a2 
+		where <![CDATA[ a2.status <> #{entity.status} ]]>
+		  and a2.send_type = #{entity.platformSendType}
+		  and <![CDATA[ a2.publish_time <= now() ]]>
+		  and (
+		  		a2.is_valid_forever = #{entity.isValidForever}
+		  	or <![CDATA[a2.expire_time >= now() ]]>
+		  )
+		  and exists (
+		  	select 1
+		  	from base_placard_scope b2
+		  	where a2.placard_id = b2.placard_id
+		      and b2.delete_flag = #{entity.deleteFlag}
+		  	  and (
+		  	  		b2.scope_type = #{entity.allBuyerType}
+		  		<if test="entity.sellerType != null and entity.sellerType != ''">
+		  	  		or b2.scope_type = #{entity.sellerType}
+		  		</if>
+		  		<if test="entity.buyerGradeValue != null and entity.buyerGradeValue != ''">
+		  			or (	b2.scope_type = #{entity.partBuyerType}
+		  	  			and b2.part_detail = #{entity.buyerGradeValue}
+		  	  		)
+		  		</if>
+		  	  )
+		  )
+	</sql>
+	<select id="getSellerPlacardList" parameterType="cn.htd.basecenter.dto.PlacardCondition" resultMap="BaseResultMap">
+		select
+			a1.placard_id as placard_id,
+			a1.title as title,
+			a1.content as content,
+			a1.comment as comment,
+			a1.publish_time as publish_time,
+			a1.pic_attachment as pic_attachment,
+			a1.has_url as has_url,
+			a1.url as url,
+			b1.status as hasRead
+		<include refid="seller_from_where_fragement" />
+		order by a1.publish_time desc 
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<select id="getSellerPlacardCount" parameterType="cn.htd.basecenter.dto.PlacardCondition" resultType="java.lang.Long">
+		select count(1)
+		<include refid="seller_from_where_fragement" />
+	</select>
+	<select id="getPlatformPlacardList" parameterType="cn.htd.basecenter.dto.PlacardCondition" resultMap="BaseResultMap">
+		select
+			a2.placard_id as placard_id,
+			a2.title as title,
+			a2.content as content,
+			a2.comment as comment,
+			a2.publish_time as publish_time,
+			a2.pic_attachment as pic_attachment,
+			a2.has_url as has_url,
+			a2.url as url,
+			a2.is_valid_forever as hasRead
+		<include refid="platform_from_where_fragement" />
+		order by a2.publish_time desc 
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<select id="getPlatformPlacardCount" parameterType="cn.htd.basecenter.dto.PlacardCondition" resultType="java.lang.Long">
+		select count(1)
+		<include refid="platform_from_where_fragement" />
+	</select>
+	<select id="getAllPlacardList" parameterType="cn.htd.basecenter.dto.PlacardCondition" resultMap="BaseResultMap">
+		select 
+			x.placard_id as placard_id,
+			x.title as title,
+			x.content as content,
+			x.comment as comment,
+			x.publish_time as publish_time,
+			x.pic_attachment as pic_attachment,
+			x.has_url as has_url,
+			x.url as url,
+			x.hasRead as hasRead
+		from (
+			(
+				select
+					a1.placard_id as placard_id,
+					a1.title as title,
+					a1.content as content,
+					a1.comment as comment,
+					a1.publish_time as publish_time,
+					a1.pic_attachment as pic_attachment,
+					a1.has_url as has_url,
+					a1.url as url,
+					b1.status as hasRead
+				<include refid="seller_from_where_fragement" />
+			)
+			union
+			(
+				select
+					a2.placard_id as placard_id,
+					a2.title as title,
+					a2.content as content,
+					a2.comment as comment,
+					a2.publish_time as publish_time,
+					a2.pic_attachment as pic_attachment,
+					a2.has_url as has_url,
+					a2.url as url,
+					a2.is_valid_forever as hasRead
+				<include refid="platform_from_where_fragement" />
+			)
+		) x
+		order by x.publish_time desc 
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<select id="getAllPlacardCount" parameterType="cn.htd.basecenter.dto.PlacardCondition" resultType="java.lang.Long">
+		select count(1)
+		from (
+			(
+				select a1.placard_id
+				<include refid="seller_from_where_fragement" />
+			)
+			union
+			(
+				select a2.placard_id
+				<include refid="platform_from_where_fragement" />
+			)
+		) x
+	</select>
+	<!-- 查询可以删除的公告列表 -->
+	<select id="queryDeletePlacardByIdList" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where <![CDATA[ status <> #{status} ]]>
+		  and <![CDATA[ expire_time < now() ]]>
+		  and placard_id in
+		 <foreach collection="placardIdList" index="index" item="placardId" open="(" separator="," close=")"> 
+            #{placardId} 
+        </foreach> 
+	</select>
+	<!-- 更新公告的状态为删除 -->
+	<update id="deletePlacardByIdList">
+		update base_placard
+		<set>
+			status = #{status},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where <![CDATA[ status <> #{status} ]]>
+		  and placard_id in
+		 <foreach collection="placardIdList" index="index" item="placardId" open="(" separator="," close=")"> 
+            #{placardId} 
+        </foreach> 
+	</update>
+	<!-- 查询定时任务处理公告列表 -->
+	<select id="queryPlacardList4Task" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where <![CDATA[publish_time <= now() ]]>
+		<if test="entity != null">
+		  and mod(placard_id, #{entity.taskQueueNum}) in 
+		  <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+            #{taskId} 
+          </foreach> 
+		  and (
+		  	(   send_type = #{entity.platformSendType}
+			  	 and (
+			  	 	   status = #{entity.pendingStatus}
+			  	 	or status = #{entity.sendingStatus}
+			  	)
+		  	)
+		  	or ( 
+		  			send_type = #{entity.sellerSendType}
+		  		and status = #{entity.pendingStatus}
+		  	)
+		  )
+		</if>
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- 更新公告的状态 -->
+	<update id="updatePlacardStatusById">
+		update base_placard
+		<set>
+			status = #{newStatus},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set>
+		where placard_id = #{placardId} 
+		  and status = #{status}
+	</update>
+</mapper>

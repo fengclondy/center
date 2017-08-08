@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.pricecenter.dao.ItemSkuBasePriceMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.pricecenter.domain.ItemSkuBasePrice" >
+    <id column="sku_id" property="skuId" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="cost_price" property="costPrice" jdbcType="DECIMAL" />
+    <result column="sale_limited_price" property="saleLimitedPrice" jdbcType="DECIMAL" />
+    <result column="price_floating_ratio" property="priceFloatingRatio" jdbcType="DECIMAL" />
+    <result column="area_sale_price" property="areaSalePrice" jdbcType="DECIMAL" />
+    <result column="box_sale_price" property="boxSalePrice" jdbcType="DECIMAL" />
+    <result column="retail_price_floating_ratio" property="retailPriceFloatingRatio" jdbcType="DECIMAL" />
+    <result column="retail_price" property="retailPrice" jdbcType="DECIMAL" />
+    <result column="vip_price_floating_ratio" property="vipPriceFloatingRatio" jdbcType="DECIMAL" />
+    <result column="commission_ratio" property="commissionRatio" jdbcType="DECIMAL" />
+    <result column="last_price_sync_time" property="lastPriceSyncTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    sku_id, item_id, seller_id, shop_id, item_code, category_id, brand_id, channel_code, 
+    cost_price, sale_limited_price, price_floating_ratio, area_sale_price, box_sale_price, 
+    retail_price_floating_ratio, retail_price, commission_ratio, vip_price_floating_ratio,
+    last_price_sync_time, create_id, create_name, create_time, modify_id,
+    modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from item_sku_base_price
+    where sku_id = #{skuId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_sku_base_price
+    where sku_id = #{skuId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.pricecenter.domain.ItemSkuBasePrice" >
+    insert into item_sku_base_price (sku_id, item_id, seller_id, 
+      shop_id, item_code, category_id, 
+      brand_id, channel_code, cost_price, 
+      sale_limited_price, price_floating_ratio, area_sale_price, 
+      box_sale_price, retail_price_floating_ratio, 
+      retail_price, commission_ratio, vip_price_floating_ratio,
+      last_price_sync_time, create_id, create_name, create_time,
+      modify_id, modify_name, modify_time
+      )
+    values (#{skuId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, 
+      #{shopId,jdbcType=BIGINT}, #{itemCode,jdbcType=VARCHAR}, #{categoryId,jdbcType=BIGINT}, 
+      #{brandId,jdbcType=BIGINT}, #{channelCode,jdbcType=VARCHAR}, #{costPrice,jdbcType=DECIMAL}, 
+      #{saleLimitedPrice,jdbcType=DECIMAL}, #{priceFloatingRatio,jdbcType=DECIMAL}, #{areaSalePrice,jdbcType=DECIMAL}, 
+      #{boxSalePrice,jdbcType=DECIMAL}, #{retailPriceFloatingRatio,jdbcType=DECIMAL}, 
+      #{retailPrice,jdbcType=DECIMAL}, #{commissionRatio,jdbcType=DECIMAL},
+      #{vipPriceFloatingRatio,jdbcType=DECIMAL},
+      #{lastPriceSyncTime,jdbcType=TIMESTAMP},
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.pricecenter.domain.ItemSkuBasePrice" >
+    insert into item_sku_base_price
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="costPrice != null" >
+        cost_price,
+      </if>
+      <if test="saleLimitedPrice != null" >
+        sale_limited_price,
+      </if>
+      <if test="priceFloatingRatio != null" >
+        price_floating_ratio,
+      </if>
+      <if test="areaSalePrice != null" >
+        area_sale_price,
+      </if>
+      <if test="boxSalePrice != null" >
+        box_sale_price,
+      </if>
+      <if test="retailPriceFloatingRatio != null" >
+        retail_price_floating_ratio,
+      </if>
+      <if test="retailPrice != null" >
+        retail_price,
+      </if>
+      <if test="vipPriceFloatingRatio != null" >
+        vip_price_floating_ratio,
+      </if>
+      <if test="commissionRatio != null" >
+        commission_ratio,
+      </if>
+      <if test="lastPriceSyncTime != null" >
+        last_price_sync_time,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="costPrice != null" >
+        #{costPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="saleLimitedPrice != null" >
+        #{saleLimitedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceFloatingRatio != null" >
+        #{priceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="areaSalePrice != null" >
+        #{areaSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="boxSalePrice != null" >
+        #{boxSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="retailPriceFloatingRatio != null" >
+        #{retailPriceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="retailPrice != null" >
+        #{retailPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPriceFloatingRatio != null" >
+        #{vipPriceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="commissionRatio != null" >
+        #{commissionRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="lastPriceSyncTime != null" >
+        #{lastPriceSyncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    ON DUPLICATE KEY UPDATE
+       modify_time = NOW()
+       <if test="modifyId != null" >
+        ,modify_id = #{modifyId,jdbcType=BIGINT}
+      </if>
+      <if test="modifyName != null" >
+        ,modify_name = #{modifyName,jdbcType=VARCHAR}
+      </if>
+      <if test="categoryId != null" >
+        ,category_id = #{categoryId,jdbcType=BIGINT}
+      </if>
+      <if test="brandId != null" >
+        ,brand_id = #{brandId,jdbcType=BIGINT}
+      </if>
+      <if test="channelCode != null" >
+        ,channel_code = #{channelCode,jdbcType=VARCHAR}
+      </if>
+      <if test="costPrice != null" >
+        ,cost_price = #{costPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="saleLimitedPrice != null" >
+        ,sale_limited_price = #{saleLimitedPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="priceFloatingRatio != null" >
+        ,price_floating_ratio = #{priceFloatingRatio,jdbcType=DECIMAL}
+      </if>
+      <if test="areaSalePrice != null" >
+        ,area_sale_price = #{areaSalePrice,jdbcType=DECIMAL}
+      </if>
+      <if test="boxSalePrice != null" >
+        ,box_sale_price = #{boxSalePrice,jdbcType=DECIMAL}
+      </if>
+      <if test="retailPriceFloatingRatio != null" >
+        ,retail_price_floating_ratio = #{retailPriceFloatingRatio,jdbcType=DECIMAL}
+      </if>
+      <if test="retailPrice != null" >
+        ,retail_price = #{retailPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="vipPriceFloatingRatio != null" >
+         ,vip_price_floating_ratio = #{vipPriceFloatingRatio,jdbcType=DECIMAL}
+    </if>
+      <if test="commissionRatio != null" >
+        ,commission_ratio = #{commissionRatio,jdbcType=DECIMAL}
+      </if>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.pricecenter.domain.ItemSkuBasePrice" >
+    update item_sku_base_price
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="costPrice != null" >
+        cost_price = #{costPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="saleLimitedPrice != null" >
+        sale_limited_price = #{saleLimitedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="priceFloatingRatio != null" >
+        price_floating_ratio = #{priceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="areaSalePrice != null" >
+        area_sale_price = #{areaSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="boxSalePrice != null" >
+        box_sale_price = #{boxSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="retailPriceFloatingRatio != null" >
+        retail_price_floating_ratio = #{retailPriceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="retailPrice != null" >
+        retail_price = #{retailPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPriceFloatingRatio != null" >
+        vip_price_floating_ratio = #{vipPriceFloatingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="commissionRatio != null" >
+        commission_ratio = #{commissionRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="lastPriceSyncTime != null" >
+        last_price_sync_time = #{lastPriceSyncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sku_id = #{skuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.pricecenter.domain.ItemSkuBasePrice" >
+    update item_sku_base_price
+    set item_id = #{itemId,jdbcType=BIGINT},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      shop_id = #{shopId,jdbcType=BIGINT},
+      item_code = #{itemCode,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=BIGINT},
+      brand_id = #{brandId,jdbcType=BIGINT},
+      channel_code = #{channelCode,jdbcType=VARCHAR},
+      cost_price = #{costPrice,jdbcType=DECIMAL},
+      sale_limited_price = #{saleLimitedPrice,jdbcType=DECIMAL},
+      price_floating_ratio = #{priceFloatingRatio,jdbcType=DECIMAL},
+      area_sale_price = #{areaSalePrice,jdbcType=DECIMAL},
+      box_sale_price = #{boxSalePrice,jdbcType=DECIMAL},
+      retail_price_floating_ratio = #{retailPriceFloatingRatio,jdbcType=DECIMAL},
+      retail_price = #{retailPrice,jdbcType=DECIMAL},
+      vip_price_floating_ratio = #{vipPriceFloatingRatio,jdbcType=DECIMAL},
+      commission_ratio = #{commissionRatio,jdbcType=DECIMAL},
+      last_price_sync_time = #{lastPriceSyncTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where sku_id = #{skuId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="queryItemSkuBasePriceBySkuIdList" resultMap="BaseResultMap">
+  	select distinct * from item_sku_base_price where sku_id in
+  	<foreach collection="list" open="(" close=")" item="item" separator=",">
+  	#{item}
+  	</foreach>
+  </select>
+
+  <select id="selectByItemCode" resultMap="BaseResultMap" parameterType="string" >
+    select
+    <include refid="Base_Column_List" />
+    from item_sku_base_price
+    where item_code = #{skuId,jdbcType=VARCHAR}
+  </select>
+</mapper>

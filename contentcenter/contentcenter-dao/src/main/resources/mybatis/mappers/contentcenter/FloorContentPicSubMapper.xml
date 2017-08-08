@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.FloorContentPicSubDAO">
+    <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.FloorContentPicSubDTO">
+        <result column="id" property="id" />
+        <result column="floor_nav_id" property="floorNavId" />
+        <result column="pic_url" property="picUrl" />
+        <result column="link_url" property="linkUrl" />
+        <result column="sort_num" property="sortNum" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, floor_nav_id, pic_url, link_url, sort_num
+    </sql>
+
+    <sql id="selectAllColumns">
+        select
+        id, floor_nav_id, pic_url, link_url, sort_num
+        from floor_content_pic_sub
+    </sql>
+
+    <!-- mysql 分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset}, #{page.rows}
+    </sql>
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+        SELECT COUNT(1) FROM floor_content_pic_sub
+    </sql>
+
+    <sql id="where_fragement">
+        WHERE 1=1
+        <if test="entity!=null">
+            <if test="entity.id != null and entity.id != '' ">
+                <![CDATA[ AND id = #{entity.id} ]]>
+            </if>
+            <if test="entity.floorNavId != null and entity.floorNavId != '' ">
+                <![CDATA[ AND floor_nav_id = #{entity.floorNavId} ]]>
+            </if>
+            <if test="entity.picUrl != null and entity.picUrl != '' ">
+                <![CDATA[ AND pic_url = #{entity.picUrl} ]]>
+            </if>
+            <if test="entity.linkUrl != null and entity.linkUrl != '' ">
+                <![CDATA[ AND link_url = #{entity.linkUrl} ]]>
+            </if>
+            <if test="entity.sortNum != null and entity.sortNum != '' ">
+                <![CDATA[ AND sort_num = #{entity.sortNum} ]]>
+            </if>
+            order by sort_num asc
+        </if>
+    </sql>
+
+    <select id="selectById" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from floor_content_pic_sub
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+
+    <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.FloorContentPicSubDTO">
+        insert into floor_content_pic_sub
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="floorNavId != null">
+                floor_nav_id,
+            </if>
+            <if test="picUrl != null">
+                pic_url,
+            </if>
+            <if test="linkUrl != null">
+                link_url,
+            </if>
+            <if test="sortNum != null">
+                sort_num
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="floorNavId != null">
+                #{floorNavId,jdbcType=BIGINT},
+            </if>
+            <if test="picUrl != null">
+                #{picUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null">
+                #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="sortNum != null">
+                #{sortNum,jdbcType=BIGINT}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByCondition" parameterType="com.bjucloud.contentcenter.dto.FloorContentPicSubDTO">
+        update floor_content_pic_sub
+        <set>
+            <if test="floorNavId != null">
+                floor_nav_id = #{floorNavId,jdbcType=BIGINT},
+            </if>
+            <if test="picUrl != null">
+                pic_url = #{picUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null">
+                link_url = #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="sortNum != null">
+                sort_num = #{sortNum,jdbcType=BIGINT}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="selectListByCondition" resultMap="BaseResultMap">
+        <include refid="selectAllColumns" />
+        <include refid="where_fragement" />
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
+
+    <select id="selectCountByCondition" resultType="java.lang.Long">
+        <include refid="count_Tail" />
+        <include refid="where_fragement" />
+    </select>
+
+    <delete id="deleteByContentId" parameterType="long">
+        delete from floor_content_pic_sub
+        where content_id = #{contentId}
+    </delete>
+
+    <delete id="deleteByFloorNavId" parameterType="long">
+        delete from floor_content_pic_sub
+        where floor_nav_id = #{floorNavId}
+    </delete>
+
+    <select id="selectByNavId" parameterType="long" resultMap="BaseResultMap">
+        <include refid="selectAllColumns" />
+        where floor_nav_id = #{floorNavId}
+    </select>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.goodscenter.dao.ItemFavouriteDAO">
+
+	<resultMap id="favouriteMapper" type="cn.htd.goodscenter.domain.ItemFavourite">
+		<result property="id" column="id"/>
+		<result property="userId" column="user_id"/>
+		<result property="sellerId" column="seller_id"/>
+		<result property="shopId" column="shop_id"/>
+		<result property="itemId" column="item_id"/>
+		<result property="skuId" column="sku_id"/>
+		<result property="channelCode" column="channel_code"/>
+		<result property="deleteFlag" column="delete_flag"/>
+		<result property="createId" column="create_id"/>
+		<result property="createName" column="create_name"/>
+		<result property="createdDate" column="created_date"/>
+		<result property="modifyId" column="modify_id"/>
+		<result property="modifyName" column="modify_name"/>
+		<result property="modifyTime" column="modify_time"/>
+	</resultMap>
+
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+	<sql id="where_base">
+		WHERE
+		1 = 1
+		<if test="entity.id != null">
+			and id = #{entity.id}
+		</if>
+		<if test="entity.userId != null">
+			and user_id = #{entity.userId}
+		</if>
+		<if test="entity.itemId != null">
+			and item_id = #{entity.itemId}
+		</if>
+		<if test="entity.skuId != null">
+			and sku_id = #{entity.skuId}
+		</if>
+		<if test="entity.sellerId != null">
+			and seller_id = #{entity.sellerId}
+		</if>
+		<if test="entity.shopId != null">
+			and shop_id = #{entity.shopId}
+		</if>
+		<if test="entity.deleteFlag != null">
+			and delete_flag = #{entity.deleteFlag}
+		</if>
+	</sql>
+
+	<select id="select" resultMap="favouriteMapper">
+		select * from item_favourite
+		<include refid="where_base"/>
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="favouriteMapper">
+		select * from item_favourite
+		where id = #{id}
+	</select>
+
+	<select id="selectListPage" resultMap="favouriteMapper">
+		select * from item_favourite
+		<include refid="where_base"/>
+		order by modify_time desc
+		<include refid="pagination_tail"/>
+	</select>
+	
+	<select id="selectListPageCount" resultType="Long">
+		select count(1) from item_favourite
+		<include refid="where_base"/>
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="Long">
+		UPDATE item_favourite SET delete_flag = 1
+		where id = #{id}
+	</delete>
+
+	<delete id="batchDelete" parameterType="java.util.List">
+		UPDATE item_favourite SET delete_flag = 1
+		WHERE id IN
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+		#{item}
+		</foreach>
+	</delete>
+
+	<update id="delete" parameterType="cn.htd.goodscenter.domain.ItemFavourite">
+		UPDATE item_favourite
+		SET delete_flag = 1
+		WHERE
+		    user_id = #{userId}
+		    AND sku_id = #{skuId}
+	</update>
+
+	<insert id="insert" keyProperty="id" >
+		insert into item_favourite(
+		user_id,
+		seller_id,
+		shop_id,
+		item_id,
+		sku_id,
+		delete_flag,
+		channel_code,
+		create_id,
+		create_name,
+		created_date
+		)values(
+		#{userId},
+		#{sellerId},
+		#{shopId},
+		#{itemId},
+		#{skuId},
+		0,
+		#{channelCode},
+		#{createId},
+		#{createName},
+		now()
+		)
+		ON DUPLICATE KEY
+		UPDATE
+		delete_flag = 0,
+		modify_time = now()
+	</insert>
+</mapper>

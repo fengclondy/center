@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.ShopOrderStatisticsDayReportDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.ShopOrderStatisticsDayReportDMO" >
+    <id column="STATISTICS_ID" property="statisticsId" jdbcType="INTEGER" />
+    <result column="SHOP_ID" property="shopId" jdbcType="BIGINT" />
+    <result column="SALES_TIME" property="salesTime" jdbcType="INTEGER" />
+    <result column="SALES_AMOUNT" property="salesAmount" jdbcType="DECIMAL" />
+    <result column="BUYER_COUNT" property="buyerCount" jdbcType="INTEGER" />
+    <result column="ORDER_COUNT" property="orderCount" jdbcType="INTEGER" />
+    <result column="STATISTICS_GOOD_COUNT" property="statisticsGoodCount" jdbcType="INTEGER" />
+    <result column="PAY_ORDER_COUNT" property="payOrderCount" jdbcType="INTEGER" />
+    <result column="STATISTICS_TIME" property="statisticsTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    STATISTICS_ID, SHOP_ID, SALES_TIME, SALES_AMOUNT, BUYER_COUNT, STATISTICS_GOOD_COUNT, 
+    PAY_ORDER_COUNT, STATISTICS_TIME,ORDER_COUNT
+  </sql>
+  <select id="selectByConditions" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.ShopOrderStatisticsDayReportDMO" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_order_statistics_day_report
+    where 1=1
+    and SHOP_ID = #{shopId}
+     <if test="startTime!=null and startTime!='' ">  
+           <![CDATA[and SALES_TIME>=#{startTime} ]]>    
+     </if>  
+     <if test="endTime!=null and endTime!=''">  
+           <![CDATA[and  SALES_TIME<=#{endTime} ]]>  
+     </if>
+     <if test="start !=null and start!=''">
+     	ORDER BY SALES_TIME DESC
+	 	LIMIT #{start},#{rows} 
+     </if> 
+
+  </select>
+  <insert id="insertSelective" parameterType="cn.htd.zeus.tc.biz.dmo.ShopOrderStatisticsDayReportDMO" >
+    insert into shop_order_statistics_day_report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="statisticsId != null" >
+        STATISTICS_ID,
+      </if>
+      <if test="shopId != null" >
+        SHOP_ID,
+      </if>
+      <if test="salesTime != null" >
+        SALES_TIME,
+      </if>
+      <if test="salesAmount != null" >
+        SALES_AMOUNT,
+      </if>
+      <if test="buyerCount != null" >
+        BUYER_COUNT,
+      </if>
+      <if test="statisticsGoodCount != null" >
+        STATISTICS_GOOD_COUNT,
+      </if>
+      <if test="payOrderCount != null" >
+        PAY_ORDER_COUNT,
+      </if>
+      <if test="statisticsTime != null" >
+        STATISTICS_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="statisticsId != null" >
+        #{statisticsId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="salesTime != null" >
+        #{salesTime,jdbcType=INTEGER},
+      </if>
+      <if test="salesAmount != null" >
+        #{salesAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerCount != null" >
+        #{buyerCount,jdbcType=INTEGER},
+      </if>
+      <if test="statisticsGoodCount != null" >
+        #{statisticsGoodCount,jdbcType=INTEGER},
+      </if>
+      <if test="payOrderCount != null" >
+        #{payOrderCount,jdbcType=INTEGER},
+      </if>
+      <if test="statisticsTime != null" >
+        #{statisticsTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPUniIndex" parameterType="cn.htd.zeus.tc.biz.dmo.ShopOrderStatisticsDayReportDMO" >
+    update shop_order_statistics_day_report
+    <set >
+      <if test="shopId != null" >
+        SHOP_ID = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="salesTime != null" >
+        SALES_TIME = #{salesTime,jdbcType=INTEGER},
+      </if>
+      <if test="salesAmount != null" >
+        SALES_AMOUNT = #{salesAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerCount != null" >
+        BUYER_COUNT = #{buyerCount,jdbcType=INTEGER},
+      </if>
+      <if test="statisticsGoodCount != null" >
+        STATISTICS_GOOD_COUNT = #{statisticsGoodCount,jdbcType=INTEGER},
+      </if>
+      <if test="payOrderCount != null" >
+        PAY_ORDER_COUNT = #{payOrderCount,jdbcType=INTEGER},
+      </if>
+      <if test="statisticsTime != null" >
+        STATISTICS_TIME = #{statisticsTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where SHOP_ID = #{shopId,jdbcType=INTEGER}
+    and SALES_TIME = #{salesTime,jdbcType=INTEGER}
+  </update>
+</mapper>

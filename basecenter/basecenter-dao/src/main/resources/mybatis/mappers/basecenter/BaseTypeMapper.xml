@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.basecenter.dao.BaseTypeDAO" >
+	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BaseType" >
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+  	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+			id,
+			type,
+			name,
+			status,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		from
+			base_type
+		]]>
+	</sql>
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity != null">
+			<if test="entity.id != null">
+				and id = #{entity.id}
+			</if>
+			<if test="entity.type != null and entity.type != ''">
+				and type = #{entity.type}
+			</if>
+			<if test="entity.name != null and entity.name != ''">
+				and name like CONCAT('%',#{entity.name},'%')
+			</if>
+			<if test="entity.status != null">
+				and status = #{entity.status}
+			</if>
+		</if>
+	</sql>
+	<!-- mysql 分页尾 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 插入记录 -->
+	<insert id="add" useGeneratedKeys="true">
+		insert into base_type(
+			type,
+			name,
+			status,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time
+		)values(
+			#{type},
+			#{name},
+			#{status},
+			#{createId},
+			#{createName},
+			now(),
+			#{createId},
+			#{createName},
+			now()
+		)
+	</insert>
+	<!-- 更新记录 -->
+	<update id="update">
+		update base_type 
+		<set>
+			type = #{type},
+			name = #{name},
+			status = #{status},
+			modify_id = #{modifyId},
+			modify_name = #{modifyName},
+			modify_time = now()
+		</set> 
+		where id = #{id}
+	</update>
+	<!-- 根据ID查询记录 -->
+	<select id="queryById" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		where id = #{id}
+	</select>
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="java.lang.Long">
+		select count(1) 
+		from base_type
+		<include refid="where_fragement" />
+	</select>
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="BaseResultMap">
+		<include refid="selectAllColumns" />
+		<include refid="where_fragement" />
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+	<!-- =========================================================== -->
+	<!-- Dao方法中的BaseDao以外方法 -->
+	<!-- =========================================================== -->
+	<select id="checkBaseTypeUniqueness" parameterType="cn.htd.basecenter.dto.BaseTypeDTO" resultType="java.lang.Integer">
+		select count(1) 
+		from base_type
+		where type = #{type}
+		<if test="id != null">
+		  and <![CDATA[ id <> #{id} ]]>
+		</if>
+	</select>
+</mapper>

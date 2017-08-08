@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.MemberCompanyInfoDao">
+
+
+	<select id="searchMemberCompanyInfoList" parameterType="cn.htd.membercenter.dto.MemberCompanyInfoVO" resultType="cn.htd.membercenter.dto.MemberCompanyInfoVO">
+		select
+		id id, member_id member_id, buyer_seller_type buyer_seller_type, company_name company_name, company_code company_code, artificial_person_name artificial_person_name,
+		artificial_person_mobile artificial_person_mobile, artificial_person_idcard artificial_person_idcard, artificial_person_pic_src artificial_person_pic_src, artificial_person_pic_back_src artificial_person_pic_back_src,
+		artificial_person_idcard_pic_src artificial_person_idcard_pic_src, area_code area_code, landline landline, fax_number fax_number, location_province location_province,
+		location_city location_city, location_county location_county, location_town location_town, location_detail location_detail,
+		create_id create_id, create_name create_name,create_time create_time, modify_id modify_id, modify_name modify_name, modify_time modify_time
+		from member_company_info
+		where 1=1
+		<if test="id != null">
+			and id = #{id}
+		</if>
+		<if test="member_id != null">
+			and member_id = #{member_id}
+		</if>
+		<if test="buyer_seller_type != null">
+			and buyer_seller_type = #{buyer_seller_type}
+		</if>
+		<if test="company_name != null">
+			and company_name like #{company_name}
+		</if>
+		<if test="belong_company_name != null">
+			and company_name like #{belong_company_name}
+		</if>
+		<if test="belong_company_name_cur != null">
+			and company_name like #{belong_company_name_cur}
+		</if>
+		<if test="company_code != null">
+			and company_code = #{company_code}
+		</if>
+		<if test="artificial_person_name != null">
+			and artificial_person_name = #{artificial_person_name}
+		</if>
+		<if test="artificial_person_mobile != null">
+			and artificial_person_mobile = #{artificial_person_mobile}
+		</if>
+		<if test="artificial_person_idcard != null">
+			and artificial_person_idcard = #{artificial_person_idcard}
+		</if>
+		<if test="artificial_person_pic_src != null">
+			and artificial_person_pic_src = #{artificial_person_pic_src}
+		</if>
+		<if test="artificial_person_pic_back_src != null">
+			and artificial_person_pic_back_src = #{artificial_person_pic_back_src}
+		</if>
+		<if test="artificial_person_idcard_pic_src != null">
+			and artificial_person_idcard_pic_src = #{artificial_person_idcard_pic_src}
+		</if>
+		<if test="area_code != null">
+			and area_code = #{area_code}
+		</if>
+		<if test="landline != null">
+			and landline = #{landline}
+		</if>
+		<if test="fax_number != null">
+			and fax_number = #{fax_number}
+		</if>
+		<if test="location_province != null">
+			and location_province = #{location_province}
+		</if>
+		<if test="location_city != null">
+			and location_city = #{location_city}
+		</if>
+		<if test="location_county != null">
+			and location_county = #{location_county}
+		</if>
+		<if test="location_town != null">
+			and location_town = #{location_town}
+		</if>
+		<if test="location_detail != null">
+			and location_detail = #{location_detail}
+		</if>
+
+		<if test="create_id != null">
+			and create_id = #{create_id}
+		</if>
+		<if test="create_name != null">
+			and create_name = #{create_name}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="modify_id != null">
+			and modify_id = #{modify_id}
+		</if>
+		<if test="modify_name != null">
+			and modify_name = #{modify_name}
+		</if>
+		<if test="modify_time != null">
+			and  modify_time = #{modify_time}
+		</if>
+
+	</select>
+	<update id="updateMemberCompanyInfoList" parameterType="cn.htd.membercenter.dto.MemberCompanyInfoVO">
+		UPDATE member_company_info
+		<set>
+			<if test="buyer_seller_type != null">
+				 buyer_seller_type = #{buyer_seller_type},
+			</if>
+			<if test="company_name != null">
+				 company_name = #{company_name},
+			</if>
+			<if test="company_code != null">
+				 company_code = #{company_code},
+			</if>
+			<if test="artificial_person_name != null">
+				 artificial_person_name = #{artificial_person_name},
+			</if>
+			<if test="artificial_person_mobile != null">
+				 artificial_person_mobile = #{artificial_person_mobile},
+			</if>
+			<if test="artificial_person_idcard != null">
+				 artificial_person_idcard = #{artificial_person_idcard},
+			</if>
+			<if test="artificial_person_pic_src != null">
+				 artificial_person_pic_src = #{artificial_person_pic_src},
+			</if>
+			<if test="artificial_person_pic_back_src != null">
+				 artificial_person_pic_back_src = #{artificial_person_pic_back_src},
+			</if>
+			<if test="artificial_person_idcard_pic_src != null">
+				 artificial_person_idcard_pic_src = #{artificial_person_idcard_pic_src},
+			</if>
+			<if test="area_code != null">
+				 area_code = #{area_code},
+			</if>
+			<if test="landline != null">
+				 landline = #{landline},
+			</if>
+			<if test="fax_number != null">
+				 fax_number = #{fax_number},
+			</if>
+			<if test="location_province != null">
+				 location_province = #{location_province},
+			</if>
+			<if test="location_city != null">
+				 location_city = #{location_city},
+			</if>
+			<if test="location_county != null">
+				 location_county = #{location_county},
+			</if>
+			<if test="location_town != null">
+				 location_town = #{location_town},
+			</if>
+			<if test="location_detail != null">
+				 location_detail = #{location_detail},
+			</if>
+			<if test="create_id != null">
+				 create_id = #{create_id},
+			</if>
+			<if test="create_name != null">
+				 create_name = #{create_name},
+			</if>
+			<if test="create_time != null">
+				 create_time = #{create_time},
+			</if>
+			<if test="modify_id != null">
+				 modify_id = #{modify_id},
+			</if>
+			<if test="modify_name != null">
+				 modify_name = #{modify_name},
+			</if>
+			modify_time = now()
+		</set>
+		where member_id=#{member_id} and buyer_seller_type='1'
+
+	</update>
+	
+	<select id="searchMemberCompanyInfo" resultType="cn.htd.membercenter.dto.MemberCompanyInfoDTO">
+		select
+		a.id memberId,
+		a.member_code memberCode,
+		a.cur_belong_seller_id curBelongSellerId,
+		a.cur_belong_manager_id curBelongManagerId,
+		b.company_name companyName,
+		b.artificial_person_name artificialPersonName,
+		b.artificial_person_mobile artificialPersonMobile,
+		b.artificial_person_idcard artificialPersonIdcard,
+		b.artificial_person_pic_src artificialPersonPicSrc,
+		b.artificial_person_pic_back_src artificialPersonPicBackSrc,
+		b.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc
+		from member_base_info a,member_company_info b
+		where a.id=b.member_id 
+			and a.status='1'
+		<if test="dto.memberId != null and dto.memberId != ''">
+			and b.member_id = #{dto.memberId}
+		</if>
+		<if test="dto.buyerSellerType != null and dto.buyerSellerType!=''">
+			and b.buyer_seller_type = #{dto.buyerSellerType}
+		</if>
+		<if test="dto.companyName != null and dto.companyName!=''">
+			and b.company_name = #{dto.companyName}
+		</if>
+		<if test="dto.artificialPersonMobile != null and dto.artificialPersonMobile!=''">
+			and b.artificial_person_mobile = #{dto.artificialPersonMobile}
+		</if>
+		<if test="dto.memberCode != null and dto.memberCode !=''">
+			and a.member_code = #{dto.memberCode}
+		</if>
+		<if test="dto.curBelongSellerId != null and dto.curBelongSellerId != ''">
+			and a.cur_belong_seller_id = #{dto.curBelongSellerId}
+		</if>
+	</select>
+	
+	<select id="searchVoidMemberCompanyInfo" resultType="cn.htd.membercenter.dto.MemberCompanyInfoDTO">
+		select
+		a.id memberId,
+		a.member_code memberCode,
+		a.cur_belong_seller_id curBelongSellerId,
+		a.cur_belong_manager_id curBelongManagerId,
+		b.company_name companyName,
+		b.artificial_person_name artificialPersonName,
+		b.artificial_person_mobile artificialPersonMobile,
+		b.artificial_person_idcard artificialPersonIdcard,
+		b.artificial_person_pic_src artificialPersonPicSrc,
+		b.artificial_person_pic_back_src artificialPersonPicBackSrc,
+		b.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc
+		from member_base_info a,member_company_info b
+		where a.id=b.member_id 
+		<if test="dto.buyerSellerType != null and dto.buyerSellerType!=''">
+			and b.buyer_seller_type = #{dto.buyerSellerType}
+		</if>
+		<if test="dto.companyName != null and dto.companyName!=''">
+			and b.company_name = #{dto.companyName}
+		</if>
+		<if test="dto.artificialPersonMobile != null and dto.artificialPersonMobile!=''">
+			and b.artificial_person_mobile = #{dto.artificialPersonMobile}
+		</if>
+	</select>
+
+	<select id="selectBelongSellerId" resultType="java.lang.Long">
+		select member_id memberId from member_company_info where buyer_seller_type='2' and company_name = #{companyName}
+	</select>
+
+<select id="selectMemberInfoByAccountNo" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
+		select 
+			c.id id,
+			c.member_code memberCode,
+			m.company_name companyName,
+			m.artificial_person_mobile artificialPersonMobile,
+			c.seller_type sellerType, 
+			c.can_mall_login canMallLogin,
+			c.has_guarantee_license hasGuaranteeLicense,
+			c.has_business_license hasBusinessLicense
+		from member_company_info m,member_base_info c
+		where m.member_id = c.id 
+		and m.account_no = #{accountNo}
+		and m.buyer_seller_type = '1' 		
+	</select>
+
+<select id="selectSellerInfoByAccountNo" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
+		select 
+			c.id id,
+			c.member_code memberCode,
+			m.company_name companyName,
+			c.seller_type sellerType, 
+			c.can_mall_login canMallLogin,
+			c.has_guarantee_license hasGuaranteeLicense,
+			c.has_business_license hasBusinessLicense
+		from member_company_info m,member_base_info c
+		where m.member_id = c.id 
+		and m.account_no = #{accountNo}
+		and m.buyer_seller_type = '2' 		
+	</select>
+
+</mapper>

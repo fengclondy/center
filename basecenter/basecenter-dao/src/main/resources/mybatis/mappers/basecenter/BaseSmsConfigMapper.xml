@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.basecenter.dao.BaseSmsConfigDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="send_name" property="sendName" jdbcType="VARCHAR" />
+    <result column="send_address" property="sendAddress" jdbcType="VARCHAR" />
+    <result column="email_type" property="emailType" jdbcType="VARCHAR" />
+    <result column="send_server" property="sendServer" jdbcType="VARCHAR" />
+    <result column="send_server_port" property="sendServerPort" jdbcType="INTEGER" />
+    <result column="receive_server" property="receiveServer" jdbcType="VARCHAR" />
+    <result column="receive_server_port" property="receiveServerPort" jdbcType="INTEGER" />
+    <result column="is_use_smtp_auth" property="isUseSmtpAuth" jdbcType="TINYINT" />
+    <result column="login_email" property="loginEmail" jdbcType="VARCHAR" />
+    <result column="login_password" property="loginPassword" jdbcType="VARCHAR" />
+    <result column="msg_url" property="msgUrl" jdbcType="VARCHAR" />
+    <result column="msg_host" property="msgHost" jdbcType="VARCHAR" />
+    <result column="msg_account" property="msgAccount" jdbcType="VARCHAR" />
+    <result column="msg_password" property="msgPassword" jdbcType="VARCHAR" />
+    <result column="msg_pszSubPort" property="msgPszsubport" jdbcType="VARCHAR" />
+    <result column="msg_sa" property="msgSa" jdbcType="VARCHAR" />
+    <result column="msg_soapAddress" property="msgSoapaddress" jdbcType="VARCHAR" />
+    <result column="used_flag" property="usedFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, channel_code, send_name, send_address, email_type, send_server, send_server_port, 
+    receive_server, receive_server_port, is_use_smtp_auth, login_email, login_password, 
+    msg_url, msg_host, msg_account, msg_password, msg_pszSubPort, msg_sa, msg_soapAddress, 
+    used_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_sms_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="queryByTypeCode" resultMap="BaseResultMap" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from base_sms_config
+    where type = #{type,jdbcType=VARCHAR}
+      and used_flag = #{usedFlag,jdbcType=TINYINT}
+  </select>
+  <insert id="add" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
+    insert into base_sms_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="sendName != null" >
+        send_name,
+      </if>
+      <if test="sendAddress != null" >
+        send_address,
+      </if>
+      <if test="emailType != null" >
+        email_type,
+      </if>
+      <if test="sendServer != null" >
+        send_server,
+      </if>
+      <if test="sendServerPort != null" >
+        send_server_port,
+      </if>
+      <if test="receiveServer != null" >
+        receive_server,
+      </if>
+      <if test="receiveServerPort != null" >
+        receive_server_port,
+      </if>
+      <if test="isUseSmtpAuth != null" >
+        is_use_smtp_auth,
+      </if>
+      <if test="loginEmail != null" >
+        login_email,
+      </if>
+      <if test="loginPassword != null" >
+        login_password,
+      </if>
+      <if test="msgUrl != null" >
+        msg_url,
+      </if>
+      <if test="msgHost != null" >
+        msg_host,
+      </if>
+      <if test="msgAccount != null" >
+        msg_account,
+      </if>
+      <if test="msgPassword != null" >
+        msg_password,
+      </if>
+      <if test="msgPszsubport != null" >
+        msg_pszSubPort,
+      </if>
+      <if test="msgSa != null" >
+        msg_sa,
+      </if>
+      <if test="msgSoapaddress != null" >
+        msg_soapAddress,
+      </if>
+        used_flag,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendName != null" >
+        #{sendName,jdbcType=VARCHAR},
+      </if>
+      <if test="sendAddress != null" >
+        #{sendAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="emailType != null" >
+        #{emailType,jdbcType=VARCHAR},
+      </if>
+      <if test="sendServer != null" >
+        #{sendServer,jdbcType=VARCHAR},
+      </if>
+      <if test="sendServerPort != null" >
+        #{sendServerPort,jdbcType=INTEGER},
+      </if>
+      <if test="receiveServer != null" >
+        #{receiveServer,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveServerPort != null" >
+        #{receiveServerPort,jdbcType=INTEGER},
+      </if>
+      <if test="isUseSmtpAuth != null" >
+        #{isUseSmtpAuth,jdbcType=TINYINT},
+      </if>
+      <if test="loginEmail != null" >
+        #{loginEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null" >
+        #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="msgUrl != null" >
+        #{msgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="msgHost != null" >
+        #{msgHost,jdbcType=VARCHAR},
+      </if>
+      <if test="msgAccount != null" >
+        #{msgAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="msgPassword != null" >
+        #{msgPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="msgPszsubport != null" >
+        #{msgPszsubport,jdbcType=VARCHAR},
+      </if>
+      <if test="msgSa != null" >
+        #{msgSa,jdbcType=VARCHAR},
+      </if>
+      <if test="msgSoapaddress != null" >
+        #{msgSoapaddress,jdbcType=VARCHAR},
+      </if>
+        0,
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
+    update base_sms_config
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendName != null" >
+        send_name = #{sendName,jdbcType=VARCHAR},
+      </if>
+      <if test="sendAddress != null" >
+        send_address = #{sendAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="emailType != null" >
+        email_type = #{emailType,jdbcType=VARCHAR},
+      </if>
+      <if test="sendServer != null" >
+        send_server = #{sendServer,jdbcType=VARCHAR},
+      </if>
+      <if test="sendServerPort != null" >
+        send_server_port = #{sendServerPort,jdbcType=INTEGER},
+      </if>
+      <if test="receiveServer != null" >
+        receive_server = #{receiveServer,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveServerPort != null" >
+        receive_server_port = #{receiveServerPort,jdbcType=INTEGER},
+      </if>
+      <if test="isUseSmtpAuth != null" >
+        is_use_smtp_auth = #{isUseSmtpAuth,jdbcType=TINYINT},
+      </if>
+      <if test="loginEmail != null" >
+        login_email = #{loginEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null" >
+        login_password = #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="msgUrl != null" >
+        msg_url = #{msgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="msgHost != null" >
+        msg_host = #{msgHost,jdbcType=VARCHAR},
+      </if>
+      <if test="msgAccount != null" >
+        msg_account = #{msgAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="msgPassword != null" >
+        msg_password = #{msgPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="msgPszsubport != null" >
+        msg_pszSubPort = #{msgPszsubport,jdbcType=VARCHAR},
+      </if>
+      <if test="msgSa != null" >
+        msg_sa = #{msgSa,jdbcType=VARCHAR},
+      </if>
+      <if test="msgSoapaddress != null" >
+        msg_soapAddress = #{msgSoapaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="usedFlag != null" >
+        used_flag = #{usedFlag,jdbcType=TINYINT},
+      </if>
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateSmsConfigUsedFlag" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
+    update base_sms_config
+    <set >
+        used_flag = #{usedFlag,jdbcType=TINYINT},
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

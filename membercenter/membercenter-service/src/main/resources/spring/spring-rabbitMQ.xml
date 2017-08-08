@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/rabbit
+                http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+
+    
+   <!-- 连接服务配置  -->
+   <rabbit:connection-factory id="connectionFactory" host="${mq.host}" username="${mq.username}"
+        password="${mq.password}" port="${mq.port}"  />
+        
+   <rabbit:admin connection-factory="connectionFactory"/>
+   
+   <!-- 会员下行 queue 队列声明-->
+   <rabbit:queue id="middleware-erp.membercenter" durable="true" auto-delete="false" exclusive="false" name="middleware-erp.membercenter"/>
+   
+   
+   <!-- 会员下行 exchange queue binging key 绑定 -->
+    <rabbit:direct-exchange name="membercenter-exchange" durable="true" auto-delete="false" id="membercenter-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="middleware-erp.membercenter" key="membercenter-exchange-key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    
+    
+    <!-- 会员下行 spring template声明-->
+    <rabbit:template exchange="membercenter-exchange" id="amqpTemplate"  connection-factory="connectionFactory" message-converter="jackson2JsonMessageConverter"/>
+    
+    <!-- 客商业务员下行 queue 队列声明-->
+   <rabbit:queue id="middleware-erp.salesman.membercenter" durable="true" auto-delete="false" exclusive="false" name="middleware-erp.salesman.membercenter"/>
+   
+   
+   <!-- 客商业务员下行 exchange queue binging key 绑定 -->
+    <rabbit:direct-exchange name="membercenter-salesman-exchange" durable="true" auto-delete="false" id="membercenter-salesman-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="middleware-erp.salesman.membercenter" key="membercenter-salesman-exchange-key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    
+    
+    <!-- 客商业务员下行 spring template声明-->
+    <rabbit:template exchange="membercenter-salesman-exchange" id="amqpTemplateSalesman"  connection-factory="connectionFactory" message-converter="jackson2JsonMessageConverter" />
+    
+    
+   <!-- 单位往来关系下行 queue队列声明-->
+   <rabbit:queue id="middleware-erp.companyrelation.membercenter" durable="true" auto-delete="false" exclusive="false" name="middleware-erp.companyrelation.membercenter"/>
+   
+   
+   <!-- 单位往来关系下行 exchange queue binging key 绑定 -->
+    <rabbit:direct-exchange name="membercenter-companyrelation-exchange" durable="true" auto-delete="false" id="membercenter-companyrelation-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="middleware-erp.companyrelation.membercenter" key="membercenter-companyrelation-exchange-key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    <!-- 单位往来关系下行 spring template声明-->
+    <rabbit:template exchange="membercenter-companyrelation-exchange" id="amqpTemplateCompanyRelationDown"  connection-factory="connectionFactory" message-converter="jackson2JsonMessageConverter"/>
+    
+    <!-- 会员审核 queue队列声明-->
+   <rabbit:queue id="middleware-erp.baseToDoCountDTO.membercenter" durable="true" auto-delete="false" exclusive="false" name="middleware-erp.baseToDoCountDTO.membercenter"/>
+   
+   
+   <!-- 会员审核 exchange queue binging key 绑定 -->
+    <rabbit:direct-exchange name="membercenter-baseToDoCountDTO-exchange" durable="true" auto-delete="false" id="membercenter-baseToDoCountDTO-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="middleware-erp.baseToDoCountDTO.membercenter" key="membercenter-baseToDoCountDTO-exchange-key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    <!-- 会员审核 spring template声明-->
+    <rabbit:template exchange="membercenter-baseToDoCountDTO-exchange" id="amqpTemplateBaseToDoCountDTODown"  connection-factory="connectionFactory" />
+    
+    <!-- 会员生日消息发送 queue队列声明-->
+   <rabbit:queue id="middleware-erp.sendPersonBirthday.membercenter" durable="true" auto-delete="false" exclusive="false" name="middleware-erp.sendPersonBirthday.membercenter"/>
+   
+   
+   <!-- 会员生日消息发送 exchange queue binging key 绑定 -->
+    <rabbit:direct-exchange name="membercenter-sendPersonBirthday-exchange" durable="true" auto-delete="false" id="membercenter-sendPersonBirthday-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="middleware-erp.sendPersonBirthday.membercenter" key="membercenter-sendPersonBirthday-exchange-key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    <!-- 会员生日消息发送 spring template声明-->
+    <rabbit:template exchange="membercenter-sendPersonBirthday-exchange" id="amqpTemplateSendPersonBirthday"  connection-factory="connectionFactory" />
+
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">
+	    <rabbit:listener queue-names="middleware-erp.member" ref="erpSellerupListenter"/>
+	</rabbit:listener-container>
+    <bean id="erpSellerupListenter"
+		class="cn.htd.membercenter.service.listenter.ErpSellerupListenter" />
+		
+		
+	
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">
+	    <rabbit:listener  queue-names="pay.customer.change" ref="yijiToCenterListenter"/>
+	</rabbit:listener-container>
+	
+	<bean id="yijiToCenterListenter"
+		class="cn.htd.membercenter.service.listenter.YijiToCenterListenter" />
+ 
+		
+    <bean id="jackson2JsonMessageConverter"
+		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
+</beans>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.MemberCallCenterDAO">
+	<!-- 呼叫中心 根据名字,手机号,会员Code查会员信息 -->
+	<select id="selectMemberCallCenterInfo" resultType="cn.htd.membercenter.dto.MemberCallCenterDTO">
+		select
+		a.id id,
+		a.member_code memberCode,
+		a.can_mall_login canMallLogin,
+		a.is_seller accountType,
+		a.cur_belong_seller_id curBelongSellerId,
+		a.cur_belong_manager_id curBelongManagerId,
+		a.status status,
+		a.is_center_store isCenterStore,
+		a.is_seller accountType,
+		b.buyer_grade buyerGrade,
+		b.is_vip isVip,
+		d.company_name companyName,
+		d.artificial_person_name artificialPersonName,
+		d.artificial_person_mobile artificialPersonMobile,
+		d.location_province locationProvince,
+		d.location_city locationCity,
+		d.location_county locationCounty,
+		d.location_town locationTown,
+		d.location_detail locationDetail,
+		d.location_addr locationAddr
+		from member_base_info a ,buyer_grade_info b,member_company_info d 
+		where a.id = b.buyer_id 
+			and a.id = d.member_id
+		<if test="memberCode!=null and memberCode!=''">
+			and a.member_code = #{memberCode}
+		</if>
+		<if test="companyName!=null and companyName!=''">
+			and d.company_name = #{companyName}
+		</if>
+		<if test="artificialPersonMobile!=null and artificialPersonMobile!=''">
+			and d.artificial_person_mobile = #{artificialPersonMobile}
+		</if>
+		
+	</select>
+	
+	<!-- 呼叫中心  根据开始时间和结束时间查询会员等级信息列表 -->
+	<select id="selectGradeList" resultType="cn.htd.membercenter.dto.GradeMemberCompanyInfoDTO">
+		select 
+		a.artificial_person_mobile artificialPersonMobile,
+		b.buyer_id buyerId,
+		b.is_vip isVip,
+		b.member_package_type memberPackageType,
+		b.package_active_start_time packageActiveStartTime,
+		b.package_active_end_time packageActiveEndTime,
+		b.package_update_time packageUpdateTime
+		from member_company_info a,buyer_grade_info b
+		where a.member_id = b.buyer_id
+		and a.buyer_seller_type = '1'
+		<if test="packageActiveStartTime != null and packageActiveStartTime != ''">
+		and unix_timestamp(b.modify_time) <![CDATA[>=]]> unix_timestamp(#{packageActiveStartTime})
+		</if>
+		<if test="packageActiveEndTime != null and packageActiveEndTime != ''">
+		and unix_timestamp(b.modify_time) <![CDATA[<=]]> unix_timestamp(#{packageActiveEndTime})
+		</if>
+	</select>
+	
+	<!-- 查询供应商IDby名称 -->
+	<select id="selectMemberBaseName" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
+		select 
+			c.id id,
+			m.company_name companyName,
+			a.buyer_grade buyerGrade,
+			c.seller_type sellerType, 
+			c.can_mall_login canMallLogin,
+			c.has_guarantee_license hasGuaranteeLicense,
+			c.has_business_license hasBusinessLicense
+		from member_company_info m,member_base_info c
+			left join buyer_grade_info a on a.buyer_id = c.id
+		where m.member_id = c.id 
+		and c.member_code = #{memberCode}
+		and m.buyer_seller_type = #{buyerSellerType} group by c.member_code		
+	</select>
+	<!-- 根据买家和卖家code查询分组id -->
+	<select id="selectBuyCodeSellCode" resultType="cn.htd.membercenter.dto.MemberGroupDTO">
+		select 
+			b.group_id groupId,
+			b.name name,
+			c.buyer_id buyerId,
+			b.seller_id sellerId
+		from buyer_group b,buyer_group_relationship c 
+		where
+		b.group_id = c.group_id	
+		and b.delete_flag = 0 
+		and c.delete_flag = 0
+		and b.seller_id = (select d.id from member_base_info d where d.member_code=#{sellerCode})
+		and c.buyer_id = (select d.id from member_base_info d where d.member_code=#{buyerCode})
+	</select>
+	
+   <!-- 查询收货地址列表-->
+   <select id="selectConsigAddressList" resultType="cn.htd.membercenter.dto.MemberConsigAddressDTO">
+    select 
+    a.member_id memberId,
+    a.address_id addressId,
+    v.invoice_id invoiceId,
+    a.consignee_name consigneeName,
+    a.consignee_mobile consigneeMobile,
+    a.consignee_email consigneeEmail,
+    v.invoice_company_name invoiceCompanyName,
+    v.tax_man_id taxManId,
+    v.invoice_person invoicePerson,
+    v.contact_phone contactPhone,
+    v.bank_name bankName,
+    v.bank_account bankAccount,
+    a.channel_code channelCode,
+    a.consignee_address_province consigneeAddressProvince,
+    a.consignee_address_city consigneeAddressCity,
+    a.consignee_address_district consigneeAddressDistrict,
+    a.consignee_address_town consigneeAddressTown,
+    a.consignee_address_detail consigneeAddressDetail,
+    a.consignee_address consigneeAddress,
+    v.invoice_address_province invoiceAddressProvince,
+    v.invoice_address_city invoiceAddressCity,
+    v.invoice_address_county invoiceAddressCounty,
+    v.invoice_address_town invoiceAddressTown,
+    v.invoice_address_detail invoiceAddressDetail,
+    v.invoice_address invoiceAddress,
+    a.post_code postCode,
+    a.consignee_area_code consigneeAreaCode,
+    a.consignee_landline consigneeLandline,
+    a.default_flag defaultFlag
+    from member_consignee_address_info a,member_invoice_info v
+    where a.member_id = v.member_id and v.delete_flag =0  and a.delete_flag=0 
+    and a.member_id = (select d.id from member_base_info d where d.member_code=#{memberCode})
+    order by a.default_flag desc,a.modify_time desc,a.create_time desc
+  </select>
+  
+  <!-- 根据会员编码查询会员发票信息 -->
+	<select id="queryMemberInvoiceInfo" resultType="cn.htd.membercenter.dto.MemberInvoiceDTO"
+		parameterType="Object">
+		select
+			a.invoice_id invoiceId,
+			a.member_id memberId,
+			a.channel_code channelCode,
+			a.invoice_notify invoiceNotify,
+			a.invoice_company_name invoiceCompanyName,
+			a.tax_man_id taxManId,
+			a.bank_name bankName,
+			a.bank_account bankAccount,
+			a.invoice_person invoicePerson,
+			a.contact_phone contactPhone,
+			a.invoice_address invoiceAddress,
+			a.invoice_address_province invoiceAddressProvince,
+			a.invoice_address_city invoiceAddressCity,
+			a.invoice_address_county invoiceAddressCounty,
+			a.invoice_address_town invoiceAddressTown,
+			a.invoice_address_detail invoiceAddressDetail,
+			a.delete_flag deleteFlag,
+			a.erp_status erpStatus,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.modify_time modifyTime
+           from member_invoice_info a,member_base_info b
+		where a.member_id = b.id and b.member_code=#{memberCode}
+		and a.delete_flag = '0' and b.status='1'  limit 1
+	</select>
+	
+	<!-- 根据会员名称，手机号，会员类型，账号类型查询会员等级分页信息 -->
+	<select id="queryMemberGradeInfo" resultType="cn.htd.membercenter.dto.MemberGradeDTO"
+		parameterType="Object">
+		select
+			a.buyer_id memberId,
+			a.buyer_grade buyerGrade,
+			a.is_vip isVip,
+		    a.point_grade pointGrade,
+			b.is_buyer isBuyer,
+			b.can_mall_login canMallLogin,
+			b.has_guarantee_license hasGuaranteeLicense,
+			b.has_business_license hasBusinessLicense,
+			b.account_type accountType,
+			c.company_name companyName,
+			c.artificial_person_mobile phoneNumber
+           from buyer_grade_info a,member_base_info b,member_company_info c
+		where b.id = a.buyer_id and b.id = c.member_id
+			and b.member_code=#{memberCode}
+			and c.buyer_seller_type = '1'
+	</select>
+	
+	<select id="queryCompanyInfoByCode" resultType="cn.htd.membercenter.dto.MemberCallCenterDTO">
+		select
+
+		a.company_name companyName
+		from member_company_info a
+		where  a.company_code = #{companyCode}
+		
+	</select>
+	<!-- 根据会员编码查询会员发票信息 -->
+	<select id="queryMemberInvoiceInfoByChannelCode" resultType="cn.htd.membercenter.dto.MemberInvoiceDTO"
+		parameterType="Object">
+		select
+			a.invoice_id invoiceId,
+			a.member_id memberId,
+			a.channel_code channelCode,
+			a.invoice_notify invoiceNotify,
+			a.invoice_company_name invoiceCompanyName,
+			a.tax_man_id taxManId,
+			a.bank_name bankName,
+			a.bank_account bankAccount,
+			a.invoice_person invoicePerson,
+			a.contact_phone contactPhone,
+			a.invoice_address invoiceAddress,
+			a.invoice_address_province invoiceAddressProvince,
+			a.invoice_address_city invoiceAddressCity,
+			a.invoice_address_county invoiceAddressCounty,
+			a.invoice_address_town invoiceAddressTown,
+			a.invoice_address_detail invoiceAddressDetail,
+			a.delete_flag deleteFlag,
+			a.erp_status erpStatus,
+			a.erp_down_time erpDownTime,
+			a.erp_error_msg erpErrorMsg,
+			a.modify_time modifyTime
+           from member_invoice_info a,member_base_info b
+		where a.member_id = b.id and b.member_code=#{memberCode} and a.channel_code = #{channelCode}
+		and a.delete_flag = '0' and b.status='1'  limit 1
+	</select>
+</mapper>

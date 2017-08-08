@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.SpecialResourceDAO">
+    <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.SpecialResourceDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="memo" jdbcType="VARCHAR" property="memo" />
+        <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_id" jdbcType="BIGINT" property="createId" />
+        <result column="create_name" jdbcType="VARCHAR" property="createName" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+        <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+        <result column="page_type" jdbcType="VARCHAR" property="pageType" />
+        <result column="html_str" jdbcType="VARCHAR" property="htmlStr" />
+        
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, name, memo, link_url, status, create_id, create_name, create_time, modify_id,
+        modify_name, modify_time,page_type,html_str
+    </sql>
+
+    <sql id="selectAllColumns">
+        select
+        id, name, memo, link_url, status, create_id, create_name, create_time, modify_id,
+        modify_name, modify_time,page_type,html_str
+        FROM
+        special_resource sr
+    </sql>
+
+
+    <!-- mysql分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset}, #{page.rows}
+    </sql>
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+        SELECT COUNT(1) FROM special_resource sr
+    </sql>
+
+    <sql id="where_fragement">
+        WHERE 1=1
+        <if test="entity!=null">
+            <if test="entity.name != null and entity.name != ''">
+                and sr.name like concat('%',#{entity.name},'%')
+            </if>
+            <if test="entity.status != null and entity.status != ''">
+                <![CDATA[ AND sr.status = #{entity.status} ]]>
+            </if>
+            <if test="entity.pageType != null ">
+                <![CDATA[ AND sr.page_type = #{entity.pageType} ]]>
+            </if>
+            <if test="entity.linkUrl != null and entity.linkUrl != ''">
+                <![CDATA[ AND sr.link_url = #{entity.linkUrl} ]]>
+            </if>
+            <if test="entity.createStart != null and entity.createStart != ''">
+                <![CDATA[
+            AND DATE_FORMAT(sr.create_time, '%Y-%m-%d') >= DATE_FORMAT(#{entity.createStart}, '%Y-%m-%d')
+            ]]>
+            </if>
+            <if test="entity.createEnd != null and entity.createEnd != ''">
+                <![CDATA[
+            AND DATE_FORMAT(sr.create_time, '%Y-%m-%d') <= DATE_FORMAT(#{entity.createEnd}, '%Y-%m-%d')
+            ]]>
+            </if>
+
+            <if test="entity.modifyStart != null and entity.modifyStart != ''">
+                <![CDATA[
+            AND DATE_FORMAT(sr.modify_time, '%Y-%m-%d') >= DATE_FORMAT(#{entity.modifyStart}, '%Y-%m-%d')
+            ]]>
+            </if>
+            <if test="entity.modifyEnd != null and entity.modifyEnd != ''">
+                <![CDATA[
+            AND DATE_FORMAT(sr.modify_time, '%Y-%m-%d') <= DATE_FORMAT(#{entity.modifyEnd}, '%Y-%m-%d')
+            ]]>
+            </if>
+        </if>
+        ORDER BY modify_time DESC
+    </sql>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from special_resource
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from special_resource
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="add" parameterType="com.bjucloud.contentcenter.dto.SpecialResourceDTO">
+        insert into special_resource (id, name, memo,
+        link_url, status,
+        create_id, create_name, create_time,
+        modify_id, modify_name, modify_time
+        )
+        values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR},
+        #{linkUrl,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+        #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+        #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, now()
+        )
+    </insert>
+    <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.SpecialResourceDTO">
+        insert into special_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="memo != null">
+                memo,
+            </if>
+            <if test="linkUrl != null">
+                link_url,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createId != null">
+                create_id,
+            </if>
+            <if test="createName != null">
+                create_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyId != null">
+                modify_id,
+            </if>
+            <if test="modifyName != null">
+                modify_name,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+            <if test="pageType != null">
+                page_type,
+            </if>
+            <if test="htmlStr != null">
+                html_str,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="memo != null">
+                #{memo,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null">
+                #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createId != null">
+                #{createId,jdbcType=BIGINT},
+            </if>
+            <if test="createName != null">
+                #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyId != null">
+                #{modifyId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyName != null">
+                #{modifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="pageType != null">
+                #{pageType,jdbcType=VARCHAR},
+            </if>
+            <if test="htmlStr != null">
+                #{htmlStr,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="com.bjucloud.contentcenter.dto.SpecialResourceDTO">
+        update special_resource
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="memo != null">
+                memo = #{memo,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null">
+                link_url = #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createId != null">
+                create_id = #{createId,jdbcType=BIGINT},
+            </if>
+            <if test="createName != null">
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyId != null">
+                modify_id = #{modifyId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyName != null">
+                modify_name = #{modifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="pageType != null">
+                page_type = #{pageType,jdbcType=VARCHAR},
+            </if>
+            <if test="htmlStr != null">
+                html_str = #{htmlStr,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bjucloud.contentcenter.dto.SpecialResourceDTO">
+        update special_resource
+        set name = #{name,jdbcType=VARCHAR},
+        memo = #{memo,jdbcType=VARCHAR},
+        link_url = #{linkUrl,jdbcType=VARCHAR},
+        status = #{status,jdbcType=VARCHAR},
+        create_id = #{createId,jdbcType=BIGINT},
+        create_name = #{createName,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectListByCondition" resultMap="BaseResultMap">
+        <include refid="selectAllColumns" />
+        <include refid="where_fragement" />
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
+    <select id="selectCountByCondition" resultType="java.lang.Long">
+        <include refid="count_Tail" />
+        <include refid="where_fragement" />
+    </select>
+    <select id="queryByLink" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from special_resource
+        where link_url = #{topicCode}
+    </select>
+
+</mapper>

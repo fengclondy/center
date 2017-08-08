@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.searchcenter.dao.ItemDictionaryDAO">
+
+	<resultMap id="attrMap" type="cn.htd.searchcenter.domain.ItemAttrDTO">
+		<result property="attrId" column="attr_id" jdbcType="BIGINT" />
+		<result property="cid" column="cid" jdbcType="BIGINT" />
+		<result property="attrName" column="attrName" jdbcType="VARCHAR"  />
+	</resultMap>
+	
+	<resultMap id="attrValueMap" type="cn.htd.searchcenter.domain.ItemAttrValueDTO">
+		<result property="valueId" column="valueId" jdbcType="BIGINT" />
+		<result property="valueName" column="valueName" jdbcType="BIGINT" />
+		<result property="attrId" column="attrId" jdbcType="VARCHAR"  />
+	</resultMap>
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+	<select id="queryBelongRelationship" resultType="java.lang.String">
+		SELECT
+		group_concat(buyer_id,":",seller_id) FROM
+		belong_relationship where
+		status = 3 and seller_id = #{sellerId}
+		and buyer_id != 0 and
+		seller_id
+		!= 0
+	</select>
+
+	<select id="querySellerName" resultType="java.lang.String">
+		SELECT
+		distinct(company_name) FROM member_company_info
+		where member_id != 0
+		AND member_id =
+		#{sellerId}
+		limit 0,1
+	</select>
+
+	<select id="queryItemStatus" resultType="java.lang.String">
+		SELECT
+		distinct(item_status) FROM item
+		where item_id = #{itemId}
+	</select>
+
+	<select id="queryBoxRelationship" resultType="java.lang.String">
+		SELECT
+		group_concat(buyer_id,":",seller_id)
+		FROM zeus.box_relationship
+		WHERE
+		buyer_id != 0 and seller_id != 0 and
+		delete_flag = 0
+		and seller_id =
+		#{sellerId}
+	</select>
+
+	<select id="queryItemVisable" resultType="java.lang.String">
+		SELECT is_visable
+		FROM
+		item_sku_publish_info
+		WHERE item_id = #{itemId} and
+		is_box_flag=#{isBox}
+		limit 0,1
+	</select>
+
+	<select id="queryAreaByCode" resultType="java.lang.String">
+		SELECT
+		distinct(parent_code) from base_address
+		WHERE code = #{areaCode} AND
+		level = 3
+	</select>
+
+	<select id="querySellerTypeById" resultType="java.lang.String">
+		SELECT
+		distinct(seller_type)
+		FROM member_base_info
+		WHERE id != 0 AND id =
+		#{sellerId}
+		limit 0,1
+	</select>
+
+	<select id="queryDescribeByItemId" resultType="java.lang.String">
+		SELECT
+		distinct(ids.describe_content)
+		from item_describe ids
+		inner join item i
+		on i.item_id = ids.item_id
+		where ids.item_id = #{itemId}
+		limit 0,1
+	</select>
+
+	<select id="querySalesVolumeByItemCode" resultType="java.lang.String">
+		SELECT
+		sum(sales_goods_count)
+		FROM shop_sales_analysis_day_report
+		WHERE item_code =
+		#{itemCode}
+	</select>
+
+	<select id="queryExternalItemPrice" resultType="java.math.BigDecimal">
+		SELECT min(price)
+		FROM item_sku_ladder_price
+		WHERE delete_flag = 0 AND item_id =
+		#{itemId}
+	</select>
+
+	<select id="querySalesAreaByItemId" resultType="java.lang.String">
+		SELECT
+		isad.area_code
+		FROM item_sales_area_detail AS isad
+		INNER
+		JOIN
+		item_sales_area AS isa ON isa.sales_area_id = isad.sales_area_id
+		WHERE
+		isa.is_box_flag = #{isBox}
+		AND isa.item_id = #{itemId}
+		AND
+		isad.delete_flag = 0
+		AND isa.delete_flag = 0
+		group by isad.area_code
+	</select>
+
+	<select id="queryIsSalesWholeCountry" resultType="java.lang.Integer">
+		SELECT
+		distinct(is_sales_whole_country)
+		FROM zeus.item_sales_area
+		WHERE
+		delete_flag = 0 and is_box_flag = #{isBox}
+		and item_id = #{itemId}
+		limit 0,1
+	</select>
+
+	<select id="queryAreaThreeAndSecond" resultType="cn.htd.searchcenter.domain.BaseAddressDTO">
+		SELECT
+		id,
+		code,
+		parent_code as parentCode
+		FROM base_address
+		WHERE level = 3 And
+		delete_flag = 0
+	</select>
+
+	<select id="queryJDItemVisable" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM
+		item
+		WHERE item_status = 5
+		AND item_id
+		= #{itemId}
+		limit 0,1
+	</select>
+
+	<select id="querySeckillItemStatus" resultType="java.lang.Integer">
+		<![CDATA[ 
+		SELECT COUNT(1) FROM
+		timelimited_info AS ti
+		INNER JOIN promotion_info as pi on pi.promotion_id = ti.promotion_id
+		WHERE pi.status = 2 AND pi.show_status = 4 AND pi.invalid_time > #{nowTime}
+		AND ti.item_id = #{itemId}
+		]]>
+	</select>
+
+	<select id="queryItemVisableCount" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		FROM item_sku_publish_info
+		WHERE is_visable = 1
+		AND item_id =#{itemId}
+	</select>
+
+	<select id="queryHotWordByItemCode" resultType="cn.htd.searchcenter.domain.HotWordDTO">
+		SELECT
+		srp.product_code
+		as productCode,group_concat(srw.hot_word) as hotWord
+		FROM
+		search_recommend AS sr
+		INNER JOIN search_recommend_product AS srp
+		ON
+		srp.recommend_word_id = sr.id
+		INNER JOIN search_recommend_word AS srw
+		ON srw.recommend_word_id =
+		sr.id
+		WHERE srw.hot_word != "" and
+		srp.product_code = #{itemCode}
+		GROUP by
+		srp.product_code
+	</select>
+
+	<select id="queryItemPicture" resultType="java.lang.String">
+		SELECT picture_url
+		FROM
+		zeus.item_picture
+		WHERE is_first = 1 AND delete_flag = 0 AND
+		picture_status = 1
+		AND item_id = #{itemId}
+		limit 0,1
+	</select>
+	
+	<select id="queryOtherItemPicture" resultType="java.lang.String">
+		SELECT picture_url 
+		FROM item_picture 
+		WHERE picture_id = (SELECT min(ip.picture_id) 
+        FROM item_picture AS ip WHERE ip.item_id = #{itemId})
+        limit 0,1
+	</select>
+
+	<select id="querySaleDetailAll" resultType="cn.htd.searchcenter.domain.ItemSalesAreaDetailDTO">
+		SELECT
+		group_concat(isad.area_code) as areaCodes,
+		isa.is_box_flag as isBox,
+		isa.item_id as itemId
+		FROM item_sales_area_detail AS isad
+		INNER
+		JOIN
+		item_sales_area AS isa ON isa.sales_area_id = isad.sales_area_id
+		where
+		isad.area_code != 0
+		AND isa.delete_flag = 0
+		AND
+		isa.is_sales_whole_country != 1
+		AND isad.delete_flag = 0
+		group by
+		isa.is_box_flag,isa.item_id
+	</select>
+
+	<select id="queryCidNameByCid" resultType="java.lang.String">
+		SELECT c_name
+		FROM
+		item_category
+		WHERE cid = #{cid}
+		limit 0,1
+	</select>
+
+	<select id="queryBrandNameByBrandId" resultType="java.lang.String">
+		SELECT
+		brand_name
+		FROM item_brand
+		WHERE brand_id = #{brandId}
+		limit 0,1
+	</select>
+
+	<select id="queryItemCategoryCidBySyncTime" resultType="java.lang.String">
+		<![CDATA[ 
+		SELECT cid FROM 
+		item_category 
+		WHERE modify_time >= #{syncTime}
+		]]>
+	</select>
+
+	<select id="queryItemAttrByCid" resultMap="attrMap">
+		SELECT
+		ia.attr_id,
+		ia.attr_name as attrName
+		FROM
+		item_attribute
+		ia,item_category_attr ica
+		WHERE
+		ia.attr_id =
+		ica.attr_id
+		AND ica.attr_type
+		= 2
+		AND ia.status = 1
+		AND ica.status = 1
+		AND ica.cid = #{cid}
+	</select>
+
+	<select id="queryItemAttrValueByCid" resultMap="attrValueMap">
+		SELECT
+		distinct(iav.value_id) as valueId,
+		iav.value_name as valueName
+		FROM
+		item_attribute_value iav,
+		item_category_attr_value icav
+		WHERE
+		iav.value_id = icav.value_id
+		AND
+		iav.status = 1
+		AND icav.status = 1
+		AND icav.attr_id = #{attrId}
+		AND icav.cid = #{cid}
+	</select>
+	
+	<select id="queryIsPublicSaleWholeCountry" resultType="java.lang.Integer">
+        SELECT is_sales_whole_country 
+        FROM item_sales_area 
+        WHERE item_id = #{itemId}
+        AND is_box_flag = #{isBox} 
+        AND delete_flag = 0
+        limit 0,1
+	</select>
+</mapper>

@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.PayOrderInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+   <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="DOWN_ORDER_NO" property="downOrderNo" jdbcType="VARCHAR" />
+    <result column="ORDER_TYPE" property="orderType" jdbcType="TINYINT" />
+    <result column="PAY_RESULT_STATUS" property="payResultStatus" jdbcType="TINYINT" />
+    <result column="PAY_RESULT_CODE" property="payResultCode" jdbcType="VARCHAR" />
+    <result column="PAY_RESULT_MSG" property="payResultMsg" jdbcType="VARCHAR" />
+    <result column="PAY_LAST_MESSAGE_ID" property="payLastMessageId" jdbcType="VARCHAR" />
+    <result column="PAY_LAST_TIME" property="payLastTime" jdbcType="TIMESTAMP" />
+    <result column="PAY_SEND_COUNT" property="paySendCount" jdbcType="TINYINT" />
+    <result column="BRAND_CODE" property="brandCode" jdbcType="VARCHAR" />
+    <result column="CLASS_CODE" property="classCode" jdbcType="VARCHAR" />
+    <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+    <result column="DEPARTMENT_CODE" property="departmentCode" jdbcType="VARCHAR" />
+    <result column="PAY_STATUS" property="payStatus" jdbcType="VARCHAR" />
+    <result column="PAY_TYPE" property="payType" jdbcType="TINYINT" />
+    <result column="ORDER_NO" property="orderNo" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="IS_LOCK_BALANCE_FLAG" property="isLockBalanceFlag" jdbcType="TINYINT" />
+    <result column="MEMBER_CODE" property="memberCode" jdbcType="VARCHAR" />
+    <result column="PRODUCT_CODE" property="productCode" jdbcType="VARCHAR" />
+    <result column="IS_RUSH_RECEIVABLE" property="isRushReceivable" jdbcType="TINYINT" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="DELETE_FLAG" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="ORDER_FROM" property="orderFrom" jdbcType="VARCHAR" />
+    <result column="MODIFY_TIME" property="modifyTime"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+     ID, DOWN_ORDER_NO, ORDER_TYPE, PAY_RESULT_STATUS, PAY_RESULT_CODE, PAY_RESULT_MSG, 
+    PAY_LAST_MESSAGE_ID, PAY_LAST_TIME, PAY_SEND_COUNT, BRAND_CODE, CLASS_CODE, AMOUNT, 
+    DEPARTMENT_CODE, PAY_STATUS, PAY_TYPE, ORDER_NO, SUPPLIER_CODE, IS_LOCK_BALANCE_FLAG, 
+    MEMBER_CODE, PRODUCT_CODE, IS_RUSH_RECEIVABLE, REMARKS, ORDER_FROM
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_b_payorderinfo
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_b_payorderinfo
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    insert into tb_b_payorderinfo (ID, DOWN_ORDER_NO, ORDER_TYPE, 
+      PAY_RESULT_STATUS, PAY_RESULT_CODE, PAY_RESULT_MSG, 
+      PAY_LAST_MESSAGE_ID, PAY_LAST_TIME, PAY_SEND_COUNT, 
+      BRAND_CODE, CLASS_CODE, AMOUNT, 
+      DEPARTMENT_CODE, PAY_STATUS, PAY_TYPE, 
+      ORDER_NO, SUPPLIER_CODE, IS_LOCK_BALANCE_FLAG, 
+      MEMBER_CODE, PRODUCT_CODE, IS_RUSH_RECEIVABLE, 
+      REMARKS, ORDER_FROM)
+    values (#{id,jdbcType=BIGINT}, #{downOrderNo,jdbcType=VARCHAR}, #{orderType,jdbcType=TINYINT}, 
+      #{payResultStatus,jdbcType=TINYINT}, #{payResultCode,jdbcType=VARCHAR}, #{payResultMsg,jdbcType=VARCHAR}, 
+      #{payLastMessageId,jdbcType=VARCHAR}, #{payLastTime,jdbcType=TIMESTAMP}, #{paySendCount,jdbcType=TINYINT}, 
+      #{brandCode,jdbcType=VARCHAR}, #{classCode,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
+      #{departmentCode,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR}, #{payType,jdbcType=TINYINT}, 
+      #{orderNo,jdbcType=VARCHAR}, #{supplierCode,jdbcType=VARCHAR}, #{isLockBalanceFlag,jdbcType=TINYINT}, 
+      #{memberCode,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR}, #{isRushReceivable,jdbcType=TINYINT}, 
+      #{remarks,jdbcType=VARCHAR}, #{orderFrom,jdbcType=VARCHAR})
+  </insert>
+ <insert id="insertSelective" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    insert into tb_b_payorderinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="downOrderNo != null" >
+        DOWN_ORDER_NO,
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE,
+      </if>
+      <if test="payResultStatus != null" >
+        PAY_RESULT_STATUS,
+      </if>
+      <if test="payResultCode != null" >
+        PAY_RESULT_CODE,
+      </if>
+      <if test="payResultMsg != null" >
+        PAY_RESULT_MSG,
+      </if>
+      <if test="payLastMessageId != null" >
+        PAY_LAST_MESSAGE_ID,
+      </if>
+      <if test="payLastTime != null" >
+        PAY_LAST_TIME,
+      </if>
+      <if test="paySendCount != null" >
+        PAY_SEND_COUNT,
+      </if>
+      <if test="brandCode != null" >
+        BRAND_CODE,
+      </if>
+      <if test="classCode != null" >
+        CLASS_CODE,
+      </if>
+      <if test="amount != null" >
+        AMOUNT,
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE,
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS,
+      </if>
+      <if test="payType != null" >
+        PAY_TYPE,
+      </if>
+      <if test="orderNo != null" >
+        ORDER_NO,
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE,
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        IS_LOCK_BALANCE_FLAG,
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE,
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE,
+      </if>
+      <if test="isRushReceivable != null" >
+        IS_RUSH_RECEIVABLE,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="orderFrom != null" >
+        ORDER_FROM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="downOrderNo != null" >
+        #{downOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null" >
+        #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null" >
+        #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null" >
+        #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySendCount != null" >
+        #{paySendCount,jdbcType=TINYINT},
+      </if>
+      <if test="brandCode != null" >
+        #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null" >
+        #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null" >
+        #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null" >
+        #{orderFrom,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    update tb_b_payorderinfo
+    <set >
+      <if test="downOrderNo != null" >
+        DOWN_ORDER_NO = #{downOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        PAY_RESULT_STATUS = #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null" >
+        PAY_RESULT_CODE = #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null" >
+        PAY_RESULT_MSG = #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null" >
+        PAY_LAST_MESSAGE_ID = #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        PAY_LAST_TIME = #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySendCount != null" >
+        PAY_SEND_COUNT = #{paySendCount,jdbcType=TINYINT},
+      </if>
+      <if test="brandCode != null" >
+        BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        CLASS_CODE = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        PAY_TYPE = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null" >
+        ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        IS_LOCK_BALANCE_FLAG = #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        IS_RUSH_RECEIVABLE = #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null" >
+        ORDER_FROM = #{orderFrom,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updatePayorderinfoByOrderNoBrandIdClassCode" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    update tb_b_payorderinfo
+    <set >
+      <if test="downOrderNo != null" >
+        DOWN_ORDER_NO = #{downOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        PAY_RESULT_STATUS = #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null" >
+        PAY_RESULT_CODE = #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null" >
+        PAY_RESULT_MSG = #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null" >
+        PAY_LAST_MESSAGE_ID = #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        PAY_LAST_TIME = #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySendCount != null" >
+        PAY_SEND_COUNT = #{paySendCount,jdbcType=TINYINT},
+      </if>
+      <if test="brandCode != null" >
+        BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        CLASS_CODE = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        PAY_TYPE = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null" >
+        ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        IS_LOCK_BALANCE_FLAG = #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        IS_RUSH_RECEIVABLE = #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null" >
+        ORDER_FROM = #{orderFrom,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        DELETE_FLAG = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+    and  BRAND_CODE = #{brandCode,jdbcType=VARCHAR}
+    and CLASS_CODE = #{classCode,jdbcType=VARCHAR}
+    and DELETE_FLAG = '0'
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    update tb_b_payorderinfo
+    set DOWN_ORDER_NO = #{downOrderNo,jdbcType=VARCHAR},
+      ORDER_TYPE = #{orderType,jdbcType=TINYINT},
+      PAY_RESULT_STATUS = #{payResultStatus,jdbcType=TINYINT},
+      PAY_RESULT_CODE = #{payResultCode,jdbcType=VARCHAR},
+      PAY_RESULT_MSG = #{payResultMsg,jdbcType=VARCHAR},
+      PAY_LAST_MESSAGE_ID = #{payLastMessageId,jdbcType=VARCHAR},
+      PAY_LAST_TIME = #{payLastTime,jdbcType=TIMESTAMP},
+      PAY_SEND_COUNT = #{paySendCount,jdbcType=TINYINT},
+      BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      CLASS_CODE = #{classCode,jdbcType=VARCHAR},
+      AMOUNT = #{amount,jdbcType=DECIMAL},
+      DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      PAY_TYPE = #{payType,jdbcType=TINYINT},
+      ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      IS_LOCK_BALANCE_FLAG = #{isLockBalanceFlag,jdbcType=TINYINT},
+      MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      IS_RUSH_RECEIVABLE = #{isRushReceivable,jdbcType=TINYINT},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      ORDER_FROM = #{orderFrom,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByRechargeOrderNo" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from tb_b_payorderinfo
+    	where DOWN_ORDER_NO = #{downOrderNo}  and DELETE_FLAG = '0'
+	</select>
+	
+    <select id="selectBrandCodeAndClassCodeByOrderNo" resultMap="BaseResultMap" parameterType="String">
+    	select * from tb_b_payorderinfo
+    	where ORDER_NO = #{orderNo}  and DELETE_FLAG = '0'
+	</select>
+	
+	<select id="selectPayOrderInfoByOrderNo" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO">
+    	select 		
+    		<include refid="Base_Column_List"/> 
+    	from tb_b_payorderinfo
+    	where ORDER_NO = #{orderNo}  
+    	and  BRAND_CODE = #{brandCode,jdbcType=VARCHAR}
+    	and CLASS_CODE = #{classCode,jdbcType=VARCHAR} 
+    	and DELETE_FLAG = '0'
+	</select>
+
+	<update id="updateByRechargeOrderNo" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    update tb_b_payorderinfo
+    <set >
+      <if test="downOrderNo != null" >
+        DOWN_ORDER_NO = #{downOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        PAY_RESULT_STATUS = #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null" >
+        PAY_RESULT_CODE = #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null" >
+        PAY_RESULT_MSG = #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null" >
+        PAY_LAST_MESSAGE_ID = #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        PAY_LAST_TIME = #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySendCount != null" >
+        PAY_SEND_COUNT = #{paySendCount,jdbcType=TINYINT},
+      </if>
+      <if test="brandCode != null" >
+        BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        CLASS_CODE = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        PAY_TYPE = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null" >
+        ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        IS_LOCK_BALANCE_FLAG = #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        IS_RUSH_RECEIVABLE = #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null" >
+        ORDER_FROM = #{orderFrom,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+    <if test="brandCode != null" >
+        and BRAND_CODE = #{brandCode,jdbcType=VARCHAR}
+      </if>
+      <if test="classCode != null" >
+        and CLASS_CODE = #{classCode,jdbcType=VARCHAR}
+      </if>
+      and DELETE_FLAG = '0'
+  </update>
+  
+  
+  <update id="updateByDownOrderNo" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    update tb_b_payorderinfo
+    <set >
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        PAY_RESULT_STATUS = #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null" >
+        PAY_RESULT_CODE = #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null" >
+        PAY_RESULT_MSG = #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null" >
+        PAY_LAST_MESSAGE_ID = #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        PAY_LAST_TIME = #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paySendCount != null" >
+        PAY_SEND_COUNT = #{paySendCount,jdbcType=TINYINT},
+      </if>
+      <if test="brandCode != null" >
+        BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        CLASS_CODE = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        PAY_TYPE = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null" >
+        ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        IS_LOCK_BALANCE_FLAG = #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        IS_RUSH_RECEIVABLE = #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null" >
+        ORDER_FROM = #{orderFrom,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where DOWN_ORDER_NO = #{downOrderNo,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 收付款下行更新专用 -->
+   <update id="updateByRechargeOrderNoLockNo" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    update tb_b_payorderinfo
+    <set >
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=TINYINT},
+      </if>
+      <if test="payResultStatus != null" >
+        PAY_RESULT_STATUS = #{payResultStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payResultCode != null" >
+        PAY_RESULT_CODE = #{payResultCode,jdbcType=VARCHAR},
+      </if>
+      <if test="payResultMsg != null" >
+        PAY_RESULT_MSG = #{payResultMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastMessageId != null" >
+        PAY_LAST_MESSAGE_ID = #{payLastMessageId,jdbcType=VARCHAR},
+      </if>
+      <if test="payLastTime != null" >
+        PAY_LAST_TIME = #{payLastTime,jdbcType=TIMESTAMP},
+      </if>
+        PAY_SEND_COUNT = PAY_SEND_COUNT + 1,
+      <if test="brandCode != null" >
+        BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="classCode != null" >
+        CLASS_CODE = #{classCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="departmentCode != null" >
+        DEPARTMENT_CODE = #{departmentCode,jdbcType=VARCHAR},
+      </if>
+       <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        PAY_TYPE = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="orderNo != null" >
+        ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLockBalanceFlag != null" >
+        IS_LOCK_BALANCE_FLAG = #{isLockBalanceFlag,jdbcType=TINYINT},
+      </if>
+      <if test="memberCode != null" >
+        MEMBER_CODE = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isRushReceivable != null" >
+        IS_RUSH_RECEIVABLE = #{isRushReceivable,jdbcType=TINYINT},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFrom != null" >
+        ORDER_FROM = #{orderFrom,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where DOWN_ORDER_NO = #{downOrderNo,jdbcType=VARCHAR}
+     <if test="orderNo != null" >
+      and ORDER_NO = #{orderNo,jdbcType=VARCHAR}
+      </if>
+      and DELETE_FLAG = '0'
+  </update>
+
+  <select id="selectPayOrderFromPayOrderInfo" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select
+    <include refid="Base_Column_List" />
+    from tb_b_payorderinfo
+    where 1=1
+	AND mod(id,#{taskQueueNum})in
+	<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+    </foreach>
+    AND PAY_SEND_COUNT = #{paySendCount}
+    AND PAY_STATUS = 'SUCCESS'
+    AND PAY_TYPE != 1
+    AND DELETE_FLAG = 0
+    limit #{startLine},#{endLine}
+  </select>
+  
+  
+  <select id="selectPostStrikeaExceptionOrdersList" parameterType="java.util.Map" resultMap="BaseResultMap">
+	select
+	id,ORDER_NO,MODIFY_TIME,PAY_RESULT_STATUS
+	from tb_b_payorderinfo
+	where 1=1
+	AND PAY_STATUS != 'SUCCESS'
+	AND PAY_TYPE = 1
+	AND DELETE_FLAG = 0
+	union all
+	select
+	id,ORDER_NO,MODIFY_TIME,PAY_RESULT_STATUS
+	from tb_b_payorderinfo
+	where 1=1
+	AND PAY_RESULT_STATUS = 1
+	AND DELETE_FLAG = 0
+	<![CDATA[ AND MODIFY_TIME < #{minutes} ]]>
+	union all
+	select
+	id,ORDER_NO,MODIFY_TIME,PAY_RESULT_STATUS
+	from tb_b_payorderinfo
+	where 1=1
+	AND PAY_RESULT_STATUS = 3
+	AND DELETE_FLAG = 0
+  </select>
+
+   <select id="selectPayOrderByOrderNo" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO" >
+    select
+    PAY_RESULT_STATUS,PAY_STATUS,PAY_TYPE
+    from tb_b_payorderinfo
+    where ORDER_NO = #{orderNo,jdbcType=VARCHAR} and DELETE_FLAG = '0'
+    limit 1
+  </select>
+</mapper>

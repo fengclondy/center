@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.SuperBossDao">
+	<!-- 会员关系同步 -->
+	<select id="serachMemberShip" resultType="cn.htd.membercenter.dto.MemberShipDTO">
+		 select
+		 a.id memberId,
+		 a.member_code memberCode,
+		 b.company_code companyCode,
+		 b.company_name companyName,
+		 b.buyer_seller_type buyerSellerType,
+		 b.location_province locationProvince,
+		 b.location_city locationCity,
+		 b.location_county locationCounty,
+		 b.location_town locationTown,
+		 b.location_detail locationDetail,
+		 b.location_addr locationAddr,
+		 b.artificial_person_name artificialPersonName,
+		 b.artificial_person_mobile artificialPersonMobile,
+		 b.account_no accountNo,
+		 a.cur_belong_seller_id curBelongSellerId,
+		 a.cur_belong_manager_id curBelongManagerId,
+		 case when a.can_mall_login=1 and a.has_guarantee_license=1 and a.has_business_license=0 then '3'
+         when  a.can_mall_login=1 and a.has_business_license=1 then '2' else '1' end as memberType,
+		 a.status isStatus
+		 from member_base_info a,member_company_info b
+		 where a.id = b.member_id
+		 and a.status = '1'
+		 <if test="startTime != null and startTime != ''">
+			and unix_timestamp(b.modify_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and unix_timestamp(b.modify_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+		</if>
+		 <if test="page != null and page != ''">
+    	     limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	<!-- 会员关系同步总数 -->
+	<select id="serachMemberShipCount" resultType="java.lang.Long">
+		 select
+		 count(*) count
+		 from member_base_info a,member_company_info b
+		 where a.id = b.member_id
+		 and a.status = '1'
+		 <if test="startTime != null and startTime != ''">
+			and unix_timestamp(b.modify_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and unix_timestamp(b.modify_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+		</if>
+	</select>
+	<!-- 包厢关系同步 -->
+	<select id="searchBoxShip" resultType="cn.htd.membercenter.domain.BoxRelationship">
+		select 
+		   box_id boxId,
+	   	   buyer_id buyerId,
+		   seller_id sellerId,    
+		   erp_status erpStatus,     
+		   erp_down_time erpDownTime,  
+		   erp_error_msg erpErrorMsg,                
+		   create_id createId,         
+		   create_name createName,       
+		   create_time createTime,        
+		   modify_id modifyId,       
+		   modify_name modifyName, 
+		   delete_flag deleteFlag,       
+		   modify_time modifyTime       
+		from
+		box_relationship
+		where 1=1
+		<if test="startTime != null and startTime != ''">
+			and unix_timestamp(modify_time) <![CDATA[>=]]> unix_timestamp(#{startTime}) 
+		</if>
+		<if test="endTime !=null and endTime !=''">
+			and unix_timestamp(modify_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+		</if>
+		<if test="page != null and page != ''">
+    	     limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	<!-- 包厢关系同步总数 -->
+	<select id="searchBoxShipCount" resultType="java.lang.Long">
+		select 
+		   count(*) count     
+		from
+		box_relationship
+		where 1=1
+		<if test="startTime != null and startTime != ''">
+			and unix_timestamp(modify_time) <![CDATA[>=]]> unix_timestamp(#{startTime}) 
+		</if>
+		<if test="endTime !=null and endTime !=''">
+			and unix_timestamp(modify_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+		</if>
+	</select>
+	<!-- 归属关系同步 -->
+	<select id="searchBelongShip" resultType="cn.htd.membercenter.domain.BelongRelationship">
+		select 
+		   belong_id belongId,
+		   buyer_id buyerId,       
+		   seller_id sellerId,      
+		   customer_manager_id customerManagerId,
+		   belong_verify_time belongVerifyTime,  
+		   buyer_feature buyerFeature,       
+		   status status,              
+		   create_id createId,        
+		   create_name createName,         
+		   create_time createTime,      
+		   modify_id modifyId,         
+		   modify_name modifyName,       
+		   modify_time modifyTime        
+		from 
+		belong_relationship
+		where 1=1
+		<if test="startTime != null and startTime != ''">
+			and unix_timestamp(modify_time) <![CDATA[>=]]> unix_timestamp(#{startTime}) 
+		</if>
+		<if test="endTime !=null and endTime !=''">
+			and unix_timestamp(modify_time) <![CDATA[<=]]> unix_timestamp(#{endTime}) 
+		</if>
+		<if test="page != null and page != ''">
+    	     limit #{page.pageOffset},#{page.rows}
+    	</if>
+	</select>
+	<!-- 归属关系同步总数-->
+	<select id="searchBelongShipCount" resultType="java.lang.Long">
+		select 
+		   count(*) count      
+		from 
+		belong_relationship
+		where 1=1
+		<if test="startTime != null and startTime != ''">
+			and unix_timestamp(modify_time) <![CDATA[>=]]> unix_timestamp(#{startTime}) 
+		</if>
+		<if test="endTime !=null and endTime !=''">
+			and unix_timestamp(modify_time) <![CDATA[<=]]> unix_timestamp(#{endTime}) 
+		</if>
+	</select>
+</mapper>
+	
+	

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+        
+	<!-- 维护敏感词清单服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.IllegalCharacterService" ref="illegalCharacterService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 对外提供替换敏感词服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.SensitiveWordFilterService" ref="sensitiveWordFilterService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 维护基础地址服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseAddressService" ref="baseAddressService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 维护类型服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseTypeService" ref="baseTypeService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 字典服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseDictionaryService" ref="baseDictionaryService" version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+	<!-- 公告服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BasePlacardService" ref="basePlacardService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 站内信服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseWebSiteMessageService" ref="baseWebSiteMessageService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 价值模型服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseValueModelService" ref="baseValueModelService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 短信通道服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseSmsConfigService" ref="baseSmsConfigService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 发送短信邮件服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.SendSmsEmailService" ref="sendSmsEmailService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 超级老板用服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseCenter4SuperbossService" ref="baseCenter4SuperbossService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 运费模板服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.FreightTemplateAddressExportService" ref="freightTemplateAddressExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 关联交易服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.TransactionRelationService" ref="transactionRelationService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+
+</beans>

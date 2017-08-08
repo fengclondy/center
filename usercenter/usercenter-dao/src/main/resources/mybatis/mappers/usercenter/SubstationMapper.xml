@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.SubstationDAO">
+
+	<sql id="select_Substation">
+        <trim>
+			<if test="substationDTO.substationId != null and substationDTO.substationId != ''">
+			      and s.substation_id = #{substationDTO.substationId}
+			</if> 
+	        <if test="substationDTO.name != null and substationDTO.name != ''">
+	              <![CDATA[ and s.name like concat('%', #{substationDTO.name}, '%') ]]>
+	        </if> 
+        </trim>
+    </sql>
+	
+	<insert id="addSubstation" parameterType="cn.htd.usercenter.dto.SubstationDTO"
+		useGeneratedKeys="true" keyProperty="substationDTO.substationId">
+		<![CDATA[
+		insert into substation(
+			name,
+			areas,
+			manager,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time	
+		) values (
+			#{substationDTO.name},
+			#{substationDTO.areas},
+			 null,
+			#{substationDTO.deleted_flag},
+			#{userId},
+			now(),
+			#{userId},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据名称查询分站信息 -->
+	<select id="querySubstationByName" resultType="cn.htd.usercenter.dto.SubstationDTO"
+		parameterType="Object">
+		select
+			s.substation_id substationId,
+			s.name,
+			s.areas,
+			s.manager,
+			s.deleted_flag deletedFlag,
+			s.created_id createdId,
+			s.created_time creteadTime,
+			s.last_updated_id lastUpdatedId,
+			s.last_updated_time lastUpdatedTime,	
+			u.name adminName
+		from substation s
+		left join user u on u.id = s.manager
+		where s.deleted_flag = 0
+        <if test="_parameter != null">
+            <include refid="select_Substation"/>
+        </if>
+        order by s.created_time desc
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 根据名称查询条数 -->
+	<select id="querySubstationByNameCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0) from substation s
+		left join user u on u.id = s.manager
+		where s.deleted_flag = 0
+		<if test="_parameter != null">
+            <include refid="select_Substation"/>
+        </if>
+	</select>
+	
+	
+	
+	
+	
+	<select id="selectSubstation" resultType="cn.htd.usercenter.dto.SubstationDTO">
+		select s.substation_id as substationId,s.name as name from substation s
+		where s.deleted_flag = 0
+        order by s.created_time desc
+	</select>
+	
+	<select id="isRepeat" resultType="cn.htd.usercenter.dto.SubstationDTO">
+		select s.substation_id as substationId,s.name as name from substation s
+		where s.deleted_flag = 0
+		<if test="substationDTO.name != null and substationDTO.name != ''">
+              and s.name = #{substationDTO.name}
+        </if> 
+        <if test="substationDTO.substationId != null and substationDTO.substationId != ''">
+              and s.substation_id != #{substationDTO.substationId}
+        </if>
+	</select>
+	
+	<select id="isHasUsed" resultType="cn.htd.usercenter.dto.SubstationDTO">
+		select s.substation_id as substationId,s.name as name from substation s
+		where s.deleted_flag = 0
+		 <if test="cityCode != null and cityCode != ''">
+              <![CDATA[ and s.areas like concat('%', #{cityCode}, '%') ]]>
+        </if> 
+        <if test="substationDTO.substationId != null and substationDTO.substationId != ''">
+              and s.substation_id != #{substationDTO.substationId}
+        </if> 
+	</select>
+	
+	<update id="updateManger" parameterType="Object">
+		update substation set
+			manager = #{userId}
+		where substation_id = #{substationId}
+	</update>
+	
+	<update id="updateMangerIsNull" parameterType="Object">
+		update substation  set 
+		manager = null,
+		last_updated_id = #{userId},
+		last_updated_time = now()
+		where substation_id = #{substationId}
+	</update>
+	
+	<update id="updateSubstation" parameterType="Object">
+		update substation set
+			name = #{name},
+			areas = #{areas},
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where substation_id = #{substationId}
+	</update>
+	
+	<!-- 根据名称查询分站信息 -->
+	<select id="querySubstationById" resultType="cn.htd.usercenter.dto.SubstationDTO"
+		parameterType="Object">
+		select s.substation_id as substationId,s.name as name , areas, manager  from substation s
+		where s.deleted_flag = 0 and s.substation_id = #{substationId}
+	</select>
+	
+	
+	<!-- 根据manager查询分站信息 -->
+	<select id="selectSubstationByManger" resultType="cn.htd.usercenter.dto.SubstationDTO"
+		parameterType="Object">
+		select
+			s.substation_id substationId,
+			s.name,
+			s.areas,
+			s.manager,
+			s.deleted_flag deletedFlag,
+			s.created_id createdId,
+			s.created_time creteadTime,
+			s.last_updated_id lastUpdatedId,
+			s.last_updated_time lastUpdatedTime	
+		from substation s
+		where s.deleted_flag = 0 and s.manager = #{userid}
+	</select>
+	
+	<!-- 删除分站 -->
+    <update id="updateSubstationFlag" parameterType="Object">
+        <![CDATA[
+        update substation 
+        set 
+        	deleted_flag = 1,
+            last_updated_id = #{userId},
+            last_updated_time = now()
+        where
+            substation_id = #{substationId}
+        ]]>
+    </update>
+
+<select id="selectSubstationByCityCode" resultType="cn.htd.usercenter.dto.SubstationDTO"
+		parameterType="Object">
+        select s.substation_id as substationId,s.name as name from substation s
+		where s.deleted_flag = 0
+		 <if test="code != null and code != ''">
+              <![CDATA[ and s.areas like concat('%', #{code}, '%') ]]>
+        </if> 
+        order by s.created_time desc
+	</select>
+</mapper>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.PermissionDAO">
+
+	<insert id="addPermission" parameterType="Object"
+		useGeneratedKeys="true" keyProperty="permission_id,product_id">
+		insert into permission (
+			product_id,
+			permission_id,
+			type,
+			level,
+			name,
+			parent_id,
+			page_url,
+			function_symbol,
+			display_order,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time	
+		) values (
+			#{permissionDTO.productId},
+			#{permissionDTO.permissionId},
+			#{permissionDTO.type},
+			#{permissionDTO.level},
+			#{permissionDTO.name},
+			#{permissionDTO.parentId},
+			#{permissionDTO.pageUrl},
+			#{permissionDTO.functionSymbol},
+			#{permissionDTO.displayOrder},
+			'0',
+			#{userId},
+			now(),
+			#{userId},
+			now()
+		)
+	</insert>
+	
+	<!-- 根据权限项目父编码和权限项目类型查询权限项目信息 -->
+	<select id="queryPermissionByParentIdAndType" resultType="cn.htd.usercenter.dto.PermissionDTO"
+		parameterType="Object">
+		select
+			product_id productId,
+			permission_id permissionId,
+			name,
+			type,
+			level,
+			parent_id parentId,
+			page_url pageUrl,
+			function_symbol functionSymbol,
+			display_order displayOrder,
+			deleted_flag deletedFlag,
+			created_id createdId,
+			created_time creteadTime,
+			last_updated_id lastUpdatedId,
+			last_updated_time lastUpdatedTime	
+		from permission
+		where deleted_flag = 0
+		<if test="permissionDTO.productId != null and permissionDTO.productId != ''">
+		      and product_id = #{permissionDTO.productId}
+		</if> 
+		<if test="permissionDTO.permissionId != null and permissionDTO.permissionId != ''">
+		      and permission_id = #{permissionDTO.permissionId}
+		</if> 
+		order by permission_id, display_order asc
+	</select>
+			
+	<update id="updatePermission" parameterType="Object">
+		update permission set
+		<if test="permissionDTO.level != null and permissionDTO.level != ''">
+			level = #{permissionDTO.level},
+		</if> 
+		<if test="permissionDTO.name != null and permissionDTO.name != ''">
+			name = #{permissionDTO.name},
+		</if>
+		<if test="permissionDTO.pageUrl != null and permissionDTO.pageUrl != ''">
+			page_url = #{permissionDTO.pageUrl},
+		</if>
+		<if test="permissionDTO.functionSymbol != null and permissionDTO.functionSymbol != ''">
+			function_symbol = #{permissionDTO.functionSymbol},
+		</if>
+		<if test="permissionDTO.displayOrder != null and permissionDTO.displayOrder != ''">	
+			display_order = #{permissionDTO.displayOrder},
+		</if>
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where product_id = #{permissionDTO.productId}
+			and permission_id = #{permissionDTO.permissionId}
+	</update>
+	
+		<!-- 根据权限项目父编码和权限项目类型查询权限项目信息 -->
+	<select id="queryPermissionCheckedByRoleId" resultType="cn.htd.usercenter.dto.PermissionDTO"
+		parameterType="Object">
+		select
+			a.product_id productId,
+			a.permission_id permissionId,
+			a.name,
+			a.type,
+			a.parent_id parentId,
+			a.page_url pageUrl,
+			a.function_symbol functionSymbol,
+			a.display_order displayOrder,
+			a.deleted_flag deletedFlag,
+			a.created_id createdId,
+			a.created_time creteadTime,
+			a.last_updated_id lastUpdatedId,
+			a.last_updated_time lastUpdatedTime,	
+			isnull(b.permission_id) checkFlag
+		from permission a left join role_permission_mapping b
+        on a.product_id = b.product_id and a.permission_id = b.permission_id 
+        <if test="roleDTO.roleId != null and roleDTO.roleId != ''">
+		      and b.role_id = #{roleDTO.roleId}
+		</if> 
+        where deleted_flag = 0
+		<if test="roleDTO.productId != null and roleDTO.productId != ''">
+		      and a.product_id = #{roleDTO.productId}
+		</if> 
+		order by a.permission_id, a.display_order asc
+	</select>
+	
+	<update id="deleteRole" parameterType="Object">
+		<![CDATA[
+		update permission set
+			deleted_flag = #{permissionDTO.deletedFlag},
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where permissionId = #{permissionDTO.permissionId}
+		]]>
+	</update>
+	
+	<select id="queryCount4PermissionUsedByRole" resultType="java.lang.Integer"
+		parameterType="Object">
+		select count(*) from role_permission_mapping 
+		where permission_id = #{permissionDTO.permissionId}
+		and product_id = #{permissionDTO.productId}
+	</select>
+	
+	<delete id="deletePermission" parameterType="Object">
+		<![CDATA[
+		delete from permission 
+		where permission_id = #{permissionDTO.permissionId}
+		and product_id = #{permissionDTO.productId}
+		]]>
+	</delete>
+	
+	<!-- 根据产品ID和产品名称查询产品条数 -->
+	<select id="checkPermissionId" resultType="java.lang.Integer"
+		parameterType="Object">
+		select count(*) from permission 
+		where product_id = #{permissionDTO.productId} and permission_id = #{permissionDTO.permissionId}
+	</select>
+	
+	<select id="queryPermissionByUserId" resultType="cn.htd.usercenter.dto.PermissionDTO"
+		parameterType="Object">
+		select
+			a.product_id productId,
+			a.permission_id permissionId,
+			a.name,
+			a.type,
+			a.parent_id parentId,
+			a.page_url pageUrl,
+			a.function_symbol functionSymbol,
+			a.display_order displayOrder,
+			a.deleted_flag deletedFlag,
+			a.created_id createdId,
+			a.created_time creteadTime,
+			a.last_updated_id lastUpdatedId,
+			a.last_updated_time lastUpdatedTime,	
+			isnull(b.permission_id) checkFlag
+		from permission a left join role_permission_mapping b
+        on a.product_id = b.product_id and a.permission_id = b.permission_id 
+        where deleted_flag = 0
+		      and a.product_id = #{productId}
+		order by a.permission_id, a.display_order asc
+	</select>
+</mapper>

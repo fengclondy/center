@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberModifyVerifyDAO">
+<!-- 查询会员修改审核信息条数-->
+	<select id="selectMemberModifyCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select
+			count(m.id)
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2' 
+		where ms.verify_status!='9'
+		and (ms.info_type=15 or ms.info_type=16 or ms.info_type=27 or ms.info_type=28)
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   <![CDATA[ and mc1.company_name like concat('%',#{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		   <![CDATA[ and mc2.company_name like concat('%',#{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test="memberBaseInfoDTO.verifyStatus != null and memberBaseInfoDTO.verifyStatus != ''">
+			and ms.verify_status=#{memberBaseInfoDTO.verifyStatus}
+		</if> 
+	</select>
+	
+	<!-- 查询会员修改审核基本信息-->
+	<select id="selectMemberModifyVerify" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+			m.status as status,
+			m.contact_name as contactName,
+			mc.company_name as companyName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+		    m.regist_time as registTime,
+		    ms.verify_status as verifyStatus,
+		    ms.info_type as infoType,
+		    ms.verify_id as verifyId,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType,
+	        m.account_type as accountType,
+	        m.is_buyer as isBuyer,
+            m.can_mall_login  as canMallLogin,
+            m.has_guarantee_license as hasGuaranteeLicense,
+            m.has_business_license as hasBusinessLicense,
+            ms.create_time as createTime,
+            ms.modify_time as modifyTime,
+            case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.can_mall_login=1 then '2' else '1' end as memberType
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id 
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		where ms.verify_status!='9'
+		and (ms.info_type=15 or ms.info_type=16 or ms.info_type=27 or ms.info_type=28)
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		    <![CDATA[ and mc1.company_name like concat('%',#{memberBaseInfoDTO.belongCompanyName},'%']]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[ and mc2.company_name like concat('%',#{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test="memberBaseInfoDTO.verifyStatus != null and memberBaseInfoDTO.verifyStatus != ''">
+			and ms.verify_status=#{memberBaseInfoDTO.verifyStatus}
+		</if> 
+		order by ms.modify_time desc,m.id
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<select id="selectModifyVerify" resultType="cn.htd.membercenter.domain.MemberStatusInfo"
+		parameterType="Object">
+		select
+			ms.verify_status as verifyStatus,
+			ms.info_type as infoType,
+			ms.verify_id as verifyId
+		from member_status_info ms
+		where 1=1
+			and (ms.info_type=15 or ms.info_type=16 or ms.info_type=27 or ms.info_type=28)
+		    and ms.member_id=#{id}
+	</select>	
+	
+	 <select id="selectVerifyCountByVerifyIds" resultType="java.lang.Long"
+		parameterType="Object">
+		select 
+		    count(v.id)
+		from verify_detail_info v 
+		where v.verify_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+		     #{item}  
+		 </foreach> 
+    </select>
+    
+     <select id="selectVerifyByVerifyIds" resultType="cn.htd.membercenter.dto.VerifyDetailInfoDTO"
+		parameterType="Object">
+		select 
+		    v.id as id,
+		    v.operator_name as operatorName,
+		    v.content_name as contentName,
+		    v.before_change as beforeChange,
+		    v.after_change as afterChange,
+		    v.before_change_desc as beforeChangeDesc,
+		    v.after_change_desc as afterChangeDesc,
+		    v.operate_time as operateTime,
+		    v.record_id as recordId,
+		    v.change_table_id as changeTableId,
+		    v.change_field_id as changeFieldId
+		from verify_detail_info v 
+		where v.verify_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+		     #{item}  
+		 </foreach> 
+    </select>
+    
+    <update id="updateTables" 
+		parameterType="Object">
+		 <foreach item="item" index="index" collection="list" open="" separator=";" close="">  
+		    update 
+		        ${item.tableName} 
+		    set
+				${item.fieldName} = #{item.fileldValue} 	  
+		    where
+				${item.conditionClomn}  = #{item.conditionValue} 
+		 </foreach> 
+	</update>
+	
+	<!-- 查询非会员注册审核基本信息-->
+	<select id="selectUnMemberVerify" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+		select
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+			m.status as status,
+			mc.company_name as companyName,
+			m.contact_name as contactName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+		    m.regist_time as registTime,
+		    ms.verify_status as verifyStatus,
+		    ms.info_type as infoType,
+		    ms.verify_id as verifyId,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType,
+	        m.account_type as accountType,
+	        m.is_buyer as isBuyer,
+            m.can_mall_login  as canMallLogin,
+            m.has_guarantee_license as hasGuaranteeLicense,
+            m.has_business_license as hasBusinessLicense,
+            case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.can_mall_login=1 then '2' else '1' end as memberType
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2' 
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		where 1=1
+		and ms.info_type=13
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   <![CDATA[ and mc1.company_name like CONCAT('%',#{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[ and mc2.company_name like CONCAT('%',#{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like CONCAT('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test="memberBaseInfoDTO.verifyStatus != null and memberBaseInfoDTO.verifyStatus != ''">
+			and ms.verify_status=#{memberBaseInfoDTO.verifyStatus}
+		</if> 
+		order by m.modify_time desc,m.id
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 查询非会员注册审核信息条数-->
+	<select id="selectUnMemberVerifyCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select
+			count(m.id)
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		where 1=1
+		and ms.info_type=13
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   <![CDATA[ and mc1.company_name like concat('%',#{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		   <![CDATA[ and mc2.company_name like concat('%',#{memberBaseInfoDTO.curBelongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like concat('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if> 
+		<if test="memberBaseInfoDTO.verifyStatus != null and memberBaseInfoDTO.verifyStatus != ''">
+			and ms.verify_status=#{memberBaseInfoDTO.verifyStatus}
+		</if> 
+	</select>
+	
+	<!-- 修改会员审批信息 -->
+	<update id="updateVerifyInfo"  parameterType="Object">
+		update verify_info set 
+			verifier_id= #{dto.verifierId},
+			verifier_name= #{dto.verifierName},
+			verify_time=#{dto.verifyTime},
+			verify_status=#{dto.verifyStatus},
+			remark=#{dto.remark},
+			modify_id=#{dto.modifyId},
+			modify_name=#{dto.modifyName},
+			modify_time= #{dto.modifyTime}
+	    where 
+	        id=#{dto.id}
+	</update>
+	
+	<select id="getVerifyInfoById" resultType="cn.htd.membercenter.domain.VerifyInfo"
+		parameterType="Object">
+		select
+		    id as id,               
+			modify_type as modifyType,       
+			belong_seller_id as belongSellerId,
+			record_type  as recordType,
+			record_id as recordId,    
+			verifier_id  as verifierId,        
+			verifier_name as verifierName,      
+			verify_time as verifyTime,       
+			verify_status as verifyStatus,  
+			remark as remark,             
+			create_id as createId,       
+            create_name as createName,        
+            create_time as createTime,       
+            modify_id as modifyId,         
+            modify_name as modifyName,        
+            modify_time as modifyTime  
+		from verify_info v
+		where
+		   v.id=#{id}
+	</select>
+   
+   <!-- 通过审批ID获取会员状态信息 -->
+	<select id="selectUnMemeberStatus" resultType="cn.htd.membercenter.dto.VerifyResultDTO"
+		parameterType="Object">
+		select
+			ms.verify_status as verifyStatus,
+			ms.verify_id as verifyId
+		from member_status_info ms
+		where 1=1
+			and ms.info_type=13
+		    and ms.member_id=#{id}
+	</select>
+	
+	<!-- 查询非会员公司名称修改审核 -->
+	<select id="selectUnMemberCompanyNameVerify" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO" parameterType="Object">
+		select
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+			m.status as status,
+			mc.company_name as companyName,
+			m.contact_name as contactName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+		    m.regist_time as registTime,
+		    ms.verify_status as verifyStatus,
+		    ms.create_time as createTime,
+		    ms.info_type as infoType,
+		    ms.verify_id as verifyId,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType,
+	        m.account_type as accountType,
+	        m.is_buyer as isBuyer,
+            m.can_mall_login  as canMallLogin,
+            m.has_guarantee_license as hasGuaranteeLicense,
+            m.has_business_license as hasBusinessLicense,
+            case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
+            when  m.can_mall_login=1 and m.can_mall_login=1 then '2' else '1' end as memberType,
+            v.after_change afterChange,
+            v.before_change beforeChange
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2' 
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		left join verify_detail_info v on v.verify_id = ms.verify_id
+		where 1=1
+		and ms.info_type=33
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   <![CDATA[ and mc1.company_name like CONCAT('%',#{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[ and mc2.company_name like CONCAT('%',#{memberBaseInfoDTO.curBelongCompanyName},'%']]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like CONCAT('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if>
+		 <if test="startTime != null and startTime != ''">
+			and unix_timestamp(ms.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and unix_timestamp(ms.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+		</if>
+		<if test="memberBaseInfoDTO.verifyStatus != null and memberBaseInfoDTO.verifyStatus != ''">
+			and ms.verify_status=#{memberBaseInfoDTO.verifyStatus}
+		</if> 
+		order by ms.modify_time desc,m.id
+		limit #{pager.pageOffset},#{pager.rows}
+	</select>
+	
+	<!-- 查询非会员公司名称修改审核 -->
+	<select id="selectUnMemberCompanyNameVerifyCount" resultType="java.lang.Long" parameterType="Object">
+		select
+			count(m.id)
+		from member_base_info m
+		left join member_status_info ms on m.id=ms.member_id
+		left join member_company_info mc on m.id=mc.member_id
+		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2' 
+		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
+		left join verify_detail_info v on v.verify_id = ms.verify_id
+		where 1=1
+		and ms.info_type=33
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
+		   <![CDATA[ and mc1.company_name like CONCAT('%',#{memberBaseInfoDTO.belongCompanyName},'%')]]>
+		</if>
+		<if test="memberBaseInfoDTO.curBelongCompanyName != null and memberBaseInfoDTO.curBelongCompanyName != ''">
+		    <![CDATA[ and mc2.company_name like CONCAT('%',#{memberBaseInfoDTO.curBelongCompanyName},'%']]>
+		</if>
+		<if test="memberBaseInfoDTO.companyName != null and memberBaseInfoDTO.companyName != ''">
+			<![CDATA[ and mc.company_name like CONCAT('%', #{memberBaseInfoDTO.companyName}, '%') ]]>
+		</if>
+		 <if test="memberBaseInfoDTO.startDate != null and memberBaseInfoDTO.startDate != ''">
+			and unix_timestamp(ms.create_time) <![CDATA[>=]]> unix_timestamp(#{memberBaseInfoDTO.startDate})
+		</if>
+		<if test="memberBaseInfoDTO.endDate != null and memberBaseInfoDTO.endDate !=''">
+			and unix_timestamp(ms.create_time) <![CDATA[<=]]> unix_timestamp(#{memberBaseInfoDTO.endDate})
+		</if>
+		<if test="memberBaseInfoDTO.verifyStatus != null and memberBaseInfoDTO.verifyStatus != ''">
+			and ms.verify_status=#{memberBaseInfoDTO.verifyStatus}
+		</if> 
+	</select>
+</mapper>

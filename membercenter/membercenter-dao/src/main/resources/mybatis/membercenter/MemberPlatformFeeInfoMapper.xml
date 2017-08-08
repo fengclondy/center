@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.MemberPlatformFeeInfoDAO">
+<!-- 查询总商家多少 -->
+  <select id="sellerPlatformCount" resultType="java.lang.Long">
+    select count(1)
+    from member_base_info AS A,member_company_info AS B
+    where A.is_seller = '1' 
+    and A.seller_type = '2'
+    and A.id = B.member_id
+    and B.buyer_seller_type = '2'
+    <if test="companyName != null and companyName != ''">
+		and B.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and A.member_code = #{companyCode}
+	</if>
+  </select>
+<!-- 查询商家信息-->
+   <select id="searchSellerPlatform" resultMap="memberResultMap">
+    select 
+    B.member_id AS sellerId,
+    B.company_name AS companyName,
+    A.member_code AS companyCode
+    from member_base_info AS A,member_company_info AS B
+    where A.is_seller = '1' 
+    and A.seller_type = '2'
+    and A.id = B.member_id
+    and B.buyer_seller_type = '2'
+    <if test="companyName != null and companyName != ''">
+		and B.company_name like CONCAT('%',#{companyName},'%')
+	</if>
+	<if test="companyCode != null and companyCode != ''">
+		and A.member_code = #{companyCode}
+	</if>
+	<if test="page != null">
+		<include refid="pagination_tail" />
+	</if>
+  </select>
+  <resultMap id="memberResultMap" type="cn.htd.membercenter.dto.MemberPlatformFeeInfoDTO">
+	    <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+	    <result column="companyCode" property="companyCode" jdbcType="VARCHAR" />
+	    <result column="sellerId" property="sellerId" jdbcType="BIGINT" />
+  </resultMap>
+  <!-- 查询商家平台使用费历史记录-->
+  <select id="searchPlatformFeeInfo" resultMap="FeeInfoResultMap">
+    select 
+    A.fee AS fee,
+    A.comment AS remarks,
+    A.create_name AS createName,
+    A.create_time AS createTime
+    from seller_platform_fee_info AS A
+    where A.seller_id = #{sellerId}
+    <if test="startTime != null and startTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+	</if>
+	<if test="endTime != null and endTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+	</if>
+	order by createTime desc
+	<if test="page != null">
+		<include refid="pagination_tail" />
+	</if>
+  </select>
+  <resultMap id="FeeInfoResultMap" type="cn.htd.membercenter.dto.MemberPlatformFeeInfoDTO">
+	    <result column="createName" property="createName" jdbcType="VARCHAR" />
+	    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="fee" property="fee" jdbcType="DECIMAL" />
+	    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="pagination_tail">
+	limit #{page.pageOffset} , #{page.rows}
+  </sql>
+  <!-- 查询商家平台使用费历史记录次数-->
+  <select id="platformFeeInfoCount" resultType="java.lang.Long">
+    select count(1)
+    from seller_platform_fee_info AS A
+    where A.seller_id = #{sellerId}
+    <if test="startTime != null and startTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[>=]]> unix_timestamp(#{startTime})
+	</if>
+	<if test="endTime != null and endTime != ''">
+		and unix_timestamp(A.create_time) <![CDATA[<=]]> unix_timestamp(#{endTime})
+	</if>
+  </select>
+  <!-- 商家保证金变动履历添加 -->
+  <insert id="addPlatformFeeInfo" useGeneratedKeys="true">
+		insert into seller_platform_fee_info(
+			seller_id,
+			fee,
+			comment,
+			create_id,
+			create_name,
+			create_time
+		)values(
+			#{entity.sellerId},
+			#{entity.fee},
+			#{entity.remarks},
+			#{entity.createId},
+			#{entity.createName},
+			#{entity.createTime}
+		)
+	</insert>
+</mapper>

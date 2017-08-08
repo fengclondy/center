@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.FloorContentDAO">
+    <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.FloorContentDTO">
+        <result column="id" property="id" />
+        <result column="nav_id" property="navId" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="show_brand" property="showBrand" />
+        <result column="create_id" property="createId" />
+        <result column="create_name" property="createName" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modify_name" property="modifyName" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, nav_id, start_time, end_time, show_brand, create_id, create_name, create_time, modify_id, modify_name,
+        modify_time
+    </sql>
+
+    <sql id="selectAllColumns">
+        select
+        id, nav_id, start_time, end_time, show_brand, create_id, create_name, create_time, modify_id, modify_name,
+        modify_time
+        from floor_content
+    </sql>
+
+    <!-- mysql 分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset}, #{page.rows}
+    </sql>
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+        SELECT COUNT(1) FROM floor_content
+    </sql>
+
+    <sql id="where_fragement">
+        WHERE 1=1
+        <if test="entity!=null">
+            <if test="entity.id != null and entity.id != '' ">
+                <![CDATA[ AND id = #{entity.id} ]]>
+            </if>
+            <if test="entity.navId != null and entity.navId != '' ">
+                <![CDATA[ AND nav_id = #{entity.navId} ]]>
+            </if>
+            <if test="entity.startTime != null and entity.startTime != '' ">
+                <![CDATA[ AND start_time = #{entity.startTime} ]]>
+            </if>
+            <if test="entity.endTime != null and entity.endTime != '' ">
+                <![CDATA[ AND end_time = #{entity.endTime} ]]>
+            </if>
+            <if test="entity.showBrand != null and entity.showBrand != '' ">
+                <![CDATA[ AND show_brand = #{entity.showBrand} ]]>
+            </if>
+        </if>
+    </sql>
+
+    <select id="selectById" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from floor_content
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByNavId" parameterType="long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from floor_content
+        where nav_id = #{navId,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.FloorContentDTO" keyProperty="id" useGeneratedKeys="true">
+        insert into floor_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="navId != null">
+                nav_id,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="showBrand != null">
+                show_brand,
+            </if>
+            <if test="createId != null">
+                create_id,
+            </if>
+            <if test="createName != null">
+                create_name,
+            </if>
+                create_time,
+            <if test="modifyId != null">
+                modify_id,
+            </if>
+            <if test="modifyName != null">
+                modify_name,
+            </if>
+                modify_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="navId != null">
+                #{navId,jdbcType=BIGINT},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="showBrand != null">
+                #{showBrand,jdbcType=BIGINT},
+            </if>
+            <if test="createId != null">
+                #{createId,jdbcType=BIGINT},
+            </if>
+            <if test="createName != null">
+                #{createName,jdbcType=VARCHAR},
+            </if>
+                now(),
+            <if test="modifyId != null">
+                #{modifyId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyName != null">
+                #{modifyName,jdbcType=VARCHAR},
+            </if>
+                now()
+        </trim>
+    </insert>
+    <update id="updateByCondition" parameterType="com.bjucloud.contentcenter.dto.FloorContentDTO">
+        update floor_content
+        <set>
+            <if test="navId != null">
+                nav_id = #{navId,jdbcType=BIGINT},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="showBrand != null">
+                show_brand = #{showBrand,jdbcType=BIGINT},
+            </if>
+            <if test="createId != null">
+                create_id = #{createId,jdbcType=BIGINT},
+            </if>
+            <if test="createName != null">
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyId != null">
+                modify_id = #{modifyId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyName != null">
+                modify_name = #{modifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="selectListByCondition" resultMap="BaseResultMap">
+        <include refid="selectAllColumns" />
+        <include refid="where_fragement" />
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
+
+    <select id="selectCountByCondition" resultType="java.lang.Long">
+        <include refid="count_Tail" />
+        <include refid="where_fragement" />
+    </select>
+
+</mapper>

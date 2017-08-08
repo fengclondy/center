@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.htd.tradecenter</groupId>
+	<artifactId>tradecenter</artifactId>
+	<packaging>pom</packaging>
+	<version>1.1.0-RELEASE</version>
+	<name>tradecenter</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<file.encoding>UTF-8</file.encoding>
+	</properties>
+	<modules>
+		<module>tradecenter-parent</module>
+		<module>tradecenter-export</module>
+		<module>tradecenter-rpc</module>
+		<module>tradecenter-common</module>
+		<module>tradecenter-domain</module>
+		<module>tradecenter-dao</module>
+		<module>tradecenter-service</module>
+		<module>tradecenter-web</module>
+	</modules>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Releases</name>
+            <url>http://171.16.46.6:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Snapshots</name>
+            <url>http://171.16.46.6:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

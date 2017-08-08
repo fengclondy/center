@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+  <bean id="scheduleManagerFactory"
+        class="com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory"
+        init-method="init">
+    <property name="zkConfig">
+      <map>
+        <entry key="zkConnectString" value="${tbschedule.registry.address}"/>
+        <entry key="rootPath" value="${tbschedule.rootPath}"/>
+        <entry key="zkSessionTimeout" value="${tbschedule.timeout}"/>
+        <entry key="userName" value="${tbschedule.userName}"/>
+        <entry key="password" value="${tbschedule.password}"/>
+        <entry key="isCheckParentPath" value="${tbschedule.isCheckParentPath}"/>
+      </map>
+    </property>
+  </bean>
+  <!-- 定时任务 修改促销活动状态 -->
+  <bean id="updatePromotionStatusScheduleTask" class="cn.htd.marketcenter.task.UpdatePromotionStatusScheduleTask"/>
+  <!-- 定时任务 清除过期优惠券 -->
+  <bean id="updateExpiredBuyerCouponScheduleTask"
+        class="cn.htd.marketcenter.task.UpdateExpiredBuyerCouponScheduleTask"/>
+  <!-- 定时任务 优惠券发放进Redis -->
+  <bean id="prepareSendCouponScheduleTask" class="cn.htd.marketcenter.task.PrepareSendCouponScheduleTask"/>
+  <!-- 定时任务 发券进会员帐户 -->
+  <bean id="sendCoupon2BuyerAccountScheduleTask" class="cn.htd.marketcenter.task.SendCoupon2BuyerAccountScheduleTask"/>
+  <!-- 定时任务 清除超过3个月以上过期的会员优惠券Redis信息 -->
+  <bean id="cleanExpiredBuyerCouponScheduleTask" class="cn.htd.marketcenter.task.CleanExpiredBuyerCouponScheduleTask"/>
+  <!-- 定时任务 同步Redis最新会员优惠券信息到DB -->
+  <bean id="updateBuyerCouponScheduleTask" class="cn.htd.marketcenter.task.UpdateBuyerCouponScheduleTask"/>
+  <!-- 定时任务 同步Redis最新会员优惠券使用日志到DB -->
+  <bean id="updateBuyerCouponUseLogScheduleTask" class="cn.htd.marketcenter.task.UpdateBuyerCouponUseLogScheduleTask"/>
+  <!-- 定时任务 同步Redis最新会员参加秒杀信息日志到DB -->
+  <bean id="updateBuyerTimelimitedUseLogScheduleTask"
+        class="cn.htd.marketcenter.task.UpdateBuyerTimelimitedUseLogScheduleTask"/>
+  <!-- 定时任务 对于过期7天的优惠券活动，清除Redis中过期优惠券活动相关信息 -->
+  <bean id="cleanExpiredPromotionScheduleTask" class="cn.htd.marketcenter.task.CleanExpiredPromotionScheduleTask"/>
+  <!-- 定时任务 释放秒杀活动预锁1小时以上，但是没提交订单而导致被锁定的库存 -->
+  <bean id="releaseTimelimitedLockedNoOrderStockScheduleTask"
+        class="cn.htd.marketcenter.task.ReleaseTimelimitedLockedNoOrderStockScheduleTask"/>
+  <!-- 定时任务 根据优惠券需求变更1.1，调整了数据结构更新Reids的数据 -->
+  <bean id="updateRedisData4CouponRequireScheduleTask"
+        class="cn.htd.marketcenter.task.UpdateRedisData4CouponRequireScheduleTask"/>
+</beans>

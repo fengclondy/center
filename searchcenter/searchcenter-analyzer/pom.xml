@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>searchcenter-parent</artifactId>
+		<groupId>cn.htd.searchcenter</groupId>
+		<version>1.1.0-RELEASE</version>
+		<relativePath>../searchcenter-parent/pom.xml</relativePath>
+	</parent>
+	<groupId>com.bjucloud.searchcenter</groupId>
+	<artifactId>searchcenter-analyzer</artifactId>
+	<version>1.1.0-RELEASE</version>
+	<name>searchcenter-analyzer</name>
+	<url>http://maven.apache.org</url>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<solr.version>5.4.0</solr.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-core</artifactId>
+			<version>5.4.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.restlet.jee</groupId>
+					<artifactId>org.restlet</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.restlet.jee</groupId>
+					<artifactId>org.restlet.ext.servlet</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-collections4</artifactId>
+	    <version>4.1</version>
+	</dependency>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.21</version>
+</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+		<!--  
+		<dependency>
+			<groupId>jdk.tools</groupId>
+			<artifactId>jdk.tools</artifactId>
+			<version>1.7</version>
+			<scope>system</scope>
+			<systemPath>${java.home}/lib/tools.jar</systemPath>
+		</dependency>
+		-->
+	</dependencies>
+</project>

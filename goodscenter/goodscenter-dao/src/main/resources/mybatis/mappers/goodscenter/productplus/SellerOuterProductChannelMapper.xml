@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.productplus.SellerOuterProductChannelMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel" >
+    <id column="access_id" property="accessId" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="access_status" property="accessStatus" jdbcType="TINYINT" />
+    <result column="access_time" property="accessTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    access_id, seller_id, channel_code, access_status, access_time, create_id, create_name, 
+    create_time, modify_id, modify_name, modify_time
+  </sql>
+  <sql id="Where_Param">
+    where
+    1 = 1
+    <if test="entity != null">
+      <if test="entity.sellerId != null" >
+        and seller_id = #{entity.sellerId}
+      </if>
+      <if test="entity.channelCode != null" >
+        <if test="entity.channelCode != 0">
+          and channel_code = #{entity.channelCode}
+          and access_status = 1
+        </if>
+        <if test="entity.channelCode == 0">
+          and access_status = 0
+        </if>
+      </if>
+      <if test="entity.accessStatus != null">
+        and access_status = #{entity.accessStatus}
+      </if>
+    </if>
+    GROUP BY seller_id
+  </sql>
+  <!-- mysql 分页尾 -->
+  <sql id="pagination_tail">
+    <if test="page != null ">
+      limit #{page.pageOffset} , #{page.rows}
+    </if>
+  </sql>
+
+  <select id="selectSellerOuterProductChannelList" resultMap="BaseResultMap">
+    select
+    *
+    from seller_outer_product_channel
+    <include refid="Where_Param" />
+    <include refid="pagination_tail" />
+  </select>
+
+  <select id="selectSellerOuterProductChannelListCount" resultType="java.lang.Long">
+    SELECT
+    count(1)
+    FROM (
+    select
+    seller_id
+    from seller_outer_product_channel
+    <include refid="Where_Param" />
+    ) a
+  </select>
+
+  <select id="selectBySellerIdAndChannelCode" parameterType="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel" resultType="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel">
+    select
+      access_id as accessId,
+      seller_id as sellerId,
+      channel_code as channelCode,
+      access_status as accessStatus,
+      access_time as accessTime,
+      create_id as create_id,
+      create_name as createName,
+      create_time as createTime,
+      modify_id as modifyId,
+      modify_name as modifyName,
+      modify_time as modifyTime
+      from seller_outer_product_channel
+    where
+      seller_id = #{sellerId}
+      and channel_code = #{channelCode}
+  </select>
+
+  <select id="selectBySellerId" parameterType="Long" resultMap="BaseResultMap">
+    select
+    access_id as accessId,
+    seller_id as sellerId,
+    channel_code as channelCode,
+    access_status as accessStatus,
+    access_time as accessTime,
+    create_id as create_id,
+    create_name as createName,
+    create_time as createTime,
+    modify_id as modifyId,
+    modify_name as modifyName,
+    modify_time as modifyTime
+    from seller_outer_product_channel
+    where
+    seller_id = #{sellerId}
+  </select>
+
+  <select id="selectAccessedListBySellerId" parameterType="Long" resultMap="BaseResultMap">
+    select
+    access_id as accessId,
+    seller_id as sellerId,
+    channel_code as channelCode,
+    access_status as accessStatus,
+    access_time as accessTime,
+    create_id as create_id,
+    create_name as createName,
+    create_time as createTime,
+    modify_id as modifyId,
+    modify_name as modifyName,
+    modify_time as modifyTime
+    from seller_outer_product_channel
+    where
+    seller_id = #{sellerId}
+    and access_status = 1
+  </select>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into seller_outer_product_channel
+    (
+    seller_id,
+    channel_code,
+    access_status,
+    access_time,
+    create_id,
+    create_name,
+    create_time
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator="," >
+      (
+      #{item.sellerId,jdbcType=BIGINT},
+      #{item.channelCode,jdbcType=VARCHAR},
+      #{item.accessStatus,jdbcType=TINYINT},
+      now(),
+      #{item.createId,jdbcType=BIGINT},
+      #{item.createName,jdbcType=VARCHAR},
+      now()
+      )
+    </foreach>
+
+  </insert>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from seller_outer_product_channel
+    where access_id = #{accessId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from seller_outer_product_channel
+    where access_id = #{accessId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel" >
+    insert
+    into
+    seller_outer_product_channel (
+    seller_id,
+    channel_code,
+    access_status,
+    access_time,
+    create_id,
+    create_name,
+    create_time
+    )
+    values (
+    #{sellerId,jdbcType=BIGINT},
+    #{channelCode,jdbcType=VARCHAR},
+      #{accessStatus,jdbcType=TINYINT},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now()
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel" >
+    insert into seller_outer_product_channel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accessId != null" >
+        access_id,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="accessStatus != null" >
+        access_status,
+      </if>
+      <if test="accessTime != null" >
+        access_time,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accessId != null" >
+        #{accessId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="accessStatus != null" >
+        #{accessStatus,jdbcType=TINYINT},
+      </if>
+      <if test="accessTime != null" >
+        #{accessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel" >
+    update seller_outer_product_channel
+    <set >
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="accessStatus != null" >
+        access_status = #{accessStatus,jdbcType=TINYINT},
+      </if>
+      <if test="accessTime != null" >
+        access_time = #{accessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where access_id = #{accessId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.productplus.SellerOuterProductChannel" >
+    update seller_outer_product_channel
+    set seller_id = #{sellerId,jdbcType=BIGINT},
+      channel_code = #{channelCode,jdbcType=VARCHAR},
+      access_status = #{accessStatus,jdbcType=TINYINT},
+      access_time = #{accessTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where access_id = #{accessId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.usercenter.dao.ProductDAO">
+
+	<insert id="addProduct" parameterType="Object"
+		useGeneratedKeys="true" keyProperty="product_id">
+		<![CDATA[
+		insert into product(
+			product_id,
+			name,
+			description,
+			url,
+			deleted_flag,
+			created_id,
+			created_time,
+			last_updated_id,
+			last_updated_time	
+		) values (
+			#{product.productId},
+			#{product.name},
+			#{product.description},
+			"",
+			#{product.deletedFlag},
+			#{userId},
+			now(),
+			#{userId},
+			now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据产品ID和产品名称查询产品信息 -->
+	<select id="queryProductById" resultType="cn.htd.usercenter.dto.ProductDTO"
+		parameterType="Object">
+		select
+			product_id productId,
+			name,
+			description,
+			url,
+			deleted_flag deletedFlag,
+			created_id createdId,
+			created_time creteadTime,
+			last_updated_id lastUpdatedId,
+			last_updated_time lastUpdatedTime	
+		from product
+		where deleted_flag = 0
+		<if test="productId != null and productId != ''">
+		      and product_id = #{productId}
+		</if> 
+	</select>
+	
+	<!-- 根据产品ID和产品名称查询产品信息 -->
+	<select id="queryProductByIdAndName" resultType="cn.htd.usercenter.dto.ProductDTO"
+		parameterType="Object">
+		select
+			product_id productId,
+			name,
+			description,
+			url,
+			deleted_flag deletedFlag,
+			created_id createdId,
+			created_time creteadTime,
+			last_updated_id lastUpdatedId,
+			last_updated_time lastUpdatedTime	
+		from product
+		where deleted_flag = 0
+		<if test="productId != null and productId != ''">
+		      and product_id = #{productId}
+		</if> 
+		<if test="name != null and name != ''">
+		      <![CDATA[ and name like concat('%', #{name}, '%') ]]>
+		</if> 
+		order by last_updated_time desc
+		<if test="pager.pageOffset != null and pager.pageOffset != ''">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+	
+	<!-- 根据产品ID和产品名称查询产品条数 -->
+	<select id="queryProductByIdAndNameCount" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(0) from product
+		where deleted_flag = 0
+        <if test="productId != null and productId != ''">
+              and product_id = #{productId}
+        </if> 
+        <if test="name != null and name != ''">
+              <![CDATA[ and name like concat('%', #{name}, '%') ]]>
+        </if> 
+	</select>
+
+	<update id="updateProduct" parameterType="Object">
+		update product set
+			name = #{product.name},
+			description = #{product.description},
+			url = #{product.url},
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where product_id = #{product.productId}
+	</update>
+	
+	<update id="deleteProduct" parameterType="Object">
+		<![CDATA[
+		update product set
+			deleted_flag = #{product.deletedFlag},
+			last_updated_id = #{userId},
+			last_updated_time = now()
+		where product_id = #{product.productId}
+		]]>
+	</update>
+	
+	<!-- 根据产品ID和产品名称查询产品条数 -->
+	<select id="queryCount4ProductUsedByRole" resultType="java.lang.Integer"
+		parameterType="Object">
+		select count(*) from role where product_id = #{product.productId}
+	</select>
+	
+	<!-- 根据产品ID和产品名称查询产品条数 -->
+	<select id="checkProductId" resultType="java.lang.Integer"
+		parameterType="Object">
+		select count(*) from product where product_id = #{product.productId}
+	</select>
+</mapper>

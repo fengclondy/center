@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.ShopSalesAnalysisDayReportDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.ShopSalesAnalysisDayReportDMO" >
+    <id column="SALES_ID" property="salesId" jdbcType="INTEGER" />
+    <result column="SHOP_ID" property="shopId" jdbcType="INTEGER" />
+    <result column="SALES_TIME" property="salesTime" jdbcType="INTEGER" />
+    <result column="SKU_CODE" property="skuCode" jdbcType="VARCHAR" />
+    <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
+    <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+    <result column="SALES_AMOUNT" property="salesAmount" jdbcType="DECIMAL" />
+    <result column="SALES_GOODS_COUNT" property="salesGoodsCount" jdbcType="INTEGER" />
+    <result column="ORDER_GOODS_COUNT" property="orderGoodsCount" jdbcType="INTEGER" />
+    <result column="STATISTICS_TIME" property="statisticsTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SALES_ID, SHOP_ID, SALES_TIME, SKU_CODE, GOODS_NAME, ITEM_CODE, SALES_AMOUNT, SALES_GOODS_COUNT, 
+    ORDER_GOODS_COUNT, STATISTICS_TIME
+  </sql>
+  <select id="selectByConditions" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_sales_analysis_day_report
+    where 1=1
+    and SHOP_ID = #{shopId}
+      <if test="skuCode != null" >
+        and SKU_CODE = #{skuCode}
+      </if>
+      <if test="goodsName != null" >
+        and GOODS_NAME LIKE CONCAT('%',#{goodsName},'%') 
+      </if>
+      <if test="itemCode != null" >
+        and ITEM_CODE = #{itemCode}
+      </if>
+      <if test="startTime!=null and startTime!='' ">  
+           <![CDATA[and SALES_TIME>=#{startTime} ]]>    
+      </if>  
+       <if test="endTime!=null and endTime!=''">  
+           <![CDATA[and  SALES_TIME<=#{endTime} ]]>  
+      </if> 
+     <if test="start !=null and start!=''">
+     	ORDER BY SALES_TIME DESC
+	 	LIMIT #{start},#{rows} 
+     </if> 
+  </select>
+  <insert id="insertSelective" parameterType="cn.htd.zeus.tc.biz.dmo.ShopSalesAnalysisDayReportDMO" >
+    insert into shop_sales_analysis_day_report
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="salesId != null" >
+        SALES_ID,
+      </if>
+      <if test="shopId != null" >
+        SHOP_ID,
+      </if>
+      <if test="salesTime != null" >
+        SALES_TIME,
+      </if>
+      <if test="skuCode != null" >
+        SKU_CODE,
+      </if>
+      <if test="goodsName != null" >
+        GOODS_NAME,
+      </if>
+      <if test="itemCode != null" >
+        ITEM_CODE,
+      </if>
+      <if test="salesAmount != null" >
+        SALES_AMOUNT,
+      </if>
+      <if test="salesGoodsCount != null" >
+        SALES_GOODS_COUNT,
+      </if>
+      <if test="orderGoodsCount != null" >
+        ORDER_GOODS_COUNT,
+      </if>
+      <if test="statisticsTime != null" >
+        STATISTICS_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="salesId != null" >
+        #{salesId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="salesTime != null" >
+        #{salesTime,jdbcType=INTEGER},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="salesAmount != null" >
+        #{salesAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="salesGoodsCount != null" >
+        #{salesGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="orderGoodsCount != null" >
+        #{orderGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="statisticsTime != null" >
+        #{statisticsTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByUniIndex" parameterType="cn.htd.zeus.tc.biz.dmo.ShopSalesAnalysisDayReportDMO" >
+    update shop_sales_analysis_day_report
+    <set >
+      <if test="shopId != null" >
+        SHOP_ID = #{shopId,jdbcType=INTEGER},
+      </if>
+      <if test="salesTime != null" >
+        SALES_TIME = #{salesTime,jdbcType=INTEGER},
+      </if>
+      <if test="skuCode != null" >
+        SKU_CODE = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        GOODS_NAME = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCode != null" >
+        ITEM_CODE = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="salesAmount != null" >
+        SALES_AMOUNT = #{salesAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="salesGoodsCount != null" >
+        SALES_GOODS_COUNT = #{salesGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="orderGoodsCount != null" >
+        ORDER_GOODS_COUNT = #{orderGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="statisticsTime != null" >
+        STATISTICS_TIME = #{statisticsTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where SHOP_ID = #{shopId}
+    and SALES_TIME = #{salesTime}
+    and SKU_CODE = #{skuCode}
+  </update>
+</mapper>

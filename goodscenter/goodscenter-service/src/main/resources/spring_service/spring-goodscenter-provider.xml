@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemExportService" ref="itemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemBrandExportService" ref="itemBrandExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemOldExportService" ref="itemOldExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemAttrValueItemExportService" ref="itemAttrValueItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.ProtocolExportService" ref="protocolExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.InquiryExportService" ref="inquiryExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.TranslationExportService" ref="translationExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemSkuExportService" ref="itemSkuExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.goodscenter.service.TradeInventoryExportService" ref="tradeInventoryExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.goodscenter.service.mall.MallItemFavouriteExportService" ref="mallItemFavouriteService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.mall.MallItemExportService" ref="mallItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemAttributeExportService" ref="itemAttributeExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemCategoryService" ref="itemCategoryService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemEvaluationService" ref="itemEvaluationService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.goodscenter.service.SearchItemExportService" ref="searchItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemSalesVolumeExportService" ref="itemSalesVolumeExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.vip.VipChannelExportService" ref="vipChannelExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.goodscenter.service.vip.VipItemExportService" ref="vipItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<!-- 临时添加，用于演示大数据推荐功能 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.RecommendGoodsService" ref="recommendGoodsService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- add by zhanxiaolong for venus service start-->
+	<dubbo:service interface="cn.htd.goodscenter.service.venus.VenusItemExportService" ref="venusItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- add by zhanxiaolong for venus service end -->
+	<!-- 暴露商品模板接口 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.ItemSpuExportService" ref="itemSpuExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<!-- 商品+服务 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.productplus.ProductPlusExportService" ref="productPlusExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<!-- 可见库存修改 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.stock.SkuStockChangeExportService" ref="skuStockChangeExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- ERP下行回调 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.HtdDownErpCallbackService" ref="htdDownErpCallbackServiceImpl" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- 超级老板商品推送 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.SuperbossProductPushService" ref="superbossProductPushService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+</beans>

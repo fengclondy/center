@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.htd.searchcenter</groupId>
+	<artifactId>searchcenter</artifactId>
+	<packaging>pom</packaging>
+	<version>1.1.0-RELEASE</version>
+	<name>searchcenter</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<file.encoding>UTF-8</file.encoding>
+	</properties>
+	<modules>
+		<module>searchcenter-parent</module>
+		<module>searchcenter-export</module>
+		<module>searchcenter-rpc</module>
+		<module>searchcenter-common</module>
+		<module>searchcenter-domain</module>
+		<module>searchcenter-dao</module>
+		<module>searchcenter-service</module>
+		<module>searchcenter-web</module>
+    	<module>searchcenter-analyzer</module>
+    <module>searchcenter-dump</module>
+  </modules>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+    		<name>Releases</name>
+    		<url>http://10.2.0.12:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots</name>
+    		<url>http://10.2.0.12:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

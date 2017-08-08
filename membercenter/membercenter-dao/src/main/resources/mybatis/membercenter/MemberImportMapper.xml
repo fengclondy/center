@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.membercenter.dao.MemberImportDAO">
+
+	<!-- 根据会员编码查询会员信息 -->
+	<select id="queryMemberInfo" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select a.member_code memberCode,
+		b.member_id memberId,
+		b.company_name memberName
+		from member_base_info a,member_company_info b
+		where a.id=b.member_id and a.status=1 and b.buyer_seller_type=1
+		and a.member_code = #{memberImportFailInfoDTO.memberCode}
+	</select>
+
+
+	<select id="querySellerInfo" resultType="cn.htd.membercenter.dto.MemberImportSuccInfoDTO"
+		parameterType="Object">
+		select a.member_code memberCode,
+		b.member_id memberId,
+		b.company_name memberName
+		from member_base_info a,member_company_info b
+		where a.id=b.member_id and a.status=1 and b.buyer_seller_type=2
+		and a.member_code = #{memberImportFailInfoDTO.memberCode}
+	</select>
+
+</mapper>

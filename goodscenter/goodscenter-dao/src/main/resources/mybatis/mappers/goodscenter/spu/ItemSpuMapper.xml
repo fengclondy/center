@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.spu.ItemSpuMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.spu.ItemSpu" >
+    <id column="spu_id" property="spuId" jdbcType="BIGINT" />
+    <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
+    <result column="spu_code" property="spuCode" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="category_attributes" property="categoryAttributes" jdbcType="VARCHAR" />
+    <result column="item_qualification" property="itemQualification" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="gross_weight" property="grossWeight" jdbcType="DECIMAL" />
+    <result column="net_weight" property="netWeight" jdbcType="DECIMAL" />
+    <result column="model_type" property="modelType" jdbcType="VARCHAR" />
+    <result column="volume" property="volume" jdbcType="DECIMAL" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="packing_list" property="packingList" jdbcType="VARCHAR" />
+    <result column="after_service" property="afterService" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+    <result column="erp_five_category_code" property="erpFiveCategoryCode" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+
+    <result column="wide" jdbcType="INTEGER" property="wide" />
+    <result column="high" jdbcType="INTEGER" property="high" />
+    <result column="length" jdbcType="INTEGER" property="length" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="erp_code" property="erpCode" jdbcType="VARCHAR" />
+    <result column="tax_rate" property="taxRate" jdbcType="DECIMAL" />
+  </resultMap>
+
+  <resultMap id="ConditionMap" type="cn.htd.goodscenter.dto.SpuInfoDTO">
+    <result column="spu_id" property="spuId" jdbcType="BIGINT" />
+    <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
+    <result column="spu_code" property="spuCode" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="category_attributes" property="categoryAttributes" jdbcType="VARCHAR" />
+    <result column="item_qualification" property="itemQualification" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="gross_weight" property="grossWeight" jdbcType="DECIMAL" />
+    <result column="net_weight" property="netWeight" jdbcType="DECIMAL" />
+    <result column="model_type" property="modelType" jdbcType="VARCHAR" />
+    <result column="volume" property="volume" jdbcType="DECIMAL" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="packing_list" property="packingList" jdbcType="VARCHAR" />
+    <result column="after_service" property="afterService" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="erp_first_category_code" property="erpFirstCategoryCode" jdbcType="VARCHAR" />
+    <result column="erp_five_category_code" property="erpFiveCategoryCode" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+
+    <result column="item_code" property="itemCode"/>
+    <result column="item_name" property="itemName"/>
+    <result column="brand_name" property="brandName"/>
+    <result column="brand_id" property="brandId"/>
+    <result column="des_id" property="desId" jdbcType="BIGINT" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="spu_desc" property="spuDesc" jdbcType="LONGVARCHAR" />
+    <result column="picture_id" property="pictureId" jdbcType="BIGINT" />
+    <result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+    <result column="picture_size" property="pictureSize" jdbcType="VARCHAR" />
+    <result column="is_first" property="isFirst" jdbcType="TINYINT" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+
+    <result column="wide" jdbcType="INTEGER" property="wide" />
+    <result column="high" jdbcType="INTEGER" property="high" />
+    <result column="length" jdbcType="INTEGER" property="length" />
+    <result column="erp_code" property="erpCode" jdbcType="VARCHAR" />
+     <result column="tax_rate" property="taxRate" jdbcType="DECIMAL" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    spu_id, spu_name, spu_code, category_id, brand_id, category_attributes, item_qualification,
+    unit, gross_weight, net_weight, model_type, volume, origin, packing_list,
+    after_service, status, erp_first_category_code, erp_five_category_code, create_id,
+    create_name, create_time, modify_id, modify_name, modify_time,
+    wide, high, length, delete_flag,erp_code,tax_rate
+  </sql>
+  <!--item+item_spu关联-->
+  <sql id="Item_Spu_Column_List" >
+    spu.spu_id,spu.spu_name, spu.spu_code, spu.category_id, spu.brand_id, spu.category_attributes, spu.item_qualification,
+    spu.unit, spu.gross_weight, spu.net_weight, spu.model_type, spu.volume, spu.origin, spu.packing_list,
+    spu.after_service, spu.status, spu.erp_first_category_code, spu.erp_five_category_code, spu.create_id,
+    spu.create_name, spu.create_time, spu.modify_id, spu.modify_name, spu.modify_time,
+    spu.wide, spu.high, spu.length, spu.delete_flag,item.item_code,item.item_name,spu.erp_code,spu.tax_rate
+  </sql>
+
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Item_Spu_Column_List" />
+    from  item_spu spu
+    LEFT JOIN item item
+    ON item.item_spu_id = spu.spu_id
+    where spu_id = #{spuId,jdbcType=BIGINT}
+    limit 1
+  </select>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select * from
+    item_spu
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from item_spu
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </delete>
+  <insert id="add" parameterType="cn.htd.goodscenter.domain.spu.ItemSpu" useGeneratedKeys="true" keyProperty="spuId">
+    insert into item_spu (spu_id, spu_name, spu_code,
+      category_id, brand_id, category_attributes,
+      item_qualification, unit, gross_weight,
+      net_weight, model_type, volume,
+      origin,  packing_list,
+      after_service, status, erp_first_category_code,
+      erp_five_category_code, create_id, create_name,
+      create_time, modify_id, modify_name,
+      modify_time,
+      wide, high, length, delete_flag,tax_rate
+    )
+    values (#{spuId,jdbcType=BIGINT}, #{spuName,jdbcType=VARCHAR}, #{spuCode,jdbcType=VARCHAR},
+      #{categoryId,jdbcType=BIGINT}, #{brandId,jdbcType=BIGINT}, #{categoryAttributes,jdbcType=VARCHAR},
+      #{itemQualification,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{grossWeight,jdbcType=DECIMAL},
+      #{netWeight,jdbcType=DECIMAL}, #{modelType,jdbcType=VARCHAR}, #{volume,jdbcType=DECIMAL},
+      #{origin,jdbcType=VARCHAR}, #{packingList,jdbcType=VARCHAR},
+      #{afterService,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      #{erpFiveCategoryCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
+      now(), #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR},
+      now(),
+      #{wide,jdbcType=INTEGER}, #{high,jdbcType=INTEGER}, #{length,jdbcType=INTEGER}, 0,#{taxRate})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.spu.ItemSpu" useGeneratedKeys="true" keyProperty="spuId">
+    insert into item_spu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="spuId != null" >
+        spu_id,
+      </if>
+      <if test="spuName != null" >
+        spu_name,
+      </if>
+      <if test="spuCode != null" >
+        spu_code,
+      </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="categoryAttributes != null" >
+        category_attributes,
+      </if>
+      <if test="itemQualification != null" >
+        item_qualification,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="grossWeight != null" >
+        gross_weight,
+      </if>
+      <if test="netWeight != null" >
+        net_weight,
+      </if>
+      <if test="modelType != null" >
+        model_type,
+      </if>
+      <if test="volume != null" >
+        volume,
+      </if>
+      <if test="origin != null" >
+        origin,
+      </if>
+      <if test="packingList != null" >
+        packing_list,
+      </if>
+      <if test="afterService != null" >
+        after_service,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        erp_first_category_code,
+      </if>
+      <if test="erpFiveCategoryCode != null" >
+        erp_five_category_code,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+        <if test="wide != null" >
+        wide,
+      </if>
+       <if test="high != null" >
+        high,
+      </if>
+      <if test="length != null" >
+        length,
+      </if>
+      <if test="erpCode != null" >
+        erp_code,
+      </if>
+       <if test="taxRate != null" >
+        tax_rate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="spuId != null" >
+        #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="spuName != null" >
+        #{spuName,jdbcType=VARCHAR},
+      </if>
+      <if test="spuCode != null" >
+        #{spuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="categoryAttributes != null" >
+        #{categoryAttributes,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQualification != null" >
+        #{itemQualification,jdbcType=VARCHAR},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="grossWeight != null" >
+        #{grossWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="netWeight != null" >
+        #{netWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="modelType != null" >
+        #{modelType,jdbcType=VARCHAR},
+      </if>
+      <if test="volume != null" >
+        #{volume,jdbcType=DECIMAL},
+      </if>
+      <if test="origin != null" >
+        #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="packingList != null" >
+        #{packingList,jdbcType=VARCHAR},
+      </if>
+      <if test="afterService != null" >
+        #{afterService,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFiveCategoryCode != null" >
+        #{erpFiveCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="wide != null" >
+       #{wide},
+      </if>
+       <if test="high != null" >
+         #{high},
+      </if>
+      <if test="length != null" >
+        #{length},
+      </if>
+       <if test="erpCode != null" >
+        #{erpCode},
+       </if>
+       <if test="taxRate != null ">
+        #{taxRate},
+       </if>
+    </trim>
+  </insert>
+  <update id="updateBySpuIdSelective" parameterType="cn.htd.goodscenter.domain.spu.ItemSpu" >
+    update item_spu
+    <set >
+     <if test="length != null" >
+        length = #{length,jdbcType=VARCHAR},
+      </if>
+      <if test="wide != null" >
+        wide = #{wide,jdbcType=VARCHAR},
+      </if>
+       <if test="high != null" >
+        high = #{high,jdbcType=VARCHAR},
+      </if>
+      <if test="spuName != null" >
+        spu_name = #{spuName,jdbcType=VARCHAR},
+      </if>
+      <if test="spuCode != null" >
+        spu_code = #{spuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="categoryAttributes != null" >
+        category_attributes = #{categoryAttributes,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQualification != null" >
+        item_qualification = #{itemQualification,jdbcType=VARCHAR},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="grossWeight != null" >
+        gross_weight = #{grossWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="netWeight != null" >
+        net_weight = #{netWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="modelType != null" >
+        model_type = #{modelType,jdbcType=VARCHAR},
+      </if>
+      <if test="volume != null" >
+        volume = #{volume,jdbcType=DECIMAL},
+      </if>
+      <if test="origin != null" >
+        origin = #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="packingList != null" >
+        packing_list = #{packingList,jdbcType=VARCHAR},
+      </if>
+      <if test="afterService != null" >
+        after_service = #{afterService,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFirstCategoryCode != null" >
+        erp_first_category_code = #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="erpFiveCategoryCode != null" >
+        erp_five_category_code = #{erpFiveCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="erpCode != null" >
+        erp_code=#{erpCode},
+       </if>
+       <if test="taxRate != null" >
+        tax_rate=#{taxRate},
+       </if>
+    </set>
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.spu.ItemSpu" >
+    update item_spu
+    set spu_name = #{spuName,jdbcType=VARCHAR},
+      spu_code = #{spuCode,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=BIGINT},
+      brand_id = #{brandId,jdbcType=BIGINT},
+      category_attributes = #{categoryAttributes,jdbcType=VARCHAR},
+      item_qualification = #{itemQualification,jdbcType=VARCHAR},
+      unit = #{unit,jdbcType=VARCHAR},
+      gross_weight = #{grossWeight,jdbcType=DECIMAL},
+      net_weight = #{netWeight,jdbcType=DECIMAL},
+      model_type = #{modelType,jdbcType=VARCHAR},
+      volume = #{volume,jdbcType=DECIMAL},
+      origin = #{origin,jdbcType=VARCHAR},
+      packing_list = #{packingList,jdbcType=VARCHAR},
+      after_service = #{afterService,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      erp_first_category_code = #{erpFirstCategoryCode,jdbcType=VARCHAR},
+      erp_five_category_code = #{erpFiveCategoryCode,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      wide = #{wide,jdbcType=INTEGER},
+      high = #{high,jdbcType=INTEGER},
+      length = #{length,jdbcType=INTEGER},
+      tax_rate=#{taxRate}
+
+    where spu_id = #{spuId,jdbcType=BIGINT}
+  </update>
+
+
+  <sql id="where_fragement">
+    from
+    item_spu
+    left join
+    item_brand
+    on item_brand.brand_id = item_spu.brand_id
+    where
+    1 = 1
+    <if test="entity != null">
+      <if test="entity.categoryId != null">
+        <![CDATA[ and (item_spu.category_id = #{entity.categoryId} )]]>
+      </if>
+      <if test="entity.spuCode != null and entity.spuCode != ''" >
+        <![CDATA[ and (item_spu.spu_code  = #{entity.spuCode})]]>
+      </if>
+      <if test="entity.spuName != null and entity.spuName != ''">
+        and item_spu.spu_name like CONCAT('%',#{entity.spuName},'%' )
+      </if>
+      <if test="entity.brandName != null and entity.brandName != ''">
+        and item_brand.brand_name like CONCAT('%',#{entity.brandName},'%' )
+      </if>
+      <if test="entity.brandId != null">
+        <![CDATA[ and (item_brand.brand_id  = #{entity.brandId})]]>
+      </if>
+    </if>
+    and item_spu.delete_flag = 0
+  </sql>
+
+  <select id="queryByCondition" parameterType="cn.htd.goodscenter.dto.SpuInfoDTO" resultMap="ConditionMap">
+    <![CDATA[
+		select
+		  item_spu.spu_id,
+		  item_spu.category_id,
+		  item_spu.spu_code,
+		  item_spu.spu_name,
+		  item_brand.brand_name,
+		  item_brand.brand_id
+    ]]>
+    <include refid="where_fragement"></include>
+    <if test="page!=null">
+      <include refid="pagination_tail" />
+    </if>
+  </select>
+  <select id="queryCount" parameterType="cn.htd.goodscenter.dto.SpuInfoDTO" resultType="Long">
+    select
+      count(*)
+    <include refid="where_fragement"></include>
+  </select>
+  <!-- 删除商品模板 -->
+  <update id="updateDeleteFlag" parameterType="cn.htd.goodscenter.dto.SpuInfoDTO" >
+    UPDATE item_spu
+    SET item_spu.delete_flag = #{entity.deleteFlag}
+    WHERE spu_id = #{entity.spuId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="queryItemSpuByName" parameterType="String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from item_spu
+    where spu_name = #{spuName}
+  </select>
+   <select id="querySpuCodeSeq" resultType="String">
+	 select  seq_nextval('spu_code_seq')
+	</select>
+
+  <select id="getSpuInfoListByItemId" parameterType="long" resultMap="BaseResultMap">
+    select
+    <include refid="Item_Spu_Column_List" />
+    from item item
+    LEFT JOIN item_spu spu
+    ON item.item_spu_id = spu.spu_id
+    where item.item_id = #{itemId,jdbcType=BIGINT}
+  </select>
+  
+   <select id="queryItemSpuBySpuCode" parameterType="String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from item_spu
+    where spu_code = #{spuCode}
+  </select>
+  
+  <select id="queryItemSpuList"  resultMap="BaseResultMap">
+    select
+     *
+    from item_spu spu where 1=0 
+    <if test="list != null and list.size() > 0">
+     or spu.spu_id in
+     <foreach collection="list" item="item" separator="," open="(" close=")">
+		#{item}    
+     </foreach>
+    </if>
+   
+  </select>
+  
+  <select id="queryItemSpuByErpCode" resultMap="BaseResultMap" parameterType="String">
+  	select 
+  	 <include refid="Base_Column_List" />
+  	 from item_spu
+    where erp_code = #{erpCode}
+  </select>
+  <!-- item spu main data start  -->
+  <select id="queryItemSpuDataCount" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO" resultType="Long">
+	  select
+				count(1)
+				 from item_spu spu 
+				 join item_category cat on spu.category_id=cat.cid
+				 join item_brand brand on spu.brand_id=brand.brand_id
+	             where 1=1
+	              and spu.erp_first_category_code is not null
+                 and spu.erp_five_category_code is not null
+                 and spu.erp_first_category_code !=''
+                 and spu.erp_five_category_code !=''
+                  and spu.erp_first_category_code !='0'
+                 and spu.erp_five_category_code !='0'
+				 <if test="productName !=null and productName != '' ">
+				 	and (spu.spu_name like concat('%',#{productName},'%') 
+				 	     or 
+				 	     spu.spu_code like concat('%',#{productName},'%')
+				 	     )
+				 </if>
+				 <if test="brandName != null and brandName != '' ">
+				 	and brand.brand_name=#{brandName}
+				 </if>
+				 <if test="categoryName !=null and categoryName != ''">
+				    and cat.c_name =#{categoryName}
+				 </if>
+				 <if test="modelType !=null and modelType !='' ">
+				    and t.model_type=#{modelType}
+				 </if>
+  </select>
+  <select id="queryItemSpuDataList" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO" 
+  			resultType="cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO">
+	  select
+		    spu.spu_id as spuId,
+			spu.spu_code as spuCode,
+			spu.spu_name as itemName,
+			cat.c_name as categoryName,
+			brand.brand_name as brandName,
+			spu.model_type as serial,
+			spu.unit as unit,
+			spu.gross_weight as grossWeight,
+			spu.net_weight as netWeight,
+			spu.length,
+			spu.wide as width,
+			spu.high as height,
+			spu.erp_code as erpCode,
+			spu.tax_rate as taxRate,
+			ifnull((select 1 from item t2 where t2.item_spu_id=spu.spu_id and t2.seller_id=#{sellerId} and t2.item_status !=6  limit 1),0) as applyStatus
+				 from item_spu spu 
+				 join item_category cat on spu.category_id=cat.cid
+				 join item_brand brand on spu.brand_id=brand.brand_id
+	             where 1=1
+	             and spu.erp_first_category_code is not null
+                 and spu.erp_five_category_code is not null
+                 and spu.erp_first_category_code !=''
+                 and spu.erp_five_category_code !=''
+                  and spu.erp_first_category_code !='0'
+                 and spu.erp_five_category_code !='0'
+				 <if test="productName !=null and productName != '' ">
+				 	and (spu.spu_name like concat('%',#{productName},'%') 
+				 	     or 
+				 	     spu.spu_code like concat('%',#{productName},'%')
+				 	     )
+				 </if>
+				 <if test="brandName != null and brandName != '' ">
+				 	and brand.brand_name=#{brandName}
+				 </if>
+				 <if test="categoryName !=null and categoryName != ''">
+				    and cat.c_name =#{categoryName}
+				 </if>
+				 <if test="modelType !=null and modelType !='' ">
+				    and t.model_type=#{modelType}
+				 </if>
+				 limit #{start},#{pageSize};
+  </select>
+   <!-- item spu main data end  -->
+
+  <select id="queryItemSpu4SupperBossListCount" resultType="Long">
+    SELECT
+      count(1)
+    FROM
+    item_spu spu
+    JOIN item_brand brand
+    ON spu.brand_id = brand.brand_id
+    JOIN item_category category
+    ON category.cid = spu.category_id
+    JOIN item_spu_picture pic
+    ON spu.spu_id = pic.spu_id
+    AND pic.is_first = 1
+    AND pic.delete_flag = 0
+    where
+    1 = 1
+    AND spu.spu_name is not NULL
+    AND spu.spu_name != ''
+    <if test="param != null and param != ''  ">
+      AND spu.spu_name like concat('%',#{param},'%')
+      or category.c_name like concat('%',#{param},'%')
+      or brand.brand_name like concat('%',#{param},'%')
+      or spu.model_type like concat('%',#{param},'%')
+    </if>
+
+  </select>
+
+  <resultMap id="itemSpuInfoListOutResultMap" type="cn.htd.goodscenter.dto.outdto.ItemSpuInfoListOutDTO">
+    <result column="spu_name" property="spuName"/>
+    <result column="spu_code" property="spuCode"/>
+    <result column="model_type" property="modelType"/>
+    <result column="cid" property="cid"/>
+    <result column="c_name" property="cName"/>
+    <result column="brand_id" property="brandId"/>
+    <result column="brand_name" property="brandName"/>
+    <result column="picture_url" property="pictureUrl"/>
+  </resultMap>
+
+  <select id="queryItemSpu4SupperBossList" resultMap="itemSpuInfoListOutResultMap">
+    SELECT
+    spu.spu_name,
+    spu.spu_code,
+    spu.model_type,
+    category.cid,
+    category.c_name,
+    brand.brand_id,
+    brand.brand_name,
+    pic.picture_url
+    FROM
+    item_spu spu
+    JOIN item_brand brand
+    ON spu.brand_id = brand.brand_id
+    JOIN item_category category
+    ON category.cid = spu.category_id
+    JOIN item_spu_picture pic
+    ON spu.spu_id = pic.spu_id
+    AND pic.is_first = 1
+    AND pic.delete_flag = 0
+    where
+    1 = 1
+    AND spu.spu_name is not NULL
+    AND spu.spu_name != ''
+    <if test="param != null and param != ''  ">
+      and spu_name like concat('%',#{param},'%')
+      or c_name like concat('%',#{param},'%')
+      or brand_name like concat('%',#{param},'%')
+      or model_type like concat('%',#{param},'%')
+    </if>
+    <if test="page != null">
+      LIMIT #{page.pageOffset} , #{page.rows}
+    </if>
+  </select>
+
+  <resultMap id="itemSpuInfoDetailOutDTOResultMap" type="cn.htd.goodscenter.dto.outdto.ItemSpuInfoDetailOutDTO">
+    <result column="spu_name" property="spuName"/>
+    <result column="spu_code" property="spuCode"/>
+    <result column="spu_id" property="spuId"/>
+    <result column="cid" property="cid"/>
+    <result column="c_name" property="cName"/>
+    <result column="brand_id" property="brandId"/>
+    <result column="brand_name" property="brandName"/>
+    <result column="model_type" property="modelType"/>
+    <result column="gross_weight" property="grossWeight"/>
+    <result column="net_weight" property="netWeight"/>
+    <result column="tax_rate" property="taxRate"/>
+    <result column="length" property="length"/>
+    <result column="wide" property="wide"/>
+    <result column="high" property="high"/>
+    <result column="origin" property="origin"/>
+    <result column="unit" property="unit"/>
+    <result column="spu_desc" property="spuDesc"/>
+  </resultMap>
+
+  <select id="getItemSpuDetailBySpuCode" parameterType="String" resultMap="itemSpuInfoDetailOutDTOResultMap">
+    select
+     spu.spu_name,
+     spu.spu_code,
+     category.cid,
+     category.c_name,
+     brand.brand_id,
+     brand.brand_name,
+     spu.model_type,
+     spu.gross_weight,
+     spu.net_weight,
+     spu.tax_rate,
+     spu.length,
+     spu.wide,
+     spu.high,
+     spu.origin,
+     spu.unit,
+     spu_describe.spu_desc,
+     spu.spu_id
+    from
+      item_spu spu
+    LEFT JOIN item_brand brand
+    ON spu.brand_id = brand.brand_id
+    LEFT JOIN item_category category
+    ON category.cid = spu.category_id
+    LEFT JOIN item_spu_describe spu_describe
+    ON spu_describe.spu_id = spu.spu_id
+    AND spu_describe.delete_flag = 0
+    where
+     spu.spu_code = #{spuCode}
+  </select>
+
+</mapper>

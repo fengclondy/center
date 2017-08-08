@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.goodscenter.dao.ItemDescribeDAO">
+    <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.ItemDescribe">
+        <id column="des_id" jdbcType="BIGINT" property="desId" />
+        <result column="item_id" jdbcType="BIGINT" property="itemId" />
+        <result column="create_id" jdbcType="BIGINT" property="createId" />
+        <result column="create_name" jdbcType="VARCHAR" property="createName" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+        <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+        <result column="describe_content" jdbcType="LONGVARCHAR" property="describeContent" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        des_id, item_id, create_id, create_name,
+        create_time,modify_id,modify_name,modify_time,
+        describe_content
+    </sql>
+    <sql id="Blob_Column_List">
+        describe_content
+    </sql>
+    <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--,-->
+        <!--<include refid="Blob_Column_List" />-->
+        <!--from item_describe-->
+        <!--where des_id = #{desId,jdbcType=BIGINT}-->
+    <!--</select>-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from item_describe
+        where des_id = #{desId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="cn.htd.goodscenter.domain.ItemDescribe">
+        insert into item_describe (des_id, item_id,
+        create_id, create_name, create_time,
+        modify_id,modify_name,modify_time,
+        describe_content)
+        values (#{desId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT},
+        #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+        #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, now(),
+        #{describeContent,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.ItemDescribe" useGeneratedKeys="true" keyProperty="desId">
+       insert into item_describe
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="desId != null" >
+        des_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="describeContent != null">
+        describe_content
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="desId != null" >
+        #{desId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="describeContent != null" >
+        #{describeContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.ItemDescribe">
+        update item_describe
+        <set>
+            <if test="itemId != null">
+                item_id = #{itemId,jdbcType=BIGINT},
+            </if>
+            <if test="createId != null">
+                create_id = #{createId,jdbcType=BIGINT},
+            </if>
+            <if test="createName != null">
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyId != null">
+                modify_id = #{modifyId,jdbcType=BIGINT},
+            </if>
+            <if test="modifyName != null">
+                modify_name = #{modifyName,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="describeContent != null">
+                describe_content = #{describeContent,jdbcType=LONGVARCHAR}
+            </if>
+        </set>
+        where des_id = #{desId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="cn.htd.goodscenter.domain.ItemDescribe">
+        update item_describe
+        set item_id = #{itemId,jdbcType=BIGINT},
+        describe_content = #{describeContent,jdbcType=LONGVARCHAR}
+        create_id = #{createId,jdbcType=BIGINT},
+        create_name = #{createName,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where des_id = #{desId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.ItemDescribe">
+        update item_describe
+        set item_id = #{itemId,jdbcType=BIGINT},
+        describe_content = #{describeContent,jdbcType=LONGVARCHAR}
+        create_id = #{createId,jdbcType=BIGINT},
+        create_name = #{createName,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where des_id = #{desId,jdbcType=BIGINT}
+    </update>
+    <!--根据ItemId更新商品描述信息-->
+    <update id="updateByItemId" parameterType="cn.htd.goodscenter.domain.ItemDescribe">
+        update item_describe
+        set
+          describe_content = #{describeContent,jdbcType=LONGVARCHAR},
+          modify_id = #{modifyId,jdbcType=BIGINT},
+          modify_name = #{modifyName,jdbcType=VARCHAR},
+          modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where
+          item_id = #{itemId,jdbcType=BIGINT}
+    </update>
+    <!--根据ItemdId查询商品描述信息-->
+   <select id="getDescByItemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from item_describe
+        where item_id = #{itemId,jdbcType=BIGINT}
+        LIMIT 1
+    </select>
+    
+    <select id="getDescBySkuId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select des.* from item_describe des join  item i on i.item_id=des.item_id
+     join item_sku sku on sku.item_id=i.item_id
+    where sku.sku_id=#{skuId}
+    </select>
+</mapper>

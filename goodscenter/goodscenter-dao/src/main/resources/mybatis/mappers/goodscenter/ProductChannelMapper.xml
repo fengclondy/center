@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.ProductChannelMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.common.ProductChannel" >
+    <id column="channel_id" property="channelId" jdbcType="BIGINT" />
+    <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+    <result column="access_status" property="accessStatus" jdbcType="TINYINT" />
+    <result column="access_time" property="accessTime" jdbcType="TIMESTAMP" />
+    <result column="outer_channel_flag" property="outerChannelFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    channel_id, channel_code, channel_name, access_status, access_time, outer_channel_flag, 
+    create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <sql id="Where_Param">
+    where
+    1= 1
+    <if test="channelId != null" >
+      and channel_id = #{channelId}
+    </if>
+    <if test="channelCode != null" >
+      and channel_code = #{channelCode}
+    </if>
+    <if test="channelName != null" >
+      and channel_name = #{channelName}
+    </if>
+    <if test="accessStatus != null" >
+      and access_status = #{accessStatus}
+    </if>
+    <if test="accessTime != null" >
+      and access_time = #{accessTime}
+    </if>
+    <if test="outerChannelFlag != null" >
+      and outer_channel_flag = #{outerChannelFlag}
+    </if>
+    <if test="createId != null" >
+      and create_id = #{createId}
+    </if>
+    <if test="createName != null" >
+      and create_name = #{createName}
+    </if>
+    <if test="createTime != null" >
+      and create_time = #{createTime}
+    </if>
+    <if test="modifyId != null" >
+      and modify_id = #{modifyId}
+    </if>
+    <if test="modifyName != null" >
+      and modify_name = #{modifyName}
+    </if>
+    <if test="modifyTime != null" >
+      and modify_time = #{modifyTime}
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from product_channel
+    where channel_id = #{channelId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from product_channel
+    where channel_id = #{channelId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.goodscenter.domain.common.ProductChannel" >
+    insert into product_channel (channel_id, channel_code, channel_name, 
+      access_status, access_time, outer_channel_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{channelId,jdbcType=BIGINT}, #{channelCode,jdbcType=VARCHAR}, #{channelName,jdbcType=VARCHAR}, 
+      #{accessStatus,jdbcType=TINYINT}, #{accessTime,jdbcType=TIMESTAMP}, #{outerChannelFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.goodscenter.domain.common.ProductChannel" >
+    insert into product_channel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="channelId != null" >
+        channel_id,
+      </if>
+      <if test="channelCode != null" >
+        channel_code,
+      </if>
+      <if test="channelName != null" >
+        channel_name,
+      </if>
+      <if test="accessStatus != null" >
+        access_status,
+      </if>
+      <if test="accessTime != null" >
+        access_time,
+      </if>
+      <if test="outerChannelFlag != null" >
+        outer_channel_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="channelId != null" >
+        #{channelId,jdbcType=BIGINT},
+      </if>
+      <if test="channelCode != null" >
+        #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="channelName != null" >
+        #{channelName,jdbcType=VARCHAR},
+      </if>
+      <if test="accessStatus != null" >
+        #{accessStatus,jdbcType=TINYINT},
+      </if>
+      <if test="accessTime != null" >
+        #{accessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outerChannelFlag != null" >
+        #{outerChannelFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.goodscenter.domain.common.ProductChannel" >
+    update product_channel
+    <set >
+      <if test="channelCode != null" >
+        channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="channelName != null" >
+        channel_name = #{channelName,jdbcType=VARCHAR},
+      </if>
+      <if test="accessStatus != null" >
+        access_status = #{accessStatus,jdbcType=TINYINT},
+      </if>
+      <if test="accessTime != null" >
+        access_time = #{accessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outerChannelFlag != null" >
+        outer_channel_flag = #{outerChannelFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where channel_id = #{channelId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.goodscenter.domain.common.ProductChannel" >
+    update product_channel
+    set channel_code = #{channelCode,jdbcType=VARCHAR},
+      channel_name = #{channelName,jdbcType=VARCHAR},
+      access_status = #{accessStatus,jdbcType=TINYINT},
+      access_time = #{accessTime,jdbcType=TIMESTAMP},
+      outer_channel_flag = #{outerChannelFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where channel_id = #{channelId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="queryAllProductChannel" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from product_channel
+  </select>
+
+  <select id="selectProductChannelList" parameterType="cn.htd.goodscenter.domain.common.ProductChannel" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from product_channel
+    <include refid="Where_Param" />
+  </select>
+
+  <select id="selectProductChannelByCode" parameterType="string" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from product_channel
+    where
+    channel_code = #{channelCode}
+  </select>
+
+  <select id="queryChannelCodeByName" parameterType="string" resultType="string">
+    select
+    channel_code
+    from product_channel
+    where
+    channel_name = #{channelName}
+  </select>
+
+
+</mapper>

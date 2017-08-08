@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.FloorQueryOutDAO">
+    <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.FloorQueryOutDTO">
+        <result column="floor_id" property="floorId" />
+        <result column="floor_name" property="floorName" />
+        <result column="floor_status" property="floorStatus" />
+        <result column="nav_id"  property="navId" />
+        <result column="nav_name"  property="navName" />
+        <result column="nav_status"  property="navStatus" />
+        <result column="nav_temp" property="navTemp" />
+        <result column="create_name" property="createName" />
+    </resultMap>
+
+
+    <sql id="selectAllColumns">
+        select
+        fi.id floor_id,
+        fi.name floor_name,
+        fi.status floor_status,
+        fn.id nav_id,
+        fn.name nav_name,
+        fn.status nav_status,
+        fn.nav_temp nav_temp,
+        fn.create_name create_name
+        from floor_info fi,floor_nav fn
+    </sql>
+
+    <!-- mysql 分页 -->
+    <sql id="pagination_tail">
+        limit #{page.pageOffset}, #{page.rows}
+    </sql>
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+        SELECT COUNT(1) FROM floor_info fi,floor_nav fn
+    </sql>
+
+    <sql id="where_fragement">
+        WHERE 1=1 and fi.id = fn.floor_id and fi.status != '2'
+        <if test="entity!=null">
+            <if test="entity.floorName != null and entity.floorName != '' ">
+                <![CDATA[ AND fi.name = #{entity.floorName} ]]>
+            </if>
+            <if test="entity.floorStatus != null and entity.floorStatus != '' ">
+                <![CDATA[ AND fi.status = #{entity.floorStatus} ]]>
+            </if>
+            <if test="entity.navName != null and entity.navName != '' ">
+                <![CDATA[ AND fn.name = #{entity.navName} ]]>
+            </if>
+            <if test="entity.navStatus != null and entity.navStatus != '' ">
+                <![CDATA[ AND fn.status = #{entity.navStatus} ]]>
+            </if>
+        </if>
+        ORDER BY fi.name ,fn.nav_temp
+    </sql>
+
+    <select id="selectListByCondition" resultMap="BaseResultMap">
+        <include refid="selectAllColumns" />
+        <include refid="where_fragement" />
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
+
+    <select id="selectCountByCondition" resultType="java.lang.Long">
+        <include refid="count_Tail" />
+        <include refid="where_fragement" />
+    </select>
+
+</mapper>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+  <classPathEntry location="D:\daima\.m2\repository\mysql\mysql-connector-java\5.1.25\mysql-connector-java-5.1.25.jar" />
+  <context id="context_core" targetRuntime="MyBatis3">
+  	<commentGenerator>
+	   	<!-- 是否去除自动生成的注释 true：是 ： false:否 -->  
+	    <property name="suppressAllComments" value="true" />  
+   	</commentGenerator>
+   	
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://172.16.1.178:3306/zeus" userId="htdzt" password="Ztdep2017" />
+   	
+   	<!--  默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer   
+         true，把JDBC DECIMAL 和 NUMERIC 类型解析为java.math.BigDecimal   
+     -->   
+	<javaTypeResolver >  
+		<property name="forceBigDecimals" value="false" />  
+	</javaTypeResolver>  
+	    
+        <javaModelGenerator targetPackage="cn.htd.membercenter.dto"
+                            targetProject="D:\shengchengxml">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mybatis.mappers.membercenter"
+                         targetProject="D:\shengchengxml">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator targetPackage="cn.htd.membercenter.mappers"
+                             targetProject="D:\shengchengxml" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+<!-- 		<table tableName="top_ad"  domainObjectName="TopAd" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="site_logo"  domainObjectName="SiteLogo" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="site_slogan"  domainObjectName="SiteSlogan" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="hot_word"  domainObjectName="HotWord" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="mall_type_sub"  domainObjectName="MallTypeSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="mall_type"  domainObjectName="MallType" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="mall_channels"  domainObjectName="MallChannels" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		
+		
+		
+		
+		<table tableName="static_ad"  domainObjectName="StaticAd" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table> 
+		
+		
+		<table tableName="login_page"  domainObjectName="LoginPage" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>-->
+		
+		
+		<!-- <table tableName="floor_content"  domainObjectName="FloorContent" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_nav"  domainObjectName="FloorNav" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_content_pic_sub"  domainObjectName="FloorContentPicSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_content_sub"  domainObjectName="FloorContentSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_info"  domainObjectName="FloorInfo" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table> -->
+		
+		<!-- <table tableName="head_ad"  domainObjectName="HeadAd" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="sub_carousel_ad"  domainObjectName="SubCarouselAd" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table> -->
+		
+		<!-- <table tableName="sub_ad"  domainObjectName="SubAd" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		<table tableName="sub_content_pic_sub"  domainObjectName="SubContentPicSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		<table tableName="sub_content_sub"  domainObjectName="SubContentSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		<table tableName="sub_content"  domainObjectName="SubContent" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table> -->
+		<table tableName="floor_nav"  domainObjectName="FloorNav" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_content_pic_sub"  domainObjectName="FloorContentPicSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+	
+		<table tableName="floor_content"  domainObjectName="FloorContent" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_info"  domainObjectName="FloorInfo" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+		
+		<table tableName="floor_content_sub"  domainObjectName="FloorContentSub" 
+		enableCountByExample="false" enableUpdateByExample="false" 
+		enableDeleteByExample="false" enableSelectByExample="false" 
+		selectByExampleQueryId="false" ></table>
+    	
+   </context>
+</generatorConfiguration>

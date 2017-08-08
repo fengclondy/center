@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+        
+	<dubbo:service interface="cn.htd.marketcenter.service.PromotionRulesDefineService" ref="promotionRulesDefineService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.PromotionBuyerRuleDefineService" ref="promotionBuyerRuleDefineService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.PromotionCategoryItemRuleDefineService" ref="promotionCategoryItemRuleDefineService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.PromotionSellerRuleDefineService" ref="promotionSellerRuleDefineService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.TimelimitedInfoService" ref="timelimitedInfoService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.DiscountInfoService" ref="discountInfoService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.BuyerCouponInfoService" ref="buyerCouponInfoService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.BuyerInterestChangeService" ref="buyerInterestChangeService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.BuyerInterestValidService" ref="buyerInterestValidService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.TriggerCouponReceiveService" ref="triggerCouponReceiveService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.BuyerTimelimitedInfo4SuperBossService" ref="buyerTimelimitedInfo4SuperBossService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.PromotionInfoService" ref="promotionInfoService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<dubbo:service interface="cn.htd.marketcenter.service.PromotionGroupService" ref="promotionGroupService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+</beans>

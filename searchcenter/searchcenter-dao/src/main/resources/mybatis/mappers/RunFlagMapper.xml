@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.searchcenter.dao.RunFlagDAO">
+	<!-- =========================================================== -->
+	<!-- 定义resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="resultMap" type="cn.htd.searchcenter.domain.RunFlag">
+		<result property="id" column="id" jdbcType="BIGINT" />
+		<result property="type" column="type" jdbcType="BIGINT" />
+		<result property="runFlag" column="runFlag" jdbcType="VARCHAR" />
+		<result property="modifiedTime" column="modifiedTime"	jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="columns">
+		id,type,runFlag,modifiedTime
+	</sql>
+
+	<update id="updateRunFlagById">
+		update solr_runflag set 
+		<trim suffix="" suffixOverrides=",">
+			<if test="runFlag != null">
+				runFlag=#{runFlag},
+			</if>
+			<if test="modifiedTime != null">
+				modifiedTime=#{modifiedTime},
+			</if>
+		</trim>
+		where type = #{type}
+	</update>
+	
+	<update id="updateAllRunFlag">
+		update solr_runflag set 
+		<trim suffix="" suffixOverrides=",">
+			<if test="runFlag != null">
+				runFlag=#{runFlag},
+			</if>
+			<if test="modifiedTime != null">
+				modifiedTime=#{modifiedTime},
+			</if>
+		</trim>
+	</update>
+
+	<update id="updateAllRunFlagForce">
+		update solr_runflag set
+		<trim suffix="" suffixOverrides=",">
+			<if test="runFlag != null">
+				runFlag=#{runFlag},
+			</if>
+			<if test="modifiedTime != null">
+				modifiedTime=#{modifiedTime},
+			</if>
+		</trim>
+	</update>
+
+	<!-- 根据type查询 -->
+	<select id="queryJobRunFlagByType" resultType="java.lang.String">
+		select distinct(runFlag) from solr_runflag where type=#{type}
+	</select>
+
+</mapper>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.htd.storecenter.dao.ShopFrameDAO">
+
+    <!-- =========================================================== -->
+    <!-- 定义resultMap                                                                                                                                                                             -->
+    <!-- =========================================================== -->
+    <resultMap id="shopFrameDTOMap" type="cn.htd.storecenter.dto.ShopFrameDTO">
+    	<result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="headModulesJson" column="head_modules_json"/>
+        <result property="bodyLayoutsJson" column="body_layouts_json"/>
+        <result property="footerModulesJson" column="footer_modules_json"/>
+        <result property="color" column="color"/>
+        <result property="showBgColor" column="show_bg_color"/>
+        <result property="bgColor" column="bg_color"/>
+        <result property="bgImgUrl" column="bg_img_url"/>
+        <result property="bgRepeat" column="bg_repeat"/>
+        <result property="bgAlign" column="bg_align"/>
+        <result property="versionType" column="version_type"/>
+    </resultMap>
+
+    <!-- =========================================================== -->
+    <!-- 一些公共变量设置                                                                                                                        -->
+    <!-- =========================================================== -->
+    <sql id="selectAllColumns">
+		<![CDATA[
+		select
+			shop_frame_.id,
+			shop_frame_.shop_id,
+			shop_frame_.head_modules_json,
+			shop_frame_.body_layouts_json,
+			shop_frame_.footer_modules_json,
+			shop_frame_.color,
+			shop_frame_.show_bg_color,
+			shop_frame_.bg_color,
+			shop_frame_.bg_img_url,
+			shop_frame_.bg_repeat,
+			shop_frame_.bg_align,
+			shop_frame_.version_type
+		from shop_frame shop_frame_
+        ]]>
+	</sql>
+
+    <sql id="where_fragement">
+         where 1=1
+        <if test="entity!=null">
+            <if test="entity.shopId != null">
+                <![CDATA[ and shop_frame_.shop_id  =#{entity.shopId} ]]>
+            </if>
+            <if test="entity.versionType != null">
+                <![CDATA[ and shop_frame_.version_type  =#{entity.versionType} ]]>
+            </if>
+        </if>
+    </sql>
+
+    <!-- mysql 分页尾 -->
+    <sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
+    <!-- mysql 查询总数 -->
+    <sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+    <!-- =========================================================== -->
+    <!-- Dao方法中的基本增删改查方法                                                                                                                                                           -->
+    <!-- =========================================================== -->
+
+    <!-- 分页查询 -->
+    <select id="selectListByCondition" resultMap="shopFrameDTOMap">
+        <include refid="selectAllColumns"/>
+        <include refid="where_fragement"/>
+        <if test="page!=null">
+            <include refid="pagination_tail"/>
+        </if>
+    </select>
+    
+    <select id="selectById" resultMap="shopFrameDTOMap">
+     	<include refid="selectAllColumns"/> where shop_frame_.id=#{id}
+    </select>
+
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="cn.htd.storecenter.dto.ShopFrameDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+		insert into shop_frame(
+			shop_id,
+			head_modules_json,
+			body_layouts_json,
+			footer_modules_json,
+			color,
+			show_bg_color,
+			bg_color,
+			bg_img_url,
+			bg_repeat,
+			bg_align,
+			version_type
+		)values(
+	        #{shopId},
+	  		#{headModulesJson},
+	  		#{bodyLayoutsJson},
+	  		#{footerModulesJson},
+	  		#{color},
+	  		#{showBgColor},
+	  		#{bgColor},
+	  		#{bgImgUrl},
+	  		#{bgRepeat},
+	  		#{bgAlign},
+	  		#{versionType}
+		)
+        ]]>
+	</insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="cn.htd.storecenter.dto.ShopFrameDTO">
+		update shop_frame set update_time=now(),
+			shop_id = #{shopId},
+			head_modules_json = #{headModulesJson},
+			body_layouts_json = #{bodyLayoutsJson},
+			footer_modules_json = #{footerModulesJson},
+			color = #{color},
+			show_bg_color = #{showBgColor},
+			bg_color = #{bgColor},
+			bg_img_url = #{bgImgUrl},
+			bg_repeat = #{bgRepeat},
+			bg_align = #{bgAlign}
+	 	where id = #{id}
+	</update>
+	
+	<!-- 删除记录 -->
+	<delete id="delete" parameterType="long">
+		<![CDATA[
+		delete from shop_frame where id = #{id}
+        ]]>
+	</delete>
+</mapper>

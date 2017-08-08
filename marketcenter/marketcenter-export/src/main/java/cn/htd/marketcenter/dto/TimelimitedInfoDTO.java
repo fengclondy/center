@@ -1,0 +1,213 @@
+package cn.htd.marketcenter.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashMap;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+/**
+ * 秒杀活动DTO
+ */
+public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serializable {
+
+	private static final long serialVersionUID = 5210372509736403342L;
+
+	/**
+	 * ID
+	 */
+	private Long timelimitedId;
+	/**
+	 * 卖家编码
+	 */
+	@NotBlank(message = "卖家编码不能为空")
+	private String sellerCode;
+	/**
+	 * 商品ITEMID
+	 */
+	@NotNull(message = "商品ITEMID不能为空")
+	private Long itemId;
+	/**
+	 * 商品SKU编码
+	 */
+	@NotBlank(message = "商品SKU编码不能为空")
+	private String skuCode;
+	/**
+	 * 商品SKU名称
+	 */
+	@NotBlank(message = "商品SKU名称不能为空")
+	private String skuName;
+	/**
+	 * 商品主图URL
+	 */
+	@NotBlank(message = "商品主图URL不能为空")
+	private String skuPicUrl;
+	/**
+	 * 商品秒杀价
+	 */
+	@NotNull(message = "商品秒杀价不能为空")
+	@Min(value = 0, message = "商品秒杀价必须大于0")
+	private BigDecimal skuTimelimitedPrice;
+	/**
+	 * 参与秒杀商品数量
+	 */
+	@NotNull(message = "参与秒杀商品数量不能为空")
+	@Min(value = 1, message = "参与秒杀商品数量必须大于0")
+	private Integer timelimitedSkuCount;
+	/**
+	 * 每人限秒数量
+	 */
+	@NotNull(message = "每人限秒数量不能为空")
+	@Min(value = 1, message = "每人限秒数量必须大于0")
+	private Integer timelimitedThreshold;
+	/**
+	 * 秒杀订单有效时间（单位：分钟）
+	 */
+	@NotNull(message = "秒杀订单有效时间不能为空")
+	@Min(value = 1, message = "秒杀订单有效时间必须大于0")
+	private Integer timelimitedValidInterval;
+	/**
+	 * 秒杀活动结果
+	 */
+	private TimelimitedResultDTO timelimitedResult;
+	/**
+	 *秒杀商品的品牌品类
+	 */
+	//@NotBlank(message = "商品品牌品类不能为空")
+	private String itemCategoryBrand;
+	/**
+	 * 商品item编码
+	 */
+	private String itemCode;
+	private HashMap<String,String> itemStockInfo;
+
+	public Long getTimelimitedId() {
+		return timelimitedId;
+	}
+
+	public void setTimelimitedId(Long timelimitedId) {
+		this.timelimitedId = timelimitedId;
+	}
+
+	public String getSellerCode() {
+		return sellerCode;
+	}
+
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
+	}
+
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
+	}
+
+	public String getSkuCode() {
+		return skuCode;
+	}
+
+	public void setSkuCode(String skuCode) {
+		this.skuCode = skuCode;
+	}
+
+	public String getSkuName() {
+		return skuName;
+	}
+
+	public void setSkuName(String skuName) {
+		this.skuName = skuName;
+	}
+
+	public String getSkuPicUrl() {
+		return skuPicUrl;
+	}
+
+	public void setSkuPicUrl(String skuPicUrl) {
+		this.skuPicUrl = skuPicUrl;
+	}
+
+	public BigDecimal getSkuTimelimitedPrice() {
+		return skuTimelimitedPrice;
+	}
+
+	public void setSkuTimelimitedPrice(BigDecimal skuTimelimitedPrice) {
+		this.skuTimelimitedPrice = skuTimelimitedPrice;
+	}
+
+	public Integer getTimelimitedSkuCount() {
+		return timelimitedSkuCount;
+	}
+
+	public void setTimelimitedSkuCount(Integer timelimitedSkuCount) {
+		this.timelimitedSkuCount = timelimitedSkuCount;
+	}
+
+	public Integer getTimelimitedThreshold() {
+		return timelimitedThreshold;
+	}
+
+	public void setTimelimitedThreshold(Integer timelimitedThreshold) {
+		this.timelimitedThreshold = timelimitedThreshold;
+	}
+
+	public Integer getTimelimitedValidInterval() {
+		return timelimitedValidInterval;
+	}
+
+	public void setTimelimitedValidInterval(Integer timelimitedValidInterval) {
+		this.timelimitedValidInterval = timelimitedValidInterval;
+	}
+
+	public TimelimitedResultDTO getTimelimitedResult() {
+		return timelimitedResult;
+	}
+
+	public void setTimelimitedResult(TimelimitedResultDTO timelimitedResult) {
+		this.timelimitedResult = timelimitedResult;
+	}
+	
+	public String getItemCategoryBrand() {
+		return itemCategoryBrand;
+	}
+
+	public void setItemCategoryBrand(String itemCategoryBrand) {
+		this.itemCategoryBrand = itemCategoryBrand;
+	}
+
+	public String getItemCode() {
+		return itemCode;
+	}
+
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
+
+	public void setTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) {
+		super.setPromotionAccumulaty(timelimitedInfo);
+		this.timelimitedId = timelimitedInfo.getTimelimitedId();
+		this.sellerCode = timelimitedInfo.getSellerCode();
+		this.itemId = timelimitedInfo.getItemId();
+		this.skuCode = timelimitedInfo.getSkuCode();
+		this.skuName = timelimitedInfo.getSkuName();
+		this.skuPicUrl = timelimitedInfo.getSkuPicUrl();
+		this.skuTimelimitedPrice = timelimitedInfo.getSkuTimelimitedPrice();
+		this.timelimitedSkuCount = timelimitedInfo.getTimelimitedSkuCount();
+		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
+		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
+		this.timelimitedResult = timelimitedInfo.getTimelimitedResult();
+	}
+
+	public HashMap<String, String> getItemStockInfo() {
+		return itemStockInfo;
+	}
+
+	public void setItemStockInfo(HashMap<String, String> itemStockInfo) {
+		this.itemStockInfo = itemStockInfo;
+	}
+}

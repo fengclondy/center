@@ -42,10 +42,8 @@ public class SkuStockReserveImplHandler extends AbstractSkuStockChangeHandler {
         // 更新库存信息
         this.updateItemSkuPublishInfo(itemSkuPublishInfo);
         // 添加操作历史记录
-        if (quantity > 0) {
-            ItemSkuPublishInfoHistory itemSkuPublishInfoHistory = this.createItemSkuPublishInfoHistory(orderNo, resource, quantity, StockTypeEnum.RESERVE.name(), messageId, itemSkuPublishInfo);
-            this.addItemSkuPublishInfoHistory(itemSkuPublishInfoHistory);
-        }
+        ItemSkuPublishInfoHistory itemSkuPublishInfoHistory = this.createItemSkuPublishInfoHistory(orderNo, resource, quantity, StockTypeEnum.RESERVE.name(), messageId, itemSkuPublishInfo);
+        this.addItemSkuPublishInfoHistory(itemSkuPublishInfoHistory);
     }
 
 }

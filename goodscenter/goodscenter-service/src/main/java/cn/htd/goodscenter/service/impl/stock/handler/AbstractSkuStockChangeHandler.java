@@ -101,6 +101,9 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             if (order4StockEntryDTO.getQuantity() == null || order4StockEntryDTO.getQuantity() < 0) {
                 throw new StockInParamIllegalException("入参校验错误, Quantity非法, Quantity : " + order4StockEntryDTO.getQuantity());
             }
+            if (order4StockEntryDTO.getQuantity() == 0) {
+                return;
+            }
             String skuCode = order4StockEntryDTO.getSkuCode();
             // 查询STOCK_ID
             ItemSkuPublishInfo itemSkuPublishInfo = null;

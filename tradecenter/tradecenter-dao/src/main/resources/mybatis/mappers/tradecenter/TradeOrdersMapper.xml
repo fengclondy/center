@@ -735,20 +735,48 @@
   <update id="updateTradeOrdersNegotiateInfo" parameterType="cn.htd.tradecenter.dto.TradeOrdersDTO" >
     update trade_orders
     <set >
-      has_productplus_flag = #{hasProductplusFlag,jdbcType=TINYINT},
-      total_goods_count = #{totalGoodsCount,jdbcType=INTEGER},
-      total_goods_amount = #{totalGoodsAmount,jdbcType=DECIMAL},
-      total_freight = #{totalFreight,jdbcType=DECIMAL},
-      total_discount_amount = #{totalDiscountAmount,jdbcType=DECIMAL},
-      shop_discount_amount = #{shopDiscountAmount,jdbcType=DECIMAL},
-      platform_discount_amount = #{platformDiscountAmount,jdbcType=DECIMAL},
-      used_rebate_amount = #{usedRebateAmount,jdbcType=DECIMAL},
-      bargaining_order_amount = #{bargainingOrderAmount,jdbcType=DECIMAL},
-      bargaining_order_freight = #{bargainingOrderFreight,jdbcType=DECIMAL},
-      order_total_amount = #{orderTotalAmount,jdbcType=DECIMAL},
-      order_pay_amount = #{orderPayAmount,jdbcType=DECIMAL},
-      has_used_coupon = #{hasUsedCoupon,jdbcType=TINYINT},
-      is_change_price = #{isChangePrice,jdbcType=TINYINT},
+      <if test="hasProductplusFlag != null" >
+          has_productplus_flag = #{hasProductplusFlag,jdbcType=TINYINT},
+      </if>
+      <if test="totalGoodsCount != null" >
+          total_goods_count = #{totalGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="totalGoodsAmount != null" >
+         total_goods_amount = #{totalGoodsAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="totalFreight != null" >
+         total_freight = #{totalFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="totalDiscountAmount != null" >
+         total_discount_amount = #{totalDiscountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="shopDiscountAmount != null" >
+         shop_discount_amount = #{shopDiscountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="platformDiscountAmount != null" >
+          platform_discount_amount = #{platformDiscountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="usedRebateAmount != null" >
+          used_rebate_amount = #{usedRebateAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingOrderAmount != null" >
+          bargaining_order_amount = #{bargainingOrderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingOrderFreight != null" >
+          bargaining_order_freight = #{bargainingOrderFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="orderTotalAmount != null" >
+          order_total_amount = #{orderTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderPayAmount != null" >
+          order_pay_amount = #{orderPayAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="hasUsedCoupon != null" >
+           has_used_coupon = #{hasUsedCoupon,jdbcType=TINYINT},
+      </if>
+      <if test="isChangePrice != null" >
+           is_change_price = #{isChangePrice,jdbcType=TINYINT},
+      </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),

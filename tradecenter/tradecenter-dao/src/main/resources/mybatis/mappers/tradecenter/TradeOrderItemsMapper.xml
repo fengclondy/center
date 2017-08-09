@@ -1284,15 +1284,31 @@
   </update>
   <update id="updateTradeOrderItemsNegotiateInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
     update trade_order_items
-    <set >
-      bargaining_goods_price = #{bargainingGoodsPrice,jdbcType=DECIMAL},
-      bargaining_goods_count = #{bargainingGoodsCount,jdbcType=INTEGER},
-      bargaining_goods_amount = #{bargainingGoodsAmount,jdbcType=DECIMAL},
-      bargaining_goods_freight = #{bargainingGoodsFreight,jdbcType=DECIMAL},
-      order_item_total_amount = #{orderItemTotalAmount,jdbcType=DECIMAL},
-      order_item_pay_amount = #{orderItemPayAmount,jdbcType=DECIMAL},
-      goods_real_price =  #{goodsRealPrice,jdbcType=DECIMAL},
-      is_change_price = #{isChangePrice,jdbcType=TINYINT},
+    <set>
+  	  <if test="bargainingGoodsPrice != null" >
+         bargaining_goods_price = #{bargainingGoodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingGoodsCount != null" >
+         bargaining_goods_count = #{bargainingGoodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="bargainingGoodsAmount != null" >
+         bargaining_goods_amount = #{bargainingGoodsAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bargainingGoodsFreight != null" >
+         bargaining_goods_freight = #{bargainingGoodsFreight,jdbcType=DECIMAL},
+      </if>
+      <if test="orderItemTotalAmount != null" >
+         order_item_total_amount = #{orderItemTotalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderItemPayAmount != null" >
+         order_item_pay_amount = #{orderItemPayAmount,jdbcType=DECIMAL},
+      </if>
+     <if test="goodsRealPrice != null" >
+         goods_real_price =  #{goodsRealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isChangePrice != null" >
+         is_change_price = #{isChangePrice,jdbcType=TINYINT},
+      </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),

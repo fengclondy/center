@@ -18,34 +18,36 @@ import org.springframework.stereotype.Service;
 public class SkuStockReduceImplHandler extends AbstractSkuStockChangeHandler {
 
     @Override
-    protected void doChange(Order4StockEntryDTO order4StockEntryDTO, Long stockId, boolean isSpecialOrder) throws Exception {
+    protected void doChange(Order4StockEntryDTO order4StockEntryDTO, Long stockId) throws Exception {
         String orderNo = order4StockEntryDTO.getOrderNo();
         String resource = order4StockEntryDTO.getOrderResource();
         Integer quantity = order4StockEntryDTO.getQuantity(); // 商品数量
         String messageId = order4StockEntryDTO.getMessageId(); // 消息ID
         // 幂等查询
-        if (idempotentHandle(orderNo, stockId, StockTypeEnum.REDUCE, messageId, isSpecialOrder)) {
+        if (idempotentHandle(orderNo, stockId, StockTypeEnum.REDUCE)) {
             return;
         }
         // ADD-START 校验该订单的商品库存有没有锁定过
-        if (!validateStockChangePreCondition(orderNo, stockId, isSpecialOrder, StockTypeEnum.RESERVE)) {
+        if (!validateStockChangePreCondition(orderNo, stockId, StockTypeEnum.RESERVE, quantity)) {
             // 如果没有校验通过
             throw new StockNoReserveRecordException("扣减库存错误-前置校验不通过【该订单下该商品没有锁定的记录】, orderNo : "
-                    + orderNo + ", stockId : " + stockId + ",isSpecialOrder : " + isSpecialOrder);
+                    + orderNo + ", stockId : " + stockId);
         }
         // ADD-END
         // 查询实时库存
         ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
-        if (itemSkuPublishInfo.getReserveQuantity() - quantity < 0) {
-            throw new StockNotEnoughReserveQuantityException("扣减库存失败-锁定库存不足以扣减, 详细 :"
-                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
-        }
-        if (itemSkuPublishInfo.getDisplayQuantity() - quantity < 0) {
-            throw new StockNotEnoughDisplayQuantityException("扣减库存失败-可见库存不足以扣减, 详细 :"
-                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
-        }
-        itemSkuPublishInfo.setDisplayQuantity(itemSkuPublishInfo.getDisplayQuantity() - quantity);
-        itemSkuPublishInfo.setReserveQuantity(itemSkuPublishInfo.getReserveQuantity() - quantity);
+//        if (itemSkuPublishInfo.getReserveQuantity() - quantity < 0) {
+//            throw new StockNotEnoughReserveQuantityException("扣减库存失败-锁定库存不足以扣减, 详细 :"
+//                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
+//        }
+//        if (itemSkuPublishInfo.getDisplayQuantity() - quantity < 0) {
+//            throw new StockNotEnoughDisplayQuantityException("扣减库存失败-可见库存不足以扣减, 详细 :"
+//                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
+//        }
+        int displayQuantity = (itemSkuPublishInfo.getDisplayQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getDisplayQuantity() - quantity);
+        int reserveQuantity = (itemSkuPublishInfo.getReserveQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getReserveQuantity() - quantity);
+        itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
+        itemSkuPublishInfo.setReserveQuantity(reserveQuantity);
         // 更新库存信息
         this.updateItemSkuPublishInfo(itemSkuPublishInfo);
         // 添加操作历史记录

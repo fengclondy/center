@@ -6,7 +6,6 @@ import cn.htd.goodscenter.dto.mall.MallSkuWithStockInDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockOutDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
 import cn.htd.goodscenter.dto.vip.VipItemEntryInfoDTO;
-import cn.htd.goodscenter.dto.vip.VipItemListOutDTO;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateItemListInfoReqDTO;
@@ -42,12 +41,12 @@ public interface GoodsCenterRAO {
 	 */
 	public OtherCenterResDTO<String> batchReleaseStock(
 			List<Order4StockChangeDTO> order4StockChangeDTOs, String messageId);
-	
+
 	/*
 	 * 调商品中心批量释放库存-只是用messageId幂等性
 	 */
-	public OtherCenterResDTO<String> comboChangeStock(
-			List<Order4StockChangeDTO> order4StockChangeDTOs, String messageId);
+	// public OtherCenterResDTO<String> comboChangeStock(
+	// List<Order4StockChangeDTO> order4StockChangeDTOs, String messageId);
 
 	/*
 	 * 调商品中心批量扣减库存
@@ -72,8 +71,10 @@ public interface GoodsCenterRAO {
 	 */
 	public OtherCenterResDTO<Boolean> canProductPlusSaleBySeller(Long sellerId,
 			String productChannel, Long categoryId, Long brandId, String messageId);
+
 	/*
 	 * 查询vip套餐商品信息List
 	 */
-	public OtherCenterResDTO<List<VipItemEntryInfoDTO>> queryVipItemList(String vipSkuCode,String messageId);
+	public OtherCenterResDTO<List<VipItemEntryInfoDTO>> queryVipItemList(String vipSkuCode,
+			String messageId);
 }

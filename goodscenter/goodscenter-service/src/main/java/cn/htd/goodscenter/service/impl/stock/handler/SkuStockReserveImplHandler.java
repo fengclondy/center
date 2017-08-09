@@ -21,13 +21,13 @@ public class SkuStockReserveImplHandler extends AbstractSkuStockChangeHandler {
      * @return
      */
     @Override
-    protected void doChange(Order4StockEntryDTO order4StockEntryDTO, Long stockId, boolean isSpecialOrder) throws Exception {
+    protected void doChange(Order4StockEntryDTO order4StockEntryDTO, Long stockId) throws Exception {
         String orderNo = order4StockEntryDTO.getOrderNo();
         String resource = order4StockEntryDTO.getOrderResource();
         Integer quantity = order4StockEntryDTO.getQuantity(); // 商品数量
         String messageId = order4StockEntryDTO.getMessageId(); // 消息ID
         // 幂等查询
-        if(idempotentHandle(orderNo, stockId, StockTypeEnum.RESERVE, messageId, isSpecialOrder)) {
+        if(idempotentHandle(orderNo, stockId, StockTypeEnum.RESERVE)) {
             return;
         }
         // 查询实时库存

@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockEntryDTO;
 import cn.htd.goodscenter.dto.stock.StockTypeEnum;
@@ -46,9 +49,6 @@ import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCancelInfoReqDTO;
-
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
 
 /**
  * @author ly
@@ -85,13 +85,13 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 
 	@Autowired
 	private PayOrderInfoDAO payOrderInfoDAO = null;
-	
+
 	@Autowired
 	private TradeOrderErpDistributionDAO tradeOrderErpDistributionDAO;
-	
+
 	@Autowired
 	private OrderStatusChangeCommonService orderStatusChangeCommonService;
-	
+
 	@Override
 	@Transactional
 	public TradeOrdersDMO orderCancel(OrderCancelInfoReqDTO orderCancelInfoDTO) {
@@ -105,32 +105,32 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
 			if (tradeOrdersDMO == null) {
 				tradeOrdersDMO = new TradeOrdersDMO();
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getCode());
 				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getMsg());
 				return tradeOrdersDMO;
 			}
 			String orderStatus = tradeOrdersDMO.getOrderStatus();
 			if (StringUtils.isEmpty((orderStatus))) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getCode());
 				tradeOrdersDMO
 						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getMsg());
 				return tradeOrdersDMO;
 			}
 			int isCancelOrder = tradeOrdersDMO.getIsCancelOrder();
 			if (OrderStatusEnum.CANCLED.getCode().equals(String.valueOf(isCancelOrder))) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL
-						.getCode());
-				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL
-						.getMsg());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getCode());
+				tradeOrdersDMO
+						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getMsg());
 				return tradeOrdersDMO;
 			}
 			if (!OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
 					&& !OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 					&& !OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getCode());
 				tradeOrdersDMO
 						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getMsg());
 				return tradeOrdersDMO;
@@ -196,15 +196,15 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
 			if (tradeOrdersDMO == null) {
 				tradeOrdersDMO = new TradeOrdersDMO();
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getCode());
 				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getMsg());
 				return tradeOrdersDMO;
 			}
 			String orderStatus = tradeOrdersDMO.getOrderStatus();
 			if (StringUtils.isEmpty((orderStatus))) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getCode());
 				tradeOrdersDMO
 						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getMsg());
 				return tradeOrdersDMO;
@@ -214,22 +214,22 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			tradeOrderItemsDMOTemp.setChannelCode(Constant.PRODUCT_CHANNEL_CODE_OUTLINE);
 			long tradeItemCount = tradeOrderItemsDAO
 					.selectTradeOrderItemsByOrderChannelCode(tradeOrderItemsDMOTemp);
-			if ((tradeItemCount != 0 && OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(
-					orderStatus))
+			if ((tradeItemCount != 0
+					&& OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus))
 					|| OrderStatusEnum.PAYED_PRE_SPLIT_ORDER_PRE.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getCode().equals(orderStatus)) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getCode());
 				tradeOrdersDMO
 						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getMsg());
 				return tradeOrdersDMO;
 			}
 			int isCancelOrder = tradeOrdersDMO.getIsCancelOrder();
 			if (OrderStatusEnum.CANCLED.getCode().equals(String.valueOf(isCancelOrder))) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL
-						.getCode());
-				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL
-						.getMsg());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getCode());
+				tradeOrdersDMO
+						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getMsg());
 				return tradeOrdersDMO;
 			}
 			String memberID = orderCancelInfoDTO.getOrderCancelMemberId();
@@ -238,33 +238,28 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			}
 			String memberName = orderCancelInfoDTO.getOrderCancelMemberName();
 			String payType = tradeOrdersDMO.getPayType();
-			if(OrderStatusEnum.PAYED_POST_STRIKEA_DOWNING.getCode().equals(orderStatus)
-					&&!PayStatusEnum.ERP_PAY.getCode().equals(payType))
-			{
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL
-						.getCode());
-				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL
-						.getMsg());
+			if (OrderStatusEnum.PAYED_POST_STRIKEA_DOWNING.getCode().equals(orderStatus)
+					&& !PayStatusEnum.ERP_PAY.getCode().equals(payType)) {
+				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL.getCode());
+				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL.getMsg());
 				return tradeOrdersDMO;
 			}
 			if (OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus)
-					||OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode()
+							.equals(orderStatus)
 					|| OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) 
-			{
-				if(	OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus))
-				{
+					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
+				if (OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
+						|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
+						|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
 					PayOrderInfoDMO payOrderInfoDMO = new PayOrderInfoDMO();
 					payOrderInfoDMO.setOrderNo(orderNo);
 					payOrderInfoDMO.setDeleteFlag(Byte.valueOf("1"));
 					payOrderInfoDAO.updateByRechargeOrderNo(payOrderInfoDMO);
-				}
-				else if(OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus)
-					||OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode().equals(orderStatus))
-				{
+				} else if (OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus)
+						|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode()
+								.equals(orderStatus)) {
 					List<PayOrderInfoDMO> payOrderInfoDMOList = payOrderInfoDAO
 							.selectBrandCodeAndClassCodeByOrderNo(orderNo);
 					List<PayOrderInfoDMO> downPayOrderList = new ArrayList<PayOrderInfoDMO>();
@@ -274,23 +269,23 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 								messageId, orderCancelInfoDTO.getOrderNo(),
 								JSON.toJSONString(payOrderInfoDMO));
 						Byte payResultStatus = payOrderInfoDMO.getPayResultStatus();
-						if(!OrderStatusEnum.ERP_RESULT_STATUS_HAVE_DOWN_MQ_RETURN.getCode().equals(String
-								.valueOf(payResultStatus)) && !PayStatusEnum.ERP_PAY.getCode().equals(payType))
-						{
-							tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL
-									.getCode());
-							tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL
-									.getMsg());
+						if (!OrderStatusEnum.ERP_RESULT_STATUS_HAVE_DOWN_MQ_RETURN.getCode()
+								.equals(String.valueOf(payResultStatus))
+								&& !PayStatusEnum.ERP_PAY.getCode().equals(payType)) {
+							tradeOrdersDMO.setResultCode(
+									ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL.getCode());
+							tradeOrdersDMO.setResultMsg(
+									ResultCodeEnum.ORDERCANCEL_ERP_DOWN_MQ_FAIL.getMsg());
 							return tradeOrdersDMO;
 						}
-						if (OrderStatusEnum.ERP_RESULT_STATUS_HAVE_DOWN_MQ_RETURN.getCode().equals(String
-								.valueOf(payResultStatus))||PayStatusEnum.ERP_PAY.getCode().equals(payType)) {
+						if (OrderStatusEnum.ERP_RESULT_STATUS_HAVE_DOWN_MQ_RETURN.getCode()
+								.equals(String.valueOf(payResultStatus))
+								|| PayStatusEnum.ERP_PAY.getCode().equals(payType)) {
 							downPayOrderList.add(payOrderInfoDMO);
 							continue;
 						}
 					}
-					for(PayOrderInfoDMO payOrderInfoDMO:downPayOrderList)
-					{
+					for (PayOrderInfoDMO payOrderInfoDMO : downPayOrderList) {
 						String lockBalanceCode = payOrderInfoDMO.getDownOrderNo();
 						OtherCenterResDTO<String> otherCenterResDTO = erpMiddleWareOrderRAO
 								.erpBalanceUnlock(messageId, lockBalanceCode);
@@ -298,10 +293,10 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 						payOrderInfoDMO.setDeleteFlag(Byte.valueOf("1"));
 						payOrderInfoDAO.updateByDownOrderNo(payOrderInfoDMO);
 						if (!ResultCodeEnum.SUCCESS.getCode().equals(resultCode)) {
-							tradeOrdersDMO.setResultCode(otherCenterResDTO
-									.getOtherCenterResponseCode());
-							tradeOrdersDMO.setResultMsg(otherCenterResDTO
-									.getOtherCenterResponseMsg());
+							tradeOrdersDMO
+									.setResultCode(otherCenterResDTO.getOtherCenterResponseCode());
+							tradeOrdersDMO
+									.setResultMsg(otherCenterResDTO.getOtherCenterResponseMsg());
 							return tradeOrdersDMO;
 						}
 					}
@@ -362,38 +357,39 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 					.selectOrderItemsByOrderItemNo(orderItemNo);
 
 			if (tradeOrderItemsDMOs == null || tradeOrderItemsDMOs.isEmpty()) {
-				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST
-						.getCode());
-				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST
-						.getMsg());
+				tradeOrderItemsDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getCode());
+				tradeOrderItemsDMO
+						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getMsg());
 				return tradeOrderItemsDMO;
 			}
 			tradeOrderItemsDMO = tradeOrderItemsDMOs.get(0);
 			String orderStatus = tradeOrderItemsDMO.getOrderItemStatus();
 			if (StringUtils.isEmpty((orderStatus))) {
-				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL
-						.getCode());
-				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL
-						.getMsg());
+				tradeOrderItemsDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getCode());
+				tradeOrderItemsDMO
+						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getMsg());
 				return tradeOrderItemsDMO;
 			}
 			if ((OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PAYED_PRE_SPLIT_ORDER_PRE.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PAYED_POST_STRIKEA_DOWNING.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode()
+							.equals(orderStatus)
 					|| OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getCode().equals(orderStatus))) {
-				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL
-						.getCode());
-				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL
-						.getMsg());
+				tradeOrderItemsDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getCode());
+				tradeOrderItemsDMO
+						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getMsg());
 				return tradeOrderItemsDMO;
 			}
 			int isCancelOrder = tradeOrderItemsDMO.getIsCancelOrderItem();
 			if (OrderStatusEnum.CANCLED.getCode().equals(String.valueOf(isCancelOrder))) {
-				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL
-						.getCode());
-				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL
-						.getMsg());
+				tradeOrderItemsDMO
+						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getCode());
+				tradeOrderItemsDMO
+						.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getMsg());
 				return tradeOrderItemsDMO;
 			}
 			String memberID = orderCancelInfoDTO.getOrderCancelMemberId();
@@ -416,14 +412,16 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 					return tradeOrderItemsDMO;
 				}
 				tradeOrderItemsDMO.setOrderItemNo(orderItemNo);
-			}else if(OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)){//如果是vms开单取消订单行，就取消相同的品牌品类的订单行
+			} else if (OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)) {// 如果是vms开单取消订单行，就取消相同的品牌品类的订单行
 				tradeOrderItemsDMO.setBrandId(tradeOrderItemsDMO.getBrandId());
-				tradeOrderItemsDMO.setErpFirstCategoryCode(tradeOrderItemsDMO.getErpFirstCategoryCode());
+				tradeOrderItemsDMO
+						.setErpFirstCategoryCode(tradeOrderItemsDMO.getErpFirstCategoryCode());
 				tradeOrderItemsDMO.setOrderItemNo(null);
-				
+
 				tradeOrdersDMO.setOrderNo(orderNo);
 				tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
-				tradeOrdersDMO = batchReleaseStock4VMSItemCancle(tradeOrderItemsDMO, orderNo, tradeOrdersDMO, messageId);
+				tradeOrdersDMO = batchReleaseStock4VMSItemCancle(tradeOrderItemsDMO, orderNo,
+						tradeOrdersDMO, messageId);
 				String reserveResultCode = tradeOrdersDMO.getResultCode();
 				if (!ResultCodeEnum.SUCCESS.getCode().equals(reserveResultCode)) {
 					tradeOrderItemsDMO.setResultCode(reserveResultCode);
@@ -457,21 +455,20 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
 				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
 			} else {
-				tradeOrderItemsDMO
-						.setResultCode(ResultCodeEnum.ORDERCANCEL_REFUNDSTATUS_IS_DATABASEFAIL
-								.getCode());
-				tradeOrderItemsDMO
-						.setResultMsg(ResultCodeEnum.ORDERCANCEL_REFUNDSTATUS_IS_DATABASEFAIL
-								.getMsg());
+				tradeOrderItemsDMO.setResultCode(
+						ResultCodeEnum.ORDERCANCEL_REFUNDSTATUS_IS_DATABASEFAIL.getCode());
+				tradeOrderItemsDMO.setResultMsg(
+						ResultCodeEnum.ORDERCANCEL_REFUNDSTATUS_IS_DATABASEFAIL.getMsg());
 			}
 			if (OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
 					|| OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
-				
-				//取消订单行更新订单表相关金额、数量等数据
-				vmsOperateOrderItemCancelUpdateOrderTable(tradeOrderItemsDMO, orderNo, tradeOrdersDMO, messageId);
+
+				// 取消订单行更新订单表相关金额、数量等数据
+				vmsOperateOrderItemCancelUpdateOrderTable(tradeOrderItemsDMO, orderNo,
+						tradeOrdersDMO, messageId);
 				BigDecimal orderItemAmount = tradeOrderItemsDMO.getOrderItemPayAmount();
-				
+
 				Long brandCode = tradeOrderItemsDMO.getBrandId();
 				String classCode = tradeOrderItemsDMO.getErpFirstCategoryCode();
 				PayOrderInfoDMO payOrderInfoDMO = new PayOrderInfoDMO();
@@ -479,8 +476,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				payOrderInfoDMO.setBrandCode(String.valueOf(brandCode));
 				payOrderInfoDMO.setClassCode(classCode);
 				String channelCode = tradeOrderItemsDMO.getChannelCode();
-				if (Constant.PRODUCT_CHANNEL_CODE_OUTLINE.equals(channelCode))
-				{
+				if (Constant.PRODUCT_CHANNEL_CODE_OUTLINE.equals(channelCode)) {
 					payOrderInfoDMO.setBrandCode(MiddleWareEnum.JD_BRAND_ID_ERP.getCode());
 					payOrderInfoDMO.setClassCode(MiddleWareEnum.JD_CLASS_CODE_ERP.getCode());
 				}
@@ -520,11 +516,12 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
 				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
 				return tradeOrderItemsDMO;
-			}else if(OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)){//如果是vms开单取消订单行，就取消相同的品牌品类的订单行
-				
-				//取消订单行更新订单表相关金额、数量等数据
-				vmsOperateOrderItemCancelUpdateOrderTable(tradeOrderItemsDMO, orderNo, tradeOrdersDMO, messageId);
-				
+			} else if (OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)) {// 如果是vms开单取消订单行，就取消相同的品牌品类的订单行
+
+				// 取消订单行更新订单表相关金额、数量等数据
+				vmsOperateOrderItemCancelUpdateOrderTable(tradeOrderItemsDMO, orderNo,
+						tradeOrdersDMO, messageId);
+
 				TradeOrderErpDistributionDMO record = new TradeOrderErpDistributionDMO();
 				record.setBrandId(tradeOrderItemsDMO.getBrandId());
 				record.setErpFirstCategoryCode(tradeOrderItemsDMO.getErpFirstCategoryCode());
@@ -554,34 +551,36 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 	/*
 	 * 取消订单行更新订单表相关金额、数量等数据
 	 */
-	private void vmsOperateOrderItemCancelUpdateOrderTable(TradeOrderItemsDMO tradeOrderItemsDMO,String orderNo,
-			TradeOrdersDMO tradeOrdersDMO,	String messageId){
+	private void vmsOperateOrderItemCancelUpdateOrderTable(TradeOrderItemsDMO tradeOrderItemsDMO,
+			String orderNo, TradeOrdersDMO tradeOrdersDMO, String messageId) {
 		String orderStatus = tradeOrderItemsDMO.getOrderItemStatus();
-		
+
 		BigDecimal orderItemAmount = null;
 		Integer orderItemGoodsCount = null;
 		BigDecimal goodsAmount = null;
 		BigDecimal orderItemTotalDiscountAmount = null;
 		BigDecimal goodsFreight = null;
 		BigDecimal orderItemTotalAmount = null;
-		
-		//如果是vms开单取消订单行，订单的金额要按照品牌品类计算
-		if(StringUtilHelper.isNotNull(orderStatus) && OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)){
+
+		// 如果是vms开单取消订单行，订单的金额要按照品牌品类计算
+		if (StringUtilHelper.isNotNull(orderStatus)
+				&& OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)) {
 			Long brandId = tradeOrderItemsDMO.getBrandId();
 			String erpFirstCategoryCode = tradeOrderItemsDMO.getErpFirstCategoryCode();
-		    TradeOrderItemsDMO record = new TradeOrderItemsDMO();
-		    record.setBrandId(brandId);
-		    record.setErpFirstCategoryCode(erpFirstCategoryCode);
-		    record.setOrderNo(orderNo);
-		    TradeOrderItemsDMO sumTradeOrderItemsDMO = tradeOrderItemsDAO.selectSumItemOrderItemNoByBrandCodeClassCode(record);
-		    
-		    orderItemAmount = sumTradeOrderItemsDMO.getOrderItemPayAmount();
+			TradeOrderItemsDMO record = new TradeOrderItemsDMO();
+			record.setBrandId(brandId);
+			record.setErpFirstCategoryCode(erpFirstCategoryCode);
+			record.setOrderNo(orderNo);
+			TradeOrderItemsDMO sumTradeOrderItemsDMO = tradeOrderItemsDAO
+					.selectSumItemOrderItemNoByBrandCodeClassCode(record);
+
+			orderItemAmount = sumTradeOrderItemsDMO.getOrderItemPayAmount();
 			orderItemGoodsCount = sumTradeOrderItemsDMO.getGoodsCount();
 			goodsAmount = sumTradeOrderItemsDMO.getGoodsAmount();
 			orderItemTotalDiscountAmount = sumTradeOrderItemsDMO.getTotalDiscountAmount();
 			goodsFreight = sumTradeOrderItemsDMO.getGoodsFreight();
 			orderItemTotalAmount = sumTradeOrderItemsDMO.getOrderItemTotalAmount();
-		}else{
+		} else {
 			orderItemAmount = tradeOrderItemsDMO.getOrderItemPayAmount();
 			orderItemGoodsCount = tradeOrderItemsDMO.getGoodsCount();
 			goodsAmount = tradeOrderItemsDMO.getGoodsAmount();
@@ -589,8 +588,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			goodsFreight = tradeOrderItemsDMO.getGoodsFreight();
 			orderItemTotalAmount = tradeOrderItemsDMO.getOrderItemTotalAmount();
 		}
-		
-		
+
 		TradeOrdersDMO tradeOrdersDMOTemp = tradeOrdersDAO.selectOrderByOrderNo(orderNo);
 		Integer orderGoodsCount = tradeOrdersDMOTemp.getTotalGoodsCount();
 		BigDecimal orderTotalDiscountAmount = tradeOrdersDMOTemp.getTotalDiscountAmount();
@@ -603,18 +601,18 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 		tradeOrdersDMO.setTotalGoodsCount(orderGoodsCount - orderItemGoodsCount);
 		tradeOrdersDMO.setTotalGoodsAmount(orderGoodsAmount.subtract(goodsAmount));
 		tradeOrdersDMO.setTotalFreight(orderTotalFreight.subtract(goodsFreight));
-		tradeOrdersDMO.setTotalDiscountAmount(orderTotalDiscountAmount
-				.subtract(orderItemTotalDiscountAmount));
+		tradeOrdersDMO.setTotalDiscountAmount(
+				orderTotalDiscountAmount.subtract(orderItemTotalDiscountAmount));
 		tradeOrdersDMO.setOrderNo(orderNo);
-		//修改订单状态，异常显示，支付状态(针对vms开单才更新的这个字段，vms是先开单，下行回调的时候才扣钱)
+		// 修改订单状态，异常显示，支付状态(针对vms开单才更新的这个字段，vms是先开单，下行回调的时候才扣钱)
 		orderStatusChangeCommonService.updateOrderErrorVMSPayStatus(tradeOrdersDMO);
 		tradeOrdersDMO.setModifyTime(DateUtil.getSystemTime());
 		LOGGER.info(
 				"MessageId:{} :{} OrderNo:{}调用方法OrderCancelServiceImpl.vmsOperateOrderItemCancel更新订单信息为{}",
-				messageId, orderNo,JSON.toJSONString(tradeOrdersDMO));
+				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		tradeOrdersDAO.updateTradeOrdersByOrderNo(tradeOrdersDMO);
 	}
-	
+
 	@Override
 	public TradeOrderItemsDMO orderItemCancel(OrderCancelInfoReqDTO orderCancelInfoDTO) {
 		TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
@@ -698,7 +696,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 		// tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 		// StringWriter w = new StringWriter();
 		// e.printStackTrace(new PrintWriter(w));
-		// LOGGER.error("MessageId:{} 调用方法OrderCancelServiceImpl.orderItemCancel出现异常{}",
+		// LOGGER.error("MessageId:{}
+		// 调用方法OrderCancelServiceImpl.orderItemCancel出现异常{}",
 		// orderCancelInfoDTO.getMessageId(), w.toString());
 		// }
 		return tradeOrderItemsDMO;
@@ -719,9 +718,10 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 		int hasUsedCoupon = tradeOrdersDMO.getHasUsedCoupon();
 		LOGGER.info("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.reservseResource输入参数是{}",
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
-		//订单状态有311 和 312的 所以必须截取后判断订单状态
-		String orderstatus = tradeOrdersDMO.getOrderStatus().substring(0,2);
-		if ((isTimeLimitedOrder == Constant.IS_TIMELIMITED_ORDER || hasUsedCoupon == Constant.HAS_USED_COUPON)
+		// 订单状态有311 和 312的 所以必须截取后判断订单状态
+		String orderstatus = tradeOrdersDMO.getOrderStatus().substring(0, 2);
+		if ((isTimeLimitedOrder == Constant.IS_TIMELIMITED_ORDER
+				|| hasUsedCoupon == Constant.HAS_USED_COUPON)
 				&& Integer.valueOf(orderstatus) < 30) {
 			List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountDMOList = new ArrayList<TradeOrderItemsDiscountDMO>();
 			if (Constant.ORDER_TYPE_PARENT.equals(orderType)) {
@@ -761,8 +761,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				orderItemPromotionDTO.setOperaterName(memberName);
 				orderItemPromotionDTOList.add(orderItemPromotionDTO);
 			}
-			OtherCenterResDTO<String> otherCenterResDTO = marketCenterRAO.releaseBuyerPromotion(
-					orderItemPromotionDTOList, messageId);
+			OtherCenterResDTO<String> otherCenterResDTO = marketCenterRAO
+					.releaseBuyerPromotion(orderItemPromotionDTOList, messageId);
 			String responseCode = otherCenterResDTO.getOtherCenterResponseCode();
 			if (!ResultCodeEnum.SUCCESS.getCode().equals(responseCode)) {
 				tradeOrdersDMO.setResultCode(responseCode);
@@ -784,10 +784,10 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			for (TradeOrderItemsDMO tradeOrderItemsDMO : tradeItemOrderDmos) {
 				String channelCode = tradeOrderItemsDMO.getChannelCode();
 				if (Constant.PRODUCT_CHANNEL_CODE_OUTLINE.equals(channelCode)
-						|| (Constant.PRODUCT_CHANNEL_CODE_INNER.equals(channelCode) && Integer
-								.valueOf(orderstatus) >= 40)
-						|| (Constant.PRODUCT_CHANNEL_CODE_OUTER.equals(channelCode) && Integer
-								.valueOf(orderstatus) >= 30)) {
+						|| (Constant.PRODUCT_CHANNEL_CODE_INNER.equals(channelCode)
+								&& Integer.valueOf(orderstatus) >= 40)
+						|| (Constant.PRODUCT_CHANNEL_CODE_OUTER.equals(channelCode)
+								&& Integer.valueOf(orderstatus) >= 30)) {
 					continue;
 				}
 				Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();
@@ -797,8 +797,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				order4StockEntryDTO.setQuantity(goodCount);
 				Integer isChangePrice = tradeOrderItemsDMO.getIsChangePrice();
 				Integer bargainingGoodsCount = tradeOrderItemsDMO.getBargainingGoodsCount();
-				if(isChangePrice == 1 && bargainingGoodsCount != 0)
-				{
+				if (isChangePrice == 1 && bargainingGoodsCount != 0) {
 					order4StockEntryDTO.setQuantity(bargainingGoodsCount);
 				}
 				order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.RELEASE);
@@ -814,14 +813,15 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				List<Order4StockChangeDTO> order4StockChangeDTOList = new ArrayList<Order4StockChangeDTO>();
 				order4StockChangeDTOList.add(order4StockChangeDTO);
 				OtherCenterResDTO<String> otherCenterResDTO = null;
-				//如果议价就调用comboChangeStock释放库存(不校验订单生命周期)
-				if(null != tradeOrdersDMO.getIsChangePrice() && tradeOrdersDMO.getIsChangePrice()==1){
-					otherCenterResDTO = goodsCenterRAO.comboChangeStock(
-							order4StockChangeDTOList, messageId);
-				}else{
-					otherCenterResDTO = goodsCenterRAO.batchReleaseStock(
-							order4StockChangeDTOList, messageId);
-				}
+				// //如果议价就调用comboChangeStock释放库存(不校验订单生命周期)
+				// if(null != tradeOrdersDMO.getIsChangePrice() &&
+				// tradeOrdersDMO.getIsChangePrice()==1){
+				// otherCenterResDTO = goodsCenterRAO.comboChangeStock(
+				// order4StockChangeDTOList, messageId);
+				// }else{
+				otherCenterResDTO = goodsCenterRAO.batchReleaseStock(order4StockChangeDTOList,
+						messageId);
+				// }
 				String stockReleaseResCode = otherCenterResDTO.getOtherCenterResponseCode();
 				if (!ResultCodeEnum.SUCCESS.getCode().equals(stockReleaseResCode)) {
 					tradeOrdersDMO.setResultCode(stockReleaseResCode);
@@ -837,9 +837,10 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 	/*
 	 * 批量释放商品库存
 	 */
-	private TradeOrdersDMO batchReleaseStock4VMSItemCancle(TradeOrderItemsDMO tradeOrderItemsDMO,String orderNo,
-			TradeOrdersDMO tradeOrdersDMO,	String messageId){
-		LOGGER.info("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle输入参数是{}",
+	private TradeOrdersDMO batchReleaseStock4VMSItemCancle(TradeOrderItemsDMO tradeOrderItemsDMO,
+			String orderNo, TradeOrdersDMO tradeOrdersDMO, String messageId) {
+		LOGGER.info(
+				"MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle输入参数是{}",
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
 		List<Order4StockEntryDTO> order4StockEntryDTOList = new ArrayList<Order4StockEntryDTO>();
@@ -847,8 +848,9 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 		record.setOrderNo(orderNo);
 		record.setBrandId(tradeOrderItemsDMO.getBrandId());
 		record.setErpFirstCategoryCode(tradeOrderItemsDMO.getErpFirstCategoryCode());
-		List<TradeOrderItemsDMO> sameBrandCodeClassCodeOrder = tradeOrderItemsDAO.selectAllItemOrderItemNoByBrandCodeClassCode(record);
-		
+		List<TradeOrderItemsDMO> sameBrandCodeClassCodeOrder = tradeOrderItemsDAO
+				.selectAllItemOrderItemNoByBrandCodeClassCode(record);
+
 		for (TradeOrderItemsDMO tradeOrderItemsDMOTemp : sameBrandCodeClassCodeOrder) {
 			Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();
 			String skuCode = tradeOrderItemsDMOTemp.getSkuCode();
@@ -857,8 +859,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			order4StockEntryDTO.setQuantity(goodCount);
 			Integer isChangePrice = tradeOrderItemsDMOTemp.getIsChangePrice();
 			Integer bargainingGoodsCount = tradeOrderItemsDMOTemp.getBargainingGoodsCount();
-			if(isChangePrice == 1 && bargainingGoodsCount != 0)
-			{
+			if (isChangePrice == 1 && bargainingGoodsCount != 0) {
 				order4StockEntryDTO.setQuantity(bargainingGoodsCount);
 			}
 			order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.RELEASE);
@@ -866,39 +867,42 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			order4StockEntryDTO.setIsBoxFlag(isBoxFlag);
 			order4StockEntryDTOList.add(order4StockEntryDTO);
 		}
-		
+
 		order4StockChangeDTO.setOrderNo(tradeOrdersDMO.getOrderNo());
 		order4StockChangeDTO.setOrderResource(tradeOrdersDMO.getOrderFrom());
 		order4StockChangeDTO.setMessageId(messageId);
 		order4StockChangeDTO.setOrderEntries(order4StockEntryDTOList);
 		List<Order4StockChangeDTO> order4StockChangeDTOList = new ArrayList<Order4StockChangeDTO>();
 		order4StockChangeDTOList.add(order4StockChangeDTO);
-		
+
 		OtherCenterResDTO<String> otherCenterResDTO = null;
-		//如果议价就调用comboChangeStock释放库存(不校验订单生命周期)
-		if(null != tradeOrdersDMO.getIsChangePrice() && tradeOrdersDMO.getIsChangePrice()==1){
-			otherCenterResDTO = goodsCenterRAO.comboChangeStock(
-					order4StockChangeDTOList, messageId);
-		}else{
-			otherCenterResDTO = goodsCenterRAO.batchReleaseStock(
-					order4StockChangeDTOList, messageId);
-		}
-		
+		// // 如果议价就调用comboChangeStock释放库存(不校验订单生命周期)
+		// if (null != tradeOrdersDMO.getIsChangePrice() &&
+		// tradeOrdersDMO.getIsChangePrice() == 1) {
+		// otherCenterResDTO =
+		// goodsCenterRAO.comboChangeStock(order4StockChangeDTOList,
+		// messageId);
+		// } else {
+		otherCenterResDTO = goodsCenterRAO.batchReleaseStock(order4StockChangeDTOList, messageId);
+		// }
+
 		String stockReleaseResCode = otherCenterResDTO.getOtherCenterResponseCode();
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(stockReleaseResCode)) {
-			LOGGER.info("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle结束,释放商品库存失败",
+			LOGGER.info(
+					"MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle结束,释放商品库存失败",
 					messageId, orderNo);
 			tradeOrdersDMO.setResultCode(stockReleaseResCode);
 			tradeOrdersDMO.setResultMsg(otherCenterResDTO.getOtherCenterResponseMsg());
 			return tradeOrdersDMO;
 		}
-		
+
 		tradeOrdersDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
-		LOGGER.info("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle结束",
+		LOGGER.info(
+				"MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle结束",
 				messageId, orderNo);
 		return tradeOrdersDMO;
 	}
-	
+
 	@Override
 	@Transactional
 	public TradeOrdersDMO orderDelete(OrderCancelInfoReqDTO orderCancelInfoDTO) throws Exception {
@@ -911,8 +915,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
 			String orderStatus = tradeOrdersDMO.getOrderStatus();
 			if (StringUtils.isEmpty((orderStatus))) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_NULL
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_NULL.getCode());
 				tradeOrdersDMO
 						.setResultMsg(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_NULL.getMsg());
 				return tradeOrdersDMO;
@@ -921,16 +925,16 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			if (!OrderStatusEnum.BUYER_RECEIPT.getCode().equals(orderStatus)
 					&& !OrderStatusEnum.EXPIRE_RECEIPT.getCode().equals(orderStatus)
 					&& !OrderStatusEnum.CANCLED.getCode().equals(String.valueOf(isCancelOrder))) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_FAIL
-						.getCode());
+				tradeOrdersDMO
+						.setResultCode(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_FAIL.getCode());
 				tradeOrdersDMO
 						.setResultMsg(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_FAIL.getMsg());
 				return tradeOrdersDMO;
 			}
 			int orderDeleteStatus = tradeOrdersDMO.getOrderDeleteStatus();
 			String deleteStatus = orderCancelInfoDTO.getIsDeleteStatus();
-			if (orderDeleteStatus == Integer.valueOf(OrderStatusEnum.ORDER_NOT_DELETE_STATUS
-					.getCode())) {
+			if (orderDeleteStatus == Integer
+					.valueOf(OrderStatusEnum.ORDER_NOT_DELETE_STATUS.getCode())) {
 				if (OrderStatusEnum.ORDER_DELETE_STATUS.getCode().equals(deleteStatus)) {
 					tradeOrdersDMO.setOrderDeleteStatus(Integer.valueOf(deleteStatus));
 					orderCancelDAO.updateOrderCancelInfo(tradeOrdersDMO);
@@ -938,11 +942,11 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 					tradeOrdersDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
 					return tradeOrdersDMO;
 				}
-			} else if (orderDeleteStatus == Integer.valueOf(OrderStatusEnum.ORDER_DELETE_STATUS
-					.getCode())) {
+			} else if (orderDeleteStatus == Integer
+					.valueOf(OrderStatusEnum.ORDER_DELETE_STATUS.getCode())) {
 				if (OrderStatusEnum.ORDER_THROUGH_DELETE_STATUS.getCode().equals(deleteStatus)
-						|| OrderStatusEnum.ORDER_RESTORE_DELETE_STATUS.getCode().equals(
-								deleteStatus)) {
+						|| OrderStatusEnum.ORDER_RESTORE_DELETE_STATUS.getCode()
+								.equals(deleteStatus)) {
 					tradeOrdersDMO.setOrderDeleteStatus(Integer.valueOf(deleteStatus));
 					orderCancelDAO.updateOrderCancelInfo(tradeOrdersDMO);
 					tradeOrdersDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
@@ -951,20 +955,20 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				}
 			} else if (orderDeleteStatus == Integer
 					.valueOf(OrderStatusEnum.ORDER_THROUGH_DELETE_STATUS.getCode())) {
-				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_THROUGH_FAIL
-						.getCode());
-				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_THROUGH_FAIL
-						.getMsg());
+				tradeOrdersDMO.setResultCode(
+						ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_THROUGH_FAIL.getCode());
+				tradeOrdersDMO.setResultMsg(
+						ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_THROUGH_FAIL.getMsg());
 				return tradeOrdersDMO;
 			}
 			LOGGER.warn(
 					"MessageId:{} OrderNo:{}调用方法OrderCancelServiceImpl.ordeDelete订单状态错误,不能从{}状态到{}状态",
-					orderCancelInfoDTO.getMessageId(), new Object[] { orderNo, orderDeleteStatus,
-							deleteStatus });
-			tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_TORSION_FAIL
-					.getCode());
-			tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_TORSION_FAIL
-					.getMsg());
+					orderCancelInfoDTO.getMessageId(),
+					new Object[] { orderNo, orderDeleteStatus, deleteStatus });
+			tradeOrdersDMO.setResultCode(
+					ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_TORSION_FAIL.getCode());
+			tradeOrdersDMO
+					.setResultMsg(ResultCodeEnum.ORDERDELETE_ORDERSTATUS_IS_TORSION_FAIL.getMsg());
 		} catch (Exception e) {
 			tradeOrdersDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
 			tradeOrdersDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());

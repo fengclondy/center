@@ -1350,6 +1350,9 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                  if (count > 0) {
                      dataList = orderItemsDAO.queryTradeOrderListItemCodeAndBoxFlag(inDTO, pager);
                      for (TradeOrderItemsDTO itemDTO : dataList) {
+                    	 if(itemDTO.getIsChangePrice() == 1){
+                    		 itemDTO.setGoodsCount(itemDTO.getBargainingGoodsCount());
+                    	 }
                          dataGridList.add(baseService.exchangeTradeOrderItemsDTO2Show(dictMap, itemDTO));
                      }
                      long endTime = System.currentTimeMillis();
@@ -1911,8 +1914,8 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                 // 没有议价时跳过此条数据
                 if ((negotiateItemDTO.getBargainingGoodsCount() == null
                         || negotiateItemDTO.getBargainingGoodsCount() <= 0)
-                        && negotiateItemDTO.getBargainingGoodsPrice() == null
-                        || BigDecimal.ZERO.compareTo(negotiateItemDTO.getBargainingGoodsPrice()) >= 0) {
+                        && (negotiateItemDTO.getBargainingGoodsPrice() == null
+                        || BigDecimal.ZERO.compareTo(negotiateItemDTO.getBargainingGoodsPrice()) >= 0)) {
                     continue;
                 }
                 // 议价数量和议价金额没有发生变化时

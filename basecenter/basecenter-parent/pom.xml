@@ -83,6 +83,12 @@
 				<artifactId>common-core</artifactId>
 				<version>${htd.version}</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>cn.htd.membercenter</groupId>
+				<artifactId>membercenter-export</artifactId>
+				<version>${htd.version}</version>
+			</dependency>
 
 			<!-- spring begin -->
 			<dependency>

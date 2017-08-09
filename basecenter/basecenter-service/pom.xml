@@ -20,6 +20,10 @@
 			<groupId>cn.htd.basecenter</groupId>
 			<artifactId>basecenter-dao</artifactId>
 		</dependency>
+		 <dependency>
+				<groupId>cn.htd.membercenter</groupId>
+				<artifactId>membercenter-export</artifactId>
+			</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>

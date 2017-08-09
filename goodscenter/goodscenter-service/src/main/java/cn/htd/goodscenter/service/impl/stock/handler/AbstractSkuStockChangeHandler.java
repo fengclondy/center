@@ -229,16 +229,13 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
         ItemSkuPublishInfoHistory itemSkuPublishInfoHistory = new ItemSkuPublishInfoHistory();
         itemSkuPublishInfoHistory.setOrderNo(orderNo);
         itemSkuPublishInfoHistory.setStockId(stockId);
+        itemSkuPublishInfoHistory.setUpdateType(preCondition.name());
         // 查询该订单、商品最近库存操作记录
-        ItemSkuPublishInfoHistory preStockChangeRecord = this.itemSkuPublishInfoHistoryMapper.selectLastStockRecord(itemSkuPublishInfoHistory);
+        List<ItemSkuPublishInfoHistory> preStockChangeRecord = this.itemSkuPublishInfoHistoryMapper.select(itemSkuPublishInfoHistory);
         // 查看有没有前置操作的相关记录
-        if (preStockChangeRecord != null && preCondition.name().equals(preStockChangeRecord.getUpdateType())) {
-            if (preStockChangeRecord.getQuantity().equals(quantity)) {
-                logger.info("存在库存修改的前置条件,校验通过. pre-stock-change-record: {}", JSONArray.fromObject(preStockChangeRecord));
-                return true;
-            } else {
-                logger.error("之前：{}的数量:{}和目前的数量：{}不一致, 订单号：{}, 库存ID：{}", preStockChangeRecord.getUpdateType(), preStockChangeRecord.getQuantity(), quantity, orderNo,stockId);
-            }
+        if (preStockChangeRecord != null && preStockChangeRecord.size() > 0) { // 有前置记录
+            logger.info("存在库存修改的前置条件,校验通过. pre-stock-change-record: {}", JSONArray.fromObject(preStockChangeRecord));
+            return true;
         }
         return false;
     }

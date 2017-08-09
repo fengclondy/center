@@ -29,7 +29,7 @@ public class SkuStockReleaseImplHandler extends AbstractSkuStockChangeHandler {
         // ADD-START 校验该订单的商品库存有没有锁定过
         if (!validateStockChangePreCondition(orderNo, stockId, StockTypeEnum.RESERVE, quantity)) {
             // 如果没有校验通过
-            throw new StockNoReserveRecordException("释放库存错误-前置校验不通过【该订单下该商品没有锁定的记录或者数量前后不对】, orderNo : "
+            throw new StockNoReserveRecordException("释放库存错误-前置校验不通过【该订单下该商品没有锁定的记录】, orderNo : "
                     + orderNo + ", stockId : " + stockId);
         }
         // ADD-END

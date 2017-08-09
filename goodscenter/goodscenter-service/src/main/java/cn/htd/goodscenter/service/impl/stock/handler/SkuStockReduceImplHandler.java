@@ -45,7 +45,7 @@ public class SkuStockReduceImplHandler extends AbstractSkuStockChangeHandler {
 //                    + formatExceptionMessage(itemSkuPublishInfo, order4StockEntryDTO));
 //        }
         int displayQuantity = (itemSkuPublishInfo.getDisplayQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getDisplayQuantity() - quantity);
-        int reserveQuantity = (itemSkuPublishInfo.getReserveQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getReserveQuantity() - quantity - quantity);
+        int reserveQuantity = (itemSkuPublishInfo.getReserveQuantity() - quantity) < 0 ? 0 :(itemSkuPublishInfo.getReserveQuantity() - quantity);
         itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
         itemSkuPublishInfo.setReserveQuantity(reserveQuantity);
         // 更新库存信息

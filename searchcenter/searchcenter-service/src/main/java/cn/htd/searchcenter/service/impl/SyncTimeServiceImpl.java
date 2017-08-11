@@ -12,7 +12,7 @@ import cn.htd.searchcenter.domain.SyncTime;
 import cn.htd.searchcenter.service.SyncTimeService;
 
 @Service("syncTimeService")
-@DataSource("dataSource_goodsCenter")
+@DataSource("dataSource_solrCenter")
 public class SyncTimeServiceImpl implements SyncTimeService{
 
 	@Resource

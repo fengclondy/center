@@ -11,7 +11,7 @@ import cn.htd.searchcenter.datasource.DataSource;
 import cn.htd.searchcenter.service.RunFlagService;
 
 @Service("runFlagService")
-@DataSource("dataSource_goodsCenter")
+@DataSource("dataSource_solrCenter")
 public class RunFlagServiceImpl implements RunFlagService{
 
 	@Resource

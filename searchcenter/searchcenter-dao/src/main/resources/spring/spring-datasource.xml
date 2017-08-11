@@ -49,6 +49,46 @@
 		</property>
 	</bean>
 
+	<bean id="dataSource_solrCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_solrCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_solrCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_solrCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_solrCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
 	<bean id="dataSource_storeCenter" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName">
@@ -248,7 +288,7 @@
 			<value>true</value>
 		</property>
 	</bean>
-	
+
 	<bean id="dataSource_tradeCenter" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName">
@@ -293,6 +333,7 @@
 		<property name="targetDataSources">
 			<map>
 				<entry key="dataSource_goodsCenter" value-ref="dataSource_goodsCenter"></entry>
+				<entry key="dataSource_solrCenter" value-ref="dataSource_solrCenter"></entry>
 				<entry key="dataSource_storeCenter" value-ref="dataSource_storeCenter"></entry>
 				<entry key="dataSource_priceCenter" value-ref="dataSource_priceCenter"></entry>
 				<entry key="dataSource_memberCenter" value-ref="dataSource_memberCenter"></entry>

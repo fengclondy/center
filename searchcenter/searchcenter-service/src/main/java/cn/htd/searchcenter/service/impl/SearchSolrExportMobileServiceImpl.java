@@ -268,6 +268,7 @@ public class SearchSolrExportMobileServiceImpl implements
 			}
 			addressSb.append(") AND (" + addressCode);
 			addressSb.append(" OR isSalesWholeCountry:true NOT shelvesFlag:4)))");
+			addressSb.append(" AND hasQuantity:true");
 			filterList.add(addressSb.toString());
 		} else {
 			logger.info("该会员地址为空：" + addressCode);

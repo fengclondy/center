@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.searchcenter.dao.PriceInfoDAO">
+	<!-- =========================================================== -->
+	<!-- 定义resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="resultMap" type="cn.htd.searchcenter.domain.PriceDTO">
+		<result property="itemId" column="itemId" jdbcType="BIGINT" />
+		<result property="retailPrice" column="retailPrice" jdbcType="DECIMAL" />
+		<result property="price" column="price" jdbcType="DECIMAL" />
+	</resultMap>
+
+
+	<!-- 根据type查询 -->
+	<select id="queryItemPriceByItemId" resultMap="resultMap">
+		SELECT
+		item_id as itemId,
+		<if test="isBox !=null and isBox == 1">
+			box_sale_price as price,
+		</if>
+		<if test="isBox !=null and isBox == 0">
+			area_sale_price as price,
+		</if>
+		retail_price as retailPrice
+		FROM item_sku_base_price
+		WHERE item_id = #{itemId}
+	</select>
+
+	<select id="queryExternalItemPrice" resultType="java.math.BigDecimal">
+		SELECT min(price)
+		FROM item_sku_ladder_price
+		WHERE delete_flag = 0 AND item_id =
+		#{itemId}
+	</select>
+
+</mapper>

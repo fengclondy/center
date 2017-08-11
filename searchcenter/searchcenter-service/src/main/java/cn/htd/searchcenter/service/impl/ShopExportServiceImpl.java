@@ -8,11 +8,13 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import cn.htd.searchcenter.dao.ShopInfoDAO;
+import cn.htd.searchcenter.datasource.DataSource;
 import cn.htd.searchcenter.domain.ShopDTO;
 import cn.htd.searchcenter.service.ShopExportService;
 
 
 @Service("shopExportService")
+@DataSource("dataSource_storeCenter")
 public class ShopExportServiceImpl implements ShopExportService{
 
 	@Resource

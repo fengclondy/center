@@ -7,10 +7,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import cn.htd.searchcenter.dao.SyncTimeDAO;
+import cn.htd.searchcenter.datasource.DataSource;
 import cn.htd.searchcenter.domain.SyncTime;
 import cn.htd.searchcenter.service.SyncTimeService;
 
 @Service("syncTimeService")
+@DataSource("dataSource_goodsCenter")
 public class SyncTimeServiceImpl implements SyncTimeService{
 
 	@Resource

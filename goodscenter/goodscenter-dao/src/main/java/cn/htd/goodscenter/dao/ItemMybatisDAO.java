@@ -312,8 +312,6 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	public Long queryCountItemDraftForSaleManageSystem(@Param("entity") ItemQueryInDTO itemInDTO);
 	
 	public void updateItemModifyTimeByItemId(@Param("itemId") Long itemId,@Param("upShelf") Integer upShelf);
-	
-	public String getItemMemberCodeByMemberId(@Param("memberId") Long memberId);
 
 	String queryMaxItemCode();
 

@@ -1,12 +1,17 @@
 package cn.htd.searchcenter.service.impl;
 
 import java.sql.Timestamp;
+
 import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
+
 import cn.htd.searchcenter.dao.RunFlagDAO;
+import cn.htd.searchcenter.datasource.DataSource;
 import cn.htd.searchcenter.service.RunFlagService;
 
 @Service("runFlagService")
+@DataSource("dataSource_solrCenter")
 public class RunFlagServiceImpl implements RunFlagService{
 
 	@Resource

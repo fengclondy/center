@@ -104,7 +104,7 @@
 	
 	<select id="queryShopQQByShopId" resultType="java.lang.String">
 		SELECT customer_QQ_number 
-		FROM zeus.qq_customer 
+		FROM qq_customer 
 		WHERE shop_id = #{shopId} 
 		limit 0,1
 	</select>

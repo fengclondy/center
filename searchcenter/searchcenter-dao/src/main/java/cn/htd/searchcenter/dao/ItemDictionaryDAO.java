@@ -32,8 +32,6 @@ public interface ItemDictionaryDAO {
 
 	public String querySalesVolumeByItemCode(@Param("itemCode") String itemCode);
 
-	public BigDecimal queryExternalItemPrice(@Param("itemId") Long itemId);
-
 	public List<String> querySalesAreaByItemId(@Param("itemId") Long itemId, @Param("isBox") int isBox);
 
 	public Integer queryIsSalesWholeCountry(@Param("itemId") Long itemId, @Param("isBox") int isBox);

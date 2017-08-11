@@ -30,9 +30,11 @@ import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
 
 import cn.htd.searchcenter.domain.ItemDTO;
+import cn.htd.searchcenter.domain.PriceDTO;
 import cn.htd.searchcenter.dump.domain.ItemSearchData;
 import cn.htd.searchcenter.service.ItemDictionaryService;
 import cn.htd.searchcenter.service.ItemExportService;
+import cn.htd.searchcenter.service.SearchPriceService;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -49,6 +51,8 @@ public class ItemDumpJobAssembling {
 	private ItemExportService ItemExportService;
 	@Resource
 	private ItemDictionaryService itemDictionaryService;
+	@Resource
+	private SearchPriceService searchPriceService;
 
 	/**
 	 * 删除solr数据
@@ -187,8 +191,9 @@ public class ItemDumpJobAssembling {
 						data.getShieldCidAndBrandId());
 				doc.addField("hasQuantity", data.getHasQuantity());
 				doc.addField("shelvesFlag", data.getShelvesFlag());
-				if(data.getItemType().intValue() == 3L){
-					doc.addField("publicSaleWholeCountryFlag", data.getPublicSaleWholeCountryFlag());
+				if (data.getItemType().intValue() == 3L) {
+					doc.addField("publicSaleWholeCountryFlag",
+							data.getPublicSaleWholeCountryFlag());
 				}
 				if (!"".equals(data.getHotWord())) {
 					doc.addField("hotWord", data.getHotWord(), 8.0f);
@@ -200,7 +205,7 @@ public class ItemDumpJobAssembling {
 	}
 
 	private boolean filterInvalidData(ItemDTO item) throws Exception {
-		boolean filterFlag = true;
+		boolean filterFlag = false;
 		Long itemType = 999L;
 		if ("10".equals(item.getProductChannelCode())
 				&& null != item.getAreaDisplayQuantity()) {
@@ -215,47 +220,18 @@ public class ItemDumpJobAssembling {
 		if ("20".equals(item.getProductChannelCode())) {
 			itemType = 1L;
 		}
-		// 京东商品
-		if ("3010".equals(item.getProductChannelCode())) {
-			itemType = 2L;
-		}
-		// 秒杀商品
-		if (item.getTimelimitedSkuCount() != null
-				&& item.getTimelimitedSkuCount() > 0) {
-			itemType = 5L;
-		}
 		if (itemType.longValue() != 999) {
 			removeSolrData(item.getItemId(), itemType.longValue());
-			if (itemType.longValue() == 2 || itemType.longValue() == 1) {
-				boolean isVisable = itemDictionaryService.queryItemStatus(item
+			if (itemType.longValue() == 1) {
+				filterFlag = itemDictionaryService.queryItemStatus(item
 						.getItemId());
-				if (!isVisable) {
-					filterFlag = false;
-				}
-			}
-			if (itemType.longValue() == 3) {
-				boolean isVisable = itemDictionaryService.queryItemVisable(
+			} else if (itemType.longValue() == 3) {
+				filterFlag = itemDictionaryService.queryItemVisable(
 						item.getItemId(), 1);
-				if (!isVisable) {
-					filterFlag = false;
-				}
-			}
-			if (itemType.longValue() == 4) {
-				boolean isVisable = itemDictionaryService.queryItemVisable(
+			} else if (itemType.longValue() == 4) {
+				filterFlag = itemDictionaryService.queryItemVisable(
 						item.getItemId(), 0);
-				if (!isVisable) {
-					filterFlag = false;
-				}
 			}
-			if (itemType.longValue() == 5) {
-				boolean isVisable = itemDictionaryService
-						.querySeckillItemStatus(item.getItemId());
-				if (!isVisable) {
-					filterFlag = false;
-				}
-			}
-		} else {
-			filterFlag = false;
 		}
 		return filterFlag;
 	}
@@ -317,12 +293,13 @@ public class ItemDumpJobAssembling {
 				// 商品属性拼装
 				String[] attr_id = itemAttrAssembling(item.getAttr_id());
 				data.setAttr_id(attr_id);
-				if(!"3010".equals(item.getProductChannelCode())){
+				if (!"3010".equals(item.getProductChannelCode())) {
 					// 获取供应商名称
-					String sellerName = itemDictionaryService.querySellerName(item
-							.getSellerId());
+					String sellerName = itemDictionaryService
+							.querySellerName(item.getSellerId());
 					data.setSellerName(sellerName);
-					data.setSellerNameScreen(item.getSellerId() + ":" + sellerName);
+					data.setSellerNameScreen(item.getSellerId() + ":"
+							+ sellerName);
 					// 获取供应商类型
 					String sellerType = itemDictionaryService
 							.querySellerTypeById(item.getSellerId());
@@ -348,13 +325,20 @@ public class ItemDumpJobAssembling {
 						String[] areaCodes = saleAreas(item.getItemId(), 0);
 						data.setAreaCode(areaCodes);
 					}
+					// 获取大厅价格
+					PriceDTO price = searchPriceService.queryItemPriceByItemId(
+							item.getItemId(), 0);
+					if (null != price) {
+						data.setPrice(price.getPrice());
+						data.setUnLoginPrice(price.getRetailPrice());
+					} else {
+						continue;
+					}
 					data.setId(String.valueOf(item.getItemId())
 							+ String.valueOf(4L));
 					data.setItemType(4L);
 					data.setShelvesFlag(shelvesFlag);
 					data.setIsSalesWholeCountry(isSalesWholeCountry);
-					data.setPrice(item.getAreaSalePrice());
-					data.setUnLoginPrice(item.getRetailPrice());
 					data.setQuantity(item.getAreaDisplayQuantity());
 					data.setListtingTime(item.getListtingTime());
 					afterAddResult(results, data);
@@ -367,11 +351,21 @@ public class ItemDumpJobAssembling {
 							.queryIsSalesWholeCountry(item.getItemId(), 1);
 					int shelvesFlag = itemDictionaryService
 							.queryItemVisableCount(item.getItemId(), 1);
-					int publicSaleWholeCountryFlag = itemDictionaryService.queryIsPublicSaleWholeCountry(item.getItemId(), 0);
+					int publicSaleWholeCountryFlag = itemDictionaryService
+							.queryIsPublicSaleWholeCountry(item.getItemId(), 0);
 					// 获取销售区域code
-					if(!isSalesWholeCountry){
+					if (!isSalesWholeCountry) {
 						String[] areaCodes = saleAreas(item.getItemId(), 1);
 						data.setAreaCode(areaCodes);
+					}
+					// 获取包厢价格
+					PriceDTO price = searchPriceService.queryItemPriceByItemId(
+							item.getItemId(), 1);
+					if (null != price) {
+						data.setPrice(price.getPrice());
+						data.setUnLoginPrice(price.getRetailPrice());
+					} else {
+						continue;
 					}
 					data.setId(String.valueOf(item.getItemId())
 							+ String.valueOf(3L));
@@ -379,15 +373,13 @@ public class ItemDumpJobAssembling {
 					data.setShelvesFlag(shelvesFlag);
 					data.setIsSalesWholeCountry(isSalesWholeCountry);
 					data.setPublicSaleWholeCountryFlag(publicSaleWholeCountryFlag);
-					data.setPrice(item.getBoxSalePrice());
-					data.setUnLoginPrice(item.getRetailPrice());
 					data.setQuantity(item.getBoxDisplayQuantity());
 					data.setListtingTime(item.getListtingTime());
 					afterAddResult(results, data);
 				}
 				// 外部商品
 				if ("20".equals(item.getProductChannelCode())) {
-					BigDecimal exterPrice = itemDictionaryService
+					BigDecimal exterPrice = searchPriceService
 							.queryExternalItemPrice(item.getItemId());
 					if (null == exterPrice) {
 						continue;
@@ -402,37 +394,7 @@ public class ItemDumpJobAssembling {
 					data.setListtingTime(item.getListtingTime());
 					afterAddResult(results, data);
 				}
-				// 京东商品
-				if ("3010".equals(item.getProductChannelCode())) {
-					data.setId(String.valueOf(item.getItemId())
-							+ String.valueOf(2L));
-					data.setItemType(2L);
-					data.setSellerName("");
-					data.setIsSalesWholeCountry(true);
-					data.setPrice(item.getAreaSalePrice());
-					data.setUnLoginPrice(item.getRetailPrice());
-					data.setQuantity(9999L);
-					data.setShieldCidAndBrandId(data.getCid() + ":"
-							+ data.getBrandId());
-					data.setListtingTime(item.getListtingTime());
-					afterAddResult(results, data);
-				}
-				// 秒杀商品
-				if (item.getTimelimitedSkuCount() != null
-						&& item.getTimelimitedSkuCount() > 0) {
-					data.setId(String.valueOf(item.getItemId())
-							+ String.valueOf(0L));
-					data.setItemType(5L);
-					data.setIsSalesWholeCountry(true);
-					data.setPrice(item.getSkuTimelimitedPrice());
-					data.setUnLoginPrice(item.getSkuTimelimitedPrice());
-					data.setQuantity(item.getTimelimitedSkuCount());
-					data.setListtingTime(item.getEffectiveTime());
-					afterAddResult(results, data);
-				}
-
 			} catch (Exception e) {
-				e.printStackTrace();
 				continue;
 			}
 		}
@@ -440,39 +402,36 @@ public class ItemDumpJobAssembling {
 	}
 
 	@SuppressWarnings("unchecked")
-	private String[] itemAttrAssembling(String attrId) throws JsonParseException,
-			JsonMappingException, IOException {
+	private String[] itemAttrAssembling(String attrId)
+			throws JsonParseException, JsonMappingException, IOException {
 		String attr_id[] = null;
 		try {
-				if (StringUtils.isNotEmpty(attrId)) {
-					if (!attrId.startsWith("{") && !attrId.endsWith("}")) {
-						attrId = "{" + attrId + "}";
-					}
-					Map<String, Object> map = JSONObject.fromObject(attrId);
-					List<String> commlist = new ArrayList<String>();
-					if (null != map && !map.isEmpty()) {
-						for (String key : map.keySet()) {
-							Object attributeValueObj = map.get(key);
-							if (attributeValueObj instanceof Integer) {
-								if (null != attributeValueObj
-										&& !"".equals(attributeValueObj)) {
-									commlist.add(String
-											.valueOf(attributeValueObj));
-								}
-							} else if (attributeValueObj instanceof JSONArray) {
-								List<Integer> jsonArray = (List<Integer>) attributeValueObj;
-								for (Integer intVal : jsonArray) {
-									if (null != intVal
-											&& intVal.intValue() != 0) {
-										commlist.add(String.valueOf(intVal));
-									}
+			if (StringUtils.isNotEmpty(attrId)) {
+				if (!attrId.startsWith("{") && !attrId.endsWith("}")) {
+					attrId = "{" + attrId + "}";
+				}
+				Map<String, Object> map = JSONObject.fromObject(attrId);
+				List<String> commlist = new ArrayList<String>();
+				if (null != map && !map.isEmpty()) {
+					for (String key : map.keySet()) {
+						Object attributeValueObj = map.get(key);
+						if (attributeValueObj instanceof Integer) {
+							if (null != attributeValueObj
+									&& !"".equals(attributeValueObj)) {
+								commlist.add(String.valueOf(attributeValueObj));
+							}
+						} else if (attributeValueObj instanceof JSONArray) {
+							List<Integer> jsonArray = (List<Integer>) attributeValueObj;
+							for (Integer intVal : jsonArray) {
+								if (null != intVal && intVal.intValue() != 0) {
+									commlist.add(String.valueOf(intVal));
 								}
 							}
 						}
 					}
-					int size = commlist.size();
-					attr_id = (String[]) commlist
-							.toArray(new String[size]);
+				}
+				int size = commlist.size();
+				attr_id = (String[]) commlist.toArray(new String[size]);
 			}
 		} catch (Exception e) {
 			return new String[0];

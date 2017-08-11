@@ -27,8 +27,6 @@ public interface ItemDictionaryService {
 	
 	public Long querySalesVolumeByItemCode(String itemCode) throws Exception;
 
-	public BigDecimal queryExternalItemPrice(Long itemId) throws Exception;
-
 	public List<String> querySalesAreaByItemId(Long itemId, int isBox) throws Exception;
 
 	public boolean queryIsSalesWholeCountry(Long itemId, int isBox) throws Exception;
@@ -36,8 +34,6 @@ public interface ItemDictionaryService {
 	public List<BaseAddressDTO> queryAreaThreeAndSecond() throws Exception;
 
 	public boolean queryJDItemVisable(Long itemId) throws Exception;
-
-	public boolean querySeckillItemStatus(Long itemId) throws Exception;
 
 	public int queryItemVisableCount(Long itemId, int isBox) throws Exception;
 	

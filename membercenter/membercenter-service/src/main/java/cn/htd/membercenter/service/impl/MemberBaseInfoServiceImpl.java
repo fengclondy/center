@@ -13,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.basecenter.domain.TransactionRelation;
 import cn.htd.basecenter.dto.SendSmsDTO;
 import cn.htd.basecenter.dto.TransactionRelationDTO;
@@ -27,6 +24,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.encrypt.KeygenGenerator;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
@@ -95,6 +93,9 @@ import cn.htd.usercenter.dto.CustomerDTO;
 import cn.htd.usercenter.dto.UserDTO;
 import cn.htd.usercenter.service.CustomerService;
 import cn.htd.usercenter.service.UserExportService;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("memberBaseInfoService")
 public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
@@ -3099,5 +3100,19 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		}
 		return rs;
 	}
+	
+		@Override
+		public ExecuteResult<String> queryCompanyCodeBySellerId(Long sellerId) {
+			ExecuteResult<String> result=new ExecuteResult<String>();
+			if(sellerId==null||sellerId<=0){
+				result.setCode(ErrorCodes.E10000.name());
+				result.setResultMessage(ErrorCodes.E10000.getErrorMsg("sellerId"));
+				return result;
+			}
+			String companyCode=memberCompanyInfoDao.queryCompanyCodeBySellerId(sellerId);
+			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setResult(companyCode);
+			return result;
+		}
 
 }

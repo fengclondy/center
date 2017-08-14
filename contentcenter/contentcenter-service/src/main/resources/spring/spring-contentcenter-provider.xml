@@ -48,8 +48,6 @@
 
 	<dubbo:service interface="com.bjucloud.contentcenter.service.MallSpecialSubjectExportService" ref="mallSpecialSubjectExportService" version="${esf.version}" timeout="60000"/>
 
-    <dubbo:service interface="com.bjucloud.contentcenter.service.ContentCenterService" ref="contentCenterService" version="${esf.version}" timeout="60000" />
-
 	<!-- add by lh 2017-01-16 暴露城市广告位 -->
 	<dubbo:service interface="com.bjucloud.contentcenter.service.SubAdService" ref="subAdService" version="${esf.version}" timeout="60000"/>
 	<!--add by lh 2017-01018 暴露城市站内容-->

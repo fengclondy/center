@@ -22,6 +22,10 @@
 			<artifactId>contentcenter-export</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>cn.htd.membercenter</groupId>
+			<artifactId>membercenter-domain</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>

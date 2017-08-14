@@ -83,7 +83,9 @@
 	
     <!--帮助中心管理-->
 	<dubbo:service interface="com.bjucloud.contentcenter.service.HelpDocumentService" ref="helpDocumentService" version="${esf.version}" timeout="60000"/>
-	
+
+	<dubbo:service interface="com.bjucloud.contentcenter.service.HelpDocToMallService" ref="helpDocToMallService" version="${esf.version}" timeout="60000"/>
+
 	<dubbo:service interface="com.bjucloud.contentcenter.service.TransactionRelationService" ref="transactionRelationService" version="${esf.version}" timeout="60000"/>
 
 	<dubbo:service interface="com.bjucloud.contentcenter.service.SubAdService" ref="subAdService" version="${esf.version}" timeout="60000"/>

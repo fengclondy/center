@@ -19,6 +19,8 @@
 	
 	<dubbo:service interface="cn.htd.membercenter.service.MemberErpCallbackService" ref="memberErpCallbackService" version="${dubbo.version}" timeout="60000" />
 	
+	<dubbo:service interface="cn.htd.membercenter.service.MemberSuperBossService" ref="memberSuperBossService" version="${dubbo.version}" timeout="60000" />
+	
 	<dubbo:service interface="cn.htd.membercenter.service.ContentCenterService" ref="contentCenterService" version="${dubbo.version}" timeout="60000" /> 
 	
 	<dubbo:service interface="cn.htd.membercenter.service.MemberStatusService" ref="memberStatusService" version="${dubbo.version}" timeout="60000" />

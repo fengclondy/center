@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjucloud.contentcenter.dao.HelpDocumentCategoryDAO">
+
+	<resultMap id="base_resultMap_helpDocCategory" type="com.bjucloud.contentcenter.domain.HelpDocCategory">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="category_code" property="categoryCode" jdbcType="VARCHAR" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="parent_category_code" property="parentCategoryCode" jdbcType="VARCHAR" />
+    <result column="parent_category_name" property="parentCategoryName" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="is_publish" property="isPublish" jdbcType="TINYINT" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="getHelpDocCategoriesByParams" parameterType="com.bjucloud.contentcenter.dto.HelpDocCategoryDTO" resultMap="base_resultMap_helpDocCategory">
+	select id,category_code,category_name,parent_category_code,parent_category_name,
+    level,is_publish,sort_num,create_id,create_name, create_time,modify_id,modify_name,modify_time  
+	from help_doc_category 
+	<where>  is_publish = 1 and   
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT} 
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			category_code = #{categoryCode,jdbcType=VARCHAR}  
+		</if>
+		<if test="parentCategoryCode != null and parentCategoryCode != ''">
+			parent_category_code = #{parentCategoryCode,jdbcType=VARCHAR}  
+		</if>
+	 </where>
+	 order by sort_num  
+	</select>
+	
+	<select id="getSingleHelpDocCategoriesByParams" parameterType="com.bjucloud.contentcenter.dto.HelpDocCategoryDTO" resultMap="base_resultMap_helpDocCategory">
+	select id,category_code,category_name,parent_category_code,parent_category_name,
+    level,is_publish,sort_num,create_id,create_name, create_time,modify_id,modify_name,modify_time  
+	from help_doc_category 
+	<where> is_publish = 1 and 
+	 	<if test="id != null">
+			id = #{id,jdbcType=BIGINT} 
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			category_code = #{categoryCode,jdbcType=VARCHAR}  
+		</if>
+		<if test="parentCategoryCode != null and parentCategoryCode != ''">
+			parent_category_code = #{parentCategoryCode,jdbcType=VARCHAR}  
+		</if>
+	 </where>
+	</select>
+	
+
+</mapper>

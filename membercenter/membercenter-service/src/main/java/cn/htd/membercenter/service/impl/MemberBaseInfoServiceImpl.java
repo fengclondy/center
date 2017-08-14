@@ -940,14 +940,14 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				ExecuteResult<String> code = getMemberCodeById(dto.getMemberId());
 				TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 				transactionRelationDTO.setBuyerName(dto.getCompanyName());
-				ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+				ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 						.getSingleTransactionRelationByParams(transactionRelationDTO);
 				if (executeResult.getResult() != null) {
-					TransactionRelation transactionRelation = executeResult.getResult();
+					TransactionRelationDTO transactionRelation = executeResult.getResult();
 					transactionRelationDTO.setId(transactionRelation.getId());
 					transactionRelationDTO.setBuyerCode(code.getResult());
-					transactionRelationDTO.setIsExist(Boolean.TRUE);
-					transactionRelationDTO.setModifyId(dto.getOperatorId());
+					transactionRelationDTO.setIsExist("1");//1.true 0.false
+					transactionRelationDTO.setModifyId(dto.getOperatorId()+"");
 					transactionRelationDTO.setModifyName(dto.getOperatorName());
 					transactionRelationDTO.setModifyTime(new Date());
 					transactionRelationService.updateTransactionRelation(transactionRelationDTO);
@@ -1330,14 +1330,14 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 
 							TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 							transactionRelationDTO.setBuyerName(oldDto.getCompanyName());
-							ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+							ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 									.getSingleTransactionRelationByParams(transactionRelationDTO);
 							if (executeResult.getResult() != null) {
-								TransactionRelation transactionRelation = executeResult.getResult();
+								TransactionRelationDTO transactionRelation = executeResult.getResult();
 								transactionRelationDTO.setId(transactionRelation.getId());
 								transactionRelationDTO.setBuyerCode(oldDto.getMemberCode());
-								transactionRelationDTO.setIsExist(Boolean.TRUE);
-								transactionRelationDTO.setModifyId(dto.getModifyId());
+								transactionRelationDTO.setIsExist("1");//1.true 0.false
+								transactionRelationDTO.setModifyId(dto.getModifyId()+"");
 								transactionRelationDTO.setModifyName(dto.getModifyName());
 								transactionRelationDTO.setModifyTime(new Date());
 								transactionRelationService.updateTransactionRelation(transactionRelationDTO);
@@ -3100,19 +3100,19 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		}
 		return rs;
 	}
-
-	@Override
-	public ExecuteResult<String> queryCompanyCodeBySellerId(Long sellerId) {
-		ExecuteResult<String> result=new ExecuteResult<String>();
-		if(sellerId==null||sellerId<=0){
-			result.setCode(ErrorCodes.E10000.name());
-			result.setResultMessage(ErrorCodes.E10000.getErrorMsg("sellerId"));
+	
+		@Override
+		public ExecuteResult<String> queryCompanyCodeBySellerId(Long sellerId) {
+			ExecuteResult<String> result=new ExecuteResult<String>();
+			if(sellerId==null||sellerId<=0){
+				result.setCode(ErrorCodes.E10000.name());
+				result.setResultMessage(ErrorCodes.E10000.getErrorMsg("sellerId"));
+				return result;
+			}
+			String companyCode=memberCompanyInfoDao.queryCompanyCodeBySellerId(sellerId);
+			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setResult(companyCode);
 			return result;
 		}
-		String companyCode=memberCompanyInfoDao.queryCompanyCodeBySellerId(sellerId);
-		result.setCode(ErrorCodes.SUCCESS.name());
-		result.setResult(companyCode);
-		return result;
-	}
 
 }

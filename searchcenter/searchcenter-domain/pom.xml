@@ -25,5 +25,10 @@
 			<groupId>org.apache.solr</groupId>
 			<version>5.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.7.1</version>
+		</dependency>
 	</dependencies>
 </project>

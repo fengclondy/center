@@ -2371,12 +2371,6 @@
 		</if>
 		 where item_id=#{itemId}
 	</update>
-	<!-- add by zhangxiaolong start  need fix-->
-	<select id="getItemMemberCodeByMemberId" resultType="String" parameterType="long">
-	 select member_code  from zeus.member_base_info where id=#{memberId} and is_seller=1
-	</select>
-	<!-- add by zhangxiaolong start need fix -->
-
 
 	<select id="queryMaxItemCode" resultType="String">
 		select max(item_code + 0) from item

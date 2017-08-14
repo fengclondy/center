@@ -166,14 +166,14 @@ public class MemberVerifySaveServiceImpl implements MemberVerifySaveService {
 					// 关联交易名单
 					TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 					transactionRelationDTO.setBuyerName(memberBase.getCompanyName());
-					ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+					ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 							.getSingleTransactionRelationByParams(transactionRelationDTO);
 					if (executeResult.getResult() != null) {
-						TransactionRelation transactionRelation = executeResult.getResult();
+						TransactionRelationDTO transactionRelation = executeResult.getResult();
 						transactionRelationDTO.setId(transactionRelation.getId());
 						transactionRelationDTO.setBuyerCode(memberBase.getMemberCode());
-						transactionRelationDTO.setIsExist(Boolean.TRUE);
-						transactionRelationDTO.setModifyId(applyBusiRelationDto.getModifyId());
+						transactionRelationDTO.setIsExist("1");//1.true 0.false
+						transactionRelationDTO.setModifyId(applyBusiRelationDto.getModifyId()+"");
 						transactionRelationDTO.setModifyName(applyBusiRelationDto.getModifyName());
 						transactionRelationDTO.setModifyTime(new Date());
 						transactionRelationService.updateTransactionRelation(transactionRelationDTO);

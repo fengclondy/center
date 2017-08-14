@@ -270,7 +270,7 @@
 		and m.buyer_seller_type = '2' 		
 	</select>
 	
-	<select id="queryCompanyCodeBySellerId" parameterType="java.lang.Long" resultType="String">
+ <select id="queryCompanyCodeBySellerId" parameterType="java.lang.Long" resultType="String">
    		select company_code as comCode from member_company_info where member_id=#{sellerId}
    		and buyer_seller_type='2'
    		limit 1

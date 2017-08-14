@@ -50,6 +50,8 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	private Integer isDiffIndustry;// 是否异业
 	private String recommendeCode;// 推荐人编码
 	private String promotionPerson;// 合作推广会员店
+	private String curBelongManagerId;//归属客户经理
+	private String belongManagerId;//当前归属客户经理
 
 	public Long getId() {
 		return id;
@@ -438,6 +440,22 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	 */
 	public void setPromotionPerson(String promotionPerson) {
 		this.promotionPerson = promotionPerson;
+	}
+
+	public String getCurBelongManagerId() {
+		return curBelongManagerId;
+	}
+
+	public void setCurBelongManagerId(String curBelongManagerId) {
+		this.curBelongManagerId = curBelongManagerId;
+	}
+
+	public String getBelongManagerId() {
+		return belongManagerId;
+	}
+
+	public void setBelongManagerId(String belongManagerId) {
+		this.belongManagerId = belongManagerId;
 	}
 
 }

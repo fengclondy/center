@@ -1,6 +1,6 @@
-package cn.htd.basecenter.dao;
-
-
-public interface MemberCompanyInfoDao{
-	String querySellerIdByCode(Long sellerId);
-}
+//package cn.htd.basecenter.dao;
+//
+//@Deprecated
+//public interface MemberCompanyInfoDao{
+//	String querySellerIdByCode(Long sellerId);
+//}

@@ -3,8 +3,7 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.htd.basecenter.dao.TransactionRelationDAO">
-
-	<resultMap id="base_resultMap_transactionRelation" type="cn.htd.basecenter.domain.TransactionRelation">
+	<resultMap id="base_resultMap_transactionRelation" type="transactionRelation">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="buyer_id" property="buyerId" jdbcType="BIGINT" />
     <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
@@ -16,8 +15,8 @@
     <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
     <result column="related_type_code" property="relatedTypeCode" jdbcType="VARCHAR" />
     <result column="related_type_name" property="relatedTypeName" jdbcType="VARCHAR" />
-    <result column="isExist" property="isExist" jdbcType="TINYINT" />
-    <result column="isRelated" property="isRelated" jdbcType="TINYINT" />
+    <result column="isExist" property="isExist" jdbcType="INTEGER" />
+    <result column="isRelated" property="isRelated" jdbcType="INTEGER" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -26,10 +25,91 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
 	</resultMap>
 	
-	<update id="updateTransactionRelation" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO" >
+	<insert id="addTransactionRelation" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO">
+	INSERT INTO related_party_transactions    
+    (buyer_id,
+    buyer_code,
+    buyer_type,
+    buyer_name,
+    seller_id,
+    seller_code,
+    seller_type,
+    seller_name,
+    related_type_code,
+    related_type_name,
+    isExist,
+    isRelated,
+    create_id,
+    create_name,
+    create_time)
+    VALUES
+    (#{buyerId,jdbcType=BIGINT},
+    #{buyerCode,jdbcType=VARCHAR},
+    #{buyerType,jdbcType=VARCHAR},
+    #{buyerName,jdbcType=VARCHAR},
+    #{sellerId,jdbcType=BIGINT},
+    #{sellerCode,jdbcType=VARCHAR},
+    #{sellerType,jdbcType=VARCHAR},
+    #{sellerName,jdbcType=VARCHAR},
+    #{relatedTypeCode,jdbcType=VARCHAR},
+    #{relatedTypeName,jdbcType=VARCHAR},
+    #{isExist,jdbcType=TINYINT},
+    #{isRelated,jdbcType=TINYINT},
+    #{createId,jdbcType=BIGINT},
+    #{createName,jdbcType=VARCHAR},
+	#{createTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<delete id="deleteTransactionRelationByParams"  parameterType="cn.htd.basecenter.dto.TransactionRelationDTO">
+		delete from related_party_transactions 
+	 	<where>
+	 		1 = 1
+	 	<if test="id != null and id != ''">
+			and id = #{id,jdbcType=BIGINT} 
+		</if>
+	 	<if test="buyerId != null and buyerId != ''">
+			and buyer_id = #{buyerId,jdbcType=BIGINT} 
+		</if>
+	 	<if test="buyerCode != null and buyerCode != ''">
+			and buyer_code = #{buyerCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="buyerType != null and buyerType != ''">
+			and buyer_type = #{buyerType,jdbcType=VARCHAR} 
+		</if>
+		<if test="buyerName != null and buyerName != ''">
+			and buyer_name = #{buyerName,jdbcType=VARCHAR} 
+		</if>
+		<if test="sellerId != null and sellerId != ''">
+			and seller_id = #{sellerId,jdbcType=BIGINT} 
+		</if>
+	 	<if test="sellerCode != null and sellerCode != ''">
+			and seller_code = #{sellerCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="sellerType != null and sellerType != ''">
+			and seller_type = #{sellerType,jdbcType=VARCHAR} 
+		</if>
+		<if test="sellerName != null and sellerName != ''">
+			and seller_name = #{sellerName,jdbcType=VARCHAR} 
+		</if>
+		<if test="relatedTypeCode != null and relatedTypeCode != ''">
+			and related_type_code = #{relatedTypeCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="relatedTypeName != null and relatedTypeName != ''">
+			and related_type_name = #{relatedTypeName,jdbcType=VARCHAR} 
+		</if>
+		<if test="isExist != null and isExist != ''">
+			and isExist = #{isExist,jdbcType=TINYINT} 
+		</if>
+		<if test="isRelated != null and isRelated != ''">
+			and isRelated = #{isRelated,jdbcType=TINYINT} 
+		</if>
+		</where>
+	</delete>
+	
+	<update id="updateTransactionRelation" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO">
 		update related_party_transactions 
 		<set>
-		<if test="buyerId != null">
+		<if test="buyerId != null and buyerId != ''">
 			buyer_id = #{buyerId,jdbcType=BIGINT} ,
 		</if>
 	 	<if test="buyerCode != null and buyerCode != ''">
@@ -41,7 +121,7 @@
 		<if test="buyerName != null and buyerName != ''">
 			buyer_name = #{buyerName,jdbcType=VARCHAR} ,
 		</if>
-		<if test="sellerId != null">
+		<if test="sellerId != null and sellerId != ''">
 			seller_id = #{sellerId,jdbcType=BIGINT} ,
 		</if>
 	 	<if test="sellerCode != null and sellerCode != ''">
@@ -59,10 +139,10 @@
 		<if test="relatedTypeName != null and relatedTypeName != ''">
 			related_type_name = #{relatedTypeName,jdbcType=VARCHAR} ,
 		</if>
-		<if test="isExist != null">
+		<if test="isExist != null and isExist != ''">
 			isExist = #{isExist,jdbcType=TINYINT} ,
 		</if>
-		<if test="isRelated != null">
+		<if test="isRelated != null and isRelated != ''">
 			isRelated = #{isRelated,jdbcType=TINYINT} ,
 		</if>
 		modify_id = #{modifyId,jdbcType=BIGINT} ,
@@ -71,32 +151,115 @@
 		</set>
 		<where>
 			1 = 1 
-	 	<if test="id != null">
+	 	<if test="id != null and id != ''">
 			and id = #{id,jdbcType=BIGINT} 
 		</if>
-<!-- 		 <if test="buyerId != null"> -->
-<!-- 		    and buyer_id = #{buyerId,jdbcType=BIGINT}  -->
-<!-- 	    </if> -->
-<!--  	    <if test="buyerCode != null and buyerCode != ''"> -->
-<!-- 		    and buyer_code = #{buyerCode,jdbcType=VARCHAR}  -->
-<!-- 	    </if> -->
-<!-- 	    <if test="buyerType != null and buyerType != ''"> -->
-<!-- 		   and buyer_type = #{buyerType,jdbcType=VARCHAR}  -->
-<!-- 	    </if> -->
-<!-- 	    <if test="buyerName != null and buyerName != ''"> -->
-<!-- 		   and buyer_name = #{buyerName,jdbcType=VARCHAR}  -->
-<!-- 	    </if> -->
 		</where>
 	</update>
 	
-	<select id="getTransactionRelationByParams" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO" resultMap="base_resultMap_transactionRelation">
-	select id,buyer_id,buyer_code,buyer_type,buyer_name, seller_id,seller_code,seller_type,seller_name,
-    related_type_code,related_type_name,isExist,isRelated,
-    create_id,create_name,modify_id,modify_name,modify_time 
-	from related_party_transactions 
+	<update id="updateTransactionRelationForImport" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO">
+		update related_party_transactions 
+		<set>
+		<if test="buyerName != null and buyerName != ''">
+			buyer_name = #{buyerName,jdbcType=VARCHAR} ,
+		</if>
+		<if test="sellerId != null and sellerId != ''">
+			seller_id = #{sellerId,jdbcType=BIGINT} ,
+		</if>
+	 	<if test="sellerCode != null and sellerCode != ''">
+			seller_code = #{sellerCode,jdbcType=VARCHAR} ,
+		</if>
+		<if test="sellerType != null and sellerType != ''">
+			seller_type = #{sellerType,jdbcType=VARCHAR} ,
+		</if>
+		<if test="sellerName != null and sellerName != ''">
+			seller_name = #{sellerName,jdbcType=VARCHAR} ,
+		</if>
+		<if test="relatedTypeCode != null and relatedTypeCode != ''">
+			related_type_code = #{relatedTypeCode,jdbcType=VARCHAR} ,
+		</if>
+		<if test="relatedTypeName != null and relatedTypeName != ''">
+			related_type_name = #{relatedTypeName,jdbcType=VARCHAR} ,
+		</if>
+		<if test="isExist != null and isExist != ''">
+			isExist = #{isExist,jdbcType=TINYINT} ,
+		</if>
+		<if test="isRelated != null and isRelated != ''">
+			isRelated = #{isRelated,jdbcType=TINYINT} ,
+		</if>
+		modify_id = #{modifyId,jdbcType=BIGINT} ,
+		modify_name = #{modifyName,jdbcType=VARCHAR} ,
+		modify_time = #{modifyTime,jdbcType=TIMESTAMP} 
+		</set>
+		<where>
+			1 = 1 
+	 	<if test="buyerCode != null and buyerCode != ''">
+			and buyer_code = #{buyerCode,jdbcType=VARCHAR} 
+		</if>
+		</where>
+	</update>
+	
+	<select id="getTransactionRelationCount" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO" resultType="int">
+		select count(1) from related_party_transactions 
+		<where>
+			1 = 1 
+		<if test="id != null and id != ''">
+			and id = #{id,jdbcType=BIGINT} 
+		</if>
+	 	<if test="buyerName != null and buyerName != ''">
+			and buyer_name = #{buyerName}
+		</if>
+		<if test="sellerName != null and sellerName != ''">
+			and seller_name = #{sellerName}
+		</if>
+		<if test="isExist != null and isExist != ''">
+			and isExist = #{isExist,jdbcType=TINYINT} 
+		</if>
+		<if test="relatedTypeCode != null and relatedTypeCode != ''">
+			and related_type_code = #{relatedTypeCode,jdbcType=VARCHAR} 
+		</if>	
+	    </where>
+	</select>
+	
+	<select id="getTransactionRelationForPage" resultMap="base_resultMap_transactionRelation">
+	<include refid = "queryTransactionRelation" />
+	<where>
+		1 = 1 
+	<if test="dto.id != null and dto.id != ''">
+		and id = #{dto.id,jdbcType=BIGINT} 
+	</if>
+	<if test="dto.buyerName != null and dto.buyerName != ''">
+		and buyer_name = #{dto.buyerName}
+	</if>
+	<if test="dto.sellerName != null and dto.sellerName != ''">
+		and seller_name = #{dto.sellerName}
+	</if>
+	<if test="dto.isExist != null and dto.isExist != ''">
+		and isExist = #{dto.isExist,jdbcType=TINYINT} 
+	</if>
+	<if test="dto.relatedTypeCode != null and dto.relatedTypeCode != ''">
+		and related_type_code = #{dto.relatedTypeCode,jdbcType=VARCHAR} 
+	</if>
+	</where>
+		order by id desc 
+	<if test="page!=null">
+        limit #{page.pageOffset},#{page.rows}
+    </if>
+	</select>
+	
+	<sql id="queryTransactionRelation">
+	select id,buyer_id buyerId,buyer_code buyerCode,buyer_type buyerType,buyer_name buyerName,
+    seller_id sellerId,seller_code sellerCode,seller_type sellerType,seller_name sellerName,
+    related_type_code relatedTypeCode, related_type_name relatedTypeName,isExist,isRelated,
+    create_id createId,create_name createName,modify_id modifyId, modify_name modifyName, modify_time modifyTime
+	from related_party_transactions  
+	</sql>
+	
+	<select id="getTransactionRelationByParams" resultType="cn.htd.basecenter.dto.TransactionRelationDTO">
+	<include refid = "queryTransactionRelation" />
 	<where>
  	    1 = 1
- 	<if test="buyerId != null">
+ 	<if test="buyerId != null and buyerId != ''">
 		and buyer_id = #{buyerId,jdbcType=BIGINT} 
 	</if>
  	<if test="buyerCode != null and buyerCode != ''">
@@ -108,7 +271,7 @@
 	<if test="buyerName != null and buyerName != ''">
 		and buyer_name = #{buyerName,jdbcType=VARCHAR} 
 	</if>
-	<if test="sellerId != null">
+	<if test="sellerId != null and sellerId != ''">
 		and seller_id = #{sellerId,jdbcType=BIGINT} 
 	</if>
  	<if test="sellerCode != null and sellerCode != ''">
@@ -126,13 +289,58 @@
 	<if test="relatedTypeName != null and relatedTypeName != ''">
 		and related_type_name = #{relatedTypeName,jdbcType=VARCHAR} 
 	</if>
-	<if test="isExist != null">
+	<if test="isExist != null and isExist != ''">
 		and isExist = #{isExist,jdbcType=TINYINT} 
 	</if>
-	<if test="isRelated != null">
+	<if test="isRelated != null and isRelated != ''">
 		and isRelated = #{isRelated,jdbcType=TINYINT} 
 	</if>
 	</where>
 	</select>
+
+	<update id="updateTransactionRelationForImportByBuyerName" parameterType="cn.htd.basecenter.dto.TransactionRelationDTO">
+		update related_party_transactions 
+		<set>
+		<if test="buyerCode != null and buyerCode != ''">
+			buyer_code = #{buyerCode,jdbcType=VARCHAR} ,
+		</if>
+		<if test="buyerName != null and buyerName != ''">
+			buyer_name = #{buyerName,jdbcType=VARCHAR} ,
+		</if>
+		<if test="sellerId != null and sellerId != ''">
+			seller_id = #{sellerId,jdbcType=BIGINT} ,
+		</if>
+	 	<if test="sellerCode != null and sellerCode != ''">
+			seller_code = #{sellerCode,jdbcType=VARCHAR} ,
+		</if>
+		<if test="sellerType != null and sellerType != ''">
+			seller_type = #{sellerType,jdbcType=VARCHAR} ,
+		</if>
+		<if test="sellerName != null and sellerName != ''">
+			seller_name = #{sellerName,jdbcType=VARCHAR} ,
+		</if>
+		<if test="relatedTypeCode != null and relatedTypeCode != ''">
+			related_type_code = #{relatedTypeCode,jdbcType=VARCHAR} ,
+		</if>
+		<if test="relatedTypeName != null and relatedTypeName != ''">
+			related_type_name = #{relatedTypeName,jdbcType=VARCHAR} ,
+		</if>
+		<if test="isExist != null and isExist != ''">
+			isExist = #{isExist,jdbcType=TINYINT} ,
+		</if>
+		<if test="isRelated != null and isRelated != ''">
+			isRelated = #{isRelated,jdbcType=TINYINT} ,
+		</if>
+		modify_id = #{modifyId,jdbcType=BIGINT} ,
+		modify_name = #{modifyName,jdbcType=VARCHAR} ,
+		modify_time = #{modifyTime,jdbcType=TIMESTAMP} 
+		</set>
+		<where>
+			1 = 1 
+		<if test="buyerName != null and buyerName != ''">
+			and buyer_name = #{buyerName,jdbcType=VARCHAR}
+		</if>
+		</where>
+	</update>
 
 </mapper>

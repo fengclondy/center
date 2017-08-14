@@ -1537,6 +1537,11 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
             throw new MemberCenterException(MemberCenterCodeConst.INPUT_PARAMETER_ERROR,
                    validateResult.getErrorMsg());
         }
+        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName())){
+			rs.addErrorMessage("公司名称已经存在，请重新填写!");
+			return rs;
+        }
+        
 		try {
 			boolean mobilecheck = checkMemberMobile(memberBaseInfoRegisterDTO.getArtificialPersonMobile(), 0l);
 			if (mobilecheck) {
@@ -3124,6 +3129,21 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 			result.setCode(ErrorCodes.SUCCESS.name());
 			result.setResult(companyCode);
 			return result;
+		}
+		
+		
+		/**
+		 * @author li.jun
+		 * @desc:校验公司名称是否唯一
+		 * @param company
+		 * @return
+		 */
+		public boolean checkCompanyNameUnique(String companyName) {
+			List<MemberCompanyInfoDTO> list = memberBaseOperationDAO.checkCompanyNameUnique(companyName);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+			return false;
 		}
 
 }

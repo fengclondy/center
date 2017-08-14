@@ -1530,12 +1530,18 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 	public ExecuteResult<String> insertMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		BelongRelationshipDTO belongRelationshipDTO = new BelongRelationshipDTO();
+		String emsg="";
         // 输入DTO的验证
         ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
         // 有错误信息时返回错误信息
         if (validateResult.isHasErrors()) {
-            throw new MemberCenterException(MemberCenterCodeConst.INPUT_PARAMETER_ERROR,
-                   validateResult.getErrorMsg());
+//            throw new MemberCenterException(MemberCenterCodeConst.INPUT_PARAMETER_ERROR,
+//                   validateResult.getErrorMsg());
+        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
+        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
+			      rs.addErrorMessage(emsg.trim());
+        	}
+			return rs;
         }
         if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName())){
 			rs.addErrorMessage("公司名称已经存在，请重新填写!");

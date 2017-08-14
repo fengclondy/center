@@ -1,7 +1,5 @@
 package cn.htd.searchcenter.service.impl;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import cn.htd.searchcenter.dao.ItemDictionaryDAO;
+import cn.htd.searchcenter.datasource.DataSource;
 import cn.htd.searchcenter.domain.BaseAddressDTO;
 import cn.htd.searchcenter.domain.HotWordDTO;
 import cn.htd.searchcenter.domain.ItemAttrDTO;
@@ -23,10 +22,12 @@ import cn.htd.searchcenter.domain.ItemAttrValueDTO;
 import cn.htd.searchcenter.service.ItemDictionaryService;
 
 @Service("itemDictionaryServiceImpl")
+@DataSource("dataSource_goodsCenter")
 public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 
 	@Resource
 	private ItemDictionaryDAO itemDictionaryDao;
+	
 
 	@Override
 	public String queryBelongRelationship(Long sellerId) {
@@ -34,6 +35,12 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
+	public String queryBoxRelationship(Long sellerId) {
+		return itemDictionaryDao.queryBoxRelationship(sellerId);
+	}
+
+	@Override
+	@DataSource("dataSource_userCenter")
 	public String querySellerName(Long sellerId) {
 		return itemDictionaryDao.querySellerName(sellerId);
 	}
@@ -46,11 +53,6 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 			isUpper = true;
 		}
 		return isUpper;
-	}
-
-	@Override
-	public String queryBoxRelationship(Long sellerId) {
-		return itemDictionaryDao.queryBoxRelationship(sellerId);
 	}
 
 	@Override
@@ -69,11 +71,13 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
+	@DataSource("dataSource_baseCenter")
 	public String queryAreaByCode(String areaCode) {
 		return itemDictionaryDao.queryAreaByCode(areaCode);
 	}
 
 	@Override
+	@DataSource("dataSource_userCenter")
 	public String querySellerTypeById(Long sellerId) {
 		return itemDictionaryDao.querySellerTypeById(sellerId);
 	}
@@ -84,6 +88,7 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
+	@DataSource("dataSource_tradeCenter")
 	public Long querySalesVolumeByItemCode(String itemCode) throws Exception {
 		String salesVolume = itemDictionaryDao
 				.querySalesVolumeByItemCode(itemCode);
@@ -92,11 +97,6 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 		} else {
 			return 0L;
 		}
-	}
-
-	@Override
-	public BigDecimal queryExternalItemPrice(Long itemId) throws Exception {
-		return itemDictionaryDao.queryExternalItemPrice(itemId);
 	}
 
 	@Override
@@ -127,6 +127,7 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
+	@DataSource("dataSource_baseCenter")
 	public List<BaseAddressDTO> queryAreaThreeAndSecond() throws Exception {
 		return itemDictionaryDao.queryAreaThreeAndSecond();
 	}
@@ -136,17 +137,6 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 		boolean visableFlag = false;
 		int jdItemVisable = itemDictionaryDao.queryJDItemVisable(itemId);
 		if (jdItemVisable == 1) {
-			visableFlag = true;
-		}
-		return visableFlag;
-	}
-
-	@Override
-	public boolean querySeckillItemStatus(Long itemId) throws Exception {
-		boolean visableFlag = false;
-		int seckillVisable = itemDictionaryDao.querySeckillItemStatus(itemId,
-				new Timestamp(System.currentTimeMillis()));
-		if (seckillVisable == 1) {
 			visableFlag = true;
 		}
 		return visableFlag;
@@ -177,6 +167,7 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
+	@DataSource("dataSource_contentCenter")
 	public String queryHotWordByItemCode(String itemCode) throws Exception {
 		String returnMap = "";
 		List<HotWordDTO> hotWordList = itemDictionaryDao

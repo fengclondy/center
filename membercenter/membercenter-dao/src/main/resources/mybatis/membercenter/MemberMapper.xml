@@ -1597,4 +1597,12 @@
 		and mc.buyer_seller_type='2'
 		limit 0,1
 	</select>
+	
+	
+  <select id="checkCompanyNameUnique" resultType="cn.htd.membercenter.dto.MemberCompanyInfoDTO">
+		SELECT company_name as companyName
+	FROM member_company_info
+	where buyer_seller_type='1' and company_name=#{companyName}
+	</select>
+	
 </mapper>

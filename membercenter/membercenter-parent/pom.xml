@@ -51,6 +51,9 @@
 			<properties>
 				<env>test</env>
 			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 		</profile>
 		<!-- 本地环境 -->
 		<profile>
@@ -58,9 +61,7 @@
 			<properties>
 				<env>dev</env>
 			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+
 		</profile>
 	</profiles>
 	<dependencyManagement>
@@ -473,6 +474,23 @@
 				<groupId>com.fasterxml.jackson.module</groupId>
 				<artifactId>jackson-module-jaxb-annotations</artifactId>
 				<version>${jackson.version}</version>
+			</dependency>
+			
+			<!-- dto validator add by lijun -->
+			<dependency>
+			   <groupId>org.hibernate</groupId>
+			   <artifactId>hibernate-validator</artifactId>
+			   <version>5.3.2.Final</version>
+			</dependency>
+			<dependency>
+			   <groupId>javax.el</groupId>
+			   <artifactId>javax.el-api</artifactId>
+			   <version>2.2.4</version>
+			</dependency>
+			<dependency>
+			   <groupId>org.glassfish.web</groupId>
+			   <artifactId>javax.el</artifactId>
+			   <version>2.2.4</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

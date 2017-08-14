@@ -267,4 +267,6 @@ public interface MemberBaseOperationDAO {
 	public Long getInnerSellerInfoByName(@Param("companyName") String companyName);
 
 	public MemberBaseInfoDTO getInnerInfoByName(@Param("companyName") String companyName);
+	
+	public List<MemberCompanyInfoDTO> checkCompanyNameUnique(@Param("companyName") String companyName);
 }

@@ -223,6 +223,6 @@ public interface ItemSkuPriceService {
 	 * @param terminalType
 	 * @return
 	 */
-    ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(Long skuId,String terminalType);
+    ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(Long skuId);
 	
 }

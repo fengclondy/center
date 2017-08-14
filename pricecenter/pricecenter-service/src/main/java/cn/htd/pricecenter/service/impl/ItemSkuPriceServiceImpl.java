@@ -42,6 +42,7 @@ import cn.htd.pricecenter.dto.OrderItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.QueryCommonItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.enums.PriceTypeEnum;
+import cn.htd.pricecenter.enums.TerminalTypeEnum;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
 
 import com.google.common.collect.Lists;
@@ -1037,8 +1038,7 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 	}
 
 	@Override
-	public ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(
-			Long skuId, String terminalType) {
+	public ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(Long skuId) {
 		
 		ExecuteResult<HzgPriceDTO> result=new ExecuteResult<HzgPriceDTO>();
 		if(skuId==null||skuId<=0){
@@ -1047,7 +1047,7 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 			return result;
 		}
 		Map<String,Object> paramMap=Maps.newHashMap();
-		paramMap.put("terminalType",terminalType);
+		paramMap.put("terminalType",TerminalTypeEnum.HZG_TYPE.getCode());
 		paramMap.put("skuId",skuId);
 		
 		List<ItemSkuTerminalPrice> itemSkuTerminalPriceList=itemSkuTerminalPriceMapper.selectBySkuIdAndTerminalType(paramMap);

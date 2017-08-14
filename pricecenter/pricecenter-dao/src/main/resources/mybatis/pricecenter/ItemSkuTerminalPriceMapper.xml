@@ -418,4 +418,21 @@
     where sku_id = #{skuId,jdbcType=BIGINT}
     and terminal_type=#{terminalType}
   </select>
+  <!-- 批量插入 -->
+  <insert id="insertBatch" parameterType="cn.htd.pricecenter.domain.ItemSkuTerminalPrice">
+    insert into item_sku_terminal_price (sku_id, item_id, 
+      seller_id, shop_id, terminal_type, 
+      price_type, price, delete_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+      <foreach collection="list" item="innerItemSkuPrice" separator=",">
+    values (#{skuId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, 
+      #{sellerId,jdbcType=BIGINT}, #{shopId,jdbcType=BIGINT}, #{terminalType,jdbcType=VARCHAR}, 
+      #{priceType,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{deleteFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
 </mapper>

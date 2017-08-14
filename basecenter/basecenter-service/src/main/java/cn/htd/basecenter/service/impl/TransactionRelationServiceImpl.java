@@ -260,49 +260,6 @@ public class TransactionRelationServiceImpl implements TransactionRelationServic
 						}
 					}
 				}
-//				if(buyerIsExistCode(dto , null)){
-//					//buyerCode存在，查询buyerName是否存在
-//					if(StringUtils.isEmpty(dto.getBuyerCode()) && buyerNameIsExist(dto.getBuyerName() , null)){
-//						//buyerName存在，数据异常不做更新处理
-//						failCount ++ ;
-//						transactionRelationList.add(dto);
-//					}else{
-//						//buyerName不存在，根据buyerCode更新其他信息
-//						if(transactionRelationDAO.updateTransactionRelationForImport(dto) > 0){
-//							successCount ++;
-//						}
-//					}
-//					continue;
-//				}else{
-//					//buyerCode不存在，查询buyerName是否存在
-//					if(StringUtils.isEmpty(dto.getBuyerCode()) && buyerNameIsExist(dto.getBuyerName() , null)){
-//						//buyerName存在，根据buyuerName更新其他信息
-//						if(transactionRelationDAO.updateTransactionRelationForImportByBuyerName(dto) > 0){
-//							successCount ++;
-//						}
-//					}else{
-//						//buyerCode不存在，新增数据
-//						if(transactionRelationDAO.addTransactionRelation(dto) > 0){
-//							successCount ++;
-//						}
-//					}
-//					continue;
-//				}
-//				
-//					dto.setModifyId(dto.getCreateId());
-//					dto.setModifyTime(dto.getCreateTime());
-//					if(StringUtils.isNotEmpty(dto.getBuyerCode())){
-//						if(transactionRelationDAO.updateTransactionRelationForImportByBuyerName(dto) > 0){
-//							successCount ++;
-//						}
-//					}else{
-//						
-//					}
-//					continue;
-//				}
-				
-//				failCount ++ ;
-//				transactionRelationList.add(dto);
 			}
 			importResult.setFailCount(failCount);
 			importResult.setSuccessCount(successCount);

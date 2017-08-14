@@ -49,12 +49,12 @@ public class TransactionRelationServiceTest {
 	@Test
 	public void updateTransactionRelationTest(){
 		TransactionRelationDTO dto = new TransactionRelationDTO();
-		dto.setId(73L);;
+		dto.setId("73");
 //		dto.setBuyerId(1L);
 //		dto.setBuyerCode("htd1087000");
 //		dto.setBuyerName("会员017");
-		dto.setIsExist(Boolean.TRUE);//是否系统存在[true.是,false.否]
-		dto.setModifyId(1L);
+		dto.setIsExist("1");//是否系统存在[true.是,false.否]
+		dto.setModifyId("1");
 		dto.setModifyName("creater031");
 		dto.setModifyTime(new Date());
 		
@@ -76,7 +76,7 @@ public class TransactionRelationServiceTest {
 		TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 		transactionRelationDTO.setBuyerName("南京市江宁区家电中心");
 		
-		ExecuteResult<TransactionRelation>  executeResult = transactionRelationService.getSingleTransactionRelationByParams(transactionRelationDTO);
+		ExecuteResult<TransactionRelationDTO>  executeResult = transactionRelationService.getSingleTransactionRelationByParams(transactionRelationDTO);
 		if(HelpDocConstants.EXECUTE_RESULT_SUCCESS.equals(executeResult.getCode())){
 			LOGGER.info("===>result:" + executeResult.getResult());
 		}else{

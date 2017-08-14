@@ -1,10 +1,16 @@
 package cn.htd.pricecenter.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ItemSkuTerminalPrice {
-    private Long skuId;
+public class ItemSkuTerminalPrice implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Long skuId;
 
     private Long itemId;
 

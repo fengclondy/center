@@ -1,10 +1,9 @@
-package com.bjucloud.contentcenter.dto;
+package cn.htd.basecenter.dto;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class ImportResultDTO implements Serializable{
-
 	/**
 	 * 
 	 */
@@ -35,6 +34,4 @@ public class ImportResultDTO implements Serializable{
 		this.transactionRelationList = transactionRelationList;
 	}
 
-
-	
 }

@@ -357,4 +357,13 @@ public interface MemberBaseInfoService {
 	 * @return
 	 */
 	public ExecuteResult<MemberBaseInfoDTO> getInnerInfoByOuterHTDCode(String memberCode);
+	
+		
+	/**
+	 * 根据大b的id查询公司编码
+	 * 
+	 * @param sellerId
+	 * @return
+	*/
+	public  ExecuteResult<String> queryCompanyCodeBySellerId(Long sellerId);
 }

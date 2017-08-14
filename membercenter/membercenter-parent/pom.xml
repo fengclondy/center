@@ -51,6 +51,9 @@
 			<properties>
 				<env>test</env>
 			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 		</profile>
 		<!-- 本地环境 -->
 		<profile>
@@ -58,9 +61,7 @@
 			<properties>
 				<env>dev</env>
 			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+
 		</profile>
 	</profiles>
 	<dependencyManagement>

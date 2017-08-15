@@ -89,6 +89,8 @@ public class MemberBaseInfoDTO implements Serializable {
 
 	private String businessType;// 企业类型，1：个体户，2：企业用户
 	private String recommenderCode;// 推荐人编码
+	
+	private String managerStatus;//超级经理人展示状态
 
 	public List<Long> getIds() {
 		return ids;
@@ -1049,5 +1051,15 @@ public class MemberBaseInfoDTO implements Serializable {
 	public void setRecommenderCode(String recommenderCode) {
 		this.recommenderCode = recommenderCode;
 	}
+
+	public String getManagerStatus() {
+		return managerStatus;
+	}
+
+	public void setManagerStatus(String managerStatus) {
+		this.managerStatus = managerStatus;
+	}
+	
+	
 
 }

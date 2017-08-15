@@ -11,6 +11,7 @@ import cn.htd.pricecenter.domain.ItemSkuLadderPrice;
 import cn.htd.pricecenter.domain.ItemSkuTerminalPrice;
 import cn.htd.pricecenter.dto.CommonItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.HzgPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceInDTO;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.OrderItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.QueryCommonItemSkuPriceDTO;
@@ -224,5 +225,12 @@ public interface ItemSkuPriceService {
 	 * @return
 	 */
     ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(Long skuId);
+    
+    /**
+     * 
+     * @param list
+     * @return
+     */
+    ExecuteResult<String> saveHzgTerminalPrice(HzgPriceInDTO hzgPriceInDTO);
 	
 }

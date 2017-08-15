@@ -21,4 +21,6 @@ public interface ItemSkuTerminalPriceMapper {
     int updateByPrimaryKey(ItemSkuTerminalPrice record);
     
     List<ItemSkuTerminalPrice> selectBySkuIdAndTerminalType(Map map);
+    
+    void insertBatch(List<ItemSkuTerminalPrice> list);
 }

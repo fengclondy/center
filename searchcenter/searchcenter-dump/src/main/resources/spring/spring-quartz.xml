@@ -165,11 +165,11 @@
 		<property name="triggers">
 			<list>
 				<!-- 1-定时调用搜索引擎SKU数据导入定时job。 -->
-				<ref bean="htdPublicItemDumpJobCronTriggerBean" />
+				<!-- <ref bean="htdPublicItemDumpJobCronTriggerBean" /> -->
 				<ref bean="htdBoxItemDumpJobCronTriggerBean" />
 				<!-- <ref bean="jdItemDumpJobCronTriggerBean" /> -->
 				<ref bean="externalItemDumpJobCronTriggerBean" />
-				<ref bean="seckillItemDumpJobCronTriggerBean" />
+				<!-- <ref bean="seckillItemDumpJobCronTriggerBean" /> -->
 				<ref bean="shopDumpJobCronTriggerBean" />
 				<ref bean="itemAllDumpJobCronTriggerBean" />
 				<ref bean="itemAttrDumpJobCronTriggerBean" />

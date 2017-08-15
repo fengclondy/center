@@ -61,7 +61,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 营业执照电子版图片地址
 	 */
-	@NotBlank(message = "营业执照电子版图片地址不能为空")
+	//@NotBlank(message = "营业执照电子版图片地址不能为空")
 	private String businessLicensePicSrc; // 营业执照电子版图片地址
 	private String buyerGuaranteeLicensePicSrc;// 供应商担保证明电子版图片地址
 	private String businessLicenseCertificatePicSrc;// 会员营业执照变更证明图片地址

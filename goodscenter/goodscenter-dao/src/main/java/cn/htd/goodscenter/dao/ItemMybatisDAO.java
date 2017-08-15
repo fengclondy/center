@@ -333,7 +333,7 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 
 	int updateFirstAndFiveCategoryCodeByItemId(Item item);
 
-	List<Item> queryPreSaleItemList(Date lastSyscTime, Map<String, Object> map);
+	List<Item> queryPreSaleItemList(Map<String, Object> map);
 
 	void updatePreSaleFlagByItemId(@Param("preSaleFlag")int preSaleFlag,@Param("itemId") Long itemId);
 	

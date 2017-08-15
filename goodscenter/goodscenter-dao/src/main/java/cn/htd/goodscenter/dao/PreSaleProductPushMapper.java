@@ -1,6 +1,7 @@
 package cn.htd.goodscenter.dao;
 
 import cn.htd.goodscenter.domain.PreSaleProductPush;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -19,5 +20,7 @@ public interface PreSaleProductPushMapper {
     PreSaleProductPush getByItemId(Long itemId);
 
     void update(PreSaleProductPush preSaleProductPush);
+
+    int updateStatus(@Param("id")Long id, @Param("status")int status,  @Param("preStatus")int preStatus);
 
 }

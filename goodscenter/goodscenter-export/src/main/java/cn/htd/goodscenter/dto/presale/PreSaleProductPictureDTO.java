@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by admin on 2017/8/14.
  */
-public class PreSaleProductPictrueDTO implements Serializable {
+public class PreSaleProductPictureDTO implements Serializable {
 
     private String imageType; // 主图：PRIMARY
 

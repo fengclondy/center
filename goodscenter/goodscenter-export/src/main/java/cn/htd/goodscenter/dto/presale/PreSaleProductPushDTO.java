@@ -38,6 +38,10 @@ public class PreSaleProductPushDTO implements Serializable {
      */
     private Integer isPreSell;
     /**
+     * 供应商ID
+     */
+    private String sellerId;
+    /**
      * 供应商code
      */
     private String sellerCode;
@@ -96,15 +100,15 @@ public class PreSaleProductPushDTO implements Serializable {
     /**
      * 销售区域
      */
-    private List<PreSaleProductSaleAreaDTO> preSaleProductSaleAreaDTOs;
+    private List<PreSaleProductSaleAreaDTO> region;
     /**
      * 商品属性
      */
-    private List<PreSaleProductAttributeDTO> preSaleProductAttributeDTOs;
+    private List<PreSaleProductAttributeDTO> itemAttr;
     /**
      * 商品图片
      */
-    private List<PreSaleProductPictrueDTO> preSaleProductPictrueDTOs;
+    private List<PreSaleProductPictureDTO> spjpgs;
 
     public String getBrandName() {
         return brandName;
@@ -266,14 +270,6 @@ public class PreSaleProductPushDTO implements Serializable {
         this.describeContent = describeContent;
     }
 
-    public List<PreSaleProductSaleAreaDTO> getPreSaleProductSaleAreaDTOs() {
-        return preSaleProductSaleAreaDTOs;
-    }
-
-    public void setPreSaleProductSaleAreaDTOs(List<PreSaleProductSaleAreaDTO> preSaleProductSaleAreaDTOs) {
-        this.preSaleProductSaleAreaDTOs = preSaleProductSaleAreaDTOs;
-    }
-
     public Integer getVersion() {
         return version;
     }
@@ -282,19 +278,35 @@ public class PreSaleProductPushDTO implements Serializable {
         this.version = version;
     }
 
-    public List<PreSaleProductAttributeDTO> getPreSaleProductAttributeDTOs() {
-        return preSaleProductAttributeDTOs;
+    public List<PreSaleProductSaleAreaDTO> getRegion() {
+        return region;
     }
 
-    public void setPreSaleProductAttributeDTOs(List<PreSaleProductAttributeDTO> preSaleProductAttributeDTOs) {
-        this.preSaleProductAttributeDTOs = preSaleProductAttributeDTOs;
+    public void setRegion(List<PreSaleProductSaleAreaDTO> region) {
+        this.region = region;
     }
 
-    public List<PreSaleProductPictrueDTO> getPreSaleProductPictrueDTOs() {
-        return preSaleProductPictrueDTOs;
+    public List<PreSaleProductAttributeDTO> getItemAttr() {
+        return itemAttr;
     }
 
-    public void setPreSaleProductPictrueDTOs(List<PreSaleProductPictrueDTO> preSaleProductPictrueDTOs) {
-        this.preSaleProductPictrueDTOs = preSaleProductPictrueDTOs;
+    public void setItemAttr(List<PreSaleProductAttributeDTO> itemAttr) {
+        this.itemAttr = itemAttr;
+    }
+
+    public List<PreSaleProductPictureDTO> getSpjpgs() {
+        return spjpgs;
+    }
+
+    public void setSpjpgs(List<PreSaleProductPictureDTO> spjpgs) {
+        this.spjpgs = spjpgs;
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
     }
 }

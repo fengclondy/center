@@ -61,14 +61,14 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 营业执照电子版图片地址
 	 */
-	@NotBlank(message = "营业执照电子版图片地址不能为空")
+	//@NotBlank(message = "营业执照电子版图片地址不能为空")
 	private String businessLicensePicSrc; // 营业执照电子版图片地址
 	private String buyerGuaranteeLicensePicSrc;// 供应商担保证明电子版图片地址
 	private String businessLicenseCertificatePicSrc;// 会员营业执照变更证明图片地址
 	/**
 	 * 营业执照号
 	 */
-	@NotBlank(message = "营业执照号不能为空")
+	//@NotBlank(message = "营业执照号不能为空")
 	private String businessLicenseId;// 营业执照号
 	private String buyerBusinessLicenseId;// 会员营业执照注册号
 	private String buyerBusinessLicensePicSrc;// 会员营业执照电子版图片地址
@@ -89,7 +89,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 归属平台
 	 */
-	@NotBlank(message = "平台公司编码不能为空")
+	//@NotBlank(message = "平台公司编码不能为空")
 	private Long belongSellerId;// 归属商家ID
 	private Long curBelongSellerId;// 当前归属商家ID
 	private Integer buyerSellerType;// 会员/商家类型 1：会员，2：商家
@@ -104,7 +104,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 归属客户经理
 	 */
-	@NotBlank(message = "客户经理编号不能为空")
+	//@NotBlank(message = "客户经理编号不能为空")
 	private String curBelongManagerId;//归属客户经理
 	private String belongManagerId;//当前归属客户经理
 

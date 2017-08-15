@@ -91,6 +91,13 @@
     <include refid="MallTypeSub_Column_List" />
     from mall_type_sub
   </select>
+  <select id="selectMallTypeSubById" parameterType="java.lang.Long" resultMap="MallTypeSubResultMap">
+    select 
+    <include refid="MallTypeSub_Column_List" />
+    from mall_type_sub where type_id=#{id}
+    order by sort_num
+  </select>
+  
   
    <resultMap id="SiteLogoResultMap" type="com.bjucloud.contentcenter.domain.SiteLogo">
     <id column="id" jdbcType="BIGINT" property="id" />

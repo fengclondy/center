@@ -9,5 +9,5 @@
 
     <dubbo:reference id="memberBaseService"
                      interface="cn.htd.membercenter.service.MemberBaseService"
-                     version="${dubbo.version}" timeout="60000" />
+                     version="${esf.version}" timeout="60000" />
 </beans>

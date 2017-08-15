@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.htd.basecenter.domain.TransactionRelation;
 import cn.htd.basecenter.dto.SendSmsDTO;
 import cn.htd.basecenter.dto.TransactionRelationDTO;
 import cn.htd.basecenter.service.SendSmsEmailService;
@@ -78,6 +77,7 @@ import cn.htd.membercenter.dto.MemberInvoiceInfoDTO;
 import cn.htd.membercenter.dto.MemberRemoveRelationshipDTO;
 import cn.htd.membercenter.dto.MyNoMemberDTO;
 import cn.htd.membercenter.dto.SalemanDTO;
+import cn.htd.membercenter.dto.SellerInfoDTO;
 import cn.htd.membercenter.dto.SellerTypeInfoDTO;
 import cn.htd.membercenter.dto.VerifyDetailInfoDTO;
 import cn.htd.membercenter.dto.VerifyInfoDTO;
@@ -96,6 +96,7 @@ import cn.htd.usercenter.service.UserExportService;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 
 @Service("memberBaseInfoService")
 public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
@@ -3112,6 +3113,27 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 			String companyCode=memberCompanyInfoDao.queryCompanyCodeBySellerId(sellerId);
 			result.setCode(ErrorCodes.SUCCESS.name());
 			result.setResult(companyCode);
+			return result;
+		}
+
+		@Override
+		public ExecuteResult<SellerInfoDTO> querySellerBaseInfo(Long sellerId) {
+			ExecuteResult<SellerInfoDTO> result=new ExecuteResult<SellerInfoDTO> ();
+			try{
+				if(sellerId==null){
+					result.setCode(ErrorCodes.E10000.name());
+					result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("sellerId")));
+					return result;
+				}
+				SellerInfoDTO sellerInfoDTO=memberBaseOperationDAO.querySellerInfoBySellerId(sellerId);
+				result.setResult(sellerInfoDTO);
+				result.setCode(ErrorCodes.SUCCESS.name());
+				
+			}catch(Exception e){
+				e.printStackTrace();
+				logger.error("MemberBaseInfoServiceImpl::querySellerBaseInfo",e);
+				result.setCode(ErrorCodes.E00001.name());
+			}
 			return result;
 		}
 

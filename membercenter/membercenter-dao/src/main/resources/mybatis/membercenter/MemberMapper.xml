@@ -1597,4 +1597,15 @@
 		and mc.buyer_seller_type='2'
 		limit 0,1
 	</select>
+	<select id="querySellerInfoBySellerId" parameterType="Long" resultType="cn.htd.membercenter.dto.SellerInfoDTO">
+		select 
+			mb.id,
+			mb.member_code,
+			mc.company_name,
+			mc.company_code
+			 from member_base_info mb 
+			join member_company_info mc
+			on mb.id=mc.member_id and mc.buyer_seller_type=2
+			where mb.is_seller='1' and member_id=#{sellerId}
+	</select>
 </mapper>

@@ -21,6 +21,7 @@ import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberCompanyInfoDTO;
 import cn.htd.membercenter.dto.MemberImportSuccInfoDTO;
 import cn.htd.membercenter.dto.MemberInvoiceInfoDTO;
+import cn.htd.membercenter.dto.SellerInfoDTO;
 import cn.htd.membercenter.dto.SellerTypeInfoDTO;
 import cn.htd.membercenter.dto.VerifyResultDTO;
 
@@ -267,4 +268,6 @@ public interface MemberBaseOperationDAO {
 	public Long getInnerSellerInfoByName(@Param("companyName") String companyName);
 
 	public MemberBaseInfoDTO getInnerInfoByName(@Param("companyName") String companyName);
+	
+	public SellerInfoDTO querySellerInfoBySellerId(@Param("sellerId") Long sellerId);
 }

@@ -2468,4 +2468,28 @@
 	<update id="updatePreSaleFlagByItemId">
 		update item set is_pre_sale = #{preSaleFlag} where item_id = #{itemId,jdbcType=BIGINT}
 	</update>
+	<select id="queryPreSaleItemInfo" parameterType="String" 
+		resultType="cn.htd.goodscenter.dto.presale.PreSaleProdQueryDTO">
+	select 
+		t.brand as brandCode,
+		brand.brand_name as brandName,
+		t.item_name as itemName,
+		t.item_code as item_code,
+		t.item_id as itemId,
+		t.seller_id as sellerId,
+		sku.sku_code as skuCode,
+		sku.sku_id as skuId,
+		spu.spu_code as spuCode,
+		spu.erp_code as erpCode,
+		t.is_pre_sale as isPreSell,
+		t.cid as thirdCatId,
+		cat.c_name as thirdCatName
+		 from item t 
+		join item_sku sku on t.item_id=sku.item_id
+		join item_spu spu on t.item_spu_id=spu.spu_id
+		join item_category cat on t.cid=cat.cid
+		join item_brand brand on brand.brand_id=t.brand
+		where sku.sku_code=#{skuCode}
+		limit 1
+	</select>
 </mapper>

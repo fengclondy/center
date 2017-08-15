@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.goodscenter.dao.PreSaleProductPushMapper" >
+    <resultMap id="BaseResultMap" type="cn.htd.goodscenter.domain.PreSaleProductPush" >
+        <id column="id" property="channelId" jdbcType="BIGINT" />
+        <result column="item_id" property="itemId" jdbcType="BIGINT" />
+        <result column="push_status" property="pushStatus" jdbcType="TINYINT" />
+        <result column="push_version" property="pushVersion" jdbcType="BIGINT" />
+        <result column="create_id" property="createId" jdbcType="BIGINT" />
+        <result column="create_name" property="createName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+        <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="cn.htd.goodscenter.domain.PreSaleProductPush">
+        select
+          *
+        from
+          pre_sale_product_push_task
+        where
+         1 = 1
+        <if test="itemId != null">
+            AND item_id = #{itemId}
+        </if>
+        <if test="pushStatus != null">
+                AND push_status = #{pushStatus}
+        </if>
+    </select>
+
+    <select id="selectbySchedule" resultMap="BaseResultMap">
+        select
+          *
+        from
+          pre_sale_product_push_task
+        where
+          push_status in (0, 3)
+          AND mod(id, #{taskQueueNum}) in
+          <foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+            #{taskId}
+          </foreach>
+</select>
+
+    <select id="getByItemId" resultMap="BaseResultMap" parameterType="Long">
+        select
+         *
+        from
+          pre_sale_product_push_task
+        where
+          item_id = #{itemId}
+    </select>
+
+    <insert id="insert" parameterType="cn.htd.goodscenter.domain.PreSaleProductPush" >
+        insert into pre_sale_product_push_task (
+        item_id, push_status, push_version,
+        create_id, create_name, create_time,
+        modify_id, modify_name, modify_time
+        )
+        values (
+        #{itemId,jdbcType=BIGINT}, #{pushStatus,jdbcType=BIGINT}, #{pushVersion, jdbcType=BIGINT}
+        #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <insert id="update" parameterType="cn.htd.goodscenter.domain.PreSaleProductPush" >
+        UPDATE pre_sale_product_push_task
+        <set>
+            <if test="pushStatus != null">
+                push_status = #{pushStatus}
+            </if>
+            modify_time = now()
+        </set>
+        WHERE item_id = #{itemId}
+    </insert>
+</mapper>

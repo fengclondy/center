@@ -2447,4 +2447,20 @@
 		</set>
 		where item_id = #{itemId,jdbcType=BIGINT}
 	</update>
+
+	<select id="queryPreSaleItemList" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			item
+		WHERE
+			is_pre_sale = 1
+		AND product_channel_code = '10'
+		AND item_status IN (1, 4, 5)
+		AND modified > #{lastSyscTime}
+		AND mod(item_id, #{taskQueueNum}) in
+		<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+	</select>
 </mapper>

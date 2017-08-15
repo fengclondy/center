@@ -97,4 +97,9 @@ public class Constants {
 	 */
 	public static final String IS_VISABLE_TRUE = "1";
 
+	/**
+	 * 预售商品同步时间
+	 */
+	public static final String LAST_SYSC_PRE_SALE_PRODUCT_TIME = "LAST_SYSC_PRE_SALE_PRODUCT_TIME";
+
 }

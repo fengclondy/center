@@ -331,4 +331,6 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	//add by zhangxiaolong end
 
 	int updateFirstAndFiveCategoryCodeByItemId(Item item);
+
+	List<Item> queryPreSaleItemList(Date lastSyscTime, Map<String, Object> map);
 }

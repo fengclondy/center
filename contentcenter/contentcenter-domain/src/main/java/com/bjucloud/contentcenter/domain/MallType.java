@@ -2,15 +2,21 @@ package com.bjucloud.contentcenter.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class MallType implements Serializable {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 
-	private String name;// 名称
+	private String name;
+	
+	 private String iconUrl;
 
-	private String status;// 状态
+	private String status;
 
 	private Long createId;
 
@@ -23,6 +29,8 @@ public class MallType implements Serializable {
 	private String modifyName;
 
 	private Date modifyTime;
+
+	private List<MallTypeSub> mallTypeSub;
 
 	public Long getId() {
 		return id;
@@ -95,4 +103,29 @@ public class MallType implements Serializable {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
+
+	/**
+	 * @return the mallTypeSub
+	 */
+	public List<MallTypeSub> getMallTypeSub() {
+		return mallTypeSub;
+	}
+
+	/**
+	 * @param mallTypeSub
+	 *            the mallTypeSub to set
+	 */
+	public void setMallTypeSub(List<MallTypeSub> mallTypeSub) {
+		this.mallTypeSub = mallTypeSub;
+	}
+
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
+	}
+	
+	
 }

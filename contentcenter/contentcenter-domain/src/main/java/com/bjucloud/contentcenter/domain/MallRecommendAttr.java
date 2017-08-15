@@ -1,5 +1,6 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,8 +9,12 @@ import java.util.Date;
  * Description: MallRecommendAttr domain类
  * </p>
  */
-public class MallRecommendAttr {
+public class MallRecommendAttr implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;//
 	private Long itemId;// 商品编号
 	private Long platformId;// 平台id

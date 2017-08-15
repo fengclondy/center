@@ -1,9 +1,14 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class MallTheme {
+public class MallTheme implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String themeName; // 主题页 名称
 	private Long cId; // 类目id

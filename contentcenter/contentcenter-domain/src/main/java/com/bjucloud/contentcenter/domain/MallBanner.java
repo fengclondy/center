@@ -1,7 +1,13 @@
 package com.bjucloud.contentcenter.domain;
 
-public class MallBanner {
+import java.io.Serializable;
 
+public class MallBanner implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;//
 	private String bannerUrl;// 图片url
 	private Double platformId;// 平台id

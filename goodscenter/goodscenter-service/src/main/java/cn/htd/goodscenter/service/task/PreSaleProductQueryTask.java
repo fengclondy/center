@@ -8,6 +8,7 @@ import cn.htd.goodscenter.domain.Item;
 import cn.htd.goodscenter.domain.PreSaleProductPush;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,22 +65,26 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
         try{
             if (taskItemList != null && taskItemList.size() > 0) {
                 String lastSyscTimeStr = this.redisDB.get(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME); // 从REDIS获取最近同步时间戳 格式：【yyyy-MM-dd HH:mm:ss】
+                if (StringUtils.isEmpty(lastSyscTimeStr)) {
+                    lastSyscTimeStr = "2017-05-03 00:00:00"; // 默认开始时间
+                }
                 Date lastSyscTime = sp.parse(lastSyscTimeStr);
+                Date now = new Date();
                 itemList = this.itemMybatisDAO.queryPreSaleItemList(lastSyscTime, this.getTaskParam(taskQueueNum, taskItemList));
                 for (Item item : itemList) {
                     Date date = new Date();
                     PreSaleProductPush preSaleProductPush = new PreSaleProductPush();
                     preSaleProductPush.setItemId(item.getItemId());
                     preSaleProductPush.setPushStatus(0);
+                    preSaleProductPush.setPushVersion(1);
                     preSaleProductPush.setCreateId(Constants.SYSTEM_CREATE_ID);
                     preSaleProductPush.setCreateName(Constants.SYSTEM_CREATE_NAME);
                     preSaleProductPush.setCreateTime(date);
                     preSaleProductPush.setModifyId(Constants.SYSTEM_CREATE_ID);
                     preSaleProductPush.setModifyName(Constants.SYSTEM_CREATE_NAME);
                     preSaleProductPush.setModifyTime(date);
-                    this.preSaleProductPushMapper.insert(preSaleProductPush);
-                    // TODO : 批量insert
                 }
+                this.redisDB.set(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME, sp.format(now));
             }
         } catch (Exception e){
             logger.error("查询预售商品数据【PreSaleProductQueryTask】出错, 错误信息", e);

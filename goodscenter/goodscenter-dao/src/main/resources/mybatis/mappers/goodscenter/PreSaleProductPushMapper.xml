@@ -62,6 +62,10 @@
         #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
         #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
         )
+        ON DUPLICATE
+        push_version = push_version + 1,
+        push_status = 0,
+        modify_time = now()
     </insert>
 
     <insert id="update" parameterType="cn.htd.goodscenter.domain.PreSaleProductPush" >
@@ -73,5 +77,11 @@
             modify_time = now()
         </set>
         WHERE item_id = #{itemId}
+    </insert>
+
+    <insert id="updateStatus">
+        UPDATE pre_sale_product_push_task
+        set push_status = #{status}, modify_time = now()
+        WHERE id = #{id} and push_status = #{preStatus}
     </insert>
 </mapper>

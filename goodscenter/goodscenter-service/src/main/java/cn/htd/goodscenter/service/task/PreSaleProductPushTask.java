@@ -7,11 +7,20 @@ import cn.htd.common.mq.MQSendUtil;
 import cn.htd.goodscenter.common.constants.Constants;
 import cn.htd.goodscenter.dao.*;
 import cn.htd.goodscenter.domain.*;
-import cn.htd.goodscenter.dto.presale.PreSaleProductPictrueDTO;
+import cn.htd.goodscenter.dto.presale.PreSaleProductAttributeDTO;
+import cn.htd.goodscenter.dto.presale.PreSaleProductPictureDTO;
 import cn.htd.goodscenter.dto.presale.PreSaleProductPushDTO;
+import cn.htd.goodscenter.dto.presale.PreSaleProductSaleAreaDTO;
 import cn.htd.goodscenter.service.ItemCategoryService;
+import cn.htd.membercenter.dto.MemberBaseInfoDTO;
+import cn.htd.membercenter.service.MemberBaseInfoService;
+import cn.htd.pricecenter.dto.HzgPriceDTO;
+import cn.htd.pricecenter.service.ItemSkuPriceService;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -49,11 +58,26 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
     @Autowired
     private ItemCategoryService itemCategoryService;
 
-    @Resource
+    @Autowired
     private ItemBrandDAO itemBrandDAO;
 
     @Autowired
+    private MemberBaseInfoService memberBaseInfoService;
+
+    @Autowired
     private ItemSkuPublishInfoMapper itemSkuPublishInfoMapper;
+
+    @Autowired
+    private CategoryAttrDAO categoryAttrDAO;
+
+    @Autowired
+    private ItemSalesAreaMapper itemSalesAreaMapper;
+
+    @Autowired
+    private ItemSalesAreaDetailMapper itemSalesAreaDetailMapper;
+
+    @Autowired
+    private ItemSkuPriceService itemSkuPriceService;
 
     @Autowired
     private RedisDB redisDB;
@@ -65,13 +89,21 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
     public boolean execute(PreSaleProductPush[] preSaleProductPushs, String s) throws Exception {
         for (PreSaleProductPush preSaleProductPush : preSaleProductPushs) {
             try {
+                // 更新为推送中
+                int result = this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 1, 0);
+                if (result == 0) {
+                    return true;
+                }
                 MQSendUtil mqSendUtil = new MQSendUtil();
                 mqSendUtil.setAmqpTemplate(amqpTemplate);
                 mqSendUtil.sendToMQWithRoutingKey(getPreSaleProductPushDTO(preSaleProductPush.getItemId()), MQRoutingKeyConstant.BRAND_DOWN_ERP_ROUTING_KEY);
+                // 更新为推送完成
+                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 2, 1);
             } catch (Exception e) {
-                // TODO : 推送失败
+                logger.error("推送预售商品失败, itemId ：{}", preSaleProductPush.getItemId(), e);
+                // 推送失败
+                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 3, 1);
             }
-
         }
         return true;
     }
@@ -103,7 +135,6 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         };
     }
 
-
     /**
      *
      * @param itemId
@@ -111,27 +142,85 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
      */
     private PreSaleProductPushDTO getPreSaleProductPushDTO(Long itemId) {
         PreSaleProductPushDTO preSaleProductPushDTO = new PreSaleProductPushDTO();
+        /** 查询数据 **/
         Item item = this.itemMybatisDAO.queryItemByPk(itemId);
+        if (item == null) {
+            throw new RuntimeException("item不存在, item_id : " + itemId);
+        }
         List<ItemSku> itemSkuList = this.itemSkuDAO.queryByItemId(itemId);
+        if (itemSkuList == null || itemSkuList.size() == 0) {
+            throw new RuntimeException("sku不存在, item_id : " + itemId);
+        }
         ItemDescribe itemDescribe = this.itemDescribeDAO.getDescByItemId(itemId);
         List<ItemPicture> itemPictureList = this.itemPictureDAO.queryItemPicsById(itemId);
+        boolean is0801 = false;
+        /** 设置seller **/
+        Long sellerId = item.getSellerId();
+        ExecuteResult<String> sellerCodeResult = this.memberBaseInfoService.getMemberCodeById(sellerId);
+        if (sellerCodeResult != null && sellerCodeResult.isSuccess()) {
+            String sellerCode = sellerCodeResult.getResult();
+            String sellerName;
+            String companyCode;
+            ExecuteResult<MemberBaseInfoDTO> executeResult = memberBaseInfoService.queryMemberBaseInfoByMemberCode(sellerCode);
+            if (executeResult != null && executeResult.isSuccess()) {
+                MemberBaseInfoDTO memberBaseInfoDTO = executeResult.getResult();
+                sellerName = memberBaseInfoDTO.getCompanyName();
+                companyCode = memberBaseInfoDTO.getCompanyCode();
+            } else {
+                throw new RuntimeException("queryMemberBaseInfoByMemberCode出错， item_id : " + itemId + ", 错误信息 : " + executeResult.getErrorMessages());
+            }
+            preSaleProductPushDTO.setSellerId(String.valueOf(sellerId));
+            preSaleProductPushDTO.setSellerCode(sellerCode);
+            preSaleProductPushDTO.setSellerName(sellerName);
+            preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? (companyCode.equals("0801") ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
+            is0801 = companyCode.equals("0801");
+        } else {
+            throw new RuntimeException("getMemberCodeById出错， item_id : " + itemId + ", 错误信息 : " + sellerCodeResult.getErrorMessages());
+        }
+        /** 设置item **/
         preSaleProductPushDTO.setSpxxname(item.getItemName());
         preSaleProductPushDTO.setSpxxnmno(item.getErpCode());
-        preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? 1 : 0);
+        /** 设置sku **/
+        ItemSku itemSku = itemSkuList.get(0);
+        preSaleProductPushDTO.setSkuCode(itemSku.getSkuCode());
+        /** 设置详情 **/
+        preSaleProductPushDTO.setDescribeContent(itemDescribe == null ? "" : itemDescribe.getDescribeContent());
         /** 设置品牌品类 **/
         Long brandId = item.getBrand();
         Long thirdCategoryId = item.getCid();
         this.setCategoryAndBrandInfo(preSaleProductPushDTO, thirdCategoryId, brandId);
         /** 设置图片 **/
-        List<PreSaleProductPictrueDTO> preSaleProductPictrueDTOs = new ArrayList<>();
+        List<PreSaleProductPictureDTO> preSaleProductPictureDTOs = new ArrayList<>();
         for (ItemPicture itemPicture : itemPictureList) {
-            PreSaleProductPictrueDTO preSaleProductPictrueDTO = new PreSaleProductPictrueDTO();
-            preSaleProductPictrueDTO.setUrl(itemPicture.getPictureUrl());
-            preSaleProductPictrueDTO.setSort(String.valueOf(itemPicture.getSortNumber()));
-            preSaleProductPictrueDTO.setImageType(itemPicture.getIsFirst() == 1 ? "PRIMARY" : "");
-            preSaleProductPictrueDTOs.add(preSaleProductPictrueDTO);
+            PreSaleProductPictureDTO preSaleProductPictureDTO = new PreSaleProductPictureDTO();
+            preSaleProductPictureDTO.setUrl(itemPicture.getPictureUrl());
+            preSaleProductPictureDTO.setSort(String.valueOf(itemPicture.getSortNumber()));
+            preSaleProductPictureDTO.setImageType(itemPicture.getIsFirst() == 1 ? "PRIMARY" : "");
+            preSaleProductPictureDTOs.add(preSaleProductPictureDTO);
         }
-        preSaleProductPushDTO.setPreSaleProductPictrueDTOs(preSaleProductPictrueDTOs);
+        preSaleProductPushDTO.setSpjpgs(preSaleProductPictureDTOs);
+        /** 设置上下架 **/
+        String shelfType = is0801 ? Constants.SHELF_TYPE_IS_AREA : Constants.SHELF_TYPE_IS_BOX;
+        ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(itemSku.getSkuId(), shelfType, Constants.IS_VISABLE_TRUE);
+        preSaleProductPushDTO.setListStatus(itemSkuPublishInfo != null ? 1 : 2); // 上架状态 1：上架 2：下架
+        if (itemSkuPublishInfo != null) {
+            preSaleProductPushDTO.setKcnum(itemSkuPublishInfo.getDisplayQuantity() - itemSkuPublishInfo.getReserveQuantity());
+        }
+        /** 设置销售属性 **/
+        preSaleProductPushDTO.setItemAttr(this.parseItemAttribute(item.getAttributes()));
+        /** 设置销售区域 **/
+        preSaleProductPushDTO.setRegion(this.parseSaleArea(itemId, shelfType));
+        /** 设置价格 **/
+        ExecuteResult<HzgPriceDTO> hzgPriceDTOExecuteResult = this.itemSkuPriceService.queryHzgTerminalPriceByTerminalType(itemSku.getSkuId());
+        if (hzgPriceDTOExecuteResult != null && hzgPriceDTOExecuteResult.isSuccess()) {
+            HzgPriceDTO hzgPriceDTO = hzgPriceDTOExecuteResult.getResult();
+            preSaleProductPushDTO.setRecommendedPrice(hzgPriceDTO.getRetailPrice());
+            preSaleProductPushDTO.setMemberPrice(hzgPriceDTO.getVipPrice());
+            preSaleProductPushDTO.setVipPrice(hzgPriceDTO.getVipPrice());
+            // TODO : 接口少价格
+        } else {
+            throw new RuntimeException("queryHzgTerminalPriceByTerminalType出错, item_id : " + itemId + ", 错误信息 ：" + hzgPriceDTOExecuteResult.getErrorMessages());
+        }
         return preSaleProductPushDTO;
     }
 
@@ -165,6 +254,99 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
             }
         } else {
             preSaleProductPushDTO.setBrandName(brandName);
+        }
+    }
+
+    private List<PreSaleProductAttributeDTO> parseItemAttribute(String attributes) {
+        List<PreSaleProductAttributeDTO> list = new ArrayList();
+        try {
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(attributes)) {
+                if (!attributes.startsWith("{")) {
+                    attributes = "{" + attributes;
+                }
+                if (!attributes.endsWith("}")) {
+                    attributes = attributes + "}";
+                }
+                Map<String, Object> map = JSONObject.fromObject(attributes);
+                if (MapUtils.isEmpty(map)) {
+                    return list;
+                }
+                for (String s : map.keySet()) {
+                    Long attributeId = Long.valueOf(s);
+                    Object attributeValueObj = map.get(s);
+                    String attributeName = this.getAttributeName(attributeId);
+                    if (org.apache.commons.lang3.StringUtils.isEmpty(attributeName)) {
+                        continue;
+                    }
+                    if (attributeValueObj instanceof JSONArray) {
+                        JSONArray jsonArray = (JSONArray) attributeValueObj;
+                        int size = jsonArray.size();
+                        for (int i = 0; i < size; i++) {
+                            Object attrValueObj = jsonArray.get(i);
+                            if(attrValueObj == null || !org.apache.commons.lang3.StringUtils.isNumeric(attrValueObj + "")){
+                                logger.error("执行方法【parseItemAttribute】attributeValueId", attrValueObj);
+                                continue;
+                            }
+                            Integer attributeValueId = Integer.valueOf(attrValueObj + "");
+                            String attributeValueName = this.getAttributeValueName(attributeValueId);
+                            if (!org.apache.commons.lang3.StringUtils.isEmpty(attributeValueName)) {
+                                PreSaleProductAttributeDTO preSaleProductAttributeDTO = new PreSaleProductAttributeDTO();
+                                preSaleProductAttributeDTO.setAttrName(attributeName);
+                                preSaleProductAttributeDTO.setAttrValue(attributeValueName);
+                                list.add(preSaleProductAttributeDTO);
+                            }
+                        }
+                    } else {
+                        Integer attributeValueId = Integer.valueOf(attributeValueObj + "");
+                        String attributeValueName = this.getAttributeValueName(attributeValueId);
+                        PreSaleProductAttributeDTO preSaleProductAttributeDTO = new PreSaleProductAttributeDTO();
+                        preSaleProductAttributeDTO.setAttrName(attributeName);
+                        preSaleProductAttributeDTO.setAttrValue(attributeValueName);
+                        list.add(preSaleProductAttributeDTO);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("解析商品销售属性出错, 属性串 : {}, 错误信息 : ", attributes, e);
+        }
+        return list;
+    }
+
+    private List<PreSaleProductSaleAreaDTO> parseSaleArea(Long itemId, String shelfType) {
+        List<PreSaleProductSaleAreaDTO> preSaleProductSaleAreaDTOs = new ArrayList<>();
+        ItemSalesArea salesAreaPublic = itemSalesAreaMapper.selectByItemId(itemId, shelfType);
+        if (null != salesAreaPublic) {
+            if (salesAreaPublic.getIsSalesWholeCountry().intValue() == 0) {
+
+            }
+        }
+        // TODO :详情
+        return preSaleProductSaleAreaDTOs;
+    }
+
+    private String getAttributeName(Long attributeId) {
+        if (attributeId != null) {
+            String attributeName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE + attributeId);
+            if (org.apache.commons.lang3.StringUtils.isEmpty(attributeName)) {
+                return this.categoryAttrDAO.getAttrNameByAttrId(attributeId);
+            } else {
+                return attributeName;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private String getAttributeValueName(Integer attributeValueId) {
+        if (attributeValueId != null) {
+            String attributeValueName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE_VALUE + attributeValueId);
+            if (org.apache.commons.lang3.StringUtils.isEmpty(attributeValueName)) {
+                return this.categoryAttrDAO.getAttrValueNameByAttrValueId(Long.valueOf(attributeValueId));
+            } else {
+                return attributeValueName;
+            }
+        } else {
+            return null;
         }
     }
 

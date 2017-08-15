@@ -29,14 +29,13 @@ public class OrderCancelTestUnit {
 	private OrderCancelService orderCancelService;
 	
     @Before  
-    public void setUp() throws Exception 
-    {  
+    public void setUp() throws Exception {  
+    	
     }
     
     @Test
     @Rollback(false) 
-    public void testOrderCancel()
-    {
+    public void testOrderCancel() {
     	try {
 			OrderCancelInfoReqDTO orderCancelInfoReqDTO = new OrderCancelInfoReqDTO();
 			orderCancelInfoReqDTO.setMessageId(GenerateIdsUtil.generateId(null));
@@ -48,22 +47,6 @@ public class OrderCancelTestUnit {
 			TradeOrdersDMO tradeOrdersDMO = orderCancelService.orderCancel(orderCancelInfoReqDTO);
 			String resultCode = tradeOrdersDMO.getResultCode();
 			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());  
-    	} catch (Exception e) {
-		}
-    }
-    @Test
-    @Rollback(false) 
-    public void testOrderDelete()
-    {
-    	try {
-			OrderCancelInfoReqDTO orderCancelInfoReqDTO = new OrderCancelInfoReqDTO();
-			orderCancelInfoReqDTO.setMessageId(GenerateIdsUtil.generateId(null));
-			orderCancelInfoReqDTO.setMemberCode("HTD_13125455");
-			orderCancelInfoReqDTO.setOrderNo("10017022217190000378");
-			orderCancelInfoReqDTO.setIsDeleteStatus(OrderStatusEnum.ORDER_RESTORE_DELETE_STATUS.getCode());
-		/*	TradeOrdersDMO tradeOrdersDMO = orderCancelService.ordeDelete(orderCancelInfoReqDTO);
-			String resultCode = tradeOrdersDMO.getResultCode();
-			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());  */
     	} catch (Exception e) {
 		}
     }

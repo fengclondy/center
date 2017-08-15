@@ -1,13 +1,18 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 商城设置--楼层广告
  *
  */
-public class MallRecfloorAdver {
+public class MallRecfloorAdver implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id; // 主键
 	private Integer sortNum; // '排序号',
 	private String title; // '名称',

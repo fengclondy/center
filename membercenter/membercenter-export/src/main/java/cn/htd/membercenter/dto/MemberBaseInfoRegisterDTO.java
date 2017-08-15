@@ -89,7 +89,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 归属平台
 	 */
-	@NotBlank(message = "平台公司编码不能为空")
+	//@NotBlank(message = "平台公司编码不能为空")
 	private Long belongSellerId;// 归属商家ID
 	private Long curBelongSellerId;// 当前归属商家ID
 	private Integer buyerSellerType;// 会员/商家类型 1：会员，2：商家
@@ -104,7 +104,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 归属客户经理
 	 */
-	@NotBlank(message = "客户经理编号不能为空")
+	//@NotBlank(message = "客户经理编号不能为空")
 	private String curBelongManagerId;//归属客户经理
 	private String belongManagerId;//当前归属客户经理
 

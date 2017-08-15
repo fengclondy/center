@@ -1,9 +1,10 @@
 package com.bjucloud.contentcenter.service;
 
 import cn.htd.common.ExecuteResult;
-import cn.htd.membercenter.domain.*;
 
 import java.util.List;
+
+import com.bjucloud.contentcenter.domain.*;
 
 public interface ContentCenterMallService {
     /**

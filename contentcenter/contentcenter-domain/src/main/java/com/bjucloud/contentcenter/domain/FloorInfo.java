@@ -2,28 +2,19 @@ package com.bjucloud.contentcenter.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-/**
- * 热搜词
- */
-public class HotWord implements Serializable{
-	
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
+public class FloorInfo implements Serializable{
+
+	private static final long serialVersionUID = 3203719175949412207L;
 
 	private Long id;
 
     private String name;
 
-    private String color;
+    private Long sortNum;
 
-    private Long sortNum;// 显示顺序
-
-    private String status;// 状态
+    private String status;
 
     private Long createId;
 
@@ -36,6 +27,8 @@ public class HotWord implements Serializable{
     private String modifyName;
 
     private Date modifyTime;
+    
+    private List<FloorNav> floorNavList;//导航栏列表
 
     public Long getId() {
         return id;
@@ -51,14 +44,6 @@ public class HotWord implements Serializable{
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color == null ? null : color.trim();
     }
 
     public Long getSortNum() {
@@ -124,4 +109,14 @@ public class HotWord implements Serializable{
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	public List<FloorNav> getFloorNavList() {
+		return floorNavList;
+	}
+
+	public void setFloorNavList(List<FloorNav> floorNavList) {
+		this.floorNavList = floorNavList;
+	}
+    
+    
 }

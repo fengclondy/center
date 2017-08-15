@@ -3,6 +3,7 @@ package cn.htd.pricecenter.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -29,18 +30,25 @@ import cn.htd.pricecenter.common.constants.PriceConstants;
 import cn.htd.pricecenter.dao.InnerItemSkuPriceMapper;
 import cn.htd.pricecenter.dao.ItemSkuBasePriceMapper;
 import cn.htd.pricecenter.dao.ItemSkuLadderPriceMapper;
+import cn.htd.pricecenter.dao.ItemSkuTerminalPriceMapper;
 import cn.htd.pricecenter.domain.InnerItemSkuPrice;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
 import cn.htd.pricecenter.domain.ItemSkuLadderPrice;
+import cn.htd.pricecenter.domain.ItemSkuTerminalPrice;
 import cn.htd.pricecenter.dto.CommonItemSkuPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceInDTO;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.OrderItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.QueryCommonItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.enums.PriceTypeEnum;
+import cn.htd.pricecenter.enums.TerminalPriceType;
+import cn.htd.pricecenter.enums.TerminalTypeEnum;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * 价格中心接口
@@ -60,6 +68,8 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 	private MallItemExportService mallItemExportService;
 	@Resource
 	private ItemSkuExportService itemSkuExportService;
+	@Resource
+	private ItemSkuTerminalPriceMapper itemSkuTerminalPriceMapper;
 	/**
 	 * 日志
 	 */
@@ -987,5 +997,172 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 			result.setCode(ErrorCodes.SUCCESS.name());
 		}
 		return result;
+	}
+
+	@Override
+	public ExecuteResult<String> saveItemSkuTerminalPrice(ItemSkuTerminalPrice itemSkuTerminalPrice) {
+		ExecuteResult<String> result=new ExecuteResult<String>();
+		try{
+			itemSkuTerminalPriceMapper.insertSelective(itemSkuTerminalPrice);
+			result.setCode(ErrorCodes.SUCCESS.name());
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("ItemSkuPriceService::saveItemSkuTerminalPrice:",e);
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<String> updateItemSkuTerminalPrice(ItemSkuTerminalPrice itemSkuTerminalPrice) {
+		ExecuteResult<String> result=new ExecuteResult<String>();
+		try{
+			itemSkuTerminalPriceMapper.updateByPrimaryKeySelective(itemSkuTerminalPrice);
+			result.setCode(ErrorCodes.SUCCESS.name());
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("ItemSkuPriceService::updateItemSkuTerminalPrice:",e);
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<List<ItemSkuTerminalPrice>> queryItemSkuTerminalPriceBySkuId(Long skuId) {
+		ExecuteResult<List<ItemSkuTerminalPrice>> result=new ExecuteResult<List<ItemSkuTerminalPrice>>();
+		if(skuId==null||skuId<=0){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("skuId")));
+			return result;
+		}
+		List<ItemSkuTerminalPrice> itemSkuTerminalPriceList=itemSkuTerminalPriceMapper.selectBySkuId(skuId);
+		result.setResult(itemSkuTerminalPriceList);
+		result.setCode(ErrorCodes.SUCCESS.name());
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(Long skuId) {
+		
+		ExecuteResult<HzgPriceDTO> result=new ExecuteResult<HzgPriceDTO>();
+		if(skuId==null||skuId<=0){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("skuId")));
+			return result;
+		}
+		Map<String,Object> paramMap=Maps.newHashMap();
+		paramMap.put("terminalType",TerminalTypeEnum.HZG_TYPE.getCode());
+		paramMap.put("skuId",skuId);
+		
+		List<ItemSkuTerminalPrice> itemSkuTerminalPriceList=itemSkuTerminalPriceMapper.selectBySkuIdAndTerminalType(paramMap);
+		
+		if(CollectionUtils.isEmpty(itemSkuTerminalPriceList)){
+			result.setCode(ErrorCodes.SUCCESS.name());
+			return result;
+		}
+		
+		HzgPriceDTO hzgPrice=new HzgPriceDTO();
+		
+		for(ItemSkuTerminalPrice itemSkuTerminalPrice:itemSkuTerminalPriceList){
+			if("0".equals(itemSkuTerminalPrice.getPriceType())){
+				hzgPrice.setRetailPrice(itemSkuTerminalPrice.getPrice());
+			}
+			if("1".equals(itemSkuTerminalPrice.getPriceType())){
+				hzgPrice.setSalePrice(itemSkuTerminalPrice.getPrice());
+			}
+			if("2".equals(itemSkuTerminalPrice.getPriceType())){
+				hzgPrice.setVipPrice(itemSkuTerminalPrice.getPrice());
+			}
+		}
+		
+		result.setResult(hzgPrice);
+		result.setCode(ErrorCodes.SUCCESS.name());
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<String> saveHzgTerminalPrice(HzgPriceInDTO hzgPriceInDTO) {
+		ExecuteResult<String> result=new ExecuteResult<String>();
+		
+		if(hzgPriceInDTO==null){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("hzgPriceInDTO")));
+			return result;
+		}
+		
+		if(hzgPriceInDTO.getItemId()==null){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("ItemId")));
+			return result;
+		}
+		if(hzgPriceInDTO.getSkuId()==null){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("SkuId")));
+			return result;
+		}
+		
+		if(hzgPriceInDTO.getSellerId()==null){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("SellerId")));
+			return result;
+		}
+		
+		if(hzgPriceInDTO.getOperatorId()==null){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("OperatorId")));
+			return result;
+		}
+		
+		if(StringUtils.isEmpty(hzgPriceInDTO.getOperatorName())){
+			result.setCode(ErrorCodes.E10000.name());
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("OperatorName")));
+			return result;
+		}
+		
+		
+		List<ItemSkuTerminalPrice> terminalPriceList=Lists.newArrayList();
+		
+		if(hzgPriceInDTO.getRetailPrice()!=null){
+			ItemSkuTerminalPrice retailPrice=convertDTO2HzgTerminalPrice(hzgPriceInDTO.getRetailPrice(),hzgPriceInDTO.getOperatorId(),hzgPriceInDTO.getOperatorName(),
+					hzgPriceInDTO.getSellerId(),hzgPriceInDTO.getItemId(),TerminalPriceType.RETAIL_PRICE.getCode(),hzgPriceInDTO.getSkuId(),
+					hzgPriceInDTO.getShopId());
+			terminalPriceList.add(retailPrice);
+		}
+		
+		if(hzgPriceInDTO.getSalePrice()!=null){
+			ItemSkuTerminalPrice salePrice=convertDTO2HzgTerminalPrice(hzgPriceInDTO.getSalePrice(),hzgPriceInDTO.getOperatorId(),hzgPriceInDTO.getOperatorName(),
+					hzgPriceInDTO.getSellerId(),hzgPriceInDTO.getItemId(),TerminalPriceType.SALE_PRICE.getCode(),hzgPriceInDTO.getSkuId(),
+					hzgPriceInDTO.getShopId());
+			terminalPriceList.add(salePrice);
+		}
+		
+		if(hzgPriceInDTO.getVipPrice()!=null){
+			ItemSkuTerminalPrice vipPrice=convertDTO2HzgTerminalPrice(hzgPriceInDTO.getVipPrice(),hzgPriceInDTO.getOperatorId(),hzgPriceInDTO.getOperatorName(),
+					hzgPriceInDTO.getSellerId(),hzgPriceInDTO.getItemId(),TerminalPriceType.VIP_PRICE.getCode(),hzgPriceInDTO.getSkuId(),
+					hzgPriceInDTO.getShopId());
+			terminalPriceList.add(vipPrice);
+		}
+		
+		if(CollectionUtils.isNotEmpty(terminalPriceList)){
+			itemSkuTerminalPriceMapper.deleteTerminalByItemId(hzgPriceInDTO.getItemId());
+			itemSkuTerminalPriceMapper.insertBatch(terminalPriceList);
+		}
+		result.setCode(ErrorCodes.SUCCESS.name());
+		return result;
+	}
+	
+	private ItemSkuTerminalPrice convertDTO2HzgTerminalPrice(BigDecimal price,Long operatorId,String operatorName,Long sellerId,Long itemId,
+			String priceType,Long skuId,Long shopId){
+		ItemSkuTerminalPrice terminalPrice=new ItemSkuTerminalPrice();
+		terminalPrice.setCreateId(operatorId);
+		terminalPrice.setCreateName(operatorName);
+		terminalPrice.setItemId(itemId);
+		terminalPrice.setModifyId(operatorId);
+		terminalPrice.setModifyName(operatorName);
+		terminalPrice.setPrice(price);
+		terminalPrice.setPriceType(priceType);
+		terminalPrice.setSellerId(sellerId);
+		terminalPrice.setSkuId(skuId);
+		terminalPrice.setTerminalType("0");
+		terminalPrice.setShopId(shopId);
+		return terminalPrice;
 	}
 }

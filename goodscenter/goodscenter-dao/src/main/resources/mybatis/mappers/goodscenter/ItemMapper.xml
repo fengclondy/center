@@ -2463,4 +2463,9 @@
 			#{taskId}
 		</foreach>
 	</select>
+	
+	<!-- 更新预售标志 -->
+	<update id="updatePreSaleFlagByItemId">
+		update item set is_pre_sale = #{preSaleFlag} where item_id = #{itemId,jdbcType=BIGINT}
+	</update>
 </mapper>

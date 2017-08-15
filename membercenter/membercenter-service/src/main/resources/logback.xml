@@ -1,5 +1,10 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <configuration>
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+		</encoder>
+	</appender>
 	<appender name="rollinginfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${loggingRoot}/membercenter.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -22,5 +27,6 @@
 	
 	<root level="${loggingLevel}">
 		<appender-ref ref="rollinginfoFile" />
+		<appender-ref ref="console" />
 	</root>
 </configuration>

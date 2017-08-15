@@ -724,7 +724,7 @@ values(
 			<if test="curBelongSellerId !=null and curBelongSellerId != ''">
 				#{curBelongSellerId},
 			</if>
-			<if test="belongManagerId != null belongManagerId != ''">
+			<if test="belongManagerId != null and belongManagerId != ''">
 				#{belongManagerId},
 			</if>
 			<if test="curBelongManagerId !=null and curBelongManagerId != ''">

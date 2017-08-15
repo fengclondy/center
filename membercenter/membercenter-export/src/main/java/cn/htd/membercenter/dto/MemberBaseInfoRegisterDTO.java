@@ -68,7 +68,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 营业执照号
 	 */
-	@NotBlank(message = "营业执照号不能为空")
+	//@NotBlank(message = "营业执照号不能为空")
 	private String businessLicenseId;// 营业执照号
 	private String buyerBusinessLicenseId;// 会员营业执照注册号
 	private String buyerBusinessLicensePicSrc;// 会员营业执照电子版图片地址

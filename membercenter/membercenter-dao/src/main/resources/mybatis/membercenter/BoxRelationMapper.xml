@@ -66,17 +66,17 @@
 		and (b.category_id !=0 and b.brand_id !=0)
 	</select>
 	<!-- 查询会员公司ID关系 -->
-	<select id="selectCompanyID" resultType="Long">
+	<select id="selectCompanyID" resultType="cn.htd.membercenter.dto.MemberBaseDTO">
 		select 
-			c.member_id  memberId
+			c.member_id  memberId,seller_type sellerType
 		from member_company_info c,member_base_info m
 		where m.id=c.member_id and m.status='1' 
 		<if test="buyerSellerType != null and buyerSellerType =='2'.toString() ">
 			and m.seller_type='1' 
 		</if>
-		<if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
+		<!-- <if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
 			and (m.seller_type ='2' or m.seller_type='')
-		</if>
+		</if> -->
 		and c.company_name =#{companyName} and c.buyer_seller_type=#{buyerSellerType} 
 		</select>
 	

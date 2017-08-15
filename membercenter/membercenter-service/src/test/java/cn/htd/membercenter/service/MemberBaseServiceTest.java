@@ -1,16 +1,15 @@
 package cn.htd.membercenter.service;
 
+import cn.htd.common.ExecuteResult;
+import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
+import cn.htd.membercenter.dto.MemberInvoiceDTO;
+import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import cn.htd.common.ExecuteResult;
-import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
-import cn.htd.membercenter.dto.MemberInvoiceDTO;
-import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 
 public class MemberBaseServiceTest {
 
@@ -253,7 +252,7 @@ public class MemberBaseServiceTest {
 	 memberBaseInfoRegisterDTO.setModifyName("haha");
 	 // memberBaseInfoRegisterDTO.setRegistFrom("注册来源1");
 
-	 memberBaseInfoRegisterDTO.setCompanyName("1");
+	 memberBaseInfoRegisterDTO.setCompanyName("南通乐美学投资管理有限公司");
 	 ExecuteResult<String> res = memberBaseInfoService.insertMemberBaseRegisterInfo(memberBaseInfoRegisterDTO);
 	 // ExecuteResult<MemberBackupContactInfo> t = memberBaseInfoService
 	 // .getContactId(Long.valueOf("11"));

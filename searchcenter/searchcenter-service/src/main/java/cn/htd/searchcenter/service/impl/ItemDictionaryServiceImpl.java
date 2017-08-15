@@ -40,7 +40,7 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
-	@DataSource("dataSource_userCenter")
+	@DataSource("dataSource_memberCenter")
 	public String querySellerName(Long sellerId) {
 		return itemDictionaryDao.querySellerName(sellerId);
 	}
@@ -77,7 +77,7 @@ public class ItemDictionaryServiceImpl implements ItemDictionaryService {
 	}
 
 	@Override
-	@DataSource("dataSource_userCenter")
+	@DataSource("dataSource_memberCenter")
 	public String querySellerTypeById(Long sellerId) {
 		return itemDictionaryDao.querySellerTypeById(sellerId);
 	}

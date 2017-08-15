@@ -169,7 +169,7 @@
 				<ref bean="htdBoxItemDumpJobCronTriggerBean" />
 				<!-- <ref bean="jdItemDumpJobCronTriggerBean" /> -->
 				<ref bean="externalItemDumpJobCronTriggerBean" />
-				<ref bean="seckillItemDumpJobCronTriggerBean" />
+				<!-- <ref bean="seckillItemDumpJobCronTriggerBean" /> -->
 				<ref bean="shopDumpJobCronTriggerBean" />
 				<ref bean="itemAllDumpJobCronTriggerBean" />
 				<ref bean="itemAttrDumpJobCronTriggerBean" />

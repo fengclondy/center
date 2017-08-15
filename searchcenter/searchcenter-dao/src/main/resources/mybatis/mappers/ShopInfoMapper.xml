@@ -33,8 +33,6 @@
 		<result property="modifyName" column="modify_name" jdbcType="VARCHAR" />
 		<result property="modifyTime" column="modify_time" jdbcType="DATE" />
 	</resultMap>
-
-
 	<!-- =========================================================== -->
 	<!-- 一些公共变量设置 -->
 	<!-- =========================================================== -->
@@ -44,7 +42,7 @@
 	</sql>
 
 	<sql id="columns">
-		s.shop_id,s.shop_name,m.company_name,m.location_province,m.location_city,mb.seller_type,s.seller_id,s.status,s.shop_url,s.logo_url,s.keyword,s.introduce,s.shop_type,s.business_type,
+		s.shop_id,s.shop_name,s.seller_id,s.status,s.shop_url,s.logo_url,s.keyword,s.introduce,s.shop_type,s.business_type,
 		s.disclaimer,s.pass_time,s.end_time,s.create_id,s.create_name,s.create_time,s.modify_id,s.modify_name,s.modify_time
 	</sql>
 
@@ -56,8 +54,6 @@
 		from shop_info as s
 		<![CDATA[ 
 		left join shop_platform_category as sc on sc.shop_id = s.shop_id and sc.category_level = 3 
-		inner join member_company_info as m on m.member_id = s.seller_id
-		inner join member_base_info as mb on mb.id = s.seller_id
 		where s.modify_time >= #{syncTime}
 		group by s.shop_id
  		limit #{start},#{end}
@@ -72,8 +68,6 @@
 		from shop_info as s
 		<![CDATA[ 
 		left join shop_platform_category as sc on sc.shop_id = s.shop_id and sc.category_level = 3 
-		inner join member_company_info as m on m.member_id = s.seller_id
-		inner join member_base_info as mb on mb.id = s.seller_id
 		where s.modify_time >= #{syncTime}
 		group by s.shop_id) as st
  		]]>
@@ -86,26 +80,29 @@
 	</select>
 
 	<select id="getCidNames" resultType="java.lang.String">
-		select REPLACE(group_concat(c_name),',',';') from item_category where cid in
+		select
+		REPLACE(group_concat(c_name),',',';') from item_category where cid in
 		(#{cids})
 	</select>
-	
+
 	<select id="queryShopStatusByShopId" resultType="java.lang.Integer">
 		SELECT COUNT(1)
 		FROM shop_info
 		WHERE status = 2 AND shop_id = #{shopId}
 	</select>
-	
+
 	<select id="queryCidNameAndCidByShopId" resultType="java.lang.String">
-        SELECT group_concat(scs.cname,":",scs.cid)
-        FROM shop_category_seller as scs
-		WHERE scs.lev = 2 AND scs.delete_flag = 0 AND scs.home_show = 1 AND scs.shop_id = #{shopId}
+		SELECT group_concat(scs.cname,":",scs.cid)
+		FROM shop_category_seller as scs
+		WHERE scs.lev = 2 AND scs.delete_flag = 0
+		AND scs.home_show = 1 AND scs.shop_id = #{shopId}
 	</select>
-	
+
 	<select id="queryShopQQByShopId" resultType="java.lang.String">
-		SELECT customer_QQ_number 
-		FROM qq_customer 
-		WHERE shop_id = #{shopId} 
+		SELECT
+		customer_QQ_number
+		FROM qq_customer
+		WHERE shop_id = #{shopId}
 		limit 0,1
 	</select>
 </mapper>

@@ -10,19 +10,16 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.util.ClientUtils;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
 
+import cn.htd.searchcenter.domain.MemberCompanyInfoDTO;
 import cn.htd.searchcenter.domain.ShopDTO;
 import cn.htd.searchcenter.dump.domain.ShopSearchData;
+import cn.htd.searchcenter.service.MemberCompanyInfoService;
 import cn.htd.searchcenter.service.ShopExportService;
 
 @Service("shopDumpJobAssembling")
@@ -35,6 +32,8 @@ public class ShopDumpJobAssembling {
 
 	@Resource
 	private ShopExportService shopExportService;
+	@Resource
+	private MemberCompanyInfoService memberCompanyInfoService;
 
 	public String removalData(String cid) {
 		if (StringUtils.isNotEmpty(cid)) {
@@ -158,16 +157,23 @@ public class ShopDumpJobAssembling {
 				data.setEndTime(shop.getEndTime());
 				data.setBusinessType(shop.getBusinessType());
 				data.setShopType(shop.getShopType());
-				data.setSellerName(shop.getSellerName());
-				data.setSellerType(shop.getSellerType());
-				if (StringUtils.isNotEmpty(shop.getLocationProvince())
-						&& StringUtils.isNotEmpty(shop.getLocationCity())) {
-					String locationProvince = shopExportService
-							.getAreaName(shop.getLocationProvince());
-					String locationCity = shopExportService.getAreaName(shop
-							.getLocationCity());
-					data.setLocationAddress(locationProvince + "   "
-							+ locationCity);
+				if(null != shop.getSellerId()){
+					MemberCompanyInfoDTO memberCompanyInfo = memberCompanyInfoService.queryMemberCompanyInfoBySellerId(shop.getSellerId());
+					String sellerType = memberCompanyInfoService.queryMemberBaseInfoBySellerId(shop.getSellerId());
+					if(null == memberCompanyInfo || StringUtils.isEmpty(sellerType)){
+						continue;
+					}
+					data.setSellerName(memberCompanyInfo.getCompanyName());
+					data.setSellerType(sellerType);
+					if (StringUtils.isNotEmpty(memberCompanyInfo.getLocationProvince())
+							&& StringUtils.isNotEmpty(memberCompanyInfo.getLocationCity())) {
+						String locationProvince = shopExportService
+								.getAreaName(memberCompanyInfo.getLocationProvince());
+						String locationCity = shopExportService.getAreaName(memberCompanyInfo
+								.getLocationCity());
+						data.setLocationAddress(locationProvince + "   "
+								+ locationCity);
+					}
 				}
 				String cids = removalData(shopExportService
 						.queryCidNameAndCidByShopId(shop.getShopId()));

@@ -91,6 +91,13 @@
     <include refid="MallTypeSub_Column_List" />
     from mall_type_sub
   </select>
+  <select id="selectMallTypeSubById" parameterType="java.lang.Long" resultMap="MallTypeSubResultMap">
+    select 
+    <include refid="MallTypeSub_Column_List" />
+    from mall_type_sub where type_id=#{id}
+    order by sort_num
+  </select>
+  
   
    <resultMap id="SiteLogoResultMap" type="com.bjucloud.contentcenter.domain.SiteLogo">
     <id column="id" jdbcType="BIGINT" property="id" />
@@ -375,4 +382,87 @@
     and a.status = '1' 
     and a.sub_id = #{subId}
   </select>
+  
+  
+    	
+  	<resultMap id="base_resultMap_floorInfoDO" type="com.bjucloud.contentcenter.domain.FloorInfoDO">
+  	<id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+    <result column="left_pic_title" jdbcType="VARCHAR" property="leftPicTitle" />
+    <result column="left_pic_url" jdbcType="VARCHAR" property="leftPicUrl" />
+    <result column="left_pic_link_url" jdbcType="VARCHAR" property="leftPicLinkUrl" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="show_brand" jdbcType="VARCHAR" property="showBrand" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  	</resultMap>
+    
+  	<resultMap id="base_resultMap_floorNavDO" type="com.bjucloud.contentcenter.domain.FloorNavDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="floor_id" jdbcType="BIGINT" property="floorId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nav_temp" jdbcType="VARCHAR" property="navTemp" />
+    <result column="nav_temp_src" jdbcType="VARCHAR" property="navTempSrc" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  	</resultMap>
+  	
+  	<resultMap id="base_resultMap_floorBrandDO" type="com.bjucloud.contentcenter.domain.FloorBrandDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="floor_id" jdbcType="BIGINT" property="floorId" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+  	</resultMap>
+  	
+  	<resultMap id="base_resultMap_floorPicDO" type="com.bjucloud.contentcenter.domain.FloorPicDO">
+  	<id column="id" jdbcType="BIGINT" property="id" />
+  	<result column="floor_nav_id" jdbcType="BIGINT" property="floorNavId" />
+   	<result column="pic_url" jdbcType="VARCHAR"  property="picUrl" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl"  />
+    <result column="sort_num" jdbcType="INTEGER" property="sortNum" />
+  	</resultMap>
+  	
+  <select id="getBaseAllFloors" resultMap="base_resultMap_floorInfoDO">
+    select  id,name,icon_url,left_pic_title,left_pic_url,left_pic_link_url,sort_num,status,show_brand,
+            create_id,create_name,create_time,modify_id,modify_name,modify_time  
+    from floor_info
+    where status = '1' 
+    order by sort_num
+   </select>
+  
+   <select id="getBaseFloorNavsByFloorId" parameterType="java.lang.Long" resultMap="base_resultMap_floorNavDO">
+    select  id,floor_id,name,nav_temp,nav_temp_src,sort_num,status,
+            create_id,create_name,create_time,modify_id,modify_name,modify_time  
+    from floor_nav 
+    where floor_id = #{floorId,jdbcType=BIGINT} and status = '1'  
+    order by sort_num
+  </select>
+  
+  <select id="getBaseFloorBrandsByFloorId" parameterType="java.lang.Long" resultMap="base_resultMap_floorBrandDO">
+    select  id,floor_id,brand_id,brand_name,sort_num 
+    from floor_content_sub  
+    where floor_id = #{floorId,jdbcType=BIGINT}   
+    order by sort_num
+  </select>
+  
+   <select id="getBaseFloorPicsByFloorNavId" parameterType="java.lang.Long" resultMap="base_resultMap_floorPicDO">
+    select  id,floor_nav_id,pic_url,link_url,sort_num 
+    from floor_content_pic_sub  
+    where floor_nav_id = #{floorNavId,jdbcType=BIGINT} 
+    order by sort_num
+  </select>
+  
 </mapper>

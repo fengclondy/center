@@ -33,6 +33,8 @@ public class MallTypeSub implements Serializable {
 
 	private String status;
 
+	private String picUrl;
+
 	private List<MallTypeSub> mallTypeSubList;
 
 	public Long getId() {
@@ -144,5 +146,13 @@ public class MallTypeSub implements Serializable {
 	 */
 	public void setMallTypeSubList(List<MallTypeSub> mallTypeSubList) {
 		this.mallTypeSubList = mallTypeSubList;
+	}
+
+	public String getPicUrl() {
+		return picUrl;
+	}
+
+	public void setPicUrl(String picUrl) {
+		this.picUrl = picUrl;
 	}
 }

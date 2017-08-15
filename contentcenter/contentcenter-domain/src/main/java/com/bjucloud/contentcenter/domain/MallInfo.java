@@ -1,13 +1,19 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
+
 /**
  * 
  * <p>
  * Description: [买场中心_商城信息]
  * </p>
  */
-public class MallInfo {
+public class MallInfo implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Double id;//
 	private String title;// 网站名称
 	private Double platformId;// 买家id

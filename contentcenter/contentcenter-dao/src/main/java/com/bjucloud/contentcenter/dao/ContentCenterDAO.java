@@ -2,7 +2,7 @@ package com.bjucloud.contentcenter.dao;
 
 import java.util.List;
 
-import cn.htd.membercenter.domain.*;
+import com.bjucloud.contentcenter.domain.*;
 import org.apache.ibatis.annotations.Param;
 
 

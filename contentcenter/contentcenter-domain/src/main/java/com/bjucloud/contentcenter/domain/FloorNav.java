@@ -2,28 +2,25 @@ package com.bjucloud.contentcenter.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-/**
- * 热搜词
- */
-public class HotWord implements Serializable{
-	
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
+public class FloorNav implements Serializable{
+
+	private static final long serialVersionUID = -3734811713451103487L;
 
 	private Long id;
 
+    private Long floorId;
+
     private String name;
 
-    private String color;
+    private String navTemp;
 
-    private Long sortNum;// 显示顺序
+    private String navTempSrc;
 
-    private String status;// 状态
+    private Long sortNum;
+
+    private String status;
 
     private Long createId;
 
@@ -36,6 +33,10 @@ public class HotWord implements Serializable{
     private String modifyName;
 
     private Date modifyTime;
+    
+    private List<Floor> floorList;//获取楼层内容列表
+    
+    private List<Floor> contentSubList;//获取楼层品牌列表
 
     public Long getId() {
         return id;
@@ -43,6 +44,14 @@ public class HotWord implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getFloorId() {
+        return floorId;
+    }
+
+    public void setFloorId(Long floorId) {
+        this.floorId = floorId;
     }
 
     public String getName() {
@@ -53,12 +62,20 @@ public class HotWord implements Serializable{
         this.name = name == null ? null : name.trim();
     }
 
-    public String getColor() {
-        return color;
+    public String getNavTemp() {
+        return navTemp;
     }
 
-    public void setColor(String color) {
-        this.color = color == null ? null : color.trim();
+    public void setNavTemp(String navTemp) {
+        this.navTemp = navTemp == null ? null : navTemp.trim();
+    }
+
+    public String getNavTempSrc() {
+        return navTempSrc;
+    }
+
+    public void setNavTempSrc(String navTempSrc) {
+        this.navTempSrc = navTempSrc == null ? null : navTempSrc.trim();
     }
 
     public Long getSortNum() {
@@ -124,4 +141,22 @@ public class HotWord implements Serializable{
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	public List<Floor> getFloorList() {
+		return floorList;
+	}
+
+	public void setFloorList(List<Floor> floorList) {
+		this.floorList = floorList;
+	}
+
+	public List<Floor> getContentSubList() {
+		return contentSubList;
+	}
+
+	public void setContentSubList(List<Floor> contentSubList) {
+		this.contentSubList = contentSubList;
+	}
+    
+	
 }

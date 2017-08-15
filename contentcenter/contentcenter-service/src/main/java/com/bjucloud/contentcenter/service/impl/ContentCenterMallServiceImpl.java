@@ -6,7 +6,10 @@ import cn.htd.goodscenter.domain.ItemBrand;
 import cn.htd.goodscenter.dto.ItemCategoryDTO;
 import cn.htd.goodscenter.service.ItemBrandExportService;
 import cn.htd.goodscenter.service.ItemCategoryService;
-import cn.htd.membercenter.domain.*;
+
+import com.bjucloud.contentcenter.domain.*;
+
+import cn.htd.membercenter.domain.MemberExtendInfo;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberBaseService;

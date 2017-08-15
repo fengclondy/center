@@ -10,17 +10,22 @@ import cn.htd.membercenter.domain.*;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberBaseService;
+
 import com.alibaba.fastjson.JSONObject;
 import com.bjucloud.contentcenter.dao.ContentCenterDAO;
 import com.bjucloud.contentcenter.service.ContentCenterMallService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.*;
 
+@Service("contentCenterMallService")
 public class ContentCenterMallServiceImpl implements ContentCenterMallService {
 
     private final static Logger logger = LoggerFactory

@@ -11,6 +11,8 @@ import cn.htd.goodscenter.dto.indto.ItemSpuInfoListInDTO;
 import cn.htd.goodscenter.dto.indto.SyncItemStockSearchInDTO;
 import cn.htd.goodscenter.dto.outdto.ItemSpuInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.outdto.ItemSpuInfoListOutDTO;
+import cn.htd.goodscenter.service.task.PreSaleProductQueryTask;
+import com.taobao.pamirs.schedule.TaskItemDefine;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,6 +45,8 @@ import cn.htd.goodscenter.test.common.CommonTest;
 import cn.htd.middleware.common.message.erp.ProductMessage;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class ItemExportServiceImplAllTest extends CommonTest {
 
@@ -658,5 +662,23 @@ public class ItemExportServiceImplAllTest extends CommonTest {
 		syncItemStockSearchInDTO.setErpCode("119452");
 		Pager page = new Pager();
 		itemExportService.querySyncItemStockSearchList(syncItemStockSearchInDTO, page);
+	}
+
+
+	@Autowired
+	@Qualifier("preSaleProductQueryTask")
+	PreSaleProductQueryTask preSaleProductQueryTask;
+
+	@Test
+	public void testpreSaleProductQueryTask() {
+		List<TaskItemDefine> taskItemList = new ArrayList<>();
+		TaskItemDefine taskItemDefine = new TaskItemDefine();
+		taskItemDefine.setTaskItemId("0");
+		taskItemList.add(taskItemDefine);
+		try {
+			preSaleProductQueryTask.selectTasks("", "", 1, taskItemList, 100);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

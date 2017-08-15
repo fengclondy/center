@@ -70,7 +70,9 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                 }
                 Date lastSyscTime = sp.parse(lastSyscTimeStr);
                 Date now = new Date();
-                itemList = this.itemMybatisDAO.queryPreSaleItemList(lastSyscTime, this.getTaskParam(taskQueueNum, taskItemList));
+                Map map = this.getTaskParam(taskQueueNum, taskItemList);
+                map.put("lastSyscTime",lastSyscTime);
+                itemList = this.itemMybatisDAO.queryPreSaleItemList(map);
                 for (Item item : itemList) {
                     Date date = new Date();
                     PreSaleProductPush preSaleProductPush = new PreSaleProductPush();
@@ -83,12 +85,14 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     preSaleProductPush.setModifyId(Constants.SYSTEM_CREATE_ID);
                     preSaleProductPush.setModifyName(Constants.SYSTEM_CREATE_NAME);
                     preSaleProductPush.setModifyTime(date);
+                    this.preSaleProductPushMapper.insert(preSaleProductPush);
                 }
                 this.redisDB.set(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME, sp.format(now));
             }
         } catch (Exception e){
             logger.error("查询预售商品数据【PreSaleProductQueryTask】出错, 错误信息", e);
         } finally {
+
             logger.info("查询预售商品数据【PreSaleProductQueryTask】任务结束");
         }
         return itemList;

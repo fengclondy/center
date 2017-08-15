@@ -58,11 +58,11 @@
         modify_id, modify_name, modify_time
         )
         values (
-        #{itemId,jdbcType=BIGINT}, #{pushStatus,jdbcType=BIGINT}, #{pushVersion, jdbcType=BIGINT}
+        #{itemId,jdbcType=BIGINT}, #{pushStatus,jdbcType=BIGINT}, #{pushVersion, jdbcType=BIGINT},
         #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
         #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
         )
-        ON DUPLICATE
+         ON DUPLICATE KEY UPDATE
         push_version = push_version + 1,
         push_status = 0,
         modify_time = now()

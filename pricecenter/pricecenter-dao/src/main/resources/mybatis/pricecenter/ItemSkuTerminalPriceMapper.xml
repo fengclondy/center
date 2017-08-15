@@ -243,4 +243,7 @@
       )
       </foreach>
   </insert>
+  <update id="deleteTerminalByItemId" parameterType="Long">
+  	update item_sku_terminal_price set delete_flag=1 where item_id=#{itemId}
+  </update>
 </mapper>

@@ -109,6 +109,8 @@ import cn.htd.middleware.common.message.erp.ProductMessage;
 import cn.htd.pricecenter.common.constants.PriceConstants;
 import cn.htd.pricecenter.domain.InnerItemSkuPrice;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
+import cn.htd.pricecenter.dto.HzgPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceInDTO;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
@@ -1186,17 +1188,38 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 //						venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName()));
 //				threadPool.shutdown();
 //			}
+			
+			itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(),
+					venusItemSkuPublishInDTO.getItemId());
 			//更新价格
 			if(venusItemSkuPublishInDTO.getStandardPrice()!=null){
 				Integer isBoxFlag="1".equals(venusItemSkuPublishInDTO.getShelfType()) ? 1 : 0;
 				itemSkuPriceService.updateItemSkuStandardPrice(venusItemSkuPublishInDTO.getStandardPrice(),isBoxFlag);
+				// add by zhangxiaolong for presale 20170815 start
+				HzgPriceDTO hzgPriceDTO=venusItemSkuPublishInDTO.getStandardPrice().getHzgPriceDTO();
+				if(1==venusItemSkuPublishInDTO.getPreSaleFlag()&&hzgPriceDTO!=null){
+					HzgPriceInDTO hzgPriceInDTO=new HzgPriceInDTO();
+					hzgPriceInDTO.setItemId(itemSkuFromDb.getItemId());
+					hzgPriceInDTO.setOperatorId(venusItemSkuPublishInDTO.getOperatorId());
+					hzgPriceInDTO.setOperatorName(venusItemSkuPublishInDTO.getOperatorName());
+					hzgPriceInDTO.setRetailPrice(hzgPriceDTO.getRetailPrice());
+					hzgPriceInDTO.setSalePrice(hzgPriceDTO.getSalePrice());
+					hzgPriceInDTO.setVipPrice(hzgPriceDTO.getVipPrice());
+					hzgPriceInDTO.setSellerId(item.getSellerId());
+					hzgPriceInDTO.setShopId(item.getShopId());
+					hzgPriceInDTO.setSkuId(itemSkuFromDb.getSkuId());
+					itemSkuPriceService.saveHzgTerminalPrice(hzgPriceInDTO);
+				}
+				// add by zhangxiaolong for presale 20170815 end
 			}
 			//销售区域
 			dealWithPublishSalesArea(venusItemSkuPublishInDTO, itemSkuFromDb);
-			
+						
 			//处理item表的主状态,判断当前商品如果是非上架状态，则要修改为上架状态
 			dealWithPublishItemStatus(venusItemSkuPublishInDTO.getSkuId(),venusItemSkuPublishInDTO.getIsVisible(),
 					venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName(), item);
+			
+			
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::txPublishItemSkuInfo:",e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -1382,6 +1405,22 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			result.setCode(VenusErrorCodes.E1040014.name());
 			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("AreaSalePrice")));
 			return result;
+		}
+		
+		//汇掌柜价格
+		if(1==venusItemSkuPublishInDTO.getPreSaleFlag()&&venusItemSkuPublishInDTO.getStandardPrice()!=null){
+			HzgPriceDTO hzgPriceDTO=venusItemSkuPublishInDTO.getStandardPrice().getHzgPriceDTO();
+			if(hzgPriceDTO==null){
+				result.setCode(VenusErrorCodes.E1040014.name());
+				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("StandardPrice::HzgPriceDTO")));
+				return result;
+			}
+			
+			if(hzgPriceDTO.getRetailPrice()==null&&hzgPriceDTO.getSalePrice()==null&&hzgPriceDTO.getVipPrice()==null){
+				result.setCode(VenusErrorCodes.E1040014.name());
+				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("StandardPrice::HzgPriceDTO")));
+				return result;
+			}
 		}
 		
 		if(venusItemSkuPublishInDTO.getStandardPrice().getItemSkuBasePrice().getSellerId()==null||

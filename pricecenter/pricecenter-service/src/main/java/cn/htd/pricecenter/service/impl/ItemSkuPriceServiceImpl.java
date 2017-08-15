@@ -1142,6 +1142,7 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 		}
 		
 		if(CollectionUtils.isNotEmpty(terminalPriceList)){
+			itemSkuTerminalPriceMapper.deleteTerminalByItemId(hzgPriceInDTO.getItemId());
 			itemSkuTerminalPriceMapper.insertBatch(terminalPriceList);
 		}
 		result.setCode(ErrorCodes.SUCCESS.name());

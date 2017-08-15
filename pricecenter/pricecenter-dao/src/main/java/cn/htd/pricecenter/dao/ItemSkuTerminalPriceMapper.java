@@ -23,4 +23,6 @@ public interface ItemSkuTerminalPriceMapper {
     List<ItemSkuTerminalPrice> selectBySkuIdAndTerminalType(Map map);
     
     void insertBatch(List<ItemSkuTerminalPrice> list);
+    
+    void deleteTerminalByItemId(Long itemId);
 }

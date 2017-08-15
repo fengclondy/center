@@ -331,4 +331,6 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	//add by zhangxiaolong end
 
 	int updateFirstAndFiveCategoryCodeByItemId(Item item);
+	
+	void updatePreSaleFlagByItemId(@Param("preSaleFlag")int preSaleFlag,@Param("itemId") Long itemId);
 }

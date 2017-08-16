@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO" >
+   <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="BARGAIN_CODE" property="bargainCode" jdbcType="VARCHAR" />
+    <result column="HEAD_SCULPTURE_URL" property="headSculptureUrl" jdbcType="VARCHAR" />
+    <result column="BARGAIN_PERSON_CODE" property="bargainPersonCode" jdbcType="VARCHAR" />
+    <result column="BARGAIN_PERSON_NAME" property="bargainPersonName" jdbcType="VARCHAR" />
+    <result column="BARGAIN_AMOUNT" property="bargainAmount" jdbcType="DECIMAL" />
+    <result column="BARGAIN_TIME" property="bargainTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+    <select id="getBuyerLaunchBargainInfoByBuyerCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from buyer_launch_bargain_info
+    	where buyer_code = #{buyerCode}
+	</select>
+	
+	
+
+
+	
+
+
+</mapper>

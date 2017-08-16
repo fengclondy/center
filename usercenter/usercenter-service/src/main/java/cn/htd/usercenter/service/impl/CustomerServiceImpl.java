@@ -228,7 +228,6 @@ public class CustomerServiceImpl implements CustomerService {
 							// dto.setCreateId(userId);
 							dto.setLastUpdateId(userId);
 							userDAO.updateUser(dto);
-							userDAO.updateUserTime(dto);
 
 							// 更新员工
 							customerDTO.setUserId(customerDTO.getUserId());

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,29 @@ public class MemberSuperBossServiceImpl implements MemberSuperBossService {
 			Long count = memberSuperBossDao.selectMemberCountByCustmanagerCode(managerCode);
 			if (count > 0) {
 				List<MemberBaseInfoDTO> resList = memberSuperBossDao.selectMemberByCustmanagerCode(managerCode, pager);
+				if( null !=resList && resList.size()>0){
+					for(MemberBaseInfoDTO memberbase:resList ){ //managerstatus 1.运营待审核 2.运营审核不通过 3.运营审核驳回 4.供应商待审核 5.供应商审核通过
+						if(StringUtils.isNotBlank(memberbase.getCooperateVerifyStatus())){
+							if(memberbase.getCooperateVerifyStatus().equals("1")){
+								memberbase.setManagerStatus("4");
+							}else{
+								memberbase.setManagerStatus("5");
+							}
+						}else{
+							if(StringUtils.isNotBlank(memberbase.getVerifyStatus())){
+								if(memberbase.getVerifyStatus().equals("1")){
+									memberbase.setManagerStatus("1");
+								}
+								if(memberbase.getVerifyStatus().equals("2")){
+									memberbase.setManagerStatus("2");
+								}
+								if(memberbase.getVerifyStatus().equals("3")){
+									memberbase.setManagerStatus("3");
+								}
+							}
+						}
+					}
+				}
 				dg.setRows(resList);
 				dg.setTotal(count);
 				rs.setResult(dg);

@@ -587,6 +587,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				// 下行到用户中心
 				ExecuteResult<Boolean> custRs = userExportService.memberPasswdReset(memberCode, password, userId);
 				if (custRs.isSuccess()) {
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(memberCode);
 					memberBaseOperationDAO.insertVerifyInfo(verDtoList);
 					rs.setResultMessage("success");
 					rs.setResult(true);
@@ -1299,6 +1301,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 								customerDTO.setCompanyId(dto.getId());
 								customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 								customerService.editCustomer(customerDTO, dto.getModifyId());
+								// 更新最终更新时间
+								memberCompanyInfoDao.updateCompanyTime(oldDto.getMemberCode());
 							} else {
 								customerDTO.setLoginId(oldDto.getMemberCode());
 								customerDTO.setMobile(oldDto.getArtificialPersonMobile());
@@ -1543,7 +1547,7 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
         	}
 			return rs;
         }
-        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName())){
+        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),0l)){
 			rs.addErrorMessage("公司名称已经存在，请重新填写!");
 			return rs;
         }
@@ -2271,10 +2275,29 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		return rs;
 	}
 
+	
 	@Override
 	public ExecuteResult<String> updateMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		// TODO Auto-generated method stub
 		ExecuteResult<String> rs = new ExecuteResult<String>();
+	      // 输入DTO的验证
+			String emsg="";
+	        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
+	        // 有错误信息时返回错误信息
+	        if (validateResult.isHasErrors()) {
+	        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
+	        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
+				      rs.addErrorMessage(emsg.trim());
+	        	}
+				return rs;
+	        }
+	        if(memberBaseInfoRegisterDTO.getMemberId() !=null){
+		        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),memberBaseInfoRegisterDTO.getMemberId())){
+					rs.addErrorMessage("公司名称已经存在，请重新填写!");
+					return rs;
+		        }	
+	        }
+
 		try {
 			if (memberBaseInfoRegisterDTO.getMemberId() != null) {
 				String cooperateVendor = memberBaseInfoRegisterDTO.getCooperateVendor();
@@ -3144,8 +3167,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		 * @param company
 		 * @return
 		 */
-		public boolean checkCompanyNameUnique(String companyName) {
-			List<MemberCompanyInfoDTO> list = memberBaseOperationDAO.checkCompanyNameUnique(companyName);
+		public boolean checkCompanyNameUnique(String companyName,Long memberId) {
+			List<MemberCompanyInfoDTO> list = memberBaseOperationDAO.checkCompanyNameUnique(companyName,memberId);
 			if (list != null && list.size() > 0) {
 				return true;
 			}

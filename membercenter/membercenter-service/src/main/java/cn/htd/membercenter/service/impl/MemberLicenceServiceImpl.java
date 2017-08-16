@@ -169,6 +169,8 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 					customerDTO.setCompanyId(dto.getMember_id());
 					customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 					customerService.editCustomer(customerDTO, Long.valueOf(dto.getModify_id()));
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(memberBase.getMemberCode());
 				} else {
 					customerDTO.setLoginId(memberBase.getMemberCode());
 					customerDTO.setMobile(memberBase.getArtificialPersonMobile());
@@ -341,6 +343,9 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 					rs.setResult(false);
 					rs.addErrorMessage("用户更改密码失败");
 					return rs;
+				} else {
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(dto.getMember_code());
 				}
 			}
 

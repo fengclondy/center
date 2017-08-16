@@ -500,8 +500,8 @@ public class UserExportServiceImpl implements UserExportService {
 	 * java.lang.String)
 	 */
 	@Override
-	public ExecuteResult<Boolean> passwdReset(Long userid, String pwd, Long userId) {
-		ExecuteResult<Boolean> res = new ExecuteResult<Boolean>();
+	public ExecuteResult<String> passwdReset(Long userid, String pwd, Long userId) {
+		ExecuteResult<String> res = new ExecuteResult<String>();
 		try {
 			UserDTO userDTO = null;
 			if (userid != null) {
@@ -512,13 +512,13 @@ public class UserExportServiceImpl implements UserExportService {
 				userDTO.setPassword(Md5Utils.getMd5(pwd));
 				userDTO.setLastUpdateId(userId);
 				userDAO.updateUser(userDTO);
-				userDAO.updateUserTime(userDTO);
+//				userDAO.updateUserTime(userDTO);
 
 				res.setResultMessage("重置密码成功！");
-				res.setResult(true);
+				res.setResult(userDTO.getLoginId());
 			} else {
 				res.addErrorMessage("用户不存在！");
-				res.setResult(false);
+				res.setResult("");
 			}
 
 		} catch (Exception e) {
@@ -702,8 +702,8 @@ public class UserExportServiceImpl implements UserExportService {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ExecuteResult<Boolean> passwdEdit(Long userid, String pwd, String oldpwd, Long userId) {
-		ExecuteResult<Boolean> res = new ExecuteResult<Boolean>();
+	public ExecuteResult<String> passwdEdit(Long userid, String pwd, String oldpwd, Long userId) {
+		ExecuteResult<String> res = new ExecuteResult<String>();
 		try {
 			UserDTO userDTO = null;
 			if (userid != null) {
@@ -723,24 +723,24 @@ public class UserExportServiceImpl implements UserExportService {
 
 				if (!userDTO.getPassword().equalsIgnoreCase(oldpwdStr)) {
 					res.addErrorMessage("原密码错误，请重新输入");
-					res.setResult(false);
+					res.setResult("");
 				} else {
 					if (pwdStr.equalsIgnoreCase(userDTO.getPassword())) {
 						res.addErrorMessage("新密码不能与原密码相同！");
-						res.setResult(false);
+						res.setResult("");
 					} else {
 						userDTO.setPassword(Md5Utils.getMd5(pwd));
 						userDTO.setLastUpdateId(userId);
 						userDAO.updateUser(userDTO);
-						userDAO.updateUserTime(userDTO);
+//						userDAO.updateUserTime(userDTO);
 
 						res.setResultMessage("修改密码成功！");
-						res.setResult(true);
+						res.setResult(userDTO.getLoginId());
 					}
 				}
 			} else {
 				res.setResultMessage("用户不存在！");
-				res.setResult(false);
+				res.setResult("");
 			}
 
 		} catch (Exception e) {
@@ -770,7 +770,7 @@ public class UserExportServiceImpl implements UserExportService {
 				userDTO.setPassword(Md5Utils.getMd5(pwd));
 				userDTO.setLastUpdateId(userId);
 				userDAO.updateUser(userDTO);
-				userDAO.updateUserTime(userDTO);
+//				userDAO.updateUserTime(userDTO);
 				res.setResultMessage("重置密码成功！");
 				res.setResult(true);
 			} else {
@@ -1105,7 +1105,7 @@ public class UserExportServiceImpl implements UserExportService {
 						userDTO.setPassword(pwd);
 						userDTO.setLastUpdateId(0l);
 						userDAO.updateUser(userDTO);
-						userDAO.updateUserTime(userDTO);
+//						userDAO.updateUserTime(userDTO);
 
 						res.setResultMessage("修改密码成功！");
 						res.setResult(true);

@@ -1600,9 +1600,9 @@
 	
 	
   <select id="checkCompanyNameUnique" resultType="cn.htd.membercenter.dto.MemberCompanyInfoDTO">
-		SELECT company_name as companyName
-	FROM member_company_info
-	where buyer_seller_type='1' and company_name=#{companyName}
+	SELECT company_name as companyName FROM member_company_info
+	  where company_name=#{companyName} 
+	    AND member_id not in(#{memberId})
 	</select>
 	
 </mapper>

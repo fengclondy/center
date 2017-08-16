@@ -10,18 +10,15 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.springframework.org/schema/mvc  http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd"
 default-autowire="byName">
   <context:property-placeholder location="classpath*:application-env.properties" />
-     <import resource="classpath*:/spring/beans-tc-common.xml" />
-	  <import resource="classpath*:/spring/beans-tc-dubbo.xml"/>
-	  <import resource="classpath*:beans-tc-dao.xml"/>
-	  <import resource="classpath*:beans-tc-datasource.xml"/>
-  	  <import resource="classpath*:/spring/beans-tc-redis.xml" />
-  	  <import resource="classpath*:/spring/beans-tc-rabbitmq.xml" />
+     <import resource="classpath*:/spring/beans-cpc-common.xml" />
+	  <import resource="classpath*:/spring/beans-cpc-dubbo.xml"/>
+	  <import resource="classpath*:beans-cpc-dao.xml"/>
+	  <import resource="classpath*:beans-cpc-datasource.xml"/>
+  	  <import resource="classpath*:/spring/beans-cpc-redis.xml" />
+<!--   	  <import resource="classpath*:/spring/beans-cpc-rabbitmq.xml" />-->
 
-     <import resource="classpath*:/spring/beans-tc-tbschedule.xml" />
+ <!--      <import resource="classpath*:/spring/beans-cpc-tbschedule.xml" />-->
 
-   <!-- add by zhangding  20161102 结束  -->
- <context:component-scan base-package="cn.htd.zeus.tc.*" />
+ <context:component-scan base-package="cn.htd.promotion.*" />
 
-
- <!--  <context:annotation-config/> -->
 </beans>  

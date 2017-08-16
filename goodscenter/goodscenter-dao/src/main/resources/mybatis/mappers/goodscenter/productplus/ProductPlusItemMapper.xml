@@ -492,7 +492,7 @@
     </select>
 
     <select id="queryTotalProductPlusItemCount" resultType="Integer">
-		select count(1) from zeus.item t  
+		select count(1) from item t  
 		where t.product_channel_code='3010'
     </select>
     
@@ -504,7 +504,7 @@
             (SELECT 
 		            GROUP_CONCAT(sop.seller_id)
 		        FROM
-		            zeus.seller_outer_product_channel sop
+		            seller_outer_product_channel sop
 		        WHERE
 		            sop.access_status = 1
 		                AND sop.channel_code = '3010'
@@ -512,7 +512,7 @@
 		              <!--   AND NOT EXISTS( SELECT 
 		                    1
 		                FROM
-		                    zeus.seller_category_brand_shield scb
+		                    seller_category_brand_shield scb
 		                WHERE
 		                    scb.shield_flag = 1
 		                        AND scb.third_category_id = t.cid

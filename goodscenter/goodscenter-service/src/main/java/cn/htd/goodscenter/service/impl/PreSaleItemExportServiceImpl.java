@@ -137,7 +137,7 @@ public class PreSaleItemExportServiceImpl implements PreSaleItemExportService{
 			if(itemSalesArea!=null){
 				preSaleProdQueryDTO.setIsWholeCountry(itemSalesArea.getIsSalesWholeCountry());
 			}
-			if(itemSalesArea.getIsSalesWholeCountry()!=1){
+			if(itemSalesArea!=null&&itemSalesArea.getIsSalesWholeCountry()!=1){
 				 List<ItemSalesAreaDetail> itemSalesAreaDetailList=itemSalesAreaDetailMapper.selectAreaDetailsBySalesAreaIdAll(itemSalesArea.getSalesAreaId());
 				 List<PreSaleItemRegion> preSaleItemRegionList=Lists.newArrayList();
 				 if(CollectionUtils.isNotEmpty(itemSalesAreaDetailList)){

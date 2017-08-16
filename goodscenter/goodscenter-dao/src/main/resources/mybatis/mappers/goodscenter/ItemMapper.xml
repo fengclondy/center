@@ -1817,7 +1817,7 @@
 		         		 sa.is_sales_whole_country=1
 		         	  <if test="provinceSiteCode !=null and provinceSiteCode != '' ">
 			            OR (sad.sales_area_type = 1 AND sad.area_code = #{provinceSiteCode}
-			            AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
+			            AND not exists (select 1 from item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
 			             and ss.delete_flag=0
 			             and ss.area_code like concat(#{provinceSiteCode}, '%') )
 			            )
@@ -1825,7 +1825,7 @@
 			          
 			          <if test="currentSiteCode !=null and currentSiteCode != '' ">
 			            OR (sad.sales_area_type = 2 AND sad.area_code = #{currentSiteCode}
-			            AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
+			            AND not exists (select 1 from item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
 			            and ss.delete_flag=0
 			            and ss.area_code like concat(#{currentSiteCode}, '%'))
 			            )
@@ -1987,7 +1987,7 @@
 		         	  
 		         	  <if test="provinceSiteCode !=null and provinceSiteCode != '' ">
 			            OR (sad.sales_area_type = 1 AND sad.area_code = #{provinceSiteCode}
-			            AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
+			            AND not exists (select 1 from item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
 			            and ss.delete_flag=0
 			            and ss.area_code like concat(#{provinceSiteCode}, '%'))
 			            )
@@ -1995,7 +1995,7 @@
 		         		 
 			          <if test="currentSiteCode !=null and currentSiteCode != '' ">
 			            OR (sad.sales_area_type = 2 AND sad.area_code = #{currentSiteCode}
-			            AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
+			            AND not exists (select 1 from item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
 			            and ss.delete_flag=0
 			            and ss.area_code like concat(#{currentSiteCode}, '%'))
 			            )

@@ -136,8 +136,8 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 		try {
 			memberList = boxRelationshipDao.selectCompanyID(companyName, buyerSellerType);
 			if (memberList == null) {
-				rs.setResultMessage("null");
 				rs.setResultMessage("要查询的会员/公司不存在！！");
+				return rs;
 			}
 			if(memberList !=null && memberList.size()>1){
 				for(MemberBaseDTO memberbase:memberList){

@@ -1201,7 +1201,7 @@
 	AND (1=0
 		<if test="provinceCode !=null and provinceCode !='' ">
 		 OR (sad.sales_area_type =1 and sad.area_code=#{provinceCode}
-		  AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
+		  AND not exists (select 1 from item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=2
 		  and ss.delete_flag=0
 		  and ss.area_code like concat(#{provinceCode}, '%')
 		  )
@@ -1209,7 +1209,7 @@
 		</if>
 		<if test="cityCode !=null and cityCode !='' ">
 		 OR (sad.sales_area_type =2 and sad.area_code=#{cityCode}
-		  AND not exists (select 1 from zeus.item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
+		  AND not exists (select 1 from item_sales_area_detail ss where ss.sales_area_id=sa.sales_area_id and ss.sales_area_type=3
 		  and ss.delete_flag=0
 		  and ss.area_code like concat(#{cityCode}, '%')
 		  )

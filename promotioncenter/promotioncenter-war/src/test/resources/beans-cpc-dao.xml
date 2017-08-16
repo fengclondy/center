@@ -8,9 +8,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	default-autowire="byName">
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
-	    <property name="configLocation" value="classpath:mybatis/sqlconfig/sqlMapConfig.xml"/>
 	    <property name="mapperLocations" value="classpath*:mybatis/*mapper.xml" />
-		<property name="typeAliasesPackage" value="cn.htd.promotion.cpc.dmo" />
+		<property name="typeAliasesPackage" value="cn.htd.promotion.cpc.biz.dmo" />
 	</bean>
 	
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

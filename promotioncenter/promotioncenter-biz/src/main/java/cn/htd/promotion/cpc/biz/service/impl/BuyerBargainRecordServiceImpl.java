@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
+import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 
 @Service("buyerBargainRecordService")
@@ -36,6 +37,14 @@ public class BuyerBargainRecordServiceImpl implements BuyerBargainRecordService 
 			buyerBargainRecordResList = JSONObject.parseArray(str,BuyerBargainRecordResDTO.class);
 		}
 		return buyerBargainRecordResList;
+	}
+
+	@Override
+	public Integer insertBuyerBargainRecord(BuyerBargainRecordReqDTO buyerBargainRecord) {
+		LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.insertBuyerBargainRecord（）方法开始,入参{}",buyerBargainRecord.getMessageId(),JSON.toJSONString(buyerBargainRecord));
+		Integer i = buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
+		LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.insertBuyerBargainRecord（）方法结束,出参{}",buyerBargainRecord.getMessageId(),JSON.toJSONString(i));
+		return i;
 	}
 
 }

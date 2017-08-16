@@ -1600,9 +1600,11 @@
 	
 	
   <select id="checkCompanyNameUnique" resultType="cn.htd.membercenter.dto.MemberCompanyInfoDTO">
-		SELECT company_name as companyName
-	FROM member_company_info
-	where  company_name=#{companyName}  and member_id not exists (#{memberId})
+	SELECT company_name as companyName FROM member_company_info
+	  where company_name=#{companyName} 
+	    AND NOT EXISTS( SELECT member_id
+        FROM member_company_info q
+        WHERE q.member_id = #{memberId})
 	</select>
 	
 </mapper>

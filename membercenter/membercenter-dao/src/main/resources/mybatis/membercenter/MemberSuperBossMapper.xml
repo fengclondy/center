@@ -44,7 +44,9 @@
 		and mc.buyer_seller_type='1'
         and ms.info_type=11
 		order by m.create_time desc,m.id
+		<if test="pager!=null">
 		limit #{pager.pageOffset},#{pager.rows}
+		</if>
 </select>
 
 <!-- 根据客户经理查询客户经理代注册会员列表条数 -->

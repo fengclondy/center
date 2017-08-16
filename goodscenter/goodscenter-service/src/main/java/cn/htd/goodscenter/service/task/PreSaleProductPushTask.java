@@ -4,6 +4,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.mq.MQRoutingKeyConstant;
 import cn.htd.common.mq.MQSendUtil;
+import cn.htd.common.util.AddressUtils;
 import cn.htd.goodscenter.common.constants.Constants;
 import cn.htd.goodscenter.dao.*;
 import cn.htd.goodscenter.domain.*;
@@ -16,6 +17,7 @@ import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.pricecenter.dto.HzgPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
+import com.alibaba.fastjson.JSON;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 import net.sf.json.JSONArray;
@@ -26,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
-import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -85,24 +85,29 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
     @Autowired
     private AmqpTemplate amqpTemplate;
 
+    @Autowired
+    private AddressUtils addressUtils;
+
     @Override
     public boolean execute(PreSaleProductPush[] preSaleProductPushs, String s) throws Exception {
         for (PreSaleProductPush preSaleProductPush : preSaleProductPushs) {
             try {
                 // 更新为推送中
-                int result = this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 1, 0);
+                int result = this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 1, Arrays.asList(new Integer[]{0, 3})); // 待推送和推送失败的可以重新推送
                 if (result == 0) {
                     return true;
                 }
                 MQSendUtil mqSendUtil = new MQSendUtil();
                 mqSendUtil.setAmqpTemplate(amqpTemplate);
-                mqSendUtil.sendToMQWithRoutingKey(getPreSaleProductPushDTO(preSaleProductPush.getItemId()), MQRoutingKeyConstant.BRAND_DOWN_ERP_ROUTING_KEY);
+                PreSaleProductPushDTO preSaleProductPushDTO = getPreSaleProductPushDTO(preSaleProductPush.getItemId());
+                System.out.println(JSON.toJSONString(preSaleProductPushDTO));
+                mqSendUtil.sendToMQWithRoutingKey(preSaleProductPushDTO, MQRoutingKeyConstant.PRE_SALE_PRODUCT_PUSH_ROUTING_KEY);
                 // 更新为推送完成
-                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 2, 1);
+                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 2, Arrays.asList(new Integer[]{1}));
             } catch (Exception e) {
                 logger.error("推送预售商品失败, itemId ：{}", preSaleProductPush.getItemId(), e);
                 // 推送失败
-                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 3, 1);
+                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 3, Arrays.asList(new Integer[]{1}));
             }
         }
         return true;
@@ -172,8 +177,8 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
             preSaleProductPushDTO.setSellerId(String.valueOf(sellerId));
             preSaleProductPushDTO.setSellerCode(sellerCode);
             preSaleProductPushDTO.setSellerName(sellerName);
-            preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? (companyCode.equals("0801") ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
-            is0801 = companyCode.equals("0801");
+            preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? ("0801".equals(companyCode) ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
+            is0801 = "0801".equals(companyCode);
         } else {
             throw new RuntimeException("getMemberCodeById出错， item_id : " + itemId + ", 错误信息 : " + sellerCodeResult.getErrorMessages());
         }
@@ -215,9 +220,8 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         if (hzgPriceDTOExecuteResult != null && hzgPriceDTOExecuteResult.isSuccess()) {
             HzgPriceDTO hzgPriceDTO = hzgPriceDTOExecuteResult.getResult();
             preSaleProductPushDTO.setRecommendedPrice(hzgPriceDTO.getRetailPrice());
-            preSaleProductPushDTO.setMemberPrice(hzgPriceDTO.getVipPrice());
+            preSaleProductPushDTO.setMemberPrice(hzgPriceDTO.getSalePrice());
             preSaleProductPushDTO.setVipPrice(hzgPriceDTO.getVipPrice());
-            // TODO : 接口少价格
         } else {
             throw new RuntimeException("queryHzgTerminalPriceByTerminalType出错, item_id : " + itemId + ", 错误信息 ：" + hzgPriceDTOExecuteResult.getErrorMessages());
         }
@@ -317,10 +321,75 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         ItemSalesArea salesAreaPublic = itemSalesAreaMapper.selectByItemId(itemId, shelfType);
         if (null != salesAreaPublic) {
             if (salesAreaPublic.getIsSalesWholeCountry().intValue() == 0) {
-
+                // TODO :详情
+                Long salesAreaId = salesAreaPublic.getSalesAreaId();
+                List<ItemSalesAreaDetail> salesAreaDetailList = itemSalesAreaDetailMapper.selectAreaDetailsBySalesAreaIdAll(salesAreaId);
+                List<String> provinces = new ArrayList<>(); // 省集合
+                List<String> citys = new ArrayList<>(); // 市集合
+                List<String> countrys = new ArrayList<>(); // 区集合
+                for (ItemSalesAreaDetail area : salesAreaDetailList) {
+                    if ("1".equals(area.getSalesAreaType())) {
+                        if (area.getAreaCode().length() == 2) {
+                            provinces.add(area.getAreaCode());
+                        }
+                    }
+                    if ("2".equals(area.getSalesAreaType())) {
+                        if (area.getAreaCode().length() == 4) {
+                            citys.add(area.getAreaCode());
+                        }
+                    }
+                    if ("3".equals(area.getSalesAreaType())) {
+                        if (area.getAreaCode().length() == 6) {
+                            countrys.add(area.getAreaCode());
+                        }
+                    }
+                }
+                for (String area : countrys) { // 从三级开始循环
+                    PreSaleProductSaleAreaDTO preSaleProductSaleAreaDTO = new PreSaleProductSaleAreaDTO();
+                    preSaleProductSaleAreaDTO.setRegionCounty(area);
+                    preSaleProductSaleAreaDTO.setRegionCity(area.substring(0, 4));
+                    preSaleProductSaleAreaDTO.setRegionProvince(area.substring(0, 2));
+                    if (addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionCounty()) == null) {
+                        continue;
+                    }
+                    preSaleProductSaleAreaDTO.setRegion(
+                            addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionProvince()).getName()
+                                    + "-" + addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionCity()).getName()
+                                    + "-" + addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionCounty()).getName());
+                    if (citys.contains(preSaleProductSaleAreaDTO.getRegionCity())) {
+                        citys.remove(preSaleProductSaleAreaDTO.getRegionCity());
+                    }
+                    if (provinces.contains(preSaleProductSaleAreaDTO.getRegionProvince())) {
+                        provinces.remove(preSaleProductSaleAreaDTO.getRegionProvince());
+                    }
+                    preSaleProductSaleAreaDTOs.add(preSaleProductSaleAreaDTO);
+                }
+                for (String area : citys) { // 循环没有三级的二级
+                    PreSaleProductSaleAreaDTO preSaleProductSaleAreaDTO = new PreSaleProductSaleAreaDTO();
+                    preSaleProductSaleAreaDTO.setRegionCity(area);
+                    preSaleProductSaleAreaDTO.setRegionProvince(area.substring(0, 2));
+                    if (addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionCity()) == null) {
+                        continue;
+                    }
+                    preSaleProductSaleAreaDTO.setRegion(
+                            addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionProvince()).getName()
+                                    + "-" + addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionCity()).getName());
+                    if (provinces.contains(preSaleProductSaleAreaDTO.getRegionProvince())) {
+                        provinces.remove(preSaleProductSaleAreaDTO.getRegionProvince());
+                    }
+                    preSaleProductSaleAreaDTOs.add(preSaleProductSaleAreaDTO);
+                }
+                for (String area : provinces) { // 循环没有二级的一级
+                    PreSaleProductSaleAreaDTO preSaleProductSaleAreaDTO = new PreSaleProductSaleAreaDTO();
+                    preSaleProductSaleAreaDTO.setRegionProvince(area);
+                    if (addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionProvince()) == null) {
+                        continue;
+                    }
+                    preSaleProductSaleAreaDTO.setRegion(addressUtils.getAddressName(preSaleProductSaleAreaDTO.getRegionProvince()).getName());
+                    preSaleProductSaleAreaDTOs.add(preSaleProductSaleAreaDTO);
+                }
             }
         }
-        // TODO :详情
         return preSaleProductSaleAreaDTOs;
     }
 

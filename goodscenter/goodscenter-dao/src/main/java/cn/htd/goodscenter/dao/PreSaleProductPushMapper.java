@@ -21,6 +21,6 @@ public interface PreSaleProductPushMapper {
 
     void update(PreSaleProductPush preSaleProductPush);
 
-    int updateStatus(@Param("id")Long id, @Param("status")int status,  @Param("preStatus")int preStatus);
+    int updateStatus(@Param("id")Long id, @Param("status")int status,  @Param("preStatusList")List<Integer> preStatus);
 
 }

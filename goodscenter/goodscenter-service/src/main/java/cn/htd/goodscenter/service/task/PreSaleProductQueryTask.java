@@ -71,7 +71,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                 Date lastSyscTime = sp.parse(lastSyscTimeStr);
                 Date now = new Date();
                 Map map = this.getTaskParam(taskQueueNum, taskItemList);
-                map.put("lastSyscTime",lastSyscTime);
+                map.put("lastSyscTime",lastSyscTime); // TODO : 时间往前推个几分钟，防止查询期间又加入的
                 itemList = this.itemMybatisDAO.queryPreSaleItemList(map);
                 for (Item item : itemList) {
                     Date date = new Date();

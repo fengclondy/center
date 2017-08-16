@@ -18,6 +18,7 @@ import cn.htd.membercenter.domain.VerifyInfo;
 import cn.htd.membercenter.dto.BuyerGroupInfo;
 import cn.htd.membercenter.dto.BuyerHisPointDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
+import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
 import cn.htd.membercenter.dto.MemberCompanyInfoDTO;
 import cn.htd.membercenter.dto.MemberImportSuccInfoDTO;
 import cn.htd.membercenter.dto.MemberInvoiceInfoDTO;
@@ -269,4 +270,6 @@ public interface MemberBaseOperationDAO {
 	public MemberBaseInfoDTO getInnerInfoByName(@Param("companyName") String companyName);
 	
 	public List<MemberCompanyInfoDTO> checkCompanyNameUnique(@Param("companyName") String companyName,@Param("memberId")Long memberId);
+	
+	public MemberBaseInfoRegisterDTO queryVerifyStatus(@Param("memberId") Long memberId);
 }

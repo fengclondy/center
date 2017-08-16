@@ -8,7 +8,7 @@
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
 	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
 	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-  </resultMap>promotion_slogan
+  </resultMap>
   
     <select id="queryBargainSloganBySellerCode" resultMap="BaseResultMap">
     	SELECT * FROM promotion_slogan

@@ -7,6 +7,6 @@ import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 
 public interface BuyerBargainAPI {
 	
-	public ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode);
+	public ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode,String messageId);
 
 }

@@ -9,8 +9,8 @@
     <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
     <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
     <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
-    <result column="PARTAKE_TIMESE" property="partakeTimes" jdbcType="INT" />
-    <result column="GOODS_NUM" property="goodsNum" jdbcType="INT" />
+    <result column="PARTAKE_TIMESE" property="partakeTimes" jdbcType="TINYINT" />
+    <result column="GOODS_NUM" property="goodsNum" jdbcType="TINYINT" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
 	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
 	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />

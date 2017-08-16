@@ -3,6 +3,8 @@ package cn.htd.promotion.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -14,19 +16,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
-import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
-import cn.htd.zeus.tc.biz.service.OrderCancelService;
-import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
+import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
-import cn.htd.zeus.tc.dto.resquest.OrderCancelInfoReqDTO;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
 @ContextConfiguration(locations={"classpath:applicationContext_test.xml","classpath:mybatis/sqlconfig/sqlMapConfig.xml"})  
-public class OrderCancelTestUnit {
+public class BuyerBargainTestUnit {
 	
 	@Resource
-	private OrderCancelService orderCancelService;
+	private BuyerLaunchBargainInfoService buyerLaunchBargainInfoService;
 	
     @Before  
     public void setUp() throws Exception {  
@@ -35,16 +34,11 @@ public class OrderCancelTestUnit {
     
     @Test
     @Rollback(false) 
-    public void testOrderCancel() {
+    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
     	try {
-			OrderCancelInfoReqDTO orderCancelInfoReqDTO = new OrderCancelInfoReqDTO();
-			orderCancelInfoReqDTO.setMessageId(GenerateIdsUtil.generateId(null));
-			orderCancelInfoReqDTO.setOrderCancelMemberId("13125455");
-			orderCancelInfoReqDTO.setMemberCode("HTD_13125455");
-			orderCancelInfoReqDTO.setOrderCancelReason("取消原因");
-			orderCancelInfoReqDTO.setOrderCancelMemberName("二娃");
-			orderCancelInfoReqDTO.setOrderNo("10017022217190000378");
-			TradeOrdersDMO tradeOrdersDMO = orderCancelService.orderCancel(orderCancelInfoReqDTO);
+			String buyerCode = "htd20070002";
+			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
 			String resultCode = tradeOrdersDMO.getResultCode();
 			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());  
     	} catch (Exception e) {

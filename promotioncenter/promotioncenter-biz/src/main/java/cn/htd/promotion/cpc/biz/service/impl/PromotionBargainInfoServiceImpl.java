@@ -15,7 +15,7 @@ import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 
-@Service("promotionSloganService")
+@Service("promotionBargainInfoService")
 public class PromotionBargainInfoServiceImpl implements PromotionBargainInfoService{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionBargainInfoServiceImpl.class);

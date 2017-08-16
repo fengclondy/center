@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
+import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.util.GenerateIdsUtil;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 
@@ -25,6 +26,9 @@ public class BuyerBargainTestUnit {
 	
 	@Resource
 	private BuyerLaunchBargainInfoService buyerLaunchBargainInfoService;
+	
+	@Resource
+	private PromotionBargainInfoService promotionBargainInfoService;
 	
     @Before  
     public void setUp() throws Exception {  
@@ -40,6 +44,23 @@ public class BuyerBargainTestUnit {
 			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
 			System.out.println(JSON.toJSONString(list));
     	} catch (Exception e) {
+    		
 		}
     }
+    
+//    @Test
+//    @Rollback(false) 
+//    public void testGetPromotionBargainInfoDetail() {
+//    	try {
+//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//			buyerBargainLaunch.setPromotionId("123");
+//			buyerBargainLaunch.setLevelCode("1");
+//			buyerBargainLaunch.setMessageId(messageId);
+//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+//			System.out.println(JSON.toJSONString(promotionBargainInfo));
+//    	} catch (Exception e) {
+//    		
+//		}
+//    }
 }

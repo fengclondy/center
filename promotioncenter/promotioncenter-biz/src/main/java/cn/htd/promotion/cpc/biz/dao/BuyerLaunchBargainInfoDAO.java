@@ -10,4 +10,5 @@ import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 public interface BuyerLaunchBargainInfoDAO {
 	
 	public List<BuyerLaunchBargainInfoDMO> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode);
+	
 }

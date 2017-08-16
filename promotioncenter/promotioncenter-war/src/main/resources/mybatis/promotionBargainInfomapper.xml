@@ -19,8 +19,9 @@
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
-    <select id="getBuyerLaunchBargainInfoByBuyerCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
-    	select * from buyer_launch_bargain_info
-    	where buyer_code = #{buyerCode}
-	</select>
+     <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
+	    select * from promotion_bargain_info
+	    and promotion_id = #{promotionId,jdbcType=VARCHAR} 
+	    and level_code = #{levelCode,jdbcType=VARCHAR}
+    </select>
 </mapper>

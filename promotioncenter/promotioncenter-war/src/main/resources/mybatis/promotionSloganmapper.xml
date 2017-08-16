@@ -11,9 +11,13 @@
   </resultMap>
   
     <select id="queryBargainSloganBySellerCode" resultMap="BaseResultMap">
-    	SELECT * FROM promotion_slogan
-    	INNER JOIN promotion_info
-    	WHERE promotion_provider_seller_code = #{providerSellerCode}
+    	SELECT ps.* FROM promotion_slogan as ps
+    	INNER JOIN promotion_info as pi on ps.promotion_id = pi.promotion_id
+    	WHERE pi.promotion_type = 22
+    	AND pi.status != 9
+    	AND pi.show_status = 4 
+    	AND ps.delete_flag = 0
+    	AND pi.promotion_provider_seller_code = #{providerSellerCode}
 	</select>
 
 </mapper>

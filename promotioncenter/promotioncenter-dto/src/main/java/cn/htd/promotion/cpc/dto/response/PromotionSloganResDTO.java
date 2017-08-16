@@ -8,7 +8,7 @@ import java.util.Date;
  * @author xmz
  *
  */
-public class PromotionSloganDTO implements Serializable {
+public class PromotionSloganResDTO implements Serializable {
 	
 	private static final long serialVersionUID = 2937241331370615679L;
 

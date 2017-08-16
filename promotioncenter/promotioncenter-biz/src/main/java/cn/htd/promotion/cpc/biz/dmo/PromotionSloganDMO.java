@@ -11,6 +11,8 @@ public class PromotionSloganDMO {
 
 	private static final long serialVersionUID = 2937241331370615679L;
 
+	private Integer id;
+	
 	private String promotionId; // 促销活动id
 	
 	private String promotionSlogan; // 宣传语
@@ -20,6 +22,15 @@ public class PromotionSloganDMO {
 	private String createName; // 创建人名称
 	
 	private Date createTime; // 创建时间
+	
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getPromotionId() {
 		return promotionId;
@@ -60,4 +71,5 @@ public class PromotionSloganDMO {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	
 }

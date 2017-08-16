@@ -2,14 +2,8 @@ package cn.htd.promotion.cpc.biz.service;
 
 import java.util.List;
 
-import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
-
-/**
- * 促销活动宣传语接口
- * 
- * @author xmz
- *
- */
+import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+ 
 public interface PromotionSloganService {
 
 	/**
@@ -19,7 +13,7 @@ public interface PromotionSloganService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<PromotionSloganDTO> queryBargainSloganBySellerCode(
+	public List<PromotionSloganResDTO> queryBargainSloganBySellerCode(
 			String providerSellerCode, String messageId) throws Exception;
 
 }

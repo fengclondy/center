@@ -11,13 +11,8 @@ import com.alibaba.fastjson.JSONObject;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionSloganDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 
-/**
- * 活动宣传语实现类
- * @author xmz
- *
- */
 @Service("promotionSloganService")
 public class PromotionSloganServiceImpl implements PromotionSloganService{
 
@@ -27,16 +22,16 @@ public class PromotionSloganServiceImpl implements PromotionSloganService{
 	private PromotionSloganDAO promotionSloganDAO;
 	
 	@Override
-	public List<PromotionSloganDTO> queryBargainSloganBySellerCode(String providerSellerCode, String messageId)
+	public List<PromotionSloganResDTO> queryBargainSloganBySellerCode(String providerSellerCode, String messageId)
 			throws Exception {
 		LOGGER.info("MessageId{}:调用promotionSloganDAO.queryBargainSloganBySellerCode（）方法开始,入参{}",messageId,providerSellerCode+":"+messageId);
 		List<PromotionSloganDMO> promotionSloganDMOList = promotionSloganDAO.queryBargainSloganBySellerCode(providerSellerCode);;
 		LOGGER.info("MessageId{}:调用promotionSloganDAO.queryBargainSloganBySellerCode（）方法开始,出参{}",JSON.toJSONString(promotionSloganDMOList));
-		List<PromotionSloganDTO> promotionSloganDTOList = null;
+		List<PromotionSloganResDTO> promotionSloganDTOList = null;
 		if(null != promotionSloganDMOList){
-			promotionSloganDTOList = new ArrayList<PromotionSloganDTO>();
+			promotionSloganDTOList = new ArrayList<PromotionSloganResDTO>();
 			String str = JSONObject.toJSONString(promotionSloganDMOList);
-			promotionSloganDTOList = JSONObject.parseArray(str,PromotionSloganDTO.class);
+			promotionSloganDTOList = JSONObject.parseArray(str,PromotionSloganResDTO.class);
 		}
 		return promotionSloganDTOList;
 	}

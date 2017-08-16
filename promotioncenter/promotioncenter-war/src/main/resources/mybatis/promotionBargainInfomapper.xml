@@ -24,6 +24,10 @@
     	where buyer_code = #{buyerCode}
 	</select>
 	
+	<select id="queryPromotionBargainInfoByPomotionId" resultMap="BaseResultMap">
+		
+	</select>
+	
 	
 
 

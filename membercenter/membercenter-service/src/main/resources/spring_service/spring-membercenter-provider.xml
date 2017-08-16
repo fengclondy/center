@@ -48,9 +48,7 @@
 	
 	<dubbo:service interface="cn.htd.membercenter.service.SuperBossService" ref="superBossService" version="${dubbo.version}" timeout="60000" />
 	
-    <dubbo:service interface="cn.htd.membercenter.service.HelpDocumentService" ref="helpDocumentService" version="${dubbo.version}" timeout="60000" /> 
-
-    <dubbo:service interface="cn.htd.membercenter.service.MemberDownErpService" ref="memberDownErpService" version="${dubbo.version}" timeout="60000" /> 
+    <dubbo:service interface="cn.htd.membercenter.service.MemberDownErpService" ref="memberDownErpService" version="${dubbo.version}" timeout="60000" />
     
 	<dubbo:service interface="cn.htd.membercenter.service.OMeetingService" ref="oMeetingService" version="${dubbo.version}" timeout="60000" /> 
 	

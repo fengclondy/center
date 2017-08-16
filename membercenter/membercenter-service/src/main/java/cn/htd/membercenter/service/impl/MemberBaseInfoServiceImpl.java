@@ -587,6 +587,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				// 下行到用户中心
 				ExecuteResult<Boolean> custRs = userExportService.memberPasswdReset(memberCode, password, userId);
 				if (custRs.isSuccess()) {
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(memberCode);
 					memberBaseOperationDAO.insertVerifyInfo(verDtoList);
 					rs.setResultMessage("success");
 					rs.setResult(true);
@@ -1299,6 +1301,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 								customerDTO.setCompanyId(dto.getId());
 								customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 								customerService.editCustomer(customerDTO, dto.getModifyId());
+								// 更新最终更新时间
+								memberCompanyInfoDao.updateCompanyTime(oldDto.getMemberCode());
 							} else {
 								customerDTO.setLoginId(oldDto.getMemberCode());
 								customerDTO.setMobile(oldDto.getArtificialPersonMobile());
@@ -2271,9 +2275,11 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		return rs;
 	}
 
-	public ExecuteResult<String>  updateMemberBaseRegisterInfo4Check(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO){
+	
+	@Override
+	public ExecuteResult<String> updateMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
+		// TODO Auto-generated method stub
 		ExecuteResult<String> rs = new ExecuteResult<String>();
-
 	      // 输入DTO的验证
 			String emsg="";
 	        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
@@ -2289,21 +2295,9 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),memberBaseInfoRegisterDTO.getMemberId())){
 					rs.addErrorMessage("公司名称已经存在，请重新填写!");
 					return rs;
-		        }
-				boolean mobilecheck = checkMemberMobile(memberBaseInfoRegisterDTO.getArtificialPersonMobile(), memberBaseInfoRegisterDTO.getMemberId());
-				if (mobilecheck) {
-					rs.addErrorMessage("手机号已存在，请重新填写!");
-					return rs;
-				}	
+		        }	
 	        }
-			return rs;
-	}
-	
-	@Override
-	public ExecuteResult<String> updateMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
-		// TODO Auto-generated method stub
-		ExecuteResult<String> rs = new ExecuteResult<String>();
-        rs=updateMemberBaseRegisterInfo4Check(memberBaseInfoRegisterDTO);
+
 		try {
 			if (memberBaseInfoRegisterDTO.getMemberId() != null) {
 				String cooperateVendor = memberBaseInfoRegisterDTO.getCooperateVendor();

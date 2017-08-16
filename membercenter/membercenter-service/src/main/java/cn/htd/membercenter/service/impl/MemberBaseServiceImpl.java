@@ -7,10 +7,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.htd.membercenter.domain.MemberExtendInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,8 @@ import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
+import cn.htd.membercenter.dao.MemberCompanyInfoDao;
+import cn.htd.membercenter.domain.MemberExtendInfo;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.enums.MemberTypeEnum;
@@ -42,6 +42,9 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 
 	@Resource
 	private MemberBaseOperationDAO memberBaseOperationDAO;
+
+	@Resource
+	private MemberCompanyInfoDao memberCompanyInfoDao;
 
 	@Autowired
 	private UserExportService userExportService;
@@ -399,5 +402,18 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 
 	public MemberExtendInfo queryMemberExtendInfoById(Long id){
 		return memberBaseOperationDAO.queryMemberExtendInfoById(id);
+	}
+	
+	/**
+	 * 根据登录ID更新公司的更新时间
+	 * 
+	 * @param loginId
+	 * @return
+	 */
+	public ExecuteResult<Boolean> updateCompanyTime(String loginId) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		int count = memberCompanyInfoDao.updateCompanyTime(loginId);
+		result.setResult(count > 0);
+		return result;
 	}
 }

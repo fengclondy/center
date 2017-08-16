@@ -109,4 +109,11 @@ public interface MemberBaseService {
 	 */
 	public MemberExtendInfo queryMemberExtendInfoById(Long id);
 
+	/**
+	 * 根据登录ID更新公司的更新时间
+	 * 
+	 * @param loginId
+	 * @return
+	 */
+	public ExecuteResult<Boolean> updateCompanyTime(String loginId);
 }

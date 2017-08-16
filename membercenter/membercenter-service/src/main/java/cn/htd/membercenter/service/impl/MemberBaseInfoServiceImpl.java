@@ -1543,7 +1543,7 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
         	}
 			return rs;
         }
-        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName())){
+        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),0l)){
 			rs.addErrorMessage("公司名称已经存在，请重新填写!");
 			return rs;
         }
@@ -2271,21 +2271,39 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		return rs;
 	}
 
+	public ExecuteResult<String>  updateMemberBaseRegisterInfo4Check(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO){
+		ExecuteResult<String> rs = new ExecuteResult<String>();
+
+	      // 输入DTO的验证
+			String emsg="";
+	        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
+	        // 有错误信息时返回错误信息
+	        if (validateResult.isHasErrors()) {
+	        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
+	        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
+				      rs.addErrorMessage(emsg.trim());
+	        	}
+				return rs;
+	        }
+	        if(memberBaseInfoRegisterDTO.getMemberId() !=null){
+		        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),memberBaseInfoRegisterDTO.getMemberId())){
+					rs.addErrorMessage("公司名称已经存在，请重新填写!");
+					return rs;
+		        }
+				boolean mobilecheck = checkMemberMobile(memberBaseInfoRegisterDTO.getArtificialPersonMobile(), memberBaseInfoRegisterDTO.getMemberId());
+				if (mobilecheck) {
+					rs.addErrorMessage("手机号已存在，请重新填写!");
+					return rs;
+				}	
+	        }
+			return rs;
+	}
+	
 	@Override
 	public ExecuteResult<String> updateMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		// TODO Auto-generated method stub
 		ExecuteResult<String> rs = new ExecuteResult<String>();
-        // 输入DTO的验证
-		String emsg="";
-        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
-        // 有错误信息时返回错误信息
-        if (validateResult.isHasErrors()) {
-        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
-        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
-			      rs.addErrorMessage(emsg.trim());
-        	}
-			return rs;
-        }
+        rs=updateMemberBaseRegisterInfo4Check(memberBaseInfoRegisterDTO);
 		try {
 			if (memberBaseInfoRegisterDTO.getMemberId() != null) {
 				String cooperateVendor = memberBaseInfoRegisterDTO.getCooperateVendor();
@@ -3155,8 +3173,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		 * @param company
 		 * @return
 		 */
-		public boolean checkCompanyNameUnique(String companyName) {
-			List<MemberCompanyInfoDTO> list = memberBaseOperationDAO.checkCompanyNameUnique(companyName);
+		public boolean checkCompanyNameUnique(String companyName,Long memberId) {
+			List<MemberCompanyInfoDTO> list = memberBaseOperationDAO.checkCompanyNameUnique(companyName,memberId);
 			if (list != null && list.size() > 0) {
 				return true;
 			}

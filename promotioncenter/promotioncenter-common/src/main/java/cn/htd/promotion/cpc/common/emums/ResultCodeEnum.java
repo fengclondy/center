@@ -12,7 +12,8 @@ public enum ResultCodeEnum {
 	//订单状态
 	SUCCESS("00000","成功！"),
 	NORESULT("11111","数据库没有查到信息！"),
-	ERROR("99999","未知异常！");
+	ERROR("99999","未知异常！"),
+	PARAMETERERROR("2222","参数异常");
 	
 
 	private ResultCodeEnum(String code, String msg) {

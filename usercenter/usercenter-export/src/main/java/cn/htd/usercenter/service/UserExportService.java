@@ -140,7 +140,7 @@ public interface UserExportService {
 	 *            操作人id
 	 * @return
 	 */
-	public ExecuteResult<Boolean> passwdReset(Long userid, String pwd, Long userId);
+	public ExecuteResult<String> passwdReset(Long userid, String pwd, Long userId);
 
 	public ExecuteResult<LoginLogDTO> queryLastLoginLog(Long userid);
 
@@ -190,7 +190,7 @@ public interface UserExportService {
 	 * @param userId
 	 *            操作人id
 	 */
-	public ExecuteResult<Boolean> passwdEdit(Long userid, String pwd, String oldpwd, Long userId);
+	public ExecuteResult<String> passwdEdit(Long userid, String pwd, String oldpwd, Long userId);
 
 	/**
 	 * 密码修改验证

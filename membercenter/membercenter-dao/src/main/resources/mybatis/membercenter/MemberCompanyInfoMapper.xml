@@ -276,4 +276,16 @@
    		limit 1
    </select>
 
+	<update id="updateCompanyTime" parameterType="java.lang.String">
+        <![CDATA[
+	        UPDATE member_company_info c
+			SET
+				c.modify_time=NOW()
+			WHERE c.member_id=(
+				select b.id
+				from member_base_info b
+				where b.member_code=#{loginId} )
+        ]]>
+    </update>
+
 </mapper>

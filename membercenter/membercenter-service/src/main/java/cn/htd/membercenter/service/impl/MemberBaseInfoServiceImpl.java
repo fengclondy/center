@@ -587,6 +587,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				// 下行到用户中心
 				ExecuteResult<Boolean> custRs = userExportService.memberPasswdReset(memberCode, password, userId);
 				if (custRs.isSuccess()) {
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(memberCode);
 					memberBaseOperationDAO.insertVerifyInfo(verDtoList);
 					rs.setResultMessage("success");
 					rs.setResult(true);
@@ -1299,6 +1301,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 								customerDTO.setCompanyId(dto.getId());
 								customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 								customerService.editCustomer(customerDTO, dto.getModifyId());
+								// 更新最终更新时间
+								memberCompanyInfoDao.updateCompanyTime(oldDto.getMemberCode());
 							} else {
 								customerDTO.setLoginId(oldDto.getMemberCode());
 								customerDTO.setMobile(oldDto.getArtificialPersonMobile());

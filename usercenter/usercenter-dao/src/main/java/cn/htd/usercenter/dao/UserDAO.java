@@ -92,9 +92,4 @@ public interface UserDAO extends BaseDAO<UserDTO> {
 	 * @param user
 	 */
 	public void updateUserName(@Param("dto") UserDTO user);
-
-	/**
-	 * @param userDTO
-	 */
-	public void updateUserTime(@Param("dto") UserDTO userDTO);
 }

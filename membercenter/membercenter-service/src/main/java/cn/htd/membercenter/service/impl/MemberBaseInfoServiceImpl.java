@@ -2295,7 +2295,12 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),memberBaseInfoRegisterDTO.getMemberId())){
 					rs.addErrorMessage("公司名称已经存在，请重新填写!");
 					return rs;
-		        }	
+		        }
+		        MemberBaseInfoRegisterDTO memberbase=  memberBaseOperationDAO.queryVerifyStatus(memberBaseInfoRegisterDTO.getMemberId());
+		        if(null !=memberbase && !memberbase.getStatus().equals("3")){ //3.为运营审核驳回
+					rs.addErrorMessage("会员信息已经通过其他方式修改，无需再次修改!"); //比如超级经理人客户端
+					return rs;
+		        }
 	        }
 
 		try {

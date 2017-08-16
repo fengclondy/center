@@ -32,11 +32,13 @@
             m.can_mall_login  as canMallLogin,
             ms.verify_status as verifyStatus,
             ms1.verify_status as cooperateVerifyStatus,
-            m.create_time as createTime
+            m.create_time as createTime,
+            v.remark
 		from member_base_info m
 		left join member_company_info mc on m.id=mc.member_id
         left join member_status_info ms on ms.member_id = m.id
         left join member_status_info ms1 on ms1.member_id = m.id and ms1.info_type=12
+        left join verify_info v on v.id=ms.verify_id
 		where
 		m.cur_belong_manager_id=#{managerCode}
 		and mc.buyer_seller_type='1'
@@ -52,6 +54,7 @@
 		left join member_company_info mc on m.id=mc.member_id
         left join member_status_info ms on ms.member_id = m.id
         left join member_status_info ms1 on ms1.member_id = m.id and ms1.info_type=12
+        left join verify_info v on v.id=ms.verify_id
 		where
 		m.cur_belong_manager_id=#{managerCode}
 		and mc.buyer_seller_type='1'

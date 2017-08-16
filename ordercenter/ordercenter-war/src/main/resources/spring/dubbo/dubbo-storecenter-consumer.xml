@@ -6,7 +6,11 @@
         http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd
         ">
-    <!--查询商品价格接口-->
+    <!--查询店铺中心客服QQ-->
 	<dubbo:reference id="qqCustomerService"
 	interface="cn.htd.storecenter.service.QQCustomerService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
+	
+    <!--查询店铺中心店铺集合-->
+	<dubbo:reference id="shopExportService"
+	interface="cn.htd.storecenter.service.ShopExportService" retries="1" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
 </beans>

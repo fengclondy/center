@@ -15,41 +15,52 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
+import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.zeus.tc.biz.dmo.OrderSalesMonthInfoDMO;
+import cn.htd.zeus.tc.biz.rao.MemberCenterRAO;
+import cn.htd.zeus.tc.biz.service.OrderManagementAnalysisService;
 import cn.htd.zeus.tc.biz.service.OrderMonthAnalysisService;
 import cn.htd.zeus.tc.common.util.DateUtil;
+import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
+import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 
-public class OrderMonthAnalysisTask implements IScheduleTaskDealMulti<OrderSalesMonthInfoDMO> {
+public class OrderMonthAnalysisTask implements IScheduleTaskDealMulti<ShopDTO> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OrderMonthAnalysisTask.class);
 
 	@Autowired
 	private OrderMonthAnalysisService orderMonthAnalysisService;
 
+	@Autowired
+	private OrderManagementAnalysisService orderManagementAnalysisService;
+
+	@Autowired
+	private MemberCenterRAO memberCenterRAO;
+
 	@Override
-	public Comparator<OrderSalesMonthInfoDMO> getComparator() {
-		return new Comparator<OrderSalesMonthInfoDMO>() {
-			public int compare(OrderSalesMonthInfoDMO o1, OrderSalesMonthInfoDMO o2) {
-				Long id1 = o1.getSupperlierId();
-				Long id2 = o2.getSupperlierId();
+	public Comparator<ShopDTO> getComparator() {
+		return new Comparator<ShopDTO>() {
+			public int compare(ShopDTO o1, ShopDTO o2) {
+				Long id1 = o1.getShopId();
+				Long id2 = o2.getShopId();
 				return id1.compareTo(id2);
 			}
 		};
 	}
 
 	@Override
-	public List<OrderSalesMonthInfoDMO> selectTasks(String taskParameter, String ownSign,
-			int taskQueueNum, List<TaskItemDefine> taskItemList, int eachFetchDataNum)
-					throws Exception {
+	public List<ShopDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
+			List<TaskItemDefine> taskItemList, int eachFetchDataNum) throws Exception {
 		LOGGER.info(
 				"【selectTasks】============================【店铺经营信息店铺查询-开始执行】【请求参数：】【taskParameter:{},ownSign:{},taskQueueNum:{},taskItemList:{},eachFetchDataNum:{}】",
 				new Object[] { JSONObject.toJSONString(taskParameter),
 						JSONObject.toJSONString(ownSign), JSONObject.toJSONString(taskQueueNum),
 						JSONObject.toJSONString(taskItemList),
 						JSONObject.toJSONString(eachFetchDataNum) });
-		List<OrderSalesMonthInfoDMO> shopInfo = new ArrayList<OrderSalesMonthInfoDMO>();
+		List<ShopDTO> shopInfo = new ArrayList<ShopDTO>();
+		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
 		try {
-			shopInfo = orderMonthAnalysisService.queryShopInfo();
+			shopInfo = orderManagementAnalysisService.queryShopInfo(messageId);
 			LOGGER.info("【selectTasks】============================【店铺经营信息店铺查询-执行成功】【返回参数：{}" + "】",
 					com.alibaba.fastjson.JSONObject.toJSONString(shopInfo));
 		} catch (Exception e) {
@@ -61,25 +72,31 @@ public class OrderMonthAnalysisTask implements IScheduleTaskDealMulti<OrderSales
 	}
 
 	@Override
-	public boolean execute(OrderSalesMonthInfoDMO[] tasks, String ownSign) throws Exception {
+	public boolean execute(ShopDTO[] tasks, String ownSign) throws Exception {
 		LOGGER.info("【execute】【店铺经营信息导入-开始执行】【请求参数：】【tasks:{},ownSign:{}】",
 				new Object[] { JSONObject.toJSONString(tasks), JSONObject.toJSONString(ownSign) });
 		boolean result = true;
 		int date = Integer.valueOf(DateUtil.getLastMonth());
 		try {
 			if (tasks != null && tasks.length > 0) {
-				for (OrderSalesMonthInfoDMO analysis : tasks) {
+				for (ShopDTO analysis : tasks) {
+					OtherCenterResDTO<String> sellerCode = memberCenterRAO
+							.queryMemberCodeByMemberId(analysis.getSellerId(), "123456");
 					OrderSalesMonthInfoDMO analysis2 = orderMonthAnalysisService
-							.queryOrderMonthAnalysisInfo(analysis.getSellerCode(),
+							.queryOrderMonthAnalysisInfo(sellerCode.getOtherCenterResult(),
 									DateUtil.getLastMonthFirstDay(),
 									DateUtil.getLastMonthLastDay());
+					OrderSalesMonthInfoDMO orderSalesMonthInfoDMO = new OrderSalesMonthInfoDMO();
+					orderSalesMonthInfoDMO.setSupperlierId(analysis.getSellerId());
+					orderSalesMonthInfoDMO.setShopId(analysis.getShopId());
+					orderSalesMonthInfoDMO.setSellerCode(sellerCode.getOtherCenterResult());
 					if (analysis2 != null) {
-						analysis.setSalesAmount(analysis2.getSalesAmount());
+						orderSalesMonthInfoDMO.setSalesAmount(analysis2.getSalesAmount());
 					} else {
-						analysis.setSalesAmount(0L);
+						orderSalesMonthInfoDMO.setSalesAmount(0L);
 					}
-					analysis.setSalesMonthYear(date);
-					orderMonthAnalysisService.insertOrderMonthAnalysisInfo(analysis);
+					orderSalesMonthInfoDMO.setSalesMonthYear(date);
+					orderMonthAnalysisService.insertOrderMonthAnalysisInfo(orderSalesMonthInfoDMO);
 				}
 			}
 		} catch (Exception e) {

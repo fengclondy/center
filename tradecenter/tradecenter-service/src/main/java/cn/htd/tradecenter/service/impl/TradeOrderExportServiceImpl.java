@@ -357,14 +357,17 @@ public class TradeOrderExportServiceImpl implements TradeOrderExportService {
 	        if(null != m){
 	            if(Boolean.valueOf(m.get("success").toString())){
 	            	if("0".equals(m.get("data").toString())){
+	            		result.setCode("-1");
 						result.addErrorMessage("未开单");
 	            	}else if("1".equals(m.get("data").toString())){
 	            		result.setResult("success");
 						result.setCode("1");
 	            		result.setResultMessage("已开单");
 	            	}else if("-1".equals(m.get("data").toString())){
+	            		result.setCode("-2");
 	            		result.addErrorMessage("开单金额小于交易金额");
 	            	}else if("-2".equals(m.get("data").toString())){
+	            		result.setCode("-2");
 	            		result.addErrorMessage("开单金额大于交易金额");
 	            	}
 	            }else{

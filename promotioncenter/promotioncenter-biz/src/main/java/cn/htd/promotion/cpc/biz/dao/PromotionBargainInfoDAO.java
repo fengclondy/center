@@ -13,5 +13,4 @@ public interface PromotionBargainInfoDAO {
 	
 	public List<BuyerLaunchBargainInfoResDTO> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode);
 
-	public List<PromotionBargainInfoDMO> queryPromotionBargainInfoByPomotionId(@Param("promotionId") String promotionId);
 }

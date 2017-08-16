@@ -12,6 +12,7 @@ public enum ResultCodeEnum {
 	//订单状态
 	SUCCESS("00000","成功！"),
 	NORESULT("11111","数据库没有查到信息！"),
+	PROMOTION_PARAM_IS_NULL("10001","调用砍价发起接口入参不能为空！"),
 	ERROR("99999","未知异常！");
 	
 

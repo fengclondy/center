@@ -13,10 +13,10 @@
     <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
     <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
     <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
-    <result column="LAUNCH_TIME" property="launchTime" jdbcType="DATETIME" />
-    <result column="BARGAIN_OVER_TIME" property="bargainOverTime" jdbcType="DATETIME" />
+    <result column="LAUNCH_TIME" property="launchTime" jdbcType="TIMESTAMP" />
+    <result column="BARGAIN_OVER_TIME" property="bargainOverTime" jdbcType="TIMESTAMP" />
     <result column="IS_BARGAIN_OVER" property="isBargainOver" jdbcType="TINYINT" />
-    <result column="GOODS_CURRENT_PRICE" property="goodsCurrentPrice" jdbcType="DATETIME" />
+    <result column="GOODS_CURRENT_PRICE" property="goodsCurrentPrice" jdbcType="DECIMAL" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
 	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
 	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />

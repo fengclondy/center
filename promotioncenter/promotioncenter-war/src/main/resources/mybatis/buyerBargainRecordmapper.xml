@@ -8,7 +8,7 @@
     <result column="BARGAIN_PERSON_CODE" property="bargainPersonCode" jdbcType="VARCHAR" />
     <result column="BARGAIN_PERSON_NAME" property="bargainPersonName" jdbcType="VARCHAR" />
     <result column="BARGAIN_AMOUNT" property="bargainAmount" jdbcType="DECIMAL" />
-    <result column="BARGAIN_TIME" property="bargainTime" jdbcType="DATETIME" />
+    <result column="BARGAIN_TIME" property="bargainTime" jdbcType="TIMESTAMP" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
 	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
 	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />

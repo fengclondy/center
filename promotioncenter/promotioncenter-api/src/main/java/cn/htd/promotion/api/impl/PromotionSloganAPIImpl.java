@@ -39,7 +39,7 @@ public class PromotionSloganAPIImpl implements PromotionSloganAPI {
 				}
 			}else{
 				result.setCode(ResultCodeEnum.ERROR.getMsg());
-				result.setErrorMessage(ResultCodeEnum.PARAMETERERROR.getMsg());
+				result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
 				LOGGER.error("MessageId:{} 调用方法promotionSloganAPIImpl.queryBargainSloganBySellerCode出现异常{}",
 						messageId,providerSellerCode+":"+messageId);
 			}

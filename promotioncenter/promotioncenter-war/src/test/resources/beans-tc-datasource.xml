@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd"
+	default-autowire="byName">
+	<bean id="dataSource" class="cn.htd.zeus.tc.common.util.XBasicDataSource"
+		destroy-method="close">
+		<property name="url" value="jdbc:mysql://172.16.1.178:3306/zeus?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="username" value="htdzt" />
+		<property name="password" value="Ztdep2017" />
+	</bean>
+	<!-- delete by 张丁 开始 -->
+	<!-- <jee:jndi-lookup id="dataSource" jndi-name="java:jboss/DS-cps" /> -->
+	<!-- delete by 张丁 结束 -->
+</beans>  

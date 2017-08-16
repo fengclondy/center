@@ -25,7 +25,7 @@ import java.util.List;
  * @since 2017-3-30 19:16
  * 
  */
-@Service("HelpDocToMallService")
+@Service("helpDocToMallService")
 public class HelpDocToMallServiceImpl implements HelpDocToMallService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(HelpDocToMallServiceImpl.class);

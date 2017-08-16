@@ -169,19 +169,19 @@
 		</property>
 	</bean>
 
-	<bean id="dataSource_memberCenter" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="dataSource_userCenter" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName">
-			<value>${jdbc.driverClassName_memberCenter}</value>
+			<value>${jdbc.driverClassName_userCenter}</value>
 		</property>
 		<property name="url">
-			<value>${jdbc.url_memberCenter}</value>
+			<value>${jdbc.url_userCenter}</value>
 		</property>
 		<property name="username">
-			<value>${jdbc.username_memberCenter}</value>
+			<value>${jdbc.username_userCenter}</value>
 		</property>
 		<property name="password">
-			<value>${jdbc.password_memberCenter}</value>
+			<value>${jdbc.password_userCenter}</value>
 		</property>
 		<property name="maxActive">
 			<value>${jdbc.maxActive}</value>
@@ -336,7 +336,7 @@
 				<entry key="dataSource_solrCenter" value-ref="dataSource_solrCenter"></entry>
 				<entry key="dataSource_storeCenter" value-ref="dataSource_storeCenter"></entry>
 				<entry key="dataSource_priceCenter" value-ref="dataSource_priceCenter"></entry>
-				<entry key="dataSource_memberCenter" value-ref="dataSource_memberCenter"></entry>
+				<entry key="dataSource_userCenter" value-ref="dataSource_userCenter"></entry>
 				<entry key="dataSource_baseCenter" value-ref="dataSource_baseCenter"></entry>
 				<entry key="dataSource_contentCenter" value-ref="dataSource_contentCenter"></entry>
 				<entry key="dataSource_tradeCenter" value-ref="dataSource_tradeCenter"></entry>

@@ -20,7 +20,11 @@
 			<groupId>com.bjucloud.contentcenter</groupId>
 			<artifactId>contentcenter-domain</artifactId>
 		</dependency>
-    </dependencies>
+		<dependency>
+			<groupId>cn.htd.membercenter</groupId>
+			<artifactId>membercenter-domain</artifactId>
+		</dependency>
+	</dependencies>
 
 	<!-- Maven私服配置 -->
 	<distributionManagement>

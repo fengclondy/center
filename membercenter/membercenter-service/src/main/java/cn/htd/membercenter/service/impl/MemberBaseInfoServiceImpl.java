@@ -28,7 +28,11 @@ import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.common.constant.StaticProperty;
+import cn.htd.membercenter.common.exception.MemberCenterException;
 import cn.htd.membercenter.common.util.HttpUtils;
+import cn.htd.membercenter.common.util.ValidateResult;
+import cn.htd.membercenter.common.util.ValidationUtils;
+import cn.htd.membercenter.costs.MemberCenterCodeConst;
 import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
@@ -1527,6 +1531,13 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 	public ExecuteResult<String> insertMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		BelongRelationshipDTO belongRelationshipDTO = new BelongRelationshipDTO();
+        // 输入DTO的验证
+        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
+        // 有错误信息时返回错误信息
+        if (validateResult.isHasErrors()) {
+            throw new MemberCenterException(MemberCenterCodeConst.INPUT_PARAMETER_ERROR,
+                   validateResult.getErrorMsg());
+        }
 		try {
 			boolean mobilecheck = checkMemberMobile(memberBaseInfoRegisterDTO.getArtificialPersonMobile(), 0l);
 			if (mobilecheck) {

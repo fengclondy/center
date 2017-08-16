@@ -2275,6 +2275,17 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 	public ExecuteResult<String> updateMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		// TODO Auto-generated method stub
 		ExecuteResult<String> rs = new ExecuteResult<String>();
+        // 输入DTO的验证
+		String emsg="";
+        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
+        // 有错误信息时返回错误信息
+        if (validateResult.isHasErrors()) {
+        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
+        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
+			      rs.addErrorMessage(emsg.trim());
+        	}
+			return rs;
+        }
 		try {
 			if (memberBaseInfoRegisterDTO.getMemberId() != null) {
 				String cooperateVendor = memberBaseInfoRegisterDTO.getCooperateVendor();

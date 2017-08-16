@@ -16,7 +16,7 @@ public class PromotionBargainInfoDMO{
 	
 	private String levelCode;//层级编码
 	
-	private String goods_picture;//商品图片
+	private String goodsPicture;//商品图片
 	
 	private String goodsName;//商品名称
 	
@@ -64,12 +64,12 @@ public class PromotionBargainInfoDMO{
 		this.levelCode = levelCode;
 	}
 
-	public String getGoods_picture() {
-		return goods_picture;
+	public String getGoodsPicture() {
+		return goodsPicture;
 	}
 
-	public void setGoods_picture(String goods_picture) {
-		this.goods_picture = goods_picture;
+	public void setGoodsPicture(String goodsPicture) {
+		this.goodsPicture = goodsPicture;
 	}
 
 	public String getGoodsName() {

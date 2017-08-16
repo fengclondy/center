@@ -2,21 +2,16 @@ package cn.htd.promotion.cpc.dto.request;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class BuyerBargainLaunchReqDTO implements Serializable{
 
 	private static final long serialVersionUID = -3459854858917893780L;
 	
 	private String buyerCode;//买家编码
 	
-	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;//促销活动编码
 	
-	@NotEmpty(message = "levelCode不能为空")
 	private String levelCode;//层级编码
 	
-	@NotEmpty(message = "messageId不能为空")
 	private String messageId;
 
 	public String getBuyerCode() {

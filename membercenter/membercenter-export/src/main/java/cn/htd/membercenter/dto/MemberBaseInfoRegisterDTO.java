@@ -50,7 +50,7 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	/**
 	 * 法人手机
 	 */
-	@NotBlank(message = "法人手机号不能为空")
+	//@NotBlank(message = "法人手机号不能为空")
 	private String artificialPersonMobile;// 法人手机号码
 	private String artificialPersonIdcard;// 法人身份证
 	private String artificialPersonPicSrc;// 法人身份证正面

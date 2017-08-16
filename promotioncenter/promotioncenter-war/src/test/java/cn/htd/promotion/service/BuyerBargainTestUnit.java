@@ -1,5 +1,7 @@
 package cn.htd.promotion.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -12,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.util.GenerateIdsUtil;
-import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -28,6 +30,9 @@ public class BuyerBargainTestUnit {
 	
 	@Resource
 	private PromotionBargainInfoService promotionBargainInfoService;
+	
+	@Resource
+	private BuyerBargainRecordService buyerBargainRecordService;
 	
     @Before  
     public void setUp() throws Exception {  
@@ -47,16 +52,30 @@ public class BuyerBargainTestUnit {
 //		}
 //    }
     
+//    @Test
+//    @Rollback(false) 
+//    public void testGetPromotionBargainInfoDetail() {
+//    	try {
+//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//			buyerBargainLaunch.setPromotionId("123");
+//			buyerBargainLaunch.setLevelCode("1");
+//			buyerBargainLaunch.setMessageId(messageId);
+//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+//			System.out.println(JSON.toJSONString(promotionBargainInfo));
+//    	} catch (Exception e) {
+//    		
+//		}
+//    }
+    
+    
     @Test
     @Rollback(false) 
-    public void testGetPromotionBargainInfoDetail() {
+    public void testGetBuyerLaunchBargainInfoByBargainCode() {
     	try {
-    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+    		String bargainCode = "123";
 			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-			buyerBargainLaunch.setPromotionId("123");
-			buyerBargainLaunch.setLevelCode("1");
-			buyerBargainLaunch.setMessageId(messageId);
-			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+			List<BuyerBargainRecordResDTO> promotionBargainInfo = buyerBargainRecordService.getBuyerBargainRecordByBargainCode(bargainCode, messageId);
 			System.out.println(JSON.toJSONString(promotionBargainInfo));
     	} catch (Exception e) {
     		

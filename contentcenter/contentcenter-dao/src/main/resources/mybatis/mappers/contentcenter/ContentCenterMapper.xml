@@ -139,6 +139,7 @@
     select 
     <include refid="SiteSlogan_Column_List" />
     from site_slogan
+    ORDER BY create_time DESC 
   </select>
   
   <resultMap id="TopAdResultMap" type="com.bjucloud.contentcenter.domain.TopAd">

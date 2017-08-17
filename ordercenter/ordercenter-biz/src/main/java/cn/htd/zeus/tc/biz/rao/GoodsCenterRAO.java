@@ -2,6 +2,8 @@ package cn.htd.zeus.tc.biz.rao;
 
 import java.util.List;
 
+import cn.htd.goodscenter.dto.mall.MallSkuInDTO;
+import cn.htd.goodscenter.dto.mall.MallSkuOutDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockInDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockOutDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
@@ -77,4 +79,10 @@ public interface GoodsCenterRAO {
 	 */
 	public OtherCenterResDTO<List<VipItemEntryInfoDTO>> queryVipItemList(String vipSkuCode,
 			String messageId);
+
+	/*
+	 * 根据商品skucode查询商品信息(供汇掌柜创建订单使用)
+	 */
+	public OtherCenterResDTO<List<MallSkuOutDTO>> queryCartItemList(
+			List<MallSkuInDTO> mallSkuInDTOList, String messageId);
 }

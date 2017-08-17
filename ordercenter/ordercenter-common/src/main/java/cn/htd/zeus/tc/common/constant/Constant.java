@@ -109,4 +109,12 @@ public class Constant {
 	// POS机充值渠道为3
 	public final static String RECHARGE_CHANNEL_POS = "3";
 
+	// 汇掌柜生成交易号，订单号前缀
+	public final static String COLLECT_SHOP = "60";
+
+	// 全国
+	public final static String ALLCOUNTRY = "1";
+
+	// 发票类型增值税发票
+	public final static String ADDVALUE_INVOICE_TYPE = "2";
 }

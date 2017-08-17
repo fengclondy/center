@@ -16,7 +16,10 @@ import com.alibaba.fastjson.JSON;
 import cn.htd.promotion.api.BuyerBargainAPI;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 
 @Service("buyerBargainAPI")
@@ -52,6 +55,36 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode出现异常{}",
 					messageId, buyerCode + ":" + messageId, w.toString());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<Boolean> updateBuyerLaunchBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		//验证参数是否为空
+		ValidateResult validateResult = DTOValidateUtil.validate(buyerBargainLaunch);
+		if(!validateResult.isPass()){
+			result.setErrorMessage(validateResult.getReponseMsg());
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			return  result;
+		}
+		try{
+			Integer falg = buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo(buyerBargainLaunch);
+			if(falg == 1){
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+				result.setResult(true);
+			}else{
+				result.setCode(ResultCodeEnum.ERROR.getCode());
+				result.setErrorMessage(ResultCodeEnum.ERROR.getMsg());
+				result.setResult(false);
+			}
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo出现异常{}",
+					buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch), w.toString());
 		}
 		return result;
 	}

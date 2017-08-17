@@ -21,7 +21,7 @@ public interface BuyerBargainRecordAPI {
 	 * @param buyerBargainRecord
 	 * @return
 	 */
-	public ExecuteResult<Integer> insertBuyerBargainRecord(BuyerBargainRecordReqDTO buyerBargainRecord);
+	public ExecuteResult<Boolean> insertBuyerBargainRecord(BuyerBargainRecordReqDTO buyerBargainRecord);
 	
 	/**
 	 * 查询改用户是否已经帮忙砍过

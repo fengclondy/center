@@ -60,8 +60,8 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI{
 	}
 
 	@Override
-	public ExecuteResult<Integer> insertBuyerBargainRecord(BuyerBargainRecordReqDTO buyerBargainRecord) {
-		ExecuteResult<Integer> result = new ExecuteResult<Integer>();
+	public ExecuteResult<Boolean> insertBuyerBargainRecord(BuyerBargainRecordReqDTO buyerBargainRecord) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
 		/*验空2017-08-16*/
 		ValidateResult validateResult = DTOValidateUtil.validate(buyerBargainRecord);
 		if(!validateResult.isPass()){
@@ -74,9 +74,11 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI{
 			if(1==i){
 				result.setCode(ResultCodeEnum.SUCCESS.getCode());
 				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+				result.setResult(true);
 			}else{
 				result.setCode(ResultCodeEnum.ERROR.getCode());
 				result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+				result.setResult(false);
 			}
 		}catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getMsg());

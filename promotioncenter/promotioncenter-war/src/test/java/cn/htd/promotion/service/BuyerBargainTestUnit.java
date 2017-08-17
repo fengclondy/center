@@ -1,5 +1,8 @@
 package cn.htd.promotion.service;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -14,6 +17,7 @@ import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.util.GenerateIdsUtil;
+import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -103,14 +107,37 @@ public class BuyerBargainTestUnit {
 //    }
     
     
+//  @Test
+//  @Rollback(false) 
+//  public void getThisPersonIsBargain() {
+//  	try {
+//  		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//  		String bargainCode = "123";
+//  		String bargainPersonCode = "htd20070001";
+//  		Boolean flag  = buyerBargainRecordService.getThisPersonIsBargain(bargainCode, bargainPersonCode, messageId);
+//		System.out.println(flag);
+//  	} catch (Exception e) {
+//  		
+//		}
+//  }
+    
   @Test
   @Rollback(false) 
-  public void getThisPersonIsBargain() {
+  public void updateBuyerLaunchBargainInfo() {
   	try {
   		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-  		String bargainCode = "123";
-  		String bargainPersonCode = "htd20070001";
-  		Boolean flag  = buyerBargainRecordService.getThisPersonIsBargain(bargainCode, bargainPersonCode, messageId);
+  		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+  		buyerBargainLaunch.setLaunchTime(new Date());
+  		buyerBargainLaunch.setBargainOverTime(new Date());
+  		buyerBargainLaunch.setIsBargainOver(1);
+  		buyerBargainLaunch.setGoodsCurrentPrice(new BigDecimal(233.22));
+  		buyerBargainLaunch.setMessageId(messageId);
+  		buyerBargainLaunch.setModifyId(125);
+  		buyerBargainLaunch.setModifyName("测试账号");
+  		buyerBargainLaunch.setModifyTime(new Date());
+  		buyerBargainLaunch.setPromotionId("123");
+  		buyerBargainLaunch.setLevelCode("1");
+  		Integer flag  = buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo(buyerBargainLaunch);
 		System.out.println(flag);
   	} catch (Exception e) {
   		

@@ -100,6 +100,7 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
                 MQSendUtil mqSendUtil = new MQSendUtil();
                 mqSendUtil.setAmqpTemplate(amqpTemplate);
                 PreSaleProductPushDTO preSaleProductPushDTO = getPreSaleProductPushDTO(preSaleProductPush.getItemId());
+                preSaleProductPushDTO.setVersion(preSaleProductPush.getPushVersion());
                 System.out.println(JSON.toJSONString(preSaleProductPushDTO));
                 mqSendUtil.sendToMQWithRoutingKey(preSaleProductPushDTO, MQRoutingKeyConstant.PRE_SALE_PRODUCT_PUSH_ROUTING_KEY);
                 // 更新为推送完成

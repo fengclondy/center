@@ -7,9 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import cn.htd.common.DataGrid;
-import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.encrypt.KeygenGenerator;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 
 public class MemberSuperBossServiceTest {
@@ -31,8 +30,10 @@ public class MemberSuperBossServiceTest {
 		pager.setPage(0);
 		MemberBaseInfoDTO memberBaseInfoDTO = new MemberBaseInfoDTO();
 		memberBaseInfoDTO.setBuyerSellerType("1");
-		ExecuteResult<DataGrid<MemberBaseInfoDTO>> rs = memberSuperBossService.selectMemberByCustmanagerCode("08019999",
-				pager);
-		System.out.print(rs);
+		String key = KeygenGenerator.getUidKey();
+		// ExecuteResult<DataGrid<MemberBaseInfoDTO>> rs =
+		// memberSuperBossService.selectMemberByCustmanagerCode("08019999",
+		// pager);
+		System.out.print(key);
 	}
 }

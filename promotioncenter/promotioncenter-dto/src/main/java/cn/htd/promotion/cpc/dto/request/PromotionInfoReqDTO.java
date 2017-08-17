@@ -1,13 +1,17 @@
-package cn.htd.promotion.cpc.biz.dmo;
+package cn.htd.promotion.cpc.dto.request;
 
+import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 促销活动DMO
- */
-public class PromotionInfoDMO {
+import org.hibernate.validator.constraints.NotEmpty;
 
-    /**
+/**
+ * 促销活动reqDTO
+ */
+public class PromotionInfoReqDTO implements Serializable{
+
+	private static final long serialVersionUID = -7783196509610537463L;
+	/**
      * 促销活动ID
      */
     private Long id;
@@ -82,45 +86,15 @@ public class PromotionInfoDMO {
      * 审核备注
      */
     private String verifyRemark;
-    /**
-     * 修改促销活动编码
-     */
-    private String modifyPromotionId;
     
-    /**
-     * 是否redis更新
-     */
-    private Integer hasRedisClean;
-    /**
-     * 创建人ID
-     */
-    private Long createId;
-    /**
-     * 创建人名称
-     */
-    private String createName;
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-    /**
-     * 更新人ID
-     */
-    private Long modifyId;
-    /**
-     * 更新人名称
-     */
-    private String modifyName;
-    /**
-     * 更新时间（促销活动更新时必须传入做乐观排他用）
-     */
-    private Date modifyTime;
+    @NotEmpty(message = "messageId不能为空")
+	private String messageId;
     
-	public Integer getHasRedisClean() {
-		return hasRedisClean;
+	public String getMessageId() {
+		return messageId;
 	}
-	public void setHasRedisClean(Integer hasRedisClean) {
-		this.hasRedisClean = hasRedisClean;
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 	public Long getId() {
 		return id;
@@ -230,47 +204,4 @@ public class PromotionInfoDMO {
 	public void setVerifyRemark(String verifyRemark) {
 		this.verifyRemark = verifyRemark;
 	}
-	public String getModifyPromotionId() {
-		return modifyPromotionId;
-	}
-	public void setModifyPromotionId(String modifyPromotionId) {
-		this.modifyPromotionId = modifyPromotionId;
-	}
-	public Long getCreateId() {
-		return createId;
-	}
-	public void setCreateId(Long createId) {
-		this.createId = createId;
-	}
-	public String getCreateName() {
-		return createName;
-	}
-	public void setCreateName(String createName) {
-		this.createName = createName;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public Long getModifyId() {
-		return modifyId;
-	}
-	public void setModifyId(Long modifyId) {
-		this.modifyId = modifyId;
-	}
-	public String getModifyName() {
-		return modifyName;
-	}
-	public void setModifyName(String modifyName) {
-		this.modifyName = modifyName;
-	}
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-    
 }

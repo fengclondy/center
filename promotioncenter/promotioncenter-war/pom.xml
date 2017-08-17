@@ -35,7 +35,7 @@
 		<promotioncenter-common.version>1.1.0-RELEASE</promotioncenter-common.version>
 		<promotioncenter-service.version>1.0.0</promotioncenter-service.version>
 		<promotioncenter-remote.version>1.0.0</promotioncenter-remote.version>
-		<mysql-connector-java.version>5.0.4</mysql-connector-java.version>
+		<mysql-connector-java.version>5.1.31</mysql-connector-java.version>
 		<spring.context.version>3.1.1.RELEASE</spring.context.version>
 		<maven.compiler.plugin.version>2.3</maven.compiler.plugin.version>
 		<maven.jetty.plugin.version>7.6.16.v20140903</maven.jetty.plugin.version>

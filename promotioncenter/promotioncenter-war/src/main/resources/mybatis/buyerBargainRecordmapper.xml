@@ -59,16 +59,16 @@
 				#{id,jdbcType=BIGINT},
 			</if>
 			<if test="bargainCode != null">
-				#{bargainCode,jdbcType=DECIMAL},
+				#{bargainCode,jdbcType=VARCHAR},
 			</if>
 			<if test="headSculptureUrl != null">
-				#{headSculptureUrl,jdbcType=DECIMAL},
+				#{headSculptureUrl,jdbcType=VARCHAR},
 			</if>
 			<if test="bargainPersonCode != null">
-				#{bargainPersonCode,jdbcType=DECIMAL},
+				#{bargainPersonCode,jdbcType=VARCHAR},
 			</if>
 			<if test="bargainPresonName != null">
-				#{bargainPresonName,jdbcType=DECIMAL},
+				#{bargainPresonName,jdbcType=VARCHAR},
 			</if>
 			<if test="bargainAmount != null">
 				#{bargainAmount,jdbcType=DECIMAL},

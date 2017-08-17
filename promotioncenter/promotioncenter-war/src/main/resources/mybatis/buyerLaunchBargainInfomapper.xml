@@ -30,10 +30,4 @@
     	where buyer_code = #{buyerCode}
 	</select>
 	
-	
-
-
-	
-
-
 </mapper>

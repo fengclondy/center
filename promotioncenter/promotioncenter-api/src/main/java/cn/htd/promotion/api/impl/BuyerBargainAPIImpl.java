@@ -32,7 +32,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 			List<BuyerLaunchBargainInfoResDTO> buyerBargainInfoList = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
 			result.setResult(buyerBargainInfoList);
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
-			if(buyerBargainInfoList.size() == 0){
+			if(buyerBargainInfoList.size() == 0 || buyerBargainInfoList ==null){
 				result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
 			}else{
 				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());

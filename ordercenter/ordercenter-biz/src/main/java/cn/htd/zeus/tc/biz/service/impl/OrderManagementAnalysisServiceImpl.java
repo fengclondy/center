@@ -8,10 +8,14 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.htd.storecenter.dto.ShopAuditInDTO;
+import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.zeus.tc.biz.dao.OrderManagementAnalysisDAO;
 import cn.htd.zeus.tc.biz.dmo.OrderManagementAnalysisDMO;
+import cn.htd.zeus.tc.biz.rao.StoreCenterRAO;
 import cn.htd.zeus.tc.biz.service.OrderManagementAnalysisService;
 
 @Service
@@ -22,6 +26,9 @@ public class OrderManagementAnalysisServiceImpl implements OrderManagementAnalys
 
 	@Resource
 	private OrderManagementAnalysisDAO orderManagementAnalysisDAO;
+
+	@Autowired
+	private StoreCenterRAO storeCenterRAO;
 
 	@Override
 	public OrderManagementAnalysisDMO queryOrderManagermentInfo(String sellerCode,
@@ -60,10 +67,11 @@ public class OrderManagementAnalysisServiceImpl implements OrderManagementAnalys
 	}
 
 	@Override
-	public List<OrderManagementAnalysisDMO> queryShopInfo() {
-		List<OrderManagementAnalysisDMO> shopInfo = null;
+	public List<ShopDTO> queryShopInfo(String messageId) {
+		List<ShopDTO> shopInfo = null;
 		try {
-			shopInfo = orderManagementAnalysisDAO.queryShopInfo();
+			ShopAuditInDTO shopAudiinDTO = new ShopAuditInDTO();
+			shopInfo = storeCenterRAO.queryShopByids(messageId, shopAudiinDTO);
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));

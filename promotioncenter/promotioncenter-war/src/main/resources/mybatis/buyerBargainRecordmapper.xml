@@ -14,12 +14,79 @@
 	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
-    <select id="getBuyerLaunchBargainInfoByBuyerCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
-    	select * from buyer_launch_bargain_info
-    	where buyer_code = #{buyerCode}
+    <select id="getBuyerBargainRecordByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from buyer_bargain_record
+    	where bargain_code = #{bargainCode}
 	</select>
 	
 	
+	<insert id="insertBuyerBargainRecord" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO">
+		insert into buyer_bargain_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="bargainCode != null">
+				bargain_code,
+			</if>
+			<if test="headSculptureUrl != null">
+				head_sculpture_url,
+			</if>
+			<if test="bargainPersonCode != null">
+				bargain_preson_code,
+			</if>
+			<if test="bargainPresonName != null">
+				bargain_preson_name,
+			</if>
+			<if test="bargainAmount != null">
+				bargain_amount,
+			</if>
+			<if test="bargainTime != null">
+				bargain_time,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createName != null">
+				create_name,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="bargainCode != null">
+				#{bargainCode,jdbcType=VARCHAR},
+			</if>
+			<if test="headSculptureUrl != null">
+				#{headSculptureUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="bargainPersonCode != null">
+				#{bargainPersonCode,jdbcType=VARCHAR},
+			</if>
+			<if test="bargainPresonName != null">
+				#{bargainPresonName,jdbcType=VARCHAR},
+			</if>
+			<if test="bargainAmount != null">
+				#{bargainAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="bargainTime != null">
+				#{bargainTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=BIGINT},
+			</if>
+			<if test="createName != null">
+				#{createName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
 
 
 	

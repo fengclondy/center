@@ -16,19 +16,19 @@ public class PromotionBargainInfoDMO{
 	
 	private String levelCode;//层级编码
 	
-	private String goods_picture;//商品图片
+	private String goodsPicture;//商品图片
 	
-	private String goods_name;//商品名称
+	private String goodsName;//商品名称
 	
-	private BigDecimal goods_cost_price;//商品原价
+	private BigDecimal goodsCostPrice;//商品原价
 	
-	private BigDecimal goods_floor_price;//商品底价
+	private BigDecimal goodsFloorPrice;//商品底价
 	
-	private Integer partake_times;//参与砍价的人数
+	private Integer partakeTimes;//参与砍价的人数
 	
-	private Integer goods_num;//参砍商品数量
+	private Integer goodsNum;//参砍商品数量
 	
-private Integer createId;//创建人ID
+	private Integer createId;//创建人ID
 	
 	private String createName;//创建人名称
 	
@@ -64,52 +64,52 @@ private Integer createId;//创建人ID
 		this.levelCode = levelCode;
 	}
 
-	public String getGoods_picture() {
-		return goods_picture;
+	public String getGoodsPicture() {
+		return goodsPicture;
 	}
 
-	public void setGoods_picture(String goods_picture) {
-		this.goods_picture = goods_picture;
+	public void setGoodsPicture(String goodsPicture) {
+		this.goodsPicture = goodsPicture;
 	}
 
-	public String getGoods_name() {
-		return goods_name;
+	public String getGoodsName() {
+		return goodsName;
 	}
 
-	public void setGoods_name(String goods_name) {
-		this.goods_name = goods_name;
+	public void setGoodsName(String goodsName) {
+		this.goodsName = goodsName;
 	}
 
-	public BigDecimal getGoods_cost_price() {
-		return goods_cost_price;
+	public BigDecimal getGoodsCostPrice() {
+		return goodsCostPrice;
 	}
 
-	public void setGoods_cost_price(BigDecimal goods_cost_price) {
-		this.goods_cost_price = goods_cost_price;
+	public void setGoodsCostPrice(BigDecimal goodsCostPrice) {
+		this.goodsCostPrice = goodsCostPrice;
 	}
 
-	public BigDecimal getGoods_floor_price() {
-		return goods_floor_price;
+	public BigDecimal getGoodsFloorPrice() {
+		return goodsFloorPrice;
 	}
 
-	public void setGoods_floor_price(BigDecimal goods_floor_price) {
-		this.goods_floor_price = goods_floor_price;
+	public void setGoodsFloorPrice(BigDecimal goodsFloorPrice) {
+		this.goodsFloorPrice = goodsFloorPrice;
 	}
 
-	public Integer getPartake_times() {
-		return partake_times;
+	public Integer getPartakeTimes() {
+		return partakeTimes;
 	}
 
-	public void setPartake_times(Integer partake_times) {
-		this.partake_times = partake_times;
+	public void setPartakeTimes(Integer partakeTimes) {
+		this.partakeTimes = partakeTimes;
 	}
 
-	public Integer getGoods_num() {
-		return goods_num;
+	public Integer getGoodsNum() {
+		return goodsNum;
 	}
 
-	public void setGoods_num(Integer goods_num) {
-		this.goods_num = goods_num;
+	public void setGoodsNum(Integer goodsNum) {
+		this.goodsNum = goodsNum;
 	}
 
 	public Integer getCreateId() {
@@ -159,5 +159,5 @@ private Integer createId;//创建人ID
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-	
+
 }

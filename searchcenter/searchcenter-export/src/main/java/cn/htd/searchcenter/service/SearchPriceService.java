@@ -2,14 +2,11 @@ package cn.htd.searchcenter.service;
 
 import java.math.BigDecimal;
 
+import cn.htd.searchcenter.domain.PriceDTO;
+
 public interface SearchPriceService {
 
-
-	public BigDecimal queryJDVipPrice(Long itemId);
-
-	public String queryBuyerGradePrice(Long itemId, Integer isBoxFlag);
-
-	public String queryGroupPrice(Long itemId, Integer isBoxFlag);
-
-	public String queryAreaPrice(Long itemId, Integer isBoxFlag);
+	public PriceDTO queryItemPriceByItemId(Long itemId, int isBox);
+	
+	public BigDecimal queryExternalItemPrice(Long itemId) throws Exception;
 }

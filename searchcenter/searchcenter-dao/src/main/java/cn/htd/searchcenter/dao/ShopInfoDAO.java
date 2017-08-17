@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import cn.htd.searchcenter.domain.MemberCompanyInfoDTO;
 import cn.htd.searchcenter.domain.ShopDTO;
 
 public interface ShopInfoDAO {
@@ -24,5 +25,4 @@ public interface ShopInfoDAO {
 	public String queryCidNameAndCidByShopId(@Param("shopId") Long shopId);
 
 	public String queryShopQQByShopId(@Param("shopId") Long shopId);
-
 }

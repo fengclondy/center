@@ -13,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.basecenter.domain.TransactionRelation;
 import cn.htd.basecenter.dto.SendSmsDTO;
 import cn.htd.basecenter.dto.TransactionRelationDTO;
@@ -27,11 +24,16 @@ import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.encrypt.KeygenGenerator;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.common.constant.StaticProperty;
+import cn.htd.membercenter.common.exception.MemberCenterException;
 import cn.htd.membercenter.common.util.HttpUtils;
+import cn.htd.membercenter.common.util.ValidateResult;
+import cn.htd.membercenter.common.util.ValidationUtils;
+import cn.htd.membercenter.costs.MemberCenterCodeConst;
 import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
@@ -95,6 +97,9 @@ import cn.htd.usercenter.dto.CustomerDTO;
 import cn.htd.usercenter.dto.UserDTO;
 import cn.htd.usercenter.service.CustomerService;
 import cn.htd.usercenter.service.UserExportService;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("memberBaseInfoService")
 public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
@@ -582,6 +587,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				// 下行到用户中心
 				ExecuteResult<Boolean> custRs = userExportService.memberPasswdReset(memberCode, password, userId);
 				if (custRs.isSuccess()) {
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(memberCode);
 					memberBaseOperationDAO.insertVerifyInfo(verDtoList);
 					rs.setResultMessage("success");
 					rs.setResult(true);
@@ -939,14 +946,14 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				ExecuteResult<String> code = getMemberCodeById(dto.getMemberId());
 				TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 				transactionRelationDTO.setBuyerName(dto.getCompanyName());
-				ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+				ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 						.getSingleTransactionRelationByParams(transactionRelationDTO);
 				if (executeResult.getResult() != null) {
-					TransactionRelation transactionRelation = executeResult.getResult();
+					TransactionRelationDTO transactionRelation = executeResult.getResult();
 					transactionRelationDTO.setId(transactionRelation.getId());
 					transactionRelationDTO.setBuyerCode(code.getResult());
-					transactionRelationDTO.setIsExist(Boolean.TRUE);
-					transactionRelationDTO.setModifyId(dto.getOperatorId());
+					transactionRelationDTO.setIsExist("1");//1.true 0.false
+					transactionRelationDTO.setModifyId(dto.getOperatorId()+"");
 					transactionRelationDTO.setModifyName(dto.getOperatorName());
 					transactionRelationDTO.setModifyTime(new Date());
 					transactionRelationService.updateTransactionRelation(transactionRelationDTO);
@@ -1294,6 +1301,8 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 								customerDTO.setCompanyId(dto.getId());
 								customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 								customerService.editCustomer(customerDTO, dto.getModifyId());
+								// 更新最终更新时间
+								memberCompanyInfoDao.updateCompanyTime(oldDto.getMemberCode());
 							} else {
 								customerDTO.setLoginId(oldDto.getMemberCode());
 								customerDTO.setMobile(oldDto.getArtificialPersonMobile());
@@ -1329,14 +1338,14 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 
 							TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 							transactionRelationDTO.setBuyerName(oldDto.getCompanyName());
-							ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+							ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 									.getSingleTransactionRelationByParams(transactionRelationDTO);
 							if (executeResult.getResult() != null) {
-								TransactionRelation transactionRelation = executeResult.getResult();
+								TransactionRelationDTO transactionRelation = executeResult.getResult();
 								transactionRelationDTO.setId(transactionRelation.getId());
 								transactionRelationDTO.setBuyerCode(oldDto.getMemberCode());
-								transactionRelationDTO.setIsExist(Boolean.TRUE);
-								transactionRelationDTO.setModifyId(dto.getModifyId());
+								transactionRelationDTO.setIsExist("1");//1.true 0.false
+								transactionRelationDTO.setModifyId(dto.getModifyId()+"");
 								transactionRelationDTO.setModifyName(dto.getModifyName());
 								transactionRelationDTO.setModifyTime(new Date());
 								transactionRelationService.updateTransactionRelation(transactionRelationDTO);
@@ -1525,6 +1534,24 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 	public ExecuteResult<String> insertMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		BelongRelationshipDTO belongRelationshipDTO = new BelongRelationshipDTO();
+		String emsg="";
+        // 输入DTO的验证
+        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
+        // 有错误信息时返回错误信息
+        if (validateResult.isHasErrors()) {
+//            throw new MemberCenterException(MemberCenterCodeConst.INPUT_PARAMETER_ERROR,
+//                   validateResult.getErrorMsg());
+        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
+        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
+			      rs.addErrorMessage(emsg.trim());
+        	}
+			return rs;
+        }
+        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),0l)){
+			rs.addErrorMessage("公司名称已经存在，请重新填写!");
+			return rs;
+        }
+        
 		try {
 			boolean mobilecheck = checkMemberMobile(memberBaseInfoRegisterDTO.getArtificialPersonMobile(), 0l);
 			if (mobilecheck) {
@@ -2248,10 +2275,34 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		return rs;
 	}
 
+	
 	@Override
 	public ExecuteResult<String> updateMemberBaseRegisterInfo(MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO) {
 		// TODO Auto-generated method stub
 		ExecuteResult<String> rs = new ExecuteResult<String>();
+	      // 输入DTO的验证
+			String emsg="";
+	        ValidateResult validateResult = ValidationUtils.validateEntity(memberBaseInfoRegisterDTO);
+	        // 有错误信息时返回错误信息
+	        if (validateResult.isHasErrors()) {
+	        	if(StringUtils.isNotBlank(validateResult.getErrorMsg()) && StringUtils.isNotBlank(validateResult.getErrorMsg().split(",")[0])){
+	        	      emsg=validateResult.getErrorMsg().split(",")[0].split(":")[1];
+				      rs.addErrorMessage(emsg.trim());
+	        	}
+				return rs;
+	        }
+	        if(memberBaseInfoRegisterDTO.getMemberId() !=null){
+		        if(StringUtils.isNotBlank(memberBaseInfoRegisterDTO.getCompanyName()) && checkCompanyNameUnique(memberBaseInfoRegisterDTO.getCompanyName(),memberBaseInfoRegisterDTO.getMemberId())){
+					rs.addErrorMessage("公司名称已经存在，请重新填写!");
+					return rs;
+		        }
+		        MemberBaseInfoRegisterDTO memberbase=  memberBaseOperationDAO.queryVerifyStatus(memberBaseInfoRegisterDTO.getMemberId());
+		        if(null !=memberbase && !memberbase.getStatus().equals("3")){ //3.为运营审核驳回
+					rs.addErrorMessage("会员信息已经通过其他方式修改，无需再次修改!"); //比如超级经理人客户端
+					return rs;
+		        }
+	        }
+
 		try {
 			if (memberBaseInfoRegisterDTO.getMemberId() != null) {
 				String cooperateVendor = memberBaseInfoRegisterDTO.getCooperateVendor();
@@ -3099,5 +3150,34 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 		}
 		return rs;
 	}
+	
+		@Override
+		public ExecuteResult<String> queryCompanyCodeBySellerId(Long sellerId) {
+			ExecuteResult<String> result=new ExecuteResult<String>();
+			if(sellerId==null||sellerId<=0){
+				result.setCode(ErrorCodes.E10000.name());
+				result.setResultMessage(ErrorCodes.E10000.getErrorMsg("sellerId"));
+				return result;
+			}
+			String companyCode=memberCompanyInfoDao.queryCompanyCodeBySellerId(sellerId);
+			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setResult(companyCode);
+			return result;
+		}
+		
+		
+		/**
+		 * @author li.jun
+		 * @desc:校验公司名称是否唯一
+		 * @param company
+		 * @return
+		 */
+		public boolean checkCompanyNameUnique(String companyName,Long memberId) {
+			List<MemberCompanyInfoDTO> list = memberBaseOperationDAO.checkCompanyNameUnique(companyName,memberId);
+			if (list != null && list.size() > 0) {
+				return true;
+			}
+			return false;
+		}
 
 }

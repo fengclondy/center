@@ -2,17 +2,16 @@ package cn.htd.searchcenter.service.impl;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.springframework.stereotype.Service;
-
 import cn.htd.searchcenter.dao.ShopInfoDAO;
+import cn.htd.searchcenter.datasource.DataSource;
 import cn.htd.searchcenter.domain.ShopDTO;
 import cn.htd.searchcenter.service.ShopExportService;
 
 
 @Service("shopExportService")
+@DataSource("dataSource_storeCenter")
 public class ShopExportServiceImpl implements ShopExportService{
 
 	@Resource
@@ -34,6 +33,7 @@ public class ShopExportServiceImpl implements ShopExportService{
 
 
 	@Override
+	@DataSource("dataSource_baseCenter")
 	public String getAreaName(String code)throws Exception {
 		return shopInfoDao.getAreaName(code);
 	}

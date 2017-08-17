@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -548,12 +549,18 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 
 					// 绑定银行卡
 					BindingBankCardCallbackDTO isBankSuccess = firstBindBankCard(outCompanyDto);
-					if (null != isBankSuccess) {
+					
+					if (null != isBankSuccess && "APPLY".equals(isBankSuccess.getPactStatus())) {
 						outCompanyDto.setCardBindStatus("2");
+						outCompanyDto.setBindId(isBankSuccess.getBindId());
+					} else if (null != isBankSuccess && "ENABLE".equals(isBankSuccess.getPactStatus())) {
+						outCompanyDto.setCardBindStatus("3");
 						outCompanyDto.setBindId(isBankSuccess.getBindId());
 					} else {
 						outCompanyDto.setCardBindStatus("4");
 					}
+					
+				
 					outCompanyDto.setBuyerSellerType("1");
 					applyRelationshipDao.insertMemberCompanyInfo(outCompanyDto);
 					outCompanyDto.setBuyerSellerType("2");
@@ -611,6 +618,7 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 			logger.error("ApplyRelationshipServiceImpl----->insertOutSellerInfo=" + e);
 			rs.setResultMessage("error");
 			rs.addErrorMessage("error");
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return rs;
 	}

@@ -49,7 +49,7 @@
 	<select id="queryBoxRelationship" resultType="java.lang.String">
 		SELECT
 		group_concat(buyer_id,":",seller_id)
-		FROM zeus.box_relationship
+		FROM box_relationship
 		WHERE
 		buyer_id != 0 and seller_id != 0 and
 		delete_flag = 0
@@ -100,13 +100,6 @@
 		#{itemCode}
 	</select>
 
-	<select id="queryExternalItemPrice" resultType="java.math.BigDecimal">
-		SELECT min(price)
-		FROM item_sku_ladder_price
-		WHERE delete_flag = 0 AND item_id =
-		#{itemId}
-	</select>
-
 	<select id="querySalesAreaByItemId" resultType="java.lang.String">
 		SELECT
 		isad.area_code
@@ -126,7 +119,7 @@
 	<select id="queryIsSalesWholeCountry" resultType="java.lang.Integer">
 		SELECT
 		distinct(is_sales_whole_country)
-		FROM zeus.item_sales_area
+		FROM item_sales_area
 		WHERE
 		delete_flag = 0 and is_box_flag = #{isBox}
 		and item_id = #{itemId}
@@ -190,7 +183,7 @@
 	<select id="queryItemPicture" resultType="java.lang.String">
 		SELECT picture_url
 		FROM
-		zeus.item_picture
+		item_picture
 		WHERE is_first = 1 AND delete_flag = 0 AND
 		picture_status = 1
 		AND item_id = #{itemId}

@@ -1,9 +1,14 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class MallDocument {
+public class MallDocument implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Integer classifyId;// 帮助文档分类
 	private String title;// 帮助文档标题

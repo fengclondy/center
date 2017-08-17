@@ -1,5 +1,6 @@
 package cn.htd.membercenter.service;
 
+import cn.htd.membercenter.domain.MemberExtendInfo;
 import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.DataGrid;
@@ -101,4 +102,18 @@ public interface MemberBaseService {
 	public ExecuteResult<Long> queryMemberInfoByCellPhone(
 			@Param("artificialPersonMobile") String artificialPersonMobile);
 
+	/**
+	 *根据会员id 查询会员详细信息
+	 * @param id
+	 * @return
+	 */
+	public MemberExtendInfo queryMemberExtendInfoById(Long id);
+
+	/**
+	 * 根据登录ID更新公司的更新时间
+	 * 
+	 * @param loginId
+	 * @return
+	 */
+	public ExecuteResult<Boolean> updateCompanyTime(String loginId);
 }

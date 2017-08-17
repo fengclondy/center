@@ -1,15 +1,15 @@
 package cn.htd.membercenter.service;
 
+import cn.htd.common.ExecuteResult;
+import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
+import cn.htd.membercenter.dto.MemberInvoiceDTO;
+import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import cn.htd.common.ExecuteResult;
-import cn.htd.membercenter.dto.MemberInvoiceDTO;
-import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 
 public class MemberBaseServiceTest {
 
@@ -30,12 +30,12 @@ public class MemberBaseServiceTest {
 		 * .getBean("memberBaseService");
 		 */
 
-		memberInvoiceService = (MemberInvoiceService) ctx.getBean("memberInvoiceService");
+		memberBaseInfoService = (MemberBaseInfoService) ctx.getBean("memberBaseInfoService");
 		applyRelationshipService = (ApplyRelationshipService) ctx.getBean("applyRelationshipService");
 
 	}
 
-	@Test
+	//@Test
 	public void insertOutSellerInfo() {
 		MemberOutsideSupplierCompanyDTO outCompanyDto = new MemberOutsideSupplierCompanyDTO();
 		outCompanyDto.setMemberCode("");
@@ -159,7 +159,7 @@ public class MemberBaseServiceTest {
 	// Assert.assertTrue(res.isSuccess());
 	// }
 
-	@Test
+	//@Test
 	public void modifyMemberInvoiceInfo() {
 		MemberInvoiceDTO memberInvoiceDTO = new MemberInvoiceDTO();
 		memberInvoiceDTO.setMemberId("10086");
@@ -237,41 +237,42 @@ public class MemberBaseServiceTest {
 	 * Assert.assertTrue(res.isSuccess()); }
 	 */
 
-	// @Test
-	// public void insertMemberBaseInfo() {
-	// MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO = new
-	// MemberBaseInfoRegisterDTO();
-	// memberBaseInfoRegisterDTO.setHasBusinessLicense(1);
-	// memberBaseInfoRegisterDTO.setArtificialPersonIdcard("1111");
-	// memberBaseInfoRegisterDTO.setArtificialPersonIdcardPicSrc("照片地址");
-	// memberBaseInfoRegisterDTO.setArtificialPersonMobile("15114215010");
-	// memberBaseInfoRegisterDTO.setCompanyName("");
-	// memberBaseInfoRegisterDTO.setCreateId(Long.valueOf("111"));
-	// memberBaseInfoRegisterDTO.setCreateName("lj");
-	// memberBaseInfoRegisterDTO.setModifyId(Long.valueOf("2222"));
-	// memberBaseInfoRegisterDTO.setModifyName("haha");
-	// // memberBaseInfoRegisterDTO.setRegistFrom("注册来源1");
-	// // ExecuteResult<String> res = memberBaseInfoService
-	// // .insertMemberBaseRegisterInfo(memberBaseInfoRegisterDTO);
-	// // ExecuteResult<MemberBackupContactInfo> t = memberBaseInfoService
-	// // .getContactId(Long.valueOf("11"));
-	// // ExecuteResult<Integer> rs =
-	// // memberBaseService.selectIsRealNameAuthenticated(Long.valueOf("25"));
-	// // System.out.println(rs);
-	//
-	// ExecuteResult<MemberBaseInfoRegisterDTO> rs = memberBaseInfoService
-	// .selectRegisterProgress(Long.valueOf("100002756"));
-	// if (rs.isSuccess()) {
-	// System.out.println(rs + "----");
-	// }
-	// /*
-	// * MemberCompanyInfoDTO memberCompanyInfoDTO = new
-	// * MemberCompanyInfoDTO(); memberCompanyInfoDTO.setBuyerSellerType(1);
-	// * ExecuteResult<MemberCompanyInfoDTO> res = memberBaseInfoService
-	// * .searchVoidMemberCompanyInfo(memberCompanyInfoDTO);
-	// */
-	//
-	// }
+	 @Test
+	 public void insertMemberBaseInfo() {
+	 MemberBaseInfoRegisterDTO memberBaseInfoRegisterDTO = new
+	 MemberBaseInfoRegisterDTO();
+	 memberBaseInfoRegisterDTO.setHasBusinessLicense(1);
+	 memberBaseInfoRegisterDTO.setArtificialPersonIdcard("1111");
+	 memberBaseInfoRegisterDTO.setArtificialPersonIdcardPicSrc("照片地址");
+	 memberBaseInfoRegisterDTO.setArtificialPersonMobile("15114215010");
+	 memberBaseInfoRegisterDTO.setCompanyName("");
+	 memberBaseInfoRegisterDTO.setCreateId(Long.valueOf("111"));
+	 memberBaseInfoRegisterDTO.setCreateName("lj");
+	 memberBaseInfoRegisterDTO.setModifyId(Long.valueOf("2222"));
+	 memberBaseInfoRegisterDTO.setModifyName("haha");
+	 // memberBaseInfoRegisterDTO.setRegistFrom("注册来源1");
+
+	 memberBaseInfoRegisterDTO.setCompanyName("南通乐美学投资管理有限公司");
+	 ExecuteResult<String> res = memberBaseInfoService.insertMemberBaseRegisterInfo(memberBaseInfoRegisterDTO);
+	 // ExecuteResult<MemberBackupContactInfo> t = memberBaseInfoService
+	 // .getContactId(Long.valueOf("11"));
+	 // ExecuteResult<Integer> rs =
+	 // memberBaseService.selectIsRealNameAuthenticated(Long.valueOf("25"));
+	 // System.out.println(rs);
+	
+//	 ExecuteResult<MemberBaseInfoRegisterDTO> rs = memberBaseInfoService
+//	 .selectRegisterProgress(Long.valueOf("100002756"));
+//	 if (rs.isSuccess()) {
+//	 System.out.println(rs + "----");
+//	 }
+	 /*
+	 * MemberCompanyInfoDTO memberCompanyInfoDTO = new
+	 * MemberCompanyInfoDTO(); memberCompanyInfoDTO.setBuyerSellerType(1);
+	 * ExecuteResult<MemberCompanyInfoDTO> res = memberBaseInfoService
+	 * .searchVoidMemberCompanyInfo(memberCompanyInfoDTO);
+	 */
+	
+	 }
 
 	/*
 	 * @Test public void queryMemberInfo() { String memberCode = "HTD20000019";

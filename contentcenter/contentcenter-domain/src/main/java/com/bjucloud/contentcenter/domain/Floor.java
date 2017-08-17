@@ -7,36 +7,52 @@ public class Floor implements Serializable {
 
 	private static final long serialVersionUID = 1648331538269746097L;
 
-	private Long id;
+	private Long Infoid;//楼层ID
+	
+	private String Infoname;//名称
+	 
+	private Long InfosortNum;//显示顺序
 
-	private Long floorId;
+	private String Infostatus;//状态  1:上架、0:下架'
 
-	private Long navId;
+	private Long Navid;//楼层导航ID
 
-	private Long contentId;
+	private String NavName;//楼层导航名称
 
-	private Date startTime;
+	private String NavNavTemp;//楼层导航模板
 
-	private Date endTime;
+	private String NavNavTempSrc;//楼层导航模板式样
 
-	private Long showBrand;
+	private Long NavSortNum;//楼层导航显示顺序
 
-	private String picUrl;
+	private String NavStatus;//楼层导航状态
+	
+	private Long contentId;//楼层内容信息ID
 
-	private String linkUrl;
+	private Date startTime;//楼层内容信息生效开始时间
 
-	private Long FloorContentPicSubSortNum;
+	private Date endTime;//楼层内容信息生效结束时间
 
-	private String name;
+	private Long showBrand;//楼层内容信息是否展示品牌
+	
+	private Long contentPicSubId;//楼层内容图片ID
 
-	private String navTemp;
+	private String picUrl;//楼层内容图片地址
 
-	private String navTempSrc;
+	private String linkUrl;//楼层内容图片指向连接地址
 
-	private Long sortNum;
+	private Long contentPicSubsortNum;//楼层内容图片显示顺序
+	
+	private Long contentSubId;//楼层内容品牌子表
 
-	private String status;
+	private String brandName;//品牌名称
 
+	private Long brandId;//品牌id
+
+	private Long sortNum;//楼层内容品牌显示顺序
+	
+	private String brandLogoUrl;// 品牌logo地址
+	
 	private Long createId;
 
 	private String createName;
@@ -48,29 +64,86 @@ public class Floor implements Serializable {
 	private String modifyName;
 
 	private Date modifyTime;
+	
 
-	public Long getId() {
-		return id;
+	public Long getInfoid() {
+		return Infoid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setInfoid(Long infoid) {
+		Infoid = infoid;
 	}
 
-	public Long getFloorId() {
-		return floorId;
+	public String getInfoname() {
+		return Infoname;
 	}
 
-	public void setFloorId(Long floorId) {
-		this.floorId = floorId;
+	public void setInfoname(String infoname) {
+		Infoname = infoname;
 	}
 
-	public Long getNavId() {
-		return navId;
+	public Long getInfosortNum() {
+		return InfosortNum;
 	}
 
-	public void setNavId(Long navId) {
-		this.navId = navId;
+	public void setInfosortNum(Long infosortNum) {
+		InfosortNum = infosortNum;
+	}
+
+	public String getInfostatus() {
+		return Infostatus;
+	}
+
+	public void setInfostatus(String infostatus) {
+		Infostatus = infostatus;
+	}
+
+	public Long getNavid() {
+		return Navid;
+	}
+
+	public void setNavid(Long navid) {
+		Navid = navid;
+	}
+
+	public String getNavName() {
+		return NavName;
+	}
+
+	public void setNavName(String navName) {
+		NavName = navName;
+	}
+
+	public String getNavNavTemp() {
+		return NavNavTemp;
+	}
+
+	public void setNavNavTemp(String navNavTemp) {
+		NavNavTemp = navNavTemp;
+	}
+
+	public String getNavNavTempSrc() {
+		return NavNavTempSrc;
+	}
+
+	public void setNavNavTempSrc(String navNavTempSrc) {
+		NavNavTempSrc = navNavTempSrc;
+	}
+
+	public Long getNavSortNum() {
+		return NavSortNum;
+	}
+
+	public void setNavSortNum(Long navSortNum) {
+		NavSortNum = navSortNum;
+	}
+
+	public String getNavStatus() {
+		return NavStatus;
+	}
+
+	public void setNavStatus(String navStatus) {
+		NavStatus = navStatus;
 	}
 
 	public Long getContentId() {
@@ -105,6 +178,14 @@ public class Floor implements Serializable {
 		this.showBrand = showBrand;
 	}
 
+	public Long getContentPicSubId() {
+		return contentPicSubId;
+	}
+
+	public void setContentPicSubId(Long contentPicSubId) {
+		this.contentPicSubId = contentPicSubId;
+	}
+
 	public String getPicUrl() {
 		return picUrl;
 	}
@@ -121,36 +202,36 @@ public class Floor implements Serializable {
 		this.linkUrl = linkUrl;
 	}
 
-	public Long getFloorContentPicSubSortNum() {
-		return FloorContentPicSubSortNum;
+	public Long getContentPicSubsortNum() {
+		return contentPicSubsortNum;
 	}
 
-	public void setFloorContentPicSubSortNum(Long floorContentPicSubSortNum) {
-		FloorContentPicSubSortNum = floorContentPicSubSortNum;
+	public void setContentPicSubsortNum(Long contentPicSubsortNum) {
+		this.contentPicSubsortNum = contentPicSubsortNum;
 	}
 
-	public String getName() {
-		return name;
+	public Long getContentSubId() {
+		return contentSubId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setContentSubId(Long contentSubId) {
+		this.contentSubId = contentSubId;
 	}
 
-	public String getNavTemp() {
-		return navTemp;
+	public String getBrandName() {
+		return brandName;
 	}
 
-	public void setNavTemp(String navTemp) {
-		this.navTemp = navTemp;
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
 	}
 
-	public String getNavTempSrc() {
-		return navTempSrc;
+	public Long getBrandId() {
+		return brandId;
 	}
 
-	public void setNavTempSrc(String navTempSrc) {
-		this.navTempSrc = navTempSrc;
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
 	}
 
 	public Long getSortNum() {
@@ -159,14 +240,6 @@ public class Floor implements Serializable {
 
 	public void setSortNum(Long sortNum) {
 		this.sortNum = sortNum;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public Long getCreateId() {
@@ -217,4 +290,13 @@ public class Floor implements Serializable {
 		this.modifyTime = modifyTime;
 	}
 
+	public String getBrandLogoUrl() {
+		return brandLogoUrl;
+	}
+
+	public void setBrandLogoUrl(String brandLogoUrl) {
+		this.brandLogoUrl = brandLogoUrl;
+	}
+
+	
 }

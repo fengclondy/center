@@ -9,18 +9,19 @@
 						   http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="dataSource_goodsCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
 		<property name="driverClassName">
-			<value>${jdbc.driverClassName}</value>
+			<value>${jdbc.driverClassName_goodsCenter}</value>
 		</property>
 		<property name="url">
-			<value>${jdbc.url}</value>
+			<value>${jdbc.url_goodsCenter}</value>
 		</property>
 		<property name="username">
-			<value>${jdbc.username}</value>
+			<value>${jdbc.username_goodsCenter}</value>
 		</property>
 		<property name="password">
-			<value>${jdbc.password}</value>
+			<value>${jdbc.password_goodsCenter}</value>
 		</property>
 		<property name="maxActive">
 			<value>${jdbc.maxActive}</value>
@@ -48,4 +49,299 @@
 		</property>
 	</bean>
 
+	<bean id="dataSource_solrCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_solrCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_solrCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_solrCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_solrCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_storeCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_storeCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_storeCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_storeCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_storeCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_priceCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_priceCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_priceCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_priceCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_priceCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_memberCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_memberCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_memberCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_memberCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_memberCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_baseCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_baseCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_baseCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_baseCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_baseCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_contentCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_contentCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_contentCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_contentCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_contentCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_tradeCenter" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName_tradeCenter}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url_tradeCenter}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username_tradeCenter}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password_tradeCenter}</value>
+		</property>
+		<property name="maxActive">
+			<value>${jdbc.maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${jdbc.maxIdle}</value>
+		</property>
+		<property name="maxWait">
+			<value>${jdbc.maxWait}</value>
+		</property>
+		<property name="validationQuery">
+			<value>SELECT 1</value>
+		</property>
+		<property name="testWhileIdle">
+			<value>true</value>
+		</property>
+		<property name="timeBetweenEvictionRunsMillis">
+			<value>3600000</value>
+		</property>
+		<property name="minEvictableIdleTimeMillis">
+			<value>18000000</value>
+		</property>
+		<property name="testOnBorrow">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dynamicDataSource" class="cn.htd.searchcenter.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map>
+				<entry key="dataSource_goodsCenter" value-ref="dataSource_goodsCenter"></entry>
+				<entry key="dataSource_solrCenter" value-ref="dataSource_solrCenter"></entry>
+				<entry key="dataSource_storeCenter" value-ref="dataSource_storeCenter"></entry>
+				<entry key="dataSource_priceCenter" value-ref="dataSource_priceCenter"></entry>
+				<entry key="dataSource_memberCenter" value-ref="dataSource_memberCenter"></entry>
+				<entry key="dataSource_baseCenter" value-ref="dataSource_baseCenter"></entry>
+				<entry key="dataSource_contentCenter" value-ref="dataSource_contentCenter"></entry>
+				<entry key="dataSource_tradeCenter" value-ref="dataSource_tradeCenter"></entry>
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="dataSource_goodsCenter" />
+	</bean>
 </beans>

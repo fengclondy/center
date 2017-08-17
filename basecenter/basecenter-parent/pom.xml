@@ -83,6 +83,12 @@
 				<artifactId>common-core</artifactId>
 				<version>${htd.version}</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>cn.htd.membercenter</groupId>
+				<artifactId>membercenter-export</artifactId>
+				<version>${htd.version}</version>
+			</dependency>
 
 			<!-- spring begin -->
 			<dependency>
@@ -409,6 +415,9 @@
 			<properties>
 				<env>test</env>
 			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 		</profile>
 		<!-- 本地环境 -->
 		<profile>
@@ -416,9 +425,7 @@
 			<properties>
 				<env>dev</env>
 			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+
 		</profile>
 	</profiles>
 	<build>

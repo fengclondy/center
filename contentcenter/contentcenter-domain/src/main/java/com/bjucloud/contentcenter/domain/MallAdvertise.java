@@ -11,6 +11,10 @@ import java.util.Date;
  */
 public class MallAdvertise implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;//
 	private Integer sortNum;// 序号
 	private Integer adType;// 广告类型 1，轮播下广告位 2，登录 3 头部广告 4 类目广告

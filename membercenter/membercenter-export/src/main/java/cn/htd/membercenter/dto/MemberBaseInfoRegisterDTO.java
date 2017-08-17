@@ -2,20 +2,55 @@ package cn.htd.membercenter.dto;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class MemberBaseInfoRegisterDTO implements Serializable {
 	private static final long serialVersionUID = 6502263076652255161L;
 	private Long id;
 	private Long memberId;// 会员ID
 	private String memberCode;// 会员编码
+	/**
+	 * 公司名称
+	 */
+	@NotBlank(message = "公司名称不能为空")
 	private String companyName;// 公司名称
+	
 	private String companyCode;// 公司编号
+	/**
+	 * 所在地-省
+	 */
+	@NotBlank(message = "所在地省编码不能为空")
 	private String locationProvince;// 所在地-省
+	/**
+	 * 所在地-市
+	 */
+	@NotBlank(message = "所在地市编码不能为空")
 	private String locationCity;// 所在地-市
+	/**
+	 * 所在地-区
+	 */
+	@NotBlank(message = "所在地区编码不能为空")
 	private String locationCounty;// 所在地-区
+	/**
+	 * 所在地-镇
+	 */
+	@NotBlank(message = "所在地镇编码不能为空")
 	private String locationTown;// 所在地-镇
+	/**
+	 * 所在地-详细地址
+	 */
+	@NotBlank(message = "所在地详细地址不能为空")
 	private String locationDetail;// 所在地-详细
 	private String locationAddr;// 所在地
+	/**
+	 * 法人姓名
+	 */
+	@NotBlank(message = "法人姓名不能为空")
 	private String artificialPersonName;// 法人姓名
+	/**
+	 * 法人手机
+	 */
+	//@NotBlank(message = "法人手机号不能为空")
 	private String artificialPersonMobile;// 法人手机号码
 	private String artificialPersonIdcard;// 法人身份证
 	private String artificialPersonPicSrc;// 法人身份证正面
@@ -23,15 +58,27 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	private String artificialPersonIdcardPicSrc;// 法人手持身份证
 	private Integer hasBusinessLicense; // 是否有营业执照
 	private Integer hasGuaranteeLicense; // 是否有担保证明
+	/**
+	 * 营业执照电子版图片地址
+	 */
+	//@NotBlank(message = "营业执照电子版图片地址不能为空")
 	private String businessLicensePicSrc; // 营业执照电子版图片地址
 	private String buyerGuaranteeLicensePicSrc;// 供应商担保证明电子版图片地址
 	private String businessLicenseCertificatePicSrc;// 会员营业执照变更证明图片地址
+	/**
+	 * 营业执照号
+	 */
+	//@NotBlank(message = "营业执照号不能为空")
 	private String businessLicenseId;// 营业执照号
 	private String buyerBusinessLicenseId;// 会员营业执照注册号
 	private String buyerBusinessLicensePicSrc;// 会员营业执照电子版图片地址
 	private String cooperateVendor; // 合作供应商
 	private String registTime;// 注册时间
 	private String registFrom;// 注册来源（推荐会员店）
+	/**
+	 * 经营范围
+	 */
+	@NotBlank(message = "经营范围不能为空")
 	private String businessScope;// 经营范围
 	private Long createId;// 创建人ID
 	private String createName;// 创建人名称
@@ -39,6 +86,10 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	private Long modifyId;// 更新人ID
 	private String modifyName;// 更新人名称
 	private String modifyTime;// 更新时间
+	/**
+	 * 归属平台
+	 */
+	//@NotBlank(message = "平台公司编码不能为空")
 	private Long belongSellerId;// 归属商家ID
 	private Long curBelongSellerId;// 当前归属商家ID
 	private Integer buyerSellerType;// 会员/商家类型 1：会员，2：商家
@@ -50,6 +101,12 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	private Integer isDiffIndustry;// 是否异业
 	private String recommendeCode;// 推荐人编码
 	private String promotionPerson;// 合作推广会员店
+	/**
+	 * 归属客户经理
+	 */
+	//@NotBlank(message = "客户经理编号不能为空")
+	private String curBelongManagerId;//归属客户经理
+	private String belongManagerId;//当前归属客户经理
 
 	public Long getId() {
 		return id;
@@ -438,6 +495,22 @@ public class MemberBaseInfoRegisterDTO implements Serializable {
 	 */
 	public void setPromotionPerson(String promotionPerson) {
 		this.promotionPerson = promotionPerson;
+	}
+
+	public String getCurBelongManagerId() {
+		return curBelongManagerId;
+	}
+
+	public void setCurBelongManagerId(String curBelongManagerId) {
+		this.curBelongManagerId = curBelongManagerId;
+	}
+
+	public String getBelongManagerId() {
+		return belongManagerId;
+	}
+
+	public void setBelongManagerId(String belongManagerId) {
+		this.belongManagerId = belongManagerId;
 	}
 
 }

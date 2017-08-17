@@ -1,9 +1,14 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class MallRecommNav {
+public class MallRecommNav implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id; //
 	private Integer sortNum;// 排序顺序
 	private String title; // 名称

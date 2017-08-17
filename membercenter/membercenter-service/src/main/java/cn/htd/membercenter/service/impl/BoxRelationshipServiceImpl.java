@@ -22,6 +22,7 @@ import cn.htd.membercenter.domain.BoxRelationship;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.BoxRelationImportDTO;
+import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberShipDTO;
 import cn.htd.membercenter.service.BoxRelationshipService;
@@ -130,14 +131,24 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	@Override
 	public ExecuteResult<Long> selectCompanyID(String companyName, String buyerSellerType) {
 		ExecuteResult<Long> rs = new ExecuteResult<Long>();
-
+        List<MemberBaseDTO> memberList=null;
+        String memberId = "";
 		try {
-			Long memberId = boxRelationshipDao.selectCompanyID(companyName, buyerSellerType);
-			if (memberId == null) {
-				rs.setResultMessage("null");
+			memberList = boxRelationshipDao.selectCompanyID(companyName, buyerSellerType);
+			if (memberList == null) {
 				rs.setResultMessage("要查询的会员/公司不存在！！");
+				return rs;
 			}
-			rs.setResult(memberId);
+			if(memberList !=null && memberList.size()>1){
+				for(MemberBaseDTO memberbase:memberList){
+					if(memberbase.getSellerType().equals("2")){ //外部供应商优先
+						memberId = memberbase.getMemberId();
+					}
+				}
+			}else{
+				memberId = memberList.get(0).getMemberId();
+			}
+			rs.setResult(memberId=="" ? null:Long.valueOf(memberId));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("BoxRelationshipServiceImpl----->selectCompanyID=" + e);

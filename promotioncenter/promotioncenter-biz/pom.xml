@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>promotioncenter</artifactId>
+		<groupId>cn.htd.promotion.cpc</groupId>
+		<version>1.1.0-RELEASE</version>
+	</parent>
+	<groupId>cn.htd.promotion.cpc</groupId>
+	<artifactId>promotioncenter-biz</artifactId>
+	<version>1.1.0-RELEASE</version>
+	<name>promotioncenter-biz</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.release.version>1.1.0-RELEASE</project.release.version>
+		<ssf.version>1.2.0</ssf.version>
+		<junit.version>4.7</junit.version>
+		<promotioncenter-common.version>1.1.0-RELEASE</promotioncenter-common.version>
+	</properties>
+	<dependencies>
+	 <!-- 引用其他中心的包 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cn.htd.promotion.cpc</groupId>
+			<artifactId>promotioncenter-common</artifactId>
+			<version>1.1.0-RELEASE</version>
+		</dependency>
+		<dependency>
+	    	<groupId>cn.htd.promotion.cpc</groupId>
+	    	<artifactId>promotioncenter-dto</artifactId>
+			<version>1.1.0-RELEASE</version>
+	    </dependency>
+	    
+	    <!-- tbschedule -->
+		<dependency>  
+			<groupId>com.taobao.pamirs.schedule</groupId>
+		    <artifactId>tbschedule</artifactId>
+			<version>3.3.3.2</version>
+			<exclusions>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+  					<artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
+			</dependency>
+		    <dependency> 
+		      <groupId>com.google.code.gson</groupId>  
+		      <artifactId>gson</artifactId>  
+		      <version>2.1</version> 
+		    </dependency> 
+		    
+	</dependencies>
+</project>

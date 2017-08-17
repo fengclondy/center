@@ -169,6 +169,8 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 					customerDTO.setCompanyId(dto.getMember_id());
 					customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 					customerService.editCustomer(customerDTO, Long.valueOf(dto.getModify_id()));
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(memberBase.getMemberCode());
 				} else {
 					customerDTO.setLoginId(memberBase.getMemberCode());
 					customerDTO.setMobile(memberBase.getArtificialPersonMobile());
@@ -200,14 +202,14 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 				// 关联交易名单
 				TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 				transactionRelationDTO.setBuyerName(memberBase.getCompanyName());
-				ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+				ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 						.getSingleTransactionRelationByParams(transactionRelationDTO);
 				if (executeResult.getResult() != null) {
-					TransactionRelation transactionRelation = executeResult.getResult();
+					TransactionRelationDTO transactionRelation = executeResult.getResult();
 					transactionRelationDTO.setId(transactionRelation.getId());
 					transactionRelationDTO.setBuyerCode(memberBase.getMemberCode());
-					transactionRelationDTO.setIsExist(Boolean.TRUE);
-					transactionRelationDTO.setModifyId(Long.valueOf(dto.getModify_id()));
+					transactionRelationDTO.setIsExist("1");//1.true 0.false
+					transactionRelationDTO.setModifyId(Long.valueOf(dto.getModify_id())+"");
 					transactionRelationDTO.setModifyName(dto.getModify_name());
 					transactionRelationDTO.setModifyTime(new Date());
 					transactionRelationService.updateTransactionRelation(transactionRelationDTO);
@@ -341,6 +343,9 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 					rs.setResult(false);
 					rs.addErrorMessage("用户更改密码失败");
 					return rs;
+				} else {
+					// 更新最终更新时间
+					memberCompanyInfoDao.updateCompanyTime(dto.getMember_code());
 				}
 			}
 

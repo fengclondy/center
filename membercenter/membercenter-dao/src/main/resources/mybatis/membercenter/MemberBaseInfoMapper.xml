@@ -668,6 +668,12 @@ values(
 			<if test="curBelongSellerId !=null and curBelongSellerId != ''">
 				cur_belong_seller_id,
 			</if>
+			<if test="belongManagerId != null and belongManagerId != ''">
+				belong_manager_id,
+			</if>
+			<if test="curBelongManagerId !=null and curBelongManagerId != ''">
+				cur_belong_manager_id,
+			</if>		
 			<if test="recommendeCode !=null and recommendeCode != ''">
 				recommender_code,
 			</if>		
@@ -717,7 +723,14 @@ values(
 			</if>
 			<if test="curBelongSellerId !=null and curBelongSellerId != ''">
 				#{curBelongSellerId},
-			</if>	
+			</if>
+			<if test="belongManagerId != null and belongManagerId != ''">
+				#{belongManagerId},
+			</if>
+			<if test="curBelongManagerId !=null and curBelongManagerId != ''">
+				#{curBelongManagerId},
+			</if>
+				
 			<if test="recommendeCode !=null and recommendeCode != ''">
 				#{recommendeCode},
 			</if>

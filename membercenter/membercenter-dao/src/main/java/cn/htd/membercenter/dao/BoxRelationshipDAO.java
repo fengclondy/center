@@ -8,6 +8,7 @@ import cn.htd.common.Pager;
 import cn.htd.membercenter.domain.BoxRelationship;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
+import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberShipDTO;
 
 public interface BoxRelationshipDAO {
@@ -59,7 +60,7 @@ public interface BoxRelationshipDAO {
 	 * @param buyerSellerType
 	 * @return
 	 */
-	public Long selectCompanyID(@Param("companyName") String companyName,
+	public List<MemberBaseDTO> selectCompanyID(@Param("companyName") String companyName,
 			@Param("buyerSellerType") String buyerSellerType);
 
 	/**

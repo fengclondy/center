@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.htd.membercenter.dao.MemberSuperBossDao">
+
+<!-- 根据客户经理查询客户经理代注册会员列表 -->
+<select id="selectMemberByCustmanagerCode" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+		parameterType="Object">
+	   select
+			m.id as id,
+			m.contact_mobile as contactMobile,
+		    m.member_code as memberCode,
+			m.status as status,
+			m.mall_account as mallAccount,
+			m.contact_name as contactName,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			mc.company_code as companyCode,
+			mc.company_name as companyName,
+		    m.regist_time as registTime,
+			mc.artificial_person_name as artificialPersonName,
+	        mc.artificial_person_mobile as artificialPersonMobile,
+	        mc.buyer_seller_type as buyerSellerType,
+	        m.account_type as accountType,
+	        m.is_buyer as isBuyer,
+	        m.is_seller as isSeller,
+            m.can_mall_login  as canMallLogin,
+            ms.verify_status as verifyStatus,
+            ms1.verify_status as cooperateVerifyStatus,
+            m.create_time as createTime,
+            v.remark
+		from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+        left join member_status_info ms on ms.member_id = m.id
+        left join member_status_info ms1 on ms1.member_id = m.id and ms1.info_type=12
+        left join verify_info v on v.id=ms.verify_id
+		where
+		m.cur_belong_manager_id=#{managerCode}
+		and mc.buyer_seller_type='1'
+        and ms.info_type=11
+		order by m.create_time desc,m.id
+		<if test="pager!=null">
+		limit #{pager.pageOffset},#{pager.rows}
+		</if>
+</select>
+
+<!-- 根据客户经理查询客户经理代注册会员列表条数 -->
+<select id="selectMemberCountByCustmanagerCode" resultType="java.lang.Long"
+		parameterType="Object">
+		select count(m.id)	from member_base_info m
+		left join member_company_info mc on m.id=mc.member_id
+        left join member_status_info ms on ms.member_id = m.id
+        left join member_status_info ms1 on ms1.member_id = m.id and ms1.info_type=12
+        left join verify_info v on v.id=ms.verify_id
+		where
+		m.cur_belong_manager_id=#{managerCode}
+		and mc.buyer_seller_type='1'
+        and ms.info_type=11
+</select>
+
+</mapper>

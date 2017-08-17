@@ -4,17 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TransactionRelationDTO implements Serializable {
-	
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1114540397765119187L;
+	private static final long serialVersionUID = 1145447741573808227L;
 	
-
-	private Long id;
+	private String id;
 	
-	private Long buyerId;
+	private String buyerId;
 	
 	private String buyerCode;
 	
@@ -22,7 +20,7 @@ public class TransactionRelationDTO implements Serializable {
 	
 	private String buyerName;
 	
-	private Long sellerId;
+	private String sellerId;
 	
 	private String sellerCode;
 	
@@ -34,35 +32,35 @@ public class TransactionRelationDTO implements Serializable {
 	
 	private String relatedTypeName;
 	
-	private Boolean isExist;
+	private String isExist;
 	
-	private Boolean isRelated;
+	private String isRelated;
 	
-	private Long createId;
+	private String createId;
 	
 	private String createName;
 	
 	private Date createTime;
 	
-	private Long modifyId;
+	private String modifyId;
 	
 	private String modifyName;
 	
 	private Date modifyTime;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public Long getBuyerId() {
+	public String getBuyerId() {
 		return buyerId;
 	}
 
-	public void setBuyerId(Long buyerId) {
+	public void setBuyerId(String buyerId) {
 		this.buyerId = buyerId;
 	}
 
@@ -90,11 +88,11 @@ public class TransactionRelationDTO implements Serializable {
 		this.buyerName = buyerName;
 	}
 
-	public Long getSellerId() {
+	public String getSellerId() {
 		return sellerId;
 	}
 
-	public void setSellerId(Long sellerId) {
+	public void setSellerId(String sellerId) {
 		this.sellerId = sellerId;
 	}
 
@@ -138,27 +136,27 @@ public class TransactionRelationDTO implements Serializable {
 		this.relatedTypeName = relatedTypeName;
 	}
 
-	public Boolean getIsExist() {
+	public String getIsExist() {
 		return isExist;
 	}
 
-	public void setIsExist(Boolean isExist) {
+	public void setIsExist(String isExist) {
 		this.isExist = isExist;
 	}
 
-	public Boolean getIsRelated() {
+	public String getIsRelated() {
 		return isRelated;
 	}
 
-	public void setIsRelated(Boolean isRelated) {
+	public void setIsRelated(String isRelated) {
 		this.isRelated = isRelated;
 	}
 
-	public Long getCreateId() {
+	public String getCreateId() {
 		return createId;
 	}
 
-	public void setCreateId(Long createId) {
+	public void setCreateId(String createId) {
 		this.createId = createId;
 	}
 
@@ -178,11 +176,11 @@ public class TransactionRelationDTO implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public Long getModifyId() {
+	public String getModifyId() {
 		return modifyId;
 	}
 
-	public void setModifyId(Long modifyId) {
+	public void setModifyId(String modifyId) {
 		this.modifyId = modifyId;
 	}
 
@@ -201,8 +199,4 @@ public class TransactionRelationDTO implements Serializable {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-
-
-	
-
 }

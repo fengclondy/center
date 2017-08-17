@@ -24,6 +24,7 @@ import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.dao.MemberBusinessRelationDAO;
+import cn.htd.membercenter.dao.MemberCompanyInfoDao;
 import cn.htd.membercenter.dao.MemberVerifySaveDAO;
 import cn.htd.membercenter.domain.MemberStatusInfo;
 import cn.htd.membercenter.domain.VerifyInfo;
@@ -54,6 +55,8 @@ public class MemberVerifySaveServiceImpl implements MemberVerifySaveService {
 	MemberBaseOperationDAO memberBaseOperationDAO;
 	@Resource
 	MemberBusinessRelationDAO memberBusinessRelationDAO;
+	@Resource
+	private MemberCompanyInfoDao memberCompanyInfoDao;
 	@Autowired
 	private UserExportService userExportService;
 	@Autowired
@@ -145,6 +148,8 @@ public class MemberVerifySaveServiceImpl implements MemberVerifySaveService {
 						customerDTO.setCompanyId(memberBase.getId());
 						customerDTO.setDefaultContact(GlobalConstant.FLAG_YES);
 						customerService.editCustomer(customerDTO, applyBusiRelationDto.getModifyId());
+						// 更新最终更新时间
+						memberCompanyInfoDao.updateCompanyTime(memberBase.getMemberCode());
 					} else {
 						customerDTO.setLoginId(memberBase.getMemberCode());
 						customerDTO.setMobile(memberBase.getArtificialPersonMobile());
@@ -166,14 +171,14 @@ public class MemberVerifySaveServiceImpl implements MemberVerifySaveService {
 					// 关联交易名单
 					TransactionRelationDTO transactionRelationDTO = new TransactionRelationDTO();
 					transactionRelationDTO.setBuyerName(memberBase.getCompanyName());
-					ExecuteResult<TransactionRelation> executeResult = transactionRelationService
+					ExecuteResult<TransactionRelationDTO> executeResult = transactionRelationService
 							.getSingleTransactionRelationByParams(transactionRelationDTO);
 					if (executeResult.getResult() != null) {
-						TransactionRelation transactionRelation = executeResult.getResult();
+						TransactionRelationDTO transactionRelation = executeResult.getResult();
 						transactionRelationDTO.setId(transactionRelation.getId());
 						transactionRelationDTO.setBuyerCode(memberBase.getMemberCode());
-						transactionRelationDTO.setIsExist(Boolean.TRUE);
-						transactionRelationDTO.setModifyId(applyBusiRelationDto.getModifyId());
+						transactionRelationDTO.setIsExist("1");//1.true 0.false
+						transactionRelationDTO.setModifyId(applyBusiRelationDto.getModifyId()+"");
 						transactionRelationDTO.setModifyName(applyBusiRelationDto.getModifyName());
 						transactionRelationDTO.setModifyTime(new Date());
 						transactionRelationService.updateTransactionRelation(transactionRelationDTO);

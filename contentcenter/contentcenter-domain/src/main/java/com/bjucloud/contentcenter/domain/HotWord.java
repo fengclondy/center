@@ -1,12 +1,21 @@
 package com.bjucloud.contentcenter.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 热搜词
  */
-public class HotWord {
-    private Long id;
+public class HotWord implements Serializable{
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+
+	private Long id;
 
     private String name;
 

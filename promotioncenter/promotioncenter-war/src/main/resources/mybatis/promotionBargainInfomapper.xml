@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO" >
+   <id column="BARGAIN_ID" property="bargainId" jdbcType="BIGINT" />
+    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
+    <result column="LEVEL_CODE" property="levelCode" jdbcType="VARCHAR" />
+    <result column="GOODS_PICTURE" property="goodsPicture" jdbcType="VARCHAR" />
+    <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
+    <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
+    <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
+    <result column="PARTAKE_TIMESE" property="partakeTimes" jdbcType="TINYINT" />
+    <result column="GOODS_NUM" property="goodsNum" jdbcType="TINYINT" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
+	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
+	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+     <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
+     <![CDATA[
+	    select * from promotion_bargain_info where
+	    promotion_id = #{promotionId,jdbcType=VARCHAR} 
+	    and level_code = #{levelCode,jdbcType=VARCHAR}
+	    ]]>
+    </select>
+</mapper>

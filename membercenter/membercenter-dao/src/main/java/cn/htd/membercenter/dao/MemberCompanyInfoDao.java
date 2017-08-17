@@ -36,4 +36,8 @@ public interface MemberCompanyInfoDao {
 	 * @return
 	 */
 	public MemberBaseInfoDTO selectSellerInfoByAccountNo(@Param("accountNo") String accountNo);
+	
+	public String queryCompanyCodeBySellerId(Long sellerId);
+	
+	public int updateCompanyTime(@Param("loginId") String loginId);
 }

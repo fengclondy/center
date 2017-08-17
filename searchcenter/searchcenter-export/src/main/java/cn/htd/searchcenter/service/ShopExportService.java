@@ -2,7 +2,6 @@ package cn.htd.searchcenter.service;
 
 import java.util.Date;
 import java.util.List;
-
 import cn.htd.searchcenter.domain.ShopDTO;
 
 public interface ShopExportService {
@@ -34,5 +33,4 @@ public interface ShopExportService {
 	public String queryCidNameAndCidByShopId(Long shopId)throws Exception;
 
 	public String queryShopQQByShopId(Long shopId)throws Exception;
-
 }

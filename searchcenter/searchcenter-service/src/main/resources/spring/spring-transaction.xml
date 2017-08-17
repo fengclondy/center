@@ -18,10 +18,10 @@
      http://www.springframework.org/schema/lang
      http://www.springframework.org/schema/lang/spring-lang-3.1.xsd">
 	<!-- Transaction Manager -->
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dynamicDataSource" />
 	</bean>
-	<!-- 支持 @Transactional 标记 -->
+	支持 @Transactional 标记
 	<tx:annotation-driven />
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -39,10 +39,19 @@
 			<tx:method name="create*" propagation="REQUIRED" />
 			<tx:method name="*" propagation="SUPPORTS" />
 		</tx:attributes>
-	</tx:advice>
-	<aop:config proxy-target-class="true">
+	</tx:advice> -->
+<!-- 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="interceptorPointCuts"
-			expression="execution(* cn.htd.service.impl.*ServiceImpl.*(..))" />
+			expression="execution(* cn.htd.searchcenter.service.impl.*.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="interceptorPointCuts" />
+	</aop:config> -->
+	
+	<bean id="dataSourceAspect" class="cn.htd.datasource.DataSourceAspect" />
+	<aop:config>
+		<aop:aspect ref="dataSourceAspect">
+			<!-- 拦截所有service方法 -->
+			<aop:pointcut id="dataSourcePointcut" expression="execution(* cn.htd.searchcenter.service.impl.*.*(..))" />
+			<aop:before pointcut-ref="dataSourcePointcut" method="intercept" />
+		</aop:aspect>
 	</aop:config>
 </beans>

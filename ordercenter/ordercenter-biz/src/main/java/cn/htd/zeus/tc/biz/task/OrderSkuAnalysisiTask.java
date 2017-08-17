@@ -19,20 +19,31 @@ import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.common.util.DateUtils;
+import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.zeus.tc.biz.dmo.OrderSkuAnalysisDMO;
+import cn.htd.zeus.tc.biz.rao.MemberCenterRAO;
+import cn.htd.zeus.tc.biz.service.OrderManagementAnalysisService;
 import cn.htd.zeus.tc.biz.service.OrderSkuAnalysisService;
+import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
+import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 
-public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<OrderSkuAnalysisDMO> {
+public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<ShopDTO> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OrderSkuAnalysisiTask.class);
 
 	@Autowired
 	private OrderSkuAnalysisService orderskuAnalysisService;
 
+	@Autowired
+	private OrderManagementAnalysisService orderManagementAnalysisService;
+
+	@Autowired
+	private MemberCenterRAO memberCenterRAO;
+
 	@Override
-	public Comparator<OrderSkuAnalysisDMO> getComparator() {
-		return new Comparator<OrderSkuAnalysisDMO>() {
-			public int compare(OrderSkuAnalysisDMO o1, OrderSkuAnalysisDMO o2) {
+	public Comparator<ShopDTO> getComparator() {
+		return new Comparator<ShopDTO>() {
+			public int compare(ShopDTO o1, ShopDTO o2) {
 				Long id1 = o1.getShopId();
 				Long id2 = o2.getShopId();
 				return id1.compareTo(id2);
@@ -41,18 +52,18 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<OrderSkuAna
 	}
 
 	@Override
-	public List<OrderSkuAnalysisDMO> selectTasks(String taskParameter, String ownSign,
-			int taskQueueNum, List<TaskItemDefine> taskItemList, int eachFetchDataNum)
-					throws Exception {
+	public List<ShopDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
+			List<TaskItemDefine> taskItemList, int eachFetchDataNum) throws Exception {
 		LOGGER.info(
 				"【selectTasks】============================【店铺销售分析店铺查询-开始执行】【请求参数：】【taskParameter:{},ownSign:{},taskQueueNum:{},taskItemList:{},eachFetchDataNum:{}】",
 				new Object[] { JSONObject.toJSONString(taskParameter),
 						JSONObject.toJSONString(ownSign), JSONObject.toJSONString(taskQueueNum),
 						JSONObject.toJSONString(taskItemList),
 						JSONObject.toJSONString(eachFetchDataNum) });
-		List<OrderSkuAnalysisDMO> shopInfo = new ArrayList<OrderSkuAnalysisDMO>();
+		List<ShopDTO> shopInfo = new ArrayList<ShopDTO>();
+		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
 		try {
-			shopInfo = orderskuAnalysisService.queryShopInfo();
+			shopInfo = orderManagementAnalysisService.queryShopInfo(messageId);
 			LOGGER.info("【selectTasks】============================【店铺销售分析店铺查询-执行成功】【返回参数：{}" + "】",
 					com.alibaba.fastjson.JSONObject.toJSONString(shopInfo));
 		} catch (Exception e) {
@@ -64,7 +75,7 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<OrderSkuAna
 	}
 
 	@Override
-	public boolean execute(OrderSkuAnalysisDMO[] tasks, String ownSign) throws Exception {
+	public boolean execute(ShopDTO[] tasks, String ownSign) throws Exception {
 		LOGGER.info("【execute】【店铺销售分析导入-开始执行】【请求参数：】【tasks:{},ownSign:{}】",
 				new Object[] { JSONObject.toJSONString(tasks), JSONObject.toJSONString(ownSign) });
 		boolean result = true;
@@ -76,13 +87,15 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<OrderSkuAna
 				.format(DateUtils.offsetDate(new Date(), Calendar.DAY_OF_MONTH, -1));
 		try {
 			if (tasks != null && tasks.length > 0) {
-				for (OrderSkuAnalysisDMO analysis : tasks) {
+				for (ShopDTO analysis : tasks) {
+					OtherCenterResDTO<String> sellerCode = memberCenterRAO
+							.queryMemberCodeByMemberId(analysis.getSellerId(), "123456");
 					List<OrderSkuAnalysisDMO> analysis2 = orderskuAnalysisService
-							.queryOrderSkuInfo(analysis.getSellerCode(), payOrderDate);
+							.queryOrderSkuInfo(sellerCode.getOtherCenterResult(), payOrderDate);
 					if (CollectionUtils.isNotEmpty(analysis2)) {
 						for (OrderSkuAnalysisDMO skuInfo : analysis2) {
 							skuInfo.setShopId(analysis.getShopId());
-							skuInfo.setSellerCode(analysis.getSellerCode());
+							skuInfo.setSellerCode(sellerCode.getOtherCenterResult());
 							skuInfo.setSalesTime(date);
 							orderskuAnalysisService.insertOrderSkuInfo(skuInfo);
 						}

@@ -1,7 +1,6 @@
 package cn.htd.searchcenter.service.impl;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Service;
 
 import cn.htd.assembling.SearchSolrItemAssembling;
-import cn.htd.common.AddressUtils;
 import cn.htd.searchcenter.searchData.ItemData;
 import cn.htd.searchcenter.searchData.Pager;
 import cn.htd.searchcenter.searchData.SearchDataGrid;
@@ -268,6 +266,7 @@ public class SearchSolrExportMobileServiceImpl implements
 			}
 			addressSb.append(") AND (" + addressCode);
 			addressSb.append(" OR isSalesWholeCountry:true NOT shelvesFlag:4)))");
+			addressSb.append(" AND hasQuantity:true");
 			filterList.add(addressSb.toString());
 		} else {
 			logger.info("该会员地址为空：" + addressCode);

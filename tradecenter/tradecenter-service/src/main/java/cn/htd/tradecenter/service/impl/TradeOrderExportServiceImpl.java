@@ -356,9 +356,20 @@ public class TradeOrderExportServiceImpl implements TradeOrderExportService {
 			logger.info("MessageId{}:检查订单在ERP是否正确出参{}",orderNo , JSON.toJSONString(m));
 	        if(null != m){
 	            if(Boolean.valueOf(m.get("success").toString())){
-	            	result.setResult("success");
-					result.setCode("1");
-	            	logger.info("erp处理成功");
+	            	if("0".equals(m.get("data").toString())){
+	            		result.setCode("-1");
+						result.addErrorMessage("未开单");
+	            	}else if("1".equals(m.get("data").toString())){
+	            		result.setResult("success");
+						result.setCode("1");
+	            		result.setResultMessage("已开单");
+	            	}else if("-1".equals(m.get("data").toString())){
+	            		result.setCode("-2");
+	            		result.addErrorMessage("开单金额小于交易金额");
+	            	}else if("-2".equals(m.get("data").toString())){
+	            		result.setCode("-2");
+	            		result.addErrorMessage("开单金额大于交易金额");
+	            	}
 	            }else{
 	            	result.setResultMessage("erp处理失败   "+m.get("resultMessage").toString()+","+ m.get("resultDetail").toString());
 	            	logger.info("erp处理失败   "+m.get("resultMessage").toString()+","+ m.get("resultDetail").toString());

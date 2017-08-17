@@ -263,19 +263,6 @@
         ]]>
     </update>
 
-<update id="updateUserTime" parameterType="cn.htd.usercenter.dto.UserDTO">
-        <![CDATA[
-        UPDATE member_company_info c
-	SET
-		c.modify_time=NOW()
-	WHERE c.member_id=(
-	select b.id
-		from member_base_info b
-		where
-		b.member_code=#{dto.loginId} )
-          
-        ]]>
-    </update>
 <!-- 更新用户信息 -->
     <update id="updateUserMobile" parameterType="cn.htd.usercenter.dto.UserDTO">
         <![CDATA[

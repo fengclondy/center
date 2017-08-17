@@ -62,7 +62,77 @@ public class PromotionBargainInfoResDTO implements Serializable{
 	
 	private Date offlineEndTime;//到店购买结束时间
 	
+	private Date launchTime;//发起时间
+	
+	private Date bargainOverTime;//砍完时间
+	
+	private Integer isBargainOver;//是否砍完  0：没有砍完 1：砍完   2：已售完
+	
+	private BigDecimal goodsCurrentPrice;//商品当前价格
+	
+	private Integer bargainPersonNum;//帮忙砍价人数
+	
+	private BigDecimal surplusPrice;//还剩多少价没砍
+	
+	private BigDecimal hasBargainPrice;//已经砍得价
+	
 	private List<BuyerBargainRecordResDTO> buyerBargainRecordList;//砍价记录
+
+	public BigDecimal getHasBargainPrice() {
+		return hasBargainPrice;
+	}
+
+	public void setHasBargainPrice(BigDecimal hasBargainPrice) {
+		this.hasBargainPrice = hasBargainPrice;
+	}
+
+	public Date getLaunchTime() {
+		return launchTime;
+	}
+
+	public void setLaunchTime(Date launchTime) {
+		this.launchTime = launchTime;
+	}
+
+	public Date getBargainOverTime() {
+		return bargainOverTime;
+	}
+
+	public void setBargainOverTime(Date bargainOverTime) {
+		this.bargainOverTime = bargainOverTime;
+	}
+
+	public Integer getIsBargainOver() {
+		return isBargainOver;
+	}
+
+	public void setIsBargainOver(Integer isBargainOver) {
+		this.isBargainOver = isBargainOver;
+	}
+
+	public BigDecimal getGoodsCurrentPrice() {
+		return goodsCurrentPrice;
+	}
+
+	public void setGoodsCurrentPrice(BigDecimal goodsCurrentPrice) {
+		this.goodsCurrentPrice = goodsCurrentPrice;
+	}
+
+	public Integer getBargainPersonNum() {
+		return bargainPersonNum;
+	}
+
+	public void setBargainPersonNum(Integer bargainPersonNum) {
+		this.bargainPersonNum = bargainPersonNum;
+	}
+
+	public BigDecimal getSurplusPrice() {
+		return surplusPrice;
+	}
+
+	public void setSurplusPrice(BigDecimal surplusPrice) {
+		this.surplusPrice = surplusPrice;
+	}
 
 	public Date getOfflineStartTime() {
 		return offlineStartTime;

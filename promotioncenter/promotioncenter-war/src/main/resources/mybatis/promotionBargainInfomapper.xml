@@ -37,15 +37,22 @@
 	    	   pei.each_start_time eachStartTime,
 	    	   pei.each_end_time eachEndTime,
 	    	   pei.offline_start_time offlineStartTime,
-	    	   pei.offline_end_time offlineEndTime
+	    	   pei.offline_end_time offlineEndTime,
+	    	   plb.launch_time launchTime,
+	    	   plb.bargain_over_time bargainOverTime,
+	    	   plb.is_bargain_over isBargainOver,
+	    	   plb.goods_current_price goodsCurrentPrice
 	    from promotion_bargain_info pbi
 	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
 	    left join promotion_seller_detail psd on pbi.promotion_id = psd.promotion_id
 	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
-	    
+	    left join buyer_launch_bargain_info plb on (plb.promotion_id = pbi.promotion_id and plb.level_code = pbi.level_code)
 	     where
 	    pbi.promotion_id = #{promotionId,jdbcType=VARCHAR} 
 	    and pbi.level_code = #{levelCode,jdbcType=VARCHAR}
+	    <if test="buyerCode != null">
+			and plb.buyer_code = #{buyerCode,jdbcType=VARCHAR}
+		</if>
 	    ]]>
     </select>
 </mapper>

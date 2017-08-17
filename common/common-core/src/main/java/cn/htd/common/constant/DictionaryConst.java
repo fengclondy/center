@@ -779,4 +779,15 @@ public class DictionaryConst {
     public static final String OPT_REFUND_STATUS_RETURN_GOODS = "REFUND_STATUS_RETURN_GOODS";
     // 字典信息-退货/退款状态-已退货
     public static final String OPT_REFUND_STATUS_REFUND = "REFUND_STATUS_REFUND";
+
+    //******************* add by jiangkun on 20170817 for B2C Start *******************
+    //字典信息-订单来源-汇掌柜预售下单
+    public static final String OPT_ORDER_FROM_SHOP_KEEPER_PRESELL = "ORDER_FROM_SHOP_KEEPER_PRESELL";
+    //字典信息-促销活动类型-扭蛋机
+    public static final String OPT_PROMOTION_TYPE_GASHAPON = "PROMOTION_TYPE_GASHAPON";
+    //字典信息-促销活动类型-砍价
+    public static final String OPT_PROMOTION_TYPE_BARGAIN = "PROMOTION_TYPE_BARGAIN";
+    //字典信息-促销活动类型-总部秒杀
+    public static final String OPT_PROMOTION_TYPE_HEAD_TIMELIMITED = "PROMOTION_TYPE_HEAD_TIMELIMITED";
+    //******************* add by jiangkun on 20170817 for B2C End *******************
 }

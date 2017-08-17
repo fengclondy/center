@@ -1,5 +1,7 @@
 package cn.htd.promotion.api.impl;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -31,21 +33,29 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI{
 	@Override
 	public ExecuteResult<List<BuyerBargainRecordResDTO>> getBuyerBargainRecordByBargainCode(String bargainCode,String messageId) {
 		ExecuteResult<List<BuyerBargainRecordResDTO>> result = new ExecuteResult<List<BuyerBargainRecordResDTO>>();
-		if(!StringUtils.isEmpty(bargainCode) && !StringUtils.isEmpty(messageId)){
-			List<BuyerBargainRecordResDTO> BuyerBargainRecordList = buyerBargainRecordService.getBuyerBargainRecordByBargainCode(bargainCode,messageId);
-			result.setResult(BuyerBargainRecordList);
-			result.setCode(ResultCodeEnum.SUCCESS.getCode());
-			if(BuyerBargainRecordList.size() == 0 || BuyerBargainRecordList ==null){
-				result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
+		try{
+			if(!StringUtils.isEmpty(bargainCode) && !StringUtils.isEmpty(messageId)){
+				List<BuyerBargainRecordResDTO> BuyerBargainRecordList = buyerBargainRecordService.getBuyerBargainRecordByBargainCode(bargainCode,messageId);
+				result.setResult(BuyerBargainRecordList);
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+				if(BuyerBargainRecordList.size() == 0 || BuyerBargainRecordList ==null){
+					result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
+				}else{
+					result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+				}
 			}else{
-				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+				result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+				result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
 			}
-		}else{
-			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
-			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+			
+			LOGGER.info("MessageId{}:getBuyerBargainRecordByBargainCode（）方法,出参{}", messageId, JSON.toJSONString(result));
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerBargainRecordService.getBuyerBargainRecordByBargainCode出现异常{}",
+					messageId, bargainCode + ":" + messageId, w.toString());
 		}
-		
-		LOGGER.info("MessageId{}:getBuyerBargainRecordByBargainCode（）方法,出参{}", messageId, JSON.toJSONString(result));
 		return result;
 	}
 
@@ -59,21 +69,41 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			return  result;
 		}
-		Integer i = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
-		if(1==i){
-			result.setCode(ResultCodeEnum.SUCCESS.getCode());
-			result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
-		}else{
-			result.setCode(ResultCodeEnum.ERROR.getCode());
-			result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+		try{
+			Integer i = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
+			if(1==i){
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+			}else{
+				result.setCode(ResultCodeEnum.ERROR.getCode());
+				result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+			}
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerBargainRecordService.insertBuyerBargainRecord出现异常{}",
+					buyerBargainRecord.getMessageId(), JSON.toJSONString(buyerBargainRecord), w.toString());
 		}
 		return result;
 	}
 
 	@Override
 	public ExecuteResult<Boolean> getThisPersonIsBargain(String bargainCode, String bargainPersonCode, String messageId) {
-		
-		return null;
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		try{
+			Boolean flag =  buyerBargainRecordService.getThisPersonIsBargain(bargainCode, bargainPersonCode, messageId);
+			result.setResult(flag);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerBargainRecordService.getThisPersonIsBargain出现异常{}",
+					messageId, bargainCode + ":" +bargainPersonCode, w.toString());
+		}
+		return result;
 	}
 
 }

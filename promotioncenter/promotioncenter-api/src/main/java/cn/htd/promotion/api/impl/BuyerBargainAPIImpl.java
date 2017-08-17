@@ -1,5 +1,7 @@
 package cn.htd.promotion.api.impl;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,22 +30,29 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 	@Override
 	public ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode,String messageId) {
 		ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<List<BuyerLaunchBargainInfoResDTO>>();
-		if(!StringUtils.isEmpty(buyerCode) && !StringUtils.isEmpty(messageId)){
-			List<BuyerLaunchBargainInfoResDTO> buyerBargainInfoList = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
-			result.setResult(buyerBargainInfoList);
-			result.setCode(ResultCodeEnum.SUCCESS.getCode());
-			if(buyerBargainInfoList.size() == 0 || buyerBargainInfoList ==null){
-				result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
+		try{
+			if(!StringUtils.isEmpty(buyerCode) && !StringUtils.isEmpty(messageId)){
+				List<BuyerLaunchBargainInfoResDTO> buyerBargainInfoList = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
+				result.setResult(buyerBargainInfoList);
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+				if(buyerBargainInfoList.size() == 0 || buyerBargainInfoList ==null){
+					result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
+				}else{
+					result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+				}
 			}else{
-				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+				result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+				result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
 			}
-		}else{
-			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
-			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+			
+			LOGGER.info("MessageId{}:getBuyerLaunchBargainInfoByBuyerCode（）方法,出参{}", messageId, JSON.toJSONString(result));
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode出现异常{}",
+					messageId, buyerCode + ":" + messageId, w.toString());
 		}
-		
-		LOGGER.info("MessageId{}:getBuyerLaunchBargainInfoByBuyerCode（）方法,出参{}", messageId, JSON.toJSONString(result));
 		return result;
 	}
-
 }

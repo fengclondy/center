@@ -548,12 +548,18 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 
 					// 绑定银行卡
 					BindingBankCardCallbackDTO isBankSuccess = firstBindBankCard(outCompanyDto);
-					if (null != isBankSuccess) {
+					
+					if (null != isBankSuccess && "APPLY".equals(isBankSuccess.getPactStatus())) {
 						outCompanyDto.setCardBindStatus("2");
+						outCompanyDto.setBindId(isBankSuccess.getBindId());
+					} else if (null != isBankSuccess && "ENABLE".equals(isBankSuccess.getPactStatus())) {
+						outCompanyDto.setCardBindStatus("3");
 						outCompanyDto.setBindId(isBankSuccess.getBindId());
 					} else {
 						outCompanyDto.setCardBindStatus("4");
 					}
+					
+				
 					outCompanyDto.setBuyerSellerType("1");
 					applyRelationshipDao.insertMemberCompanyInfo(outCompanyDto);
 					outCompanyDto.setBuyerSellerType("2");

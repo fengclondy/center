@@ -70,4 +70,10 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI{
 		return result;
 	}
 
+	@Override
+	public ExecuteResult<Boolean> getThisPersonIsBargain(String bargainCode, String bargainPersonCode, String messageId) {
+		
+		return null;
+	}
+
 }

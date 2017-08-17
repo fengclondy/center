@@ -3,7 +3,9 @@ package cn.htd.promotion.service;
 import javax.annotation.Resource;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
+import cn.htd.promotion.cpc.common.util.GenerateIdsUtil;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -98,4 +101,21 @@ public class BuyerBargainTestUnit {
 //    		
 //		}
 //    }
+    
+    
+  @Test
+  @Rollback(false) 
+  public void getThisPersonIsBargain() {
+  	try {
+  		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+  		String bargainCode = "123";
+  		String bargainPersonCode = "htd20070001";
+  		Boolean flag  = buyerBargainRecordService.getThisPersonIsBargain(bargainCode, bargainPersonCode, messageId);
+		System.out.println(flag);
+  	} catch (Exception e) {
+  		
+		}
+  }
+    
+    
 }

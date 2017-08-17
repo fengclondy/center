@@ -18,7 +18,7 @@ import cn.htd.promotion.cpc.biz.service.promotionInfoService;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoResDTO;
 
-@Service("promotionBargainInfoService")
+@Service("promotionInfoService")
 public class PromotionInfoServiceImpl implements promotionInfoService{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionInfoServiceImpl.class);

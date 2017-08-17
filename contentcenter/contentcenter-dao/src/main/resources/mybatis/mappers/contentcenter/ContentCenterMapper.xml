@@ -185,6 +185,7 @@
     select 
     <include refid="LoginPage_Column_List" />
     from login_page
+    ORDER BY create_time DESC
   </select>
   
   <resultMap id="StaticAdResultMap" type="com.bjucloud.contentcenter.domain.StaticAd">

@@ -42,7 +42,7 @@ public class MemberSuperBossServiceImpl implements MemberSuperBossService {
 			if (count > 0) {
 				List<MemberBaseInfoDTO> resList = memberSuperBossDao.selectMemberByCustmanagerCode(managerCode, pager);
 				if( null !=resList && resList.size()>0){
-					for(MemberBaseInfoDTO memberbase:resList ){ //managerstatus 1.运营待审核 2.运营审核通过 3.运营审核不通过/驳回 4.供应商待审核 5.供应商审核通过
+					for(MemberBaseInfoDTO memberbase:resList ){ //managerstatus 1.运营待审核 2.运营审核不通过 3.运营审核终止/驳回 4.供应商待审核 5.供应商审核通过（或者公海会员运营审核通过默认通过） 
 						if(StringUtils.isNotBlank(memberbase.getCooperateVerifyStatus())){ //如果供应商审核状态不为空，则说明运营已经审核通过
 							if(memberbase.getCooperateVerifyStatus().equals("1")){//如果cooperateVerifyStatus为1，即供应商待审核状态
 								memberbase.setManagerStatus("4");//设置超级经理人展示会员注册状态，4，表示供应商待审核
@@ -55,10 +55,13 @@ public class MemberSuperBossServiceImpl implements MemberSuperBossService {
 									memberbase.setManagerStatus("1");
 								}
 								if(memberbase.getVerifyStatus().equals("2")){//2.说明运营审核通过
-									memberbase.setManagerStatus("2");
+									memberbase.setManagerStatus("5");//如果是公海会员，运营审核通过，默认通过，不用经过供应商审核
 								}
 								if(memberbase.getVerifyStatus().equals("3")){//3.运行审核不通过
 									memberbase.setManagerStatus("3");
+								}
+								if(memberbase.getVerifyStatus().equals("4")){//3.终止/驳回
+									memberbase.setManagerStatus("6");
 								}
 							}
 						}

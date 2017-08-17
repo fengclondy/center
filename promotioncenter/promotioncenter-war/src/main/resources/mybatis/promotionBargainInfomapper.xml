@@ -21,9 +21,31 @@
   
      <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
      <![CDATA[
-	    select * from promotion_bargain_info where
-	    promotion_id = #{promotionId,jdbcType=VARCHAR} 
-	    and level_code = #{levelCode,jdbcType=VARCHAR}
+	    select pbi.bargain_id bargainId ,
+	    	   pbi.promotion_id promotionId,
+	    	   pbi.level_code levelCode,
+	    	   pbi.goods_picture goodsPicture,
+	    	   pbi.goods_name goodsName,
+	    	   pbi.goods_cost_price goodsCostPrice,
+	    	   pbi.goods_floor_price goodsFloorPrice,
+	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
+	    	   ps.promotion_slogan promotionDescribe,
+	    	   psd.seller_name sellerName,
+	    	   pei.contact_name contactName,
+	    	   pei.contact_telephone contactTelphone,
+	    	   pei.contact_address contactAddress,
+	    	   pei.each_start_time eachStartTime,
+	    	   pei.each_end_time eachEndTime,
+	    	   pei.offline_start_time offlineStartTime,
+	    	   pei.offline_end_time offlineEndTime
+	    from promotion_bargain_info pbi
+	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
+	    left join promotion_seller_detail psd on pbi.promotion_id = psd.promotion_id
+	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
+	    
+	     where
+	    pbi.promotion_id = #{promotionId,jdbcType=VARCHAR} 
+	    and pbi.level_code = #{levelCode,jdbcType=VARCHAR}
 	    ]]>
     </select>
 </mapper>

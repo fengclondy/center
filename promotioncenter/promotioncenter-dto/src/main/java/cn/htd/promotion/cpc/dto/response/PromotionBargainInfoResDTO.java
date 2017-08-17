@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.dto.response;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 砍价活动信息表
@@ -27,7 +28,7 @@ public class PromotionBargainInfoResDTO implements Serializable{
 	
 	private BigDecimal goodsFloorPrice;//商品底价
 	
-	private Integer partake_times;//参与砍价的人数
+	private Integer partakeTimes;//参与砍价的人数
 	
 	private Integer goodsNum;//参砍商品数量
 	
@@ -42,6 +43,106 @@ public class PromotionBargainInfoResDTO implements Serializable{
 	private String modifyName;//更新人名称
 	
 	private Date modifyTime;//更新时间
+	
+	private String promotionDescribe;//宣传标语
+	
+	private String sellerName;//店铺名称
+	
+	private String contactName;//联系人电话
+	
+	private String contactTelphone;//联系电话
+	
+	private String contactAddress;//联系地址
+	
+	private Date eachStartTime;//活动开始时间
+	
+	private Date eachEndTime;//活动结束时间
+	
+	private Date offlineStartTime;//到店购买开始时间
+	
+	private Date offlineEndTime;//到店购买结束时间
+	
+	private List<BuyerBargainRecordResDTO> buyerBargainRecordList;//砍价记录
+
+	public Date getOfflineStartTime() {
+		return offlineStartTime;
+	}
+
+	public void setOfflineStartTime(Date offlineStartTime) {
+		this.offlineStartTime = offlineStartTime;
+	}
+
+	public Date getOfflineEndTime() {
+		return offlineEndTime;
+	}
+
+	public void setOfflineEndTime(Date offlineEndTime) {
+		this.offlineEndTime = offlineEndTime;
+	}
+
+	public String getPromotionDescribe() {
+		return promotionDescribe;
+	}
+
+	public void setPromotionDescribe(String promotionDescribe) {
+		this.promotionDescribe = promotionDescribe;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public String getContactTelphone() {
+		return contactTelphone;
+	}
+
+	public void setContactTelphone(String contactTelphone) {
+		this.contactTelphone = contactTelphone;
+	}
+
+	public String getContactAddress() {
+		return contactAddress;
+	}
+
+	public void setContactAddress(String contactAddress) {
+		this.contactAddress = contactAddress;
+	}
+
+	public Date getEachStartTime() {
+		return eachStartTime;
+	}
+
+	public void setEachStartTime(Date eachStartTime) {
+		this.eachStartTime = eachStartTime;
+	}
+
+	public Date getEachEndTime() {
+		return eachEndTime;
+	}
+
+	public void setEachEndTime(Date eachEndTime) {
+		this.eachEndTime = eachEndTime;
+	}
+
+	public List<BuyerBargainRecordResDTO> getBuyerBargainRecordList() {
+		return buyerBargainRecordList;
+	}
+
+	public void setBuyerBargainRecordList(List<BuyerBargainRecordResDTO> buyerBargainRecordList) {
+		this.buyerBargainRecordList = buyerBargainRecordList;
+	}
 
 	public Integer getBargainId() {
 		return bargainId;
@@ -99,12 +200,12 @@ public class PromotionBargainInfoResDTO implements Serializable{
 		this.goodsFloorPrice = goodsFloorPrice;
 	}
 
-	public Integer getPartake_times() {
-		return partake_times;
+	public Integer getPartakeTimes() {
+		return partakeTimes;
 	}
 
-	public void setPartake_times(Integer partake_times) {
-		this.partake_times = partake_times;
+	public void setPartakeTimes(Integer partakeTimes) {
+		this.partakeTimes = partakeTimes;
 	}
 
 	public Integer getGoodsNum() {

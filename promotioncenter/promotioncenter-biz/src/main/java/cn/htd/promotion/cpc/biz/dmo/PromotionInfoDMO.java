@@ -3,7 +3,7 @@ package cn.htd.promotion.cpc.biz.dmo;
 import java.util.Date;
 
 /**
- * 促销活动DTO
+ * 促销活动DMO
  */
 public class PromotionInfoDMO {
 
@@ -57,12 +57,12 @@ public class PromotionInfoDMO {
     private int isVip;
     
     /**
-     * 促销活动状态
+     * 促销活动状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
      */
     private String status;
     
     /**
-     * 促销活动展示状态
+     * 促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
      */
     private String showStatus;
     

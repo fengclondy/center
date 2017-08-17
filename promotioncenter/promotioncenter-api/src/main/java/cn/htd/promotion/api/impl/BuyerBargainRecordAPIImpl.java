@@ -59,8 +59,15 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			return  result;
 		}
-		Integer flag = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
-		return null;
+		Integer i = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
+		if(1==i){
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+		}else{
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+		}
+		return result;
 	}
 
 }

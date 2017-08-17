@@ -18,6 +18,16 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 	
 	@NotEmpty(message = "messageId不能为空")
 	private String messageId;
+	
+	private String bargainCode;//砍价编码
+
+	public String getBargainCode() {
+		return bargainCode;
+	}
+
+	public void setBargainCode(String bargainCode) {
+		this.bargainCode = bargainCode;
+	}
 
 	public String getBuyerCode() {
 		return buyerCode;

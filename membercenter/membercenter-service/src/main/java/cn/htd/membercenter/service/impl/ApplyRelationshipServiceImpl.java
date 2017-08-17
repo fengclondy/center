@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -617,6 +618,7 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 			logger.error("ApplyRelationshipServiceImpl----->insertOutSellerInfo=" + e);
 			rs.setResultMessage("error");
 			rs.addErrorMessage("error");
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return rs;
 	}

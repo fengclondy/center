@@ -16,6 +16,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dao.MemberSuperBossDao;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
+import cn.htd.membercenter.enums.ExternalAuditStatusEnum;
 import cn.htd.membercenter.service.MemberSuperBossService;
 
 @Service("memberSuperBossService")
@@ -45,24 +46,25 @@ public class MemberSuperBossServiceImpl implements MemberSuperBossService {
 					for(MemberBaseInfoDTO memberbase:resList ){ //managerstatus 1.运营待审核 2.运营审核不通过 3.运营审核终止/驳回 4.供应商待审核 5.供应商审核通过（或者公海会员运营审核通过默认通过） 
 						if(StringUtils.isNotBlank(memberbase.getCooperateVerifyStatus())){ //如果供应商审核状态不为空，则说明运营已经审核通过
 							if(memberbase.getCooperateVerifyStatus().equals("1")){//如果cooperateVerifyStatus为1，即供应商待审核状态
-								memberbase.setManagerStatus("4");//设置超级经理人展示会员注册状态，4，表示供应商待审核
+								memberbase.setManagerStatus(ExternalAuditStatusEnum.SUPPLIERE_UDIT_PENDING.getCode());//设置超级经理人展示会员注册状态，4，表示供应商待审核
 							}else{
-								memberbase.setManagerStatus("5");//cooperateVerifyStatus为其他状态，说明供应商审核通过，供应商审核驳回，业务要求默认审核通过
+								memberbase.setManagerStatus(ExternalAuditStatusEnum.SUPPLIERE_AUDIT_PASS.getCode());//cooperateVerifyStatus为其他状态，说明供应商审核通过，供应商审核驳回，业务要求默认审核通过
 							}
 						}else{
 							if(StringUtils.isNotBlank(memberbase.getVerifyStatus())){ //如果是运行审核，则判断超级经理级展示状态
 								if(memberbase.getVerifyStatus().equals("1")){//verifyStatus为1.说明运营待审核
-									memberbase.setManagerStatus("1");
+									memberbase.setManagerStatus(ExternalAuditStatusEnum.OPERATE_AUDIT_PENDING.getCode());
 								}
 								if(memberbase.getVerifyStatus().equals("2")){//2.说明运营审核通过
-									memberbase.setManagerStatus("5");//如果是公海会员，运营审核通过，默认通过，不用经过供应商审核
+									memberbase.setManagerStatus(ExternalAuditStatusEnum.SUPPLIERE_AUDIT_PASS.getCode());//如果是公海会员，运营审核通过，默认通过，不用经过供应商审核
 								}
 								if(memberbase.getVerifyStatus().equals("3")){//3.运行审核不通过
-									memberbase.setManagerStatus("3");
+									memberbase.setManagerStatus(ExternalAuditStatusEnum.OPERATE_AUDIT_NOT_PASS.getCode());
 								}
-								if(memberbase.getVerifyStatus().equals("4")){//3.终止/驳回
-									memberbase.setManagerStatus("6");
+								if(memberbase.getVerifyStatus().equals("4")){//4.运营审核终止/驳回
+									memberbase.setManagerStatus(ExternalAuditStatusEnum.OPERATE_AUDIT_REJECT.getCode());
 								}
+								
 							}
 						}
 					}

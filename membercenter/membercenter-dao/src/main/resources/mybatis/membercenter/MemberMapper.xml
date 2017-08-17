@@ -1605,4 +1605,14 @@
 	    AND member_id not in(#{memberId})
 	</select>
 	
+	
+	 <select id="queryVerifyStatus" resultType="cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO">
+        SELECT 
+          p.verify_status as status
+		FROM
+		    membercenter.member_status_info AS p
+		WHERE
+		    p.member_id = #{memberId}
+		    AND p.info_type = '11';
+	</select>
 </mapper>

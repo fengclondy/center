@@ -652,4 +652,35 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		}
 		return other;
 	}
+
+	@Override
+	public OtherCenterResDTO<String> getMemberCodeById(Long memberId) {
+		OtherCenterResDTO<String> other = new OtherCenterResDTO<String>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("根据会员ID查询会员CODE--组装查询参数开始:memberId{}", memberId);
+			ExecuteResult<String> result = memberBaseInfoService.getMemberCodeById(memberId);
+			LOGGER.info("根据会员ID查询会员CODE--返回结果:{}", JSONObject.toJSONString(result) + "耗时:"
+					+ (System.currentTimeMillis() - startTime));
+			if (null != result.getResult() && result.isSuccess() == true) {
+				other.setOtherCenterResult(result.getResult());
+				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			} else {
+				// 没有查到数据
+				LOGGER.warn("根据会员ID查询会员CODE-没有查到数据 参数:memberId{}", memberId);
+				other.setOtherCenterResponseCode(
+						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
+				other.setOtherCenterResponseMsg(
+						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getMsg());
+			}
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("调用方法MemberCenterRAOImpl.getMemberCodeById出现异常{}", w.toString());
+			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return other;
+	}
+
 }

@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class OrderCreateSkuListInfoReqDTO implements Serializable {
 
 	private static final long serialVersionUID = -7082845410146900648L;
 
 	// 商品SKU编码
-	@NotEmpty(message = "skuCode不能为空")
+	@NotBlank(message = "skuCode不能为空")
 	private String skuCode;
 
 	// 商品数量

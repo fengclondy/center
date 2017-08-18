@@ -63,12 +63,12 @@ public class StoreCenterRAOImpl implements StoreCenterRAO {
 		try {
 			Long startTime = System.currentTimeMillis();
 			LOGGER.info("查询卖家中心(findShopInfoById查询卖家店铺信息)--组装查询参数开始:{}", id);
-			ExecuteResult<ShopDTO> result = shopExportService.findShopInfoById(id);
+			ExecuteResult<ShopDTO> result = shopExportService.queryBySellerId(id);
 			Long endTime = System.currentTimeMillis();
 			LOGGER.info("查询卖家中心(findShopInfoById查询卖家店铺信息)--返回结果:{}",
 					JSONObject.toJSONString(result) + " 耗时:" + (endTime - startTime));
 
-			if (result.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
+			if (result.getResult() != null) {
 				other.setOtherCenterResult(result.getResult());
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {

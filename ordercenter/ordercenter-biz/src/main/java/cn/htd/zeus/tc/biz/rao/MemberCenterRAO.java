@@ -116,4 +116,12 @@ public interface MemberCenterRAO {
 	 */
 	public OtherCenterResDTO<ApplyBusiRelationDTO> selectBusiRelation(Long memberId, Long sellerId,
 			Long categoryId, Long brandId);
+
+	/**
+	 * 根据会员ID查询会员编码
+	 *
+	 * @param memberId
+	 * @return
+	 */
+	public OtherCenterResDTO<String> getMemberCodeById(Long memberId);
 }

@@ -1648,9 +1648,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		// 默认执行结果成功
 		orderCreateInfoResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		// 根据买家ID查询买家编码
-		String buyerCode = memberCenterRAO
-				.queryMemberCodeByMemberId(orderCreate4huilinReqDTO.getBuyerId(), messageId)
-				.getOtherCenterResponseCode();
+		String buyerCode = memberCenterRAO.getMemberCodeById(orderCreate4huilinReqDTO.getBuyerId())
+				.getOtherCenterResult();
+		orderCreateInfoReqDTO.setBuyerCode(buyerCode);
 		// 设置发票信息
 		this.setInvoiceInfo4order(messageId, buyerCode, orderCreateInfoReqDTO,
 				orderCreateInfoResDTO);
@@ -1694,7 +1694,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			OrderCreateInfoReqDTO orderCreateInfoReqDTO,
 			OrderCreateInfoResDTO orderCreateInfoResDTO) {
 		OtherCenterResDTO<MemberInvoiceDTO> memberInvoiceInfo = memberCenterRAO
-				.queryMemberInvoiceInfo(buyerCode, Constant.PRODUCT_CHANNEL_CODE_INNER, messageId);
+				.queryMemberInvoiceInfo(buyerCode, "", messageId);
 		if (!ResultCodeEnum.SUCCESS.getCode()
 				.equals(memberInvoiceInfo.getOtherCenterResponseCode())) {
 			orderCreateInfoResDTO.setResponseCode(memberInvoiceInfo.getOtherCenterResponseCode());

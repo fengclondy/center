@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class OrderCreate4huilinReqDTO implements Serializable {
@@ -13,27 +14,27 @@ public class OrderCreate4huilinReqDTO implements Serializable {
 	private static final long serialVersionUID = -7963788605565343410L;
 
 	// 接口编号
-	@NotEmpty(message = "messageId不能为空")
+	@NotBlank(message = "messageId不能为空")
 	private String messageId;
 
 	// 会员编号
-	@NotEmpty(message = "buyerId不能为空")
+	@NotNull(message = "buyerId不能为空")
 	private Long buyerId;
 
 	// 买家留言
-	@NotEmpty(message = "buyerRemarks不能为空")
+	@NotBlank(message = "buyerRemarks不能为空")
 	private String buyerRemarks;
 
 	// 卖家编码
-	@NotEmpty(message = "sellerId不能为空")
+	@NotNull(message = "sellerId不能为空")
 	private Long sellerId;
 
 	// 订单来源
-	@NotEmpty(message = "orderFrom不能为空")
+	@NotBlank(message = "orderFrom不能为空")
 	private String orderFrom;
 
 	// 订单行集合
-	@NotNull(message = "skuList不能为空")
+	@NotEmpty(message = "skuList不能为空")
 	@Valid
 	private List<OrderCreateSkuListInfoReqDTO> skuList;
 

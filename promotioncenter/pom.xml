@@ -160,9 +160,9 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<encoding>UTF-8</encoding>
 					<webResources>
 						<resource>
+							<encoding>UTF-8</encoding>
 							<!-- 元配置文件的目录，相对于pom.xml文件的路径 -->
 							<directory>src/main/webapp/WEB-INF</directory>
 							<!-- 是否过滤文件，也就是是否启动auto-config的功能 -->

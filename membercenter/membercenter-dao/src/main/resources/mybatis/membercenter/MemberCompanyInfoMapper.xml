@@ -236,7 +236,13 @@
 	</select>
 
 	<select id="selectBelongSellerId" resultType="java.lang.Long">
-		select member_id memberId from member_company_info where buyer_seller_type='2' and company_name = #{companyName}
+		SELECT 
+           mc.member_id memberId
+        FROM
+	   member_base_info mb,
+       member_company_info mc
+       WHERE 1=1 and mb.id = mc.member_id and mb.seller_type=1 and
+       mc.buyer_seller_type = '2' AND mc.company_name = #{companyName}
 	</select>
 
 <select id="selectMemberInfoByAccountNo" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">

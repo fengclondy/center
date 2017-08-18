@@ -1302,7 +1302,7 @@
 			mc.company_name as memberName			
 		from member_company_info mc, member_base_info m
 		where 
-		m.id = mc.member_id and m.status='1' and
+		m.id = mc.member_id and m.status='1' and m.seller_type = '1' and
 	 mc.buyer_seller_type='2' AND mc.company_name = #{name}
 	</select>
 	

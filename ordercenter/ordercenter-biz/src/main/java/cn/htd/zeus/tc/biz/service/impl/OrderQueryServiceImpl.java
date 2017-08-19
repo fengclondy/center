@@ -3,12 +3,13 @@ package cn.htd.zeus.tc.biz.service.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
-import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
-import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
-import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsOutDTO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,6 +43,9 @@ import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.DateUtil;
+import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
+import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
+import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
 import cn.htd.zeus.tc.dto.response.ChargeConditionInfoDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryParamResDTO;
@@ -646,28 +650,62 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 		}
 	}
 
-
 	@Override
-	public String querySellerCodeWithPurchaseRecordsByBuyerCode(OrderQueryPurchaseRecordInDTO orderQueryPurchaseRecordInDTO) {
+	public String querySellerCodeWithPurchaseRecordsByBuyerCode(
+			OrderQueryPurchaseRecordInDTO orderQueryPurchaseRecordInDTO) {
 		String sellerCode = null;
 		if (orderQueryPurchaseRecordInDTO.getBoxSellerCodeList().size() > 0) { // 如果包厢关系列表有大B数据
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.MONTH, -1);
 			Date timeLimited = calendar.getTime();
-			sellerCode = this.traderdersDAO.selectSellerCodeWithPurchaseRecordByBuyerCode(orderQueryPurchaseRecordInDTO.getBuyerCode(), orderQueryPurchaseRecordInDTO.getBoxSellerCodeList(), timeLimited);
+			sellerCode = this.traderdersDAO.selectSellerCodeWithPurchaseRecordByBuyerCode(
+					orderQueryPurchaseRecordInDTO.getBuyerCode(),
+					orderQueryPurchaseRecordInDTO.getBoxSellerCodeList(), timeLimited);
 		}
 		return sellerCode;
 	}
 
 	@Override
-	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO) {
+	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(
+			OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO) {
 		List<OrderRecentQueryPurchaseRecordOutDTO> orderRecentQueryPurchaseRecordOutDTOList = new ArrayList<>();
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MONTH, -1);
 		Date timeLimited = calendar.getTime();
 		if (orderRecentQueryPurchaseRecordsInDTO.getBoxSellerCodeList().size() > 0) {
-			orderRecentQueryPurchaseRecordOutDTOList = this.traderdersDAO.queryPurchaseRecordsByBuyerCodeAndSellerCode(orderRecentQueryPurchaseRecordsInDTO.getBuyerCode(), orderRecentQueryPurchaseRecordsInDTO.getBoxSellerCodeList(), timeLimited);
+			orderRecentQueryPurchaseRecordOutDTOList = this.traderdersDAO
+					.queryPurchaseRecordsByBuyerCodeAndSellerCode(
+							orderRecentQueryPurchaseRecordsInDTO.getBuyerCode(),
+							orderRecentQueryPurchaseRecordsInDTO.getBoxSellerCodeList(),
+							timeLimited);
 		}
 		return orderRecentQueryPurchaseRecordOutDTOList;
+	}
+
+	@Override
+	public OrderQueryPageSizeResDTO queryPresaleOrderCountByBuyerId(
+			OrderQueryParamReqDTO orderQueryParamReqDTO) {
+		OrderQueryPageSizeResDTO orderQueryPageSizeResDTO = new OrderQueryPageSizeResDTO();
+		try {
+			OrderQueryParamDMO tradeOrdersParamDMO = new OrderQueryParamDMO();
+			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
+			List<String> orderStatusList = new ArrayList<String>();
+			orderStatusList.add(OrderStatusEnum.PRE_PAY.getCode());
+			tradeOrdersParamDMO.setOrderStatus(orderStatusList);
+			// 查询预售订单
+			tradeOrdersParamDMO.setOrderFrom("5");
+			Integer pageSize = traderdersDAO.queryPresaleOrderCountByBuyerId(tradeOrdersParamDMO);
+			orderQueryPageSizeResDTO.setSize(pageSize == null ? 0 : pageSize);
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+		} catch (Exception e) {
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderCountByBuyerId出现异常{}",
+					orderQueryParamReqDTO.getMessageId(), w.toString());
+		}
+		return orderQueryPageSizeResDTO;
 	}
 }

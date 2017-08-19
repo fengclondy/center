@@ -933,6 +933,29 @@ and b.customer_manager_code = #{customerManagerID}
 		and t.order_delete_status != 2
 	</select>
 	
+	<select id="queryPresaleOrderCountByBuyerId" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		count(0)
+		from trade_orders t
+		where 1=1
+		<if test="buyerCode != null">
+			and t.buyer_code = #{buyerCode}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and t.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="orderFrom != null">
+			and t.order_from = #{orderFrom}
+		</if>
+		<if test="isCancelOrder != null">
+			and t.is_cancel_order = #{isCancelOrder}
+		</if>
+	</select>
+	
 	
 	<select id="selectOrderCountBySupperBoss" resultType="java.lang.Integer"
 		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">

@@ -7,13 +7,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
+import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
 
 /**
@@ -162,17 +162,34 @@ public interface TradeOrdersDAO {
 
 	/**
 	 * 查询最近购买记录的大B code，（必须是有包厢关系的）
+	 * 
 	 * @param buyerCode
 	 * @param boxSellerCodeList
 	 * @return
 	 */
-	public String selectSellerCodeWithPurchaseRecordByBuyerCode(@Param("buyerCode")String buyerCode, @Param("boxSellerCodeList")List<String> boxSellerCodeList,  @Param("timeLimit")Date timeLimit);
+	public String selectSellerCodeWithPurchaseRecordByBuyerCode(
+			@Param("buyerCode") String buyerCode,
+			@Param("boxSellerCodeList") List<String> boxSellerCodeList,
+			@Param("timeLimit") Date timeLimit);
 
 	/**
 	 * 查询最近购买记录
+	 * 
 	 * @param buyerCode
 	 * @param boxSellerCodeList
 	 * @return
 	 */
-	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(@Param("buyerCode")String buyerCode, @Param("boxSellerCodeList")List<String> boxSellerCodeList,  @Param("timeLimit")Date timeLimit);
+	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(
+			@Param("buyerCode") String buyerCode,
+			@Param("boxSellerCodeList") List<String> boxSellerCodeList,
+			@Param("timeLimit") Date timeLimit);
+
+	/**
+	 * 根据买家编码查询预售待支付订单数量
+	 * 
+	 * @param orderQueryParamDMO
+	 * @return
+	 */
+	public Integer queryPresaleOrderCountByBuyerId(OrderQueryParamDMO orderQueryParamDMO);
+
 }

@@ -19,6 +19,6 @@ default-autowire="byName">
 
  <!--      <import resource="classpath*:/spring/beans-cpc-tbschedule.xml" />-->
 
- <context:component-scan base-package="cn.htd.promotion.*" />
+ <context:component-scan base-package="cn.htd.*" />
 
 </beans>  

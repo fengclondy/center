@@ -2,6 +2,7 @@ package cn.htd.promotion.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -16,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
-import cn.htd.promotion.cpc.common.util.GenerateIdsUtil;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+
+import com.alibaba.fastjson.JSON;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -38,18 +41,18 @@ public class BuyerBargainTestUnit {
     	
     }
     
-//    @Test
-//    @Rollback(false) 
-//    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
-//    	try {
-//			String buyerCode = "htd20070002";
-//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-//			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
-//			System.out.println(JSON.toJSONString(list));
-//    	} catch (Exception e) {
-//    		
-//		}
-//    }
+    @Test
+    @Rollback(false) 
+    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
+    	try {
+			String buyerCode = "htd20070002";
+			String messageId ="001";
+			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
+			System.out.println(JSON.toJSONString(list));
+    	} catch (Exception e) {
+    		
+		}
+    }
     
 //    @Test
 //    @Rollback(false) 
@@ -86,7 +89,7 @@ public class BuyerBargainTestUnit {
     @Rollback(false) 
     public void insertBuyerBargainRecord() {
     	try {
-    		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+    		String messageId = "001";
     		BuyerBargainRecordReqDTO buyerBargainRecord = new BuyerBargainRecordReqDTO();
     		buyerBargainRecord.setBargainCode("123");
     		buyerBargainRecord.setHeadSculptureUrl("http://baidu.com");

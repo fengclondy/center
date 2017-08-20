@@ -3,68 +3,69 @@ package cn.htd.promotion.cpc.dto.response;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 砍价活动信息表
  * @author xxj
  *
  */
-public class PromotionBargainInfoResDTO implements Serializable{
+public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implements Serializable{
 
 	private static final long serialVersionUID = 8605548926689874138L;
 
-	private Integer bargainId;//砍价ID
+	private String bargainId;//砍价ID
 	
-	private String promotionId;//促销活动编码
-	
-	private String levelCode;//层级编码
-	
+	@NotBlank(message = "商品图片不能为空")
 	private String goodsPicture;//商品图片
 	
+	@NotBlank(message = "商品名称不能为空")
 	private String goodsName;//商品名称
 	
+	@NotNull(message = "商品原价不能为空")
+	@Min(value = 0, message = "商品原价必须大于0")
 	private BigDecimal goodsCostPrice;//商品原价
 	
+	@NotNull(message = "商品底价不能为空")
+	@Min(value = 0, message = "商品底价必须大于0")
 	private BigDecimal goodsFloorPrice;//商品底价
 	
-	private Integer partake_times;//参与砍价的人数
+	@NotNull(message = "参与砍价的人数不能为空")
+	@Min(value = 1, message = "参与砍价的人数必须大于0")
+	private Integer partakeTimes;//参与砍价的人数
 	
+	@NotNull(message = "参砍商品数量不能为空")
+	@Min(value = 1, message = "参砍商品数量必须大于0")
 	private Integer goodsNum;//参砍商品数量
 	
-	private Integer createId;//创建人ID
-	
-	private String createName;//创建人名称
-	
-	private Date createTime;//创建时间
-	
-	private Integer modifyId;//更新人ID
-	
-	private String modifyName;//更新人名称
-	
-	private Date modifyTime;//更新时间
+	private Integer virtualQuantity;//汇掌柜端虚拟显示人数增加
 
-	public Integer getBargainId() {
+	private String promotionSlogan;//宣传语
+	
+	public Integer getVirtualQuantity() {
+		return virtualQuantity;
+	}
+
+	public void setVirtualQuantity(Integer virtualQuantity) {
+		this.virtualQuantity = virtualQuantity;
+	}
+
+	public String getPromotionSlogan() {
+		return promotionSlogan;
+	}
+
+	public void setPromotionSlogan(String promotionSlogan) {
+		this.promotionSlogan = promotionSlogan;
+	}
+
+	public String getBargainId() {
 		return bargainId;
 	}
 
-	public void setBargainId(Integer bargainId) {
+	public void setBargainId(String bargainId) {
 		this.bargainId = bargainId;
-	}
-
-	public String getPromotionId() {
-		return promotionId;
-	}
-
-	public void setPromotionId(String promotionId) {
-		this.promotionId = promotionId;
-	}
-
-	public String getLevelCode() {
-		return levelCode;
-	}
-
-	public void setLevelCode(String levelCode) {
-		this.levelCode = levelCode;
 	}
 
 	public String getGoodsPicture() {
@@ -99,12 +100,12 @@ public class PromotionBargainInfoResDTO implements Serializable{
 		this.goodsFloorPrice = goodsFloorPrice;
 	}
 
-	public Integer getPartake_times() {
-		return partake_times;
+	public Integer getPartakeTimes() {
+		return partakeTimes;
 	}
 
-	public void setPartake_times(Integer partake_times) {
-		this.partake_times = partake_times;
+	public void setPartakeTimes(Integer partakeTimes) {
+		this.partakeTimes = partakeTimes;
 	}
 
 	public Integer getGoodsNum() {
@@ -115,53 +116,17 @@ public class PromotionBargainInfoResDTO implements Serializable{
 		this.goodsNum = goodsNum;
 	}
 
-	public Integer getCreateId() {
-		return createId;
+	public void setPromotionBargainInfoResDTO(PromotionBargainInfoResDTO promotionBargainInfoResDTO) {
+		super.setPromotionAccumulaty(promotionBargainInfoResDTO);
+		this.bargainId = promotionBargainInfoResDTO.getBargainId();
+		this.goodsPicture = promotionBargainInfoResDTO.getGoodsPicture();
+		this.goodsName = promotionBargainInfoResDTO.getGoodsName();
+		this.goodsCostPrice = promotionBargainInfoResDTO.getGoodsCostPrice();
+		this.goodsFloorPrice = promotionBargainInfoResDTO.getGoodsFloorPrice();
+		this.partakeTimes = promotionBargainInfoResDTO.getPartakeTimes();
+		this.goodsNum = promotionBargainInfoResDTO.getGoodsNum();
+		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
+		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
 	}
-
-	public void setCreateId(Integer createId) {
-		this.createId = createId;
-	}
-
-	public String getCreateName() {
-		return createName;
-	}
-
-	public void setCreateName(String createName) {
-		this.createName = createName;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Integer getModifyId() {
-		return modifyId;
-	}
-
-	public void setModifyId(Integer modifyId) {
-		this.modifyId = modifyId;
-	}
-
-	public String getModifyName() {
-		return modifyName;
-	}
-
-	public void setModifyName(String modifyName) {
-		this.modifyName = modifyName;
-	}
-
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-
-	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-
 	
 }

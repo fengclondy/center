@@ -25,17 +25,24 @@ public class PromotionSloganAPIImpl implements PromotionSloganAPI {
 
 	@Override
 	public ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(
+		
+			
 			String providerSellerCode, String messageId) {
+		
+		
+		
+		
+		
 		ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
 		
 		if (StringUtils.isEmpty(providerSellerCode) || StringUtils.isEmpty(messageId)) {
-			result.setCode(ResultCodeEnum.ERROR.getMsg());
-			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL
-					.getMsg());
-			LOGGER.error(
-					"MessageId:{} 调用方法promotionSloganAPIImpl.queryBargainSloganBySellerCode出现异常{}",
-					messageId, providerSellerCode + ":" + messageId);
-			return result;
+//			result.setCode(ResultCodeEnum.ERROR.getMsg());
+//			result.setErrorMessage(ResultCodeEåånum.PROMOTION_PARAM_IS_NULL
+//					.getMsg());
+//			LOGGER.error(
+//					"MessageId:{} 调用方法promotionSloganAPIImpl.queryBargainSloganBySellerCode出现异常{}",
+//					messageId, providerSellerCode + ":" + messageId);
+//			return result;
 		}
 		try {
 			List<PromotionSloganResDTO> promotionSloganDTOList = promotionSloganService

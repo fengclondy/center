@@ -52,7 +52,6 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 成本分摊类型
      */
-    @NotBlank(message = "成本分摊类型不能为空")
     private String costAllocationType;
     /**
      * 促销活动类型
@@ -104,12 +103,10 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 创建人ID
      */
-    @NotNull(message = "创建人ID不能为空")
     private Long createId;
     /**
      * 创建人名称
      */
-    @NotNull(message = "创建人名称不能为空")
     private String createName;
     /**
      * 创建时间
@@ -183,6 +180,91 @@ public class PromotionInfoDTO implements Serializable {
     private String effectiveTimeStr;
 
     private String invalidTimeStr;
+    
+    /**
+     * 是否有每日次数限制
+     */
+    private Integer isDailyTimesLimit;
+    /**
+     *会员每日参与次数 
+     */
+    private Integer dailyBuyerPartakeTimes;
+    /**
+     * 联系人名称
+     */
+    private String contactName;
+    /**
+     * 联系电话
+     */
+    private String contactTelephone;
+    /**
+     * 联系地址
+     */
+    private String contactAddress;
+    /**
+     * 到店购买开始时间
+     */
+    private Date offlineStartTime;
+    /**
+     * 到店购买结束时间
+     */
+    private Date offlineEndTime;
+    
+    public Date getOfflineStartTime() {
+		return offlineStartTime;
+	}
+
+	public void setOfflineStartTime(Date offlineStartTime) {
+		this.offlineStartTime = offlineStartTime;
+	}
+
+	public Date getOfflineEndTime() {
+		return offlineEndTime;
+	}
+
+	public void setOfflineEndTime(Date offlineEndTime) {
+		this.offlineEndTime = offlineEndTime;
+	}
+
+	public Integer getIsDailyTimesLimit() {
+		return isDailyTimesLimit;
+	}
+
+	public void setIsDailyTimesLimit(Integer isDailyTimesLimit) {
+		this.isDailyTimesLimit = isDailyTimesLimit;
+	}
+
+	public Integer getDailyBuyerPartakeTimes() {
+		return dailyBuyerPartakeTimes;
+	}
+
+	public void setDailyBuyerPartakeTimes(Integer dailyBuyerPartakeTimes) {
+		this.dailyBuyerPartakeTimes = dailyBuyerPartakeTimes;
+	}
+
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public String getContactTelephone() {
+		return contactTelephone;
+	}
+
+	public void setContactTelephone(String contactTelephone) {
+		this.contactTelephone = contactTelephone;
+	}
+
+	public String getContactAddress() {
+		return contactAddress;
+	}
+
+	public void setContactAddress(String contactAddress) {
+		this.contactAddress = contactAddress;
+	}
 
     public String getEffectiveTimeStr() {
         return effectiveTimeStr;

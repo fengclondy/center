@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO">
+	<resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO">
+		<id column="id" property="id" />
+		<result column="promotion_id" property="promotionId" />
+		<result column="level_number" property="levelNumber" />
+		<result column="level_code" property="levelCode" />
+		<result column="addup_type" property="addupType" />
+		<result column="level_amount" property="levelAmount" />
+		<result column="quantifier_type" property="quantifierType" />
+		<result column="delete_flag" property="deleteFlag" />
+		<result column="create_id" property="createId" />
+		<result column="create_name" property="createName" />
+		<result column="create_time" property="createTime" />
+		<result column="modify_id" property="modifyId" />
+		<result column="modify_name" property="modifyName" />
+		<result column="modify_time" property="modifyTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,
+		promotion_id,
+		level_number, 
+		level_code,
+		addup_type,
+		level_amount, 
+		quantifier_type,
+		delete_flag,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+	</sql>
+	<select id="queryAccumulatyListByPromotionId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from promotion_accumulaty
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+		<if test="levelCodeList != null and levelCodeList.size != 0">
+		  and level_code in 
+		  	<foreach item="levelCode" index="index" collection="levelCodeList" open="(" separator="," close=")">  
+				#{levelCode}
+			</foreach>
+		</if>
+		  and delete_flag = 0
+	</select>
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into promotion_accumulaty
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			promotion_id,
+			level_number,
+			level_code,
+			<if test="addupType != null and addupType != ''">
+				addup_type,
+			</if>
+			<if test="levelAmount != null and levelAmount != ''">
+				level_amount,
+			</if>
+			<if test="quantifierType != null and quantifierType != ''">
+				quantifier_type,
+			</if>
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{promotionId,jdbcType=VARCHAR},
+			#{levelNumber,jdbcType=INTEGER},
+			#{levelCode,jdbcType=VARCHAR},
+			<if test="addupType != null and addupType != ''">
+				#{addupType,jdbcType=VARCHAR},
+			</if>
+			<if test="levelAmount != null and levelAmount != ''">
+				#{levelAmount,jdbcType=VARCHAR},
+			</if>
+			<if test="quantifierType != null and quantifierType != ''">
+				#{quantifierType,jdbcType=VARCHAR},
+			</if>
+			0,
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+		</trim>
+	</insert>
+	<update id="update">
+		update promotion_accumulaty
+		<set>
+			<if test="addupType != null and addupType != ''">
+				addup_type = #{addupType,jdbcType=VARCHAR},
+			</if>
+			<if test="levelAmount != null and levelAmount != ''">
+				level_amount = #{levelAmount,jdbcType=VARCHAR},
+			</if>
+			<if test="quantifierType != null and quantifierType != ''">
+				quantifier_type = #{quantifierType,jdbcType=VARCHAR},
+			</if>
+			modify_id = #{modifyId,jdbcType=BIGINT},
+			modify_name = #{modifyName,jdbcType=VARCHAR},
+			modify_time = now(),
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+		  and level_code = #{levelCode,jdbcType=VARCHAR}
+	</update>
+	<update id="delete" >
+		update promotion_accumulaty
+		<set>
+			delete_flag = 1,
+			modify_id = #{modifyId,jdbcType=BIGINT},
+			modify_name = #{modifyName,jdbcType=VARCHAR},
+			modify_time = now(),
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+		<if test="levelCode != null and levelCode != ''">
+		and level_code = #{levelCode,jdbcType=VARCHAR}
+		</if>
+	</update>
+</mapper>

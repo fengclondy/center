@@ -68,6 +68,9 @@
 		</profile>
 		<profile>
 			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<properties>
 				<epp_env>dev</epp_env>
 				<comm_env>common</comm_env>
@@ -80,9 +83,7 @@
 		</profile>
 		<profile>
 			<id>sit</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			
 			<properties>
 				<epp_env>sit</epp_env>
 				<comm_env>common</comm_env>
@@ -95,7 +96,6 @@
 		</profile>
 		<profile>
 			<id>prep</id>
-		
 			<properties>
 				<epp_env>prep</epp_env>
 				<comm_env>common</comm_env>

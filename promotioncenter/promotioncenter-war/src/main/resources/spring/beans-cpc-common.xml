@@ -16,7 +16,7 @@
 	 <bean id="orderMethodInterceptor" class="cn.htd.promotion.cpc.interceptor.LogMethodInterceptor"></bean>
 	 <aop:config proxy-target-class="true">
 	 	<aop:pointcut  id="apiAopPointcut"
-	 	expression="execution(* cn.htd.promotion.cpc.api..*.*(..)) || execution(* cn.htd.promotion.cpc.web..*.*(..))
+	 	expression="execution(* cn.htd.promotion.cpc.api..*.*(..))
 	 	 || execution(* cn.htd.promotion.cpc.biz.service..*.*(..)) || execution(* cn.htd.promotion.cpc.biz.listenter..*.*(..))
 	 	 || execution(* cn.htd.promotion.cpc.biz.rao.impl..*.*(..))  " />
 	 	<aop:advisor pointcut-ref="apiAopPointcut" advice-ref="orderMethodInterceptor" />

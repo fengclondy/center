@@ -1,34 +1,398 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO" >
-  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO" >
-   <id column="ID" property="id" jdbcType="BIGINT" />
-    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
-    <result column="PROMOTION_NAME" property="promotionName" jdbcType="VARCHAR" />
-    <result column="PROMOTION_DESCRIBE" property="promotionDescribe" jdbcType="VARCHAR" />
-    <result column="PROMOTION_PROVIDER_TYPE" property="promotionProviderType" jdbcType="VARCHAR" />
-    <result column="PROMOTION_PROVIDER_SELLER_CODE" property="promotionProviderSellerCode" jdbcType="VARCHAR" />
-    <result column="PROMOTION_PROVIDER_SHOP_ID" property="promotionProviderShopId" jdbcType="BIGINT" />
-    <result column="COST_ALLOCATION_TYPE" property="costAllocationType" jdbcType="VARCHAR" />
-    <result column="PROMOTION_TYPE" property="promotionType" jdbcType="VARCHAR" />
-    <result column="EFFECTIVE_TIME" property="effectiveTime" jdbcType="TIMESTAMP" />    
-    <result column="INVALID_TIME" property="invalidTime" jdbcType="TIMESTAMP" />  
-    <result column="IS_VIP" property="isVip" jdbcType="TINYINT" />
-    <result column="STATUS" property="status" jdbcType="VARCHAR" />
-    <result column="SHOW_STATUS" property="showStatus" jdbcType="VARCHAR" />
-    <result column="VERIFIER_ID" property="verifierId" jdbcType="BIGINT" />
-    <result column="VERIFIER_NAME" property="verifierName" jdbcType="VARCHAR" />
-    <result column="VERIFY_TIME" property="verifyTime" jdbcType="TIMESTAMP" />
-    <result column="VERIFY_REMARK" property="verifyRemark" jdbcType="VARCHAR" />
-    <result column="MODIFY_PROMOTION_ID" property="modifyPromotionId" jdbcType="VARCHAR" />
-    <result column="HAS_REDIS_CLEAN" property="hasRedisClean" jdbcType="TINYINT" />
-    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
-	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
-	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
-	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
-	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+   <result column="id" jdbcType="BIGINT" property="promotionId"/>
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="promotion_name" jdbcType="VARCHAR" property="promotionName"/>
+    <result column="promotion_describe" jdbcType="VARCHAR" property="promotionDescribe"/>
+    <result column="promotion_provider_type" jdbcType="VARCHAR" property="promotionProviderType"/>
+    <result column="promotion_provider_seller_code" jdbcType="VARCHAR" property="promotionProviderSellerCode"/>
+    <result column="promotion_provider_shop_id" jdbcType="BIGINT" property="promotionProviderShopId"/>
+    <result column="cost_allocation_type" jdbcType="VARCHAR" property="costAllocationType"/>
+    <result column="promotion_type" jdbcType="VARCHAR" property="promotionType"/>
+    <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+    <result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime"/>
+    <result column="is_daily_times_limit" jdbcType="TINYINT" property="isDailyTimesLimit"/>
+    <result column="daily_buyer_partake_times" jdbcType="TINYINT" property="dailyBuyerPartakeTimes"/>
+    <result column="contact_name" jdbcType="VARCHAR" property="contactName"/>
+    <result column="contact_telephone" jdbcType="VARCHAR" property="contactTelephone"/>
+    <result column="contact_address" jdbcType="VARCHAR" property="contactAddress"/>
+    <result column="offline_start_time" jdbcType="TIMESTAMP" property="offlineStartTime"/>
+    <result column="offline_end_time" jdbcType="TIMESTAMP" property="offlineEndTime"/>
+    <result column="is_vip" jdbcType="TINYINT" property="isVip"/>
+    <result column="status" jdbcType="VARCHAR" property="status"/>
+    <result column="show_status" jdbcType="VARCHAR" property="showStatus"/>
+    <result column="verifier_id" jdbcType="BIGINT" property="verifierId"/>
+    <result column="verifier_name" jdbcType="VARCHAR" property="verifierName"/>
+    <result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime"/>
+    <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
+    <result column="modify_promotion_id" jdbcType="VARCHAR" property="modifyPromotionId"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
   </resultMap>
+  <sql id="Base_Column_List">
+		id,
+		promotion_id,
+		promotion_name,
+		promotion_describe,
+		promotion_provider_type,
+		promotion_provider_seller_code,
+		promotion_provider_shop_id,
+		cost_allocation_type,
+		promotion_type,
+		effective_time,
+		invalid_time,
+		is_vip,
+		status,
+		show_status,
+		verifier_id,
+		verifier_name,
+		verify_time,
+		verify_remark,
+		modify_promotion_id,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+	</sql>
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+  <select id="queryPromotionList4Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where 1 = 1
+    <if test="entity != null">
+      and status in
+      <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
+        #{statusCode}
+      </foreach>
+      and show_status in
+      <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
+               close=")">
+        #{verifyStatusCode}
+      </foreach>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <select id="queryPromotionInfoByIdList" parameterType="java.util.List" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where 1=1
+    and promotion_id in
+    <foreach collection="list" index="index" item="promotionId" open="(" separator="," close=")">
+      #{promotionId}
+    </foreach>
+  </select>
+  <select id="queryById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where promotion_id = #{promotionId, jdbcType=VARCHAR}
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into promotion_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      promotion_id,
+      promotion_name,
+      <if test="promotionDescribe != null and promotionDescribe != ''">
+        promotion_describe,
+      </if>
+      promotion_provider_type,
+      <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
+        promotion_provider_seller_code,
+      </if>
+      <if test="promotionProviderShopId != null">
+        promotion_provider_shop_id,
+      </if>
+      cost_allocation_type,
+      promotion_type,
+      effective_time,
+      invalid_time,
+      <if test="isVip != null">
+        is_vip,
+      </if>
+      status,
+      show_status,
+      <if test="verifierId != null">
+        verifier_id,
+      </if>
+      <if test="verifierName != null and verifierName != ''">
+        verifier_name,
+      </if>
+      <if test="verifyTime != null">
+        verify_time,
+      </if>
+      <if test="verifyRemark != null and verifyRemark != ''">
+        verify_remark,
+      </if>
+      <if test="modifyPromotionId != null and modifyPromotionId != ''">
+        modify_promotion_id,
+      </if>
+      <if test="isDailyTimesLimit != null and isDailyTimesLimit != ''">
+      	is_daily_times_limit,
+      </if>
+      <if test="dailyBuyerPartakeTimes != null and dailyBuyerPartakeTimes != ''">
+      	daily_buyer_partake_times,
+      </if>
+      <if test="contactName != null and contactName != ''">
+      	contact_name,
+      </if>
+      <if test="contactTelephone != null and contactTelephone != ''">
+      	contact_telephone,
+      </if>
+      <if test="contactAddress != null and contactAddress != ''">
+      	contact_address,
+      </if>
+      <if test="offlineStartTime != null and offlineStartTime != ''">
+      	offline_start_time,
+      </if>
+      <if test="offlineEndTime != null and offlineEndTime != ''">
+      	offline_end_time,
+      </if>
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{promotionId,jdbcType=VARCHAR},
+      #{promotionName,jdbcType=VARCHAR},
+      <if test="promotionDescribe != null and promotionDescribe != ''">
+        #{promotionDescribe,jdbcType=VARCHAR},
+      </if>
+      #{promotionProviderType,jdbcType=VARCHAR},
+      <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
+        #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderShopId != null">
+        #{promotionProviderShopId,jdbcType=BIGINT},
+      </if>
+      1,
+      #{promotionType,jdbcType=VARCHAR},
+      #{effectiveTime,jdbcType=TIMESTAMP},
+      #{invalidTime,jdbcType=TIMESTAMP},
+      <if test="isVip != null">
+        #{isVip,jdbcType=TINYINT},
+      </if>
+      #{status,jdbcType=VARCHAR},
+      #{showStatus,jdbcType=VARCHAR},
+      <if test="verifierId != null">
+        #{verifierId,jdbcType=BIGINT},
+      </if>
+      <if test="verifierName != null and verifierName != ''">
+        #{verifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTime != null">
+        #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyRemark != null and verifyRemark != ''">
+        #{verifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyPromotionId != null and modifyPromotionId != ''">
+        #{modifyPromotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="isDailyTimesLimit != null and isDailyTimesLimit != ''">
+      	#{isDailyTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="dailyBuyerPartakeTimes != null and dailyBuyerPartakeTimes != ''">
+      	#{dailyBuyerPartakeTimes,jdbcType=TINYINT},
+      </if>
+      <if test="contactName != null and contactName != ''">
+      	#{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTelephone != null and contactTelephone != ''">
+      	#{contactTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="contactAddress != null and contactAddress != ''">
+      	#{contactAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="offlineStartTime != null and offlineStartTime != ''">
+      	#{offlineStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offlineEndTime != null and offlineEndTime != ''">
+      	#{offlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <update id="update">
+    update promotion_info
+    <set>
+      promotion_name = #{promotionName,jdbcType=VARCHAR},
+      <if test="promotionDescribe != null and promotionDescribe != ''">
+        promotion_describe = #{promotionDescribe,jdbcType=VARCHAR},
+      </if>
+      promotion_provider_type = #{promotionProviderType,jdbcType=VARCHAR},
+      <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
+        promotion_provider_seller_code = #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderShopId != null">
+        promotion_provider_shop_id = #{promotionProviderShopId,jdbcType=BIGINT},
+      </if>
+      <if test="isDailyTimesLimit != null and isDailyTimesLimit != ''">
+      	is_daily_times_limit = #{isDailyTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="dailyBuyerPartakeTimes != null and dailyBuyerPartakeTimes != ''">
+      	 daily_buyer_partake_times = #{dailyBuyerPartakeTimes,jdbcType=TINYINT},
+      </if>
+      <if test="contactName != null and contactName != ''">
+      	 contact_name = #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTelephone != null and contactTelephone != ''">
+      	contact_telephone = #{contactTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="contactAddress != null and contactAddress != ''">
+        contact_address = #{contactAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="offlineStartTime != null and offlineStartTime != ''">
+      	offline_start_time = #{offlineStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offlineEndTime != null and offlineEndTime != ''">
+      	offline_end_time = #{offlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      cost_allocation_type = 1,
+      effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+      invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+      <if test="isVip != null">
+        is_vip = #{isVip,jdbcType=TINYINT},
+      </if>
+      status = #{status,jdbcType=VARCHAR},
+      show_status = #{showStatus,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  <update id="savePromotionValidStatus" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      show_status = #{showStatus},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId, jdbcType=VARCHAR}
+  </update>
+  <update id="updatePromotionStatusById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      status = #{status,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  <update id="updatePromotionVerifyInfo" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      show_status = #{showStatus,jdbcType=VARCHAR},
+      verifier_id = #{verifierId,jdbcType=BIGINT},
+      verifier_name = #{verifierName,jdbcType=VARCHAR},
+      verify_time = now(),
+      verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  <select id="queryPromotionListByType" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where promotion_type = #{promotionType, jdbcType=VARCHAR}
+    and <![CDATA[ status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
+    and <![CDATA[ now() <= invalid_time]]>
+  </select>
   
-
+  
+  
+  <select id="queryTimelimitedListBySku"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where promotion_type = #{entity.promotionType, jdbcType=VARCHAR}
+    and <![CDATA[ status <> #{entity.deleteStatus, jdbcType=VARCHAR} ]]>
+    and <![CDATA[ now() >= invalid_time]]>
+    and <![CDATA[ show_status = #{entity.showStatus, jdbcType=VARCHAR}]]>
+    and <![CDATA[ promotion_provider_seller_code = #{sellerCode, jdbcType=VARCHAR}]]>
+    and exists (select 1
+    from timelimited_info
+    where promotion_info.promotion_id = timelimited_info.promotion_id
+    and timelimited_info.sku_code = #{entity.skuCode, jdbcType=VARCHAR}
+    )
+  </select>
+  
+  <update id="updateTimelimitedListBySku">
+    update promotion_info
+    <set>
+      show_status = 4,
+      modify_id = #{entity.createId,jdbcType=BIGINT},
+      modify_name = #{entity.createName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where 
+    show_status= 3
+    and promotion_provider_seller_code = #{entity.promotionProviderSellerCode, jdbcType=VARCHAR}
+    and promotion_id in
+     <foreach collection="promotionIdList" index="index" item="promotionId" open="(" separator="," close=")">
+        #{promotionId}
+      </foreach>
+  </update>
+  <select id="queryNeedCleanRedisPromotion4Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where has_redis_clean = 0
+    <if test="entity != null">
+      <if test="entity.promotionType != null and entity.promotionType != ''">
+      and promotion_type = #{entity.promotionType}
+      </if>
+      and <![CDATA[ invalid_time < now() ]]>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    order by id desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <update id="updateCleanedRedisPromotionStatus" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      has_redis_clean = 1,
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and has_redis_clean = 0
+  </update>
 </mapper>

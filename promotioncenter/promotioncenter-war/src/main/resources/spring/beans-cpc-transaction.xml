@@ -39,8 +39,9 @@
 			<tx:method name="*" propagation="SUPPORTS" />
 		</tx:attributes>
 	</tx:advice>
-	<aop:config proxy-target-class="true">
-		<aop:pointcut id="interceptorPointCuts" expression="(execution(* cn.htd..*ServiceImpl.*(..))) or (execution(* cn.htd..*DAO.*(..)))" />
+<!--  	<aop:config proxy-target-class="true">
+		<aop:pointcut id="interceptorPointCuts" expression="(execution(* cn.htd.promotion.cpc.biz.service..*.*(..))) or (execution(* cn.htd.promotion.cpc.biz.dao..*.*(..)))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="interceptorPointCuts" />
 	</aop:config>
+-->
 </beans>

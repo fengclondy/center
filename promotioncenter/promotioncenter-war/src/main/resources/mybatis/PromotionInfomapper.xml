@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO" >
+   <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
+    <result column="PROMOTION_NAME" property="promotionName" jdbcType="VARCHAR" />
+    <result column="PROMOTION_DESCRIBE" property="promotionDescribe" jdbcType="VARCHAR" />
+    <result column="PROMOTION_PROVIDER_TYPE" property="promotionProviderType" jdbcType="VARCHAR" />
+    <result column="PROMOTION_PROVIDER_SELLER_CODE" property="promotionProviderSellerCode" jdbcType="VARCHAR" />
+    <result column="PROMOTION_PROVIDER_SHOP_ID" property="promotionProviderShopId" jdbcType="BIGINT" />
+    <result column="COST_ALLOCATION_TYPE" property="costAllocationType" jdbcType="VARCHAR" />
+    <result column="PROMOTION_TYPE" property="promotionType" jdbcType="VARCHAR" />
+    <result column="EFFECTIVE_TIME" property="effectiveTime" jdbcType="TIMESTAMP" />    
+    <result column="INVALID_TIME" property="invalidTime" jdbcType="TIMESTAMP" />  
+    <result column="IS_VIP" property="isVip" jdbcType="TINYINT" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="SHOW_STATUS" property="showStatus" jdbcType="VARCHAR" />
+    <result column="VERIFIER_ID" property="verifierId" jdbcType="BIGINT" />
+    <result column="VERIFIER_NAME" property="verifierName" jdbcType="VARCHAR" />
+    <result column="VERIFY_TIME" property="verifyTime" jdbcType="TIMESTAMP" />
+    <result column="VERIFY_REMARK" property="verifyRemark" jdbcType="VARCHAR" />
+    <result column="MODIFY_PROMOTION_ID" property="modifyPromotionId" jdbcType="VARCHAR" />
+    <result column="HAS_REDIS_CLEAN" property="hasRedisClean" jdbcType="TINYINT" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
+	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
+	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+
+</mapper>

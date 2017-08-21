@@ -8,6 +8,8 @@ public interface BuyerBargainRecordService {
 
 	public List<BuyerBargainRecordResDTO> getBuyerBargainRecordByBargainCode(String bargainCode,String messageId);
 	
-	public Integer insertBuyerBargainRecord(BuyerBargainRecordReqDTO BuyerBargainRecord); 
+	public Integer insertBuyerBargainRecord(BuyerBargainRecordReqDTO BuyerBargainRecord);
+	
+	public Boolean getThisPersonIsBargain(String bargainCode, String bargainPersonCode, String messageId);
 	
 }

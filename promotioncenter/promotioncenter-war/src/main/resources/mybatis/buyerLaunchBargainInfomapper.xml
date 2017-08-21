@@ -88,5 +88,32 @@
 			now(),
 		</trim>
 	</insert>
-	
+
+	<update id="updateBuyerLaunchBargainInfo" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO">
+		update buyer_launch_bargain_info
+		<set>
+			<if test="launchTime != null">
+				launch_time = #{launchTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bargainOverTime != null">
+				bargain_over_time = #{bargainOverTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isBargainOver != null">
+				is_bargain_over = #{isBargainOver,jdbcType=TINYINT},
+			</if>
+			<if test="goodsCurrentPrice != null">
+				goods_current_price = #{goodsCurrentPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="modifyId != null">
+				modify_id = #{modifyId,jdbcType=BIGINT},
+			</if>
+			<if test="modifyName != null">
+				modify_name = #{modifyName,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyTime != null">
+				modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR}
+	</update>
 </mapper>

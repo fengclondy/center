@@ -41,6 +41,11 @@ public class PromotionInfoDTO implements Serializable {
      * 促销活动发起方商家编码
      */
     private String promotionProviderSellerCode;
+    
+    /**
+     * 促销活动商家名称
+     */
+    private String sellerName;
     /**
      * 促销活动发起方商家店铺ID
      */
@@ -73,13 +78,14 @@ public class PromotionInfoDTO implements Serializable {
      */
     private int isVip;
     /**
-     * 促销活动展示状态
-     */
-    private String showStatus;
-    /**
-     * 促销活动状态
+     * 促销活动状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
      */
     private String status;
+    
+    /**
+     * 促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+     */
+    private String showStatus;
     /**
      * 审核人ID
      */
@@ -346,7 +352,15 @@ public class PromotionInfoDTO implements Serializable {
         this.promotionProviderSellerCode = promotionProviderSellerCode;
     }
 
-    public Long getPromotionProviderShopId() {
+    public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public Long getPromotionProviderShopId() {
         return promotionProviderShopId;
     }
 

@@ -19,6 +19,8 @@ import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+
 import com.alibaba.fastjson.JSON;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 
@@ -41,35 +43,36 @@ public class BuyerBargainTestUnit {
     	
     }
     
-    @Test
-    @Rollback(false) 
-    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
-    	try {
-			String buyerCode = "htd20070002";
-			String messageId ="001";
-			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
-			System.out.println(JSON.toJSONString(list));
-    	} catch (Exception e) {
-    		
-		}
-    }
-    
 //    @Test
 //    @Rollback(false) 
-//    public void testGetPromotionBargainInfoDetail() {
+//    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
 //    	try {
-//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-//			buyerBargainLaunch.setPromotionId("123");
-//			buyerBargainLaunch.setLevelCode("1");
-//			buyerBargainLaunch.setMessageId(messageId);
-//			buyerBargainLaunch.setBargainCode("123");
-//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
-//			System.out.println(JSON.toJSONString(promotionBargainInfo));
+//			String buyerCode = "htd20070002";
+//			String messageId ="001";
+//			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
+//			System.out.println(JSON.toJSONString(list));
 //    	} catch (Exception e) {
 //    		
 //		}
 //    }
+    
+    @Test
+    @Rollback(false) 
+    public void testGetPromotionBargainInfoDetail() {
+    	try {
+    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+    		buyerBargainLaunch.setBuyerCode("htd20070002");
+			buyerBargainLaunch.setPromotionId("22171657300933");
+			buyerBargainLaunch.setLevelCode("2217165730093316");
+			buyerBargainLaunch.setMessageId("123456");
+			buyerBargainLaunch.setBargainCode("123");
+			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+			System.out.println(JSON.toJSONString(promotionBargainInfo));
+    	} catch (Exception e) {
+    		
+		}
+    }
     
     
 //    @Test

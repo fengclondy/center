@@ -1672,6 +1672,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			LOGGER.warn("从商品中心查询商品信息失败：");
 			return orderCreateInfoResDTO;
 		}
+		orderCreateInfoReqDTO.setMessageId(messageId);
 		// 生成订单
 		OrderCreateInfoDMO orderCreateInfoDMO = this.orderCreate(orderCreateInfoReqDTO);
 		JSONObject jsonObj = (JSONObject) JSONObject.toJSON(orderCreateInfoDMO);
@@ -1781,7 +1782,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					String sellerCode = memberCenterRAO
 							.queryMemberCodeByMemberId(orderCreate4huilinReqDTO.getSellerId(),
 									messageId)
-							.getOtherCenterResponseCode();
+							.getOtherCenterResult();
 					inforeqDto.setSellerCode(sellerCode);
 					OtherCenterResDTO<ShopDTO> shopInfo = storeCenterRAO.findShopInfoById(sellerId);
 					inforeqDto.setShopId(shopInfo.getOtherCenterResult().getShopId());

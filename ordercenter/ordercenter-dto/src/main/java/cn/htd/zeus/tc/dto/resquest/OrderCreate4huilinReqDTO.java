@@ -22,7 +22,6 @@ public class OrderCreate4huilinReqDTO implements Serializable {
 	private Long buyerId;
 
 	// 买家留言
-	@NotBlank(message = "buyerRemarks不能为空")
 	private String buyerRemarks;
 
 	// 卖家编码

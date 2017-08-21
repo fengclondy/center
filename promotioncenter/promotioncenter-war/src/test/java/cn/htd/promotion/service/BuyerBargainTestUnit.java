@@ -2,6 +2,7 @@ package cn.htd.promotion.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -16,8 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
-import cn.htd.promotion.cpc.common.util.GenerateIdsUtil;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+
+import com.alibaba.fastjson.JSON;
+import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -43,7 +48,7 @@ public class BuyerBargainTestUnit {
 //    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
 //    	try {
 //			String buyerCode = "htd20070002";
-//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//			String messageId ="001";
 //			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
 //			System.out.println(JSON.toJSONString(list));
 //    	} catch (Exception e) {
@@ -51,21 +56,23 @@ public class BuyerBargainTestUnit {
 //		}
 //    }
     
-//    @Test
-//    @Rollback(false) 
-//    public void testGetPromotionBargainInfoDetail() {
-//    	try {
-//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+    @Test
+    @Rollback(false) 
+    public void testGetPromotionBargainInfoDetail() {
+    	try {
+    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
 //			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-//			buyerBargainLaunch.setPromotionId("123");
-//			buyerBargainLaunch.setLevelCode("1");
-//			buyerBargainLaunch.setMessageId(messageId);
-//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
-//			System.out.println(JSON.toJSONString(promotionBargainInfo));
-//    	} catch (Exception e) {
-//    		
-//		}
-//    }
+    		buyerBargainLaunch.setBuyerCode("htd20070002");
+			buyerBargainLaunch.setPromotionId("22171657300933");
+			buyerBargainLaunch.setLevelCode("2217165730093316");
+			buyerBargainLaunch.setMessageId("123456");
+			buyerBargainLaunch.setBargainCode("123");
+			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+			System.out.println(JSON.toJSONString(promotionBargainInfo));
+    	} catch (Exception e) {
+    		
+		}
+    }
     
     
 //    @Test
@@ -82,26 +89,88 @@ public class BuyerBargainTestUnit {
 //    }
     
     
-    @Test
-    @Rollback(false) 
-    public void insertBuyerBargainRecord() {
-    	try {
-    		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-    		BuyerBargainRecordReqDTO buyerBargainRecord = new BuyerBargainRecordReqDTO();
-    		buyerBargainRecord.setBargainCode("123");
-    		buyerBargainRecord.setHeadSculptureUrl("http://baidu.com");
-    		buyerBargainRecord.setBargainPersonCode("htd20070002");
-    		buyerBargainRecord.setBargainPresonName("帮忙砍价3");
-    		buyerBargainRecord.setBargainAmount(new BigDecimal("5.23"));
-    		buyerBargainRecord.setBargainTime(new Date());
-    		buyerBargainRecord.setCreateId(123);
-    		buyerBargainRecord.setCreateName("系统");
-    		buyerBargainRecord.setCreateTime(new Date());
-    		buyerBargainRecord.setMessageId(messageId);
-			Integer i  = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
-			System.out.println(i);
-    	} catch (Exception e) {
+//    @Test
+//    @Rollback(false) 
+//    public void insertBuyerBargainRecord() {
+//    	try {
+//    		String messageId = "001";
+//    		BuyerBargainRecordReqDTO buyerBargainRecord = new BuyerBargainRecordReqDTO();
+//    		buyerBargainRecord.setBargainCode("123");
+//    		buyerBargainRecord.setHeadSculptureUrl("http://baidu.com");
+//    		buyerBargainRecord.setBargainPersonCode("htd20070002");
+//    		buyerBargainRecord.setBargainPresonName("帮忙砍价3");
+//    		buyerBargainRecord.setBargainAmount(new BigDecimal("5.23"));
+//    		buyerBargainRecord.setBargainTime(new Date());
+//    		buyerBargainRecord.setCreateId(123);
+//    		buyerBargainRecord.setCreateName("系统");
+//    		buyerBargainRecord.setCreateTime(new Date());
+//    		buyerBargainRecord.setMessageId(messageId);
+//			Integer i  = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
+//			System.out.println(i);
+//    	} catch (Exception e) {
+//    		
+//    	}
+//    }
     		
-		}
-    }
+//    @Test
+//    @Rollback(false) 
+//    public void insertBuyerBargainRecord() {
+//    	try {
+//    		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//    		BuyerBargainRecordReqDTO buyerBargainRecord = new BuyerBargainRecordReqDTO();
+//    		buyerBargainRecord.setBargainCode("123");
+//    		buyerBargainRecord.setHeadSculptureUrl("http://baidu.com");
+//    		buyerBargainRecord.setBargainPersonCode("htd20070002");
+//    		buyerBargainRecord.setBargainPresonName("帮忙砍价3");
+//    		buyerBargainRecord.setBargainAmount(new BigDecimal("5.23"));
+//    		buyerBargainRecord.setBargainTime(new Date());
+//    		buyerBargainRecord.setCreateId(123);
+//    		buyerBargainRecord.setCreateName("系统");
+//    		buyerBargainRecord.setCreateTime(new Date());
+//    		buyerBargainRecord.setMessageId(messageId);
+//			Integer i  = buyerBargainRecordService.insertBuyerBargainRecord(buyerBargainRecord);
+//			System.out.println(i);
+//    	} catch (Exception e) {
+//    		
+//		}
+//    }
+    
+    
+//  @Test
+//  @Rollback(false) 
+//  public void getThisPersonIsBargain() {
+//  	try {
+//  		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//  		String bargainCode = "123";
+//  		String bargainPersonCode = "htd20070001";
+//  		Boolean flag  = buyerBargainRecordService.getThisPersonIsBargain(bargainCode, bargainPersonCode, messageId);
+//		System.out.println(flag);
+//  	} catch (Exception e) {
+//  		
+//		}
+//  }
+    
+//  @Test
+//  @Rollback(false) 
+//  public void updateBuyerLaunchBargainInfo() {
+//  	try {
+//  		String messageId = "";
+//  		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+//  		buyerBargainLaunch.setLaunchTime(new Date());
+//  		buyerBargainLaunch.setBargainOverTime(new Date());
+//  		buyerBargainLaunch.setIsBargainOver(1);
+//  		buyerBargainLaunch.setGoodsCurrentPrice(new BigDecimal(233.22));
+//  		buyerBargainLaunch.setMessageId(messageId);
+//  		buyerBargainLaunch.setModifyId(125);
+//  		buyerBargainLaunch.setModifyName("测试账号");
+//  		buyerBargainLaunch.setModifyTime(new Date());
+//  		buyerBargainLaunch.setPromotionId("123");
+//  		buyerBargainLaunch.setLevelCode("1");
+//  		Integer flag  = buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo(buyerBargainLaunch);
+//		System.out.println(flag);
+//  	} catch (Exception e) {
+//		}
+//  }
+    
+    
 }

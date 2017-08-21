@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * 砍价发起信息表
  * @author xuxuejiao
@@ -17,23 +22,43 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	
 	private String bargainCode;//砍价发起编号
 	
+	@NotBlank(message = "促销活动编码不能为空")
 	private String promotionId;//促销活动编码
 	
+	@NotBlank(message = "促销活动层级编码不能为空")
 	private String levelCode;//层级编码
 	
+	@NotBlank(message = "会员编码不能为空")
 	private String buyerCode;//会员编码
 	
+	@NotBlank(message = "会员名称不能为空")
 	private String buyerName;//会员名称
 	
+	@NotBlank(message = "会员头像不能为空")
+	private String headSculptureURL; //会员头像
+	
+	@NotBlank(message = "会员电话号码不能为空")
 	private String buyerTelephone;//会员电话号码
 	
+	@NotBlank(message = "商品图片不能为空")
 	private String goodsPicture;//商品图片
 	
+	@NotBlank(message = "商品名称不能为空")
 	private String goodsName;//商品名称
 	
+	@NotNull(message = "商品原价不能为空")
 	private BigDecimal goodsCostPrice;//商品原价
 	
+	@NotNull(message = "商品低价不能为空")
 	private BigDecimal goodsFloorPrice;//商品底价
+	
+	@NotNull(message = "参与砍价的人数不能为空")
+	@Min(value = 1, message = "参与砍价的人数必须大于0")
+	private Integer partakeTimes;//参与砍价的人数
+	
+	@NotNull(message = "参砍商品数量不能为空")
+	@Min(value = 1, message = "参砍商品数量必须大于0")
+	private Integer goodsNum;//参砍商品数量
 	
 	private Date launchTime;//发起时间
 	
@@ -47,8 +72,10 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	
 	private BigDecimal surplusPrice;//还剩多少价没砍
 	
+	@NotNull(message = "创建人id不能为空")
 	private Integer createId;//创建人ID
 	
+	@NotNull(message = "创建人名称不能为空")
 	private String createName;//创建人名称
 	
 	private Date createTime;//创建时间
@@ -243,4 +270,27 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 		this.modifyTime = modifyTime;
 	}
 
+	public Integer getPartakeTimes() {
+		return partakeTimes;
+	}
+
+	public void setPartakeTimes(Integer partakeTimes) {
+		this.partakeTimes = partakeTimes;
+	}
+
+	public Integer getGoodsNum() {
+		return goodsNum;
+	}
+
+	public void setGoodsNum(Integer goodsNum) {
+		this.goodsNum = goodsNum;
+	}
+
+	public String getHeadSculptureURL() {
+		return headSculptureURL;
+	}
+
+	public void setHeadSculptureURL(String headSculptureURL) {
+		this.headSculptureURL = headSculptureURL;
+	}
 }

@@ -6,4 +6,9 @@
         http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd
         ">
+    <!--砍价接口-->
+	<dubbo:service interface="cn.htd.promotion.api.BuyerBargainAPI" ref="buyerBargainAPI" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<dubbo:service interface="cn.htd.promotion.api.BuyerBargainRecordAPI" ref="buyerBargainRecordAPI" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<dubbo:service interface="cn.htd.promotion.api.PromotionBargainInfoAPI" ref="promotionBargainInfoAPI" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<dubbo:service interface="cn.htd.promotion.api.PromotionSloganAPI" ref="promotionSloganAPI" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 </beans>

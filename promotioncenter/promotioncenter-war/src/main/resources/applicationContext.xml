@@ -13,7 +13,7 @@ default-autowire="byName">
   <!-- add by zhangding  20161102 开始  本工程web-info下也有个applicationContext.xml，但是没有用到 -->
   <import resource="classpath*:/spring/beans-*.xml" />
    <!-- add by zhangding  20161102 结束  -->
- <context:component-scan base-package="cn.htd.promotion.cpc.*" />
+ <context:component-scan base-package="cn.htd.*" />
   <context:property-placeholder location="classpath:application-env.properties" />
  <!--  <context:annotation-config/> -->
   

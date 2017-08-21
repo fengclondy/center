@@ -5,8 +5,8 @@
    <id column="ID" property="id" jdbcType="BIGINT" />
     <result column="BARGAIN_CODE" property="bargainCode" jdbcType="VARCHAR" />
     <result column="HEAD_SCULPTURE_URL" property="headSculptureUrl" jdbcType="VARCHAR" />
-    <result column="BARGAIN_PERSON_CODE" property="bargainPersonCode" jdbcType="VARCHAR" />
-    <result column="BARGAIN_PERSON_NAME" property="bargainPersonName" jdbcType="VARCHAR" />
+    <result column="BARGAIN_PRESON_CODE" property="bargainPersonCode" jdbcType="VARCHAR" />
+    <result column="BARGAIN_PRESON_NAME" property="bargainPresonName" jdbcType="VARCHAR" />
     <result column="BARGAIN_AMOUNT" property="bargainAmount" jdbcType="DECIMAL" />
     <result column="BARGAIN_TIME" property="bargainTime" jdbcType="TIMESTAMP" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
@@ -17,6 +17,11 @@
     <select id="getBuyerBargainRecordByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
     	select * from buyer_bargain_record
     	where bargain_code = #{bargainCode}
+	</select>
+	
+	<select id="getThisPersonIsBargain" resultMap="BaseResultMap"  parameterType="map">
+    	select * from buyer_bargain_record
+    	where bargain_code = #{bargainCode} and bargain_preson_code = #{bargainPersonCode}
 	</select>
 	
 	

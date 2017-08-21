@@ -19,5 +19,39 @@
     	AND ps.delete_flag = 0
     	AND pi.promotion_provider_seller_code = #{providerSellerCode}
 	</select>
-
+	
+	<select id="queryBargainSloganByPromotionId" resultType="cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO">
+		SELECT  ps.* FROM promotion_slogan as ps
+		WHERE ps.delete_flag = 0
+		AND ps.promotion_id = #{promotionId}
+		limit 0,1
+	</select>
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+	insert into promotion_slogan
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			promotion_id,
+			promotion_slogan,
+			delete_flag,
+			create_id,
+			create_name,
+			create_time,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{promotionId,jdbcType=VARCHAR},
+			#{promotionSlogan,jdbcType=VARCHAR}, 
+			0,
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+		</trim>
+	</insert>
+	
+	<update id="delete" >
+		update promotion_slogan
+		<set>
+			delete_flag = 1
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+	</update>
 </mapper>

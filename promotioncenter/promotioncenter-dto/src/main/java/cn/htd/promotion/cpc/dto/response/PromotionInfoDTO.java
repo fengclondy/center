@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -41,6 +42,11 @@ public class PromotionInfoDTO implements Serializable {
      * 促销活动发起方商家编码
      */
     private String promotionProviderSellerCode;
+    
+    /**
+     * 促销活动商家名称
+     */
+    private String sellerName;
     /**
      * 促销活动发起方商家店铺ID
      */
@@ -52,7 +58,6 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 成本分摊类型
      */
-    @NotBlank(message = "成本分摊类型不能为空")
     private String costAllocationType;
     /**
      * 促销活动类型
@@ -74,13 +79,14 @@ public class PromotionInfoDTO implements Serializable {
      */
     private int isVip;
     /**
-     * 促销活动展示状态
-     */
-    private String showStatus;
-    /**
-     * 促销活动状态
+     * 促销活动状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
      */
     private String status;
+    
+    /**
+     * 促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+     */
+    private String showStatus;
     /**
      * 审核人ID
      */
@@ -104,12 +110,10 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 创建人ID
      */
-    @NotNull(message = "创建人ID不能为空")
     private Long createId;
     /**
      * 创建人名称
      */
-    @NotNull(message = "创建人名称不能为空")
     private String createName;
     /**
      * 创建时间
@@ -183,7 +187,7 @@ public class PromotionInfoDTO implements Serializable {
     private String effectiveTimeStr;
 
     private String invalidTimeStr;
-
+    
     public String getEffectiveTimeStr() {
         return effectiveTimeStr;
     }
@@ -264,7 +268,15 @@ public class PromotionInfoDTO implements Serializable {
         this.promotionProviderSellerCode = promotionProviderSellerCode;
     }
 
-    public Long getPromotionProviderShopId() {
+    public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public Long getPromotionProviderShopId() {
         return promotionProviderShopId;
     }
 

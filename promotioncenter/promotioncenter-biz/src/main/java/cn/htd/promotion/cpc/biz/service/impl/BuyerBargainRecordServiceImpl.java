@@ -1,7 +1,9 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -45,6 +47,22 @@ public class BuyerBargainRecordServiceImpl implements BuyerBargainRecordService 
 		Integer i = buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
 		LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.insertBuyerBargainRecord（）方法结束,出参{}",buyerBargainRecord.getMessageId(),JSON.toJSONString(i));
 		return i;
+	}
+
+	@Override
+	public Boolean getThisPersonIsBargain(String bargainCode, String bargainPersonCode, String messageId) {
+		Boolean flag = true;
+		LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getThisPersonIsBargain（）方法开始,入参{}",messageId,bargainCode + ":" +bargainPersonCode);
+		Map<String, String> map = new HashMap<String,String>();
+		map.put("bargainCode", bargainCode);
+		map.put("bargainPersonCode", bargainPersonCode);
+		BuyerBargainRecordDMO BuyerBargainRecordDMO = buyerBargainRecordDAO.getThisPersonIsBargain(map);
+		LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.insertBuyerBargainRecord（）方法结束,出参{}",messageId,JSON.toJSONString(BuyerBargainRecordDMO));
+		//该用户已经砍过
+		if(BuyerBargainRecordDMO != null){
+			flag = false;
+		}
+		return flag;
 	}
 
 }

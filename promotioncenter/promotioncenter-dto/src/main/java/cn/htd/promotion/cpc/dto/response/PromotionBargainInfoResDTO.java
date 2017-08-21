@@ -43,18 +43,6 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private Integer virtualQuantity;//汇掌柜端虚拟显示人数增加
 	
-	private Integer createId;//创建人ID
-	
-	private String createName;//创建人名称
-	
-	private Date createTime;//创建时间
-	
-	private Integer modifyId;//更新人ID
-	
-	private String modifyName;//更新人名称
-	
-	private Date modifyTime;//更新时间
-	
 	private String promotionDescribe;//宣传标语
 	
 	private String sellerName;//店铺名称

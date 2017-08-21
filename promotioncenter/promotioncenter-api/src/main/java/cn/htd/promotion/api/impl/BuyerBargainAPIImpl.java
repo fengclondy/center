@@ -10,16 +10,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-
 import cn.htd.promotion.api.BuyerBargainAPI;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
+import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+
+import com.alibaba.dubbo.common.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
 
 @Service("buyerBargainAPI")
 public class BuyerBargainAPIImpl implements BuyerBargainAPI{
@@ -61,30 +64,33 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 	@Override
 	public ExecuteResult<Boolean> updateBuyerLaunchBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch) {
 		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
-		//验证参数是否为空
-//		ValidateResult validateResult = DTOValidateUtil.validate(buyerBargainLaunch);
-//		if(!validateResult.isPass()){
-//			result.setErrorMessage(validateResult.getReponseMsg());
-//			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
-//			return  result;
-//		}
-//		try{
-//			Integer falg = buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo(buyerBargainLaunch);
-//			if(falg == 1){
-//				result.setCode(ResultCodeEnum.SUCCESS.getCode());
-//				result.setResult(true);
-//			}else{
-//				result.setCode(ResultCodeEnum.ERROR.getCode());
-//				result.setErrorMessage(ResultCodeEnum.ERROR.getMsg());
-//				result.setResult(false);
-//			}
-//		}catch (Exception e) {
-//			result.setCode(ResultCodeEnum.ERROR.getMsg());
-//			StringWriter w = new StringWriter();
-//			e.printStackTrace(new PrintWriter(w));
-//			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo出现异常{}",
-//					buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch), w.toString());
-//		}
+		try{
+			//验证参数是否为空
+			ValidateResult validateResult = ValidationUtils
+					.validateEntity(buyerBargainLaunch);
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
+	                    validateResult.getErrorMsg());
+			}
+			Integer falg = buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo(buyerBargainLaunch);
+			if(falg == 1){
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+				result.setResult(true);
+			}else{
+				result.setCode(ResultCodeEnum.ERROR.getCode());
+				result.setErrorMessage(ResultCodeEnum.ERROR.getMsg());
+				result.setResult(false);
+			}
+		}catch(PromotionCenterBusinessException pbs){
+			result.setCode(pbs.getCode());
+			result.setErrorMessage(pbs.getMessage());
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo出现异常{}",
+					buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch), w.toString());
+		}
 		return result;
 	}
 }

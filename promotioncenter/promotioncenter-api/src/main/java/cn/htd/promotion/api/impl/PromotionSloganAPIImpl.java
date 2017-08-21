@@ -25,14 +25,7 @@ public class PromotionSloganAPIImpl implements PromotionSloganAPI {
 
 	@Override
 	public ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(
-		
-			
 			String providerSellerCode, String messageId) {
-		
-		
-		
-		
-		
 		ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
 		
 		if (StringUtils.isEmpty(providerSellerCode) || StringUtils.isEmpty(messageId)) {

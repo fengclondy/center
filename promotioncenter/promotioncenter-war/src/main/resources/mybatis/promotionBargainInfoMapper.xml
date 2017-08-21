@@ -19,8 +19,8 @@
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
-     <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
-     <![CDATA[
+     <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" 
+     				parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
 	    select pbi.bargain_id bargainId ,
 	    	   pbi.promotion_id promotionId,
 	    	   pbi.level_code levelCode,
@@ -47,13 +47,11 @@
 	    left join promotion_seller_detail psd on pbi.promotion_id = psd.promotion_id
 	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
 	    left join buyer_launch_bargain_info plb on (plb.promotion_id = pbi.promotion_id and plb.level_code = pbi.level_code)
-	     where
-	    pbi.promotion_id = #{promotionId,jdbcType=VARCHAR} 
-	    and pbi.level_code = #{levelCode,jdbcType=VARCHAR}
+	    where pbi.promotion_id = #{promotionId} 
+	    and pbi.level_code = #{levelCode}
 	    <if test="buyerCode != null">
-			and plb.buyer_code = #{buyerCode,jdbcType=VARCHAR}
+			and plb.buyer_code = #{buyerCode}
 		</if>
-	    ]]>
     </select>
     
     <insert id="add" useGeneratedKeys="true" keyProperty="id">

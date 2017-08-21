@@ -1618,10 +1618,10 @@
 	
 		<select id="querySellerInfoBySellerId" parameterType="Long" resultType="cn.htd.membercenter.dto.SellerInfoDTO">
 		select 
-			mb.id,
-			mb.member_code,
-			mc.company_name,
-			mc.company_code
+			mb.id as memberId,
+			mb.member_code as memberCode,
+			mc.company_name as companyName,
+			mc.company_code as companyCode
 			 from member_base_info mb 
 			join member_company_info mc
 			on mb.id=mc.member_id and mc.buyer_seller_type=2

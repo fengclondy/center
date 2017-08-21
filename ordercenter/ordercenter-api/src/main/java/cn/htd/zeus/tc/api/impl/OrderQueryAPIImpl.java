@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.htd.common.ExecuteResult;
-import cn.htd.zeus.tc.dto.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +26,11 @@ import cn.htd.zeus.tc.biz.service.OrderQueryService;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
+import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
+import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordOutDTO;
+import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
+import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
+import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsOutDTO;
 import cn.htd.zeus.tc.dto.response.ChargeConditionInfoDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryDetailResDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
@@ -443,7 +446,7 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 			orderQueryParamReqDTO.setOrderStatus(recoed.getOrderStatus());
 			orderQueryParamReqDTO.setSellerCode(recoed.getSellerCode());
 			orderQueryParamReqDTO.setSellerName(recoed.getSellerName());
-			
+
 			if (recoed.getPageSize() != null && recoed.getCurrentPage() != null) {
 				orderQueryParamReqDTO.setStart((recoed.getCurrentPage() - 1) * recoed.getPageSize());
 				orderQueryParamReqDTO.setRows(recoed.getPageSize());
@@ -550,17 +553,20 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 	}
 
 	@Override
-	public OrderQueryPurchaseRecordOutDTO querySellerCodeWithPurchaseRecordsByBuyerCode(OrderQueryPurchaseRecordInDTO orderQueryPurchaseRecordInDTO) {
+	public OrderQueryPurchaseRecordOutDTO querySellerCodeWithPurchaseRecordsByBuyerCode(
+			OrderQueryPurchaseRecordInDTO orderQueryPurchaseRecordInDTO) {
 		OrderQueryPurchaseRecordOutDTO orderQueryPurchaseRecordOutDTO = new OrderQueryPurchaseRecordOutDTO();
 		try {
 			if (orderQueryPurchaseRecordInDTO == null
 					|| StringUtils.isEmpty(orderQueryPurchaseRecordInDTO.getBuyerCode())
 					|| orderQueryPurchaseRecordInDTO.getBoxSellerCodeList() == null) {
 				orderQueryPurchaseRecordOutDTO.setReponseMsg(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getMsg());
-				orderQueryPurchaseRecordOutDTO.setResponseCode(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getCode());
+				orderQueryPurchaseRecordOutDTO
+						.setResponseCode(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getCode());
 				return orderQueryPurchaseRecordOutDTO;
 			}
-			String sellerCode = this.orderQueryService.querySellerCodeWithPurchaseRecordsByBuyerCode(orderQueryPurchaseRecordInDTO);
+			String sellerCode = this.orderQueryService
+					.querySellerCodeWithPurchaseRecordsByBuyerCode(orderQueryPurchaseRecordInDTO);
 			orderQueryPurchaseRecordOutDTO.setSellerCode(sellerCode);
 			orderQueryPurchaseRecordOutDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 			orderQueryPurchaseRecordOutDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
@@ -575,18 +581,23 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 	}
 
 	@Override
-	public OrderRecentQueryPurchaseRecordsOutDTO queryPurchaseRecordsByBuyerCodeAndSellerCode(OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO) {
+	public OrderRecentQueryPurchaseRecordsOutDTO queryPurchaseRecordsByBuyerCodeAndSellerCode(
+			OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO) {
 		OrderRecentQueryPurchaseRecordsOutDTO orderRecentQueryPurchaseRecordsOutDTO = new OrderRecentQueryPurchaseRecordsOutDTO();
 		try {
 			if (orderRecentQueryPurchaseRecordsInDTO == null
 					|| StringUtils.isEmpty(orderRecentQueryPurchaseRecordsInDTO.getBuyerCode())
 					|| orderRecentQueryPurchaseRecordsInDTO.getBoxSellerCodeList() == null) {
-				orderRecentQueryPurchaseRecordsOutDTO.setReponseMsg(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getMsg());
-				orderRecentQueryPurchaseRecordsOutDTO.setResponseCode(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getCode());
+				orderRecentQueryPurchaseRecordsOutDTO
+						.setReponseMsg(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getMsg());
+				orderRecentQueryPurchaseRecordsOutDTO
+						.setResponseCode(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getCode());
 				return orderRecentQueryPurchaseRecordsOutDTO;
 			}
-			List<OrderRecentQueryPurchaseRecordOutDTO> orderRecentQueryPurchaseRecordOutDTOList = this.orderQueryService.queryPurchaseRecordsByBuyerCodeAndSellerCode(orderRecentQueryPurchaseRecordsInDTO);
-			orderRecentQueryPurchaseRecordsOutDTO.setOrderRecentQueryPurchaseRecordOutDTOList(orderRecentQueryPurchaseRecordOutDTOList);
+			List<OrderRecentQueryPurchaseRecordOutDTO> orderRecentQueryPurchaseRecordOutDTOList = this.orderQueryService
+					.queryPurchaseRecordsByBuyerCodeAndSellerCode(orderRecentQueryPurchaseRecordsInDTO);
+			orderRecentQueryPurchaseRecordsOutDTO
+					.setOrderRecentQueryPurchaseRecordOutDTOList(orderRecentQueryPurchaseRecordOutDTOList);
 			orderRecentQueryPurchaseRecordsOutDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 			orderRecentQueryPurchaseRecordsOutDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
@@ -597,6 +608,40 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 			LOGGER.error("调用方法OrderQueryAPIImpl.queryPurchaseRecordsByBuyerCodeAndSellerCode出现异常{}", w.toString());
 		}
 		return orderRecentQueryPurchaseRecordsOutDTO;
+	}
+
+	@Override
+	public OrderQueryPageSizeResDTO queryPresalePendingPayOrderNums(OrderQueryParamReqDTO orderQueryParamReqDTO) {
+		OrderQueryPageSizeResDTO orderQueryPageSizeResDTO = new OrderQueryPageSizeResDTO();
+		try {
+			orderQueryPageSizeResDTO.setMessageId(orderQueryParamReqDTO.getMessageId());
+			if (!StringUtilHelper.allIsNotNull(orderQueryParamReqDTO.getBuyerCode(),
+					orderQueryParamReqDTO.getMessageId())) {
+				orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getCode());
+				orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ORDERQUERY_PARAM_LEAST_ONE_NULL.getMsg());
+				return orderQueryPageSizeResDTO;
+			}
+			if (!StringUtilHelper.parseNumFormat(orderQueryParamReqDTO.getMessageId())) {
+				orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.GOODSCENTER_MESSAGE_ID_IS_ERROR.getCode());
+				orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.GOODSCENTER_MESSAGE_ID_IS_ERROR.getMsg());
+				return orderQueryPageSizeResDTO;
+			}
+
+			OrderQueryPageSizeResDTO orderQueryPageSizeResDTOTemp = orderQueryService
+					.queryPresaleOrderCountByBuyerId(orderQueryParamReqDTO);
+			if (orderQueryPageSizeResDTOTemp != null) {
+				orderQueryPageSizeResDTO = orderQueryPageSizeResDTOTemp;
+			}
+		} catch (Exception e) {
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法OrderQueryAPIImpl.queryPresalePendingPayOrderNums出现异常{}",
+					orderQueryParamReqDTO.getMessageId(), w.toString());
+		}
+
+		return orderQueryPageSizeResDTO;
 	}
 
 }

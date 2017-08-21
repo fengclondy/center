@@ -45,32 +45,32 @@ public class SkuStockChangeExportServiceTest extends CommonTest {
     @Test
     public void testSkuStockChangeExportService() {
         Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
-        order4StockChangeDTO.setOrderNo("1017080810020402744");
+        order4StockChangeDTO.setOrderNo("1017081110020402790");
         order4StockChangeDTO.setOrderResource("web");
         order4StockChangeDTO.setMessageId(UUID.randomUUID().toString());
         List<Order4StockEntryDTO> list = new ArrayList();
         Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();
-        order4StockEntryDTO.setQuantity(4);
-        order4StockEntryDTO.setSkuCode("HTDH_0000098300");
-        order4StockEntryDTO.setIsBoxFlag(0);
+        order4StockEntryDTO.setQuantity(5);
+        order4StockEntryDTO.setSkuCode("HTDH_0000098400");
+        order4StockEntryDTO.setIsBoxFlag(1);
         list.add(order4StockEntryDTO);
         order4StockChangeDTO.setOrderEntries(list);
         ExecuteResult<String> executeResult = skuStockChangeExportService.reserveStock(order4StockChangeDTO);
-        System.out.println(executeResult);
+        System.out.println(JSON.toJSONString(executeResult));
     }
 
 
     @Test
     public void testSkuStockChangeExportService1() {
         Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
-        order4StockChangeDTO.setOrderNo("1017080810020402744");
+        order4StockChangeDTO.setOrderNo("1017081110020402790");
         order4StockChangeDTO.setOrderResource("web");
         order4StockChangeDTO.setMessageId(UUID.randomUUID().toString());
         List<Order4StockEntryDTO> list = new ArrayList();
         Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();
-        order4StockEntryDTO.setQuantity(5);
-        order4StockEntryDTO.setSkuCode("HTDH_0000098300");
-        order4StockEntryDTO.setIsBoxFlag(0);
+        order4StockEntryDTO.setQuantity(2);
+        order4StockEntryDTO.setSkuCode("HTDH_0000098400");
+        order4StockEntryDTO.setIsBoxFlag(1);
         order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.RELEASE);
         list.add(order4StockEntryDTO);
         order4StockChangeDTO.setOrderEntries(list);
@@ -81,14 +81,14 @@ public class SkuStockChangeExportServiceTest extends CommonTest {
     @Test
     public void testSkuStockChangeExportService2() {
         Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
-        order4StockChangeDTO.setOrderNo("1017080810020402743");
+        order4StockChangeDTO.setOrderNo("1017081110020402790");
         order4StockChangeDTO.setOrderResource("web");
         order4StockChangeDTO.setMessageId(UUID.randomUUID().toString());
         List<Order4StockEntryDTO> list = new ArrayList();
         Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();
-        order4StockEntryDTO.setQuantity(5);
-        order4StockEntryDTO.setSkuCode("HTDH_0000098300");
-        order4StockEntryDTO.setIsBoxFlag(0);
+        order4StockEntryDTO.setQuantity(3);
+        order4StockEntryDTO.setSkuCode("HTDH_0000098400");
+        order4StockEntryDTO.setIsBoxFlag(1);
         order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.REDUCE);
         list.add(order4StockEntryDTO);
         order4StockChangeDTO.setOrderEntries(list);
@@ -101,17 +101,17 @@ public class SkuStockChangeExportServiceTest extends CommonTest {
     @Test
     public void testChangePrice() {
         Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
-        order4StockChangeDTO.setOrderNo("1017080810020402744");
+        order4StockChangeDTO.setOrderNo("1017080910020402766");
         order4StockChangeDTO.setOrderResource("web");
         order4StockChangeDTO.setMessageId(UUID.randomUUID().toString());
         List<Order4StockEntryDTO> list = new ArrayList();
         Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();
-        order4StockEntryDTO.setQuantity(6);
+        order4StockEntryDTO.setQuantity(0);
         order4StockEntryDTO.setSkuCode("HTDH_0000098300");
         order4StockEntryDTO.setIsBoxFlag(0);
         order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.RESERVE);
         Order4StockEntryDTO order4StockEntryDTO2 = new Order4StockEntryDTO();
-        order4StockEntryDTO2.setQuantity(0);
+        order4StockEntryDTO2.setQuantity(6);
         order4StockEntryDTO2.setSkuCode("HTDH_0000098400");
         order4StockEntryDTO2.setIsBoxFlag(1);
         order4StockEntryDTO2.setStockTypeEnum(StockTypeEnum.RESERVE);

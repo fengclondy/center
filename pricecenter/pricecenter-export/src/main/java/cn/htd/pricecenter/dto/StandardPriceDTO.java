@@ -1,10 +1,10 @@
 package cn.htd.pricecenter.dto;
 
-import cn.htd.pricecenter.domain.InnerItemSkuPrice;
-import cn.htd.pricecenter.domain.ItemSkuBasePrice;
-
 import java.io.Serializable;
 import java.util.List;
+
+import cn.htd.pricecenter.domain.InnerItemSkuPrice;
+import cn.htd.pricecenter.domain.ItemSkuBasePrice;
 
 public class StandardPriceDTO implements Serializable{
 	/**
@@ -22,6 +22,8 @@ public class StandardPriceDTO implements Serializable{
 	private List<InnerItemSkuPrice>	areaLevelPriceList;
 	//区域价
 	private List<InnerItemSkuPrice>  areaPriceList;
+	//汇掌柜价格
+	private HzgPriceDTO hzgPriceDTO;
 	public ItemSkuBasePrice getItemSkuBasePrice() {
 		return itemSkuBasePrice;
 	}
@@ -64,4 +66,11 @@ public class StandardPriceDTO implements Serializable{
 	public void setAreaLevelPriceList(List<InnerItemSkuPrice> areaLevelPriceList) {
 		this.areaLevelPriceList = areaLevelPriceList;
 	}
+	public HzgPriceDTO getHzgPriceDTO() {
+		return hzgPriceDTO;
+	}
+	public void setHzgPriceDTO(HzgPriceDTO hzgPriceDTO) {
+		this.hzgPriceDTO = hzgPriceDTO;
+	}
+	
 }

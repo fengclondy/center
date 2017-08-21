@@ -62,4 +62,7 @@
 	
 	<!-- 超级老板商品推送 -->
 	<dubbo:service interface="cn.htd.goodscenter.service.SuperbossProductPushService" ref="superbossProductPushService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- 预售商品 -->
+	<dubbo:service interface="cn.htd.goodscenter.service.PreSaleItemExportService" ref="preSaleItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 </beans>

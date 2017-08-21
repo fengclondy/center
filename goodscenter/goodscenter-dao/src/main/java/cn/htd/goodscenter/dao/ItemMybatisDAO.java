@@ -30,6 +30,7 @@ import cn.htd.goodscenter.dto.mall.MallSearchItemDTO;
 import cn.htd.goodscenter.dto.outdto.HotSellItemOutDTO;
 import cn.htd.goodscenter.dto.outdto.ItemToDoCountDTO;
 import cn.htd.goodscenter.dto.outdto.SyncItemStockSearchOutDTO;
+import cn.htd.goodscenter.dto.presale.PreSaleProdQueryDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusQueryDropdownItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusQueryDropdownItemListOutDTO;
 import cn.htd.goodscenter.dto.vip.VipItemEntryInfoDTO;
@@ -331,4 +332,11 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	//add by zhangxiaolong end
 
 	int updateFirstAndFiveCategoryCodeByItemId(Item item);
+
+	List<Item> queryPreSaleItemList(Map<String, Object> map);
+
+	void updatePreSaleFlagByItemId(@Param("preSaleFlag")int preSaleFlag,@Param("itemId") Long itemId);
+	
+	PreSaleProdQueryDTO queryPreSaleItemInfo(@Param("skuCode") String skuCode);
+
 }

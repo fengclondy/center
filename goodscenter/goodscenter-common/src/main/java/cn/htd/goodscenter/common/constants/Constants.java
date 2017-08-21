@@ -102,4 +102,23 @@ public class Constants {
 	 */
 	public static final String LAST_SYSC_PRE_SALE_PRODUCT_TIME = "LAST_SYSC_PRE_SALE_PRODUCT_TIME";
 
+	/**
+	 * 预售商品准备 推送
+	 */
+	public static final int PRE_SALE_ITEM_PUSH_PRE = 0;
+
+	/**
+	 * 预售商品准备 推送中
+	 */
+	public static final int PRE_SALE_ITEM_PUSH_ING = 1;
+
+	/**
+	 * 预售商品准备 推送成功
+	 */
+	public static final int PRE_SALE_ITEM_PUSH_SUCCESS = 2;
+
+	/**
+	 * 预售商品准备 推送失败
+	 */
+	public static final int PRE_SALE_ITEM_PUSH_FAIL = 3;
 }

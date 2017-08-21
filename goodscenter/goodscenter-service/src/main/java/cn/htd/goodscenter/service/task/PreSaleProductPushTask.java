@@ -93,7 +93,7 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         for (PreSaleProductPush preSaleProductPush : preSaleProductPushs) {
             try {
                 // 更新为推送中
-                int result = this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 1, Arrays.asList(new Integer[]{0, 3})); // 待推送和推送失败的可以重新推送
+                int result = this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), Constants.PRE_SALE_ITEM_PUSH_ING, Arrays.asList(new Integer[]{Constants.PRE_SALE_ITEM_PUSH_PRE, Constants.PRE_SALE_ITEM_PUSH_FAIL})); // 待推送和推送失败的可以重新推送
                 if (result == 0) {
                     return true;
                 }
@@ -104,11 +104,11 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
                 System.out.println(JSON.toJSONString(preSaleProductPushDTO));
                 mqSendUtil.sendToMQWithRoutingKey(preSaleProductPushDTO, MQRoutingKeyConstant.PRE_SALE_PRODUCT_PUSH_ROUTING_KEY);
                 // 更新为推送完成
-                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 2, Arrays.asList(new Integer[]{1}));
+                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), Constants.PRE_SALE_ITEM_PUSH_SUCCESS, Arrays.asList(new Integer[]{1}));
             } catch (Exception e) {
                 logger.error("推送预售商品失败, itemId ：{}", preSaleProductPush.getItemId(), e);
                 // 推送失败
-                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), 3, Arrays.asList(new Integer[]{1}));
+                this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), Constants.PRE_SALE_ITEM_PUSH_FAIL, Arrays.asList(new Integer[]{1}));
             }
         }
         return true;

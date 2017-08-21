@@ -77,7 +77,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     Date date = new Date();
                     PreSaleProductPush preSaleProductPush = new PreSaleProductPush();
                     preSaleProductPush.setItemId(item.getItemId());
-                    preSaleProductPush.setPushStatus(0);
+                    preSaleProductPush.setPushStatus(Constants.PRE_SALE_ITEM_PUSH_PRE);
                     preSaleProductPush.setPushVersion(1);
                     preSaleProductPush.setCreateId(Constants.SYSTEM_CREATE_ID);
                     preSaleProductPush.setCreateName(Constants.SYSTEM_CREATE_NAME);

@@ -71,12 +71,14 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime); // TODO : 时间往前推个几分钟，防止查询期间又加入的
-                    itemList = this.itemMybatisDAO.queryPreSaleItemList(map, 0); // 全量
+                    map.put("isIncrement", 0);
+                    itemList = this.itemMybatisDAO.queryPreSaleItemList(map); // 全量
                 } else { // 下面走增量，查询更新时间比同步时间大的
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime); // TODO : 时间往前推个几分钟，防止查询期间又加入的
-                    itemList = this.itemMybatisDAO.queryPreSaleItemList(map, 1); // 增量
+                    map.put("isIncrement", 1);
+                    itemList = this.itemMybatisDAO.queryPreSaleItemList(map); // 增量
                 }
                 for (Item item : itemList) {
                     Date date = new Date();

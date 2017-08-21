@@ -339,7 +339,7 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	 * @param isIncrement 是否增量
 	 * @return
 	 */
-	List<Item> queryPreSaleItemList(Map<String, Object> map, Integer isIncrement);
+	List<Item> queryPreSaleItemList(Map<String, Object> map);
 
 	void updatePreSaleFlagByItemId(@Param("preSaleFlag")int preSaleFlag,@Param("itemId") Long itemId);
 	

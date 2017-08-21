@@ -344,6 +344,13 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 		ItemSkuBasePrice itemSkuBasePrice = itemSkuBasePriceMapper.selectByPrimaryKey(skuId);
 		standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
 		queryInnerItemSkuPrice(skuId, isBoxFlag, standardPriceDTO);
+		
+		ExecuteResult<HzgPriceDTO> hzgPriceResult=queryHzgTerminalPriceByTerminalType(skuId);
+		
+		if(hzgPriceResult!=null&&hzgPriceResult.isSuccess()){
+			standardPriceDTO.setHzgPriceDTO(hzgPriceResult.getResult());
+		}
+		
 		result.setCode(ErrorCodes.SUCCESS.name());
 		result.setResult(standardPriceDTO);
 		return result;

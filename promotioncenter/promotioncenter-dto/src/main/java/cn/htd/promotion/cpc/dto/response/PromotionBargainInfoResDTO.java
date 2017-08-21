@@ -44,6 +44,8 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 
 	private String promotionSlogan;//宣传语
 	
+	@NotNull(message = "粉丝发起砍价上限次数不能为空")
+	@Min(value = 2, message = "粉丝发起砍价上限次数必须大于1")
 	public Integer getVirtualQuantity() {
 		return virtualQuantity;
 	}

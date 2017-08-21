@@ -29,6 +29,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * 单节点-单线程-单批次推送
@@ -220,9 +221,11 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         ExecuteResult<HzgPriceDTO> hzgPriceDTOExecuteResult = this.itemSkuPriceService.queryHzgTerminalPriceByTerminalType(itemSku.getSkuId());
         if (hzgPriceDTOExecuteResult != null && hzgPriceDTOExecuteResult.isSuccess()) {
             HzgPriceDTO hzgPriceDTO = hzgPriceDTOExecuteResult.getResult();
-            preSaleProductPushDTO.setRecommendedPrice(hzgPriceDTO.getRetailPrice());
-            preSaleProductPushDTO.setMemberPrice(hzgPriceDTO.getSalePrice());
-            preSaleProductPushDTO.setVipPrice(hzgPriceDTO.getVipPrice());
+            if (hzgPriceDTO != null) { // TODO : 没有价格是否需要推送
+                preSaleProductPushDTO.setRecommendedPrice(hzgPriceDTO.getRetailPrice());
+                preSaleProductPushDTO.setMemberPrice(hzgPriceDTO.getSalePrice());
+                preSaleProductPushDTO.setVipPrice(hzgPriceDTO.getVipPrice());
+            }
         } else {
             throw new RuntimeException("queryHzgTerminalPriceByTerminalType出错, item_id : " + itemId + ", 错误信息 ：" + hzgPriceDTOExecuteResult.getErrorMessages());
         }
@@ -429,5 +432,11 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         paramMap.put("taskQueueNum", taskQueueNum);
         paramMap.put("taskIdList", taskIdList);
         return paramMap;
+    }
+
+    public static void main(String[] args) {
+//        BlockingQueue
+
+
     }
 }

@@ -13,13 +13,6 @@
     <result column="promotion_type" jdbcType="VARCHAR" property="promotionType"/>
     <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
     <result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime"/>
-    <result column="is_daily_times_limit" jdbcType="TINYINT" property="isDailyTimesLimit"/>
-    <result column="daily_buyer_partake_times" jdbcType="TINYINT" property="dailyBuyerPartakeTimes"/>
-    <result column="contact_name" jdbcType="VARCHAR" property="contactName"/>
-    <result column="contact_telephone" jdbcType="VARCHAR" property="contactTelephone"/>
-    <result column="contact_address" jdbcType="VARCHAR" property="contactAddress"/>
-    <result column="offline_start_time" jdbcType="TIMESTAMP" property="offlineStartTime"/>
-    <result column="offline_end_time" jdbcType="TIMESTAMP" property="offlineEndTime"/>
     <result column="is_vip" jdbcType="TINYINT" property="isVip"/>
     <result column="status" jdbcType="VARCHAR" property="status"/>
     <result column="show_status" jdbcType="VARCHAR" property="showStatus"/>
@@ -145,27 +138,6 @@
       <if test="modifyPromotionId != null and modifyPromotionId != ''">
         modify_promotion_id,
       </if>
-      <if test="isDailyTimesLimit != null and isDailyTimesLimit != ''">
-      	is_daily_times_limit,
-      </if>
-      <if test="dailyBuyerPartakeTimes != null and dailyBuyerPartakeTimes != ''">
-      	daily_buyer_partake_times,
-      </if>
-      <if test="contactName != null and contactName != ''">
-      	contact_name,
-      </if>
-      <if test="contactTelephone != null and contactTelephone != ''">
-      	contact_telephone,
-      </if>
-      <if test="contactAddress != null and contactAddress != ''">
-      	contact_address,
-      </if>
-      <if test="offlineStartTime != null and offlineStartTime != ''">
-      	offline_start_time,
-      </if>
-      <if test="offlineEndTime != null and offlineEndTime != ''">
-      	offline_end_time,
-      </if>
       create_id,
       create_name,
       create_time,
@@ -210,27 +182,6 @@
       <if test="modifyPromotionId != null and modifyPromotionId != ''">
         #{modifyPromotionId,jdbcType=VARCHAR},
       </if>
-      <if test="isDailyTimesLimit != null and isDailyTimesLimit != ''">
-      	#{isDailyTimesLimit,jdbcType=TINYINT},
-      </if>
-      <if test="dailyBuyerPartakeTimes != null and dailyBuyerPartakeTimes != ''">
-      	#{dailyBuyerPartakeTimes,jdbcType=TINYINT},
-      </if>
-      <if test="contactName != null and contactName != ''">
-      	#{contactName,jdbcType=VARCHAR},
-      </if>
-      <if test="contactTelephone != null and contactTelephone != ''">
-      	#{contactTelephone,jdbcType=VARCHAR},
-      </if>
-      <if test="contactAddress != null and contactAddress != ''">
-      	#{contactAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="offlineStartTime != null and offlineStartTime != ''">
-      	#{offlineStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="offlineEndTime != null and offlineEndTime != ''">
-      	#{offlineEndTime,jdbcType=TIMESTAMP},
-      </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -252,27 +203,6 @@
       </if>
       <if test="promotionProviderShopId != null">
         promotion_provider_shop_id = #{promotionProviderShopId,jdbcType=BIGINT},
-      </if>
-      <if test="isDailyTimesLimit != null and isDailyTimesLimit != ''">
-      	is_daily_times_limit = #{isDailyTimesLimit,jdbcType=TINYINT},
-      </if>
-      <if test="dailyBuyerPartakeTimes != null and dailyBuyerPartakeTimes != ''">
-      	 daily_buyer_partake_times = #{dailyBuyerPartakeTimes,jdbcType=TINYINT},
-      </if>
-      <if test="contactName != null and contactName != ''">
-      	 contact_name = #{contactName,jdbcType=VARCHAR},
-      </if>
-      <if test="contactTelephone != null and contactTelephone != ''">
-      	contact_telephone = #{contactTelephone,jdbcType=VARCHAR},
-      </if>
-      <if test="contactAddress != null and contactAddress != ''">
-        contact_address = #{contactAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="offlineStartTime != null and offlineStartTime != ''">
-      	offline_start_time = #{offlineStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="offlineEndTime != null and offlineEndTime != ''">
-      	offline_end_time = #{offlineEndTime,jdbcType=TIMESTAMP},
       </if>
       cost_allocation_type = 1,
       effective_time = #{effectiveTime,jdbcType=TIMESTAMP},

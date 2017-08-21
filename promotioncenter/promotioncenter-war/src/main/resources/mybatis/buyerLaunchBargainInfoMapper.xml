@@ -38,9 +38,9 @@
 	<select id="queryBuyerLaunchBargainInfoNumber" resultType="java.lang.Integer">
 		SELECT COUNT(0)
 		FROM buyer_launch_bargain_info
-		WHERE promotion_id = #{promotionId}
-		AND level_code = #{levelCode}
-		<if test="isBargainOver != null and isBargainOver != ''">
+		WHERE promotion_id = #{barfainDTO.promotionId}
+		AND level_code = #{barfainDTO.levelCode}
+		<if test="barfainDTO.isBargainOver != null and barfainDTO.isBargainOver != ''">
 			AND is_bargain_over = 1
 		</if>
 	</select>
@@ -68,23 +68,23 @@
 			modify_time,
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			#{bargainCode,jdbcType=INTEGER},
-			#{promotionId,jdbcType=VARCHAR},
-			#{levelCode,jdbcType=VARCHAR},
-			#{buyerCode,jdbcType=VARCHAR},
-			#{buyerName,jdbcType=VARCHAR},
-			#{buyerTelephone,jdbcType=VARCHAR},
-			#{goods_picture,jdbcType=VARCHAR},
-			#{goods_name,jdbcType=VARCHAR},
-			#{goods_cost_price,jdbcType=DECIMAL},
-			#{goods_floor_price,jdbcType=DECIMAL},
+			#{barfainDTO.bargainCode,jdbcType=INTEGER},
+			#{barfainDTO.promotionId,jdbcType=VARCHAR},
+			#{barfainDTO.levelCode,jdbcType=VARCHAR},
+			#{barfainDTO.buyerCode,jdbcType=VARCHAR},
+			#{barfainDTO.buyerName,jdbcType=VARCHAR},
+			#{barfainDTO.buyerTelephone,jdbcType=VARCHAR},
+			#{barfainDTO.goodsPicture,jdbcType=VARCHAR},
+			#{barfainDTO.goodsName,jdbcType=VARCHAR},
+			#{barfainDTO.goodsCostPrice,jdbcType=DECIMAL},
+			#{barfainDTO.goodsFloorPrice,jdbcType=DECIMAL},
 			now(),
-			#{goods_current_price,jdbcType=DECIMAL},
-			#{createId,jdbcType=BIGINT},
-			#{createName,jdbcType=VARCHAR},
+			#{barfainDTO.goodsCurrentPrice,jdbcType=DECIMAL},
+			#{barfainDTO.createId,jdbcType=BIGINT},
+			#{barfainDTO.createName,jdbcType=VARCHAR},
 			now(),
-			#{createId,jdbcType=BIGINT},
-			#{createName,jdbcType=VARCHAR},
+			#{barfainDTO.createId,jdbcType=BIGINT},
+			#{barfainDTO.createName,jdbcType=VARCHAR},
 			now(),
 		</trim>
 	</insert>

@@ -135,7 +135,6 @@ public class PromotionBargainInfoServiceImpl implements
 							.setScale(dto.getGoodsCostPrice()));
 					dto.setGoodsFloorPrice(CalculateUtils
 							.setScale(dto.getGoodsFloorPrice()));
-					dto.setBargainId(noGenerator.generatePromotionGargainId(dto.getPromotionType()));
 					accuDTOList.add(dto);
 				}
 				accuDTO = baseService
@@ -240,36 +239,34 @@ public class PromotionBargainInfoServiceImpl implements
 	        String paramModifyTimeStr = "";
 	        String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
 	                .OPT_PROMOTION_STATUS_END);
-			if(null != bargainInfoList && !bargainInfoList.isEmpty()){
-				promotionId = bargainInfoList.get(0).getPromotionId();
-				String promotionType = dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_TYPE,
-						DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN);
-				String promotionProviderType = dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE, 
-						DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_MEMBER_SHOP);
-				for (PromotionBargainInfoResDTO dto : bargainInfoList) {
-					if(StringUtils.isEmpty(dto.getPromotionType())){
-						dto.setPromotionType(promotionType);
-						dto.setBargainId(noGenerator.generatePromotionGargainId(promotionType));
-					}
-					if(StringUtils.isEmpty(dto.getPromotionProviderType())){
-						dto.setPromotionProviderType(promotionProviderType);
-					}
-					// 输入DTO的验证
-					ValidateResult validateResult = ValidationUtils
-							.validateEntity(dto);
-					if (validateResult.isHasErrors()) {
-						throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
-			                  validateResult.getErrorMsg());
-					}
-					dto.setGoodsCostPrice(CalculateUtils
-							.setScale(dto.getGoodsCostPrice()));
-					dto.setGoodsFloorPrice(CalculateUtils
-							.setScale(dto.getGoodsFloorPrice()));
-						accuDTOList.add(dto);
-				}
 	        try {
+	        	if(null != bargainInfoList && !bargainInfoList.isEmpty()){
+					promotionId = bargainInfoList.get(0).getPromotionId();
+					String promotionType = dictionary.getValueByCode(
+							DictionaryConst.TYPE_PROMOTION_TYPE,
+							DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN);
+					String promotionProviderType = dictionary.getValueByCode(
+							DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE, 
+							DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_MEMBER_SHOP);
+					for (PromotionBargainInfoResDTO dto : bargainInfoList) {
+						if(StringUtils.isEmpty(dto.getPromotionType())){
+							dto.setPromotionType(promotionType);
+						}
+						if(StringUtils.isEmpty(dto.getPromotionProviderType())){
+							dto.setPromotionProviderType(promotionProviderType);
+						}
+						// 输入DTO的验证
+						ValidateResult validateResult = ValidationUtils
+								.validateEntity(dto);
+						if (validateResult.isHasErrors()) {
+							throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
+				                  validateResult.getErrorMsg());
+						}
+						dto.setGoodsCostPrice(CalculateUtils
+								.setScale(dto.getGoodsCostPrice()));
+						dto.setGoodsFloorPrice(CalculateUtils
+								.setScale(dto.getGoodsFloorPrice()));
+							accuDTOList.add(dto);
 	            if (StringUtils.isEmpty(promotionId)) {
 	                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR, "修改砍价活动ID不能为空");
 	            }
@@ -284,10 +281,10 @@ public class PromotionBargainInfoServiceImpl implements
 	                        "砍价活动:" + promotionId + " 只有在已结束状态时不能进行修改");
 	            }
 	            modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
-	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
-	                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_HAS_MODIFIED,
-	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
-	            }
+//	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
+//	                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_HAS_MODIFIED,
+//	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
+//	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());
@@ -299,15 +296,16 @@ public class PromotionBargainInfoServiceImpl implements
 	            accuDTO.setPromotionStatusHistoryList(historyList);
 	            promotionBargainRedisHandle.deleteRedisBargainInfo(promotionId);
 	            promotionBargainRedisHandle.addBargainInfo2Redis(bargainInfoList);
-	            result.setResult(bargainInfoList);
+	            result.setResult(bargainInfoList);	
+				}
+			}
 	        } catch (PromotionCenterBusinessException pbe) {
 	            result.setCode(pbe.getCode());
 	            result.setErrorMessage(pbe.getMessage());
 	        } catch (Exception e) {
 	            result.setCode(ResultCodeEnum.ERROR.getCode());
 	            result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-	        }
-	    }
-		return result;
+	        }	
+	        return result;
 	 }
 }

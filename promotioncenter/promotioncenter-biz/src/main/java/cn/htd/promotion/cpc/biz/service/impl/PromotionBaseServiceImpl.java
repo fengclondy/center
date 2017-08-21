@@ -19,6 +19,7 @@ import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
@@ -29,6 +30,7 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoExtendDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
@@ -58,6 +60,9 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 	
 	@Resource
 	private BuyerLaunchBargainInfoDAO buyerLaunchBargainInfoDAO;
+	
+	@Resource
+	private PromotionInfoExtendDAO promotionInfoExtendDAO;
 
     /**
      * 删除促销活动
@@ -129,6 +134,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         PromotionBargainInfoResDTO bargainDTO = null;
+        PromotionInfoExtendDTO extendDTO = new PromotionInfoExtendDTO();
         int vipFlg = -1;
         if (promotionInfo == null) {
             throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR, "促销活动参数不能为空");
@@ -161,9 +167,12 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             accumulatyDTO.setCreateId(promotionInfo.getCreateId());
             accumulatyDTO.setCreateName(promotionInfo.getCreateName());
             promotionAccumulatyDAO.add(accumulatyDTO);
-            bargainDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
+            bargainDTO = (PromotionBargainInfoResDTO)accumulatyDTO;
             promotionBargainInfoDAO.add(bargainDTO);
+            
         }
+        extendDTO = (PromotionInfoExtendDTO)bargainDTO;
+        promotionInfoExtendDAO.add(extendDTO);
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.add(promotionInfo);
         return promotionInfo;
@@ -218,6 +227,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionBargainInfoResDTO bargainDTO = null;
         PromotionSloganResDTO slogan = null;
         List<PromotionAccumulatyDTO> accumulatyDTOList = null;
+        PromotionInfoExtendDTO extendDTO = null;
         Map<String, PromotionAccumulatyDTO> oldAccumulatyMap = new HashMap<String, PromotionAccumulatyDTO>();
         int maxLevelNum = 0;
         int vipFlg = -1;
@@ -285,6 +295,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
                 promotionSloganDAO.update(slogan);
         	}
+        	 extendDTO = (PromotionInfoExtendDTO)accumulatyDTO;
+             promotionInfoExtendDAO.update(extendDTO);
         }
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.update(promotionInfo);

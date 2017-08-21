@@ -46,10 +46,10 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	@NotBlank(message = "商品名称不能为空")
 	private String goodsName;//商品名称
 	
-	@NotBlank(message = "商品原价不能为空")
+	@NotNull(message = "商品原价不能为空")
 	private BigDecimal goodsCostPrice;//商品原价
 	
-	@NotBlank(message = "商品低价不能为空")
+	@NotNull(message = "商品低价不能为空")
 	private BigDecimal goodsFloorPrice;//商品底价
 	
 	@NotNull(message = "参与砍价的人数不能为空")
@@ -72,10 +72,10 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	
 	private BigDecimal surplusPrice;//还剩多少价没砍
 	
-	@NotBlank(message = "创建人id不能为空")
+	@NotNull(message = "创建人id不能为空")
 	private Integer createId;//创建人ID
 	
-	@NotBlank(message = "创建人名称不能为空")
+	@NotNull(message = "创建人名称不能为空")
 	private String createName;//创建人名称
 	
 	private Date createTime;//创建时间

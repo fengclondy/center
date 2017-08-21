@@ -182,20 +182,24 @@ public class PromotionBargainRedisHandle {
 
 	/**
 	 * 添加砍价发起流程金额拆分
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	public BigDecimal addRedisBargainPriceSplit(BuyerLaunchBargainInfoResDTO dto) throws Exception {
+	public BigDecimal addRedisBargainPriceSplit(BuyerLaunchBargainInfoResDTO dto)
+			throws Exception {
 		BigDecimal popPrice = null;
-		int price = (dto.getGoodsCostPrice().subtract(dto.getGoodsFloorPrice()))
-				.divide(new BigDecimal(100)).intValue();
+		int price = (dto.getGoodsCostPrice().subtract(dto.getGoodsFloorPrice()).multiply(new BigDecimal("100"))).intValue();
 		BargainPriceSplit priceSplit = new BargainPriceSplit();
+		String key = "";
 		List<String> priceList = priceSplit.splitRedPackets(price,
 				dto.getPartakeTimes());
 		if (null != priceList && !priceList.isEmpty()) {
+			key = RedisConst.REDIS_BARGAIN_PRICE_SPLIT + "_" + dto.getPromotionId() + "_" + dto.getLevelCode() + "_"
+					+ dto.getBargainCode();
 			for (String str : priceList) {
-				promotionRedisDB.headPush(RedisConst.REDIS_BARGAIN_PRICE_SPLIT,str);
+				promotionRedisDB.headPush(key, str);
 			}
-			String priceStr = promotionRedisDB.tailPop(RedisConst.REDIS_BARGAIN_PRICE_SPLIT);
+			String priceStr = promotionRedisDB.tailPop(key);
 			popPrice = new BigDecimal(priceStr);
 		}
 		return popPrice;

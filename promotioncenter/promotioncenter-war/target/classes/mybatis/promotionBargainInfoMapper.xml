@@ -59,7 +59,6 @@
     <insert id="add" useGeneratedKeys="true" keyProperty="id">
 		insert into promotion_bargain_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			bargain_id,
 			promotion_id,
 			level_code,
 			goods_picture,
@@ -76,7 +75,6 @@
 			modify_time,
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			#{bargainId,,jdbcType=BIGINT},
 			#{promotionId,jdbcType=VARCHAR},
 			#{levelCode,jdbcType=VARCHAR},
 			#{goodsPicture,jdbcType=VARCHAR}, 

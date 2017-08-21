@@ -76,7 +76,9 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	private BigDecimal hasBargainPrice;//已经砍得价
 	
 	private List<BuyerBargainRecordResDTO> buyerBargainRecordList;//砍价记录
-
+	
+	private String promotionSlogan;//宣传语
+	
 	public BigDecimal getHasBargainPrice() {
 		return hasBargainPrice;
 	}
@@ -213,10 +215,6 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.buyerBargainRecordList = buyerBargainRecordList;
 	}
 
-	private String promotionSlogan;//宣传语
-	
-	@NotNull(message = "粉丝发起砍价上限次数不能为空")
-	@Min(value = 2, message = "粉丝发起砍价上限次数必须大于1")
 	public Integer getVirtualQuantity() {
 		return virtualQuantity;
 	}

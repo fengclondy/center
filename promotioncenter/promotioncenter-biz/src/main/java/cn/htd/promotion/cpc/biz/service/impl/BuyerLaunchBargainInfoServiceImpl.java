@@ -16,6 +16,7 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
@@ -27,10 +28,11 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.StringUtilHelper;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
-import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
+import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoExtendDTO;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -57,6 +59,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	
 	@Resource
 	private BuyerBargainRecordDAO buyerBargainRecordDAO;
+	
+	@Resource
+	private PromotionInfoExtendDAO promotionInfoExtendDAO;
 	
 	@Override
 	public List<BuyerLaunchBargainInfoResDTO> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode,String messageId) {
@@ -91,6 +96,8 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throws PromotionCenterBusinessException {
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.addBuyerBargainLaunch（）方法开始,入参{}",messageId,StringUtilHelper.getClassParam(bargainInfoDTO)+":"+messageId);
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
+		PromotionInfoDTO promotionInfo = null;
+		PromotionInfoExtendDTO promotionInfoExtend = null;
 		try {
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(bargainInfoDTO);
@@ -98,12 +105,12 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
 	                  validateResult.getErrorMsg());
 			}
-			PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(bargainInfoDTO.getPromotionId());
+			promotionInfo = promotionInfoDAO.queryById(bargainInfoDTO.getPromotionId());
 			if (promotionInfo == null) {
                 throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "砍价活动不存在");
             }
 			String promotionType = promotionInfo.getShowStatus();
-			if(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			if(!dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionType)){
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
 		                  "砍价活动未启用");
@@ -116,8 +123,14 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
 		                  "砍价活动时间已结束");
 			}
+			promotionInfoExtend = promotionInfoExtendDAO.queryById(bargainInfoDTO.getPromotionId());
+			if(promotionInfoExtend == null) {
+                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "砍价活动不存在");
+
+			}
 			Integer launchTimes = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(bargainInfoDTO);
-			if(null != launchTimes && launchTimes.intValue() >= promotionInfo.getDailyBuyerPartakeTimes()){
+			if(null != launchTimes && null != promotionInfoExtend.getTotalPartakeTimes()
+					&& launchTimes.intValue() >= promotionInfoExtend.getTotalPartakeTimes().intValue()){
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_BARGAIN_JOIN_QTY,
 		                  "该砍价活动商品参与次数已上限");
 			}

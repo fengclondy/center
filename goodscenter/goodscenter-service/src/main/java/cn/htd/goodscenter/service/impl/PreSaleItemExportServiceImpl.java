@@ -98,6 +98,9 @@ public class PreSaleItemExportServiceImpl implements PreSaleItemExportService{
 			if(itemSkuPublishInfo!=null){
 				preSaleProdQueryDTO.setKcNum(itemSkuPublishInfo.getDisplayQuantity());
 				preSaleProdQueryDTO.setListStatus(itemSkuPublishInfo.getIsVisable()==1 ?1 : 2);
+			}else{
+				preSaleProdQueryDTO.setKcNum(0);
+				preSaleProdQueryDTO.setListStatus(2);
 			}
 
 			//查询价格

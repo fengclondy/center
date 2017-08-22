@@ -163,6 +163,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			buyerBargainRecord.setCreateTime(new Date());
 			buyerBargainRecord.setBargainTime(new Date());
 			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
+			result.setResult(bargainInfoDTO);
 		} catch (PromotionCenterBusinessException pbs){
 			result.setCode(pbs.getCode());
 			result.setErrorMessage(pbs.getMessage());

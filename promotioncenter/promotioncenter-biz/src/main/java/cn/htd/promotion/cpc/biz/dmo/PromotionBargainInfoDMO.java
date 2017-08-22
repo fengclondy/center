@@ -54,9 +54,9 @@ public class PromotionBargainInfoDMO{
 	
 	private Date invalidTime;//活动结束有效期
 	
-	private Date eachStartTime;//活动开始时间
+	private Date eachStartTimeD;//活动开始时间
 	
-	private Date eachEndTime;//活动结束时间
+	private Date eachEndTimeD;//活动结束时间
 	
 	private Date offlineStartTime;//到店购买开始时间
 	
@@ -204,20 +204,20 @@ public class PromotionBargainInfoDMO{
 		this.contactAddress = contactAddress;
 	}
 
-	public Date getEachStartTime() {
-		return eachStartTime;
+	public Date getEachStartTimeD() {
+		return eachStartTimeD;
 	}
 
-	public void setEachStartTime(Date eachStartTime) {
-		this.eachStartTime = eachStartTime;
+	public void setEachStartTimeD(Date eachStartTimeD) {
+		this.eachStartTimeD = eachStartTimeD;
 	}
 
-	public Date getEachEndTime() {
-		return eachEndTime;
+	public Date getEachEndTimeD() {
+		return eachEndTimeD;
 	}
 
-	public void setEachEndTime(Date eachEndTime) {
-		this.eachEndTime = eachEndTime;
+	public void setEachEndTimeD(Date eachEndTimeD) {
+		this.eachEndTimeD = eachEndTimeD;
 	}
 
 	public Integer getBargainId() {

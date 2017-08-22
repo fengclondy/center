@@ -16,11 +16,11 @@ public class PromotionInfoExtendDTO extends PromotionInfoDTO implements
 	
 	private String cycleTimeValue;//周期时间值
 	
+	private Integer isTotalTimesLimit;//是否有总次数限制
+	
 	private Date eachStartTime;//周期活动开始时间
 	
 	private Date eachEndTime;//周期活动结束时间
-	
-	private Integer isTotalTimesLimit;//是否有总次数限制
 	
 	private Long totalPartakeTimes;//参与总次数
 	
@@ -48,6 +48,18 @@ public class PromotionInfoExtendDTO extends PromotionInfoDTO implements
 	
 	private String contactAddress;//联系地址
 	
+	public Date getEachStartTime() {
+		return eachStartTime;
+	}
+	public void setEachStartTime(Date eachStartTime) {
+		this.eachStartTime = eachStartTime;
+	}
+	public Date getEachEndTime() {
+		return eachEndTime;
+	}
+	public void setEachEndTime(Date eachEndTime) {
+		this.eachEndTime = eachEndTime;
+	}
 	public Date getOfflineStartTime() {
 		return offlineStartTime;
 	}
@@ -71,18 +83,6 @@ public class PromotionInfoExtendDTO extends PromotionInfoDTO implements
 	}
 	public void setCycleTimeValue(String cycleTimeValue) {
 		this.cycleTimeValue = cycleTimeValue;
-	}
-	public Date getEachStartTime() {
-		return eachStartTime;
-	}
-	public void setEachStartTime(Date eachStartTime) {
-		this.eachStartTime = eachStartTime;
-	}
-	public Date getEachEndTime() {
-		return eachEndTime;
-	}
-	public void setEachEndTime(Date eachEndTime) {
-		this.eachEndTime = eachEndTime;
 	}
 	public Integer getIsTotalTimesLimit() {
 		return isTotalTimesLimit;
@@ -176,8 +176,6 @@ public class PromotionInfoExtendDTO extends PromotionInfoDTO implements
 		this.offlineEndTime = extendDTO.getOfflineEndTime();
 		this.cycleTimeType = extendDTO.getCycleTimeType();
 		this.cycleTimeValue = extendDTO.getCycleTimeValue();
-		this.eachStartTime = extendDTO.getEachStartTime();
-		this.eachEndTime = extendDTO.getEachEndTime();
 		this.isTotalTimesLimit = extendDTO.getIsTotalTimesLimit();
 		this.totalPartakeTimes = extendDTO.getTotalPartakeTimes();
 		this.isDailyTimesLimit = extendDTO.getIsDailyTimesLimit();

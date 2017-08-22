@@ -128,9 +128,18 @@ public class OrderCreateAPIImplTestUnit {
 		orderList.add(order1);
 		
 		OrderCreateOrderListInfoReqDTO order2 = new OrderCreateOrderListInfoReqDTO();
-		order2.setSellerId(33131L);
+		order2.setSellerId(32529L);
 		order2.setOrderFrom("5");
-		order2.setSkuList(skuList);
+		
+		List<OrderCreateSkuListInfoReqDTO> skuList2 = new ArrayList<OrderCreateSkuListInfoReqDTO>();
+		OrderCreateSkuListInfoReqDTO sku2 = new OrderCreateSkuListInfoReqDTO();
+		sku2.setSkuCode("HTDH_0000131299");//35411
+		sku2.setGoodsCount(1L);
+		sku2.setChannelCode("10");
+		sku2.setIsBoxFlag(1);
+		skuList2.add(sku2);
+		
+		order2.setSkuList(skuList2);
 		orderList.add(order2);
 		
 		orderCreate4huilinReqDTO.setOrderList(orderList);

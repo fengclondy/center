@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.AwardRecordDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.PromotionAwardDMO" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
+    <result column="LEVEL_CODE" property="levelCode" jdbcType="VARCHAR" />
+    <result column="PROMOTION_TYPE" property="promotionType" jdbcType="VARCHAR" />
+    <result column="PROMOTION_NAME" property="promotionName" jdbcType="VARCHAR" />
+    <result column="BUYER_CODE" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="BUYER_NAME" property="buyerName" jdbcType="VARCHAR" />
+    <result column="BUYER_TELEPHONE" property="buyerTelephone" jdbcType="VARCHAR" />
+	<result column="SELLER_CODE" property="sellerCode" jdbcType="VARCHAR" />
+	<result column="REWARD_TYPE" property="rewardType" jdbcType="VARCHAR" />
+    <result column="RELEVANCE_BARGAIN_CODE" property="relevanceBargainCode" jdbcType="VARCHAR" />
+    <result column="REWARD_NAME" property="rewardName" jdbcType="VARCHAR" />
+    <result column="WINNING_TIME" property="winningTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+    <result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
+    <result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="getAwardRecordByPromotionId" resultMap="BaseResultMap">
+    select * from buyer_winning_record bwr
+    where 1 = 1
+    <include refid="awardRecord_mid" />
+    <if test="page!=null">
+      <include refid="pagination_tail" />
+    </if>
+  </select>
+
+  <select id="getTotalAwardRecord" resultType="java.lang.Long">
+    select count(1) from buyer_winning_record bwr
+    where 1 = 1
+    <include refid="awardRecord_mid" />
+  </select>
+
+  <!-- 查询条件-->
+  <sql id="awardRecord_mid">
+    <if test="params.rewardType!=null and params.rewardType!=''">
+      and bwr.PROMOTION_ID = #{params.promotionId}
+    </if>
+    <if test="params.rewardType!=null and params.rewardType!=''">
+      and bwr.REWARD_TYPE = #{params.rewardType}
+    </if>
+    <if test="params.startDate!=null and params.startDate!=''">
+      and date_format(bwr.WINNING_TIME , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.endDate!=null and params.endDate!=''">
+      and date_format(bwr.WINNING_TIME , '%Y-%m-%d') &lt; date_format(#{params.winningEdnTime} , '%Y-%m-%d')
+    </if>
+  </sql>
+
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+
+</mapper>

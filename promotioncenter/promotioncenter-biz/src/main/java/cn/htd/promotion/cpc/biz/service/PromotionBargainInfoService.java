@@ -26,11 +26,30 @@ public interface PromotionBargainInfoService {
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> addPromotionBargainInfoRedis(
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList)throws PromotionCenterBusinessException;
 	
+	/**
+	 * 删除砍价活动
+	 * @param validDTO
+	 * @return
+	 * @throws PromotionCenterBusinessException
+	 */
 	public ExecuteResult<String> deleteBargainInfo(PromotionValidDTO validDTO)throws PromotionCenterBusinessException;
 
+	/**
+	 * 获取砍价活动信息
+	 * @param messageId
+	 * @param promotionId
+	 * @return
+	 * @throws PromotionCenterBusinessException
+	 */
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(
 			String messageId, String promotionId) throws PromotionCenterBusinessException;
 	
+	/**
+	 * 修改砍价活动信息
+	 * @param bargainInfoList
+	 * @return
+	 * @throws PromotionCenterBusinessException
+	 */
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList)
 	    	throws PromotionCenterBusinessException;
 

@@ -79,6 +79,8 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String promotionSlogan;//宣传语
 	
+	private List<String> sloganList;//宣传语集合
+	
 	public BigDecimal getHasBargainPrice() {
 		return hasBargainPrice;
 	}
@@ -287,6 +289,14 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.goodsNum = goodsNum;
 	}
 
+	public List<String> getSloganList() {
+		return sloganList;
+	}
+
+	public void setSloganList(List<String> sloganList) {
+		this.sloganList = sloganList;
+	}
+
 	public void setPromotionBargainInfoResDTO(PromotionBargainInfoResDTO promotionBargainInfoResDTO) {
 		super.setPromotionAccumulaty(promotionBargainInfoResDTO);
 		this.bargainId = promotionBargainInfoResDTO.getBargainId();
@@ -298,6 +308,7 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.goodsNum = promotionBargainInfoResDTO.getGoodsNum();
 		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
 		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
+		this.sloganList = promotionBargainInfoResDTO.getSloganList();
 	}
 	
 }

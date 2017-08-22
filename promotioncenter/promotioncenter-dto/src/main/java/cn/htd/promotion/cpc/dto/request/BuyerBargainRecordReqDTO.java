@@ -29,7 +29,6 @@ public class BuyerBargainRecordReqDTO implements Serializable {
 	@NotEmpty(message = "bargainPresonName不能为空")
 	private String bargainPresonName;//砍价人名称
 	
-	@NotEmpty(message = "bargainAmount不能为空")
 	private BigDecimal bargainAmount = BigDecimal.ZERO;//砍价金额
 	
 	@NotEmpty(message = "bargainTime不能为空")

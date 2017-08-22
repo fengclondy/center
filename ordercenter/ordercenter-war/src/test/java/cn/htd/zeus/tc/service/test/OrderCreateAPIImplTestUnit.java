@@ -14,9 +14,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
+
 import cn.htd.zeus.tc.api.OrderCreateAPI;
 import cn.htd.zeus.tc.biz.service.OrderCreateService;
+import cn.htd.zeus.tc.dto.response.OrderCreateInfoResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreate4huilinReqDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderCreateOrderListInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateSkuListInfoReqDTO;
 
 @Transactional
@@ -104,18 +109,64 @@ public class OrderCreateAPIImplTestUnit {
 	public void testCreateOrder4huilin() {
 		OrderCreate4huilinReqDTO orderCreate4huilinReqDTO = new OrderCreate4huilinReqDTO();
 		orderCreate4huilinReqDTO.setMessageId("123456");
-		orderCreate4huilinReqDTO.setBuyerId(34757L);
-		orderCreate4huilinReqDTO.setSellerId(17606L);
-		orderCreate4huilinReqDTO.setOrderFrom("5");
-		orderCreate4huilinReqDTO.setBuyerRemarks("test");
+		orderCreate4huilinReqDTO.setBuyerId(15965L);
+		
+		List<OrderCreateOrderListInfoReqDTO> orderList = new ArrayList<OrderCreateOrderListInfoReqDTO>();
+		OrderCreateOrderListInfoReqDTO order1 = new OrderCreateOrderListInfoReqDTO();
+		order1.setSellerId(33131L);
+		order1.setOrderFrom("5");
+		
 		List<OrderCreateSkuListInfoReqDTO> skuList = new ArrayList<OrderCreateSkuListInfoReqDTO>();
 		OrderCreateSkuListInfoReqDTO sku = new OrderCreateSkuListInfoReqDTO();
-		sku.setSkuCode("HTDH_0000084301");
+		sku.setSkuCode("HTDH_0000035411");//35411
 		sku.setGoodsCount(1L);
 		sku.setChannelCode("10");
 		sku.setIsBoxFlag(0);
 		skuList.add(sku);
-		orderCreate4huilinReqDTO.setSkuList(skuList);
-		orderCreateAPI.orderCreate4Huilin(orderCreate4huilinReqDTO);
+		
+		order1.setSkuList(skuList);
+		orderList.add(order1);
+		
+		OrderCreateOrderListInfoReqDTO order2 = new OrderCreateOrderListInfoReqDTO();
+		order2.setSellerId(33131L);
+		order2.setOrderFrom("5");
+		order2.setSkuList(skuList);
+		orderList.add(order2);
+		
+		orderCreate4huilinReqDTO.setOrderList(orderList);
+		
+		OrderCreateInfoResDTO res = orderCreateAPI.orderCreate4Huilin(orderCreate4huilinReqDTO);
+		System.out.println("create::::::::::;;;" + JSONObject.toJSONString(res));
+	}
+	
+	public static void main(String[] args) {
+		OrderCreate4huilinReqDTO orderCreate4huilinReqDTO = new OrderCreate4huilinReqDTO();
+		orderCreate4huilinReqDTO.setMessageId("123456");
+		orderCreate4huilinReqDTO.setBuyerId(15965L);
+		
+		List<OrderCreateOrderListInfoReqDTO> orderList = new ArrayList<OrderCreateOrderListInfoReqDTO>();
+		OrderCreateOrderListInfoReqDTO order1 = new OrderCreateOrderListInfoReqDTO();
+		order1.setSellerId(33131L);
+		order1.setOrderFrom("5");
+		
+		List<OrderCreateSkuListInfoReqDTO> skuList = new ArrayList<OrderCreateSkuListInfoReqDTO>();
+		OrderCreateSkuListInfoReqDTO sku = new OrderCreateSkuListInfoReqDTO();
+		sku.setSkuCode("HTDH_0000035411");//35411
+		sku.setGoodsCount(1L);
+		sku.setChannelCode("10");
+		sku.setIsBoxFlag(0);
+		skuList.add(sku);
+		
+		order1.setSkuList(skuList);
+		orderList.add(order1);
+		
+		OrderCreateOrderListInfoReqDTO order2 = new OrderCreateOrderListInfoReqDTO();
+		order2.setSellerId(33131L);
+		order2.setOrderFrom("5");
+		order2.setSkuList(skuList);
+		orderList.add(order2);
+		
+		orderCreate4huilinReqDTO.setOrderList(orderList);
+		System.out.println(JSONObject.toJSONString(orderCreate4huilinReqDTO));
 	}
 }

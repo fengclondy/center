@@ -21,110 +21,32 @@ public class OrderCreate4huilinReqDTO implements Serializable {
 	@NotNull(message = "buyerId不能为空")
 	private Long buyerId;
 
-	// 买家留言
-	private String buyerRemarks;
-
-	// 卖家编码
-	@NotNull(message = "sellerId不能为空")
-	private Long sellerId;
-
-	// 订单来源
-	@NotBlank(message = "orderFrom不能为空")
-	private String orderFrom;
-
-	// 订单行集合
-	@NotEmpty(message = "skuList不能为空")
+	// 订单集合
+	@NotNull(message = "orderList不能为空")
 	@Valid
-	private List<OrderCreateSkuListInfoReqDTO> skuList;
+	private List<OrderCreateOrderListInfoReqDTO> orderList;
 
-	/**
-	 * @return the messageId
-	 */
 	public String getMessageId() {
 		return messageId;
 	}
 
-	/**
-	 * @param messageId
-	 *            the messageId to set
-	 */
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
 	}
 
-	/**
-	 * @return the buyerRemarks
-	 */
-	public String getBuyerRemarks() {
-		return buyerRemarks;
-	}
-
-	/**
-	 * @param buyerRemarks
-	 *            the buyerRemarks to set
-	 */
-	public void setBuyerRemarks(String buyerRemarks) {
-		this.buyerRemarks = buyerRemarks;
-	}
-
-	/**
-	 * @return the buyerId
-	 */
 	public Long getBuyerId() {
 		return buyerId;
 	}
 
-	/**
-	 * @param buyerId
-	 *            the buyerId to set
-	 */
 	public void setBuyerId(Long buyerId) {
 		this.buyerId = buyerId;
 	}
 
-	/**
-	 * @return the sellerId
-	 */
-	public Long getSellerId() {
-		return sellerId;
+	public List<OrderCreateOrderListInfoReqDTO> getOrderList() {
+		return orderList;
 	}
 
-	/**
-	 * @param sellerId
-	 *            the sellerId to set
-	 */
-	public void setSellerId(Long sellerId) {
-		this.sellerId = sellerId;
+	public void setOrderList(List<OrderCreateOrderListInfoReqDTO> orderList) {
+		this.orderList = orderList;
 	}
-
-	/**
-	 * @return the orderFrom
-	 */
-	public String getOrderFrom() {
-		return orderFrom;
-	}
-
-	/**
-	 * @param orderFrom
-	 *            the orderFrom to set
-	 */
-	public void setOrderFrom(String orderFrom) {
-		this.orderFrom = orderFrom;
-	}
-
-	/**
-	 * @return the skuList
-	 */
-	public List<OrderCreateSkuListInfoReqDTO> getSkuList() {
-		return skuList;
-	}
-
-	/**
-	 * @param skuList
-	 *            the skuList to set
-	 */
-	public void setSkuList(List<OrderCreateSkuListInfoReqDTO> skuList) {
-		this.skuList = skuList;
-	}
-
 }

@@ -50,6 +50,10 @@ public class PromotionBargainInfoDMO{
 	
 	private String contactAddress;//联系地址
 	
+	private Date effectiveTime;//活动开始有效期
+	
+	private Date invalidTime;//活动结束有效期
+	
 	private Date eachStartTime;//活动开始时间
 	
 	private Date eachEndTime;//活动结束时间
@@ -72,6 +76,22 @@ public class PromotionBargainInfoDMO{
 	
 	private BigDecimal hasBargainPrice;//已经砍得价格
 	
+	public Date getEffectiveTime() {
+		return effectiveTime;
+	}
+
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+
+	public Date getInvalidTime() {
+		return invalidTime;
+	}
+
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+
 	public BigDecimal getHasBargainPrice() {
 		return hasBargainPrice;
 	}

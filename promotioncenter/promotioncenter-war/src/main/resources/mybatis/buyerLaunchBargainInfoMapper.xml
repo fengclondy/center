@@ -30,6 +30,11 @@
     	where buyer_code = #{buyerCode}
 	</select>
 	
+	<select id="getBuyerBargainLaunchInfoByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from buyer_launch_bargain_info
+    	where bargain_code = #{bargainCode}
+	</select>
+	
 	<select id="getBuyerLaunchBargainInfoByPromotionId" resultMap="BaseResultMap">
 		SELECT * FROM buyer_launch_bargain_info
 		WHERE promotion_id = #{promotionId}

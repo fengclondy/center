@@ -22,5 +22,13 @@ public interface BuyerBargainAPI {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> updateBuyerLaunchBargainInfo (BuyerBargainLaunchReqDTO buyerBargainLaunch);
+	
+	/**
+	 * 根据砍价编码查询砍价商品详情
+	 * @param bargainCode
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<BuyerLaunchBargainInfoResDTO> getBuyerBargainLaunchInfoByBargainCode(String bargainCode , String messageId);
 
 }

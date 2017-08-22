@@ -17,4 +17,6 @@ public interface BuyerLaunchBargainInfoService {
 			
 	public Integer updateBuyerLaunchBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch);
 	
+	public BuyerLaunchBargainInfoResDTO getBuyerBargainLaunchInfoByBargainCode(String bargainCode , String messageId);
+	
 }

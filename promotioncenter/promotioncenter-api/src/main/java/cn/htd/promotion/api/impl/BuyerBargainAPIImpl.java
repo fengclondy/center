@@ -104,4 +104,33 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		}
 		return result;
 	}
+
+	@Override
+	public ExecuteResult<BuyerLaunchBargainInfoResDTO> getBuyerBargainLaunchInfoByBargainCode(String bargainCode,
+			String messageId) {
+		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
+		try{
+			if(!StringUtils.isEmpty(bargainCode) && !StringUtils.isEmpty(messageId)){
+				BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo = buyerLaunchBargainInfoService.
+						getBuyerBargainLaunchInfoByBargainCode(bargainCode,messageId);
+				if(buyerLaunchBargainInfo != null){
+					result.setCode(ResultCodeEnum.SUCCESS.getCode());
+					result.setResult(buyerLaunchBargainInfo);
+				}else{
+					result.setCode(ResultCodeEnum.NORESULT.getCode());
+				}
+			}else{
+				result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+				result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+				return result;
+			}
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.getBuyerBargainLaunchInfoByBargainCode出现异常{}",
+					messageId, bargainCode + ":" + messageId, w.toString());
+		}
+		return result;
+	}
 }

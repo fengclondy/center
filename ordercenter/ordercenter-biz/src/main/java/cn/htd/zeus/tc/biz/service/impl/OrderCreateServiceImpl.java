@@ -1645,7 +1645,6 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		// 生成汇掌柜的交易号
 		String tradeNo = GenerateIdsUtil.generateTradeID(Constant.COLLECT_SHOP);
 		orderCreateInfoReqDTO.setTradeNo(tradeNo);
-		orderCreateInfoReqDTO.setSite(Constant.ALLCOUNTRY);
 		// 默认执行结果成功
 		orderCreateInfoResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		// 根据买家ID查询买家编码
@@ -1659,8 +1658,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			LOGGER.warn("从会员中心查询卖家发票信息失败：");
 			return orderCreateInfoResDTO;
 		}
-		// 设置收货地址信息
-		this.setConsigInfo4order(messageId, buyerCode, orderCreateInfoReqDTO,
+		// 设置收货地址信息和站点
+		this.setConsigInfo4order(messageId, orderCreate4huilinReqDTO.getBuyerId(), orderCreateInfoReqDTO,
 				orderCreateInfoResDTO);
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(orderCreateInfoResDTO.getResponseCode())) {
 			LOGGER.warn("从会员中心查询卖家收货地址信息失败：");
@@ -1722,31 +1721,32 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 	 * @param orderCreateInfoReqDTO
 	 * @param orderCreateInfoResDTO
 	 */
-	private void setConsigInfo4order(String messageId, String buyerCode,
+	private void setConsigInfo4order(String messageId, Long buyerId,
 			OrderCreateInfoReqDTO orderCreateInfoReqDTO,
 			OrderCreateInfoResDTO orderCreateInfoResDTO) {
-		OtherCenterResDTO<MemberBaseInfoDTO> consigAddress = memberCenterRAO.selectMemberBaseName(
-				buyerCode, MemberCenterEnum.MEMBER_TYPE_BUYER.getCode(), messageId);
+		OtherCenterResDTO<MemberDetailInfo> consigAddress = memberCenterRAO
+				.getMemberDetailById(buyerId, messageId);
+		
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(consigAddress.getOtherCenterResponseCode())) {
 			orderCreateInfoResDTO.setResponseCode(consigAddress.getOtherCenterResponseCode());
 			orderCreateInfoResDTO.setReponseMsg(consigAddress.getOtherCenterResponseMsg());
 			return;
 		} else {
 			orderCreateInfoReqDTO.setDeliveryType("1");
+			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
+			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
+			
 			orderCreateInfoReqDTO
-					.setConsigneeName(consigAddress.getOtherCenterResult().getContactName());
+					.setConsigneeName(memberBaseInfoDTO.getContactName());
 			orderCreateInfoReqDTO
-					.setConsigneeAddress(consigAddress.getOtherCenterResult().getLocationAddr());
-			orderCreateInfoReqDTO.setConsigneeAddressDetail(
-					consigAddress.getOtherCenterResult().getLocationDetail());
-			orderCreateInfoReqDTO.setConsigneeAddressProvince(
-					consigAddress.getOtherCenterResult().getLocationProvince());
-			orderCreateInfoReqDTO.setConsigneeAddressCity(
-					consigAddress.getOtherCenterResult().getLocationCity());
-			orderCreateInfoReqDTO.setConsigneeAddressDistrict(
-					consigAddress.getOtherCenterResult().getLocationCounty());
-			orderCreateInfoReqDTO.setConsigneeAddressTown(
-					consigAddress.getOtherCenterResult().getLocationTown());
+					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());
+			orderCreateInfoReqDTO.setConsigneeAddressDetail(memberBaseInfoDTO.getLocationDetail());
+			orderCreateInfoReqDTO.setConsigneeAddressProvince(memberBaseInfoDTO.getLocationProvince());
+			String city = memberBaseInfoDTO.getLocationCity();
+			orderCreateInfoReqDTO.setConsigneeAddressCity(city);
+			orderCreateInfoReqDTO.setSite(city);
+			orderCreateInfoReqDTO.setConsigneeAddressDistrict(memberBaseInfoDTO.getLocationCounty());
+			orderCreateInfoReqDTO.setConsigneeAddressTown(memberBaseInfoDTO.getLocationTown());
 			orderCreateInfoReqDTO.setPostCode("");
 		}
 	}

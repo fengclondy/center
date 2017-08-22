@@ -586,7 +586,8 @@
 		info.automatic_starttime as automaticVisibleUpTime,
 		info.automatic_endtime as automaticVisibleDownTime,
 		spu.spu_code as spuCode,
-		t.item_code as itemCode
+		t.item_code as itemCode,
+		t.is_pre_sale as preSaleFlag
 		 from item_sku sku
 		join item t on sku.item_id=t.item_id
 		join item_category cat on cat.cid=t.cid

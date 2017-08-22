@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 促销活动层级DTO
  */
-public class PromotionAccumulatyDTO extends PromotionInfoDTO implements Serializable {
+public class PromotionAccumulatyDTO extends PromotionInfoExtendDTO implements Serializable {
 
 	private static final long serialVersionUID = -6475736552526494381L;
 

@@ -88,6 +88,8 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	private String promotionReserveQty;
 	//商品item编码
 	private String itemCode;
+	//预售标志：0 非预售 1 是预售 
+	private Integer preSaleFlag;
 	
 	public String getItemCode() {
 		return itemCode;
@@ -311,6 +313,12 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	}
 	public void setPromotionReserveQty(String promotionReserveQty) {
 		this.promotionReserveQty = promotionReserveQty;
+	}
+	public Integer getPreSaleFlag() {
+		return preSaleFlag;
+	}
+	public void setPreSaleFlag(Integer preSaleFlag) {
+		this.preSaleFlag = preSaleFlag;
 	}
 	
 }

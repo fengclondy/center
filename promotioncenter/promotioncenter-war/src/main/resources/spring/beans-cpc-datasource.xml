@@ -30,7 +30,5 @@
     	<property name="minEvictableIdleTimeMillis" value="${dataSource.minEvictableIdleTimeMillis}"></property>
     	<property name="timeBetweenEvictionRunsMillis" value="${dataSource.timeBetweenEvictionRunsMillis}"></property>
 	</bean>
-	<!-- delete by 张丁 开始 -->
 	<!-- <jee:jndi-lookup id="dataSource" jndi-name="java:jboss/DS-cps" /> -->
-	<!-- delete by 张丁 结束 -->
 </beans>  

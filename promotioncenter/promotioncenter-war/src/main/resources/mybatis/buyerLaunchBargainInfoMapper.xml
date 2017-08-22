@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO" >
+   <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="BARGAIN_CODE" property="bargainCode" jdbcType="VARCHAR" />
+    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
+    <result column="LEVEL_CODE" property="levelCode" jdbcType="VARCHAR" />
+    <result column="BUYER_CODE" property="buyerCode" jdbcType="VARCHAR" />
+    <result column="BUYER_NAME" property="buyerName" jdbcType="VARCHAR" />
+    <result column="BUYER_TELEPHONE" property="buyerTelephone" jdbcType="VARCHAR" />
+    <result column="GOODS_PICTURE" property="goodsPicture" jdbcType="VARCHAR" />
+    <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
+    <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
+    <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
+    <result column="LAUNCH_TIME" property="launchTime" jdbcType="TIMESTAMP" />
+    <result column="BARGAIN_OVER_TIME" property="bargainOverTime" jdbcType="TIMESTAMP" />
+    <result column="IS_BARGAIN_OVER" property="isBargainOver" jdbcType="TINYINT" />
+    <result column="GOODS_CURRENT_PRICE" property="goodsCurrentPrice" jdbcType="DECIMAL" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
+	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
+	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+    <select id="getBuyerLaunchBargainInfoByBuyerCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from buyer_launch_bargain_info
+    	where buyer_code = #{buyerCode}
+	</select>
+	
+	<select id="getBuyerBargainLaunchInfoByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from buyer_launch_bargain_info
+    	where bargain_code = #{bargainCode}
+	</select>
+	
+	<select id="getBuyerLaunchBargainInfoByPromotionId" resultMap="BaseResultMap">
+		SELECT * FROM buyer_launch_bargain_info
+		WHERE promotion_id = #{promotionId}
+	</select>
+	
+	<select id="queryBuyerLaunchBargainInfoNumber" resultType="java.lang.Integer">
+		SELECT COUNT(0)
+		FROM buyer_launch_bargain_info
+		WHERE promotion_id = #{barfainDTO.promotionId}
+		AND level_code = #{barfainDTO.levelCode}
+		<if test="barfainDTO.isBargainOver != null and barfainDTO.isBargainOver != ''">
+			AND is_bargain_over = 1
+		</if>
+	</select>
+	
+	<insert id="addBuyerLaunchBargainInfo">
+		insert into buyer_launch_bargain_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			bargain_code,
+			promotion_id,
+			level_code,
+			buyer_code,
+			buyer_name,
+			buyer_telephone,
+			goods_picture,
+			goods_name,
+			goods_cost_price,
+			goods_floor_price,
+			launch_time,
+			goods_current_price,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{barfainDTO.bargainCode,jdbcType=INTEGER},
+			#{barfainDTO.promotionId,jdbcType=VARCHAR},
+			#{barfainDTO.levelCode,jdbcType=VARCHAR},
+			#{barfainDTO.buyerCode,jdbcType=VARCHAR},
+			#{barfainDTO.buyerName,jdbcType=VARCHAR},
+			#{barfainDTO.buyerTelephone,jdbcType=VARCHAR},
+			#{barfainDTO.goodsPicture,jdbcType=VARCHAR},
+			#{barfainDTO.goodsName,jdbcType=VARCHAR},
+			#{barfainDTO.goodsCostPrice,jdbcType=DECIMAL},
+			#{barfainDTO.goodsFloorPrice,jdbcType=DECIMAL},
+			now(),
+			#{barfainDTO.goodsCurrentPrice,jdbcType=DECIMAL},
+			#{barfainDTO.createId,jdbcType=BIGINT},
+			#{barfainDTO.createName,jdbcType=VARCHAR},
+			now(),
+			#{barfainDTO.createId,jdbcType=BIGINT},
+			#{barfainDTO.createName,jdbcType=VARCHAR},
+			now(),
+		</trim>
+	</insert>
+
+	<update id="updateBuyerLaunchBargainInfo" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO">
+		update buyer_launch_bargain_info
+		<set>
+			<if test="launchTime != null">
+				launch_time = #{launchTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bargainOverTime != null">
+				bargain_over_time = #{bargainOverTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isBargainOver != null">
+				is_bargain_over = #{isBargainOver,jdbcType=TINYINT},
+			</if>
+			<if test="goodsCurrentPrice != null">
+				goods_current_price = #{goodsCurrentPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="modifyId != null">
+				modify_id = #{modifyId,jdbcType=BIGINT},
+			</if>
+			<if test="modifyName != null">
+				modify_name = #{modifyName,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyTime != null">
+				modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR}
+	</update>
+</mapper>

@@ -216,21 +216,23 @@ public class DateUtil {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(Integer.valueOf(getLastMonth()));
-		// String date1="20161129153852"; //
-		// System.out.println("20161201200101".substring(0,8));
-		// // String date2="20161116150201";
-		// // System.out.println(getCurrentDate());
-		// System.out.println(isValidDate("20170228"));
-		// try {
-		// if(judgment24Date(date1)){
-		// System.out.println("可用");
-		//
-		// }else{
-		// System.out.println("已过期");
-		// }
-		// } catch (Exception e) {
-		// // TODO: handle exception
-		// }
+//		System.out.println(Integer.valueOf(getLastMonth()));
+//		 String date1="20161129153852"; //
+//		 System.out.println("20161201200101".substring(0,8));
+//		 // String date2="20161116150201";
+//		 // System.out.println(getCurrentDate());
+//		 System.out.println(isValidDate("20170228"));
+//		 try {
+//		 if(judgment24Date(date1)){
+//		 System.out.println("可用");
+//		
+//		 }else{
+//		 System.out.println("已过期");
+//		 }
+//		 } catch (Exception e) {
+//		 // TODO: handle exception
+//		 }
+		
+		System.out.println(getDateBySpecificDate("2017-03-22 11:28:20"));
 	}
 }

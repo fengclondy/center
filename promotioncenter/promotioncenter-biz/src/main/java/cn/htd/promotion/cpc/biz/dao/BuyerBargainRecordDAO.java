@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,6 @@ public interface BuyerBargainRecordDAO {
 	public List<BuyerBargainRecordDMO> getBuyerBargainRecordByBargainCode(String bargainCode);
 	
 	public Integer insertBuyerBargainRecord(BuyerBargainRecordReqDTO BuyerBargainRecord);
+	
+	public BuyerBargainRecordDMO getThisPersonIsBargain(Map<String,String> map);
 }

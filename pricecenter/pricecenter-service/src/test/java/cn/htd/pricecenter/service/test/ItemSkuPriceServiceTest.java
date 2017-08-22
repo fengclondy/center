@@ -1,5 +1,6 @@
 package cn.htd.pricecenter.service.test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
@@ -17,6 +18,7 @@ import cn.htd.pricecenter.domain.InnerItemSkuPrice;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
 import cn.htd.pricecenter.domain.ItemSkuLadderPrice;
 import cn.htd.pricecenter.dto.CommonItemSkuPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceInDTO;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.QueryCommonItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
@@ -156,6 +158,21 @@ public class ItemSkuPriceServiceTest extends CommonTest{
 		
 		JdItemPriceResponseDTO result=MiddlewareInterfaceUtil.getJdItemRealPrice("1539467");
 		System.out.println(result.getJdPrice());
+	}
+	
+	@Test
+	public void testSaveHzgPrice(){
+		HzgPriceInDTO hzgPriceInDTO=new HzgPriceInDTO();
+		hzgPriceInDTO.setItemId(2L);
+		hzgPriceInDTO.setOperatorId(897L);
+		hzgPriceInDTO.setOperatorName("zhangxiaolong");
+		hzgPriceInDTO.setRetailPrice(new BigDecimal("38.90"));
+		hzgPriceInDTO.setSalePrice(new BigDecimal("37.90"));
+		hzgPriceInDTO.setVipPrice(new BigDecimal("36.90"));
+		hzgPriceInDTO.setSellerId(3752L);
+		hzgPriceInDTO.setShopId(46L);
+		hzgPriceInDTO.setSkuId(2L);
+		itemSkuPriceService.saveHzgTerminalPrice(hzgPriceInDTO);
 	}
 
 	

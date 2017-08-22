@@ -6,9 +6,13 @@ import java.util.List;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.dto.*;
 import cn.htd.goodscenter.dto.indto.QueryItemStockDetailInDTO;
+import cn.htd.goodscenter.service.task.PreSaleProductQueryTask;
+import com.taobao.pamirs.schedule.TaskItemDefine;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -147,4 +151,5 @@ public class ItemExportServiceTest {
         itemExportService.queryItemQuantityInfo(queryItemStockDetailInDTO);
 
     }
+
 }

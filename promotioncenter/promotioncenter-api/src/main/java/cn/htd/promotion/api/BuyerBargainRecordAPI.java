@@ -8,8 +8,27 @@ import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 
 public interface BuyerBargainRecordAPI {
 	
+	/**
+	 * 根据砍价编号查询砍价记录
+	 * @param bargainCode
+	 * @param messageId
+	 * @return
+	 */
 	public ExecuteResult<List<BuyerBargainRecordResDTO>> getBuyerBargainRecordByBargainCode(String bargainCode,String messageId);
 	
-	public ExecuteResult<Integer> insertBuyerBargainRecord(BuyerBargainRecordReqDTO BuyerBargainRecord);
+	/**
+	 * 插入砍价记录
+	 * @param buyerBargainRecord
+	 * @return
+	 */
+	public ExecuteResult<Boolean> insertBuyerBargainRecord(BuyerBargainRecordReqDTO buyerBargainRecord);
+	
+	/**
+	 * 查询改用户是否已经帮忙砍过
+	 * @param bargainCode
+	 * @param bargainPersonCode
+	 * @return
+	 */
+	public ExecuteResult<Boolean> getThisPersonIsBargain(String bargainCode ,String bargainPersonCode, String messageId);
 
 }

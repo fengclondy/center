@@ -2,15 +2,20 @@ package cn.htd.goodscenter.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.goodscenter.domain.PreSaleProductPush;
 import cn.htd.goodscenter.dto.indto.ItemSpuInfoListInDTO;
 import cn.htd.goodscenter.dto.indto.SyncItemStockSearchInDTO;
 import cn.htd.goodscenter.dto.outdto.ItemSpuInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.outdto.ItemSpuInfoListOutDTO;
+import cn.htd.goodscenter.service.task.PreSaleProductPushTask;
+import cn.htd.goodscenter.service.task.PreSaleProductQueryTask;
+import com.taobao.pamirs.schedule.TaskItemDefine;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,6 +48,8 @@ import cn.htd.goodscenter.test.common.CommonTest;
 import cn.htd.middleware.common.message.erp.ProductMessage;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class ItemExportServiceImplAllTest extends CommonTest {
 
@@ -658,5 +665,54 @@ public class ItemExportServiceImplAllTest extends CommonTest {
 		syncItemStockSearchInDTO.setErpCode("119452");
 		Pager page = new Pager();
 		itemExportService.querySyncItemStockSearchList(syncItemStockSearchInDTO, page);
+	}
+
+
+	@Autowired
+	@Qualifier("preSaleProductQueryTask")
+	PreSaleProductQueryTask preSaleProductQueryTask;
+
+	@Autowired
+	@Qualifier("preSaleProductPushTask")
+	PreSaleProductPushTask preSaleProductPushTask;
+
+	@Test
+	public void testpreSaleProductQueryTask() {
+		List<TaskItemDefine> taskItemList = new ArrayList<>();
+		TaskItemDefine taskItemDefine = new TaskItemDefine();
+		taskItemDefine.setTaskItemId("0");
+		taskItemList.add(taskItemDefine);
+		try {
+			preSaleProductQueryTask.selectTasks("", "", 1, taskItemList, 100);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testpreSaleProductPushTask() {
+		List<TaskItemDefine> taskItemList = new ArrayList<>();
+		TaskItemDefine taskItemDefine = new TaskItemDefine();
+		taskItemDefine.setTaskItemId("0");
+		taskItemList.add(taskItemDefine);
+		try {
+			preSaleProductPushTask.selectTasks("", "", 1, taskItemList, 100);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testpreSaleProductPushTask2() {
+		List<TaskItemDefine> taskItemList = new ArrayList<>();
+		TaskItemDefine taskItemDefine = new TaskItemDefine();
+		taskItemDefine.setTaskItemId("0");
+		taskItemList.add(taskItemDefine);
+		try {
+			List<PreSaleProductPush> preSaleProductPushList = preSaleProductPushTask.selectTasks("", "", 1, taskItemList, 100);
+			preSaleProductPushTask.execute(preSaleProductPushList.toArray(new PreSaleProductPush[]{}), "");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

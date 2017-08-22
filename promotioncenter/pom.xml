@@ -68,6 +68,9 @@
 		</profile>
 		<profile>
 			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<properties>
 				<epp_env>dev</epp_env>
 				<comm_env>common</comm_env>
@@ -80,9 +83,7 @@
 		</profile>
 		<profile>
 			<id>sit</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			
 			<properties>
 				<epp_env>sit</epp_env>
 				<comm_env>common</comm_env>
@@ -95,7 +96,6 @@
 		</profile>
 		<profile>
 			<id>prep</id>
-		
 			<properties>
 				<epp_env>prep</epp_env>
 				<comm_env>common</comm_env>
@@ -160,9 +160,9 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
+					<encoding>UTF-8</encoding>
 					<webResources>
 						<resource>
-							<encoding>UTF-8</encoding>
 							<!-- 元配置文件的目录，相对于pom.xml文件的路径 -->
 							<directory>src/main/webapp/WEB-INF</directory>
 							<!-- 是否过滤文件，也就是是否启动auto-config的功能 -->

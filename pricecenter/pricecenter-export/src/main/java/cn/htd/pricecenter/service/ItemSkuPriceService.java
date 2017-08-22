@@ -8,7 +8,10 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.pricecenter.domain.InnerItemSkuPrice;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
 import cn.htd.pricecenter.domain.ItemSkuLadderPrice;
+import cn.htd.pricecenter.domain.ItemSkuTerminalPrice;
 import cn.htd.pricecenter.dto.CommonItemSkuPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceDTO;
+import cn.htd.pricecenter.dto.HzgPriceInDTO;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.OrderItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.QueryCommonItemSkuPriceDTO;
@@ -189,4 +192,45 @@ public interface ItemSkuPriceService {
 	 * @return
 	 */
 	ExecuteResult<OrderItemSkuPriceDTO> queryOrderItemSkuPrice(QueryCommonItemSkuPriceDTO queryCommonItemSkuPriceDTO);
+	
+	/**
+	 * 保存商品终端价格
+	 * 
+	 * @param itemSkuTerminalPrice
+	 * @return
+	 */
+	ExecuteResult<String> saveItemSkuTerminalPrice(ItemSkuTerminalPrice itemSkuTerminalPrice);
+	
+	/**
+	 * 更新商品终端价格
+	 * 
+	 * @param itemSkuTerminalPrice
+	 * @return
+	 */
+	ExecuteResult<String> updateItemSkuTerminalPrice(ItemSkuTerminalPrice itemSkuTerminalPrice);
+	
+	/**
+	 * 查询商品终端价格
+	 * 
+	 * @param itemSkuTerminalPrice
+	 * @return
+	 */
+	ExecuteResult<List<ItemSkuTerminalPrice>> queryItemSkuTerminalPriceBySkuId(Long skuId);
+	
+	/**
+	 * 查询汇掌柜价格
+	 * 
+	 * @param skuId
+	 * @param terminalType
+	 * @return
+	 */
+    ExecuteResult<HzgPriceDTO> queryHzgTerminalPriceByTerminalType(Long skuId);
+    
+    /**
+     * 
+     * @param list
+     * @return
+     */
+    ExecuteResult<String> saveHzgTerminalPrice(HzgPriceInDTO hzgPriceInDTO);
+	
 }

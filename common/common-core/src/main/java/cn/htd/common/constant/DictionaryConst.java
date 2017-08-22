@@ -789,5 +789,7 @@ public class DictionaryConst {
     public static final String OPT_PROMOTION_TYPE_BARGAIN = "PROMOTION_TYPE_BARGAIN";
     //字典信息-促销活动类型-总部秒杀
     public static final String OPT_PROMOTION_TYPE_HEAD_TIMELIMITED = "PROMOTION_TYPE_HEAD_TIMELIMITED";
+    //字典信息-促销活动发起方类型-会员店
+    public static final String OPT_PROMOTION_PROVIDER_TYPE_MEMBER_SHOP = "PROMOTION_PROVIDER_TYPE_MEMBER_SHOP";
     //******************* add by jiangkun on 20170817 for B2C End *******************
 }

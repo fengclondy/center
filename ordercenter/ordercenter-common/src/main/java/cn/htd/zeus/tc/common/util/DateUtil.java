@@ -215,6 +215,17 @@ public class DateUtil {
 		return lastDay;
 	}
 
+	public static Timestamp getTomorrowDate() {
+		Date date = new Date();// 取时间
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+		date = calendar.getTime();
+		String time = df.format(date);
+		java.sql.Timestamp sqlTime = java.sql.Timestamp.valueOf(time);
+		return sqlTime;
+	}
+
 	public static void main(String[] args) throws Exception {
 		System.out.println(Integer.valueOf(getLastMonth()));
 		// String date1="20161129153852"; //

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
+import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBuyerGradeInfoDTO;
 import cn.htd.membercenter.dto.MemberConsigAddressDTO;
@@ -20,6 +21,7 @@ import cn.htd.membercenter.dto.MemberDetailInfo;
 import cn.htd.membercenter.dto.MemberGradeDTO;
 import cn.htd.membercenter.dto.MemberGroupDTO;
 import cn.htd.membercenter.dto.MemberInvoiceDTO;
+import cn.htd.membercenter.service.BoxRelationshipService;
 import cn.htd.membercenter.service.ConsigneeAddressService;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberBuyerService;
@@ -40,9 +42,12 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 
 	@Autowired
 	private MemberBaseInfoService memberBaseInfoService;
-	
+
 	@Autowired
 	private MemberBuyerService memberBuyerService;
+
+	@Autowired
+	private BoxRelationshipService boxRelationshipService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MemberCenterRAOImpl.class);
 
@@ -223,14 +228,15 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 	 * @param messageId
 	 * @return
 	 */
-	public OtherCenterResDTO<MemberInvoiceDTO> queryMemberInvoiceInfo(String memberCode,String channelCode,
-			String messageId) {
+	public OtherCenterResDTO<MemberInvoiceDTO> queryMemberInvoiceInfo(String memberCode,
+			String channelCode, String messageId) {
 		OtherCenterResDTO<MemberInvoiceDTO> other = new OtherCenterResDTO<MemberInvoiceDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("查询会员发票信息--组装查询参数开始:" + "MessageId:" + messageId+" memberCode:"+memberCode+" channelCode:"+channelCode);
+			LOGGER.info("查询会员发票信息--组装查询参数开始:" + "MessageId:" + messageId + " memberCode:"
+					+ memberCode + " channelCode:" + channelCode);
 			ExecuteResult<MemberInvoiceDTO> result = memberCallCenterService
-					.queryMemberInvoiceInfo(memberCode,channelCode);
+					.queryMemberInvoiceInfo(memberCode, channelCode);
 			LOGGER.info("MessageId:{}查询会员发票信息--返回结果:{}", messageId,
 					JSONObject.toJSONString(result));
 			Long endTime = System.currentTimeMillis();
@@ -291,9 +297,10 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		}
 		return other;
 	}
-	
+
 	@Override
-	public OtherCenterResDTO<MemberBaseInfoDTO> getMemberDetailBySellerId(long memberId, String messageId) {
+	public OtherCenterResDTO<MemberBaseInfoDTO> getMemberDetailBySellerId(long memberId,
+			String messageId) {
 		OtherCenterResDTO<MemberBaseInfoDTO> other = new OtherCenterResDTO<MemberBaseInfoDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
@@ -369,31 +376,31 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		}
 		return other;
 	}
-	
-	
+
 	/*
-	 * 根据卖家code和渠道编码查询卖家的地址
-	 * 例子：如果传入卖家code和3010 则查出的就是卖家在京东的收获地址
+	 * 根据卖家code和渠道编码查询卖家的地址 例子：如果传入卖家code和3010 则查出的就是卖家在京东的收获地址
 	 * 重写selectChannelAddressDTO方法
 	 */
-	public OtherCenterResDTO<MemberConsigAddressDTO> selectChannelAddressDTO4Common(String messageId, String memberCode,
-			String channelCode) {
+	public OtherCenterResDTO<MemberConsigAddressDTO> selectChannelAddressDTO4Common(
+			String messageId, String memberCode, String channelCode) {
 		OtherCenterResDTO<MemberConsigAddressDTO> other = new OtherCenterResDTO<MemberConsigAddressDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("查询卖家的地址--4common--组装查询参数开始:" + "MessageId:" + messageId + "memberCode:" + memberCode
-					+ "channelCode:" + channelCode);
+			LOGGER.info("查询卖家的地址--4common--组装查询参数开始:" + "MessageId:" + messageId + "memberCode:"
+					+ memberCode + "channelCode:" + channelCode);
 			ExecuteResult<MemberConsigAddressDTO> result = consigneeAddressService
 					.selectChannelAddressDTO(messageId, memberCode, channelCode);
-			LOGGER.info("MessageId:{} 查询卖家的地址--4common--返回结果:{}", messageId, JSONObject.toJSONString(result)
-					+ "耗时:" + (System.currentTimeMillis() - startTime));
+			LOGGER.info("MessageId:{} 查询卖家的地址--4common--返回结果:{}", messageId,
+					JSONObject.toJSONString(result) + "耗时:"
+							+ (System.currentTimeMillis() - startTime));
 			if (null != result.getResult() && result.isSuccess() == true) {
 				MemberConsigAddressDTO consigAddressInfo = result.getResult();
 				other.setOtherCenterResult(consigAddressInfo);
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {
 				// 没有查到数据
-				LOGGER.warn("MessageId:{}查询卖家的地址(selectChannelAddressDTO4Common)-没有查到数据 参数:{}", messageId);
+				LOGGER.warn("MessageId:{}查询卖家的地址(selectChannelAddressDTO4Common)-没有查到数据 参数:{}",
+						messageId);
 				other.setOtherCenterResponseCode(
 						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
 				other.setOtherCenterResponseMsg(
@@ -402,23 +409,25 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法MemberCenterRAOImpl.selectChannelAddressDTO4Common出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法MemberCenterRAOImpl.selectChannelAddressDTO4Common出现异常{}",
 					messageId, w.toString());
 			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
 		}
 		return other;
 	}
-	
+
 	/*
 	 * 根据code查询id
 	 */
 	@Override
-	public OtherCenterResDTO<Long> getMemberIdByCode(String memberCode,String messageId) {
+	public OtherCenterResDTO<Long> getMemberIdByCode(String memberCode, String messageId) {
 		OtherCenterResDTO<Long> other = new OtherCenterResDTO<Long>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("查询会员code--组装查询参数开始:" + "MessageId:" + messageId + "memberCode:" + memberCode);
+			LOGGER.info(
+					"查询会员code--组装查询参数开始:" + "MessageId:" + messageId + "memberCode:" + memberCode);
 			ExecuteResult<Long> result = memberBaseInfoService.getMemberIdByCode(memberCode);
 			LOGGER.info("MessageId:{} 查询会员code--返回结果:{}", messageId, JSONObject.toJSONString(result)
 					+ "耗时:" + (System.currentTimeMillis() - startTime));
@@ -428,7 +437,8 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {
 				// 没有查到数据
-				LOGGER.warn("MessageId:{}根据code查询会员的id(getMemberIdByCode)-没有查到数据 参数:{}", messageId,memberCode);
+				LOGGER.warn("MessageId:{}根据code查询会员的id(getMemberIdByCode)-没有查到数据 参数:{}", messageId,
+						memberCode);
 				other.setOtherCenterResponseCode(
 						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
 				other.setOtherCenterResponseMsg(
@@ -437,24 +447,26 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法MemberCenterRAOImpl.getMemberIdByCode出现异常{}",
-					messageId, w.toString());
+			LOGGER.error("MessageId:{} 调用方法MemberCenterRAOImpl.getMemberIdByCode出现异常{}", messageId,
+					w.toString());
 			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
 		}
 		return other;
 	}
-	
+
 	/*
 	 * 根据会员id查询注册地址
 	 */
 	@Override
-	public OtherCenterResDTO<MemberDetailInfo> getMemberDetailById(Long memberId,String messageId) {
+	public OtherCenterResDTO<MemberDetailInfo> getMemberDetailById(Long memberId,
+			String messageId) {
 		OtherCenterResDTO<MemberDetailInfo> other = new OtherCenterResDTO<MemberDetailInfo>();
 		try {
 			Long startTime = System.currentTimeMillis();
 			LOGGER.info("查询注册地址--组装查询参数开始:" + "MessageId:" + messageId + "memberId:" + memberId);
-			ExecuteResult<MemberDetailInfo> result = memberBaseInfoService.getMemberDetailById(memberId);
+			ExecuteResult<MemberDetailInfo> result = memberBaseInfoService
+					.getMemberDetailById(memberId);
 			LOGGER.info("MessageId:{} 查询注册地址--返回结果:{}", messageId, JSONObject.toJSONString(result)
 					+ "耗时:" + (System.currentTimeMillis() - startTime));
 			if (null != result.getResult() && result.isSuccess() == true) {
@@ -463,7 +475,8 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {
 				// 没有查到数据
-				LOGGER.warn("MessageId:{}查询注册地址(getMemberDetailById)-没有查到数据 参数:{}", messageId,memberId);
+				LOGGER.warn("MessageId:{}查询注册地址(getMemberDetailById)-没有查到数据 参数:{}", messageId,
+						memberId);
 				other.setOtherCenterResponseCode(
 						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
 				other.setOtherCenterResponseMsg(
@@ -479,7 +492,7 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		}
 		return other;
 	}
-	
+
 	/**
 	 * 查询会员等级详细信息
 	 * 
@@ -487,21 +500,25 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 	 * @return
 	 */
 	@Override
-	public OtherCenterResDTO<MemberBuyerGradeInfoDTO> queryBuyerGradeInfo(Long memberId,String messageId) {
+	public OtherCenterResDTO<MemberBuyerGradeInfoDTO> queryBuyerGradeInfo(Long memberId,
+			String messageId) {
 		OtherCenterResDTO<MemberBuyerGradeInfoDTO> other = new OtherCenterResDTO<MemberBuyerGradeInfoDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("MessageId{}查询会员等级详细信息--组装查询参数开始:MemberId{}",messageId,memberId);
-			ExecuteResult<MemberBuyerGradeInfoDTO> result = memberBuyerService.queryBuyerGradeInfo(memberId);
-			LOGGER.info("MessageId:{} 查询会员等级详细信息--返回结果:{}", messageId, JSONObject.toJSONString(result)
-					+ "耗时:" + (System.currentTimeMillis() - startTime));
+			LOGGER.info("MessageId{}查询会员等级详细信息--组装查询参数开始:MemberId{}", messageId, memberId);
+			ExecuteResult<MemberBuyerGradeInfoDTO> result = memberBuyerService
+					.queryBuyerGradeInfo(memberId);
+			LOGGER.info("MessageId:{} 查询会员等级详细信息--返回结果:{}", messageId,
+					JSONObject.toJSONString(result) + "耗时:"
+							+ (System.currentTimeMillis() - startTime));
 			if (null != result.getResult() && result.isSuccess() == true) {
 				MemberBuyerGradeInfoDTO memberBuyerGradeInfo = result.getResult();
 				other.setOtherCenterResult(memberBuyerGradeInfo);
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {
 				// 没有查到数据
-				LOGGER.warn("MessageId:{}查询会员等级详细信息(queryBuyerGradeInfo)-没有查到数据 参数:{}", messageId,memberId);
+				LOGGER.warn("MessageId:{}查询会员等级详细信息(queryBuyerGradeInfo)-没有查到数据 参数:{}", messageId,
+						memberId);
 				other.setOtherCenterResponseCode(
 						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
 				other.setOtherCenterResponseMsg(
@@ -517,7 +534,7 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 		}
 		return other;
 	}
-	
+
 	/**
 	 * 查询外部供应商是否有平台公司身份
 	 * 
@@ -525,23 +542,26 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 	 * @param messageId
 	 * @return
 	 */
-	public OtherCenterResDTO<String> isHasInnerComapanyCert(String memberCode,String messageId){
-		
-		
+	public OtherCenterResDTO<String> isHasInnerComapanyCert(String memberCode, String messageId) {
+
 		OtherCenterResDTO<String> other = new OtherCenterResDTO<String>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("MessageId{}查询外部供应商是否有平台公司身份--组装查询参数开始:memberCode{}",messageId,memberCode);
-			ExecuteResult<String> result = memberBaseInfoService.IsHasInnerComapanyCert(memberCode);;
-			LOGGER.info("MessageId:{} 查询外部供应商是否有平台公司身份--返回结果:{}", messageId, JSONObject.toJSONString(result)
-					+ "耗时:" + (System.currentTimeMillis() - startTime));
+			LOGGER.info("MessageId{}查询外部供应商是否有平台公司身份--组装查询参数开始:memberCode{}", messageId,
+					memberCode);
+			ExecuteResult<String> result = memberBaseInfoService.IsHasInnerComapanyCert(memberCode);
+			;
+			LOGGER.info("MessageId:{} 查询外部供应商是否有平台公司身份--返回结果:{}", messageId,
+					JSONObject.toJSONString(result) + "耗时:"
+							+ (System.currentTimeMillis() - startTime));
 			if (null != result.getResult() && result.isSuccess() == true) {
 				String isHasInnerComapanyCert = result.getResult();
 				other.setOtherCenterResult(isHasInnerComapanyCert);
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {
 				// 没有查到数据
-				LOGGER.warn("MessageId:{}查询外部供应商是否有平台公司身份(isHasInnerComapanyCert)-没有查到数据 参数:{}", messageId,memberCode);
+				LOGGER.warn("MessageId:{}查询外部供应商是否有平台公司身份(isHasInnerComapanyCert)-没有查到数据 参数:{}",
+						messageId, memberCode);
 				other.setOtherCenterResponseCode(
 						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
 				other.setOtherCenterResponseMsg(
@@ -556,24 +576,30 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
 		}
 		return other;
-		
+
 	}
-	
-	public OtherCenterResDTO<MemberBaseInfoDTO> getInnerInfoByOuterHTDCode(String memberCode,String messageId){
+
+	public OtherCenterResDTO<MemberBaseInfoDTO> getInnerInfoByOuterHTDCode(String memberCode,
+			String messageId) {
 		OtherCenterResDTO<MemberBaseInfoDTO> other = new OtherCenterResDTO<MemberBaseInfoDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("MessageId{}查询外部供应商对应的平台公司code--组装查询参数开始:memberCode{}",messageId,memberCode);
-			ExecuteResult<MemberBaseInfoDTO> result = memberBaseInfoService.getInnerInfoByOuterHTDCode(memberCode);
-			LOGGER.info("MessageId:{} 查询外部供应商对应的平台公司code--返回结果:{}", messageId, JSONObject.toJSONString(result)
-					+ "耗时:" + (System.currentTimeMillis() - startTime));
+			LOGGER.info("MessageId{}查询外部供应商对应的平台公司code--组装查询参数开始:memberCode{}", messageId,
+					memberCode);
+			ExecuteResult<MemberBaseInfoDTO> result = memberBaseInfoService
+					.getInnerInfoByOuterHTDCode(memberCode);
+			LOGGER.info("MessageId:{} 查询外部供应商对应的平台公司code--返回结果:{}", messageId,
+					JSONObject.toJSONString(result) + "耗时:"
+							+ (System.currentTimeMillis() - startTime));
 			if (null != result.getResult() && result.isSuccess() == true) {
 				MemberBaseInfoDTO memberBaseInfoDTO = result.getResult();
 				other.setOtherCenterResult(memberBaseInfoDTO);
 				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			} else {
 				// 没有查到数据
-				LOGGER.warn("MessageId:{}查询外部供应商对应的平台公司code(getInnerInfoByOuterHTDCode)-没有查到数据 参数:{}", messageId,memberCode);
+				LOGGER.warn(
+						"MessageId:{}查询外部供应商对应的平台公司code(getInnerInfoByOuterHTDCode)-没有查到数据 参数:{}",
+						messageId, memberCode);
 				other.setOtherCenterResponseCode(
 						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
 				other.setOtherCenterResponseMsg(
@@ -588,6 +614,73 @@ public class MemberCenterRAOImpl implements MemberCenterRAO {
 			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
 		}
 		return other;
-		
+
 	}
+
+	@Override
+	public OtherCenterResDTO<ApplyBusiRelationDTO> selectBusiRelation(Long memberId, Long sellerId,
+			Long categoryId, Long brandId) {
+		OtherCenterResDTO<ApplyBusiRelationDTO> other = new OtherCenterResDTO<ApplyBusiRelationDTO>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("查询买家卖家经营关系--组装查询参数开始:memberId{}sellerId{}categoryId{}brandId{}", memberId,
+					sellerId, categoryId, brandId);
+			ExecuteResult<ApplyBusiRelationDTO> result = boxRelationshipService
+					.selectBusiRelation(memberId, sellerId, categoryId, brandId);
+			LOGGER.info("查询买家卖家经营关系--返回结果:{}", JSONObject.toJSONString(result) + "耗时:"
+					+ (System.currentTimeMillis() - startTime));
+			if (null != result.getResult() && result.isSuccess() == true) {
+				ApplyBusiRelationDTO applyBusiRelationDTO = result.getResult();
+				other.setOtherCenterResult(applyBusiRelationDTO);
+				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			} else {
+				// 没有查到数据
+				LOGGER.warn(
+						"查询买家卖家经营关系(selectBusiRelation)-没有查到数据 参数:memberId{}sellerId{}categoryId{}brandId{}",
+						memberId, sellerId, categoryId, brandId);
+				other.setOtherCenterResponseCode(
+						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
+				other.setOtherCenterResponseMsg(
+						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getMsg());
+			}
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("调用方法MemberCenterRAOImpl.selectBusiRelation出现异常{}", w.toString());
+			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return other;
+	}
+
+	@Override
+	public OtherCenterResDTO<String> getMemberCodeById(Long memberId) {
+		OtherCenterResDTO<String> other = new OtherCenterResDTO<String>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("根据会员ID查询会员CODE--组装查询参数开始:memberId{}", memberId);
+			ExecuteResult<String> result = memberBaseInfoService.getMemberCodeById(memberId);
+			LOGGER.info("根据会员ID查询会员CODE--返回结果:{}", JSONObject.toJSONString(result) + "耗时:"
+					+ (System.currentTimeMillis() - startTime));
+			if (null != result.getResult() && result.isSuccess() == true) {
+				other.setOtherCenterResult(result.getResult());
+				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			} else {
+				// 没有查到数据
+				LOGGER.warn("根据会员ID查询会员CODE-没有查到数据 参数:memberId{}", memberId);
+				other.setOtherCenterResponseCode(
+						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getCode());
+				other.setOtherCenterResponseMsg(
+						FacadeOtherResultCodeEnum.MEMBERCENTER_QUERY_NOT_RESULT.getMsg());
+			}
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("调用方法MemberCenterRAOImpl.getMemberCodeById出现异常{}", w.toString());
+			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return other;
+	}
+
 }

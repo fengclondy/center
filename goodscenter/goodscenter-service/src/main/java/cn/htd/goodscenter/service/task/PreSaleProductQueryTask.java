@@ -70,30 +70,31 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     lastSyscTimeStr = "2017-05-03 00:00:00"; // 默认开始时间
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
-                    map.put("lastSyscTime",lastSyscTime); // TODO : 时间往前推个几分钟，防止查询期间又加入的
-                    map.put("isIncrement", 0);
+                    map.put("lastSyscTime",lastSyscTime);
+                    map.put("isIncrement", 0); // 附带条件 pre_sale = 1
                     itemList = this.itemMybatisDAO.queryPreSaleItemList(map); // 全量
+                    for (Item item : itemList) {
+                        save2PushInfo(item);
+                    }
                 } else { // 下面走增量，查询更新时间比同步时间大的
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
-                    map.put("lastSyscTime",lastSyscTime); // TODO : 时间往前推个几分钟，防止查询期间又加入的
+                    map.put("lastSyscTime",lastSyscTime);
                     map.put("isIncrement", 1);
                     itemList = this.itemMybatisDAO.queryPreSaleItemList(map); // 增量
+                    for (Item item : itemList) {
+                        if (item.isPreSale()) { // 如果是预售推直接插入
+                            save2PushInfo(item);
+                        } else { // 如果不是预售的，查询之前有没有预售推送过，如果有，则插入，作为变更数据
+                            PreSaleProductPush preSaleProductPush = this.preSaleProductPushMapper.getByItemId(item.getItemId());
+                            if (preSaleProductPush != null) {
+                                save2PushInfo(item);
+                            }
+                        }
+
+                    }
                 }
-                for (Item item : itemList) {
-                    Date date = new Date();
-                    PreSaleProductPush preSaleProductPush = new PreSaleProductPush();
-                    preSaleProductPush.setItemId(item.getItemId());
-                    preSaleProductPush.setPushStatus(Constants.PRE_SALE_ITEM_PUSH_PRE);
-                    preSaleProductPush.setPushVersion(1);
-                    preSaleProductPush.setCreateId(Constants.SYSTEM_CREATE_ID);
-                    preSaleProductPush.setCreateName(Constants.SYSTEM_CREATE_NAME);
-                    preSaleProductPush.setCreateTime(date);
-                    preSaleProductPush.setModifyId(Constants.SYSTEM_CREATE_ID);
-                    preSaleProductPush.setModifyName(Constants.SYSTEM_CREATE_NAME);
-                    preSaleProductPush.setModifyTime(date);
-                    this.preSaleProductPushMapper.insert(preSaleProductPush);
-                }
+
                 this.redisDB.set(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME, sp.format(now));
             }
         } catch (Exception e){
@@ -103,6 +104,21 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
             logger.info("查询预售商品数据【PreSaleProductQueryTask】任务结束");
         }
         return itemList;
+    }
+
+    private void save2PushInfo(Item item) {
+        Date date = new Date();
+        PreSaleProductPush preSaleProductPush = new PreSaleProductPush();
+        preSaleProductPush.setItemId(item.getItemId());
+        preSaleProductPush.setPushStatus(Constants.PRE_SALE_ITEM_PUSH_PRE);
+        preSaleProductPush.setPushVersion(1);
+        preSaleProductPush.setCreateId(Constants.SYSTEM_CREATE_ID);
+        preSaleProductPush.setCreateName(Constants.SYSTEM_CREATE_NAME);
+        preSaleProductPush.setCreateTime(date);
+        preSaleProductPush.setModifyId(Constants.SYSTEM_CREATE_ID);
+        preSaleProductPush.setModifyName(Constants.SYSTEM_CREATE_NAME);
+        preSaleProductPush.setModifyTime(date);
+        this.preSaleProductPushMapper.insert(preSaleProductPush);
     }
 
     @Override

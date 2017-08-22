@@ -198,4 +198,20 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		return buyerLaunchBargainInfoResDTO;
 	}
 
+	@Override
+	public Integer getBuyerLaunchBargainInfoNum(String promotionId, String levelCode,
+			String messageId) {
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoList（）方法开始,入参{}",
+				messageId,promotionId+":"+levelCode+":"+messageId);
+		BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo = new BuyerLaunchBargainInfoResDTO();
+		buyerLaunchBargainInfo.setPromotionId(promotionId);
+		buyerLaunchBargainInfo.setLevelCode(levelCode);
+		buyerLaunchBargainInfo.setIsBargainOver(1);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber（）方法开始,入参{}",messageId,
+				JSON.toJSONString(buyerLaunchBargainInfo));
+		Integer i = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(buyerLaunchBargainInfo);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoList（）方法结束,出参{}",messageId,
+				i);
+		return i;
+	}
 }

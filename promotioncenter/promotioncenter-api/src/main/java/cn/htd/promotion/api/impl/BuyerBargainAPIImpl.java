@@ -133,4 +133,28 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		}
 		return result;
 	}
+
+	@Override
+	public ExecuteResult<Integer> getBuyerLaunchBargainInfoNum(String promotionId,
+			String levelCode, String messageId) {
+		ExecuteResult<Integer> result = new ExecuteResult<Integer>();
+		try{
+			if(!StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(levelCode) && !StringUtils.isEmpty(messageId)){
+				Integer i = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoNum(promotionId,levelCode,messageId);
+				result.setResult(i);
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+			}else{
+				result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+				result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+			}
+			LOGGER.info("MessageId{}:getBuyerLaunchBargainInfoNum（）方法,出参{}", messageId, JSON.toJSONString(result));
+		}catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoNum出现异常{}",
+					messageId, promotionId + ":"+levelCode+ ":" + messageId, w.toString());
+		}
+		return result;
+	}
 }

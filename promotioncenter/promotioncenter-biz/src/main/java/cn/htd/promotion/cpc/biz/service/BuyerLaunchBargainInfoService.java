@@ -19,4 +19,6 @@ public interface BuyerLaunchBargainInfoService {
 	
 	public BuyerLaunchBargainInfoResDTO getBuyerBargainLaunchInfoByBargainCode(String bargainCode , String messageId);
 	
+	public Integer getBuyerLaunchBargainInfoNum(String promotionId,String levelCode,String messageId);
+	
 }

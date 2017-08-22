@@ -173,17 +173,31 @@ public class BuyerBargainTestUnit {
 //  }
     
     
-  @Test
-  @Rollback(false) 
-  public void testGetBuyerLaunchBargainInfoByBuyerCode() {
-  	try {
-			String bargainCode = "3172131110005";
-			String messageId ="001";
-			BuyerLaunchBargainInfoResDTO list = buyerLaunchBargainInfoService.getBuyerBargainLaunchInfoByBargainCode(bargainCode,messageId);
-			System.out.println(JSON.toJSONString(list));
-  	} catch (Exception e) {
-  		
-		}
-  }
+//  @Test
+//  @Rollback(false) 
+//  public void testGetBuyerLaunchBargainInfoByBuyerCode() {
+//  	try {
+//			String bargainCode = "3172131110005";
+//			String messageId ="001";
+//			BuyerLaunchBargainInfoResDTO list = buyerLaunchBargainInfoService.getBuyerBargainLaunchInfoByBargainCode(bargainCode,messageId);
+//			System.out.println(JSON.toJSONString(list));
+//  	} catch (Exception e) {
+//  		
+//		}
+//  }
+    
+    @Test
+    @Rollback(false) 
+    public void getBuyerLaunchBargainInfoNum() {
+    	try {
+  			String promotionId = "22172129400942";
+  			String levelCode = "2217212940094243";
+  			String messageId ="001";
+  			Integer list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoNum(promotionId,levelCode,messageId);
+  			System.out.println(JSON.toJSONString(list));
+    	} catch (Exception e) {
+    		
+  		}
+    }
     
 }

@@ -17,6 +17,14 @@ public interface BuyerBargainAPI {
 	public ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode,String messageId);
 	
 	/**
+	 * 根据活动id和层级编码查询已经砍完的商品集合
+	 * @param buyerCode
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<Integer> getBuyerLaunchBargainInfoNum(String promotionId,String levelCode,String messageId);
+	
+	/**
 	 * 更新我的砍价商品
 	 * @param buyerBargainLaunch
 	 * @return

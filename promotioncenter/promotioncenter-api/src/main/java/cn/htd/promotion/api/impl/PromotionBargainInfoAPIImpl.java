@@ -2,10 +2,15 @@ package cn.htd.promotion.api.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
+
 import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.promotion.api.PromotionBargainInfoAPI;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
@@ -50,7 +55,7 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 			result.setCode(pbs.getCode());
 			result.setErrorMessage(pbs.getMessage());
 		}catch (Exception e) {
-			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error("MessageId:{} 调用方法promotionBargainInfoService.getPromotionBargainInfoDetail出现异常{}",
@@ -58,5 +63,19 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 		}
 		return result;
 	}
+	
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(String messageId,
+            String promotionId){
+		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
+		if(!StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(messageId)){
+			return promotionBargainInfoService.getPromotionBargainInfoList(messageId, promotionId);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+	
+	
 
 }

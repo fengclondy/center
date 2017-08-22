@@ -1,7 +1,5 @@
 package cn.htd.promotion.api.impl;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
@@ -28,35 +26,13 @@ public class PromotionSloganAPIImpl implements PromotionSloganAPI {
 			String providerSellerCode, String messageId) {
 		ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
 		
-		if (StringUtils.isEmpty(providerSellerCode) || StringUtils.isEmpty(messageId)) {
-//			result.setCode(ResultCodeEnum.ERROR.getMsg());
-//			result.setErrorMessage(ResultCodeEåånum.PROMOTION_PARAM_IS_NULL
-//					.getMsg());
-//			LOGGER.error(
-//					"MessageId:{} 调用方法promotionSloganAPIImpl.queryBargainSloganBySellerCode出现异常{}",
-//					messageId, providerSellerCode + ":" + messageId);
-//			return result;
-		}
-		try {
-			List<PromotionSloganResDTO> promotionSloganDTOList = promotionSloganService
-					.queryBargainSloganBySellerCode(providerSellerCode,
-							messageId);
-			if (null == promotionSloganDTOList
-					|| promotionSloganDTOList.size() == 0) {
-				result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
-			} else {
-				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
-				result.setResult(promotionSloganDTOList);
-			}
-
-		} catch (Exception e) {
-			result.setCode(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法promotionSloganService.queryBargainSloganBySellerCode出现异常{}",
-					messageId, providerSellerCode + ":" + messageId,
-					w.toString());
+		if (!StringUtils.isEmpty(providerSellerCode) && !StringUtils.isEmpty(messageId)) {
+			return promotionSloganService.queryBargainSloganBySellerCode(providerSellerCode, messageId);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+			LOGGER.error("MessageId:{} 调用方法PromotionSloganAPIImpl.queryBargainSloganBySellerCode出现错误{}",
+					messageId, providerSellerCode + ":" + messageId);
 		}
 		return result;
 	}

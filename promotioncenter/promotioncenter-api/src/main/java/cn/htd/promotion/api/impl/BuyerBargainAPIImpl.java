@@ -93,4 +93,15 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		}
 		return result;
 	}
+	
+	public ExecuteResult<BuyerLaunchBargainInfoResDTO> addBuyerBargainLaunch(BuyerLaunchBargainInfoResDTO bargainInfoDTO, String messageId){
+		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
+		if(!StringUtils.isEmpty(messageId) && null != bargainInfoDTO){
+			return buyerLaunchBargainInfoService.addBuyerBargainLaunch(bargainInfoDTO, messageId);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
 }

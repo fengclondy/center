@@ -13,8 +13,12 @@ public interface BuyerLaunchBargainInfoService {
 	public List<BuyerLaunchBargainInfoResDTO> getBuyerLaunchBargainInfoByPromotionId(String promotionId, String messageId);
 	
 	public ExecuteResult<BuyerLaunchBargainInfoResDTO> addBuyerBargainLaunch(BuyerLaunchBargainInfoResDTO barfainDTO, String messageId)
-			throws PromotionCenterBusinessException;;
+			throws PromotionCenterBusinessException;
 			
 	public Integer updateBuyerLaunchBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch);
+	
+	public BuyerLaunchBargainInfoResDTO getBuyerBargainLaunchInfoByBargainCode(String bargainCode , String messageId);
+	
+	public Integer getBuyerLaunchBargainInfoNum(String promotionId,String levelCode,String messageId);
 	
 }

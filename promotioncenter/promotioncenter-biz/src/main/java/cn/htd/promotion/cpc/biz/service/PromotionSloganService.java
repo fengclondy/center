@@ -1,6 +1,9 @@
 package cn.htd.promotion.cpc.biz.service;
 
 import java.util.List;
+
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 
 public interface PromotionSloganService {
@@ -13,6 +16,6 @@ public interface PromotionSloganService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<PromotionSloganResDTO> queryBargainSloganBySellerCode(
-			String providerSellerCode, String messageId) throws Exception;
+	public  ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(
+			String providerSellerCode, String messageId) throws PromotionCenterBusinessException;
 }

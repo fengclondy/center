@@ -53,9 +53,9 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String contactAddress;//联系地址
 	
-	private Date eachStartTime;//活动开始时间
+	private Date eachStartTimeD;//活动开始时间
 	
-	private Date eachEndTime;//活动结束时间
+	private Date eachEndTimeD;//活动结束时间
 	
 	private Date offlineStartTime;//到店购买开始时间
 	
@@ -78,6 +78,8 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	private List<BuyerBargainRecordResDTO> buyerBargainRecordList;//砍价记录
 	
 	private String promotionSlogan;//宣传语
+	
+	private List<String> sloganList;//宣传语集合
 	
 	public BigDecimal getHasBargainPrice() {
 		return hasBargainPrice;
@@ -191,20 +193,20 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.contactAddress = contactAddress;
 	}
 
-	public Date getEachStartTime() {
-		return eachStartTime;
+	public Date getEachStartTimeD() {
+		return eachStartTimeD;
 	}
 
-	public void setEachStartTime(Date eachStartTime) {
-		this.eachStartTime = eachStartTime;
+	public void setEachStartTimeD(Date eachStartTimeD) {
+		this.eachStartTimeD = eachStartTimeD;
 	}
 
-	public Date getEachEndTime() {
-		return eachEndTime;
+	public Date getEachEndTimeD() {
+		return eachEndTimeD;
 	}
 
-	public void setEachEndTime(Date eachEndTime) {
-		this.eachEndTime = eachEndTime;
+	public void setEachEndTimeD(Date eachEndTimeD) {
+		this.eachEndTimeD = eachEndTimeD;
 	}
 
 	public List<BuyerBargainRecordResDTO> getBuyerBargainRecordList() {
@@ -287,6 +289,14 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.goodsNum = goodsNum;
 	}
 
+	public List<String> getSloganList() {
+		return sloganList;
+	}
+
+	public void setSloganList(List<String> sloganList) {
+		this.sloganList = sloganList;
+	}
+
 	public void setPromotionBargainInfoResDTO(PromotionBargainInfoResDTO promotionBargainInfoResDTO) {
 		super.setPromotionAccumulaty(promotionBargainInfoResDTO);
 		this.bargainId = promotionBargainInfoResDTO.getBargainId();
@@ -298,6 +308,7 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.goodsNum = promotionBargainInfoResDTO.getGoodsNum();
 		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
 		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
+		this.sloganList = promotionBargainInfoResDTO.getSloganList();
 	}
 	
 }

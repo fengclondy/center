@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionInfoExtendDTO">
+   <result column="id" jdbcType="BIGINT" property="promotionId"/>
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="offline_start_time" jdbcType="TIMESTAMP" property="offlineStartTime"/>
+    <result column="offline_end_time" jdbcType="TIMESTAMP" property="offlineEndTime"/>
+    <result column="cycle_time_type" jdbcType="VARCHAR" property="cycleTimeType"/>
+    <result column="cycle_time_value" jdbcType="VARCHAR" property="cycleTimeValue"/>
+    <result column="each_start_time" jdbcType="TIMESTAMP" property="eachStartTime"/>
+    <result column="each_end_time" jdbcType="TIMESTAMP" property="eachEndTime"/>
+    <result column="is_total_times_limit" jdbcType="TINYINT" property="isTotalTimesLimit"/>
+    <result column="total_partake_times" jdbcType="BIGINT" property="totalPartakeTimes"/>
+    <result column="is_daily_times_limit" jdbcType="TINYINT" property="isDailyTimesLimit"/>
+    <result column="daily_winning_times" jdbcType="BIGINT" property="dailyWinningTimes"/>
+    <result column="daily_buyer_partake_times" jdbcType="BIGINT" property="dailyBuyerPartakeTimes"/>
+    <result column="daily_buyer_winning_times" jdbcType="BIGINT" property="dailyBuyerWinningTimes"/>
+    <result column="is_share_times_limit" jdbcType="TINYINT" property="isShareTimesLimit"/>
+    <result column="share_extra_partake_times" jdbcType="BIGINT" property="shareExtraPartakeTimes"/>
+    <result column="top_extra_partake_times" jdbcType="BIGINT" property="topExtraPartakeTimes"/>
+    <result column="contact_name" jdbcType="VARCHAR" property="contactName"/>
+    <result column="contact_telephone" jdbcType="VARCHAR" property="contactTelephone"/>
+    <result column="contact_address" jdbcType="VARCHAR" property="contactAddress"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+		id,
+		promotion_id,
+		offline_start_time,
+		offline_end_time,
+		cycle_time_type,
+		cycle_time_value,
+		each_start_time,
+		each_end_time,
+		is_total_times_limit,
+		total_partake_times,
+		is_daily_times_limit,
+		daily_winning_times,
+		daily_buyer_partake_times,
+		daily_buyer_winning_times,
+		is_share_times_limit,
+		share_extra_partake_times,
+		top_extra_partake_times,
+		contact_name,
+		contact_telephone,
+		contact_address,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+	</sql>
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+  <select id="queryPromotionExtendInfoByIdList" parameterType="java.util.List" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_extend_info
+    where 1=1
+    and promotion_id in
+    <foreach collection="list" index="index" item="promotionId" open="(" separator="," close=")">
+      #{promotionId}
+    </foreach>
+  </select>
+  <select id="queryById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_extend_info
+    where promotion_id = #{promotionId, jdbcType=VARCHAR}
+    limit 0,1
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into promotion_extend_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      promotion_id,
+      <if test="offlineStartTime != null and offlineStartTime != ''">
+        offline_start_time,
+      </if>
+      <if test="offlineEndTime != null and offlineEndTime != ''">
+        offline_end_time,
+      </if>
+      <if test="cycleTimeType != null and cycleTimeType != ''">
+        cycle_time_type,
+      </if>
+      <if test="cycleTimeValue != null and cycleTimeValue != ''">
+      	cycle_time_value,
+      </if>
+      <if test="eachStartTime != null and eachStartTime != ''">
+        each_start_time,
+      </if>
+      <if test="eachEndTime != null and eachEndTime != ''">
+        each_end_time,
+      </if>
+      <if test="isTotalTimesLimit != null">
+        is_total_times_limit,
+      </if>
+      <if test="totalPartakeTimes != null">
+        total_partake_times,
+      </if>
+      <if test="isDailyTimesLimit != null">
+        is_daily_times_limit,
+      </if>
+      <if test="dailyWinningTimes != null">
+      	daily_winning_times,
+      </if>
+      <if test="dailyBuyerPartakeTimes != null">
+      	daily_buyer_partake_times,
+      </if>
+      <if test="dailyBuyerWinningTimes != null">
+      	daily_buyer_winning_times,
+      </if>
+      <if test="isShareTimesLimit != null">
+      	is_share_times_limit,
+      </if>
+      <if test="shareExtraPartakeTimes != null">
+      	share_extra_partake_times,
+      </if>
+      <if test="topExtraPartakeTimes != null">
+      	top_extra_partake_times,
+      </if>
+      <if test="contactName != null and contactName != ''">
+      	contact_name,
+      </if>
+      <if test="contactTelephone != null and contactTelephone != ''">
+      	contact_telephone,
+      </if>
+      <if test="contactAddress != null and contactAddress != ''">
+      	contact_address,
+      </if>
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{promotionId,jdbcType=VARCHAR},
+      <if test="offlineStartTime != null and offlineStartTime != ''">
+        #{offlineStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offlineEndTime != null and offlineEndTime != ''">
+      	#{offlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cycleTimeType != null and cycleTimeType != ''">
+     	#{cycleTimeType,jdbcType=VARCHAR},
+      </if>
+      <if test="cycleTimeValue != null and cycleTimeValue != ''">
+      	#{cycleTimeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="eachStartTime != null and eachStartTime != ''">
+        #{eachStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eachEndTime != null and eachEndTime != ''">
+        #{eachEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isTotalTimesLimit != null">
+        #{isTotalTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="totalPartakeTimes != null">
+        #{totalPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="isDailyTimesLimit != null">
+        #{isDailyTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="dailyWinningTimes != null">
+        #{dailyWinningTimes,jdbcType=BIGINT},
+      </if>
+      <if test="dailyBuyerPartakeTimes != null">
+      	#{dailyBuyerPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="dailyBuyerWinningTimes != null">
+      	#{dailyBuyerWinningTimes,jdbcType=BIGINT},
+      </if>
+      <if test="isShareTimesLimit != null">
+      	#{isShareTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="shareExtraPartakeTimes != null">
+      	#{shareExtraPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="topExtraPartakeTimes != null">
+		#{topExtraPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="contactName != null and contactName != ''">
+      	#{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTelephone != null and contactTelephone != ''">
+      	#{contactTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="contactAddress != null and contactAddress != ''">
+      	#{contactAddress,jdbcType=VARCHAR},
+      </if>
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <update id="update">
+    update promotion_extend_info
+    <set>
+	  <if test="offlineStartTime != null and offlineStartTime != ''">
+        offline_start_time = #{offlineStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offlineEndTime != null and offlineEndTime != ''">
+      	offline_end_time = #{offlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cycleTimeType != null and cycleTimeType != ''">
+     	cycle_time_type = #{cycleTimeType,jdbcType=VARCHAR},
+      </if>
+      <if test="cycleTimeValue != null and cycleTimeValue != ''">
+      	cycle_time_value = #{cycleTimeValue,jdbcType=VARCHAR},
+      </if>
+      <if test="eachStartTime != null and eachStartTime != ''">
+        each_start_time = #{eachStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eachEndTime != null and eachEndTime != ''">
+        each_end_time = #{eachEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isTotalTimesLimit != null">
+        is_total_times_limit = #{isTotalTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="totalPartakeTimes != null">
+        total_partake_times = #{totalPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="isDailyTimesLimit != null">
+        is_daily_times_limit = #{isDailyTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="dailyWinningTimes != null">
+        daily_winning_times = #{dailyWinningTimes,jdbcType=BIGINT},
+      </if>
+      <if test="dailyBuyerPartakeTimes != null">
+      	daily_buyer_partake_times = #{dailyBuyerPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="dailyBuyerWinningTimes != null">
+      	daily_buyer_winning_times = #{dailyBuyerWinningTimes,jdbcType=BIGINT},
+      </if>
+      <if test="isShareTimesLimit != null">
+      	is_share_times_limit = #{isShareTimesLimit,jdbcType=TINYINT},
+      </if>
+      <if test="shareExtraPartakeTimes != null">
+      	share_extra_partake_times = #{shareExtraPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="topExtraPartakeTimes != null">
+		top_extra_partake_times = #{topExtraPartakeTimes,jdbcType=BIGINT},
+      </if>
+      <if test="contactName != null and contactName != ''">
+      	 contact_name = #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTelephone != null and contactTelephone != ''">
+      	contact_telephone = #{contactTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="contactAddress != null and contactAddress != ''">
+        contact_address = #{contactAddress,jdbcType=VARCHAR},
+      </if>
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+</mapper>

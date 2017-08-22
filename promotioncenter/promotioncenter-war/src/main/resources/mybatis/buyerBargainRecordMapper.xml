@@ -93,8 +93,10 @@
 		</trim>
 	</insert>
 
-
+	<select id="queryPromotionBargainJoinQTY" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM buyer_bargain_record 
+		WHERE bargain_code in (SELECT bargain_code FROM buyer_launch_bargain_info 
+		WHERE promotion_id = #{promotionId})
+	</select>
 	
-
-
 </mapper>

@@ -94,7 +94,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	@Override
 	public ExecuteResult<BuyerLaunchBargainInfoResDTO> addBuyerBargainLaunch(BuyerLaunchBargainInfoResDTO bargainInfoDTO, String messageId) 
 				throws PromotionCenterBusinessException {
-		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.addBuyerBargainLaunch（）方法开始,入参{}",messageId,StringUtilHelper.getClassParam(bargainInfoDTO)+":"+messageId);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.addBuyerBargainLaunch（）方法开始,入参{}",messageId,JSON.toJSONString(bargainInfoDTO)+":"+messageId);
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
 		PromotionInfoDTO promotionInfo = null;
 		PromotionInfoExtendDTO promotionInfoExtend = null;
@@ -119,7 +119,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
 		                  "砍价活动时间未开始");
 			}
-			if((new Date()).before(promotionInfo.getInvalidTime())){
+			if((new Date()).after(promotionInfo.getInvalidTime())){
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
 		                  "砍价活动时间已结束");
 			}
@@ -163,6 +163,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			buyerBargainRecord.setCreateTime(new Date());
 			buyerBargainRecord.setBargainTime(new Date());
 			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
+			result.setResult(bargainInfoDTO);
 		} catch (PromotionCenterBusinessException pbs){
 			result.setCode(pbs.getCode());
 			result.setErrorMessage(pbs.getMessage());
@@ -181,5 +182,36 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				"执行结果为："+flag);
 		return flag;
 	}
+	
+	@Override
+	public BuyerLaunchBargainInfoResDTO getBuyerBargainLaunchInfoByBargainCode(String bargainCode, String messageId) {
+		BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfoResDTO = null;
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法开始,入参{}",
+				messageId,bargainCode+":"+messageId);
+		BuyerLaunchBargainInfoDMO buyerBargainInfo = buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode(bargainCode);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法开始,出参{}",messageId,
+				JSON.toJSONString(buyerBargainInfo));
+		if(buyerBargainInfo != null){
+			String str = JSONObject.toJSONString(buyerBargainInfo);
+			buyerLaunchBargainInfoResDTO = JSONObject.parseObject(str,BuyerLaunchBargainInfoResDTO.class);
+		}
+		return buyerLaunchBargainInfoResDTO;
+	}
 
+	@Override
+	public Integer getBuyerLaunchBargainInfoNum(String promotionId, String levelCode,
+			String messageId) {
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoList（）方法开始,入参{}",
+				messageId,promotionId+":"+levelCode+":"+messageId);
+		BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo = new BuyerLaunchBargainInfoResDTO();
+		buyerLaunchBargainInfo.setPromotionId(promotionId);
+		buyerLaunchBargainInfo.setLevelCode(levelCode);
+		buyerLaunchBargainInfo.setIsBargainOver(1);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber（）方法开始,入参{}",messageId,
+				JSON.toJSONString(buyerLaunchBargainInfo));
+		Integer i = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(buyerLaunchBargainInfo);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoList（）方法结束,出参{}",messageId,
+				i);
+		return i;
+	}
 }

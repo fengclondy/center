@@ -221,6 +221,8 @@ public class PromotionBargainInfoServiceImpl implements
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+            LOGGER.error("MessageId:{} 调用方法PromotionBargainInfoService.getPromotionBargainInfoList出现异常{}",
+            		messageId, promotionId, e.toString());
         }
         return result;
     }
@@ -281,10 +283,10 @@ public class PromotionBargainInfoServiceImpl implements
 	                        "砍价活动:" + promotionId + " 只有在已结束状态时不能进行修改");
 	            }
 	            modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
-//	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
-//	                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_HAS_MODIFIED,
-//	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
-//	            }
+	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
+	                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_HAS_MODIFIED,
+	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
+	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());

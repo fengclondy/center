@@ -23,6 +23,7 @@ import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 
 @Service("buyerBargainRecordAPI")
 public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
@@ -44,11 +45,12 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
 						.getBuyerBargainRecordByBargainCode(bargainCode,
 								messageId);
 				result.setResult(BuyerBargainRecordList);
-				result.setCode(ResultCodeEnum.SUCCESS.getCode());
 				if (BuyerBargainRecordList.size() == 0
 						|| BuyerBargainRecordList == null) {
+					result.setCode(ResultCodeEnum.NORESULT.getCode());
 					result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
 				} else {
+					result.setCode(ResultCodeEnum.SUCCESS.getCode());
 					result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 				}
 			} else {
@@ -127,6 +129,19 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
 					"MessageId:{} 调用方法buyerBargainRecordService.getThisPersonIsBargain出现异常{}",
 					messageId, bargainCode + ":" + bargainPersonCode,
 					w.toString());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<Integer> queryPromotionBargainJoinQTY(
+			String promotionId, String messageId) {
+		ExecuteResult<Integer> result = new ExecuteResult<Integer>();
+		if(!StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(messageId)){
+			return buyerBargainRecordService.queryPromotionBargainJoinQTY(promotionId, messageId);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
 		}
 		return result;
 	}

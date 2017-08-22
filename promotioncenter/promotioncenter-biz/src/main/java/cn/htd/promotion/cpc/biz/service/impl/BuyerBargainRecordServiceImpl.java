@@ -17,6 +17,10 @@ import com.alibaba.fastjson.JSONObject;
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 
@@ -63,6 +67,26 @@ public class BuyerBargainRecordServiceImpl implements BuyerBargainRecordService 
 			flag = false;
 		}
 		return flag;
+	}
+
+	@Override
+	public ExecuteResult<Integer> queryPromotionBargainJoinQTY(String promotionId, String messageId)
+			throws PromotionCenterBusinessException {
+		LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.queryPromotionBargainJoinQTY（）方法开始,入参{}",messageId,promotionId);
+		ExecuteResult<Integer> result = new ExecuteResult<Integer>();
+		Integer qty = null;
+		try {
+			qty = buyerBargainRecordDAO.queryPromotionBargainJoinQTY(promotionId);
+			if(null == qty){
+				result.setResult(0);
+			}else{
+				result.setResult(qty.intValue());
+			}
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
 	}
 
 }

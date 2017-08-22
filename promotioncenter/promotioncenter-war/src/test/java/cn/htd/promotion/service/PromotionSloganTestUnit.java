@@ -1,11 +1,6 @@
 package cn.htd.promotion.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
-
-import net.sf.json.JSONObject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,9 +8,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
-
-import com.alibaba.fastjson.JSON;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -25,8 +19,12 @@ public class PromotionSloganTestUnit {
     @Resource
     private PromotionSloganService promotionSloganService;
     
+	@Resource
+	private BuyerBargainRecordDAO buyerBargainRecordDAO;
+    
 	@Test
 	public void savePromotionInfo() {
-		 
+		Integer qty = buyerBargainRecordDAO.queryPromotionBargainJoinQTY("22172129400942");
+		System.out.println(qty);
 	}
 }

@@ -91,10 +91,8 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                                 save2PushInfo(item);
                             }
                         }
-
                     }
                 }
-
                 this.redisDB.set(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME, sp.format(now));
             }
         } catch (Exception e){

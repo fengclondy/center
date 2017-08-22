@@ -44,11 +44,12 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
 						.getBuyerBargainRecordByBargainCode(bargainCode,
 								messageId);
 				result.setResult(BuyerBargainRecordList);
-				result.setCode(ResultCodeEnum.SUCCESS.getCode());
 				if (BuyerBargainRecordList.size() == 0
 						|| BuyerBargainRecordList == null) {
+					result.setCode(ResultCodeEnum.NORESULT.getCode());
 					result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
 				} else {
+					result.setCode(ResultCodeEnum.SUCCESS.getCode());
 					result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 				}
 			} else {

@@ -39,10 +39,12 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 			if(!StringUtils.isEmpty(buyerCode) && !StringUtils.isEmpty(messageId)){
 				List<BuyerLaunchBargainInfoResDTO> buyerBargainInfoList = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
 				result.setResult(buyerBargainInfoList);
-				result.setCode(ResultCodeEnum.SUCCESS.getCode());
+				
 				if(buyerBargainInfoList.size() == 0 || buyerBargainInfoList ==null){
+					result.setCode(ResultCodeEnum.NORESULT.getCode());
 					result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
 				}else{
+					result.setCode(ResultCodeEnum.SUCCESS.getCode());
 					result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 				}
 			}else{
@@ -118,6 +120,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 					result.setResult(buyerLaunchBargainInfo);
 				}else{
 					result.setCode(ResultCodeEnum.NORESULT.getCode());
+					result.setCode(ResultCodeEnum.NORESULT.getMsg());
 				}
 			}else{
 				result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());

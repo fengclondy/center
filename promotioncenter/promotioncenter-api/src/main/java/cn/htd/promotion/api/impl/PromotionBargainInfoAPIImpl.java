@@ -45,10 +45,11 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 			}
 			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
 			result.setResult(promotionBargainInfo);
-			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			if(promotionBargainInfo ==null){
+				result.setCode(ResultCodeEnum.NORESULT.getCode());
 				result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
 			}else{
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
 				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 			}
 		}catch(PromotionCenterBusinessException pbs){

@@ -24,6 +24,11 @@ public class UserSyncServiceImpl implements UserSyncService {
 
     private final static Logger logger = LoggerFactory.getLogger(UserSyncServiceImpl.class);
 
+    /**
+     * 平台公司
+     */
+    public static final String TYPE_SUBCOMPANY = "2";
+    
     @Resource
     private HTDCompanyDAO htdCompanyDAO;
 
@@ -35,6 +40,11 @@ public class UserSyncServiceImpl implements UserSyncService {
         ExecuteResult<Boolean> res = new ExecuteResult<Boolean>();
 
         try {
+            // 非平台公司的时候，区域默认空格
+            if (!TYPE_SUBCOMPANY.equals(dto.getType())) {
+                dto.setArea(" ");
+            }
+        	
             // 同步HTD公司信息
             HTDCompanyDTO oldDto = htdCompanyDAO.queryHTDCompanyById(dto.getCompanyId());
             if (oldDto == null) {

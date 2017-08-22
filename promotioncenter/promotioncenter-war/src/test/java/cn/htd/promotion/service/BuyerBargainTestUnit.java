@@ -56,23 +56,23 @@ public class BuyerBargainTestUnit {
 //		}
 //    }
     
-    @Test
-    @Rollback(false) 
-    public void testGetPromotionBargainInfoDetail() {
-    	try {
-    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-//			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-    		buyerBargainLaunch.setBuyerCode("htd20070002");
-			buyerBargainLaunch.setPromotionId("22171657300933");
-			buyerBargainLaunch.setLevelCode("2217165730093316");
-			buyerBargainLaunch.setMessageId("123456");
-			buyerBargainLaunch.setBargainCode("123");
-			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
-			System.out.println(JSON.toJSONString(promotionBargainInfo));
-    	} catch (Exception e) {
-    		
-		}
-    }
+//    @Test
+//    @Rollback(false) 
+//    public void testGetPromotionBargainInfoDetail() {
+//    	try {
+//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+////			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
+//    		buyerBargainLaunch.setBuyerCode("htd20070002");
+//			buyerBargainLaunch.setPromotionId("22171657300933");
+//			buyerBargainLaunch.setLevelCode("2217165730093316");
+//			buyerBargainLaunch.setMessageId("123456");
+//			buyerBargainLaunch.setBargainCode("123");
+//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+//			System.out.println(JSON.toJSONString(promotionBargainInfo));
+//    	} catch (Exception e) {
+//    		
+//		}
+//    }
     
     
 //    @Test
@@ -172,5 +172,18 @@ public class BuyerBargainTestUnit {
 //		}
 //  }
     
+    
+  @Test
+  @Rollback(false) 
+  public void testGetBuyerLaunchBargainInfoByBuyerCode() {
+  	try {
+			String bargainCode = "3172131110005";
+			String messageId ="001";
+			BuyerLaunchBargainInfoResDTO list = buyerLaunchBargainInfoService.getBuyerBargainLaunchInfoByBargainCode(bargainCode,messageId);
+			System.out.println(JSON.toJSONString(list));
+  	} catch (Exception e) {
+  		
+		}
+  }
     
 }

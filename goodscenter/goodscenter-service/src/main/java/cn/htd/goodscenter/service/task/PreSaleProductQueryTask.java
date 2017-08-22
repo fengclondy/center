@@ -98,7 +98,6 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
         } catch (Exception e){
             logger.error("查询预售商品数据【PreSaleProductQueryTask】出错, 错误信息", e);
         } finally {
-
             logger.info("查询预售商品数据【PreSaleProductQueryTask】任务结束");
         }
         return itemList;

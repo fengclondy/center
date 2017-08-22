@@ -135,32 +135,4 @@ public class StringUtilHelper {
 		}
 		return flag;
 	}
-
-	/**
-	 * 根据class打印其属性name与value
-	 * 
-	 * @param bean
-	 * @return
-	 */
-	public static String getClassParam(Object bean) {
-		String value = "";
-		if (null == bean) {
-			return "";
-		}
-		try {
-			Class<?> userCla = (Class<?>) bean.getClass();
-			Field[] fs = userCla.getDeclaredFields();
-			for (int i = 0; i < fs.length; i++) {
-				Field f = fs[i];
-				f.setAccessible(true);
-				Object val = f.get(bean);
-				if (null != val) {
-					value += f.getName() + "=" + val + ";";
-				}
-			}
-		} catch (Exception e) {
-			return "";
-		}
-		return value;
-	}
 }

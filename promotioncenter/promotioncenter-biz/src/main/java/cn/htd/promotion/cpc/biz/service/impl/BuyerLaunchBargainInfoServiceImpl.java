@@ -94,7 +94,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	@Override
 	public ExecuteResult<BuyerLaunchBargainInfoResDTO> addBuyerBargainLaunch(BuyerLaunchBargainInfoResDTO bargainInfoDTO, String messageId) 
 				throws PromotionCenterBusinessException {
-		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.addBuyerBargainLaunch（）方法开始,入参{}",messageId,StringUtilHelper.getClassParam(bargainInfoDTO)+":"+messageId);
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.addBuyerBargainLaunch（）方法开始,入参{}",messageId,JSON.toJSONString(bargainInfoDTO)+":"+messageId);
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
 		PromotionInfoDTO promotionInfo = null;
 		PromotionInfoExtendDTO promotionInfoExtend = null;

@@ -17,7 +17,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.6.0</slf4j.version>
-		<junit.version>4.7</junit.version>
+		<junit.version>4.12</junit.version>
 		<quartz.version>1.5.2</quartz.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-logging-api.version>1.1</commons-logging-api.version>

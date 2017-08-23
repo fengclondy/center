@@ -191,8 +191,8 @@ public class OrderCreateAPIImpl implements OrderCreateAPI {
 			return orderCreateInfoResDTO;
 		}
 		// 处理订单信息
-		orderCreateService.assembleOrder4huilin(orderCreate4huilinReqDTO.getMessageId(), orderCreate4huilinReqDTO,
+		OrderCreateInfoResDTO res = orderCreateService.assembleOrder4huilin(orderCreate4huilinReqDTO.getMessageId(), orderCreate4huilinReqDTO,
 				orderCreateInfoResDTO);
-		return orderCreateInfoResDTO;
+		return res;
 	}
 }

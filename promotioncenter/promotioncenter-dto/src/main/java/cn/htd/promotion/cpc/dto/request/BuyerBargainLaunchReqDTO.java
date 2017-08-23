@@ -12,10 +12,8 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 	
 	private String buyerCode;//买家编码
 	
-	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;//促销活动编码
 	
-	@NotEmpty(message = "levelCode不能为空")
 	private String levelCode;//层级编码
 	
 	@NotEmpty(message = "messageId不能为空")
@@ -27,7 +25,7 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 	
 	private Date bargainOverTime;//砍完时间
 	
-	private Integer isBargainOver;//是否砍完  0：没有砍完 1：砍完   2：已售完
+	private Integer isBargainOver;//是否砍完  0：没有砍完 1：砍完   2：已售完  空：全部
 	
 	private BigDecimal goodsCurrentPrice;//商品当前价格
 	
@@ -36,6 +34,26 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 	private String modifyName;//更新人名称
 	
 	private Date modifyTime;//更新时间
+	
+	private String goodsName;//砍价商品
+	
+	private String buyerTelephone;//联系方式
+
+	public String getGoodsName() {
+		return goodsName;
+	}
+
+	public void setGoodsName(String goodsName) {
+		this.goodsName = goodsName;
+	}
+
+	public String getBuyerTelephone() {
+		return buyerTelephone;
+	}
+
+	public void setBuyerTelephone(String buyerTelephone) {
+		this.buyerTelephone = buyerTelephone;
+	}
 
 	public Date getLaunchTime() {
 		return launchTime;

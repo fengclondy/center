@@ -1,6 +1,7 @@
 package cn.htd.zeus.tc.dto.resquest;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +19,9 @@ public class PreSalesOrderCallBackReqDTO extends GenricReqDTO implements Seriali
 	//订单号
 	@NotEmpty(message = "orderNo不能为空")
 	private String orderNo;
+	
+	@NotNull(message = "orderNoList不能为空")
+	private List<String> orderNoList;
 	
 	//erp预售下行状态
 	@NotNull(message = "erpResultStatus不能为空")
@@ -72,5 +76,12 @@ public class PreSalesOrderCallBackReqDTO extends GenricReqDTO implements Seriali
 	public void setSaleNo(String saleNo) {
 		this.saleNo = saleNo;
 	}
-	
+
+	public List<String> getOrderNoList() {
+		return orderNoList;
+	}
+
+	public void setOrderNoList(List<String> orderNoList) {
+		this.orderNoList = orderNoList;
+	}
 }

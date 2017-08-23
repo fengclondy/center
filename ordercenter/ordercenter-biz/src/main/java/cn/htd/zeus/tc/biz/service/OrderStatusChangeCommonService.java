@@ -1,5 +1,7 @@
 package cn.htd.zeus.tc.biz.service;
 
+import java.util.List;
+
 import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
 
 /*
@@ -29,5 +31,5 @@ public interface OrderStatusChangeCommonService {
 	 */
 	public void updateOrderErrorVMSPayStatus(TradeOrdersDMO tradeOrdersDMO);
 
-	public int updateOrderPayTimeLimit(String orderNo);
+	public int updateOrderPayTimeLimit(List<String> orderNoList);
 }

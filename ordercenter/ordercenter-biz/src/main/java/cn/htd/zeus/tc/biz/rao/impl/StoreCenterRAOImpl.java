@@ -14,11 +14,12 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.storecenter.dto.QQCustomerDTO;
-import cn.htd.storecenter.dto.ShopAuditInDTO;
 import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.storecenter.service.QQCustomerService;
 import cn.htd.storecenter.service.ShopExportService;
 import cn.htd.zeus.tc.biz.rao.StoreCenterRAO;
+import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
+import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 
 @Service
 public class StoreCenterRAOImpl implements StoreCenterRAO {
@@ -57,23 +58,33 @@ public class StoreCenterRAOImpl implements StoreCenterRAO {
 	}
 
 	@Override
-	public List<ShopDTO> queryShopByids(String messageId, ShopAuditInDTO shopAudiinDTO) {
-		ExecuteResult<List<ShopDTO>> shopList = new ExecuteResult<List<ShopDTO>>();
+	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id) { 
+		OtherCenterResDTO<ShopDTO> other = new OtherCenterResDTO<ShopDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
-			LOGGER.info("MessageId:{}查询卖家中心(queryShopByids查询所有店铺信息)--组装查询参数开始:{}", messageId,
-					JSONObject.toJSONString(shopAudiinDTO));
-			shopList = shopExportService.queryShopByids(shopAudiinDTO);
+			LOGGER.info("查询卖家中心(findShopInfoById查询卖家店铺信息)--组装查询参数开始:{}", id);
+			ExecuteResult<ShopDTO> result = shopExportService.queryBySellerId(id);
 			Long endTime = System.currentTimeMillis();
-			LOGGER.info("MessageId:{}查询卖家中心(queryShopByids查询所有店铺信息)--返回结果:{}", messageId,
-					JSONObject.toJSONString(shopList) + " 耗时:" + (endTime - startTime));
+			LOGGER.info("查询卖家中心(findShopInfoById查询卖家店铺信息)--返回结果:{}",
+					JSONObject.toJSONString(result) + " 耗时:" + (endTime - startTime));
+
+			if (result.getResult() != null) {
+				other.setOtherCenterResult(result.getResult());
+				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			} else {
+				// 没有查到数据
+				LOGGER.warn("查询卖家中心(findShopInfoById查询卖家店铺信息-没有查到数据 返回错误码和错误信息:{}",
+						result.getCode() + result.getResultMessage());
+				other.setOtherCenterResponseMsg(ResultCodeEnum.SHOPINFO_IS_NULL.getMsg());
+				other.setOtherCenterResponseCode(ResultCodeEnum.SHOPINFO_IS_NULL.getCode());
+			}
+
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法shopExportService.queryShopByids出现异常{}", messageId,
-					w.toString());
+			LOGGER.error("调用方法findShopInfoById查询卖家店铺信息出现异常{}", w.toString());
 		}
-		return shopList.getResult();
+		return other;
 	}
 
 }

@@ -11,5 +11,5 @@ public interface StoreCenterRAO {
 	public List<QQCustomerDTO> searchQQCustomerByCondition(Long shopId, String messageId,
 			String customerType);
 
-	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id);
+	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id); 
 }

@@ -58,7 +58,7 @@ public class StoreCenterRAOImpl implements StoreCenterRAO {
 	}
 
 	@Override
-	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id) {
+	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id) { 
 		OtherCenterResDTO<ShopDTO> other = new OtherCenterResDTO<ShopDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();

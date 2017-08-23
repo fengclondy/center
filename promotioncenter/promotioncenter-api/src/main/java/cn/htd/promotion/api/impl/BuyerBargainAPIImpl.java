@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.api.BuyerBargainAPI;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
@@ -158,6 +160,17 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 			LOGGER.error("MessageId:{} 调用方法buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoNum出现异常{}",
 					messageId, promotionId + ":"+levelCode+ ":" + messageId, w.toString());
 		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByCondition(
+			Pager<BuyerBargainLaunchReqDTO> pager, BuyerBargainLaunchReqDTO BuyerBargainLaunch) {
+		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
+		DataGrid<BuyerLaunchBargainInfoResDTO> datagrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
+		
+		
+		result.setResult(datagrid);
 		return result;
 	}
 }

@@ -30,7 +30,6 @@
 	    	   pbi.goods_floor_price goodsFloorPrice,
 	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
 	    	   ps.promotion_slogan promotionDescribe,
-	    	   psd.seller_name sellerName,
 	    	   pei.contact_name contactName,
 	    	   pei.contact_telephone contactTelphone,
 	    	   pei.contact_address contactAddress,
@@ -42,11 +41,11 @@
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
+	    	   pi.promotion_provider_seller_code sellerName,
 	     	   pi.effective_time effectiveTime,
 			   pi.invalid_time invalidTime
 	    from promotion_bargain_info pbi
 	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
-	    left join promotion_seller_detail psd on pbi.promotion_id = psd.promotion_id
 	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
 		left join promotion_info pi on pi.promotion_id = pbi.promotion_id
 	    left join buyer_launch_bargain_info plb on (plb.promotion_id = pbi.promotion_id and plb.level_code = pbi.level_code)

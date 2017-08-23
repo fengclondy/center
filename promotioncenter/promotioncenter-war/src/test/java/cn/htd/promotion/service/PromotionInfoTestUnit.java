@@ -52,13 +52,14 @@ public class PromotionInfoTestUnit {
 			List<String> sloganList = new ArrayList<String>();
 			sloganList.add("汇通达周年庆");
 			sloganList.add("汇通达十年庆");
+			sloganList.add("汇通达百年庆");
 			PromotionBargainInfoResDTO p1 = new PromotionBargainInfoResDTO();
 			p1.setPromotionName("汇通达周年庆");
-			p1.setPromotionDescribe("汇通达周年庆");
+			p1.setPromotionDescribe("赶紧来买吧!!!");
 			p1.setEffectiveTime(new Date());
 			p1.setInvalidTime(DateUtil.getDateBySpecificDate("2017-08-20 12:00:00"));
 			p1.setOfflineStartTime(new Date());
-			p1.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-20 12:00:00"));
+			p1.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
 			p1.setGoodsPicture("1.pig");
 			p1.setGoodsName("格力空调");
 			p1.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
@@ -70,7 +71,7 @@ public class PromotionInfoTestUnit {
 			p1.setContactTelephone("1398822111");
 			p1.setContactName("胥明忠");
 			p1.setContactAddress("江苏");
-			p1.setPromotionProviderShopId(1L);
+			p1.setPromotionProviderShopId(801781L);
 			p1.setCreateId(123L);
 			p1.setCreateName("sa");
 			p1.setCreateTime(new Date());
@@ -80,7 +81,7 @@ public class PromotionInfoTestUnit {
 			p2.setEffectiveTime(new Date());
 			p2.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
 			p2.setOfflineStartTime(new Date());
-			p2.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-20 12:00:00"));
+			p2.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
 			p2.setGoodsPicture("2.pig");
 			p2.setGoodsName("格力冰箱");
 			p2.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
@@ -92,7 +93,7 @@ public class PromotionInfoTestUnit {
 			p2.setContactTelephone("1398822111222");
 			p2.setContactName("胥明忠2");
 			p2.setContactAddress("江苏2");
-			p2.setPromotionProviderShopId(2L);
+			p2.setPromotionProviderShopId(801781L);
 			p1.setCreateId(123L);
 			p1.setCreateName("sa");
 			p1.setCreateTime(new Date());

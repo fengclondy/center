@@ -27,6 +27,13 @@ public interface TradeOrdersDAO {
 	 * 根据orderNo跟新订单表
 	 */
 	int updateTradeOrdersByOrderNo(TradeOrdersDMO tradeOrdersDMO);
+	
+	/**
+	 * 根据订单List更新订单支付时间
+	 * @param tradeOrdersDMO
+	 * @return
+	 */
+	int updateTradeOrdersByOrderNoList(TradeOrdersDMO tradeOrdersDMO);
 
 	/*
 	 * 根据大B和小Bid查询订单表的最新一条记录

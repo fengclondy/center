@@ -19,6 +19,8 @@ import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.storecenter.service.QQCustomerService;
 import cn.htd.storecenter.service.ShopExportService;
 import cn.htd.zeus.tc.biz.rao.StoreCenterRAO;
+import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
+import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 
 @Service
 public class StoreCenterRAOImpl implements StoreCenterRAO {
@@ -74,6 +76,37 @@ public class StoreCenterRAOImpl implements StoreCenterRAO {
 					w.toString());
 		}
 		return shopList.getResult();
+	}
+
+
+	@Override
+	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id) { 
+		OtherCenterResDTO<ShopDTO> other = new OtherCenterResDTO<ShopDTO>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("查询卖家中心(findShopInfoById查询卖家店铺信息)--组装查询参数开始:{}", id);
+			ExecuteResult<ShopDTO> result = shopExportService.queryBySellerId(id);
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info("查询卖家中心(findShopInfoById查询卖家店铺信息)--返回结果:{}",
+					JSONObject.toJSONString(result) + " 耗时:" + (endTime - startTime));
+
+			if (result.getResult() != null) {
+				other.setOtherCenterResult(result.getResult());
+				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			} else {
+				// 没有查到数据
+				LOGGER.warn("查询卖家中心(findShopInfoById查询卖家店铺信息-没有查到数据 返回错误码和错误信息:{}",
+						result.getCode() + result.getResultMessage());
+				other.setOtherCenterResponseMsg(ResultCodeEnum.SHOPINFO_IS_NULL.getMsg());
+				other.setOtherCenterResponseCode(ResultCodeEnum.SHOPINFO_IS_NULL.getCode());
+			}
+
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("调用方法findShopInfoById查询卖家店铺信息出现异常{}", w.toString());
+		}
+		return other;
 	}
 
 }

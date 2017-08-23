@@ -17,6 +17,6 @@ public interface AwardRecordAPI {
      * @param PromotionAwardReqDTO
      * @return
      */
-    public ExecuteResult<DataGrid<PromotionAwardDTO>> getAwardRecordByPromotionId(PromotionAwardReqDTO dto);
+    public ExecuteResult<DataGrid<PromotionAwardDTO>> getAwardRecordByPromotionId(PromotionAwardReqDTO dto,String messageId);
 
 }

@@ -1694,4 +1694,18 @@ and b.customer_manager_code = #{customerManagerID}
 		AND trade_order_items.modify_time > #{timeLimit}
 		ORDER BY trade_order_items.modify_time  DESC
 	</select>
+	
+	<update id="updateTradeOrdersByOrderNoList" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+		update trade_orders
+		<set>
+			<if test="payTimeLimit != null">
+				pay_time_limit = #{payTimeLimit,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where 1=1
+		<foreach collection="orderNoList" item="orderNoTemp"
+			open=" and order_no in(" close=")" separator=",">
+			#{orderNoTemp}
+		</foreach>
+	</update>
 </mapper>

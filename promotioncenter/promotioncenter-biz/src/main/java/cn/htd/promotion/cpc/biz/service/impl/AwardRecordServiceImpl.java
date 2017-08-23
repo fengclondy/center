@@ -7,9 +7,11 @@ import cn.htd.promotion.cpc.biz.dmo.PromotionAwardDMO;
 import cn.htd.promotion.cpc.biz.service.AwardRecordService;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -28,12 +30,8 @@ public class AwardRecordServiceImpl implements AwardRecordService {
     AwardRecordDAO awardRecordDAO;
 
     @Override
-    public DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto) {
-        Map<String,Object> param = new HashMap<String,Object>();
-        param.put("winningStartTime",dto.getWinningStartTime());
-        param.put("winningEdnTime",dto.getWinningEdnTime());
-        param.put("rewardType",dto.getRewardType());
-        param.put("promotionId",dto.getPromotionId());
+    public DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto,String messageId) {
+        logger.info("promotionId{}:AwardRecordServiceImpl.getAwardRecordByPromotionId（）方法,入参{}",messageId , JSON.toJSONString(dto));
 
         //分页
         Pager<PromotionAwardReqDTO> page = new Pager<PromotionAwardReqDTO>();
@@ -59,6 +57,13 @@ public class AwardRecordServiceImpl implements AwardRecordService {
             dto.setWinningEdnTime(endTime + " 23:59:59");
         }
 
+        Map<String,Object> param = new HashMap<String,Object>();
+        param.put("winningStartTime",dto.getWinningStartTime());
+        param.put("winningEdnTime",dto.getWinningEdnTime());
+        param.put("rewardType",dto.getRewardType());
+        param.put("promotionId",dto.getPromotionId());
+        param.put("winningStartTime",dto.getWinningStartTime());
+        param.put("winningEndTime",dto.getWinningEdnTime());
 
         DataGrid<PromotionAwardDTO> dataGrid = new DataGrid<PromotionAwardDTO>();
         try {
@@ -67,7 +72,7 @@ public class AwardRecordServiceImpl implements AwardRecordService {
             dataGrid.setTotal(count);
             dataGrid.setRows(list);
         } catch (Exception e) {
-            logger.error("执行方法【queryTradeSettlement】报错：{}", e);
+            logger.error("messageId{}:执行方法【getAwardRecordByPromotionId】报错：{}", messageId ,e.toString());
             throw new RuntimeException(e);
         }
         return dataGrid;

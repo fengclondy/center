@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.storecenter.dto.QQCustomerDTO;
+import cn.htd.storecenter.dto.ShopAuditInDTO;
 import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.storecenter.service.QQCustomerService;
 import cn.htd.storecenter.service.ShopExportService;
@@ -56,6 +57,27 @@ public class StoreCenterRAOImpl implements StoreCenterRAO {
 		}
 		return qqCustomerDTOList;
 	}
+
+	@Override
+	public List<ShopDTO> queryShopByids(String messageId, ShopAuditInDTO shopAudiinDTO) {
+		ExecuteResult<List<ShopDTO>> shopList = new ExecuteResult<List<ShopDTO>>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{}查询卖家中心(queryShopByids查询所有店铺信息)--组装查询参数开始:{}", messageId,
+					JSONObject.toJSONString(shopAudiinDTO));
+			shopList = shopExportService.queryShopByids(shopAudiinDTO);
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{}查询卖家中心(queryShopByids查询所有店铺信息)--返回结果:{}", messageId,
+					JSONObject.toJSONString(shopList) + " 耗时:" + (endTime - startTime));
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法shopExportService.queryShopByids出现异常{}", messageId,
+					w.toString());
+		}
+		return shopList.getResult();
+	}
+
 
 	@Override
 	public OtherCenterResDTO<ShopDTO> findShopInfoById(long id) { 

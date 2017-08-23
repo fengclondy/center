@@ -30,13 +30,31 @@ public class PromotionAwardReqDTO implements Serializable{
 
     private String sellerCode;//归属会员店编号
 
+    private String sellerAddress;//会员店地址
+
+    private String belongSuperiorName;//归属上级公司名称
+
     private String rewardType;//奖励类型 1:发券，2：实物奖品，3：话费，4：汇金币
 
     private String relevanceBargainCode;//关联砍价发起编号
 
     private String rewardName;//奖品名称
 
+    private String awardValue;//奖品值
+
     private Date winningTime;//中奖时间
+
+    private String winnerName;//中奖人姓名
+
+    private String winningContact;//中奖人联系方式
+
+    private String chargeTelephone;//充值号码
+
+    private String logisticsStatus;//物流状态：00-待发货，01-已发货
+
+    private String logisticsCompany;//物流编号
+
+    private String logisticsNo;//物流编号
 
     private Long createId;//创建人ID
 
@@ -50,6 +68,7 @@ public class PromotionAwardReqDTO implements Serializable{
 
     private Date modifyTime;//更新时间
 
+
     //用于分页
     private Integer page;
 
@@ -58,39 +77,8 @@ public class PromotionAwardReqDTO implements Serializable{
     //用于搜索
     private String winningStartTime;//中奖开始时间
 
-    private String winningEdnTime;//中奖结束时间
+    private String winningEndTime;//中奖结束时间
 
-    public String getWinningStartTime() {
-        return winningStartTime;
-    }
-
-    public void setWinningStartTime(String winningStartTime) {
-        this.winningStartTime = winningStartTime;
-    }
-
-    public String getWinningEdnTime() {
-        return winningEdnTime;
-    }
-
-    public void setWinningEdnTime(String winningEdnTime) {
-        this.winningEdnTime = winningEdnTime;
-    }
-
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
 
     public Long getId() {
         return id;
@@ -164,6 +152,22 @@ public class PromotionAwardReqDTO implements Serializable{
         this.sellerCode = sellerCode;
     }
 
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
+
+    public String getBelongSuperiorName() {
+        return belongSuperiorName;
+    }
+
+    public void setBelongSuperiorName(String belongSuperiorName) {
+        this.belongSuperiorName = belongSuperiorName;
+    }
+
     public String getRewardType() {
         return rewardType;
     }
@@ -188,12 +192,68 @@ public class PromotionAwardReqDTO implements Serializable{
         this.rewardName = rewardName;
     }
 
+    public String getAwardValue() {
+        return awardValue;
+    }
+
+    public void setAwardValue(String awardValue) {
+        this.awardValue = awardValue;
+    }
+
     public Date getWinningTime() {
         return winningTime;
     }
 
     public void setWinningTime(Date winningTime) {
         this.winningTime = winningTime;
+    }
+
+    public String getWinnerName() {
+        return winnerName;
+    }
+
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
+    }
+
+    public String getWinningContact() {
+        return winningContact;
+    }
+
+    public void setWinningContact(String winningContact) {
+        this.winningContact = winningContact;
+    }
+
+    public String getChargeTelephone() {
+        return chargeTelephone;
+    }
+
+    public void setChargeTelephone(String chargeTelephone) {
+        this.chargeTelephone = chargeTelephone;
+    }
+
+    public String getLogisticsStatus() {
+        return logisticsStatus;
+    }
+
+    public void setLogisticsStatus(String logisticsStatus) {
+        this.logisticsStatus = logisticsStatus;
+    }
+
+    public String getLogisticsCompany() {
+        return logisticsCompany;
+    }
+
+    public void setLogisticsCompany(String logisticsCompany) {
+        this.logisticsCompany = logisticsCompany;
+    }
+
+    public String getLogisticsNo() {
+        return logisticsNo;
+    }
+
+    public void setLogisticsNo(String logisticsNo) {
+        this.logisticsNo = logisticsNo;
     }
 
     public Long getCreateId() {
@@ -242,5 +302,37 @@ public class PromotionAwardReqDTO implements Serializable{
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getWinningStartTime() {
+        return winningStartTime;
+    }
+
+    public void setWinningStartTime(String winningStartTime) {
+        this.winningStartTime = winningStartTime;
+    }
+
+    public String getWinningEndTime() {
+        return winningEndTime;
+    }
+
+    public void setWinningEndTime(String winningEndTime) {
+        this.winningEndTime = winningEndTime;
     }
 }

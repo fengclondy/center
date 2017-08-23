@@ -37,6 +37,7 @@ public class AwardRecordTest {
             dto.setPromotionId("NDJ00010000001");
             dto.setPage(1);
             dto.setPageSize(10);
+            dto.setBuyerName("买");
             DataGrid<PromotionAwardDTO> result =  awardRecordService.getAwardRecordByPromotionId(dto,messageId);
             System.out.printf("result:"+result);
 		} catch (Exception e) {

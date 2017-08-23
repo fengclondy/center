@@ -30,13 +30,31 @@ public class PromotionAwardDTO implements Serializable{
 
     private String sellerCode;//归属会员店编号
 
+    private String sellerAddress;//会员店地址
+
+    private String belongSuperiorName;//归属上级公司名称
+
     private String rewardType;//奖励类型 1:发券，2：实物奖品，3：话费，4：汇金币
 
     private String relevanceBargainCode;//关联砍价发起编号
 
     private String rewardName;//奖品名称
 
+    private String awardValue;//奖品值
+
     private Date winningTime;//中奖时间
+
+    private String winnerName;//中奖人姓名
+
+    private String winningContact;//中奖人联系方式
+
+    private String chargeTelephone;//充值号码
+
+    private String logisticsStatus;//物流状态：00-待发货，01-已发货
+
+    private String logisticsCompany;//物流编号
+
+    private String logisticsNo;//物流编号
 
     private Long createId;//创建人ID
 
@@ -201,5 +219,77 @@ public class PromotionAwardDTO implements Serializable{
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
+
+    public String getBelongSuperiorName() {
+        return belongSuperiorName;
+    }
+
+    public void setBelongSuperiorName(String belongSuperiorName) {
+        this.belongSuperiorName = belongSuperiorName;
+    }
+
+    public String getAwardValue() {
+        return awardValue;
+    }
+
+    public void setAwardValue(String awardValue) {
+        this.awardValue = awardValue;
+    }
+
+    public String getWinnerName() {
+        return winnerName;
+    }
+
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
+    }
+
+    public String getWinningContact() {
+        return winningContact;
+    }
+
+    public void setWinningContact(String winningContact) {
+        this.winningContact = winningContact;
+    }
+
+    public String getChargeTelephone() {
+        return chargeTelephone;
+    }
+
+    public void setChargeTelephone(String chargeTelephone) {
+        this.chargeTelephone = chargeTelephone;
+    }
+
+    public String getLogisticsStatus() {
+        return logisticsStatus;
+    }
+
+    public void setLogisticsStatus(String logisticsStatus) {
+        this.logisticsStatus = logisticsStatus;
+    }
+
+    public String getLogisticsCompany() {
+        return logisticsCompany;
+    }
+
+    public void setLogisticsCompany(String logisticsCompany) {
+        this.logisticsCompany = logisticsCompany;
+    }
+
+    public String getLogisticsNo() {
+        return logisticsNo;
+    }
+
+    public void setLogisticsNo(String logisticsNo) {
+        this.logisticsNo = logisticsNo;
     }
 }

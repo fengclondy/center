@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,9 @@ import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
-import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
-import cn.htd.promotion.cpc.common.util.StringUtilHelper;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
@@ -102,49 +100,49 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(bargainInfoDTO);
 			if (validateResult.isHasErrors()) {
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 	                  validateResult.getErrorMsg());
 			}
 			promotionInfo = promotionInfoDAO.queryById(bargainInfoDTO.getPromotionId());
 			if (promotionInfo == null) {
-                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "砍价活动不存在");
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动不存在");
             }
 			String promotionType = promotionInfo.getShowStatus();
 			if(!dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionType)){
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_VALID.getCode(),
 		                  "砍价活动未启用");
 			}
 			if((new Date()).before(promotionInfo.getEffectiveTime())){
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_VALID.getCode(),
 		                  "砍价活动时间未开始");
 			}
 			if((new Date()).after(promotionInfo.getInvalidTime())){
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_VALID.getCode(),
 		                  "砍价活动时间已结束");
 			}
 			promotionInfoExtend = promotionInfoExtendDAO.queryById(bargainInfoDTO.getPromotionId());
 			if(promotionInfoExtend == null) {
-                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "砍价活动不存在");
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动不存在");
 
 			}
 			Integer launchTimes = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(bargainInfoDTO);
 			if(null != launchTimes && null != promotionInfoExtend.getTotalPartakeTimes()
 					&& launchTimes.intValue() >= promotionInfoExtend.getTotalPartakeTimes().intValue()){
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_BARGAIN_JOIN_QTY,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
 		                  "该砍价活动商品参与次数已上限");
 			}
 			bargainInfoDTO.setIsBargainOver(1);
 			Integer bargainLockingStockNumber = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(bargainInfoDTO);
 			if(null != bargainLockingStockNumber && bargainLockingStockNumber.intValue() >= bargainInfoDTO.getGoodsNum()){
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NO_STOCK,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_STOCK.getCode(),
 		                  "砍价商品库存不足");
 			}
 			bargainInfoDTO.setIsBargainOver(0);
 			bargainInfoDTO.setBargainCode(noGenerator.generatePromotionGargainLaunchCode(promotionType));
 			BigDecimal popPrice = promotionBargainRedisHandle.addRedisBargainPriceSplit(bargainInfoDTO);
 			if(null == popPrice){
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.POMOTION_SPLIT_PRICE_ERROR,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.POMOTION_SPLIT_PRICE_ERROR.getCode(),
 		                  "拆分金额失败");
 			}
 			BigDecimal goodsCurrentPrice = (bargainInfoDTO.getGoodsCostPrice().subtract(bargainInfoDTO.getGoodsFloorPrice()))

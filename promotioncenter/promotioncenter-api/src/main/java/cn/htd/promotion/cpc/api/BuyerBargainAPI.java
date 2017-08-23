@@ -1,4 +1,4 @@
-package cn.htd.promotion.api;
+package cn.htd.promotion.cpc.api;
 
 import java.util.List;
 

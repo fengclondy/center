@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="log.path" value="/home/htd/logs/promotioncenter" />
+	<property name="log.path" value="/Users/jiangkun/Documents/Source/HTD-Projects/logs" />
 
 	<!-- Action访问记录 -->
 	<appender name="actionAccessAppender"

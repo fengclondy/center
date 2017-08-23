@@ -12,5 +12,5 @@ import java.util.List;
  */
 public interface AwardRecordService {
 
-    public DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto);
+    public DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto , String messageId);
 }

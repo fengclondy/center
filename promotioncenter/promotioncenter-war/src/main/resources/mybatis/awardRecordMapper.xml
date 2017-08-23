@@ -46,11 +46,11 @@
     <if test="params.rewardType!=null and params.rewardType!=''">
       and bwr.REWARD_TYPE = #{params.rewardType}
     </if>
-    <if test="params.startDate!=null and params.startDate!=''">
+    <if test="params.winningStartTime!=null and params.winningStartTime!=''">
       and date_format(bwr.WINNING_TIME , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
     </if>
-    <if test="params.endDate!=null and params.endDate!=''">
-      and date_format(bwr.WINNING_TIME , '%Y-%m-%d') &lt; date_format(#{params.winningEdnTime} , '%Y-%m-%d')
+    <if test="params.winningEndTime!=null and params.winningEndTime!=''">
+      and date_format(bwr.WINNING_TIME , '%Y-%m-%d') &lt; date_format(#{params.winningEndTime} , '%Y-%m-%d')
     </if>
   </sql>
 

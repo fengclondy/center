@@ -23,9 +23,14 @@ public class OrderQueryParamReqDTO extends GenricReqDTO implements Serializable{
 	private static final long serialVersionUID = -2965872780264767995L;
 
 	/**
-	 * 会员id
+	 * 会员code
 	 */
 	private String buyerCode;
+	
+	/**
+	 * 会员id
+	 */
+	private Long buyerId;
 	
 	/**
 	 * 卖家编号
@@ -194,4 +199,12 @@ public class OrderQueryParamReqDTO extends GenricReqDTO implements Serializable{
 		this.sellerName = sellerName;
 	}
 
+	public Long getBuyerId() {
+		return buyerId;
+	}
+
+	public void setBuyerId(Long buyerId) {
+		this.buyerId = buyerId;
+	}
+	
 }

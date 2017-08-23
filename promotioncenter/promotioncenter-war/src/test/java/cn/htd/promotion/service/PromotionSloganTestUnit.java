@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
+import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
 
 @Transactional  
@@ -18,8 +18,13 @@ public class PromotionSloganTestUnit {
 
     @Resource
     private PromotionSloganService promotionSloganService;
+    
+	@Resource
+	private BuyerBargainRecordDAO buyerBargainRecordDAO;
+    
 	@Test
 	public void savePromotionInfo() {
-		
+		Integer qty = buyerBargainRecordDAO.queryPromotionBargainJoinQTY("22172129400942");
+		System.out.println(qty);
 	}
 }

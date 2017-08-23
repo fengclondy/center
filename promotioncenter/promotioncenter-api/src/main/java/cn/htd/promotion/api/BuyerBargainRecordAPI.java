@@ -30,5 +30,12 @@ public interface BuyerBargainRecordAPI {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> getThisPersonIsBargain(String bargainCode ,String bargainPersonCode, String messageId);
+	
+	/**
+	 * 根据活动id查询该活动参与人数
+	 * @param promotionId
+	 * @return
+	 */
+	public ExecuteResult<Integer> queryPromotionBargainJoinQTY(String promotionId, String messageId);
 
 }

@@ -86,6 +86,7 @@ import cn.htd.zeus.tc.dto.resquest.OrderCreate4huilinReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateItemListInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateListInfoReqDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderCreateOrderListInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateSkuListInfoReqDTO;
 
 /*
@@ -1644,11 +1645,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		// 生成汇掌柜的交易号
 		String tradeNo = GenerateIdsUtil.generateTradeID(Constant.COLLECT_SHOP);
 		orderCreateInfoReqDTO.setTradeNo(tradeNo);
-		orderCreateInfoReqDTO.setSite(Constant.ALLCOUNTRY);
 		// 默认执行结果成功
 		orderCreateInfoResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		// 根据买家ID查询买家编码
-		String buyerCode = memberCenterRAO.getMemberCodeById(orderCreate4huilinReqDTO.getBuyerId())
+		String buyerCode = memberCenterRAO.getMemberCodeById(orderCreate4huilinReqDTO.getBuyerId(),messageId)
 				.getOtherCenterResult();
 		orderCreateInfoReqDTO.setBuyerCode(buyerCode);
 		// 设置发票信息
@@ -1658,8 +1658,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			LOGGER.warn("从会员中心查询卖家发票信息失败：");
 			return orderCreateInfoResDTO;
 		}
-		// 设置收货地址信息
-		this.setConsigInfo4order(messageId, buyerCode, orderCreateInfoReqDTO,
+		// 设置收货地址信息和站点
+		this.setConsigInfo4order(messageId, orderCreate4huilinReqDTO.getBuyerId(), orderCreateInfoReqDTO,
 				orderCreateInfoResDTO);
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(orderCreateInfoResDTO.getResponseCode())) {
 			LOGGER.warn("从会员中心查询卖家收货地址信息失败：");
@@ -1669,9 +1669,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		this.setSkuListInfo4order(messageId, orderCreate4huilinReqDTO, orderCreateInfoReqDTO,
 				orderCreateInfoResDTO);
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(orderCreateInfoResDTO.getResponseCode())) {
-			LOGGER.warn("从商品中心查询商品信息失败：");
+			LOGGER.warn(orderCreateInfoResDTO.getReponseMsg());
 			return orderCreateInfoResDTO;
 		}
+		orderCreateInfoReqDTO.setMessageId(messageId);
 		// 生成订单
 		OrderCreateInfoDMO orderCreateInfoDMO = this.orderCreate(orderCreateInfoReqDTO);
 		JSONObject jsonObj = (JSONObject) JSONObject.toJSON(orderCreateInfoDMO);
@@ -1698,6 +1699,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		if (!ResultCodeEnum.SUCCESS.getCode()
 				.equals(memberInvoiceInfo.getOtherCenterResponseCode())) {
 			orderCreateInfoResDTO.setResponseCode(memberInvoiceInfo.getOtherCenterResponseCode());
+			orderCreateInfoResDTO.setReponseMsg(memberInvoiceInfo.getOtherCenterResponseMsg());
+			return;
 		} else {
 			MemberInvoiceDTO memberInvoice = memberInvoiceInfo.getOtherCenterResult();
 			orderCreateInfoReqDTO.setInvoiceType("2");
@@ -1718,29 +1721,32 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 	 * @param orderCreateInfoReqDTO
 	 * @param orderCreateInfoResDTO
 	 */
-	private void setConsigInfo4order(String messageId, String buyerCode,
+	private void setConsigInfo4order(String messageId, Long buyerId,
 			OrderCreateInfoReqDTO orderCreateInfoReqDTO,
 			OrderCreateInfoResDTO orderCreateInfoResDTO) {
-		OtherCenterResDTO<MemberBaseInfoDTO> consigAddress = memberCenterRAO.selectMemberBaseName(
-				buyerCode, MemberCenterEnum.MEMBER_TYPE_BUYER.getCode(), messageId);
+		OtherCenterResDTO<MemberDetailInfo> consigAddress = memberCenterRAO
+				.getMemberDetailById(buyerId, messageId);
+		
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(consigAddress.getOtherCenterResponseCode())) {
 			orderCreateInfoResDTO.setResponseCode(consigAddress.getOtherCenterResponseCode());
+			orderCreateInfoResDTO.setReponseMsg(consigAddress.getOtherCenterResponseMsg());
+			return;
 		} else {
 			orderCreateInfoReqDTO.setDeliveryType("1");
+			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
+			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
+			
 			orderCreateInfoReqDTO
-					.setConsigneeName(consigAddress.getOtherCenterResult().getContactName());
+					.setConsigneeName(memberBaseInfoDTO.getContactName());
 			orderCreateInfoReqDTO
-					.setConsigneeAddress(consigAddress.getOtherCenterResult().getLocationAddr());
-			orderCreateInfoReqDTO.setConsigneeAddressDetail(
-					consigAddress.getOtherCenterResult().getLocationDetail());
-			orderCreateInfoReqDTO.setConsigneeAddressProvince(
-					consigAddress.getOtherCenterResult().getLocationProvince());
-			orderCreateInfoReqDTO.setConsigneeAddressCity(
-					consigAddress.getOtherCenterResult().getLocationCity());
-			orderCreateInfoReqDTO.setConsigneeAddressDistrict(
-					consigAddress.getOtherCenterResult().getLocationCounty());
-			orderCreateInfoReqDTO.setConsigneeAddressTown(
-					consigAddress.getOtherCenterResult().getLocationTown());
+					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());
+			orderCreateInfoReqDTO.setConsigneeAddressDetail(memberBaseInfoDTO.getLocationDetail());
+			orderCreateInfoReqDTO.setConsigneeAddressProvince(memberBaseInfoDTO.getLocationProvince());
+			String city = memberBaseInfoDTO.getLocationCity();
+			orderCreateInfoReqDTO.setConsigneeAddressCity(city);
+			orderCreateInfoReqDTO.setSite(city);
+			orderCreateInfoReqDTO.setConsigneeAddressDistrict(memberBaseInfoDTO.getLocationCounty());
+			orderCreateInfoReqDTO.setConsigneeAddressTown(memberBaseInfoDTO.getLocationTown());
 			orderCreateInfoReqDTO.setPostCode("");
 		}
 	}
@@ -1756,69 +1762,84 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			OrderCreate4huilinReqDTO orderCreate4huilinReqDTO,
 			OrderCreateInfoReqDTO orderCreateInfoReqDTO,
 			OrderCreateInfoResDTO orderCreateInfoResDTO) {
-		List<OrderCreateSkuListInfoReqDTO> skuList = orderCreate4huilinReqDTO.getSkuList();
-		List<MallSkuInDTO> mallSkuInDTOList = new ArrayList<MallSkuInDTO>();
-		if (CollectionUtils.isNotEmpty(skuList)) {
-			for (OrderCreateSkuListInfoReqDTO sku : skuList) {
-				MallSkuInDTO skuIn = new MallSkuInDTO();
-				skuIn.setSkuCode(sku.getSkuCode());
-				mallSkuInDTOList.add(skuIn);
-			}
-			OtherCenterResDTO<List<MallSkuOutDTO>> skuOut = goodsCenterRAO
-					.queryCartItemList(mallSkuInDTOList, messageId);
-			if (!ResultCodeEnum.SUCCESS.getCode().equals(skuOut.getOtherCenterResponseCode())) {
-				orderCreateInfoResDTO.setResponseCode(skuOut.getOtherCenterResponseCode());
-			} else {
-				List<MallSkuOutDTO> skuOutList = skuOut.getOtherCenterResult();
-				if (CollectionUtils.isNotEmpty(skuOutList)) {
-					Long memberId = orderCreate4huilinReqDTO.getBuyerId();
-					Long sellerId = orderCreate4huilinReqDTO.getSellerId();
-					String orderNo = GenerateIdsUtil.generateOrderID(Constant.COLLECT_SHOP);
-					OrderCreateListInfoReqDTO inforeqDto = new OrderCreateListInfoReqDTO();
-					inforeqDto.setOrderFrom(orderCreate4huilinReqDTO.getOrderFrom());
-					inforeqDto.setOrderNo(orderNo);
-					// 根据买家ID查询买家编码
-					String sellerCode = memberCenterRAO
-							.queryMemberCodeByMemberId(orderCreate4huilinReqDTO.getSellerId(),
-									messageId)
-							.getOtherCenterResponseCode();
-					inforeqDto.setSellerCode(sellerCode);
-					OtherCenterResDTO<ShopDTO> shopInfo = storeCenterRAO.findShopInfoById(sellerId);
-					inforeqDto.setShopId(shopInfo.getOtherCenterResult().getShopId());
-					inforeqDto.setShopName(shopInfo.getOtherCenterResult().getShopName());
-					List<OrderCreateItemListInfoReqDTO> itemList = new ArrayList<OrderCreateItemListInfoReqDTO>();
-					for (MallSkuOutDTO mallSku : skuOutList) {
-						for (OrderCreateSkuListInfoReqDTO sku : skuList) {
-							if (mallSku.getSkuCode().equals(sku.getSkuCode())) {
-								OrderCreateItemListInfoReqDTO orderCreateItemListInfoReqDTO = new OrderCreateItemListInfoReqDTO();
-								orderCreateItemListInfoReqDTO.setOrderItemNo(
-										orderNo.concat(GenerateIdsUtil.generateSubOrderSeq()));
-								orderCreateItemListInfoReqDTO.setSkuCode(mallSku.getSkuCode());
-								orderCreateItemListInfoReqDTO.setGoodsCount(sku.getGoodsCount());
-								orderCreateItemListInfoReqDTO.setChannelCode(sku.getChannelCode());
-								orderCreateItemListInfoReqDTO.setIsBoxFlag(sku.getIsBoxFlag());
-								// 经营关系
-								OtherCenterResDTO<ApplyBusiRelationDTO> isHasDevRelation = memberCenterRAO
-										.selectBusiRelation(memberId, sellerId,
-												mallSku.getThirdCategoryId(), mallSku.getBrandId());
-								// 有经营关系
-								if (isHasDevRelation.getOtherCenterResult() != null) {
-									orderCreateItemListInfoReqDTO.setIsHasDevRelation(1);
-								} else {
-									// 没有经营关系
-									orderCreateItemListInfoReqDTO.setIsHasDevRelation(0);
-								}
-								itemList.add(orderCreateItemListInfoReqDTO);
+		
+		List<OrderCreateOrderListInfoReqDTO> orderList = orderCreate4huilinReqDTO.getOrderList();
+		if(CollectionUtils.isNotEmpty(orderList)){
+			List<OrderCreateListInfoReqDTO> infoReqDtoList = new ArrayList<OrderCreateListInfoReqDTO>();
+			for(OrderCreateOrderListInfoReqDTO order : orderList){
+				List<OrderCreateSkuListInfoReqDTO> skuList = order.getSkuList();
+				List<MallSkuInDTO> mallSkuInDTOList = new ArrayList<MallSkuInDTO>();
+				if (CollectionUtils.isNotEmpty(skuList)) {
+					for (OrderCreateSkuListInfoReqDTO sku : skuList) {
+						MallSkuInDTO skuIn = new MallSkuInDTO();
+						skuIn.setSkuCode(sku.getSkuCode());
+						mallSkuInDTOList.add(skuIn);
+					}
+					OtherCenterResDTO<List<MallSkuOutDTO>> skuOut = goodsCenterRAO
+							.queryCartItemList(mallSkuInDTOList, messageId);
+					if (!ResultCodeEnum.SUCCESS.getCode().equals(skuOut.getOtherCenterResponseCode())) {
+						orderCreateInfoResDTO.setResponseCode(skuOut.getOtherCenterResponseCode());
+						orderCreateInfoResDTO.setReponseMsg(skuOut.getOtherCenterResponseMsg());
+						return;
+					} else {
+						List<MallSkuOutDTO> skuOutList = skuOut.getOtherCenterResult();
+						if (CollectionUtils.isNotEmpty(skuOutList)) {
+							Long memberId = orderCreate4huilinReqDTO.getBuyerId();
+							Long sellerId = order.getSellerId();
+							String orderNo = GenerateIdsUtil.generateOrderID(Constant.COLLECT_SHOP);
+							OrderCreateListInfoReqDTO inforeqDto = new OrderCreateListInfoReqDTO();
+							inforeqDto.setOrderFrom(order.getOrderFrom());
+							inforeqDto.setOrderNo(orderNo);
+							// 根据买家ID查询买家编码
+							OtherCenterResDTO<String> sellerInfo = memberCenterRAO
+									.queryMemberCodeByMemberId(order.getSellerId(),
+											messageId);
+							if (!ResultCodeEnum.SUCCESS.getCode().equals(sellerInfo.getOtherCenterResponseCode())){
+								orderCreateInfoResDTO.setResponseCode(sellerInfo.getOtherCenterResponseCode());
+								orderCreateInfoResDTO.setReponseMsg(sellerInfo.getOtherCenterResponseMsg());
+								return;
 							}
+							String sellerCode = sellerInfo.getOtherCenterResult();
+							inforeqDto.setSellerCode(sellerCode);
+							OtherCenterResDTO<ShopDTO> shopInfo = storeCenterRAO.findShopInfoById(sellerId);
+							inforeqDto.setShopId(shopInfo.getOtherCenterResult().getShopId());
+							inforeqDto.setShopName(shopInfo.getOtherCenterResult().getShopName());
+							List<OrderCreateItemListInfoReqDTO> itemList = new ArrayList<OrderCreateItemListInfoReqDTO>();
+							for (MallSkuOutDTO mallSku : skuOutList) {
+								for (OrderCreateSkuListInfoReqDTO sku : skuList) {
+									if (mallSku.getSkuCode().equals(sku.getSkuCode())) {
+										OrderCreateItemListInfoReqDTO orderCreateItemListInfoReqDTO = new OrderCreateItemListInfoReqDTO();
+										orderCreateItemListInfoReqDTO.setOrderItemNo(
+												orderNo.concat(GenerateIdsUtil.generateSubOrderSeq()));
+										orderCreateItemListInfoReqDTO.setSkuCode(mallSku.getSkuCode());
+										orderCreateItemListInfoReqDTO.setGoodsCount(sku.getGoodsCount());
+										orderCreateItemListInfoReqDTO.setChannelCode(sku.getChannelCode());
+										orderCreateItemListInfoReqDTO.setIsBoxFlag(sku.getIsBoxFlag());
+										// 经营关系
+										OtherCenterResDTO<ApplyBusiRelationDTO> isHasDevRelation = memberCenterRAO
+												.selectBusiRelation(memberId, sellerId,
+														mallSku.getThirdCategoryId(), mallSku.getBrandId());
+										// 有经营关系
+										if (isHasDevRelation.getOtherCenterResult() != null) {
+											orderCreateItemListInfoReqDTO.setIsHasDevRelation(1);
+										} else {
+											// 没有经营关系
+											orderCreateItemListInfoReqDTO.setIsHasDevRelation(0);
+										}
+										itemList.add(orderCreateItemListInfoReqDTO);
+									}
+								}
+							}
+							inforeqDto.setOrderItemList(itemList);
+							infoReqDtoList.add(inforeqDto);
+							orderCreateInfoReqDTO.setOrderList(infoReqDtoList);
 						}
 					}
-					inforeqDto.setOrderItemList(itemList);
-					List<OrderCreateListInfoReqDTO> infoReqDtoList = new ArrayList<OrderCreateListInfoReqDTO>();
-					infoReqDtoList.add(inforeqDto);
-					orderCreateInfoReqDTO.setOrderList(infoReqDtoList);
 				}
+
 			}
 		}
+		
 	}
 
 }

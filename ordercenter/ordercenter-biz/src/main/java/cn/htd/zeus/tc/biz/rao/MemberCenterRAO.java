@@ -123,5 +123,5 @@ public interface MemberCenterRAO {
 	 * @param memberId
 	 * @return
 	 */
-	public OtherCenterResDTO<String> getMemberCodeById(Long memberId);
+	public OtherCenterResDTO<String> getMemberCodeById(Long memberId,String messageId);
 }

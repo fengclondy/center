@@ -1,9 +1,11 @@
 package cn.htd.pricecenter.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ItemSkuTerminalPrice {
+public class ItemSkuTerminalPrice implements Serializable{
+	private Long id;
     private Long skuId;
 
     private Long itemId;
@@ -143,4 +145,13 @@ public class ItemSkuTerminalPrice {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+    
 }

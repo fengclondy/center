@@ -107,13 +107,20 @@ public class PromotionBargainRedisHandle {
 	 */
 	public void addBargainInfo2Redis(
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList) {
+		String promotionId = "";
+		String promotionSlogan = "";
+		List<String> sloganList = null;
 		if (null != promotionBargainInfoList
 				&& !promotionBargainInfoList.isEmpty()) {
-			String promotionId = promotionBargainInfoList.get(0)
-					.getPromotionId();
+			promotionId = promotionBargainInfoList.get(0).getPromotionId();
+			promotionSlogan = promotionBargainInfoList.get(0).getPromotionSlogan();
+			if(StringUtils.isNotEmpty(promotionSlogan)){
+				sloganList = JSON.parseArray(promotionSlogan, String.class);
+			}
 			for (PromotionBargainInfoResDTO dto : promotionBargainInfoList) {
 				dto.setCreateTime(new Date());
 				dto.setModifyTime(new Date());
+				dto.setSloganList(sloganList);
 				dto.setShowStatus(dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));

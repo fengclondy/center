@@ -14,6 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
@@ -47,6 +49,9 @@ public class PromotionInfoTestUnit {
 			System.out.println(111);
 			String messageId = "001";
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
+			List<String> sloganList = new ArrayList<String>();
+			sloganList.add("汇通达周年庆");
+			sloganList.add("汇通达十年庆");
 			PromotionBargainInfoResDTO p1 = new PromotionBargainInfoResDTO();
 			p1.setPromotionName("汇通达周年庆");
 			p1.setPromotionDescribe("汇通达周年庆");
@@ -60,7 +65,7 @@ public class PromotionInfoTestUnit {
 			p1.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
 			p1.setGoodsNum(20);
 			p1.setPartakeTimes(300);
-			p1.setPromotionSlogan("汇通达周年庆");
+			p1.setPromotionSlogan(JSON.toJSONString(sloganList));
 			p1.setTotalPartakeTimes(5L);
 			p1.setContactTelephone("1398822111");
 			p1.setContactName("胥明忠");
@@ -82,7 +87,7 @@ public class PromotionInfoTestUnit {
 			p2.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
 			p2.setGoodsNum(20);
 			p2.setPartakeTimes(300);
-			p2.setPromotionSlogan("汇通达2");
+			p2.setPromotionSlogan(JSON.toJSONString(sloganList));
 			p2.setTotalPartakeTimes(5L);
 			p2.setContactTelephone("1398822111222");
 			p2.setContactName("胥明忠2");
@@ -125,6 +130,8 @@ public class PromotionInfoTestUnit {
 		dto.setOperatorName("xx");
 		ExecuteResult<String> result = promotionBargainInfoService.deleteBargainInfo(dto);
 		System.out.println(result.getErrorMessage());
+		
+		
 	}
 	
 	@Test

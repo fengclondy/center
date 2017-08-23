@@ -119,7 +119,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
 		                  "砍价活动时间未开始");
 			}
-			if((new Date()).before(promotionInfo.getInvalidTime())){
+			if((new Date()).after(promotionInfo.getInvalidTime())){
 				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.BARGAIN_NOT_VALID,
 		                  "砍价活动时间已结束");
 			}

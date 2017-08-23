@@ -1,5 +1,10 @@
 package cn.htd.zeus.tc.service.test;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -14,6 +19,7 @@ import cn.htd.zeus.tc.biz.dmo.OrderQueryListDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
 import cn.htd.zeus.tc.biz.service.OrderQueryService;
 import cn.htd.zeus.tc.biz.service.OrderStatusChangeCommonService;
+import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
@@ -155,7 +161,8 @@ public class OrderQueryAPITestUnit {
 	@Test
 	@Rollback(false)
 	public void testpreSalesOrderUpdateStatus() {
-		String orderNo = "1001708011429357254";
-		orderStatusChangeCommonService.updateOrderPayTimeLimit(orderNo);
+		List<String> orderNoList = new ArrayList<String>();
+		orderNoList.add("1001708011429357254");
+		orderStatusChangeCommonService.updateOrderPayTimeLimit(orderNoList);
 	}
 }

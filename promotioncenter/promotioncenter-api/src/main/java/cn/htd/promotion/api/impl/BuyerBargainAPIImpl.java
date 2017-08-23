@@ -102,7 +102,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
 		if(!StringUtils.isEmpty(messageId) && null != bargainInfoDTO){
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
-			return buyerLaunchBargainInfoService.addBuyerBargainLaunch(bargainInfoDTO, messageId);
+			result = buyerLaunchBargainInfoService.addBuyerBargainLaunch(bargainInfoDTO, messageId);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
@@ -169,8 +169,6 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 			Pager<BuyerBargainLaunchReqDTO> pager, BuyerBargainLaunchReqDTO BuyerBargainLaunch) {
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
 		DataGrid<BuyerLaunchBargainInfoResDTO> datagrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
-		
-		
 		result.setResult(datagrid);
 		return result;
 	}

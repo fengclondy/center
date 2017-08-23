@@ -2,7 +2,9 @@ package cn.htd.zeus.tc.api.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,13 +71,14 @@ public class PreSalesOrderCallBackAPIImpl implements PreSalesOrderCallBackAPI {
 		PreSalesOrderCallBackResDTO res = new PreSalesOrderCallBackResDTO();
 		try {
 			preSalesOrderCallBackReqDTO.setMessageId(GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp()));
-			if (StringUtils.isNotBlank(preSalesOrderCallBackReqDTO.getOrderNo())) {
+			List<String> orderList = preSalesOrderCallBackReqDTO.getOrderNoList();
+			if (CollectionUtils.isEmpty(orderList)){
 				res.setReponseMsg(ResultCodeEnum.ORDERCENTER_CREAREORDER_PARAM_IS_NULL.getMsg());
 				res.setResponseCode(ResultCodeEnum.ORDERCENTER_CREAREORDER_PARAM_IS_NULL.getCode());
 				return res;
 			}
 			int result = orderStatusChangeCommonService
-					.updateOrderPayTimeLimit(preSalesOrderCallBackReqDTO.getOrderNo());
+					.updateOrderPayTimeLimit(orderList);
 			// 存在订单更新结果则提示成功 不存在订单更新结果则失败(由于订单号不存在导致)
 			if (result > 0) {
 				res.setResponseCode(ResultCodeEnum.SUCCESS.getCode());

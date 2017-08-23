@@ -223,11 +223,11 @@ public class OrderStatusChangeCommonServiceImpl implements OrderStatusChangeComm
 	}
 
 	@Override
-	public int updateOrderPayTimeLimit(String orderNo) {
+	public int updateOrderPayTimeLimit(List<String> orderNoList) {
 		TradeOrdersDMO tradeOrdersDMO = new TradeOrdersDMO();
-		tradeOrdersDMO.setOrderNo(orderNo);
+		tradeOrdersDMO.setOrderNoList(orderNoList);
 		tradeOrdersDMO.setPayTimeLimit(DateUtil.getTomorrowDate());
-		int update = tradeOrdersDAO.updateTradeOrdersByOrderNo(tradeOrdersDMO);
+		int update = tradeOrdersDAO.updateTradeOrdersByOrderNoList(tradeOrdersDMO);
 		return update;
 	}
 }

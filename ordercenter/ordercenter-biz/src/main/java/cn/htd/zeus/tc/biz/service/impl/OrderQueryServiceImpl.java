@@ -34,6 +34,7 @@ import cn.htd.zeus.tc.biz.dmo.PayOrderInfoDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDiscountDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
+import cn.htd.zeus.tc.biz.rao.MemberCenterRAO;
 import cn.htd.zeus.tc.biz.rao.StoreCenterRAO;
 import cn.htd.zeus.tc.biz.service.OrderQueryService;
 import cn.htd.zeus.tc.common.constant.Constant;
@@ -43,9 +44,11 @@ import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.DateUtil;
+import cn.htd.zeus.tc.common.util.StringUtilHelper;
 import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
+import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 import cn.htd.zeus.tc.dto.response.ChargeConditionInfoDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryParamResDTO;
@@ -62,7 +65,8 @@ import cn.htd.zeus.tc.dto.resquest.OrdersQueryVIPListReqDTO;
 @Service
 public class OrderQueryServiceImpl implements OrderQueryService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OrderQueryServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(OrderQueryServiceImpl.class);
 
 	@Autowired
 	private TradeOrdersDAO traderdersDAO;
@@ -85,17 +89,23 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 	@Autowired
 	private StoreCenterRAO storeCenterRAO;
 
+	@Autowired
+	private MemberCenterRAO memberCenterRAO;
+
 	private static final int THREE_MONTH = -3;// 三个月
 
 	@Override
-	public OrderQueryListDMO selectOrderByBuyerId(OrderQueryParamReqDTO orderQueryParamReqDTO) {
+	public OrderQueryListDMO selectOrderByBuyerId(
+			OrderQueryParamReqDTO orderQueryParamReqDTO) {
 
 		OrderQueryListDMO orderQueryListDMO = new OrderQueryListDMO();
 
 		try {
 			OrderQueryParamDMO tradeOrdersDMOParam = new OrderQueryParamDMO();
-			tradeOrdersDMOParam.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
-			tradeOrdersDMOParam.setOrderDeleteStatus(orderQueryParamReqDTO.getOrderDeleteStatus());
+			tradeOrdersDMOParam.setBuyerCode(orderQueryParamReqDTO
+					.getBuyerCode());
+			tradeOrdersDMOParam.setOrderDeleteStatus(orderQueryParamReqDTO
+					.getOrderDeleteStatus());
 			// tradeOrdersDMOParam.setIsCancelOrder(orderQueryParamReqDTO.getIsCancelOrder());
 			tradeOrdersDMOParam.setStart(orderQueryParamReqDTO.getStart());
 			tradeOrdersDMOParam.setRows(orderQueryParamReqDTO.getRows());
@@ -118,7 +128,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			orderQueryListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByBuyerId出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByBuyerId出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 
@@ -133,15 +144,21 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
 		try {
 			OrderQueryParamDMO tradeOrdersParamDMO = new OrderQueryParamDMO();
-			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
+			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO
+					.getBuyerCode());
 			tradeOrdersParamDMO.setOrderNo(orderQueryParamReqDTO.getOrderNo());
-			tradeOrdersParamDMO.setOrderDeleteStatus(orderQueryParamReqDTO.getOrderDeleteStatus());
-			tradeOrdersParamDMO.setIsCancelOrder(orderQueryParamReqDTO.getIsCancelOrder());
-			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO.getOrderStatus());
-			tradeOrdersParamDMO.setShopName(orderQueryParamReqDTO.getShopName());
+			tradeOrdersParamDMO.setOrderDeleteStatus(orderQueryParamReqDTO
+					.getOrderDeleteStatus());
+			tradeOrdersParamDMO.setIsCancelOrder(orderQueryParamReqDTO
+					.getIsCancelOrder());
+			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO
+					.getOrderStatus());
 			tradeOrdersParamDMO
-					.setCreateOrderTimeFrom(orderQueryParamReqDTO.getCreateOrderTimeFrom());
-			tradeOrdersParamDMO.setCreateOrderTimeTo(orderQueryParamReqDTO.getCreateOrderTimeTo());
+					.setShopName(orderQueryParamReqDTO.getShopName());
+			tradeOrdersParamDMO.setCreateOrderTimeFrom(orderQueryParamReqDTO
+					.getCreateOrderTimeFrom());
+			tradeOrdersParamDMO.setCreateOrderTimeTo(orderQueryParamReqDTO
+					.getCreateOrderTimeTo());
 			tradeOrdersParamDMO.setStart(orderQueryParamReqDTO.getStart());
 			tradeOrdersParamDMO.setRows(orderQueryParamReqDTO.getRows());
 			List<TradeOrdersDMO> tradeOrdersDMOTempList = traderdersDAO
@@ -156,7 +173,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 				}
 			}
 			// tradeOrdersParamDMO.setOrderFrom("1");
-			Integer count = traderdersDAO.selectOrderCountByBuyerId(tradeOrdersParamDMO);
+			Integer count = traderdersDAO
+					.selectOrderCountByBuyerId(tradeOrdersParamDMO);
 			orderQueryListDMO.setOrderList(tradeOrdersDMOTempList);
 			orderQueryListDMO.setCount(count == null ? 0 : count);
 			orderQueryListDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
@@ -166,7 +184,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			orderQueryListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByBuyerId出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByBuyerId出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 
@@ -181,18 +200,25 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
 		try {
 			OrderQueryParamDMO tradeOrdersParamDMO = new OrderQueryParamDMO();
-			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
-			tradeOrdersParamDMO.setOrderDeleteStatus(orderQueryParamReqDTO.getOrderDeleteStatus());
-			tradeOrdersParamDMO.setIsCancelOrder(orderQueryParamReqDTO.getIsCancelOrder());
-			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO.getOrderStatus());
-			tradeOrdersParamDMO.setSellerCode(orderQueryParamReqDTO.getSellerCode());
-			tradeOrdersParamDMO.setSellerName(orderQueryParamReqDTO.getSellerName());
+			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO
+					.getBuyerCode());
+			tradeOrdersParamDMO.setOrderDeleteStatus(orderQueryParamReqDTO
+					.getOrderDeleteStatus());
+			tradeOrdersParamDMO.setIsCancelOrder(orderQueryParamReqDTO
+					.getIsCancelOrder());
+			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO
+					.getOrderStatus());
+			tradeOrdersParamDMO.setSellerCode(orderQueryParamReqDTO
+					.getSellerCode());
+			tradeOrdersParamDMO.setSellerName(orderQueryParamReqDTO
+					.getSellerName());
 			tradeOrdersParamDMO.setStart(orderQueryParamReqDTO.getStart());
 			tradeOrdersParamDMO.setRows(orderQueryParamReqDTO.getRows());
 			List<TradeOrdersDMO> tradeOrdersDMOTempList = traderdersDAO
 					.selectSupperBossOrderByTradeOrdersParam(tradeOrdersParamDMO);
 
-			Integer count = traderdersDAO.selectOrderCountBySupperBoss(tradeOrdersParamDMO);
+			Integer count = traderdersDAO
+					.selectOrderCountBySupperBoss(tradeOrdersParamDMO);
 			orderQueryListDMO.setOrderList(tradeOrdersDMOTempList);
 			orderQueryListDMO.setCount(count == null ? 0 : count);
 			orderQueryListDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
@@ -202,7 +228,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			orderQueryListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByBuyerId出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByBuyerId出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 
@@ -217,26 +244,38 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
 		try {
 			OrderQueryParamDMO tradeOrdersParamDMO = new OrderQueryParamDMO();
-			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
-			tradeOrdersParamDMO.setOrderDeleteStatus(orderQueryParamReqDTO.getOrderDeleteStatus());
-			tradeOrdersParamDMO.setIsCancelOrder(orderQueryParamReqDTO.getIsCancelOrder());
+			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO
+					.getBuyerCode());
+			tradeOrdersParamDMO.setOrderDeleteStatus(orderQueryParamReqDTO
+					.getOrderDeleteStatus());
+			tradeOrdersParamDMO.setIsCancelOrder(orderQueryParamReqDTO
+					.getIsCancelOrder());
 			tradeOrdersParamDMO.setOrderNo(orderQueryParamReqDTO.getOrderNo());
-			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO.getOrderStatus());
-			tradeOrdersParamDMO.setShopName(orderQueryParamReqDTO.getShopName());
-			// tradeOrdersParamDMO.setOrderFrom("1");
+			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO
+					.getOrderStatus());
 			tradeOrdersParamDMO
-					.setCreateOrderTimeFrom(orderQueryParamReqDTO.getCreateOrderTimeFrom());
-			tradeOrdersParamDMO.setCreateOrderTimeTo(orderQueryParamReqDTO.getCreateOrderTimeTo());
-			Integer pageSize = traderdersDAO.selectOrderCountByBuyerId(tradeOrdersParamDMO);
+					.setShopName(orderQueryParamReqDTO.getShopName());
+			// tradeOrdersParamDMO.setOrderFrom("1");
+			tradeOrdersParamDMO.setCreateOrderTimeFrom(orderQueryParamReqDTO
+					.getCreateOrderTimeFrom());
+			tradeOrdersParamDMO.setCreateOrderTimeTo(orderQueryParamReqDTO
+					.getCreateOrderTimeTo());
+			Integer pageSize = traderdersDAO
+					.selectOrderCountByBuyerId(tradeOrdersParamDMO);
 			orderQueryPageSizeResDTO.setSize(pageSize == null ? 0 : pageSize);
-			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.SUCCESS
+					.getCode());
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.SUCCESS
+					.getMsg());
 		} catch (Exception e) {
-			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ERROR
+					.getCode());
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ERROR
+					.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderCountByBuyerId出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderCountByBuyerId出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 
@@ -244,7 +283,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 	}
 
 	@Override
-	public TradeOrdersDMO selectOrderByPrimaryKey(OrderQueryParamReqDTO orderQueryParamReqDTO) {
+	public TradeOrdersDMO selectOrderByPrimaryKey(
+			OrderQueryParamReqDTO orderQueryParamReqDTO) {
 
 		TradeOrdersDMO tradeOrdersDMO = new TradeOrdersDMO();
 
@@ -262,7 +302,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			}
 			// 优惠券
 			List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
-					.selectBuyerCouponCodeByOrderNo(orderQueryParamReqDTO.getOrderNo());
+					.selectBuyerCouponCodeByOrderNo(orderQueryParamReqDTO
+							.getOrderNo());
 			String buyerCouponCode = "";
 			// if (tradeOrderItemsDiscountDMOList.size() > 0) {
 			// buyerCouponCode =
@@ -286,7 +327,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			tradeOrdersDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByPrimaryKey出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderByPrimaryKey出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 
@@ -294,7 +336,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 	}
 
 	@Override
-	public OrderQueryListDMO queryListOrder(OrderQueryParamReqDTO orderQueryParamReqDTO) {
+	public OrderQueryListDMO queryListOrder(
+			OrderQueryParamReqDTO orderQueryParamReqDTO) {
 
 		OrderQueryListDMO orderQueryListDMO = new OrderQueryListDMO();
 
@@ -303,10 +346,13 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			if (orderQueryParamReqDTO.getBuyerPhone() != null) {
 				// 会员信息
 				MemberCompanyInfoDTO memberCompanyInfoDTO = new MemberCompanyInfoDTO();
-				memberCompanyInfoDTO.setBuyerSellerType(
-						Integer.parseInt(MemberCenterEnum.MEMBER_TYPE_BUYER.getCode()));
 				memberCompanyInfoDTO
-						.setArtificialPersonMobile(orderQueryParamReqDTO.getBuyerPhone());
+						.setBuyerSellerType(Integer
+								.parseInt(MemberCenterEnum.MEMBER_TYPE_BUYER
+										.getCode()));
+				memberCompanyInfoDTO
+						.setArtificialPersonMobile(orderQueryParamReqDTO
+								.getBuyerPhone());
 				ExecuteResult<MemberCompanyInfoDTO> result = memberBaseInfoService
 						.selectMobilePhoneMemberId(memberCompanyInfoDTO);
 				MemberCompanyInfoDTO memberDTO = new MemberCompanyInfoDTO();
@@ -315,26 +361,32 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 					tradeOrdersDMOParam.setBuyerCode(memberDTO.getMemberCode());
 				} else {
 					orderQueryListDMO
-							.setResultMsg(ResultCodeEnum.ORDERSETTLEMENT_MEMBER_INFO_NULL.getMsg());
-					orderQueryListDMO.setResultCode(
-							ResultCodeEnum.ORDERSETTLEMENT_MEMBER_INFO_NULL.getCode());
+							.setResultMsg(ResultCodeEnum.ORDERSETTLEMENT_MEMBER_INFO_NULL
+									.getMsg());
+					orderQueryListDMO
+							.setResultCode(ResultCodeEnum.ORDERSETTLEMENT_MEMBER_INFO_NULL
+									.getCode());
 					return orderQueryListDMO;
 				}
 			} else {
-				tradeOrdersDMOParam.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
+				tradeOrdersDMOParam.setBuyerCode(orderQueryParamReqDTO
+						.getBuyerCode());
 			}
-			tradeOrdersDMOParam.setBuyerName(orderQueryParamReqDTO.getBuyerName());
+			tradeOrdersDMOParam.setBuyerName(orderQueryParamReqDTO
+					.getBuyerName());
 			if (orderQueryParamReqDTO.getStart() != null
 					&& orderQueryParamReqDTO.getRows() != null) {
 				tradeOrdersDMOParam.setRows(orderQueryParamReqDTO.getRows());
-				tradeOrdersDMOParam.setStart(
-						(orderQueryParamReqDTO.getStart() - 1) * orderQueryParamReqDTO.getRows());
+				tradeOrdersDMOParam
+						.setStart((orderQueryParamReqDTO.getStart() - 1)
+								* orderQueryParamReqDTO.getRows());
 			}
 			List<TradeOrdersDMO> orderQueryDMOTempList = traderdersDAO
 					.queryListOrder(tradeOrdersDMOParam);
 
 			tradeOrdersDMOParam.setOrderDeleteStatus(0);
-			Integer count = traderdersDAO.selectOrderCountByBuyerId(tradeOrdersDMOParam);
+			Integer count = traderdersDAO
+					.selectOrderCountByBuyerId(tradeOrdersDMOParam);
 
 			orderQueryListDMO.setOrderList(orderQueryDMOTempList);
 			orderQueryListDMO.setCount(count == null ? 0 : count);
@@ -345,7 +397,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			orderQueryListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.queryListOrder出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.queryListOrder出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 
@@ -357,9 +410,11 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 		Boolean result = true;
 		Map map = new HashMap();
 		map.put("orderNo", recoed.getOrderNo());
-		long itemCount = traderderItemsDAO.selectTradeOrderItemsByOrderNoOrStatus(map);
+		long itemCount = traderderItemsDAO
+				.selectTradeOrderItemsByOrderNoOrStatus(map);
 		map.put("orderItemStatus", recoed.getOrderItemStatus());
-		long statusCount = traderderItemsDAO.selectTradeOrderItemsByOrderNoOrStatus(map);
+		long statusCount = traderderItemsDAO
+				.selectTradeOrderItemsByOrderNoOrStatus(map);
 		if (itemCount != statusCount) {
 			result = false;
 		}
@@ -367,7 +422,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 	}
 
 	@Override
-	public OrderQueryListDMO queryListOrderByCondition(OrderQuerySupprMangerReqDTO recoed) {
+	public OrderQueryListDMO queryListOrderByCondition(
+			OrderQuerySupprMangerReqDTO recoed) {
 		OrderQueryListDMO orderQueryListDMO = new OrderQueryListDMO();
 
 		try {
@@ -376,11 +432,14 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			tradeOrdersDMOParam.setSellerName(recoed.getMemberName());
 			if (recoed.getPageSize() != null && recoed.getCurrentPage() != null) {
 				tradeOrdersDMOParam.setRows(recoed.getPageSize());
-				tradeOrdersDMOParam.setStart((recoed.getCurrentPage() - 1) * recoed.getPageSize());
+				tradeOrdersDMOParam.setStart((recoed.getCurrentPage() - 1)
+						* recoed.getPageSize());
 			}
 			tradeOrdersDMOParam.setOrderStatus(recoed.getOrderStatus());
-			tradeOrdersDMOParam.setCustomerManagerID(recoed.getCustomerManagerID());
-			tradeOrdersDMOParam.setCreateOrderTimeFrom(DateUtil.getMonthTime(THREE_MONTH));
+			tradeOrdersDMOParam.setCustomerManagerID(recoed
+					.getCustomerManagerID());
+			tradeOrdersDMOParam.setCreateOrderTimeFrom(DateUtil
+					.getMonthTime(THREE_MONTH));
 			List<TradeOrdersDMO> orderQueryDMOTempList = traderdersDAO
 					.queryListOrderByCondition(tradeOrdersDMOParam);
 
@@ -396,7 +455,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			orderQueryListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.queryOrderBySupprBoss出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.queryOrderBySupprBoss出现异常{}",
 					recoed.getMessageId(), w.toString());
 		}
 
@@ -422,12 +482,16 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			tradeOrdersDMOParam.setSellerName(recoed.getMemberName());
 			if (recoed.getPageSize() != null && recoed.getCurrentPage() != null) {
 				tradeOrdersDMOParam.setRows(recoed.getPageSize());
-				tradeOrdersDMOParam.setStart((recoed.getCurrentPage() - 1) * recoed.getPageSize());
+				tradeOrdersDMOParam.setStart((recoed.getCurrentPage() - 1)
+						* recoed.getPageSize());
 			}
 			tradeOrdersDMOParam.setOrderStatus(recoed.getOrderStatus());
-			tradeOrdersDMOParam.setCustomerManagerID(recoed.getCustomerManagerID());
-			tradeOrdersDMOParam.setCreateOrderTimeFrom(DateUtil.getMonthTime(THREE_MONTH));
-			LOGGER.info("客户经理人查询三个月订单参数:" + JSONObject.toJSONString(tradeOrdersDMOParam));
+			tradeOrdersDMOParam.setCustomerManagerID(recoed
+					.getCustomerManagerID());
+			tradeOrdersDMOParam.setCreateOrderTimeFrom(DateUtil
+					.getMonthTime(THREE_MONTH));
+			LOGGER.info("客户经理人查询三个月订单参数:"
+					+ JSONObject.toJSONString(tradeOrdersDMOParam));
 
 			Integer count = traderdersDAO
 					.queryListOrderByCondition4SuperManagerCount(tradeOrdersDMOParam);
@@ -438,8 +502,10 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 				if (null != orderQueryDMOTempList) {
 					for (TradeOrdersDMO orderQueryDMOTemp : orderQueryDMOTempList) {
 						TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
-						tradeOrderItemsDMO.setOrderNo(orderQueryDMOTemp.getOrderNo());
-						tradeOrderItemsDMO.setCustomerManagerCode(recoed.getCustomerManagerID());
+						tradeOrderItemsDMO.setOrderNo(orderQueryDMOTemp
+								.getOrderNo());
+						tradeOrderItemsDMO.setCustomerManagerCode(recoed
+								.getCustomerManagerID());
 						List<TradeOrderItemsDMO> itemList = traderderItemsDAO
 								.queryListOrderByCondition4SuperManagerItem(tradeOrderItemsDMO);
 						if (null != itemList) {
@@ -449,36 +515,45 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
 							BigDecimal orderTotalAmount = new BigDecimal(0);
 							BigDecimal orderPayAmount = new BigDecimal(0);
-							BigDecimal bargainingOrderFreight = new BigDecimal(0);
+							BigDecimal bargainingOrderFreight = new BigDecimal(
+									0);
 							for (TradeOrderItemsDMO itemTemp : itemList) {
-								totalGoodsCount = totalGoodsCount + itemTemp.getGoodsCount();
-								totalGoodsAmt = totalGoodsAmt.add(itemTemp.getGoodsAmount() == null
-										? new BigDecimal(0) : itemTemp.getGoodsAmount());
+								totalGoodsCount = totalGoodsCount
+										+ itemTemp.getGoodsCount();
+								totalGoodsAmt = totalGoodsAmt
+										.add(itemTemp.getGoodsAmount() == null ? new BigDecimal(
+												0) : itemTemp.getGoodsAmount());
 								totalDiscountAmount = totalDiscountAmount
-										.add(itemTemp.getTotalDiscountAmount() == null
-												? new BigDecimal(0)
-												: itemTemp.getTotalDiscountAmount());
+										.add(itemTemp.getTotalDiscountAmount() == null ? new BigDecimal(
+												0) : itemTemp
+												.getTotalDiscountAmount());
 
 								bargainingOrderFreight = bargainingOrderFreight
-										.add(itemTemp.getBargainingGoodsFreight() == null
-												? new BigDecimal(0)
-												: itemTemp.getBargainingGoodsFreight());
+										.add(itemTemp
+												.getBargainingGoodsFreight() == null ? new BigDecimal(
+												0) : itemTemp
+												.getBargainingGoodsFreight());
 								orderTotalAmount = orderTotalAmount
-										.add(itemTemp.getOrderItemTotalAmount() == null
-												? new BigDecimal(0)
-												: itemTemp.getOrderItemTotalAmount());
-								orderPayAmount = orderPayAmount.add(
-										itemTemp.getOrderItemPayAmount() == null ? new BigDecimal(0)
-												: itemTemp.getOrderItemPayAmount());
+										.add(itemTemp.getOrderItemTotalAmount() == null ? new BigDecimal(
+												0) : itemTemp
+												.getOrderItemTotalAmount());
+								orderPayAmount = orderPayAmount
+										.add(itemTemp.getOrderItemPayAmount() == null ? new BigDecimal(
+												0) : itemTemp
+												.getOrderItemPayAmount());
 							}
 							orderQueryDMOTemp.setOrderItemsList(itemList);
-							orderQueryDMOTemp.setTotalGoodsAmount(totalGoodsAmt);
-							orderQueryDMOTemp.setTotalDiscountAmount(totalDiscountAmount);
-							orderQueryDMOTemp.setBargainingOrderFreight(bargainingOrderFreight);
-							orderQueryDMOTemp.setOrderTotalAmount(orderTotalAmount);
+							orderQueryDMOTemp
+									.setTotalGoodsAmount(totalGoodsAmt);
+							orderQueryDMOTemp
+									.setTotalDiscountAmount(totalDiscountAmount);
+							orderQueryDMOTemp
+									.setBargainingOrderFreight(bargainingOrderFreight);
+							orderQueryDMOTemp
+									.setOrderTotalAmount(orderTotalAmount);
 							orderQueryDMOTemp.setOrderPayAmount(orderPayAmount);
-							orderQueryDMOTemp.setTotalGoodsCount(
-									Integer.valueOf(String.valueOf(totalGoodsCount)));
+							orderQueryDMOTemp.setTotalGoodsCount(Integer
+									.valueOf(String.valueOf(totalGoodsCount)));
 						}
 					}
 				}
@@ -515,133 +590,172 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 		OrdersQueryVIPListDMO ordersQueryVIPListDMO = new OrdersQueryVIPListDMO();
 		try {
 			OrderQueryParamDMO orderQueryParamDMO = new OrderQueryParamDMO();
-			orderQueryParamDMO
-					.setCreateOrderTimeFrom(DateUtil.getDateBySpecificDate(request.getStartTime()));
-			orderQueryParamDMO
-					.setCreateOrderTimeTo(DateUtil.getDateBySpecificDate(request.getEndTime()));
+			orderQueryParamDMO.setCreateOrderTimeFrom(DateUtil
+					.getDateBySpecificDate(request.getStartTime()));
+			orderQueryParamDMO.setCreateOrderTimeTo(DateUtil
+					.getDateBySpecificDate(request.getEndTime()));
 			Integer start = (request.getPage() - 1) * request.getRows();
 			orderQueryParamDMO.setStart(start);
 			orderQueryParamDMO.setRows(request.getRows());
-			orderQueryParamDMO.setIsVipItem(Integer.valueOf(GoodCenterEnum.IS_VIP_GOODS.getCode()));
+			orderQueryParamDMO.setIsVipItem(Integer
+					.valueOf(GoodCenterEnum.IS_VIP_GOODS.getCode()));
 			List<String> orderStatus = new ArrayList<String>();
 			orderStatus.add(OrderStatusEnum.ORDER_COMPLETE.getCode());
 			orderQueryParamDMO.setOrderStatus(orderStatus);
 			List<TradeOrdersDMO> tradeOrdersDMOList = traderdersDAO
 					.selectVipOrder(orderQueryParamDMO);
 
-			Integer count = traderdersDAO.selectVipOrderCount(orderQueryParamDMO);
+			Integer count = traderdersDAO
+					.selectVipOrderCount(orderQueryParamDMO);
 			ordersQueryVIPListDMO.setCount(count == null ? 0 : count);
 			ordersQueryVIPListDMO.setOrderList(tradeOrdersDMOList);
-			ordersQueryVIPListDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+			ordersQueryVIPListDMO.setResultCode(ResultCodeEnum.SUCCESS
+					.getCode());
 			ordersQueryVIPListDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (Exception e) {
 			ordersQueryVIPListDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
 			ordersQueryVIPListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectVipOrder出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectVipOrder出现异常{}",
 					request.getMessageId(), w.toString());
 		}
 		return ordersQueryVIPListDMO;
 	}
 
 	@Override
-	public OrdersQueryVIPListDMO selectVipOrderNotCompleted(OrdersQueryVIPListReqDTO request) {
+	public OrdersQueryVIPListDMO selectVipOrderNotCompleted(
+			OrdersQueryVIPListReqDTO request) {
 		OrdersQueryVIPListDMO ordersQueryVIPListDMO = new OrdersQueryVIPListDMO();
 		try {
 			OrderQueryParamDMO orderQueryParamDMO = new OrderQueryParamDMO();
 			orderQueryParamDMO.setSkuCode(request.getSkuCode());
 			orderQueryParamDMO.setOrderStatus(request.getOrderStatus());
-			orderQueryParamDMO.setIsVipItem(Integer.valueOf(GoodCenterEnum.IS_VIP_GOODS.getCode()));
+			orderQueryParamDMO.setIsVipItem(Integer
+					.valueOf(GoodCenterEnum.IS_VIP_GOODS.getCode()));
 			List<TradeOrdersDMO> tradeOrdersDMOList = traderdersDAO
 					.selectVipOrder(orderQueryParamDMO);
 
 			ordersQueryVIPListDMO.setOrderList(tradeOrdersDMOList);
-			ordersQueryVIPListDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+			ordersQueryVIPListDMO.setResultCode(ResultCodeEnum.SUCCESS
+					.getCode());
 			ordersQueryVIPListDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (Exception e) {
 			ordersQueryVIPListDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
 			ordersQueryVIPListDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectVipOrderNotCompleted出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectVipOrderNotCompleted出现异常{}",
 					request.getMessageId(), w.toString());
 		}
 		return ordersQueryVIPListDMO;
 	}
 
 	@Override
-	public List<ChargeConditionInfoDTO> queryChargeConditionInfo(String messageId,
-			TradeOrdersDMO tradeOrdersDMO) {
-		List<TradeOrderItemsDMO> orderItemsList = tradeOrdersDMO.getOrderItemsList();
+	public List<ChargeConditionInfoDTO> queryChargeConditionInfo(
+			String messageId, TradeOrdersDMO tradeOrdersDMO) {
+		List<TradeOrderItemsDMO> orderItemsList = tradeOrdersDMO
+				.getOrderItemsList();
 		List<ChargeConditionInfoDTO> chargeConditionInfoList = new ArrayList<ChargeConditionInfoDTO>();
-		LOGGER.info("MessageId:{} 调用方法OrderQueryServiceImpl.queryChargeConditionInfo查询数据开始{}",
+		LOGGER.info(
+				"MessageId:{} 调用方法OrderQueryServiceImpl.queryChargeConditionInfo查询数据开始{}",
 				messageId, tradeOrdersDMO.getOrderNo());
-		if (GoodCenterEnum.EXTERNAL_SUPPLIER.getCode()
-				.equals(orderItemsList.get(0).getChannelCode())) {
+		if (GoodCenterEnum.EXTERNAL_SUPPLIER.getCode().equals(
+				orderItemsList.get(0).getChannelCode())) {
 			for (TradeOrderItemsDMO orderItems : orderItemsList) {
 				if (orderItems.getIsCancelOrderItem().equals(1)
 						|| orderItems.getIsCancelOrderItem().equals(2)) {
 					continue;
 				}
 				ChargeConditionInfoDTO chargeConditionInfoDTO = new ChargeConditionInfoDTO();
-				chargeConditionInfoDTO.setBrandCode(String.valueOf(orderItems.getBrandId()));
-				chargeConditionInfoDTO.setChargeAmount(orderItems.getOrderItemPayAmount());
-				chargeConditionInfoDTO.setClassCode(GoodCenterEnum.EXTERNAL_SUPPLIER.getCode());
-				chargeConditionInfoDTO.setCustomerCode(tradeOrdersDMO.getBuyerCode());
-				chargeConditionInfoDTO.setCompanyCode(tradeOrdersDMO.getSellerCode());
-				chargeConditionInfoDTO.setItemOrderNo(orderItems.getOrderItemNo());
+				chargeConditionInfoDTO.setBrandCode(String.valueOf(orderItems
+						.getBrandId()));
+				chargeConditionInfoDTO.setChargeAmount(orderItems
+						.getOrderItemPayAmount());
+				chargeConditionInfoDTO
+						.setClassCode(GoodCenterEnum.EXTERNAL_SUPPLIER
+								.getCode());
+				chargeConditionInfoDTO.setCustomerCode(tradeOrdersDMO
+						.getBuyerCode());
+				chargeConditionInfoDTO.setCompanyCode(tradeOrdersDMO
+						.getSellerCode());
+				chargeConditionInfoDTO.setItemOrderNo(orderItems
+						.getOrderItemNo());
 				chargeConditionInfoList.add(chargeConditionInfoDTO);
 			}
-		} else if (GoodCenterEnum.INTERNAL_SUPPLIER.getCode()
-				.equals(orderItemsList.get(0).getChannelCode())) {
+		} else if (GoodCenterEnum.INTERNAL_SUPPLIER.getCode().equals(
+				orderItemsList.get(0).getChannelCode())) {
 			List<PayOrderInfoDMO> orderList = paymentOrderInfoDAO
-					.selectBrandCodeAndClassCodeByOrderNo(tradeOrdersDMO.getOrderNo());
+					.selectBrandCodeAndClassCodeByOrderNo(tradeOrdersDMO
+							.getOrderNo());
 			for (PayOrderInfoDMO payOrderInfo : orderList) {
 				ChargeConditionInfoDTO chargeConditionInfoDTO = new ChargeConditionInfoDTO();
-				chargeConditionInfoDTO.setBrandCode(payOrderInfo.getBrandCode());
-				chargeConditionInfoDTO.setChargeAmount(payOrderInfo.getAmount());
-				chargeConditionInfoDTO.setClassCode(payOrderInfo.getClassCode());
-				chargeConditionInfoDTO.setCustomerCode(tradeOrdersDMO.getBuyerCode());
-				chargeConditionInfoDTO.setCompanyCode(tradeOrdersDMO.getSellerCode());
-				chargeConditionInfoDTO.setItemOrderNo(payOrderInfo.getDownOrderNo());
+				chargeConditionInfoDTO
+						.setBrandCode(payOrderInfo.getBrandCode());
+				chargeConditionInfoDTO
+						.setChargeAmount(payOrderInfo.getAmount());
+				chargeConditionInfoDTO
+						.setClassCode(payOrderInfo.getClassCode());
+				chargeConditionInfoDTO.setCustomerCode(tradeOrdersDMO
+						.getBuyerCode());
+				chargeConditionInfoDTO.setCompanyCode(tradeOrdersDMO
+						.getSellerCode());
+				chargeConditionInfoDTO.setItemOrderNo(payOrderInfo
+						.getDownOrderNo());
 				chargeConditionInfoList.add(chargeConditionInfoDTO);
 			}
-		} else if (GoodCenterEnum.JD_SUPPLIER.getCode()
-				.equals(orderItemsList.get(0).getChannelCode())) {
+		} else if (GoodCenterEnum.JD_SUPPLIER.getCode().equals(
+				orderItemsList.get(0).getChannelCode())) {
 			List<PayOrderInfoDMO> orderList = paymentOrderInfoDAO
-					.selectBrandCodeAndClassCodeByOrderNo(tradeOrdersDMO.getOrderNo());
+					.selectBrandCodeAndClassCodeByOrderNo(tradeOrdersDMO
+							.getOrderNo());
 			ChargeConditionInfoDTO chargeConditionInfoDTO = new ChargeConditionInfoDTO();
-			chargeConditionInfoDTO.setBrandCode(MiddleWareEnum.JD_BRAND_ID_PAY.getCode());
-			chargeConditionInfoDTO.setChargeAmount(orderList.get(0).getAmount());
-			chargeConditionInfoDTO.setClassCode(MiddleWareEnum.JD_BRAND_ID_PAY.getCode());
-			chargeConditionInfoDTO.setCustomerCode(tradeOrdersDMO.getBuyerCode());
-			chargeConditionInfoDTO.setCompanyCode(tradeOrdersDMO.getSellerCode());
-			chargeConditionInfoDTO.setItemOrderNo(orderList.get(0).getDownOrderNo());
+			chargeConditionInfoDTO.setBrandCode(MiddleWareEnum.JD_BRAND_ID_PAY
+					.getCode());
+			chargeConditionInfoDTO
+					.setChargeAmount(orderList.get(0).getAmount());
+			chargeConditionInfoDTO.setClassCode(MiddleWareEnum.JD_BRAND_ID_PAY
+					.getCode());
+			chargeConditionInfoDTO.setCustomerCode(tradeOrdersDMO
+					.getBuyerCode());
+			chargeConditionInfoDTO.setCompanyCode(tradeOrdersDMO
+					.getSellerCode());
+			chargeConditionInfoDTO.setItemOrderNo(orderList.get(0)
+					.getDownOrderNo());
 			chargeConditionInfoList.add(chargeConditionInfoDTO);
 		}
-		LOGGER.info("MessageId:{} 调用方法OrderQueryServiceImpl.queryChargeConditionInfo查询数据结束{}",
+		LOGGER.info(
+				"MessageId:{} 调用方法OrderQueryServiceImpl.queryChargeConditionInfo查询数据结束{}",
 				messageId, JSONObject.toJSONString(chargeConditionInfoList));
 		return chargeConditionInfoList;
 	}
 
 	@Override
-	public void setCustomerQQInfo(OrdersQueryParamListResDTO ordersQueryParamListResDTO) {
-		List<OrderQueryParamResDTO> orderList = ordersQueryParamListResDTO.getOrderList();
+	public void setCustomerQQInfo(
+			OrdersQueryParamListResDTO ordersQueryParamListResDTO) {
+		List<OrderQueryParamResDTO> orderList = ordersQueryParamListResDTO
+				.getOrderList();
 		if (CollectionUtils.isNotEmpty(orderList)) {
 			for (OrderQueryParamResDTO order : orderList) {
-				List<QQCustomerDTO> qqCustomerDTOList = storeCenterRAO.searchQQCustomerByCondition(
-						order.getShopId(), ordersQueryParamListResDTO.getMessageId(),
-						Constant.CUSTOMER_QQ_TYPE_OUTER);
+				List<QQCustomerDTO> qqCustomerDTOList = storeCenterRAO
+						.searchQQCustomerByCondition(order.getShopId(),
+								ordersQueryParamListResDTO.getMessageId(),
+								Constant.CUSTOMER_QQ_TYPE_OUTER);
 				if (CollectionUtils.isNotEmpty(qqCustomerDTOList)
-						&& !"".equals(qqCustomerDTOList.get(0).getCustomerQQNumber())) {
-					order.setSellerQQ(qqCustomerDTOList.get(0).getCustomerQQNumber());
+						&& !"".equals(qqCustomerDTOList.get(0)
+								.getCustomerQQNumber())) {
+					order.setSellerQQ(qqCustomerDTOList.get(0)
+							.getCustomerQQNumber());
 				} else {
-					List<QQCustomerDTO> qqCustomerList = storeCenterRAO.searchQQCustomerByCondition(
-							null, ordersQueryParamListResDTO.getMessageId(),
-							Constant.CUSTOMER_QQ_TYPE_INNER);
+					List<QQCustomerDTO> qqCustomerList = storeCenterRAO
+							.searchQQCustomerByCondition(null,
+									ordersQueryParamListResDTO.getMessageId(),
+									Constant.CUSTOMER_QQ_TYPE_INNER);
 					if (CollectionUtils.isNotEmpty(qqCustomerList)) {
-						order.setSellerQQ(qqCustomerList.get(0).getCustomerQQNumber());
+						order.setSellerQQ(qqCustomerList.get(0)
+								.getCustomerQQNumber());
 					} else {
 						order.setSellerQQ("");
 					}
@@ -658,9 +772,11 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.MONTH, -1);
 			Date timeLimited = calendar.getTime();
-			sellerCode = this.traderdersDAO.selectSellerCodeWithPurchaseRecordByBuyerCode(
-					orderQueryPurchaseRecordInDTO.getBuyerCode(),
-					orderQueryPurchaseRecordInDTO.getBoxSellerCodeList(), timeLimited);
+			sellerCode = this.traderdersDAO
+					.selectSellerCodeWithPurchaseRecordByBuyerCode(
+							orderQueryPurchaseRecordInDTO.getBuyerCode(),
+							orderQueryPurchaseRecordInDTO
+									.getBoxSellerCodeList(), timeLimited);
 		}
 		return sellerCode;
 	}
@@ -676,8 +792,8 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			orderRecentQueryPurchaseRecordOutDTOList = this.traderdersDAO
 					.queryPurchaseRecordsByBuyerCodeAndSellerCode(
 							orderRecentQueryPurchaseRecordsInDTO.getBuyerCode(),
-							orderRecentQueryPurchaseRecordsInDTO.getBoxSellerCodeList(),
-							timeLimited);
+							orderRecentQueryPurchaseRecordsInDTO
+									.getBoxSellerCodeList(), timeLimited);
 		}
 		return orderRecentQueryPurchaseRecordOutDTOList;
 	}
@@ -688,22 +804,43 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 		OrderQueryPageSizeResDTO orderQueryPageSizeResDTO = new OrderQueryPageSizeResDTO();
 		try {
 			OrderQueryParamDMO tradeOrdersParamDMO = new OrderQueryParamDMO();
-			tradeOrdersParamDMO.setBuyerCode(orderQueryParamReqDTO.getBuyerCode());
+			String buyerCode = orderQueryParamReqDTO.getBuyerCode();
+			if (StringUtilHelper.isNull(buyerCode)) {
+				OtherCenterResDTO<String> memberInfo = memberCenterRAO
+						.getMemberCodeById(orderQueryParamReqDTO.getBuyerId(),
+								orderQueryParamReqDTO.getMessageId());
+				if (!ResultCodeEnum.SUCCESS.getCode().equals(
+						memberInfo.getOtherCenterResponseCode())) {
+					orderQueryPageSizeResDTO.setResponseCode(memberInfo
+							.getOtherCenterResponseCode());
+					orderQueryPageSizeResDTO.setReponseMsg(memberInfo
+							.getOtherCenterResponseMsg());
+					return orderQueryPageSizeResDTO;
+				}
+				buyerCode = memberInfo.getOtherCenterResult();
+			}
+			tradeOrdersParamDMO.setBuyerCode(buyerCode);
 			List<String> orderStatusList = new ArrayList<String>();
 			orderStatusList.add(OrderStatusEnum.PRE_PAY.getCode());
 			tradeOrdersParamDMO.setOrderStatus(orderStatusList);
 			// 查询预售订单
 			tradeOrdersParamDMO.setOrderFrom("5");
-			Integer pageSize = traderdersDAO.queryPresaleOrderCountByBuyerId(tradeOrdersParamDMO);
+			Integer pageSize = traderdersDAO
+					.queryPresaleOrderCountByBuyerId(tradeOrdersParamDMO);
 			orderQueryPageSizeResDTO.setSize(pageSize == null ? 0 : pageSize);
-			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.SUCCESS
+					.getCode());
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.SUCCESS
+					.getMsg());
 		} catch (Exception e) {
-			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
+			orderQueryPageSizeResDTO.setResponseCode(ResultCodeEnum.ERROR
+					.getCode());
+			orderQueryPageSizeResDTO.setReponseMsg(ResultCodeEnum.ERROR
+					.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderCountByBuyerId出现异常{}",
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderQueryServiceImpl.selectOrderCountByBuyerId出现异常{}",
 					orderQueryParamReqDTO.getMessageId(), w.toString());
 		}
 		return orderQueryPageSizeResDTO;

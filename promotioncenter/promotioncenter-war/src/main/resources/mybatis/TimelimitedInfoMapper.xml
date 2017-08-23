@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.TimelimitedInfoDMO" >
+    <id column="timelimited_id" property="timelimitedId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="sku_name" property="skuName" jdbcType="VARCHAR" />
+    <result column="first_category_code" property="firstCategoryCode" jdbcType="VARCHAR" />
+    <result column="second_category_code" property="secondCategoryCode" jdbcType="VARCHAR" />
+    <result column="third_category_code" property="thirdCategoryCode" jdbcType="VARCHAR" />
+    <result column="sku_category_name" property="skuCategoryName" jdbcType="VARCHAR" />
+    <result column="sku_pic_url" property="skuPicUrl" jdbcType="VARCHAR" />
+    <result column="sku_cost_price" property="skuCostPrice" jdbcType="DECIMAL" />
+    <result column="sku_timelimited_price" property="skuTimelimitedPrice" jdbcType="DECIMAL" />
+    <result column="timelimited_sku_count" property="timelimitedSkuCount" jdbcType="INTEGER" />
+    <result column="timelimited_threshold" property="timelimitedThreshold" jdbcType="INTEGER" />
+    <result column="timelimited_valid_interval" property="timelimitedValidInterval" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    timelimited_id, promotion_id, level_code, seller_code, item_id, sku_code, sku_name, 
+    first_category_code, second_category_code, third_category_code, sku_category_name, 
+    sku_pic_url, sku_cost_price, sku_timelimited_price, timelimited_sku_count, timelimited_threshold, 
+    timelimited_valid_interval, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from timelimited_info
+    where timelimited_id = #{timelimitedId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from timelimited_info
+    where timelimited_id = #{timelimitedId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO" >
+    insert into timelimited_info (timelimited_id, promotion_id, level_code, 
+      seller_code, item_id, sku_code, 
+      sku_name, first_category_code, second_category_code, 
+      third_category_code, sku_category_name, sku_pic_url, 
+      sku_cost_price, sku_timelimited_price, timelimited_sku_count, 
+      timelimited_threshold, timelimited_valid_interval, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{timelimitedId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{levelCode,jdbcType=VARCHAR}, 
+      #{sellerCode,jdbcType=VARCHAR}, #{itemId,jdbcType=BIGINT}, #{skuCode,jdbcType=VARCHAR}, 
+      #{skuName,jdbcType=VARCHAR}, #{firstCategoryCode,jdbcType=VARCHAR}, #{secondCategoryCode,jdbcType=VARCHAR}, 
+      #{thirdCategoryCode,jdbcType=VARCHAR}, #{skuCategoryName,jdbcType=VARCHAR}, #{skuPicUrl,jdbcType=VARCHAR}, 
+      #{skuCostPrice,jdbcType=DECIMAL}, #{skuTimelimitedPrice,jdbcType=DECIMAL}, #{timelimitedSkuCount,jdbcType=INTEGER}, 
+      #{timelimitedThreshold,jdbcType=INTEGER}, #{timelimitedValidInterval,jdbcType=INTEGER}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO" >
+    insert into timelimited_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="timelimitedId != null" >
+        timelimited_id,
+      </if>
+      <if test="promotionId != null" >
+        promotion_id,
+      </if>
+      <if test="levelCode != null" >
+        level_code,
+      </if>
+      <if test="sellerCode != null" >
+        seller_code,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="skuName != null" >
+        sku_name,
+      </if>
+      <if test="firstCategoryCode != null" >
+        first_category_code,
+      </if>
+      <if test="secondCategoryCode != null" >
+        second_category_code,
+      </if>
+      <if test="thirdCategoryCode != null" >
+        third_category_code,
+      </if>
+      <if test="skuCategoryName != null" >
+        sku_category_name,
+      </if>
+      <if test="skuPicUrl != null" >
+        sku_pic_url,
+      </if>
+      <if test="skuCostPrice != null" >
+        sku_cost_price,
+      </if>
+      <if test="skuTimelimitedPrice != null" >
+        sku_timelimited_price,
+      </if>
+      <if test="timelimitedSkuCount != null" >
+        timelimited_sku_count,
+      </if>
+      <if test="timelimitedThreshold != null" >
+        timelimited_threshold,
+      </if>
+      <if test="timelimitedValidInterval != null" >
+        timelimited_valid_interval,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="timelimitedId != null" >
+        #{timelimitedId,jdbcType=BIGINT},
+      </if>
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="levelCode != null" >
+        #{levelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuName != null" >
+        #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="firstCategoryCode != null" >
+        #{firstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="secondCategoryCode != null" >
+        #{secondCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdCategoryCode != null" >
+        #{thirdCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCategoryName != null" >
+        #{skuCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuPicUrl != null" >
+        #{skuPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCostPrice != null" >
+        #{skuCostPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="skuTimelimitedPrice != null" >
+        #{skuTimelimitedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="timelimitedSkuCount != null" >
+        #{timelimitedSkuCount,jdbcType=INTEGER},
+      </if>
+      <if test="timelimitedThreshold != null" >
+        #{timelimitedThreshold,jdbcType=INTEGER},
+      </if>
+      <if test="timelimitedValidInterval != null" >
+        #{timelimitedValidInterval,jdbcType=INTEGER},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO" >
+    update timelimited_info
+    <set >
+      <if test="promotionId != null" >
+        promotion_id = #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="levelCode != null" >
+        level_code = #{levelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null" >
+        seller_code = #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuName != null" >
+        sku_name = #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="firstCategoryCode != null" >
+        first_category_code = #{firstCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="secondCategoryCode != null" >
+        second_category_code = #{secondCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdCategoryCode != null" >
+        third_category_code = #{thirdCategoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCategoryName != null" >
+        sku_category_name = #{skuCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuPicUrl != null" >
+        sku_pic_url = #{skuPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCostPrice != null" >
+        sku_cost_price = #{skuCostPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="skuTimelimitedPrice != null" >
+        sku_timelimited_price = #{skuTimelimitedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="timelimitedSkuCount != null" >
+        timelimited_sku_count = #{timelimitedSkuCount,jdbcType=INTEGER},
+      </if>
+      <if test="timelimitedThreshold != null" >
+        timelimited_threshold = #{timelimitedThreshold,jdbcType=INTEGER},
+      </if>
+      <if test="timelimitedValidInterval != null" >
+        timelimited_valid_interval = #{timelimitedValidInterval,jdbcType=INTEGER},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where timelimited_id = #{timelimitedId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO" >
+    update timelimited_info
+    set promotion_id = #{promotionId,jdbcType=VARCHAR},
+      level_code = #{levelCode,jdbcType=VARCHAR},
+      seller_code = #{sellerCode,jdbcType=VARCHAR},
+      item_id = #{itemId,jdbcType=BIGINT},
+      sku_code = #{skuCode,jdbcType=VARCHAR},
+      sku_name = #{skuName,jdbcType=VARCHAR},
+      first_category_code = #{firstCategoryCode,jdbcType=VARCHAR},
+      second_category_code = #{secondCategoryCode,jdbcType=VARCHAR},
+      third_category_code = #{thirdCategoryCode,jdbcType=VARCHAR},
+      sku_category_name = #{skuCategoryName,jdbcType=VARCHAR},
+      sku_pic_url = #{skuPicUrl,jdbcType=VARCHAR},
+      sku_cost_price = #{skuCostPrice,jdbcType=DECIMAL},
+      sku_timelimited_price = #{skuTimelimitedPrice,jdbcType=DECIMAL},
+      timelimited_sku_count = #{timelimitedSkuCount,jdbcType=INTEGER},
+      timelimited_threshold = #{timelimitedThreshold,jdbcType=INTEGER},
+      timelimited_valid_interval = #{timelimitedValidInterval,jdbcType=INTEGER},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where timelimited_id = #{timelimitedId,jdbcType=BIGINT}
+  </update>
+</mapper>

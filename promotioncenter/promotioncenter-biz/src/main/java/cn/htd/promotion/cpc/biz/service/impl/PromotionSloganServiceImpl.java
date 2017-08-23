@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,11 @@ public class PromotionSloganServiceImpl implements PromotionSloganService{
 				promotionSloganDTOList = new ArrayList<PromotionSloganResDTO>();
 				String str = JSONObject.toJSONString(promotionSloganDMOList);
 				promotionSloganDTOList = JSONObject.parseArray(str,PromotionSloganResDTO.class);
+				for (PromotionSloganResDTO dto : promotionSloganDTOList) {
+					if(StringUtils.isNotEmpty(dto.getPromotionSlogan())){
+						dto.setSloganList(JSON.parseArray(dto.getPromotionSlogan(), String.class));
+					}
+				}
 				result.setResult(promotionSloganDTOList);
 			}
 		}catch(PromotionCenterBusinessException psb){

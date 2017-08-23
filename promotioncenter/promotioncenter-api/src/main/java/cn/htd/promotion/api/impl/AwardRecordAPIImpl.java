@@ -31,12 +31,12 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
     AwardRecordService awardRecordService;
 
     @Override
-    public ExecuteResult<DataGrid<PromotionAwardDTO>> getAwardRecordByPromotionId(PromotionAwardReqDTO dto) {
+    public ExecuteResult<DataGrid<PromotionAwardDTO>> getAwardRecordByPromotionId(PromotionAwardReqDTO dto,String messageId) {
         ExecuteResult<DataGrid<PromotionAwardDTO>> result = new ExecuteResult<DataGrid<PromotionAwardDTO>>();
 
         try{
-            if(!StringUtils.isEmpty(dto.getPromotionId())){
-                DataGrid<PromotionAwardDTO> awardRecordList = awardRecordService.getAwardRecordByPromotionId(dto);
+            if(!StringUtils.isEmpty(dto.getPromotionId()) && !!StringUtils.isEmpty(messageId)){
+                DataGrid<PromotionAwardDTO> awardRecordList = awardRecordService.getAwardRecordByPromotionId(dto,messageId);
                 result.setResult(awardRecordList);
                 result.setCode(ResultCodeEnum.SUCCESS.getCode());
                 if(awardRecordList.getSize() == 0|| awardRecordList ==null){
@@ -49,13 +49,12 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
                 result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
             }
 
-            logger.info("promotionId{}:AwardRecordAPIImpl.getAwardRecordByPromotionId（）方法,出参{}", dto.getPromotionId(), JSON.toJSONString(result));
+            logger.info("promotionId{}:AwardRecordAPIImpl.getAwardRecordByPromotionId（）方法,出参{}",messageId , dto.getPromotionId(), JSON.toJSONString(result));
         }catch (Exception e) {
-            result.setCode(ResultCodeEnum.ERROR.getMsg());
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
-            logger.error("MessageId:{} 调用方法AwardRecordAPIImpl.getAwardRecordByPromotionId出现异常{}",
-                    dto.getPromotionId() + ":" +  w.toString());
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法AwardRecordAPIImpl.getAwardRecordByPromotionId出现异常{}",messageId,
+                    dto.getPromotionId() + ":" +  e.toString());
         }
         return result;
     }

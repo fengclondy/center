@@ -163,6 +163,20 @@ public class DateUtil {
 		}
 		return date;
 	}
+	
+	/**
+     * 获得指定日期的前后天数的日期
+     *
+     * @param targetDt
+     * @param specifiedDay
+     * @return
+     */
+    public static Date getSpecifiedDay(Date targetDt, int specifiedDay) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(targetDt);
+        cal.add(Calendar.DATE, specifiedDay);
+        return cal.getTime();
+    }
 
 	/*
 	 * 将Date转成java.sql.Timestamp 入库用

@@ -26,6 +26,7 @@ public class PromotionSloganAPIImpl implements PromotionSloganAPI {
 			String providerSellerCode, String messageId) {
 		ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
 		if (!StringUtils.isEmpty(providerSellerCode) && !StringUtils.isEmpty(messageId)) {
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			return promotionSloganService.queryBargainSloganBySellerCode(providerSellerCode, messageId);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());

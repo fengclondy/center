@@ -101,6 +101,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 	public ExecuteResult<BuyerLaunchBargainInfoResDTO> addBuyerBargainLaunch(BuyerLaunchBargainInfoResDTO bargainInfoDTO, String messageId){
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
 		if(!StringUtils.isEmpty(messageId) && null != bargainInfoDTO){
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			return buyerLaunchBargainInfoService.addBuyerBargainLaunch(bargainInfoDTO, messageId);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());

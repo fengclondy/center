@@ -69,6 +69,7 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
             String promotionId){
 		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
 		if(!StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(messageId)){
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			return promotionBargainInfoService.getPromotionBargainInfoList(messageId, promotionId);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());

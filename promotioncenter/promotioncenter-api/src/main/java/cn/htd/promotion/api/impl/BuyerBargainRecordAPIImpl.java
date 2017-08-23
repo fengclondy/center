@@ -138,6 +138,7 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
 			String promotionId, String messageId) {
 		ExecuteResult<Integer> result = new ExecuteResult<Integer>();
 		if(!StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(messageId)){
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			return buyerBargainRecordService.queryPromotionBargainJoinQTY(promotionId, messageId);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());

@@ -44,11 +44,11 @@ public class PromotionBargainInfoDMO{
 	
 	private String sellerName;//店铺名称
 	
-	private String contactName;//联系人电话
+	private String contactNameD;//联系人电话
 	
-	private String contactTelphone;//联系电话
+	private String contactTelphoneD;//联系电话
 	
-	private String contactAddress;//联系地址
+	private String contactAddressD;//联系地址
 	
 	private Date effectiveTime;//活动开始有效期
 	
@@ -180,28 +180,28 @@ public class PromotionBargainInfoDMO{
 		this.sellerName = sellerName;
 	}
 
-	public String getContactName() {
-		return contactName;
+	public String getContactNameD() {
+		return contactNameD;
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public void setContactNameD(String contactNameD) {
+		this.contactNameD = contactNameD;
 	}
 
-	public String getContactTelphone() {
-		return contactTelphone;
+	public String getContactTelphoneD() {
+		return contactTelphoneD;
 	}
 
-	public void setContactTelphone(String contactTelphone) {
-		this.contactTelphone = contactTelphone;
+	public void setContactTelphoneD(String contactTelphoneD) {
+		this.contactTelphoneD = contactTelphoneD;
 	}
 
-	public String getContactAddress() {
-		return contactAddress;
+	public String getContactAddressD() {
+		return contactAddressD;
 	}
 
-	public void setContactAddress(String contactAddress) {
-		this.contactAddress = contactAddress;
+	public void setContactAddressD(String contactAddressD) {
+		this.contactAddressD = contactAddressD;
 	}
 
 	public Date getEachStartTimeD() {

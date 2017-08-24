@@ -29,7 +29,7 @@
 	    	   pbi.goods_cost_price goodsCostPrice,
 	    	   pbi.goods_floor_price goodsFloorPrice,
 	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
-	    	   ps.promotion_slogan promotionDescribe,
+	    	   ps.promotion_slogan promotionDesc,
 	    	   pei.contact_name contactName,
 	    	   pei.contact_telephone contactTelphone,
 	    	   pei.contact_address contactAddress,

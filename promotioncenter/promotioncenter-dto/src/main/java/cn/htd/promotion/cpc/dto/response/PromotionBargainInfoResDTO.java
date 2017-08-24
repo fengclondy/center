@@ -43,7 +43,7 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private Integer virtualQuantity;//汇掌柜端虚拟显示人数增加
 	
-	private String promotionDescribe;//宣传标语
+	private String promotionDesc;//宣传标语
 	
 	private String sellerName;//店铺名称
 	
@@ -153,12 +153,12 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.offlineEndTime = offlineEndTime;
 	}
 
-	public String getPromotionDescribe() {
-		return promotionDescribe;
+	public String getPromotionDesc() {
+		return promotionDesc;
 	}
 
-	public void setPromotionDescribe(String promotionDescribe) {
-		this.promotionDescribe = promotionDescribe;
+	public void setPromotionDesc(String promotionDesc) {
+		this.promotionDesc = promotionDesc;
 	}
 
 	public String getSellerName() {

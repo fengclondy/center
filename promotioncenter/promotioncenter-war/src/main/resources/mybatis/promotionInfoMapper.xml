@@ -27,8 +27,6 @@
     <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
     <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
-    <result column="winningNum" jdbcType="VARCHAR" property="winningNum"/>
-    <result column="winningTodayNum" jdbcType="VARCHAR" property="winningTodayNum"/>
   </resultMap>
   <sql id="Base_Column_List">
 		id,
@@ -327,52 +325,4 @@
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
     and has_redis_clean = 0
   </update>
-  <select id="getPromotionGashaponByInfo" resultMap="BaseResultMap" parameterType="Object">
-	SELECT 
-	a.promotion_id,
-	a.promotion_type,
-	a.promotion_name,
-	a.effective_time,
-	a.invalid_time,
-	a.`status`,
-	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id ) as winningNum,
-	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and to_days(bw.winning_time) = to_days(now())) as winningTodayNum,
-	a.modify_time
-	FROM promotion_info a WHERE a.promotion_type = '22'
-	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
-	</if>
-	<if test="entity.status != null and entity.status != ''">
-	and  a.`status` = #{entity.status}
-	</if>
-    <if test="entity.effectiveTime != null and entity.effectiveTime != '' and  entity.invalidTime != null and entity.invalidTime != '' ">
-		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
-		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
-	</if>  
-	<if test="entity.modifyTime != null and entity.modifyTime != ''">
-   	and a.modify_time = #{entity.modifyTime}
-	</if> 
-	<if test="pager.pageOffset != null and pager != null">
-	limit #{pager.pageOffset},#{pager.rows}
-	</if>
-  </select>
-  
-  <select id="getTotalPromotionGashaponByInfo" resultType="java.lang.Long">
-  	SELECT 
-  	count(1)
-	FROM promotion_info a WHERE a.promotion_type = '22'
-	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
-	</if>
-	<if test="entity.status != null and entity.status != ''">
-	and  a.`status` = #{entity.status}
-	</if>
-    <if test="entity.effectiveTime != null and entity.effectiveTime != '' and  entity.invalidTime != null and entity.invalidTime != '' ">
-		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
-		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
-	</if>  
-	<if test="entity.modifyTime != null and entity.modifyTime != ''">
-   	and a.modify_time = #{entity.modifyTime}
-	</if> 
-  </select>
 </mapper>

@@ -5,12 +5,13 @@ package cn.htd.promotion.cpc.common.emums;
 
 public enum ResultCodeEnum {
 
-    SUCCESS("00000", "成功！"),
-    ERROR("99999", "未知异常！"),
+	//订单状态
+	SUCCESS("00000","成功！"),
+	NORESULT("11111","数据库没有查到信息！"),
+	PROMOTION_PARAM_IS_NULL("10001","调用砍价接口入参不能为空！"),
+	PROMOTION_AWARD_IS_NULL("10002","调用查询中奖记录接口入参不能为空！"),
+	ERROR("99999","未知异常！"),
 
-    NORESULT("11111", "数据库没有查到信息！"),
-
-    PROMOTION_PARAM_IS_NULL("10001", "调用砍价接口入参不能为空！"),
     PROMOTION_NOT_EXIST("26001", "促销活动数据不存在"),
     PROMOTION_NOT_EXPIRED("26002", "促销活动未过有效期"),
     PARAMETER_ERROR("26003", "促销活动参数不能为空"),

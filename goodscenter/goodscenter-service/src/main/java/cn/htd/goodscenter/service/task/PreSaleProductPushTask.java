@@ -92,6 +92,7 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
 
     @Override
     public boolean execute(PreSaleProductPush[] preSaleProductPushs, String s) throws Exception {
+        logger.info("预售数据推送开始");
         for (PreSaleProductPush preSaleProductPush : preSaleProductPushs) {
             try {
                 // 更新为推送中
@@ -103,7 +104,7 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
                 mqSendUtil.setAmqpTemplate(amqpTemplate);
                 PreSaleProductPushDTO preSaleProductPushDTO = getPreSaleProductPushDTO(preSaleProductPush.getItemId());
                 preSaleProductPushDTO.setVersion(preSaleProductPush.getPushVersion());
-                System.out.println(JSON.toJSONString(preSaleProductPushDTO));
+                logger.info("预售数据推送 : {}", JSON.toJSONString(preSaleProductPushDTO));
                 mqSendUtil.sendToMQWithRoutingKey(preSaleProductPushDTO, MQRoutingKeyConstant.PRE_SALE_PRODUCT_PUSH_ROUTING_KEY);
                 // 更新为推送完成
                 this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), Constants.PRE_SALE_ITEM_PUSH_SUCCESS, Arrays.asList(new Integer[]{1}));
@@ -113,6 +114,7 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
                 this.preSaleProductPushMapper.updateStatus(preSaleProductPush.getId(), Constants.PRE_SALE_ITEM_PUSH_FAIL, Arrays.asList(new Integer[]{1}));
             }
         }
+        logger.info("预售数据推送结束");
         return true;
     }
 
@@ -433,7 +435,6 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
 
     public static void main(String[] args) {
 //        BlockingQueue
-
-
+        Thread t1 = new Thread();
     }
 }

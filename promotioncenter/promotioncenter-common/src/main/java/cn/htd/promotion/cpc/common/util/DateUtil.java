@@ -246,7 +246,5 @@ public class DateUtil {
 //		 } catch (Exception e) {
 //		 // TODO: handle exception
 //		 }
-		
-		System.out.println(getDateBySpecificDate("2017-03-22 11:28:20"));
 	}
 }

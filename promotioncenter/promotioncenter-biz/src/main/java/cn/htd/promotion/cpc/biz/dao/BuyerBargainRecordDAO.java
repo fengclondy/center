@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 
 @Repository("cn.htd.promotion.cpc.biz.dao.buyerBargainRecordDAO")
 public interface BuyerBargainRecordDAO {
@@ -19,4 +21,7 @@ public interface BuyerBargainRecordDAO {
 	public BuyerBargainRecordDMO getThisPersonIsBargain(Map<String,String> map);
 
 	public Integer queryPromotionBargainJoinQTY(@Param("promotionId") String promotionId);
+	
+	public Integer queryPromotionBargainJoinTypeQTY(@Param("promotionId") String promotionId);
+
 }

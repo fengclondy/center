@@ -1,6 +1,9 @@
 package cn.htd.promotion.cpc.biz.service;
 
 import java.util.List;
+
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
@@ -20,5 +23,8 @@ public interface BuyerLaunchBargainInfoService {
 	public BuyerLaunchBargainInfoResDTO getBuyerBargainLaunchInfoByBargainCode(String bargainCode , String messageId);
 	
 	public Integer getBuyerLaunchBargainInfoNum(String promotionId,String levelCode,String messageId);
+	
+	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page);
 	
 }

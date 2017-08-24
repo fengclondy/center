@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.api.PromotionBargainInfoAPI;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
@@ -21,6 +23,8 @@ import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
 
@@ -76,7 +80,30 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 		}
 		return result;
 	}
-	
-	
 
+	@Override
+	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
+			String sellerCode, Pager<String> page) {
+		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
+		if(!StringUtils.isEmpty(sellerCode)){
+			return promotionBargainInfoService.queryPromotionInfoListBySellerCode(sellerCode, page);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
+			String sellerCode,  Pager<String> page) {
+		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
+		if(!StringUtils.isEmpty(sellerCode)){
+			return promotionBargainInfoService.queryPromotionBargainOverview(sellerCode, page);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
 }

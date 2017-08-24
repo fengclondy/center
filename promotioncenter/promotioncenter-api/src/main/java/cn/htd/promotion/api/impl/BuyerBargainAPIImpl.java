@@ -171,4 +171,18 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		result.setResult(datagrid);
 		return result;
 	}
+	
+
+	@Override
+	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
+		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
+		if(null != buyerBargainLaunch && !StringUtils.isEmpty(buyerBargainLaunch.getSellerCode())){
+			return buyerLaunchBargainInfoService.queryLaunchBargainInfoList(buyerBargainLaunch, page);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
 }

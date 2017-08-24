@@ -1,22 +1,28 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DateUtils;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
+import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
@@ -33,13 +39,19 @@ import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
+import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("promotionBargainInfoService")
 public class PromotionBargainInfoServiceImpl implements
@@ -66,6 +78,10 @@ public class PromotionBargainInfoServiceImpl implements
 	private PromotionSloganDAO promotionSloganDAO;
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
+    @Resource
+    private PromotionAccumulatyDAO promotionAccumulatyDAO;
+	@Resource
+	private BuyerLaunchBargainInfoDAO buyerLaunchBargainInfoDAO;
 
 	
 	@Resource
@@ -310,4 +326,94 @@ public class PromotionBargainInfoServiceImpl implements
 	        }	
 	        return result;
 	 }
+
+	@Override
+	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
+			String sellerCode, Pager<String> page) throws PromotionCenterBusinessException {
+		DataGrid<PromotonInfoResDTO> dataGrid = new DataGrid<PromotonInfoResDTO>();
+		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
+		List<PromotonInfoResDTO> resList = new ArrayList<PromotonInfoResDTO>();
+		try {
+			List<PromotionInfoDTO> promotionInfoList = promotionInfoDAO.queryPromotionInfoListBySellerCode(sellerCode, page);
+			Long promotionInfoCount = promotionInfoDAO.queryPromotionInfoCountBySellerCode(sellerCode);
+			if(null != promotionInfoList && !promotionInfoList.isEmpty()){
+				for (PromotionInfoDTO promotionInfo : promotionInfoList) {
+					PromotonInfoResDTO resDTO = new PromotonInfoResDTO();
+					resDTO.setPromotionId(promotionInfo.getPromotionId());
+					resDTO.setPromotionName(promotionInfo.getPromotionName());
+					resDTO.setEffectiveTime(promotionInfo.getEffectiveTime());
+					resDTO.setInvalidTime(promotionInfo.getInvalidTime());
+					resDTO.setStatus(promotionInfo.getStatus());
+					//参砍商品种类
+					List<PromotionAccumulatyDTO> accumulatyList = promotionAccumulatyDAO.queryPromotionAccumulatyByPromotionId(resDTO.getPromotionId());
+					resDTO.setBargainType(accumulatyList == null ? 0 : accumulatyList.size());
+					//未砍商品数量
+					Integer joinTypeQTY = buyerBargainRecordDAO.queryPromotionBargainJoinTypeQTY(resDTO.getPromotionId());
+					Integer bargainQTY = promotionBargainInfoDAO.queryPromotionBargainStockSum(resDTO.getPromotionId());
+					if(joinTypeQTY != null && bargainQTY != null){
+						resDTO.setNoBargainItemQTY(bargainQTY.intValue() - joinTypeQTY.intValue());
+					}else{
+						resDTO.setNoBargainItemQTY(0);
+					}
+					//发起砍价人数
+					Integer launchQTY = buyerBargainRecordDAO.queryPromotionBargainJoinQTY(resDTO.getPromotionId());
+					resDTO.setLaunchBargainQTY(launchQTY == null ? 0 : launchQTY.intValue());
+					resList.add(resDTO);
+				}
+			}
+			dataGrid.setRows(resList);
+			dataGrid.setTotal(promotionInfoCount);
+			result.setResult(dataGrid);
+		} catch (Exception e) {
+			 result.setCode(ResultCodeEnum.ERROR.getCode());
+	         result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
+			String sellerCode, Pager<String> page) {
+		DataGrid<PromotionBargainOverviewResDTO> dataGrid = new DataGrid<PromotionBargainOverviewResDTO>();
+		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
+		List<PromotionBargainOverviewResDTO> resList = new ArrayList<PromotionBargainOverviewResDTO>();
+		BuyerBargainLaunchReqDTO launchDTO = new BuyerBargainLaunchReqDTO();
+		try {
+			List<PromotionBargainInfoDMO> bargainList  = promotionBargainInfoDAO.queryPromotionBargainBySellerCode(sellerCode, page);
+			Long bargainCount = promotionBargainInfoDAO.queryPromotionBargainCountBySellerCode(sellerCode);
+			if(null != bargainList && !bargainList.isEmpty()){
+				for (PromotionBargainInfoDMO dmo : bargainList) {
+					PromotionBargainOverviewResDTO resDTO = new PromotionBargainOverviewResDTO();
+					resDTO.setPromotionId(dmo.getPromotionId());
+					resDTO.setGoodsName(dmo.getGoodsName());
+					resDTO.setGoodsCostPrice(dmo.getGoodsCostPrice() == null ? BigDecimal.ZERO : dmo.getGoodsCostPrice());
+					resDTO.setGoodsFloorPrice(dmo.getGoodsFloorPrice() == null ? BigDecimal.ZERO : dmo.getGoodsFloorPrice());
+					resDTO.setPartakeTimes(dmo.getPartakeTimes() == null ? 0 : dmo.getPartakeTimes());
+					//已发起砍价数量
+					launchDTO.setLevelCode(dmo.getLevelCode());
+					launchDTO.setPromotionId(dmo.getPromotionId());
+					List<BuyerLaunchBargainInfoResDTO> launchList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(launchDTO, null);
+					resDTO.setLaunchTimes(launchList == null ? 0 : launchList.size());
+					//已砍完数量
+					launchDTO.setIsBargainOver(1);
+					List<BuyerLaunchBargainInfoResDTO> overList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(launchDTO, null);
+					resDTO.setOverTimes(overList == null ? 0 : overList.size());
+					//剩余商品数量
+					if(resDTO.getPartakeTimes().intValue() == 0 || resDTO.getPartakeTimes() < resDTO.getOverTimes()){
+						resDTO.setSurplusTimes(0);
+					}else{
+						resDTO.setSurplusTimes(dmo.getPartakeTimes() - resDTO.getOverTimes());
+					}
+					resList.add(resDTO);
+				}
+			}
+			dataGrid.setTotal(bargainCount);
+			dataGrid.setRows(resList);
+			result.setResult(dataGrid);
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -296,17 +295,6 @@ public class UserExportServiceImpl implements UserExportService {
 		return res;
 	}
 
-	private static ObjectMapper mapper = new ObjectMapper();
-
-	private static String toJson(Object obj) {
-		String jsonString = "";
-		try {
-			jsonString = mapper.writeValueAsString(obj);
-		} catch (Exception e) {
-		}
-		return jsonString;
-	}
-
 	@Override
 	public ExecuteResult<List<MenuDTO>> getMenusByUser(Long userId, String productId) {
 		ExecuteResult<List<MenuDTO>> res = new ExecuteResult<List<MenuDTO>>();
@@ -399,6 +387,15 @@ public class UserExportServiceImpl implements UserExportService {
 							// 分部是"本部"的时候，添加公海会员的平台公司ID"0801"
 							if ("F000".equals(branchId)) {
 								inchargeCompanies.add("0801");
+								
+								// 对于erp有实体公司的分部，都作为本部的下级平台公司，纳入本部的数据权限范畴
+								List<HTDCompanyDTO> branchList = htdCompanyDAO.querySubCompanies(new String[]{"0801"});
+								for (HTDCompanyDTO branch : branchList) {
+									// 非ERP虚拟公司
+									if (!branch.getCompanyId().startsWith("F")) {
+										inchargeCompanies.add(branch.getCompanyId());
+									}
+								}
 								break;
 							}
 						}

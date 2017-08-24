@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
@@ -79,7 +79,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             // 根据活动ID获取活动信息
             promotionInfo = promotionInfoDAO.queryById(validDTO.getPromotionId());
             if (promotionInfo == null) {
-                throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "该促销活动不存在");
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "该促销活动不存在");
             }
             // 活动已删除
             if (dictionary
@@ -96,7 +96,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 			buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(validDTO.getPromotionId());
                 	if ((promotionInfo.getInvalidTime() != null && !(new Date()).after(promotionInfo.getInvalidTime())) 
                 			&& (null != buyerLaunchList && !buyerLaunchList.isEmpty())) {
-                        throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_SOMEONE_INVOLVED,
+                        throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),
                                 "砍价活动还未结束并有人参与");
                     }
                 }
@@ -137,13 +137,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionInfoExtendDTO extendDTO = new PromotionInfoExtendDTO();
         int vipFlg = -1;
         if (promotionInfo == null) {
-            throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR, "促销活动参数不能为空");
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
         }
         promotionType = promotionInfo.getPromotionType();
         promotionId = noGenerator.generatePromotionId(promotionType);
         promotionAccumulatyList = promotionInfo.getPromotionAccumulatyList();
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
-            throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动层级不能为空");
         }
         promotionInfo.setPromotionId(promotionId);
         if (dictionary
@@ -194,7 +194,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         List<String> levelCodeList = null;
         promotionInfo = promotionInfoDAO.queryById(promotionId);
         if (promotionInfo == null) {
-            throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "促销活动不存在");
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "促销活动不存在");
         }
         if (levelCodeArr != null && levelCodeArr.length > 0) {
             levelCodeList = new ArrayList<String>();
@@ -204,7 +204,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         }
         promotionAccumulatyList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionId, levelCodeList);
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
-            throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "促销活动层级不存在");
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "促销活动层级不存在");
         }
         promotionInfo.setPromotionAccumulatyList(promotionAccumulatyList);
         return promotionInfo;
@@ -232,7 +232,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         int maxLevelNum = 0;
         int vipFlg = -1;
         if (promotionInfo == null) {
-            throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR, "促销活动参数不能为空");
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
         }
         promotionId = promotionInfo.getPromotionId();
         promotionType = promotionInfo.getPromotionType();

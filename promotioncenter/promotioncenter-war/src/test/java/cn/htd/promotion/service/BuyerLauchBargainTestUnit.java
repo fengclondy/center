@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 
 @Transactional  
@@ -25,7 +25,7 @@ public class BuyerLauchBargainTestUnit {
 	@Resource
 	private BuyerLaunchBargainInfoService buyerLaunchBargainInfoService;
 	@Resource
-	private PromotionCenterRedisDB promotionRedisDB;
+	private PromotionRedisDB promotionRedisDB;
 	
 	@Test
 	@Rollback(false) 

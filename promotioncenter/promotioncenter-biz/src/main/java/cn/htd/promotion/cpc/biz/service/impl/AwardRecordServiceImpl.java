@@ -3,7 +3,6 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
-import cn.htd.promotion.cpc.biz.dmo.PromotionAwardDMO;
 import cn.htd.promotion.cpc.biz.service.AwardRecordService;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
@@ -11,7 +10,6 @@ import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -48,22 +46,22 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         // 开始时间
         String startTime = dto.getWinningStartTime();
         // 结束时间
-        String endTime = dto.getWinningEdnTime();
+        String endTime = dto.getWinningEndTime();
 
         if(null != startTime && !"".equals(startTime)){
             dto.setWinningStartTime(startTime + " 00:00:00");
         }
         if(null != endTime && !"".equals(endTime)){
-            dto.setWinningEdnTime(endTime + " 23:59:59");
+            dto.setWinningEndTime(endTime + " 23:59:59");
         }
 
         Map<String,Object> param = new HashMap<String,Object>();
+        param.put("buyerCode",dto.getBuyerCode());
+        param.put("winnerName",dto.getWinnerName());
         param.put("winningStartTime",dto.getWinningStartTime());
-        param.put("winningEdnTime",dto.getWinningEdnTime());
+        param.put("winningEndTime",dto.getWinningEndTime());
         param.put("rewardType",dto.getRewardType());
         param.put("promotionId",dto.getPromotionId());
-        param.put("winningStartTime",dto.getWinningStartTime());
-        param.put("winningEndTime",dto.getWinningEdnTime());
 
         DataGrid<PromotionAwardDTO> dataGrid = new DataGrid<PromotionAwardDTO>();
         try {

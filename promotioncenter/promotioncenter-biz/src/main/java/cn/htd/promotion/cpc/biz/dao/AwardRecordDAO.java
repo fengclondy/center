@@ -1,7 +1,6 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import cn.htd.common.Pager;
-import cn.htd.promotion.cpc.biz.dmo.PromotionAwardDMO;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import org.apache.ibatis.annotations.Param;

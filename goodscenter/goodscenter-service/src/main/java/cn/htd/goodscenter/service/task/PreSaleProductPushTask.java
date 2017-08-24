@@ -14,6 +14,7 @@ import cn.htd.goodscenter.dto.presale.PreSaleProductPushDTO;
 import cn.htd.goodscenter.dto.presale.PreSaleProductSaleAreaDTO;
 import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
+import cn.htd.membercenter.dto.SellerInfoDTO;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.pricecenter.dto.HzgPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
@@ -163,27 +164,23 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         boolean is0801 = false;
         /** 设置seller **/
         Long sellerId = item.getSellerId();
-        ExecuteResult<String> sellerCodeResult = this.memberBaseInfoService.getMemberCodeById(sellerId);
-        if (sellerCodeResult != null && sellerCodeResult.isSuccess()) {
-            String sellerCode = sellerCodeResult.getResult();
-            String sellerName;
-            String companyCode;
-            ExecuteResult<MemberBaseInfoDTO> executeResult = memberBaseInfoService.queryMemberBaseInfoByMemberCode(sellerCode);
-            if (executeResult != null && executeResult.isSuccess()) {
-                MemberBaseInfoDTO memberBaseInfoDTO = executeResult.getResult();
-                sellerName = memberBaseInfoDTO.getCompanyName();
-                companyCode = memberBaseInfoDTO.getCompanyCode();
-            } else {
-                throw new RuntimeException("queryMemberBaseInfoByMemberCode出错， item_id : " + itemId + ", 错误信息 : " + executeResult.getErrorMessages());
-            }
-            preSaleProductPushDTO.setSellerId(String.valueOf(sellerId));
-            preSaleProductPushDTO.setSellerCode(sellerCode);
-            preSaleProductPushDTO.setSellerName(sellerName);
-            preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? ("0801".equals(companyCode) ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
-            is0801 = "0801".equals(companyCode);
+        String sellerName;
+        String companyCode;
+        String sellerCode;
+        ExecuteResult<SellerInfoDTO> executeResult = memberBaseInfoService.querySellerBaseInfo(sellerId);
+        if (executeResult != null && executeResult.isSuccess()) {
+            SellerInfoDTO sellerInfoDTO = executeResult.getResult();
+            sellerName = sellerInfoDTO.getCompanyName();
+            companyCode = sellerInfoDTO.getCompanyCode();
+            sellerCode = sellerInfoDTO.getMemberCode();
         } else {
-            throw new RuntimeException("getMemberCodeById出错， item_id : " + itemId + ", 错误信息 : " + sellerCodeResult.getErrorMessages());
+            throw new RuntimeException("queryMemberBaseInfoByMemberCode出错， item_id : " + itemId + ", 错误信息 : " + executeResult.getErrorMessages());
         }
+        preSaleProductPushDTO.setSellerId(String.valueOf(sellerId));
+        preSaleProductPushDTO.setSellerCode(sellerCode);
+        preSaleProductPushDTO.setSellerName(sellerName);
+        preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? ("0801".equals(companyCode) ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
+        is0801 = "0801".equals(companyCode);
         /** 设置item **/
         preSaleProductPushDTO.setSpxxname(item.getItemName());
         preSaleProductPushDTO.setSpxxnmno(item.getErpCode());

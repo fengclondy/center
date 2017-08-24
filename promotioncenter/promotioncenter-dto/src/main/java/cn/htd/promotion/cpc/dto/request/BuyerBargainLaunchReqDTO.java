@@ -10,6 +10,8 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 
 	private static final long serialVersionUID = -3459854858917893780L;
 	
+	private Integer id;
+	
 	private String buyerCode;//买家编码
 	
 	private String promotionId;//促销活动编码
@@ -38,6 +40,14 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 	private String goodsName;//砍价商品
 	
 	private String buyerTelephone;//联系方式
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getGoodsName() {
 		return goodsName;

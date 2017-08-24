@@ -78,6 +78,7 @@ import cn.htd.zeus.tc.dto.OrderItemCouponDTO;
 import cn.htd.zeus.tc.dto.TimelimitedInfoDTO;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 import cn.htd.zeus.tc.dto.response.OrderCreateInfoResDTO;
+import cn.htd.zeus.tc.dto.response.OrderCreateListInfoResDTO;
 import cn.htd.zeus.tc.dto.resquest.BatchGetStockReqDTO;
 import cn.htd.zeus.tc.dto.resquest.BatchGetStockSkuNumsReqDTO;
 import cn.htd.zeus.tc.dto.resquest.JDCreateOrderReqDTO;
@@ -1666,8 +1667,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			return orderCreateInfoResDTO;
 		}
 		// 设置订单和订单行信息
+		Map<String,Long> sellerInfoMap = new HashMap<String,Long>();
 		this.setSkuListInfo4order(messageId, orderCreate4huilinReqDTO, orderCreateInfoReqDTO,
-				orderCreateInfoResDTO);
+				orderCreateInfoResDTO,sellerInfoMap);
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(orderCreateInfoResDTO.getResponseCode())) {
 			LOGGER.warn(orderCreateInfoResDTO.getReponseMsg());
 			return orderCreateInfoResDTO;
@@ -1677,6 +1679,14 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		OrderCreateInfoDMO orderCreateInfoDMO = this.orderCreate(orderCreateInfoReqDTO);
 		JSONObject jsonObj = (JSONObject) JSONObject.toJSON(orderCreateInfoDMO);
 		orderCreateInfoResDTO = JSONObject.toJavaObject(jsonObj, OrderCreateInfoResDTO.class);
+		
+		List<OrderCreateListInfoResDTO> orderListRes = orderCreateInfoResDTO.getOrderResList();
+		if(CollectionUtils.isNotEmpty(orderListRes)){
+			for(OrderCreateListInfoResDTO order : orderListRes){
+				String sellerUserIdKey = order.getSellerUserId();
+				order.setSellerUserId(sellerInfoMap.get(sellerUserIdKey).toString());
+			}
+		}
 		orderCreateInfoResDTO.setResponseCode(orderCreateInfoDMO.getResultCode());
 		orderCreateInfoResDTO.setReponseMsg(orderCreateInfoDMO.getResultMsg());
 		return orderCreateInfoResDTO;
@@ -1761,7 +1771,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 	private void setSkuListInfo4order(String messageId,
 			OrderCreate4huilinReqDTO orderCreate4huilinReqDTO,
 			OrderCreateInfoReqDTO orderCreateInfoReqDTO,
-			OrderCreateInfoResDTO orderCreateInfoResDTO) {
+			OrderCreateInfoResDTO orderCreateInfoResDTO,
+			Map<String,Long> sellerInfoMap) {
 		
 		List<OrderCreateOrderListInfoReqDTO> orderList = orderCreate4huilinReqDTO.getOrderList();
 		if(CollectionUtils.isNotEmpty(orderList)){
@@ -1801,6 +1812,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 							}
 							String sellerCode = sellerInfo.getOtherCenterResult();
 							inforeqDto.setSellerCode(sellerCode);
+							sellerInfoMap.put(sellerCode, sellerId);
 							OtherCenterResDTO<ShopDTO> shopInfo = storeCenterRAO.findShopInfoById(sellerId);
 							inforeqDto.setShopId(shopInfo.getOtherCenterResult().getShopId());
 							inforeqDto.setShopName(shopInfo.getOtherCenterResult().getShopName());

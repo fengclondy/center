@@ -1,4 +1,4 @@
-package cn.htd.promotion.api;
+package cn.htd.promotion.cpc.api;
 
 import cn.htd.common.DataGrid;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;

@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.convert;
 
+import org.springframework.beans.BeanUtils;
+
 import cn.htd.promotion.cpc.biz.dmo.TimelimitedInfoDMO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
@@ -8,8 +10,10 @@ public class TimelimitedInfoConvert extends AbstractConvert<TimelimitedInfoDMO, 
 
 	@Override
 	protected TimelimitedInfoResDTO populateTarget(TimelimitedInfoDMO source) {
+		
 		TimelimitedInfoResDTO timelimitedInfoResDTO = new TimelimitedInfoResDTO();
-		// BeanUtils.copyProperties(source, target);
+		 BeanUtils.copyProperties(source, timelimitedInfoResDTO);
+		 
 		return timelimitedInfoResDTO;
 	}
 

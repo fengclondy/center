@@ -6,25 +6,24 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
-import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.BargainPriceSplit;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerUseBargainLogDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-
-import com.alibaba.fastjson.JSON;
 
 @Service("promotionBargainRedisHandle")
 public class PromotionBargainRedisHandle {
@@ -36,7 +35,7 @@ public class PromotionBargainRedisHandle {
 	private DictionaryUtils dictionary;
 
 	@Resource
-	private PromotionCenterRedisDB promotionRedisDB;
+	private PromotionRedisDB promotionRedisDB;
 
 	/**
 	 * 保存砍价活动的启用状态
@@ -66,7 +65,7 @@ public class PromotionBargainRedisHandle {
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
 						.equals(validStatus)) {
 			throw new PromotionCenterBusinessException(
-					PromotionCenterCodeConst.BARGAIN_NOT_VALID, "砍价活动ID:"
+					ResultCodeEnum.BARGAIN_NOT_VALID.getCode(), "砍价活动ID:"
 							+ promotionId + " 该砍价活动未启用");
 		}
 		promotionBargainInfoJsonStr = promotionRedisDB.getHash(
@@ -75,7 +74,7 @@ public class PromotionBargainRedisHandle {
 				PromotionBargainInfoResDTO.class);
 		if (promotionBargainInfoList == null) {
 			throw new PromotionCenterBusinessException(
-					PromotionCenterCodeConst.PROMOTION_NOT_EXIST, "砍价活动ID:"
+					ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动ID:"
 							+ promotionId + " 该砍价活动不存在!");
 		}
 		return promotionBargainInfoList;

@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,6 @@ import com.alibaba.fastjson.JSONObject;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionSloganDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
-import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
@@ -42,6 +43,11 @@ public class PromotionSloganServiceImpl implements PromotionSloganService{
 				promotionSloganDTOList = new ArrayList<PromotionSloganResDTO>();
 				String str = JSONObject.toJSONString(promotionSloganDMOList);
 				promotionSloganDTOList = JSONObject.parseArray(str,PromotionSloganResDTO.class);
+				for (PromotionSloganResDTO dto : promotionSloganDTOList) {
+					if(StringUtils.isNotEmpty(dto.getPromotionSlogan())){
+						dto.setSloganList(JSON.parseArray(dto.getPromotionSlogan(), String.class));
+					}
+				}
 				result.setResult(promotionSloganDTOList);
 			}
 		}catch(PromotionCenterBusinessException psb){

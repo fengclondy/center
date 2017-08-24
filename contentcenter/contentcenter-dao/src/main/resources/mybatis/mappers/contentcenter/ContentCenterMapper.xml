@@ -22,6 +22,8 @@
     select 
     <include refid="HotWord_Column_List" />
     from hot_word
+    where status='1'
+    order by sort_num
   </select>
   
   <resultMap id="MallChannelsResultMap" type="com.bjucloud.contentcenter.domain.MallChannels">
@@ -46,11 +48,14 @@
     select 
     <include refid="MallChannels_Column_List" />
     from mall_channels
+    where status='1'
+    order by sort_num
   </select>
   
   <resultMap id="MallTypeResultMap" type="com.bjucloud.contentcenter.domain.MallType">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="create_id" jdbcType="BIGINT" property="createId" />
     <result column="create_name" jdbcType="VARCHAR" property="createName" />
@@ -60,12 +65,15 @@
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
   </resultMap>
   <sql id="MallType_Column_List">
-    id, name, status, create_id, create_name, create_time, modify_id, modify_name, modify_time
+    id, name, icon_url, status, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
   <select id="selectMallType" parameterType="java.lang.Long" resultMap="MallTypeResultMap">
     select 
     <include refid="MallType_Column_List" />
     from mall_type
+    where 
+    status='1'
+    order by create_time asc
   </select>
   
   <resultMap id="MallTypeSubResultMap" type="com.bjucloud.contentcenter.domain.MallTypeSub">
@@ -90,6 +98,8 @@
     select 
     <include refid="MallTypeSub_Column_List" />
     from mall_type_sub
+    where 
+    status='1' order by sort_num
   </select>
   <select id="selectMallTypeSubById" parameterType="java.lang.Long" resultMap="MallTypeSubResultMap">
     select 
@@ -118,6 +128,7 @@
     select 
     <include refid="SiteLogo_Column_List" />
     from site_logo
+    order by create_time desc
   </select>
   
    <resultMap id="SiteSloganResultMap" type="com.bjucloud.contentcenter.domain.SiteSlogan">
@@ -164,6 +175,8 @@
     select 
     <include refid="TopAd_Column_List" />
     from top_ad
+    where 
+    status='1' and now() between start_time and end_time;
   </select>
 
 	<resultMap id="LoginPageResultMap" type="com.bjucloud.contentcenter.domain.LoginPage">
@@ -211,6 +224,7 @@
     select 
     <include refid="StaticAd_Column_List" />
     from static_ad where status='1'
+    order by sort_num
   </select>
   
    <resultMap id="FloorResultMap" type="com.bjucloud.contentcenter.domain.Floor" >
@@ -274,6 +288,7 @@
     select 
     <include refid="HeadAd_Column_List" />
     from head_ad where status = '1'
+    order by sort_num
   </select>
   
    <resultMap id="SubCarouselAdResultMap" type="com.bjucloud.contentcenter.domain.SubCarouselAd" >
@@ -303,6 +318,7 @@
     <if test="subId !=null and subId !=''">
     	and sub_id = #{subId}
     </if>
+    order by sort_num
   </select>
   
   <resultMap id="StoreSubAdResultMap" type="com.bjucloud.contentcenter.domain.SubAd" >
@@ -343,6 +359,7 @@
     and b.id = d.sub_content_id 
     and a.status = '1'
     and a.sub_id = #{subId} 
+    order by d.sort_num 
   </select>
   
   <resultMap id="SubAdResultMap" type="com.bjucloud.contentcenter.domain.SubAd" >
@@ -383,6 +400,7 @@
     and b.id = c.sub_content_id
     and a.status = '1' 
     and a.sub_id = #{subId}
+    order by c.sort_num
   </select>
   
   

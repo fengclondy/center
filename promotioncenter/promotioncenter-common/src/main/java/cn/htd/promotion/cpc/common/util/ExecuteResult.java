@@ -2,6 +2,8 @@ package cn.htd.promotion.cpc.common.util;
 
 import java.io.Serializable;
 
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+
 /**
  * 执行结果信息类，用于封装增删改方法的结果信息 失败时必须将错误信息设置到errorMessages中
  */
@@ -13,7 +15,7 @@ public class ExecuteResult<T> implements Serializable {
 	private String resultMessage;// 执行成功结果信息
 	private String errorMessage;// 调用失败时，返回的错误集合
 	
-	private String code;
+	private String code = ResultCodeEnum.SUCCESS.getCode();
 
 	public T getResult() {
 		return result;

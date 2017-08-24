@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class ItemSkuTerminalPrice implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5437070595115394269L;
 	private Long id;
     private Long skuId;
 

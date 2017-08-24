@@ -86,6 +86,7 @@ public enum OrderStatusEnum {
 	ORDER_FROM_MALL("1","商城开单"),
 	ORDER_FROM_VMS("2","VMS开单"),
 	ORDER_FROM_ERP_VMS("4","VMS开单-(erp五合一专用)"),
+	ORDER_FROM_PRESALE("5","预售"),
 	
 	ORDER_RELEASE_STOCK("1","创建订单锁定商品库存-失败时候需要释放商品库存"),
 	ORDER_NOT_RELEASE_STOCK("0","创建订单不锁定商品库存-失败时候不需要释放商品库存"),

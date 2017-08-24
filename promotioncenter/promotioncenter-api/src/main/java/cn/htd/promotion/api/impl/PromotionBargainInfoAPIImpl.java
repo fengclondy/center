@@ -13,9 +13,8 @@ import org.springframework.stereotype.Service;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
-import cn.htd.promotion.api.PromotionBargainInfoAPI;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
+import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -24,19 +23,21 @@ import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
 
 @Service("promotionBargainInfoAPI")
-public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
+public class PromotionBargainInfoAPIImpl{
 	
 	@Resource
 	private PromotionBargainInfoService promotionBargainInfoService;
+	@Resource
+	private PromotionSloganService promotionSloganService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionBargainInfoAPIImpl.class);
 
-	@Override
 	public ExecuteResult<PromotionBargainInfoResDTO> getPromotionBargainInfoDetail(
 			BuyerBargainLaunchReqDTO buyerBargainLaunch) {
 		ExecuteResult<PromotionBargainInfoResDTO> result = new ExecuteResult<PromotionBargainInfoResDTO>();
@@ -44,7 +45,7 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 			ValidateResult validateResult = ValidationUtils
 					.validateEntity(buyerBargainLaunch);
 			if (validateResult.isHasErrors()) {
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 	                    validateResult.getErrorMsg());
 			}
 			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
@@ -81,7 +82,6 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 		return result;
 	}
 
-	@Override
 	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
 			String sellerCode, Pager<String> page) {
 		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
@@ -94,7 +94,6 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 		return result;
 	}
 
-	@Override
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
 			String sellerCode,  Pager<String> page) {
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
@@ -106,4 +105,19 @@ public class PromotionBargainInfoAPIImpl implements  PromotionBargainInfoAPI{
 		}
 		return result;
 	}
+	
+	public ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(
+			String providerSellerCode, String messageId) {
+		ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
+		if (!StringUtils.isEmpty(providerSellerCode) && !StringUtils.isEmpty(messageId)) {
+			return promotionSloganService.queryBargainSloganBySellerCode(providerSellerCode, messageId);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+			LOGGER.error("MessageId:{} 调用方法PromotionSloganAPIImpl.queryBargainSloganBySellerCode出现错误{}",
+					messageId, providerSellerCode + ":" + messageId);
+		}
+		return result;
+	}
+
 }

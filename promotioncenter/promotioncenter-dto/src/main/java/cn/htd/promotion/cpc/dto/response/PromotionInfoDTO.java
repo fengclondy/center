@@ -188,6 +188,15 @@ public class PromotionInfoDTO implements Serializable {
 
     private String invalidTimeStr;
     
+    /**
+     * 中奖总数量
+     */
+    private String winningNum;
+    /**
+     * 今日中奖总数量
+     */
+    private String winningTodayNum;
+    
     public String getEffectiveTimeStr() {
         return effectiveTimeStr;
     }
@@ -523,8 +532,26 @@ public class PromotionInfoDTO implements Serializable {
     public void setVerifyStatusList(List<String> verifyStatusList) {
         this.verifyStatusList = verifyStatusList;
     }
+    
+    
 
-    public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
+    public String getWinningNum() {
+		return winningNum;
+	}
+
+	public void setWinningNum(String winningNum) {
+		this.winningNum = winningNum;
+	}
+
+	public String getWinningTodayNum() {
+		return winningTodayNum;
+	}
+
+	public void setWinningTodayNum(String winningTodayNum) {
+		this.winningTodayNum = winningTodayNum;
+	}
+
+	public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
         this.id = promotionInfoDTO.getId();
         this.promotionId = promotionInfoDTO.getPromotionId();
         this.promotionName = promotionInfoDTO.getPromotionName();

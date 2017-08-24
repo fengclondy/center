@@ -30,6 +30,8 @@ public class OrderItemSkuPriceDTO implements Serializable{
 	private BigDecimal goodsPrice;
 	//外部供应商的阶梯价格
 	private List<ItemSkuLadderPrice> ladderPriceList;
+	//汇掌柜价格
+	private HzgPriceDTO hzgPrice;
 	
 	public BigDecimal getCostPrice() {
 		return costPrice;
@@ -78,6 +80,12 @@ public class OrderItemSkuPriceDTO implements Serializable{
 	}
 	public void setLadderPriceList(List<ItemSkuLadderPrice> ladderPriceList) {
 		this.ladderPriceList = ladderPriceList;
+	}
+	public HzgPriceDTO getHzgPrice() {
+		return hzgPrice;
+	}
+	public void setHzgPrice(HzgPriceDTO hzgPrice) {
+		this.hzgPrice = hzgPrice;
 	}
 	
 }

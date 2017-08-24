@@ -16,7 +16,6 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 
@@ -29,8 +28,6 @@ public class BuyerLauchBargainTestUnit {
 	
 	@Resource
 	private BuyerLaunchBargainInfoService buyerLaunchBargainInfoService;
-	@Resource
-	private PromotionCenterRedisDB promotionRedisDB;
 	
 	@Test
 	@Rollback(false) 
@@ -55,12 +52,12 @@ public class BuyerLauchBargainTestUnit {
 		System.out.println(result.getErrorMessage());
 	}
 	
-	@Test
-	@Rollback(false) 
-	public void addRedis(){
-		String price = promotionRedisDB.tailPop("XMZ");
-		System.out.println(price);
-	}
+//	@Test
+//	@Rollback(false) 
+//	public void addRedis(){
+//		String price = promotionRedisDB.tailPop("XMZ");
+//		System.out.println(price);
+//	}
 	
 	@Test
 	@Rollback(false)

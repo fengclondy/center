@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
-import cn.htd.promotion.api.BuyerBargainAPI;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -27,14 +26,13 @@ import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 
 @Service("buyerBargainAPI")
-public class BuyerBargainAPIImpl implements BuyerBargainAPI{
+public class BuyerBargainAPIImpl{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BuyerBargainAPIImpl.class);
 	
 	@Resource
 	private BuyerLaunchBargainInfoService buyerLaunchBargainInfoService;
 
-	@Override
 	public ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode,String messageId) {
 		ExecuteResult<List<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<List<BuyerLaunchBargainInfoResDTO>>();
 		try{
@@ -65,7 +63,6 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		return result;
 	}
 
-	@Override
 	public ExecuteResult<Boolean> updateBuyerLaunchBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch) {
 		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
 		try{
@@ -73,7 +70,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 			ValidateResult validateResult = ValidationUtils
 					.validateEntity(buyerBargainLaunch);
 			if (validateResult.isHasErrors()) {
-				throw new PromotionCenterBusinessException(PromotionCenterCodeConst.PARAMETER_ERROR,
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 	                    validateResult.getErrorMsg());
 			}
 			Integer falg = buyerLaunchBargainInfoService.updateBuyerLaunchBargainInfo(buyerBargainLaunch);
@@ -109,7 +106,6 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		return result;
 	}
 
-	@Override
 	public ExecuteResult<BuyerLaunchBargainInfoResDTO> getBuyerBargainLaunchInfoByBargainCode(String bargainCode,
 			String messageId) {
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
@@ -139,7 +135,6 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		return result;
 	}
 
-	@Override
 	public ExecuteResult<Integer> getBuyerLaunchBargainInfoNum(String promotionId,
 			String levelCode, String messageId) {
 		ExecuteResult<Integer> result = new ExecuteResult<Integer>();
@@ -163,7 +158,6 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 		return result;
 	}
 
-	@Override
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> getBuyerLaunchBargainInfoByCondition(
 			Pager<BuyerBargainLaunchReqDTO> pager, BuyerBargainLaunchReqDTO BuyerBargainLaunch) {
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
@@ -173,7 +167,6 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI{
 	}
 	
 
-	@Override
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
 			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.htd.promotion.cpc.biz.dao.AwardRecordDAO" >
-  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.PromotionAwardDMO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionAwardDTO" >
     <id column="ID" property="id" jdbcType="BIGINT" />
     <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
     <result column="LEVEL_CODE" property="levelCode" jdbcType="VARCHAR" />
@@ -11,10 +11,19 @@
     <result column="BUYER_NAME" property="buyerName" jdbcType="VARCHAR" />
     <result column="BUYER_TELEPHONE" property="buyerTelephone" jdbcType="VARCHAR" />
 	<result column="SELLER_CODE" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="SELLER_ADDRESS" property="sellerAddress" jdbcType="VARCHAR" />
+    <result column="BELONG_SUPERIOR_NAME" property="belongSuperiorName" jdbcType="VARCHAR" />
 	<result column="REWARD_TYPE" property="rewardType" jdbcType="VARCHAR" />
     <result column="RELEVANCE_BARGAIN_CODE" property="relevanceBargainCode" jdbcType="VARCHAR" />
     <result column="REWARD_NAME" property="rewardName" jdbcType="VARCHAR" />
+    <result column="AWARD_VALUE" property="awardValue" jdbcType="VARCHAR" />
     <result column="WINNING_TIME" property="winningTime" jdbcType="TIMESTAMP" />
+    <result column="WINNER_NAME" property="winnerName" jdbcType="VARCHAR" />
+    <result column="WINNING_CONTACT" property="winningContact" jdbcType="VARCHAR" />
+    <result column="CHARGE_TELEPHONE" property="chargeTelephone" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_STATUS" property="logisticsStatus" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_COMPANY" property="logisticsCompany" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_NO" property="logisticsNo" jdbcType="VARCHAR" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
     <result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
     <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
@@ -40,8 +49,14 @@
 
   <!-- 查询条件-->
   <sql id="awardRecord_mid">
-    <if test="params.rewardType!=null and params.rewardType!=''">
+    <if test="params.promotionId!=null and params.promotionId!=''">
       and bwr.PROMOTION_ID = #{params.promotionId}
+    </if>
+    <if test="params.buyerCode!=null and params.buyerCode!=''">
+      and bwr.BUYER_CODE = #{params.buyerCode}
+    </if>
+    <if test="params.buyerName!=null and params.buyerName!=''">
+      and bwr.BUYER_NAME like concat('%', #{params.buyerName} ,'%')
     </if>
     <if test="params.rewardType!=null and params.rewardType!=''">
       and bwr.REWARD_TYPE = #{params.rewardType}

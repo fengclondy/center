@@ -21,7 +21,6 @@ import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
@@ -39,9 +38,6 @@ public class PromotionInfoTestUnit {
     @Resource
     private PromotionSloganDAO promotionSloganDAO;
     
-	@Resource
-	private PromotionCenterRedisDB promotionRedisDB;
-
 	@Test
 	@Rollback(false) 
 	public void savePromotionInfo() {
@@ -136,12 +132,12 @@ public class PromotionInfoTestUnit {
 		System.out.println(JSON.toJSONString(list));
 	}
 
-	@Test
-	@Rollback(false) 
-	public void delRedisPromotionInfo() {
-		promotionRedisDB.del("B2B_MIDDLE_BARGAIN");
-		promotionRedisDB.del("B2B_MIDDLE_BARGAIN_VALID");
-	}
+//	@Test
+//	@Rollback(false) 
+//	public void delRedisPromotionInfo() {
+//		promotionRedisDB.del("B2B_MIDDLE_BARGAIN");
+//		promotionRedisDB.del("B2B_MIDDLE_BARGAIN_VALID");
+//	}
 	
 	@Test
 	@Rollback(false) 

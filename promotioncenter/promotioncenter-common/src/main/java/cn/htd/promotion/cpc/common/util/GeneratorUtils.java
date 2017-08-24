@@ -34,7 +34,7 @@ public class GeneratorUtils {
 	private static Map<String, String> map = new HashMap<String, String>();
 
 	@Resource
-	private PromotionCenterRedisDB marketRedisDB;
+	private PromotionRedisDB marketRedisDB;
 
 	/**
 	 * 促销活动编码生成方法

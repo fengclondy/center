@@ -57,9 +57,9 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private Date eachEndTimeD;//活动结束时间
 	
-	private Date offlineStartTime;//到店购买开始时间
+	private Date offlineStartTimeD;//到店购买开始时间
 	
-	private Date offlineEndTime;//到店购买结束时间
+	private Date offlineEndTimeD;//到店购买结束时间
 	
 	private Date launchTime;//发起时间
 	
@@ -137,20 +137,20 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.surplusPrice = surplusPrice;
 	}
 
-	public Date getOfflineStartTime() {
-		return offlineStartTime;
+	public Date getOfflineStartTimeD() {
+		return offlineStartTimeD;
 	}
 
-	public void setOfflineStartTime(Date offlineStartTime) {
-		this.offlineStartTime = offlineStartTime;
+	public void setOfflineStartTimeD(Date offlineStartTimeD) {
+		this.offlineStartTimeD = offlineStartTimeD;
 	}
 
-	public Date getOfflineEndTime() {
-		return offlineEndTime;
+	public Date getOfflineEndTimeD() {
+		return offlineEndTimeD;
 	}
 
-	public void setOfflineEndTime(Date offlineEndTime) {
-		this.offlineEndTime = offlineEndTime;
+	public void setOfflineEndTimeD(Date offlineEndTimeD) {
+		this.offlineEndTimeD = offlineEndTimeD;
 	}
 
 	public String getPromotionDesc() {

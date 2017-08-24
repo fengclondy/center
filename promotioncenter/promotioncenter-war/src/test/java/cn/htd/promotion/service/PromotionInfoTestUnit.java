@@ -21,7 +21,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
@@ -40,7 +40,7 @@ public class PromotionInfoTestUnit {
     private PromotionSloganDAO promotionSloganDAO;
     
 	@Resource
-	private PromotionCenterRedisDB promotionRedisDB;
+	private PromotionRedisDB promotionRedisDB;
 
 	@Test
 	@Rollback(false) 

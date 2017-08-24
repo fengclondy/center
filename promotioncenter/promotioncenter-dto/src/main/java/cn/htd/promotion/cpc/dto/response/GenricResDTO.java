@@ -2,42 +2,42 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.io.Serializable;
 
-public class GenricResDTO implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1186301269812058781L;
+public class GenricResDTO implements Serializable {
 
-	private String messageID = null;
-	
-	private String responseCode = null;
-	
-	private String responseMsg = null;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -1186301269812058781L;
 
-	public String getMessageID() {
-		return messageID;
-	}
+    private String messageId = null;
 
-	public void setMessageID(String messageID) {
-		this.messageID = messageID;
-	}
+    private String responseCode = null;
 
-	public String getResponseCode() {
-		return responseCode;
-	}
+    private String responseMsg = null;
 
-	public void setResponseCode(String responseCode) {
-		this.responseCode = responseCode;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public String getResponseMsg() {
-		return responseMsg;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public void setResponseMsg(String responseMsg) {
-		this.responseMsg = responseMsg;
-	}
-	
-	
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public String getResponseMsg() {
+        return responseMsg;
+    }
+
+    public void setResponseMsg(String responseMsg) {
+        this.responseMsg = responseMsg;
+    }
+
+
 }

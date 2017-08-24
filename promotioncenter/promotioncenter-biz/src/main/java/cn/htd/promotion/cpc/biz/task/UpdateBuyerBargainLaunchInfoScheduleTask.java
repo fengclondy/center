@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 
 public class UpdateBuyerBargainLaunchInfoScheduleTask implements IScheduleTaskDealMulti<BuyerBargainLaunchReqDTO>{
@@ -27,7 +28,7 @@ public class UpdateBuyerBargainLaunchInfoScheduleTask implements IScheduleTaskDe
 	public static final String BUYER_LAUNCH_BARGAIN_INFO = "BUYER_LAUNCH_BARGAIN_INFO";
 	
 	@Resource
-    private PromotionCenterRedisDB promotionRedisDB;
+    private PromotionRedisDB promotionRedisDB;
 	
 	@Resource
 	private BuyerLaunchBargainInfoDAO buyerLaunchBargainInfoDAO;

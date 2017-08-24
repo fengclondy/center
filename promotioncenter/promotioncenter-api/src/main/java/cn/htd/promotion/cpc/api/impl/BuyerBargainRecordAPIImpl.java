@@ -1,4 +1,4 @@
-package cn.htd.promotion.api.impl;
+package cn.htd.promotion.cpc.api.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,17 +14,14 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 
-import cn.htd.promotion.api.BuyerBargainRecordAPI;
+import cn.htd.promotion.cpc.api.BuyerBargainRecordAPI;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterCodeConst;
-import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 
 @Service("buyerBargainRecordAPI")
 public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
@@ -82,7 +80,7 @@ public class BuyerBargainRecordAPIImpl implements BuyerBargainRecordAPI {
 					.validateEntity(buyerBargainRecord);
 			if (validateResult.isHasErrors()) {
 				throw new PromotionCenterBusinessException(
-						PromotionCenterCodeConst.PARAMETER_ERROR,
+						ResultCodeEnum.PARAMETER_ERROR.getCode(),
 						validateResult.getErrorMsg());
 			}
 			Integer i = buyerBargainRecordService

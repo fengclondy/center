@@ -16,7 +16,7 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 
 public class InsertBuyerBargainRecordScheduleTask implements IScheduleTaskDealMulti<BuyerBargainRecordReqDTO>{
@@ -27,7 +27,7 @@ public class InsertBuyerBargainRecordScheduleTask implements IScheduleTaskDealMu
 	public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
 	
 	@Resource
-    private PromotionCenterRedisDB promotionRedisDB;
+    private PromotionRedisDB promotionRedisDB;
 	
 	@Resource
 	private BuyerBargainRecordDAO buyerBargainRecordDAO;

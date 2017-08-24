@@ -11,18 +11,15 @@ import java.io.Serializable;
  */
 public class GenricReqDTO implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7569714466068742961L;
 
-	private String messageID = null;
+	private String messageId = null;
 
-	public String getMessageID() {
-		return messageID;
+	public String getMessageId() {
+		return messageId;
 	}
 
-	public void setMessageID(String messageID) {
-		this.messageID = messageID;
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 }

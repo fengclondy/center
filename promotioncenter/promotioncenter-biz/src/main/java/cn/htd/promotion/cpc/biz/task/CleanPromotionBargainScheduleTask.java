@@ -26,7 +26,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 
 /**
@@ -45,7 +45,7 @@ public class CleanPromotionBargainScheduleTask implements IScheduleTaskDealMulti
     private DictionaryUtils dictionary;
 
     @Resource
-    private PromotionCenterRedisDB promotionRedisDB;
+    private PromotionRedisDB promotionRedisDB;
 
     @Resource
     private PromotionInfoDAO promotionInfoDAO;

@@ -1,12 +1,14 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 
 @Repository("cn.htd.promotion.cpc.biz.dao.promotionInfoDAO")
@@ -79,4 +81,21 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public Integer updateCleanedRedisPromotionStatus(PromotionInfoDTO PromotionInfoResDTO);
+
+    /**
+     * 查询扭蛋活动列表
+     *
+     * @param PromotionInfoResDTO
+     * @return
+     */
+	public List<PromotionInfoDTO> getPromotionGashaponByInfo(
+			@Param("entity") PromotionInfoReqDTO promotionInfoReqDTO,@Param("pager") Pager<PromotionInfoReqDTO> pager);
+
+    /**
+     * 查询扭蛋活动列表总数
+     *
+     * @param PromotionInfoResDTO
+     * @return
+     */
+	public long getTotalPromotionGashaponByInfo(@Param("entity") PromotionInfoReqDTO promotionInfoReqDTO);
 }

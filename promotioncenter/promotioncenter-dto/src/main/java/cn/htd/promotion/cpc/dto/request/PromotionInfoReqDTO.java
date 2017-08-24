@@ -56,6 +56,14 @@ public class PromotionInfoReqDTO implements Serializable{
      */
     private Date invalidTime;
     /**
+     * 促销活动开始时间str
+     */
+    private String effectiveTimestr;
+    /**
+     * 促销活动结束时间str
+     */
+    private String invalidTimestr;
+    /**
      * 是否是VIP会员专属标记
      */
     private int isVip;
@@ -86,6 +94,10 @@ public class PromotionInfoReqDTO implements Serializable{
      * 审核备注
      */
     private String verifyRemark;
+    /**
+     * 更新时间（促销活动更新时必须传入做乐观排他用）
+     */
+    private String modifyTime;
     
     @NotEmpty(message = "messageId不能为空")
 	private String messageId;
@@ -204,4 +216,24 @@ public class PromotionInfoReqDTO implements Serializable{
 	public void setVerifyRemark(String verifyRemark) {
 		this.verifyRemark = verifyRemark;
 	}
+	public String getModifyTime() {
+		return modifyTime;
+	}
+	public void setModifyTime(String modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+	public String getEffectiveTimestr() {
+		return effectiveTimestr;
+	}
+	public void setEffectiveTimestr(String effectiveTimestr) {
+		this.effectiveTimestr = effectiveTimestr;
+	}
+	public String getInvalidTimestr() {
+		return invalidTimestr;
+	}
+	public void setInvalidTimestr(String invalidTimestr) {
+		this.invalidTimestr = invalidTimestr;
+	}
+	
+	
 }

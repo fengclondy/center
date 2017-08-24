@@ -45,8 +45,8 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
                     result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
                 }
             }else{
-                result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
-                result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+                result.setCode(ResultCodeEnum.PROMOTION_AWARD_IS_NULL.getCode());
+                result.setErrorMessage(ResultCodeEnum.PROMOTION_AWARD_IS_NULL.getMsg());
             }
 
             logger.info("promotionId{}:AwardRecordAPIImpl.getAwardRecordByPromotionId（）方法,出参{}",messageId , dto.getPromotionId(), JSON.toJSONString(result));

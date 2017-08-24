@@ -43,23 +43,23 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private Integer virtualQuantity;//汇掌柜端虚拟显示人数增加
 	
-	private String promotionDescribe;//宣传标语
+	private String promotionDesc;//宣传标语
 	
 	private String sellerName;//店铺名称
 	
-	private String contactName;//联系人电话
+	private String contactNameD;//联系人电话
 	
-	private String contactTelphone;//联系电话
+	private String contactTelphoneD;//联系电话
 	
-	private String contactAddress;//联系地址
+	private String contactAddressD;//联系地址
 	
 	private Date eachStartTimeD;//活动开始时间
 	
 	private Date eachEndTimeD;//活动结束时间
 	
-	private Date offlineStartTime;//到店购买开始时间
+	private Date offlineStartTimeD;//到店购买开始时间
 	
-	private Date offlineEndTime;//到店购买结束时间
+	private Date offlineEndTimeD;//到店购买结束时间
 	
 	private Date launchTime;//发起时间
 	
@@ -137,28 +137,28 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.surplusPrice = surplusPrice;
 	}
 
-	public Date getOfflineStartTime() {
-		return offlineStartTime;
+	public Date getOfflineStartTimeD() {
+		return offlineStartTimeD;
 	}
 
-	public void setOfflineStartTime(Date offlineStartTime) {
-		this.offlineStartTime = offlineStartTime;
+	public void setOfflineStartTimeD(Date offlineStartTimeD) {
+		this.offlineStartTimeD = offlineStartTimeD;
 	}
 
-	public Date getOfflineEndTime() {
-		return offlineEndTime;
+	public Date getOfflineEndTimeD() {
+		return offlineEndTimeD;
 	}
 
-	public void setOfflineEndTime(Date offlineEndTime) {
-		this.offlineEndTime = offlineEndTime;
+	public void setOfflineEndTimeD(Date offlineEndTimeD) {
+		this.offlineEndTimeD = offlineEndTimeD;
 	}
 
-	public String getPromotionDescribe() {
-		return promotionDescribe;
+	public String getPromotionDesc() {
+		return promotionDesc;
 	}
 
-	public void setPromotionDescribe(String promotionDescribe) {
-		this.promotionDescribe = promotionDescribe;
+	public void setPromotionDesc(String promotionDesc) {
+		this.promotionDesc = promotionDesc;
 	}
 
 	public String getSellerName() {
@@ -169,28 +169,28 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.sellerName = sellerName;
 	}
 
-	public String getContactName() {
-		return contactName;
+	public String getContactNameD() {
+		return contactNameD;
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public void setContactNameD(String contactNameD) {
+		this.contactNameD = contactNameD;
 	}
 
-	public String getContactTelphone() {
-		return contactTelphone;
+	public String getContactTelphoneD() {
+		return contactTelphoneD;
 	}
 
-	public void setContactTelphone(String contactTelphone) {
-		this.contactTelphone = contactTelphone;
+	public void setContactTelphoneD(String contactTelphoneD) {
+		this.contactTelphoneD = contactTelphoneD;
 	}
 
-	public String getContactAddress() {
-		return contactAddress;
+	public String getContactAddressD() {
+		return contactAddressD;
 	}
 
-	public void setContactAddress(String contactAddress) {
-		this.contactAddress = contactAddress;
+	public void setContactAddressD(String contactAddressD) {
+		this.contactAddressD = contactAddressD;
 	}
 
 	public Date getEachStartTimeD() {

@@ -12,6 +12,20 @@ public class ValidateResult {
 
 	// 校验错误信息
 	private Map<String, String> errorMsg = new HashMap<String, String>();
+	
+	/*
+	 * add by 张丁 开始
+	 */
+	private Boolean isPass=true;
+	
+	/**
+	 * 返回码
+	 */
+	private String reponseMsg = null;
+	
+    /*
+     * add by 张丁 结束
+     */
 
 	public boolean isHasErrors() {
 		return hasErrors;
@@ -45,6 +59,21 @@ public class ValidateResult {
 
 	public void setErrorMsg(Map<String, String> errorMsg) {
 		this.errorMsg = errorMsg;
+	}
+
+	public Boolean isPass() {
+		return isPass;
+	}
+	public void setIsPass(Boolean isPass) {
+		this.isPass = isPass;
+	}
+
+	public String getReponseMsg() {
+		return reponseMsg;
+	}
+
+	public void setReponseMsg(String reponseMsg) {
+		this.reponseMsg = reponseMsg;
 	}
 
 }

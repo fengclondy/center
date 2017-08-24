@@ -943,6 +943,36 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 			return result;
 		}
 		
+		//查询汇掌柜价格 start
+		try{
+			Map<String,Object> paramMap=Maps.newHashMap();
+			paramMap.put("terminalType",TerminalTypeEnum.HZG_TYPE.getCode());
+			paramMap.put("skuId",queryCommonItemSkuPriceDTO.getSkuId());
+			
+			List<ItemSkuTerminalPrice> itemSkuTerminalPriceList=itemSkuTerminalPriceMapper.selectBySkuIdAndTerminalType(paramMap);
+			
+			if(CollectionUtils.isNotEmpty(itemSkuTerminalPriceList)){
+				HzgPriceDTO hzgPrice=new HzgPriceDTO();
+				
+				for(ItemSkuTerminalPrice itemSkuTerminalPrice:itemSkuTerminalPriceList){
+					if("0".equals(itemSkuTerminalPrice.getPriceType())){
+						hzgPrice.setRetailPrice(itemSkuTerminalPrice.getPrice());
+					}
+					if("1".equals(itemSkuTerminalPrice.getPriceType())){
+						hzgPrice.setSalePrice(itemSkuTerminalPrice.getPrice());
+					}
+					if("2".equals(itemSkuTerminalPrice.getPriceType())){
+						hzgPrice.setVipPrice(itemSkuTerminalPrice.getPrice());
+					}
+				}
+				orderItemSkuPriceDTO.setHzgPrice(hzgPrice);
+			}
+			
+		}catch(Exception e){
+			
+		}
+		//查询汇掌柜价格 end
+		
 		ExecuteResult<CommonItemSkuPriceDTO> queryCommonItemSkuPrice=queryCommonItemSkuPrice(queryCommonItemSkuPriceDTO);
 		
 		if(!queryCommonItemSkuPrice.isSuccess()){

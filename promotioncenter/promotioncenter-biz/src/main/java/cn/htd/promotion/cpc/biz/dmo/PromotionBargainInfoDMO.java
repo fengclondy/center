@@ -40,7 +40,7 @@ public class PromotionBargainInfoDMO{
 	
 	private Date modifyTime;//更新时间
 	
-	private String promotionDescribe;//宣传标语
+	private String promotionDesc;//宣传标语
 	
 	private String sellerName;//店铺名称
 	
@@ -164,12 +164,12 @@ public class PromotionBargainInfoDMO{
 		this.offlineEndTime = offlineEndTime;
 	}
 
-	public String getPromotionDescribe() {
-		return promotionDescribe;
+	public String getPromotionDesc() {
+		return promotionDesc;
 	}
 
-	public void setPromotionDescribe(String promotionDescribe) {
-		this.promotionDescribe = promotionDescribe;
+	public void setPromotionDesc(String promotionDesc) {
+		this.promotionDesc = promotionDesc;
 	}
 
 	public String getSellerName() {

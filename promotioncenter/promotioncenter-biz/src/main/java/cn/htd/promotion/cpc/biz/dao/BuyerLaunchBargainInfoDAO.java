@@ -29,7 +29,7 @@ public interface BuyerLaunchBargainInfoDAO {
 	
 	public BuyerLaunchBargainInfoDMO getBuyerBargainLaunchInfoByBargainCode(String bargainCode);
 
-	public List<BuyerLaunchBargainInfoResDTO> queryLaunchBargainInfoList(
+	public List<BuyerLaunchBargainInfoDMO> queryLaunchBargainInfoList(
 			@Param("bargainDTO") BuyerBargainLaunchReqDTO buyerBargainLaunch, @Param("page") Pager<BuyerBargainLaunchReqDTO> page);
 
 	public Long queryLaunchBargainInfoCount(

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoExtendDTO;
@@ -221,11 +223,15 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		DataGrid<BuyerLaunchBargainInfoResDTO> dataGrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
 		try {
-			List<BuyerLaunchBargainInfoResDTO> launchBargainList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(buyerBargainLaunch, page);
-			Long launchBargainCount = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoCount(buyerBargainLaunch);
-			dataGrid.setRows(launchBargainList);
-			dataGrid.setTotal(launchBargainCount);
-			result.setResult(dataGrid);
+			List<BuyerLaunchBargainInfoDMO> launchBargainList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(buyerBargainLaunch, page);
+			if(null != launchBargainList && !launchBargainList.isEmpty()){
+				String bargainDMOStr = JSON.toJSONString(launchBargainList);
+				List<BuyerLaunchBargainInfoResDTO> dtoList = JSONObject.parseArray(bargainDMOStr, BuyerLaunchBargainInfoResDTO.class);
+				Long launchBargainCount = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoCount(buyerBargainLaunch);
+				dataGrid.setRows(dtoList);
+				dataGrid.setTotal(launchBargainCount);
+				result.setResult(dataGrid);
+			}
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setErrorMessage(e.toString());

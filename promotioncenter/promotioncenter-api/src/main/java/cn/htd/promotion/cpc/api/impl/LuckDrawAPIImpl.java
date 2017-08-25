@@ -13,45 +13,97 @@ import cn.htd.promotion.cpc.api.LuckDrawAPI;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
-import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
+import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
+import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("luckDrawAPI")
 public class LuckDrawAPIImpl implements LuckDrawAPI {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(LuckDrawAPIImpl.class);
-	
+
 	@Resource
 	private LuckDrawService luckDrawService;
 
 	@Override
-	public ExecuteResult<String> validateLuckDrawPermission(
-			ValidateLuckDrawReqDTO request) {
-		ExecuteResult<String> result = new ExecuteResult<String>();
+	public String validateLuckDrawPermission(String validateLuckDrawReqDTOJson) {
+		ValidateLuckDrawResDTO result = new ValidateLuckDrawResDTO();
 		String messageId = "";
+		ValidateLuckDrawReqDTO requestDTO = new ValidateLuckDrawReqDTO();
 		try {
+			JSONObject jsonObject = JSON
+					.parseObject(validateLuckDrawReqDTOJson);
+			requestDTO = JSONObject.toJavaObject(jsonObject,
+					ValidateLuckDrawReqDTO.class);
 			/* 验空2017-02-13 */
-			ValidateResult validateResult = DTOValidateUtil.validate(request);
+			ValidateResult validateResult = DTOValidateUtil
+					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL.getCode());
-				result.setErrorMessage(validateResult.getReponseMsg());
-				return result;
+				result.setResponseMsg(validateResult.getReponseMsg());
+				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+						.getCode());
+				return JSON.toJSONString(result);
 			}
-			messageId = request.getMessageId();
-			luckDrawService.validateLuckDrawPermission(request, result);
+			messageId = requestDTO.getMessageId();
+			result = luckDrawService.validateLuckDrawPermission(requestDTO);
 		} catch (Exception e) {
-			result.setCode(ResultCodeEnum.ERROR.getMsg());
-			result.setErrorMessage(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
 					"MessageId:{} 调用方法LuckDrawAPIImpl.validateLuckDrawPermission出现异常 OrgId：{}",
-					messageId, request.getOrgId(), w.toString());
+					messageId, requestDTO.getOrgId(), w.toString());
 		}
 
-		return result;
+		return JSON.toJSONString(result);
 	}
 
+	@Override
+	public String lotteryActivityPage(String lotteryActivityPageReqDTOJson) {
+		LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
+		String messageId = "";
+		LotteryActivityPageReqDTO requestDTO = new LotteryActivityPageReqDTO();
+		try {
+			JSONObject jsonObject = JSON
+					.parseObject(lotteryActivityPageReqDTOJson);
+			requestDTO = JSONObject.toJavaObject(jsonObject,
+					LotteryActivityPageReqDTO.class);
+			/* 验空2017-02-13 */
+			ValidateResult validateResult = DTOValidateUtil
+					.validate(requestDTO);
+			if (!validateResult.isPass()) {
+				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+						.getCode());
+				result.setResponseMsg(validateResult.getReponseMsg());
+				return JSON.toJSONString(result);
+			}
+			messageId = requestDTO.getMessageId();
+			result = luckDrawService.lotteryActivityPage(requestDTO);
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawAPIImpl.lotteryActivityPage出现异常 OrgId：{}",
+					messageId, requestDTO.getOrgId(), w.toString());
+		}
+		return JSON.toJSONString(result);
+	}
+
+	public static void main(String[] args) {
+		String s = "{\"code\":\"00000\",\"resultMessage\":\"成功\",\"orgId\":\"41444444\"}";
+		JSONObject jsonObject = JSON.parseObject(s);
+		ValidateLuckDrawReqDTO requestDTO = new ValidateLuckDrawReqDTO();
+		requestDTO = JSONObject.toJavaObject(jsonObject,
+				ValidateLuckDrawReqDTO.class);
+		System.out.println(requestDTO.getOrgId());
+	}
 }

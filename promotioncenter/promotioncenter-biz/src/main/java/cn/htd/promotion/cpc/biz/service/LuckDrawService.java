@@ -1,7 +1,9 @@
 package cn.htd.promotion.cpc.biz.service;
 
-import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
+import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
+import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
 public interface LuckDrawService {
 
@@ -11,6 +13,15 @@ public interface LuckDrawService {
 	 * @param request
 	 * @return
 	 */
-	public ExecuteResult<String> validateLuckDrawPermission(
-			ValidateLuckDrawReqDTO request, ExecuteResult<String> result);
+	public ValidateLuckDrawResDTO validateLuckDrawPermission(
+			ValidateLuckDrawReqDTO requestDTO);
+
+	/**
+	 * 抽奖(扭蛋)活动页
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public LotteryActivityPageResDTO lotteryActivityPage(
+			LotteryActivityPageReqDTO request);
 }

@@ -135,7 +135,7 @@
         	AND blbi.buyer_telephone = #{bargainDTO.buyerTelephone}
         </if>
         <if test="bargainDTO.goodsName != null and bargainDTO.goodsName != ''">
-        	AND blbi.goods_name like '%bargainDTO.goodsName%'
+        	AND blbi.goods_name like concat('%', #{bargainDTO.goodsName} ,'%')
         </if>
         <if test="bargainDTO.isBargainOver != null and bargainDTO.isBargainOver != ''">
         	AND blbi.is_bargain_over = #{bargainDTO.isBargainOver}
@@ -161,7 +161,7 @@
         	AND blbi.buyer_telephone = #{bargainDTO.buyerTelephone}
         </if>
         <if test="bargainDTO.goodsName != null and bargainDTO.goodsName != ''">
-        	AND blbi.goods_name like '%bargainDTO.goodsName%'
+        	AND blbi.goods_name like concat('%', #{bargainDTO.goodsName} ,'%')
         </if>
         <if test="bargainDTO.isBargainOver != null and bargainDTO.isBargainOver != ''">
         	AND blbi.is_bargain_over = #{bargainDTO.isBargainOver}

@@ -350,6 +350,9 @@
   	<if test="dto.promotionProviderSellerCode != null and dto.promotionProviderSellerCode != ''">
   		AND promotion_provider_seller_code = #{dto.promotionProviderSellerCode}
   	</if>
+  	<if test="dto.promotionName != null and dto.promotionName != ''">
+  		AND promotion_name like concat('%', #{dto.promotionName} ,'%')
+  	</if>
   	<if test="dto.status != null">
   		AND status = #{dto.status}
   	</if>
@@ -357,7 +360,7 @@
   		<![CDATA[ AND effective_time >= #{dto.effectiveTime}]]>
   	</if>
   	<if test="dto.invalidTime != null">
-  		<![CDATA[ AND dto.invalid_time <= #{dto.invalidTime}]]>
+  		<![CDATA[ AND invalid_time <= #{dto.invalidTime}]]>
   	</if>
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
@@ -370,6 +373,9 @@
   	WHERE status != 9
   	<if test="dto.promotionProviderSellerCode != null and dto.promotionProviderSellerCode != ''">
   		AND promotion_provider_seller_code = #{dto.promotionProviderSellerCode}
+  	</if>
+  	<if test="dto.promotionName != null and dto.promotionName != ''">
+  		AND promotion_name like concat('%', #{dto.promotionName} ,'%')
   	</if>
   	<if test="dto.status != null">
   		AND status = #{dto.status}

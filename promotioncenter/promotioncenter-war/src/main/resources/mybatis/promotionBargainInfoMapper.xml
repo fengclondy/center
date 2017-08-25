@@ -19,6 +19,10 @@
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
+    <sql id="pagination_tail">
+	 	limit #{page.pageOffset} , #{page.rows}
+	</sql>
+  
      <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" 
      				parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
 	    select pbi.bargain_id bargainId ,
@@ -121,4 +125,27 @@
 		where promotion_id = #{promotionId,jdbcType=VARCHAR}
 		  and level_code = #{levelCode,jdbcType=VARCHAR}
 	</update>
+	
+	<select id="queryPromotionBargainStockSum" resultType="java.lang.Integer">
+		SELECT SUM(goods_num) 
+		FROM promotion_bargain_info
+		WHERE promotion_id = #{promotionId}
+	</select>
+	
+	<select id="queryPromotionBargainBySellerCode" resultMap="BaseResultMap">
+		SELECT * FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_provider_seller_code = #{sellerCode}
+  	    AND pi.status != 9
+  	    <if test="page!=null">
+	      <include refid="pagination_tail"/>
+	    </if>
+	</select>
+	
+	<select id="queryPromotionBargainCountBySellerCode" resultType="java.lang.Long">
+		SELECT COUNT(0) FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_provider_seller_code = #{sellerCode}
+  	    AND pi.status != 9
+	</select>
 </mapper>

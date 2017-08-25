@@ -40,6 +40,16 @@ public class BuyerBargainLaunchReqDTO implements Serializable{
 	private String goodsName;//砍价商品
 	
 	private String buyerTelephone;//联系方式
+	
+	private String sellerCode;//卖家编码
+
+	public String getSellerCode() {
+		return sellerCode;
+	}
+
+	public void setSellerCode(String sellerCode) {
+		this.sellerCode = sellerCode;
+	}
 
 	public Integer getId() {
 		return id;

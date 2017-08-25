@@ -1,9 +1,5 @@
 package cn.htd.promotion.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -14,15 +10,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
-import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
-import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
-import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -186,18 +183,37 @@ public class BuyerBargainTestUnit {
 //		}
 //  }
     
+//    @Test
+//    @Rollback(false) 
+//    public void getBuyerLaunchBargainInfoNum() {
+//    	try {
+//  			String promotionId = "22172129400942";
+//  			String levelCode = "2217212940094243";
+//  			String messageId ="001";
+//  			Integer list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoNum(promotionId,levelCode,messageId);
+//  			System.out.println(JSON.toJSONString(list));
+//    	} catch (Exception e) {
+//    		
+//  		}
+//    }
+    
     @Test
     @Rollback(false) 
-    public void getBuyerLaunchBargainInfoNum() {
-    	try {
-  			String promotionId = "22172129400942";
-  			String levelCode = "2217212940094243";
-  			String messageId ="001";
-  			Integer list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoNum(promotionId,levelCode,messageId);
-  			System.out.println(JSON.toJSONString(list));
-    	} catch (Exception e) {
-    		
-  		}
+    public void queryPromotionInfoListBySellerCode(){
+    	Pager<String> page = new Pager<String>();
+    	page.setPageOffset(1);
+    	page.setRows(10);
+    	ExecuteResult<DataGrid<PromotonInfoResDTO>> list = promotionBargainInfoService.queryPromotionInfoListBySellerCode("801781", page);
+    	System.out.println(JSON.toJSONString(list));
     }
     
+    @Test
+    @Rollback(false) 
+    public void queryPromotionBargainOverview(){
+    	Pager<String> page = new Pager<String>();
+    	page.setPageOffset(1);
+    	page.setRows(10);
+    	ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> list = promotionBargainInfoService.queryPromotionBargainOverview("801781", page);
+    	System.out.println(JSON.toJSONString(list));
+    }
 }

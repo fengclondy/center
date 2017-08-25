@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
@@ -211,5 +213,23 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoList（）方法结束,出参{}",messageId,
 				i);
 		return i;
+	}
+	
+	@Override
+	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
+		DataGrid<BuyerLaunchBargainInfoResDTO> dataGrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
+		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
+		try {
+			List<BuyerLaunchBargainInfoResDTO> launchBargainList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(buyerBargainLaunch, page);
+			Long launchBargainCount = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoCount(buyerBargainLaunch);
+			dataGrid.setRows(launchBargainList);
+			dataGrid.setTotal(launchBargainCount);
+			result.setResult(dataGrid);
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setErrorMessage(e.toString());
+		}
+		return result;
 	}
 }

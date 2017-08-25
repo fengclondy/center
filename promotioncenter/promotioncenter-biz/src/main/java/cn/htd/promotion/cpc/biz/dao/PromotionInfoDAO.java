@@ -83,7 +83,15 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
     public Integer updateCleanedRedisPromotionStatus(PromotionInfoDTO PromotionInfoResDTO);
 
     /**
-     * 查询扭蛋活动列表
+     * 根据卖家编码获取对应的促销活动集合
+     * @param buyerCode
+     * @return
+     */
+	public List<PromotionInfoDTO> queryPromotionInfoListBySellerCode(@Param("sellerCode") String sellerCode, @Param("page") Pager<String> page);
+
+	public Long queryPromotionInfoCountBySellerCode(@Param("sellerCode") String sellerCode);
+	
+	/** 查询扭蛋活动列表
      *
      * @param PromotionInfoResDTO
      * @return

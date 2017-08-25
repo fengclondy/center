@@ -25,6 +25,6 @@ public interface BuyerLaunchBargainInfoService {
 	public Integer getBuyerLaunchBargainInfoNum(String promotionId,String levelCode,String messageId);
 	
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
-			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page);
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page);
 	
 }

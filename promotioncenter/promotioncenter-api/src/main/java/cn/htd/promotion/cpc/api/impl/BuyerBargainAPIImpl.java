@@ -180,7 +180,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI {
     }
 
     public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
-			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page) {
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
 		if(null != buyerBargainLaunch && !StringUtils.isEmpty(buyerBargainLaunch.getSellerCode())){
 			return buyerLaunchBargainInfoService.queryLaunchBargainInfoList(buyerBargainLaunch, page);

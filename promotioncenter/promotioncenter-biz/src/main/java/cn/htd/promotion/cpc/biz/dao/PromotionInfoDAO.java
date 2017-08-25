@@ -87,9 +87,9 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @param buyerCode
      * @return
      */
-	public List<PromotionInfoDTO> queryPromotionInfoListBySellerCode(@Param("sellerCode") String sellerCode, @Param("page") Pager<String> page);
+	public List<PromotionInfoDTO> queryPromotionInfoListBySellerCode(@Param("dto") PromotionInfoReqDTO dto, @Param("page") Pager<PromotionInfoReqDTO> page);
 
-	public Long queryPromotionInfoCountBySellerCode(@Param("sellerCode") String sellerCode);
+	public Long queryPromotionInfoCountBySellerCode(@Param("dto") PromotionInfoReqDTO dto);
 	
 	/** 查询扭蛋活动列表
      *

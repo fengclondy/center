@@ -78,6 +78,10 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     }
                 } else { // 下面走增量，查询更新时间比同步时间大的
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(lastSyscTime);
+                    calendar.add(Calendar.MINUTE, -1);
+                    lastSyscTime = calendar.getTime();
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime);
                     map.put("isIncrement", 1);

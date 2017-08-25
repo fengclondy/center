@@ -16,10 +16,10 @@
   <bean id="jedisConnectionFactory"
         class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
     <property name="usePool" value="true"></property>
-    <property name="hostName" value="${promotion.redis.host}"/>
-    <property name="port" value="${promotion.redis.port}"/>
-    <property name="timeout" value="${promotion.redis.timeout}"/>
-    <property name="database" value="${promotion.redis.default.db}"></property>
+    <property name="hostName" value="172.16.1.178"/>
+    <property name="port" value="6379"/>
+    <property name="timeout" value="100000"/>
+    <property name="database" value="0"></property>
     <constructor-arg index="0" ref="jedisPoolConfig"/>
   </bean>
 

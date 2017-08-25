@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +25,7 @@ public class PromotionRedisDB {
     private static final Logger logger = LoggerFactory.getLogger(PromotionRedisDB.class);
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 判断redis中是否存在key
@@ -36,7 +37,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}]", "promotionRedisDB-exists", "key=" + key);
         boolean isExists = false;
         try {
-            isExists = redisTemplate.hasKey(key);
+            isExists = stringRedisTemplate.hasKey(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-exists", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -56,7 +57,7 @@ public class PromotionRedisDB {
         String value = "";
 
         try {
-            value = redisTemplate.opsForValue().get(key);
+            value = stringRedisTemplate.opsForValue().get(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-get", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -75,7 +76,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-set", "key=" + key, "value=" + value);
 
         try {
-            redisTemplate.opsForValue().set(key, value);
+            stringRedisTemplate.opsForValue().set(key, value);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-set", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -93,7 +94,7 @@ public class PromotionRedisDB {
 
         try {
             if (exists(key)) {
-                redisTemplate.delete(key);
+                stringRedisTemplate.delete(key);
             }
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-del", ExceptionUtils.getStackTraceAsString(e));
@@ -151,7 +152,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-expire", "key=" + key, "seconds=" + seconds);
 
         try {
-            redisTemplate.expire(key, seconds, TimeUnit.SECONDS);
+            stringRedisTemplate.expire(key, seconds, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-expire", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -170,7 +171,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-setHash", "key=" + key,
                 "value=" + JSON.toJSONString(hValue));
         try {
-            redisTemplate.opsForHash().putAll(key, hValue);
+            stringRedisTemplate.opsForHash().putAll(key, hValue);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-setHash", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -190,7 +191,7 @@ public class PromotionRedisDB {
                 "value=" + value);
 
         try {
-            redisTemplate.opsForHash().put(key, field, value);
+            stringRedisTemplate.opsForHash().put(key, field, value);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-setHash", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -210,7 +211,7 @@ public class PromotionRedisDB {
         String value = null;
 
         try {
-            value = (String) redisTemplate.opsForHash().get(key, field);
+            value = (String) stringRedisTemplate.opsForHash().get(key, field);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getHash", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -230,7 +231,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-delHash", "key=" + key, "field=" + field);
 
         try {
-            redisTemplate.opsForHash().delete(key, field);
+            stringRedisTemplate.opsForHash().delete(key, field);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-delHash", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -250,7 +251,7 @@ public class PromotionRedisDB {
         boolean isExists = false;
 
         try {
-            isExists = redisTemplate.opsForHash().hasKey(key, field);
+            isExists = stringRedisTemplate.opsForHash().hasKey(key, field);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-existsHash", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -272,7 +273,7 @@ public class PromotionRedisDB {
 
         try {
             if (exists(key)) {
-                tmpMap = redisTemplate.opsForHash().entries(key);
+                tmpMap = stringRedisTemplate.opsForHash().entries(key);
                 if (tmpMap != null && !tmpMap.isEmpty()) {
                     for (Map.Entry<Object, Object> entry : tmpMap.entrySet()) {
                         valueMap.put((String) entry.getKey(), (String) entry.getValue());
@@ -302,7 +303,7 @@ public class PromotionRedisDB {
 
         try {
             if (exists(key)) {
-                tmpSet = redisTemplate.opsForHash().keys(key);
+                tmpSet = stringRedisTemplate.opsForHash().keys(key);
                 if (tmpSet != null && !tmpSet.isEmpty()) {
                     for (Object filed : tmpSet) {
                         filedList.add((String) filed);
@@ -342,7 +343,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-tailPush", "key=" + key, "value=" + value);
 
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            stringRedisTemplate.opsForList().rightPush(key, value);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-tailPush", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -361,7 +362,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-headPush", "key=" + key, "value=" + value);
 
         try {
-            redisTemplate.opsForList().leftPush(key, value);
+            stringRedisTemplate.opsForList().leftPush(key, value);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-headPush", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -382,7 +383,7 @@ public class PromotionRedisDB {
 
         try {
             if (exists(key)) {
-                value = redisTemplate.opsForList().rightPop(key);
+                value = stringRedisTemplate.opsForList().rightPop(key);
             }
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-tailPop", ExceptionUtils.getStackTraceAsString(e));
@@ -405,7 +406,7 @@ public class PromotionRedisDB {
 
         try {
             if (exists(key)) {
-                value = redisTemplate.opsForList().leftPop(key);
+                value = stringRedisTemplate.opsForList().leftPop(key);
             }
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-headPop", ExceptionUtils.getStackTraceAsString(e));
@@ -423,7 +424,7 @@ public class PromotionRedisDB {
         Long length = 0L;
 
         try {
-            length = redisTemplate.opsForList().size(key);
+            length = stringRedisTemplate.opsForList().size(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getLlen", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -484,7 +485,7 @@ public class PromotionRedisDB {
         Long returnValue = 0L;
 
         try {
-            returnValue = redisTemplate.opsForValue().increment(key, increment);
+            returnValue = stringRedisTemplate.opsForValue().increment(key, increment);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-incrBy", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -540,7 +541,7 @@ public class PromotionRedisDB {
         Long returnValue = 0L;
 
         try {
-            returnValue = redisTemplate.opsForHash().increment(key, field, increment);
+            returnValue = stringRedisTemplate.opsForHash().increment(key, field, increment);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-incrHashBy", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -561,7 +562,7 @@ public class PromotionRedisDB {
         Long returnValue = 0L;
 
         try {
-            returnValue = redisTemplate.opsForSet().add(key, value);
+            returnValue = stringRedisTemplate.opsForSet().add(key, value);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-addSet", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -582,7 +583,7 @@ public class PromotionRedisDB {
 
         try {
             if (exists(key)) {
-                returnValue = redisTemplate.opsForSet().pop(key);
+                returnValue = stringRedisTemplate.opsForSet().pop(key);
             }
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-popSet", ExceptionUtils.getStackTraceAsString(e));
@@ -603,7 +604,7 @@ public class PromotionRedisDB {
         Long returnValue = 0L;
 
         try {
-            returnValue = redisTemplate.opsForSet().remove(key, value);
+            returnValue = stringRedisTemplate.opsForSet().remove(key, value);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-removeSet", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -623,7 +624,7 @@ public class PromotionRedisDB {
         Long returnValue = 0L;
 
         try {
-            returnValue = redisTemplate.opsForSet().size(key);
+            returnValue = stringRedisTemplate.opsForSet().size(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getSetLen", ExceptionUtils.getStackTraceAsString(e));
         } finally {

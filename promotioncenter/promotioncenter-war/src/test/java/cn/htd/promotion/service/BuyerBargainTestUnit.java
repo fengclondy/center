@@ -197,23 +197,23 @@ public class BuyerBargainTestUnit {
 //  		}
 //    }
     
-    @Test
-    @Rollback(false) 
-    public void queryPromotionInfoListBySellerCode(){
-    	Pager<String> page = new Pager<String>();
-    	page.setPageOffset(1);
-    	page.setRows(10);
-    	ExecuteResult<DataGrid<PromotonInfoResDTO>> list = promotionBargainInfoService.queryPromotionInfoListBySellerCode("801781", page);
-    	System.out.println(JSON.toJSONString(list));
-    }
-    
-    @Test
-    @Rollback(false) 
-    public void queryPromotionBargainOverview(){
-    	Pager<String> page = new Pager<String>();
-    	page.setPageOffset(1);
-    	page.setRows(10);
-    	ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> list = promotionBargainInfoService.queryPromotionBargainOverview("801781", page);
-    	System.out.println(JSON.toJSONString(list));
-    }
+//    @Test
+//    @Rollback(false) 
+//    public void queryPromotionInfoListBySellerCode(){
+//    	Pager<String> page = new Pager<String>();
+//    	page.setPageOffset(1);
+//    	page.setRows(10);
+//    	ExecuteResult<DataGrid<PromotonInfoResDTO>> list = promotionBargainInfoService.queryPromotionInfoListBySellerCode("801781", page);
+//    	System.out.println(JSON.toJSONString(list));
+//    }
+//    
+//    @Test
+//    @Rollback(false) 
+//    public void queryPromotionBargainOverview(){
+//    	Pager<String> page = new Pager<String>();
+//    	page.setPageOffset(1);
+//    	page.setRows(10);
+//    	ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> list = promotionBargainInfoService.queryPromotionBargainOverview("801781", page);
+//    	System.out.println(JSON.toJSONString(list));
+//    }
 }

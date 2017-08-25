@@ -37,7 +37,7 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
                         awardRecordService.getAwardRecordByPromotionId(dto, messageId);
                 result.setResult(awardRecordList);
                 result.setCode(ResultCodeEnum.SUCCESS.getCode());
-                if (awardRecordList.getSize() == 0 || awardRecordList == null) {
+                if (awardRecordList.getTotal() == 0 || awardRecordList == null) {
                     result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
                 } else {
                     result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());

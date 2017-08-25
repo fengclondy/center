@@ -357,10 +357,10 @@
   		AND status = #{dto.status}
   	</if>
   	<if test="dto.effectiveTime != null">
-  		<![CDATA[ AND effective_time >= #{dto.effectiveTime}]]>
+  		<![CDATA[ AND invalid_time <= #{dto.effectiveTime}]]>
   	</if>
   	<if test="dto.invalidTime != null">
-  		<![CDATA[ AND invalid_time <= #{dto.invalidTime}]]>
+  		<![CDATA[ AND effective_time >= #{dto.invalidTime}]]>
   	</if>
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
@@ -381,10 +381,10 @@
   		AND status = #{dto.status}
   	</if>
   	<if test="dto.effectiveTime != null">
-  		<![CDATA[ AND effective_time >= #{dto.effectiveTime}]]>
+  		<![CDATA[ AND invalid_time <= #{dto.effectiveTime}]]>
   	</if>
   	<if test="dto.invalidTime != null">
-  		<![CDATA[ AND invalid_time <= #{dto.invalidTime}]]>
+  		<![CDATA[ AND effective_time >= #{dto.invalidTime}]]>
   	</if>
   </select>
 </mapper>

@@ -1,11 +1,16 @@
 package cn.htd.promotion.cpc.biz.service;
 
 import java.util.List;
+
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
+import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 public interface PromotionBargainInfoService {
 
@@ -53,4 +58,20 @@ public interface PromotionBargainInfoService {
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList)
 	    	throws PromotionCenterBusinessException;
 
+	/**
+	 * 根据卖家编码获取对应的促销活动信息
+	 * @param buyerCode
+	 * @return
+	 * @throws PromotionCenterBusinessException
+	 */
+	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
+			String buyerCode, Pager<String> page) throws PromotionCenterBusinessException;
+
+	/**
+	 * 根据卖家编码获取对应的促销活动商品概览
+	 * @param sellerCode
+	 * @return
+	 */
+	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
+			String sellerCode,  Pager<String> page);
 }

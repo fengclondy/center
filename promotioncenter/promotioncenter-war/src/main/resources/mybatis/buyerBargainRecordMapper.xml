@@ -99,4 +99,11 @@
 		WHERE promotion_id = #{promotionId})
 	</select>
 	
+	<select id="queryPromotionBargainJoinTypeQTY" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM (SELECT bbr.* from buyer_bargain_record as bbr
+		INNER JOIN buyer_launch_bargain_info as blbi on bbr.bargain_code = blbi.bargain_code
+		WHERE blbi.promotion_id = #{promotionId}
+		GROUP BY bbr.bargain_code) t
+	</select>
+	
 </mapper>

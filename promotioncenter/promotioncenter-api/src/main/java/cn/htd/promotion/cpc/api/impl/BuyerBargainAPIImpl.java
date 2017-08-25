@@ -17,8 +17,10 @@ import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -176,4 +178,16 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI {
         result.setResult(datagrid);
         return result;
     }
+
+    public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
+		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
+		if(null != buyerBargainLaunch && !StringUtils.isEmpty(buyerBargainLaunch.getSellerCode())){
+			return buyerLaunchBargainInfoService.queryLaunchBargainInfoList(buyerBargainLaunch, page);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
 }

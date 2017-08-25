@@ -56,5 +56,13 @@ public interface BuyerBargainAPI {
 	 * @return
 	 */
 	public ExecuteResult<BuyerLaunchBargainInfoResDTO> addBuyerBargainLaunch(BuyerLaunchBargainInfoResDTO bargainInfoDTO, String messageId);
+	
+	/**
+	 * 查询砍价信息
+	 * @param buyerBargainLaunch
+	 * @return
+	 */
+	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page);
+
 
 }

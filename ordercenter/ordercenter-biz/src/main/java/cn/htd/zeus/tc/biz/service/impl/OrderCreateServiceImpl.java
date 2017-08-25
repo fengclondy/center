@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.goodscenter.dto.mall.MallSkuInDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuOutDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuStockOutDTO;
@@ -35,6 +33,7 @@ import cn.htd.membercenter.dto.MemberBuyerGradeInfoDTO;
 import cn.htd.membercenter.dto.MemberDetailInfo;
 import cn.htd.membercenter.dto.MemberGroupDTO;
 import cn.htd.membercenter.dto.MemberInvoiceDTO;
+import cn.htd.pricecenter.dto.HzgPriceDTO;
 import cn.htd.pricecenter.dto.OrderItemSkuPriceDTO;
 import cn.htd.pricecenter.dto.QueryCommonItemSkuPriceDTO;
 import cn.htd.storecenter.dto.ShopDTO;
@@ -89,6 +88,8 @@ import cn.htd.zeus.tc.dto.resquest.OrderCreateItemListInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateListInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateOrderListInfoReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCreateSkuListInfoReqDTO;
+
+import com.alibaba.fastjson.JSONObject;
 
 /*
  * 该类目前只支持有优惠券下单、无优惠券下单、内部供应商下单、外接渠道下单、秒杀、外部供应商的下单
@@ -1041,8 +1042,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					.setOtherCenterResponseMsg(memberGroupDTO.getOtherCenterResponseMsg());
 			return orderItemSkuPriceDTORes;
 		}
+		String buyerGrade = memberGroupDTO.getOtherCenterResult().getBuyerGrade();
 		queryCommonItemSkuPriceDTO
-				.setBuyerGrade(memberGroupDTO.getOtherCenterResult().getBuyerGrade());
+				.setBuyerGrade(buyerGrade);
 		buyerGradeMap.put("buyerGrade", queryCommonItemSkuPriceDTO.getBuyerGrade());
 		queryCommonItemSkuPriceDTO
 				.setMemberGroupId(memberGroupDTO.getOtherCenterResult().getGroupId());
@@ -1069,6 +1071,18 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		}
 		orderItemSkuPriceDTORes = priceCenterRAO.queryOrderItemSkuPrice(queryCommonItemSkuPriceDTO,
 				messageId);
+		//预售商品取预售价格|预售vip价格
+		String orderFrom = orderTemp.getOrderFrom();
+		if(orderFrom.equals(OrderStatusEnum.ORDER_FROM_PRESALE.getCode())){
+			HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
+			if(null != hzgPrice){
+				if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
+					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
+				}else{
+					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+				}
+			}
+		}
 		return orderItemSkuPriceDTORes;
 	}
 

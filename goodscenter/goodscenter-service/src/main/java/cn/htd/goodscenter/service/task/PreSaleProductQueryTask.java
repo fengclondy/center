@@ -71,7 +71,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(lastSyscTime);
-                    calendar.add(Calendar.HOUR, -1);
+                    calendar.add(Calendar.MINUTE, -2);
                     lastSyscTime = calendar.getTime();
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime);
@@ -84,7 +84,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(lastSyscTime);
-                    calendar.add(Calendar.HOUR, -1);
+                    calendar.add(Calendar.MINUTE, -2);
                     lastSyscTime = calendar.getTime();
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime);

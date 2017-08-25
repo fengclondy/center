@@ -384,7 +384,7 @@
   		<![CDATA[ AND effective_time >= #{dto.effectiveTime}]]>
   	</if>
   	<if test="dto.invalidTime != null">
-  		<![CDATA[ AND dto.invalid_time <= #{dto.invalidTime}]]>
+  		<![CDATA[ AND invalid_time <= #{dto.invalidTime}]]>
   	</if>
   </select>
 </mapper>

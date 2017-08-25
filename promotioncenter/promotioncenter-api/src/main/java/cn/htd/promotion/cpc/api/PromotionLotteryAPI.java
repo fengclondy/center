@@ -8,7 +8,7 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 
-public interface PromotionGashaponAPI {
+public interface PromotionLotteryAPI {
 	
 	/**
 	 * 查询扭蛋机活动列表

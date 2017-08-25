@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
-import cn.htd.promotion.cpc.api.PromotionGashaponAPI;
+import cn.htd.promotion.cpc.api.PromotionLotteryAPI;
 import cn.htd.promotion.cpc.biz.service.PromotionInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -19,10 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
-@Service("promotionGashaponAPI")
-public class PromotionGashaponAPIImpl implements PromotionGashaponAPI {
+@Service("promotionLotteryAPI")
+public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BuyerBargainAPIImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
 
     @Resource
     private PromotionInfoService promotionInfoService;

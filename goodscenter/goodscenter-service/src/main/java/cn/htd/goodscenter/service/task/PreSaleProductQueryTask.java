@@ -69,6 +69,10 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                 if (StringUtils.isEmpty(lastSyscTimeStr)) { // 第一次走全量只查询预售商品
                     lastSyscTimeStr = "2017-05-03 00:00:00"; // 默认开始时间
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(lastSyscTime);
+                    calendar.add(Calendar.HOUR, -1);
+                    lastSyscTime = calendar.getTime();
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime);
                     map.put("isIncrement", 0); // 附带条件 pre_sale = 1
@@ -78,6 +82,10 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     }
                 } else { // 下面走增量，查询更新时间比同步时间大的
                     Date lastSyscTime = sp.parse(lastSyscTimeStr);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(lastSyscTime);
+                    calendar.add(Calendar.HOUR, -1);
+                    lastSyscTime = calendar.getTime();
                     Map map = this.getTaskParam(taskQueueNum, taskItemList);
                     map.put("lastSyscTime",lastSyscTime);
                     map.put("isIncrement", 1);

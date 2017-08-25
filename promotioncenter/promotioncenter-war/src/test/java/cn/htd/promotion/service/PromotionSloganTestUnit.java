@@ -22,9 +22,9 @@ public class PromotionSloganTestUnit {
 	@Resource
 	private BuyerBargainRecordDAO buyerBargainRecordDAO;
     
-	@Test
-	public void savePromotionInfo() {
-		Integer qty = buyerBargainRecordDAO.queryPromotionBargainJoinQTY("22172129400942");
-		System.out.println(qty);
-	}
+//	@Test
+//	public void savePromotionInfo() {
+//		Integer qty = buyerBargainRecordDAO.queryPromotionBargainJoinQTY("22172129400942");
+//		System.out.println(qty);
+//	}
 }

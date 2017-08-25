@@ -325,4 +325,20 @@
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
     and has_redis_clean = 0
   </update>
+  
+  <select id="queryPromotionInfoListBySellerCode" resultMap="BaseResultMap">
+  	select * from promotion_info
+  	where promotion_provider_seller_code = #{sellerCode}
+  	and status != 9
+  	<if test="page!=null">
+	   <include refid="pagination_tail"/>
+	</if>
+  </select>
+  
+  <select id="queryPromotionInfoCountBySellerCode" resultType="java.lang.Long">
+  	SELECT COUNT(0)
+  	FROM promotion_info
+  	WHERE promotion_provider_seller_code = #{sellerCode}
+  	and status != 9
+  </select>
 </mapper>

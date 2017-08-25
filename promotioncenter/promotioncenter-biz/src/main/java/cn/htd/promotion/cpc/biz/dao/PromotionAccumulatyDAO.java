@@ -20,5 +20,7 @@ public interface PromotionAccumulatyDAO extends BaseDAO<PromotionAccumulatyDTO> 
 	 */
 	public List<PromotionAccumulatyDTO> queryAccumulatyListByPromotionId(@Param("promotionId") String promotionId,
 			@Param("levelCodeList") List<String> levelCodeList);
+
+	public List<PromotionAccumulatyDTO> queryPromotionAccumulatyByPromotionId(@Param("promotionId") String promotionId);
 	
 }

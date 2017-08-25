@@ -23,8 +23,11 @@ public enum ResultCodeEnum {
     PROMOTION_HAS_MODIFIED("26008", "促销活动已被修改"),
     PROMOTION_NO_STOCK("26009", "促销活动商品库存不足"),
     POMOTION_SPLIT_PRICE_ERROR("26010", "促销活动拆分金额失败"),
-    PROMOTION_BARGAIN_JOIN_QTY("26011", "促销活动参与次数已上限");
-
+    PROMOTION_BARGAIN_JOIN_QTY("26011", "促销活动参与次数已上限"),
+	
+	LUCK_DRAW_PARAM_IS_NULL("30001","调用扭蛋抽奖接口入参不能为空！"),
+	LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION("30002","该会员店没有抽奖权限");
+	
     private ResultCodeEnum(String code, String msg) {
         this.code = code;
         Msg = msg;

@@ -17,6 +17,6 @@
   <dubbo:service interface="cn.htd.promotion.cpc.api.AwardRecordAPI" ref="awardRecordAPI" version="${dubbo.version}"
                  timeout="${dubbo.timeout}"/>
   <!--扭蛋接口-->
-  <dubbo:service interface="cn.htd.promotion.cpc.api.PromotionGashaponAPI" ref="promotionGashaponAPI"
+  <dubbo:service interface="cn.htd.promotion.cpc.api.PromotionLotteryAPI" ref="promotionLotteryAPI"
                  version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 </beans>

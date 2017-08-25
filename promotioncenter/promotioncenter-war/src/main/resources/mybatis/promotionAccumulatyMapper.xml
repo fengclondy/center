@@ -124,4 +124,10 @@
 		and level_code = #{levelCode,jdbcType=VARCHAR}
 		</if>
 	</update>
+	
+	<select id="queryPromotionAccumulatyByPromotionId" resultMap="BaseResultMap">
+		SELECT * FROM promotion_accumulaty
+		WHERE promotion_id = #{promotionId}
+		AND delete_flag = 0
+	</select>
 </mapper>

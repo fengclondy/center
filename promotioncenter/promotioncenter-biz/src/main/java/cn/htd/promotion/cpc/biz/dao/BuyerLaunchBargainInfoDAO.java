@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
@@ -21,11 +22,17 @@ public interface BuyerLaunchBargainInfoDAO {
 			@Param("promotionId") String promotionId);
 
 	public Integer queryBuyerLaunchBargainInfoNumber(
-			@Param("barfainDTO") BuyerLaunchBargainInfoResDTO barfainDTO);
+			@Param("bargainDTO") BuyerLaunchBargainInfoResDTO barfainDTO);
 
 	public void addBuyerLaunchBargainInfo(
-			@Param("barfainDTO") BuyerLaunchBargainInfoResDTO bargainInfoDTO);
+			@Param("bargainDTO") BuyerLaunchBargainInfoResDTO bargainInfoDTO);
 	
 	public BuyerLaunchBargainInfoDMO getBuyerBargainLaunchInfoByBargainCode(String bargainCode);
+
+	public List<BuyerLaunchBargainInfoResDTO> queryLaunchBargainInfoList(
+			@Param("bargainDTO") BuyerBargainLaunchReqDTO buyerBargainLaunch, @Param("page") Pager<String> page);
+
+	public Long queryLaunchBargainInfoCount(
+			@Param("bargainDTO") BuyerBargainLaunchReqDTO buyerBargainLaunch);
 
 }

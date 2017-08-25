@@ -1077,9 +1077,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
 			if(null != hzgPrice){
 				if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
-					orderItemSkuPriceDTORes.getOtherCenterResult().setSalePrice(hzgPrice.getVipPrice());
+					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
 				}else{
-					orderItemSkuPriceDTORes.getOtherCenterResult().setSalePrice(hzgPrice.getSalePrice());
+					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
 				}
 			}
 		}

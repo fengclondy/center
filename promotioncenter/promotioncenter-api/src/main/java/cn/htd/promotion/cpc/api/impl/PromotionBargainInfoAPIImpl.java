@@ -69,6 +69,7 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
         return result;
     }
 
+    @Override
     public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(String messageId,
             String promotionId) {
         ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
@@ -81,7 +82,9 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
         return result;
     }
     
-	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
+ 
+    @Override
+    public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
 			String sellerCode, Pager<String> page) {
 		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
 		if(!StringUtils.isEmpty(sellerCode)){
@@ -93,7 +96,9 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
 		return result;
 	}
 
-	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
+    
+    @Override
+    public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
 			String sellerCode,  Pager<String> page) {
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
 		if(!StringUtils.isEmpty(sellerCode)){
@@ -104,7 +109,5 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
 		}
 		return result;
 	}
- 
-
 
 }

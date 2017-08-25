@@ -217,7 +217,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	
 	@Override
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
-			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page) {
 		DataGrid<BuyerLaunchBargainInfoResDTO> dataGrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
 		try {

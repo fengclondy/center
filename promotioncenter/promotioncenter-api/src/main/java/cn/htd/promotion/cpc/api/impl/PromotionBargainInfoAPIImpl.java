@@ -6,6 +6,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.PromotionBargainInfoAPI;
@@ -16,16 +21,12 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("promotionBargainInfoAPI")
 public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
@@ -85,10 +86,10 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
  
     @Override
     public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
-			String sellerCode, Pager<String> page) {
+    		PromotionInfoReqDTO reqDTO, Pager<PromotionInfoReqDTO> page) {
 		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
-		if(!StringUtils.isEmpty(sellerCode)){
-			return promotionBargainInfoService.queryPromotionInfoListBySellerCode(sellerCode, page);
+		if(null != reqDTO){
+			return promotionBargainInfoService.queryPromotionInfoListBySellerCode(reqDTO, page);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());

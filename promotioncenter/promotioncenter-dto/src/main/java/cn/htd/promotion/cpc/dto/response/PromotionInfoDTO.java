@@ -196,8 +196,32 @@ public class PromotionInfoDTO implements Serializable {
      * 今日中奖总数量
      */
     private String winningTodayNum;
+    /**
+     * 处理标记
+     */
+    private Integer dealFlag;
+    /**
+     * 是否清除redis
+     */
+    private Integer hasRedisClean;
     
-    public String getEffectiveTimeStr() {
+    public Integer getDealFlag() {
+		return dealFlag;
+	}
+
+	public void setDealFlag(Integer dealFlag) {
+		this.dealFlag = dealFlag;
+	}
+
+	public Integer getHasRedisClean() {
+		return hasRedisClean;
+	}
+
+	public void setHasRedisClean(Integer hasRedisClean) {
+		this.hasRedisClean = hasRedisClean;
+	}
+
+	public String getEffectiveTimeStr() {
         return effectiveTimeStr;
     }
 
@@ -585,5 +609,7 @@ public class PromotionInfoDTO implements Serializable {
         this.categoryItemRuleDesc = promotionInfoDTO.getCategoryItemRuleDesc();
         this.promotionAccumulatyList = promotionInfoDTO.getPromotionAccumulatyList();
         this.promotionStatusHistoryList = promotionInfoDTO.getPromotionStatusHistoryList();
+        this.dealFlag = promotionInfoDTO.getDealFlag();
+        this.hasRedisClean = promotionInfoDTO.getHasRedisClean();
     }
 }

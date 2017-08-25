@@ -27,6 +27,8 @@
     <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
     <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    <result column="deal_flag" jdbcType="TINYINT" property="dealFlag" />
+    <result column="has_redis_clean" jdbcType="TINYINT" property="hasRedisClean" />
   </resultMap>
   <sql id="Base_Column_List">
 		id,
@@ -52,6 +54,8 @@
 		create_name,
 		create_time,
 		modify_id,
+		deal_flag,
+		has_redis_clean,
 		modify_name,
 		modify_time
 	</sql>
@@ -138,6 +142,12 @@
       <if test="modifyPromotionId != null and modifyPromotionId != ''">
         modify_promotion_id,
       </if>
+      <if test="dealFlag != null">
+      	deal_flag = deal_flag,
+      </if>
+      <if test="hasRedisClean != null">
+      	has_redis_clean = hasRedisClean,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -182,6 +192,12 @@
       <if test="modifyPromotionId != null and modifyPromotionId != ''">
         #{modifyPromotionId,jdbcType=VARCHAR},
       </if>
+      <if test="dealFlag != null">
+      	#{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasRedisClean != null">
+      	#{hasRedisClean,jdbcType=TINYINT},
+      </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -212,6 +228,8 @@
       </if>
       status = #{status,jdbcType=VARCHAR},
       show_status = #{showStatus,jdbcType=VARCHAR},
+      deal_flag = #{dealFlag,jdbcType=TINYINT},
+      has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),
@@ -328,8 +346,19 @@
   
   <select id="queryPromotionInfoListBySellerCode" resultMap="BaseResultMap">
   	select * from promotion_info
-  	where promotion_provider_seller_code = #{sellerCode}
-  	and status != 9
+  	where status != 9
+  	<if test="dto.promotionProviderSellerCode != null and dto.promotionProviderSellerCode != ''">
+  		AND promotion_provider_seller_code = #{dto.promotionProviderSellerCode}
+  	</if>
+  	<if test="dto.status != null">
+  		AND status = #{dto.status}
+  	</if>
+  	<if test="dto.effectiveTime != null">
+  		<![CDATA[ AND effective_time >= #{dto.effectiveTime}]]>
+  	</if>
+  	<if test="dto.invalidTime != null">
+  		<![CDATA[ AND dto.invalid_time <= #{dto.invalidTime}]]>
+  	</if>
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
 	</if>
@@ -338,7 +367,18 @@
   <select id="queryPromotionInfoCountBySellerCode" resultType="java.lang.Long">
   	SELECT COUNT(0)
   	FROM promotion_info
-  	WHERE promotion_provider_seller_code = #{sellerCode}
-  	and status != 9
+  	WHERE status != 9
+  	<if test="dto.promotionProviderSellerCode != null and dto.promotionProviderSellerCode != ''">
+  		AND promotion_provider_seller_code = #{dto.promotionProviderSellerCode}
+  	</if>
+  	<if test="dto.status != null">
+  		AND status = #{dto.status}
+  	</if>
+  	<if test="dto.effectiveTime != null">
+  		<![CDATA[ AND effective_time >= #{dto.effectiveTime}]]>
+  	</if>
+  	<if test="dto.invalidTime != null">
+  		<![CDATA[ AND dto.invalid_time <= #{dto.invalidTime}]]>
+  	</if>
   </select>
 </mapper>

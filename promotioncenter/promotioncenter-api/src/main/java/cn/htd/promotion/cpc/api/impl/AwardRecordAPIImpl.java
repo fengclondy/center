@@ -32,7 +32,7 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
         ExecuteResult<DataGrid<PromotionAwardDTO>> result = new ExecuteResult<DataGrid<PromotionAwardDTO>>();
 
         try {
-            if (!StringUtils.isEmpty(dto.getPromotionId()) && !!StringUtils.isEmpty(messageId)) {
+            if (!StringUtils.isEmpty(messageId)) {
                 DataGrid<PromotionAwardDTO> awardRecordList =
                         awardRecordService.getAwardRecordByPromotionId(dto, messageId);
                 result.setResult(awardRecordList);

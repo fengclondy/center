@@ -15,7 +15,7 @@ default-autowire="byName">
 	  <import resource="classpath*:beans-cpc-dao.xml"/>
 	  <import resource="classpath*:beans-cpc-datasource.xml"/>
   	  <import resource="classpath*:/spring/beans-cpc-redis.xml" />
-<!--   	  <import resource="classpath*:/spring/beans-cpc-rabbitmq.xml" />-->
+   	  <import resource="classpath*:/spring/beans-cpc-promotion-redis.xml" />
 
  <!--      <import resource="classpath*:/spring/beans-cpc-tbschedule.xml" />-->
 

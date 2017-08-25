@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
@@ -46,6 +48,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -330,13 +333,13 @@ public class PromotionBargainInfoServiceImpl implements
 
 	@Override
 	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
-			String sellerCode, Pager<String> page) throws PromotionCenterBusinessException {
+			PromotionInfoReqDTO reqDTO, Pager<PromotionInfoReqDTO> page) throws PromotionCenterBusinessException {
 		DataGrid<PromotonInfoResDTO> dataGrid = new DataGrid<PromotonInfoResDTO>();
 		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
 		List<PromotonInfoResDTO> resList = new ArrayList<PromotonInfoResDTO>();
 		try {
-			List<PromotionInfoDTO> promotionInfoList = promotionInfoDAO.queryPromotionInfoListBySellerCode(sellerCode, page);
-			Long promotionInfoCount = promotionInfoDAO.queryPromotionInfoCountBySellerCode(sellerCode);
+			List<PromotionInfoDTO> promotionInfoList = promotionInfoDAO.queryPromotionInfoListBySellerCode(reqDTO, page);
+			Long promotionInfoCount = promotionInfoDAO.queryPromotionInfoCountBySellerCode(reqDTO);
 			if(null != promotionInfoList && !promotionInfoList.isEmpty()){
 				for (PromotionInfoDTO promotionInfo : promotionInfoList) {
 					PromotonInfoResDTO resDTO = new PromotonInfoResDTO();

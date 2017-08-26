@@ -84,4 +84,5 @@ public interface PromotionBargainInfoService {
      * @return
      */
     public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(PromotionValidDTO dto) throws PromotionCenterBusinessException;
+    
 }

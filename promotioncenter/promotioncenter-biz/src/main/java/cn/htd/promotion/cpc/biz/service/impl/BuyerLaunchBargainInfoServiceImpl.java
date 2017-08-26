@@ -109,7 +109,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			if(StringUtils.isNotEmpty(bargainInfoDTO.getPromotionId()) && StringUtils.isNotEmpty(bargainInfoDTO.getLevelCode())){
 				paramDTO.setPromotionId(bargainInfoDTO.getPromotionId());
 				paramDTO.setLevelCode(bargainInfoDTO.getLevelCode());
-				PromotionBargainInfoDMO paramDMO = promotionBargainInfoDAO.getPromotionBargainInfoDetail(null);
+				PromotionBargainInfoDMO paramDMO = promotionBargainInfoDAO.queryPromotionBargainInfo(paramDTO);
 				if(null == paramDMO){
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动不存在");
 				}

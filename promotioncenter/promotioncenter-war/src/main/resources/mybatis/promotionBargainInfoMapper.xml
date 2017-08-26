@@ -149,4 +149,15 @@
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
   	    AND pi.status != 9
 	</select>
+	
+	<select id="queryPromotionBargainInfo" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO">
+		SELECT * FROM promotion_bargain_info
+		WHERE 1=1
+		<if test="promotionId != null and promotionId != ''">
+			AND promotion_id = #{promotionId}
+		</if>
+		<if test="levelCode != null and levelCode != ''">
+			AND level_code = #{levelCode}
+		</if>
+	</select>
 </mapper>

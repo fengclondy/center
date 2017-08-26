@@ -14,9 +14,11 @@ import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
 import com.alibaba.fastjson.JSONObject;
@@ -99,10 +101,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public LotteryActivityRulePageResDTO shareLinkHandle(
-			LotteryActivityRulePageReqDTO request) {
+	public ShareLinkHandleResDTO shareLinkHandle(
+			ShareLinkHandleReqDTO request) {
 		String messageId = request.getMessageId();
-		LotteryActivityRulePageResDTO result = new LotteryActivityRulePageResDTO();
+		ShareLinkHandleResDTO result = new ShareLinkHandleResDTO();
 		try {
 			//TODO
 			//更新粉丝抽奖次数成功

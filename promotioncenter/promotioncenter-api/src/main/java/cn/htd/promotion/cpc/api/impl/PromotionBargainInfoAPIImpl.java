@@ -126,4 +126,42 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
 		return result;
 	}
 
+	@Override
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> addPromotionBargainInfoRedis(
+			List<PromotionBargainInfoResDTO> promotionBargainInfoList) {
+		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
+		if(null != promotionBargainInfoList && !promotionBargainInfoList.isEmpty()){
+			return promotionBargainInfoService.addPromotionBargainInfoRedis(promotionBargainInfoList);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<String> deleteBargainInfo(PromotionValidDTO validDTO) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		if(null != validDTO){
+			return promotionBargainInfoService.deleteBargainInfo(validDTO);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(
+			List<PromotionBargainInfoResDTO> bargainInfoList) {
+		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
+		if(null != bargainInfoList){
+			return promotionBargainInfoService.updateBargainInfo(bargainInfoList);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+
 }

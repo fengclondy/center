@@ -171,6 +171,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             promotionBargainInfoDAO.add(bargainDTO);
             
         }
+        if(null !=bargainDTO && "1".equals(bargainDTO.getUpFlag())) {
+        	promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+        }
         extendDTO = (PromotionInfoExtendDTO)bargainDTO;
         promotionInfoExtendDAO.add(extendDTO);
         promotionInfo.setIsVip(vipFlg);

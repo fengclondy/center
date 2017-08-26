@@ -2,9 +2,11 @@ package cn.htd.promotion.cpc.biz.service;
 
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
 public interface LuckDrawService {
@@ -42,6 +44,6 @@ public interface LuckDrawService {
 	 * @param request
 	 * @return
 	 */
-	public LotteryActivityRulePageResDTO shareLinkHandle(
-			LotteryActivityRulePageReqDTO request);
+	public ShareLinkHandleResDTO shareLinkHandle(
+			ShareLinkHandleReqDTO request);
 }

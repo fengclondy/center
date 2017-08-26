@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.biz.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -337,6 +338,7 @@ public class PromotionBargainInfoServiceImpl implements
 			 throws PromotionCenterBusinessException{
 		ExecuteResult<PromotionInfoDTO> result = new ExecuteResult<PromotionInfoDTO>();
 		PromotionInfoDTO promotionInfoDTO = null;
+		PromotionInfoDTO promotionInfoRedis = null;
 		String statusUp = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 				DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
 		String statusDown = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
@@ -364,15 +366,30 @@ public class PromotionBargainInfoServiceImpl implements
             	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动已被删除");
             }
             if(statusCurrent.equals(statusUp)) {
+            	//上架操作
             	if(promotionInfoDTO.getShowStatus().equals(statusUp)) {
                 	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(), "砍价活动已上架，不需要重复上架");
             	}
-            	
+            	if(!(new Date()).before(promotionInfoDTO.getInvalidTime())) {
+                	throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_VALID.getCode(), "砍价活动已过有效期");
+            	}
             }else if(statusUp.equals(statusDown)) {
+            	//下架操作
             	if(promotionInfoDTO.getShowStatus().equals(statusDown)) {
                 	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(), "砍价活动已下架，不需要重复下架");
             	}
+            	List<BuyerLaunchBargainInfoDMO> buyerLaunchList = 
+            			buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfoDTO.getPromotionId());
+            	if (null != buyerLaunchList && !buyerLaunchList.isEmpty()) {
+                    throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),
+                            "砍价活动还未结束并有人参与");
+                }
             }
+            promotionInfoDAO.upDownShelvesBargainInfo(dto);
+            promotionInfoRedis = new PromotionInfoDTO();
+            promotionInfoRedis.setPromotionId(dto.getPromotionId());
+            promotionInfoRedis.setShowStatus(statusCurrent);
+        	promotionBargainRedisHandle.saveBargainValidStatus2Redis(promotionInfoRedis);
 		} catch (PromotionCenterBusinessException pbe) {
             result.setCode(pbe.getCode());
             result.setErrorMessage(pbe.getMessage());

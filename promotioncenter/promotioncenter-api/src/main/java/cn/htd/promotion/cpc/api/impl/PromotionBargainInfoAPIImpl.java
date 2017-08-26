@@ -24,6 +24,8 @@ import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
@@ -104,6 +106,19 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
 		if(!StringUtils.isEmpty(sellerCode)){
 			return promotionBargainInfoService.queryPromotionBargainOverview(sellerCode, page);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(
+			PromotionValidDTO dto) {
+		ExecuteResult<PromotionInfoDTO> result = new ExecuteResult<PromotionInfoDTO>();
+		if(null != dto){
+			return promotionBargainInfoService.upDownShelvesPromotionInfo(dto);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());

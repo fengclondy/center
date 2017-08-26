@@ -25,12 +25,35 @@ public interface PromotionBargainInfoAPI {
 	
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(String sellerCode, Pager<String> page);
 	
-    
     /**
      * 促销活动砍价上下架
      * @param dto
      * @return
      */
     public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(PromotionValidDTO dto);
+    
+	/**
+	 * 新增砍价商品
+	 * 
+	 * @param promotionBargainInfoResDTO
+	 */
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> addPromotionBargainInfoRedis(
+			List<PromotionBargainInfoResDTO> promotionBargainInfoList);
+	
+	/**
+	 * 删除砍价活动
+	 * @param validDTO
+	 * @return
+	 * @throws PromotionCenterBusinessException
+	 */
+	public ExecuteResult<String> deleteBargainInfo(PromotionValidDTO validDTO);
+
+	/**
+	 * 修改砍价活动信息
+	 * @param bargainInfoList
+	 * @return
+	 * @throws PromotionCenterBusinessException
+	 */
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList);
 
 }

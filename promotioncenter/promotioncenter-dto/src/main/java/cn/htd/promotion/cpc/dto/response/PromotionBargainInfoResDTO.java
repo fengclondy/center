@@ -81,6 +81,16 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private List<String> sloganList;//宣传语集合
 	
+	private String upFlag; //上架标记 1:保存暂不上架  默认为空，表示立即上架
+	
+	public String getUpFlag() {
+		return upFlag;
+	}
+
+	public void setUpFlag(String upFlag) {
+		this.upFlag = upFlag;
+	}
+
 	public BigDecimal getHasBargainPrice() {
 		return hasBargainPrice;
 	}

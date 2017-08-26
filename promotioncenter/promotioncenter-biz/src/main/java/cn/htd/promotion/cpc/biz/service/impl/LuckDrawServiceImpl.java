@@ -3,15 +3,20 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
+import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
+import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
 import com.alibaba.fastjson.JSONObject;
@@ -21,6 +26,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(LuckDrawServiceImpl.class);
+	
+	@Resource
+    private PromotionInfoDAO promotionInfoDAO;
 
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
@@ -70,4 +78,44 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		return result;
 	}
 
+	@Override
+	public LotteryActivityRulePageResDTO lotteryActivityRulePage(
+			LotteryActivityRulePageReqDTO request) {
+		String messageId = request.getMessageId();
+		LotteryActivityRulePageResDTO result = new LotteryActivityRulePageResDTO();
+		try{
+			//TODO 
+			//promotionInfoDAO 从数据库里查出活动规则
+		}catch(Exception e){
+			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityRulePage出现异常 request：{}",
+					messageId, JSONObject.toJSONString(request), w.toString());
+		}
+		return result;
+	}
+
+	@Override
+	public LotteryActivityRulePageResDTO shareLinkHandle(
+			LotteryActivityRulePageReqDTO request) {
+		String messageId = request.getMessageId();
+		LotteryActivityRulePageResDTO result = new LotteryActivityRulePageResDTO();
+		try {
+			//TODO
+			//更新粉丝抽奖次数成功
+			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawServiceImpl.shareLinkHandle出现异常 request：{}",
+					messageId, JSONObject.toJSONString(request), w.toString());
+		}
+		return result;
+	}
 }

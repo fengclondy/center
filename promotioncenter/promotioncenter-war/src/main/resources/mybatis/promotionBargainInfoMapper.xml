@@ -32,6 +32,7 @@
 	    	   pbi.goods_name goodsName,
 	    	   pbi.goods_cost_price goodsCostPrice,
 	    	   pbi.goods_floor_price goodsFloorPrice,
+	    	   pbi.goods_num goodsNum,
 	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
 	    	   ps.promotion_slogan promotionDesc,
 	    	   pei.contact_name contactNameD,
@@ -147,5 +148,16 @@
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
   	    AND pi.status != 9
+	</select>
+	
+	<select id="queryPromotionBargainInfo" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO">
+		SELECT * FROM promotion_bargain_info
+		WHERE 1=1
+		<if test="promotionId != null and promotionId != ''">
+			AND promotion_id = #{promotionId}
+		</if>
+		<if test="levelCode != null and levelCode != ''">
+			AND level_code = #{levelCode}
+		</if>
 	</select>
 </mapper>

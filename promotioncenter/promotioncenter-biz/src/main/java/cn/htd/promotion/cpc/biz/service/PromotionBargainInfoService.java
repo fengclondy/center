@@ -10,6 +10,7 @@ import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
@@ -75,4 +76,13 @@ public interface PromotionBargainInfoService {
 	 */
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
 			String sellerCode,  Pager<String> page);
+	
+    
+    /**
+     * 促销活动砍价上下架
+     * @param dto
+     * @return
+     */
+    public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(PromotionValidDTO dto) throws PromotionCenterBusinessException;
+    
 }

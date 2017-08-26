@@ -24,6 +24,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
+import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
@@ -330,6 +331,58 @@ public class PromotionBargainInfoServiceImpl implements
 	        }	
 	        return result;
 	 }
+	 
+	 @Override
+	 public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(PromotionValidDTO dto)
+			 throws PromotionCenterBusinessException{
+		ExecuteResult<PromotionInfoDTO> result = new ExecuteResult<PromotionInfoDTO>();
+		PromotionInfoDTO promotionInfoDTO = null;
+		String statusUp = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+				DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
+		String statusDown = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
+                .OPT_PROMOTION_VERIFY_STATUS_INVALID);
+		String statusCurrent = dto.getShowStatus();
+		try {
+			// 输入DTO的验证
+	        ValidateResult validateResult = ValidationUtils
+	              .validateEntity(dto);
+	        // 有错误信息时返回错误信息
+	        if (validateResult.isHasErrors()) {
+	        	throw new PromotionCenterBusinessException(
+	        			ResultCodeEnum.PARAMETER_ERROR.getCode(),
+	        			validateResult.getErrorMsg());
+	         }
+	        if(StringUtils.isEmpty(statusCurrent)) {
+	        	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(), "砍价活动状态不正确");
+	        }
+	        // 根据活动ID获取活动信息
+            promotionInfoDTO = promotionInfoDAO.queryById(dto.getPromotionId());
+            if(null == promotionInfoDTO) {
+            	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动不存在");
+            }
+            if(null == promotionInfoDTO.getDealFlag() || promotionInfoDTO.getDealFlag().intValue() == 1) {
+            	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动已被删除");
+            }
+            if(statusCurrent.equals(statusUp)) {
+            	if(promotionInfoDTO.getShowStatus().equals(statusUp)) {
+                	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(), "砍价活动已上架，不需要重复上架");
+            	}
+            	
+            }else if(statusUp.equals(statusDown)) {
+            	if(promotionInfoDTO.getShowStatus().equals(statusDown)) {
+                	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(), "砍价活动已下架，不需要重复下架");
+            	}
+            }
+		} catch (PromotionCenterBusinessException pbe) {
+            result.setCode(pbe.getCode());
+            result.setErrorMessage(pbe.getMessage());
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+        }	
+		 return result;
+	 }
+
 
 	@Override
 	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
@@ -396,11 +449,12 @@ public class PromotionBargainInfoServiceImpl implements
 					//已发起砍价数量
 					launchDTO.setLevelCode(dmo.getLevelCode());
 					launchDTO.setPromotionId(dmo.getPromotionId());
-					List<BuyerLaunchBargainInfoResDTO> launchList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(launchDTO, null);
+					List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(launchDTO, null);
 					resDTO.setLaunchTimes(launchList == null ? 0 : launchList.size());
 					//已砍完数量
 					launchDTO.setIsBargainOver(1);
-					List<BuyerLaunchBargainInfoResDTO> overList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(launchDTO, null);
+					List<BuyerLaunchBargainInfoDMO> overList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(launchDTO, null);
+					resDTO.setLaunchTimes(launchList == null ? 0 : overList.size());
 					resDTO.setOverTimes(overList == null ? 0 : overList.size());
 					//剩余商品数量
 					if(resDTO.getPartakeTimes().intValue() == 0 || resDTO.getPartakeTimes() < resDTO.getOverTimes()){

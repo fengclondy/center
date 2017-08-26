@@ -32,6 +32,7 @@
 	    	   pbi.goods_name goodsName,
 	    	   pbi.goods_cost_price goodsCostPrice,
 	    	   pbi.goods_floor_price goodsFloorPrice,
+	    	   pbi.goods_num goodsNum,
 	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
 	    	   ps.promotion_slogan promotionDesc,
 	    	   pei.contact_name contactNameD,

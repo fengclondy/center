@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,14 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
+import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
@@ -63,6 +66,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	@Resource
 	private PromotionInfoExtendDAO promotionInfoExtendDAO;
 	
+    @Resource
+    private PromotionBargainInfoDAO promotionBargainInfoDAO;
+	
 	@Override
 	public List<BuyerLaunchBargainInfoResDTO> getBuyerLaunchBargainInfoByBuyerCode(String buyerCode,String messageId) {
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,入参{}",messageId,buyerCode+":"+messageId);
@@ -98,7 +104,22 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
 		PromotionInfoDTO promotionInfo = null;
 		PromotionInfoExtendDTO promotionInfoExtend = null;
+		BuyerBargainLaunchReqDTO paramDTO = new BuyerBargainLaunchReqDTO();
 		try {
+			if(StringUtils.isNotEmpty(bargainInfoDTO.getPromotionId()) && StringUtils.isNotEmpty(bargainInfoDTO.getLevelCode())){
+				paramDTO.setPromotionId(bargainInfoDTO.getPromotionId());
+				paramDTO.setLevelCode(bargainInfoDTO.getLevelCode());
+				PromotionBargainInfoDMO paramDMO = promotionBargainInfoDAO.queryPromotionBargainInfo(paramDTO);
+				if(null == paramDMO){
+	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动不存在");
+				}
+				bargainInfoDTO.setGoodsName(paramDMO.getGoodsName());
+				bargainInfoDTO.setGoodsCostPrice(paramDMO.getGoodsCostPrice());
+				bargainInfoDTO.setGoodsFloorPrice(paramDMO.getGoodsFloorPrice());
+				bargainInfoDTO.setPartakeTimes(paramDMO.getPartakeTimes());
+				bargainInfoDTO.setGoodsNum(paramDMO.getGoodsNum());
+				bargainInfoDTO.setGoodsPicture(paramDMO.getGoodsPicture());
+			}
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(bargainInfoDTO);
 			if (validateResult.isHasErrors()) {
@@ -217,15 +238,19 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	
 	@Override
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
-			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<String> page) {
+			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page) {
 		DataGrid<BuyerLaunchBargainInfoResDTO> dataGrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
 		try {
-			List<BuyerLaunchBargainInfoResDTO> launchBargainList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(buyerBargainLaunch, page);
-			Long launchBargainCount = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoCount(buyerBargainLaunch);
-			dataGrid.setRows(launchBargainList);
-			dataGrid.setTotal(launchBargainCount);
-			result.setResult(dataGrid);
+			List<BuyerLaunchBargainInfoDMO> launchBargainList = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList(buyerBargainLaunch, page);
+			if(null != launchBargainList && !launchBargainList.isEmpty()){
+				String bargainDMOStr = JSON.toJSONString(launchBargainList);
+				List<BuyerLaunchBargainInfoResDTO> dtoList = JSONObject.parseArray(bargainDMOStr, BuyerLaunchBargainInfoResDTO.class);
+				Long launchBargainCount = buyerLaunchBargainInfoDAO.queryLaunchBargainInfoCount(buyerBargainLaunch);
+				dataGrid.setRows(dtoList);
+				dataGrid.setTotal(launchBargainCount);
+				result.setResult(dataGrid);
+			}
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setErrorMessage(e.toString());

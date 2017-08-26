@@ -57,7 +57,7 @@ public class AwardRecordServiceImpl implements AwardRecordService {
 
         Map<String,Object> param = new HashMap<String,Object>();
         param.put("buyerCode",dto.getBuyerCode());
-        param.put("winnerName",dto.getWinnerName());
+        param.put("buyerName",dto.getBuyerName());
         param.put("winningStartTime",dto.getWinningStartTime());
         param.put("winningEndTime",dto.getWinningEndTime());
         param.put("rewardType",dto.getRewardType());

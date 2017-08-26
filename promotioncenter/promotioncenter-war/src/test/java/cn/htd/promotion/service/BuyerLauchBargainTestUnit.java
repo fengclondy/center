@@ -29,28 +29,28 @@ public class BuyerLauchBargainTestUnit {
 	@Resource
 	private BuyerLaunchBargainInfoService buyerLaunchBargainInfoService;
 	
-//	@Test
-//	@Rollback(false) 
-//	public void addBuyerBargainLaunch() {
-//		BuyerLaunchBargainInfoResDTO barfainDTO = new BuyerLaunchBargainInfoResDTO();
-//		barfainDTO.setPromotionId("22171625270069");
-//		barfainDTO.setLevelCode("2217162527006976");
-//		barfainDTO.setBuyerCode("13913037054");
-//		barfainDTO.setBuyerName("小龙");
-//		barfainDTO.setHeadSculptureURL("777.pig");
-//		barfainDTO.setBuyerTelephone("13913037054");
-//		barfainDTO.setGoodsPicture("777.pig");
-//		barfainDTO.setGoodsName("陈康");
-//		barfainDTO.setGoodsCostPrice(new BigDecimal("3000.00"));
-//		barfainDTO.setGoodsFloorPrice(new BigDecimal("2000.00"));
-//		barfainDTO.setGoodsNum(20);
-//		barfainDTO.setPartakeTimes(20);
-//		barfainDTO.setCreateId(111);
-//		barfainDTO.setCreateName("xxoo");
-//		barfainDTO.setCreateTime(new Date());
-//		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = buyerLaunchBargainInfoService.addBuyerBargainLaunch(barfainDTO, "337788");
-//		System.out.println(result.getErrorMessage());
-//	}
+	@Test
+	@Rollback(false) 
+	public void addBuyerBargainLaunch() {
+		BuyerLaunchBargainInfoResDTO barfainDTO = new BuyerLaunchBargainInfoResDTO();
+		barfainDTO.setPromotionId("22171803310071");
+		barfainDTO.setLevelCode("2217180331007180");
+		barfainDTO.setBuyerCode("13913037054");
+		barfainDTO.setBuyerName("小龙");
+		barfainDTO.setHeadSculptureURL("777.pig");
+		barfainDTO.setBuyerTelephone("13913037054");
+		barfainDTO.setGoodsPicture("777.pig");
+		barfainDTO.setGoodsName("陈康");
+		barfainDTO.setGoodsCostPrice(new BigDecimal("3000.00"));
+		barfainDTO.setGoodsFloorPrice(new BigDecimal("2000.00"));
+		barfainDTO.setGoodsNum(20);
+		barfainDTO.setPartakeTimes(20);
+		barfainDTO.setCreateId(111);
+		barfainDTO.setCreateName("xxoo");
+		barfainDTO.setCreateTime(new Date());
+		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = buyerLaunchBargainInfoService.addBuyerBargainLaunch(barfainDTO, "337788");
+		System.out.println(result.getErrorMessage());
+	}
 	
 //	@Test
 //	@Rollback(false) 
@@ -59,17 +59,17 @@ public class BuyerLauchBargainTestUnit {
 //		System.out.println(price);
 //	}
 	
-//	@Test
-//	@Rollback(false)
-//	public void queryLaunchBargainInfoList(){
-//		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-//		buyerBargainLaunch.setSellerCode("801781");
-//		Pager<String> page = new Pager<String>();
-//		page.setPageOffset(1);
-//		page.setRows(10);
-//		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = buyerLaunchBargainInfoService.queryLaunchBargainInfoList(buyerBargainLaunch, page);
-//		System.out.println(JSON.toJSONString(result));
-//	}
+	@Test
+	@Rollback(false)
+	public void queryLaunchBargainInfoList(){
+		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+		buyerBargainLaunch.setSellerCode("801781");
+		Pager<BuyerBargainLaunchReqDTO> page = new Pager<BuyerBargainLaunchReqDTO>();
+		page.setPageOffset(1);
+		page.setRows(10);
+		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = buyerLaunchBargainInfoService.queryLaunchBargainInfoList(buyerBargainLaunch, page);
+		System.out.println(JSON.toJSONString(result));
+	}
 	
 	
 }

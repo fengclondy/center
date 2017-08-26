@@ -1,10 +1,5 @@
 package cn.htd.promotion.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.junit.Test;
@@ -14,17 +9,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import redis.clients.jedis.Jedis;
-
 import com.alibaba.fastjson.JSON;
 
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
-import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
-import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 @Transactional  
@@ -43,6 +36,9 @@ public class PromotionInfoTestUnit {
     
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
+	
+    @Resource
+    private PromotionBargainInfoDAO promotionBargainInfoDAO;
 	
 //	@Test
 //	@Rollback(false) 
@@ -131,13 +127,13 @@ public class PromotionInfoTestUnit {
 //		}
 //	}
 	
-	@Test
-	public void getPromotionInfo() {
-		ExecuteResult<List<PromotionBargainInfoResDTO>> data = promotionBargainInfoService.getPromotionBargainInfoList("00001", "22171625270069");
-		List<PromotionBargainInfoResDTO> list = data.getResult();
-		System.out.println(JSON.toJSONString(data));
-	}
-
+//	@Test
+//	public void getPromotionInfo() {
+//		ExecuteResult<List<PromotionBargainInfoResDTO>> data = promotionBargainInfoService.getPromotionBargainInfoList("00001", "22171625270069");
+//		List<PromotionBargainInfoResDTO> list = data.getResult();
+//		System.out.println(JSON.toJSONString(data));
+//	}
+//
 //	@Test
 //	@Rollback(false) 
 //	public void delRedisPromotionInfo() {
@@ -228,9 +224,14 @@ public class PromotionInfoTestUnit {
 //	}
 	
 	@Test
+	@Rollback(false) 
 	public void getReids(){
-		System.out.println(promotionRedisDB.get("zxllockkey"));
-//		String status = promotionRedisDB.getHash("B2B_MIDDLE_BARGAIN_VALID", "22171625270069");
-//		System.out.println(status);
+		PromotionValidDTO dto = new PromotionValidDTO();
+		dto.setShowStatus("3");
+		dto.setPromotionId("22171542040072");
+		dto.setOperatorId(990L);
+		dto.setOperatorName("llm");
+		ExecuteResult<PromotionInfoDTO> result = promotionBargainInfoService.upDownShelvesPromotionInfo(dto);
+		System.out.println(JSON.toJSONString(result));
 	}
 }

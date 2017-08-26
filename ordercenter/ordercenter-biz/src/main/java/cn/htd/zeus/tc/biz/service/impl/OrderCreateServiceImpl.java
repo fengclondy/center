@@ -1698,7 +1698,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		if(CollectionUtils.isNotEmpty(orderListRes)){
 			for(OrderCreateListInfoResDTO order : orderListRes){
 				String sellerUserIdKey = order.getSellerUserId();
-				order.setSellerUserId(sellerInfoMap.get(sellerUserIdKey).toString());
+				order.setSellerId(sellerInfoMap.get(sellerUserIdKey).toString());
 			}
 		}
 		orderCreateInfoResDTO.setResponseCode(orderCreateInfoDMO.getResultCode());

@@ -63,6 +63,5 @@ public interface BuyerBargainAPI {
 	 * @return
 	 */
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page);
-
-
+	
 }

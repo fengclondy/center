@@ -15,6 +15,8 @@ import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 public interface PromotionBargainInfoDAO extends BaseDAO<PromotionBargainInfoResDTO> {
 	
 	public PromotionBargainInfoDMO getPromotionBargainInfoDetail(BuyerBargainLaunchReqDTO buyerBargainLaunch);
+	
+    public PromotionBargainInfoDMO queryPromotionBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch);
 
 	public Integer queryPromotionBargainStockSum(@Param("promotionId") String promotionId);
 

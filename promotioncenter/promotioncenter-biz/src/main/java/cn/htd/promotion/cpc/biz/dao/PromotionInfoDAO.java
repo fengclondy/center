@@ -10,6 +10,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 @Repository("cn.htd.promotion.cpc.biz.dao.promotionInfoDAO")
 public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
@@ -106,4 +107,10 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
 	public long getTotalPromotionGashaponByInfo(@Param("entity") PromotionInfoReqDTO promotionInfoReqDTO);
+
+	/**
+	 * 砍价活动上下架
+	 * @param dto
+	 */
+	public void upDownShelvesBargainInfo(@Param("dto") PromotionValidDTO dto);
 }

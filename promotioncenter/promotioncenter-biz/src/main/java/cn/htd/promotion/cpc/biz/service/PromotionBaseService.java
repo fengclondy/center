@@ -108,5 +108,5 @@ public interface PromotionBaseService {
      * @return
      */
     public String setPromotionStatusInfo(PromotionInfoDTO promotionInfo);
- 
+
 }

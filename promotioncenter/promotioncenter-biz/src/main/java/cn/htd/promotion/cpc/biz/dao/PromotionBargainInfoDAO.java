@@ -10,6 +10,7 @@ import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 @Repository("cn.htd.promotion.cpc.biz.dao.promotionBargainInfoDAO")
 public interface PromotionBargainInfoDAO extends BaseDAO<PromotionBargainInfoResDTO> {
@@ -24,4 +25,5 @@ public interface PromotionBargainInfoDAO extends BaseDAO<PromotionBargainInfoRes
 			@Param("page") Pager<String> page);
 
 	public Long queryPromotionBargainCountBySellerCode(@Param("sellerCode") String sellerCode);
+
 }

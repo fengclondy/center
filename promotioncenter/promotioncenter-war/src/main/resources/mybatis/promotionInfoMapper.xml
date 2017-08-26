@@ -387,4 +387,13 @@
   	 	<![CDATA[AND effective_time <= #{dto.invalidTime}]]>
   	</if>
   </select>
+  
+  <update id="upDownShelvesBargainInfo">
+  	UPDATE promotion_info
+  	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+  	modify_id = #{dto.operatorId,jdbcType=BIGINT},
+    modify_name = #{dto.operatorName,jdbcType=VARCHAR},
+    modify_time = now()
+  	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
+  </update>
 </mapper>

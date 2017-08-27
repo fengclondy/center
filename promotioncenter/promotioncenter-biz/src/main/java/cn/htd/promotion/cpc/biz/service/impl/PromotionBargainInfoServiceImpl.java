@@ -432,7 +432,7 @@ public class PromotionBargainInfoServiceImpl implements
 					//发起砍价人数
 					Integer launchQTY = buyerBargainRecordDAO.queryPromotionBargainJoinQTY(resDTO.getPromotionId());
 					resDTO.setLaunchBargainQTY(launchQTY == null ? 0 : launchQTY.intValue());
-					resDTO.setShowStatus(promotionInfo.getShowStatus()); 
+					resDTO.setShowStatus(promotionInfo.getShowStatus());
 					resList.add(resDTO);
 				}
 			}

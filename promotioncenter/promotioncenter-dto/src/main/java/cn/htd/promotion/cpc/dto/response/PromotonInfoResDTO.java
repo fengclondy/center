@@ -44,6 +44,18 @@ public class PromotonInfoResDTO implements Serializable{
      *  发起砍价人数
      */
     private int launchBargainQTY;
+    /**
+     * 启用状态
+     * @return
+     */
+    private String showStatus;
+    
+	public String getShowStatus() {
+		return showStatus;
+	}
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
+	}
 	public String getPromotionId() {
 		return promotionId;
 	}

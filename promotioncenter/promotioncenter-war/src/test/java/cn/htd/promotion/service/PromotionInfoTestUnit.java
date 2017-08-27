@@ -1,5 +1,10 @@
 package cn.htd.promotion.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.junit.Test;
@@ -9,16 +14,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
-
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
+import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
+
+import com.alibaba.fastjson.JSON;
 
 @Transactional  
 @RunWith(SpringJUnit4ClassRunner.class)  
@@ -40,92 +47,92 @@ public class PromotionInfoTestUnit {
     @Resource
     private PromotionBargainInfoDAO promotionBargainInfoDAO;
 	
-//	@Test
-//	@Rollback(false) 
-//	public void savePromotionInfo() {
-//		try {
-//			System.out.println(111);
-//			String messageId = "001";
-//			List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
-//			List<String> sloganList = new ArrayList<String>();
-//			sloganList.add("汇通达周年庆");
-//			sloganList.add("汇通达十年庆");
-//			sloganList.add("汇通达百年庆");
-//			PromotionBargainInfoResDTO p1 = new PromotionBargainInfoResDTO();
-//			p1.setPromotionName("汇通达周年庆");
-//			p1.setPromotionDescribe("赶紧来买吧!!!");
-//			p1.setEffectiveTime(new Date());
-//			p1.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
-//			p1.setOfflineStartTime(new Date());
-//			p1.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
-//			p1.setGoodsPicture("1.pig");
-//			p1.setGoodsName("格力空调");
-//			p1.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
-//			p1.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
-//			p1.setGoodsNum(2);
-//			p1.setPartakeTimes(300);
-//			p1.setPromotionSlogan(JSON.toJSONString(sloganList));
-//			p1.setTotalPartakeTimes(5L);
-//			p1.setContactTelephone("1398822111");
-//			p1.setContactName("胥明忠");
-//			p1.setContactAddress("江苏");
-//			p1.setPromotionProviderSellerCode("801781");
-//			p1.setCreateId(123L);
-//			p1.setCreateName("sa");
-//			p1.setCreateTime(new Date());
-//			PromotionBargainInfoResDTO p2 = new PromotionBargainInfoResDTO();
-//			p2.setPromotionName("汇通达周年庆");
-//			p2.setPromotionDescribe("汇通达周年庆");
-//			p2.setEffectiveTime(new Date());
-//			p2.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
-//			p2.setOfflineStartTime(new Date());
-//			p2.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
-//			p2.setGoodsPicture("2.pig");
-//			p2.setGoodsName("格力冰箱");
-//			p2.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
-//			p2.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
-//			p2.setGoodsNum(2);
-//			p2.setPartakeTimes(300);
-//			p2.setPromotionSlogan(JSON.toJSONString(sloganList));
-//			p2.setTotalPartakeTimes(5L);
-//			p2.setContactTelephone("1398822111222");
-//			p2.setContactName("胥明忠2");
-//			p2.setContactAddress("江苏2");
-//			p2.setPromotionProviderSellerCode("801781");
-//			p2.setCreateId(123L);
-//			p2.setCreateName("sa");
-//			p2.setCreateTime(new Date());
-//			PromotionBargainInfoResDTO p3 = new PromotionBargainInfoResDTO();
-//			p3.setPromotionName("汇通达周年庆");
-//			p3.setPromotionDescribe("汇通达周年庆");
-//			p3.setEffectiveTime(new Date());
-//			p3.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
-//			p3.setOfflineStartTime(new Date());
-//			p3.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
-//			p3.setGoodsPicture("3.pig");
-//			p3.setGoodsName("格力手机");
-//			p3.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
-//			p3.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
-//			p3.setGoodsNum(2);
-//			p3.setPartakeTimes(300);
-//			p3.setPromotionSlogan(JSON.toJSONString(sloganList));
-//			p3.setTotalPartakeTimes(5L);
-//			p3.setContactTelephone("1398822111222");
-//			p3.setContactName("胥明忠2");
-//			p3.setContactAddress("江苏2");
-//			p3.setPromotionProviderSellerCode("801781");
-//			p3.setCreateId(123L);
-//			p3.setCreateName("sa");
-//			p3.setCreateTime(new Date());
-//			promotionBargainInfoList.add(p1);
-//			promotionBargainInfoList.add(p2);
-//			promotionBargainInfoList.add(p3);
-//			ExecuteResult<List<PromotionBargainInfoResDTO>> result = promotionBargainInfoService.addPromotionBargainInfoRedis(promotionBargainInfoList);
-//			System.out.println(result.getErrorMessage());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	@Test
+	@Rollback(false) 
+	public void savePromotionInfo() {
+		try {
+			System.out.println(111);
+			String messageId = "001";
+			List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
+			List<String> sloganList = new ArrayList<String>();
+			sloganList.add("汇通达周年庆");
+			sloganList.add("汇通达十年庆");
+			sloganList.add("汇通达百年庆");
+			PromotionBargainInfoResDTO p1 = new PromotionBargainInfoResDTO();
+			p1.setPromotionName("汇通达周年庆");
+			p1.setPromotionDescribe("赶紧来买吧!!!");
+			p1.setEffectiveTime(new Date());
+			p1.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
+			p1.setOfflineStartTime(new Date());
+			p1.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
+			p1.setGoodsPicture("1.pig");
+			p1.setGoodsName("格力空调");
+			p1.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
+			p1.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
+			p1.setGoodsNum(2);
+			p1.setPartakeTimes(300);
+			p1.setPromotionSlogan(JSON.toJSONString(sloganList));
+			p1.setTotalPartakeTimes(5L);
+			p1.setContactTelephone("1398822111");
+			p1.setContactName("胥明忠");
+			p1.setContactAddress("江苏");
+			p1.setPromotionProviderSellerCode("801781");
+			p1.setCreateId(123L);
+			p1.setCreateName("sa");
+			p1.setCreateTime(new Date());
+			PromotionBargainInfoResDTO p2 = new PromotionBargainInfoResDTO();
+			p2.setPromotionName("汇通达周年庆");
+			p2.setPromotionDescribe("汇通达周年庆");
+			p2.setEffectiveTime(new Date());
+			p2.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
+			p2.setOfflineStartTime(new Date());
+			p2.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
+			p2.setGoodsPicture("2.pig");
+			p2.setGoodsName("格力冰箱");
+			p2.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
+			p2.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
+			p2.setGoodsNum(2);
+			p2.setPartakeTimes(300);
+			p2.setPromotionSlogan(JSON.toJSONString(sloganList));
+			p2.setTotalPartakeTimes(5L);
+			p2.setContactTelephone("1398822111222");
+			p2.setContactName("胥明忠2");
+			p2.setContactAddress("江苏2");
+			p2.setPromotionProviderSellerCode("801781");
+			p2.setCreateId(123L);
+			p2.setCreateName("sa");
+			p2.setCreateTime(new Date());
+			PromotionBargainInfoResDTO p3 = new PromotionBargainInfoResDTO();
+			p3.setPromotionName("汇通达周年庆");
+			p3.setPromotionDescribe("汇通达周年庆");
+			p3.setEffectiveTime(new Date());
+			p3.setInvalidTime(DateUtil.getDateBySpecificDate("2017-09-20 12:00:00"));
+			p3.setOfflineStartTime(new Date());
+			p3.setOfflineEndTime(DateUtil.getDateBySpecificDate("2017-08-29 12:00:00"));
+			p3.setGoodsPicture("3.pig");
+			p3.setGoodsName("格力手机");
+			p3.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
+			p3.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
+			p3.setGoodsNum(2);
+			p3.setPartakeTimes(300);
+			p3.setPromotionSlogan(JSON.toJSONString(sloganList));
+			p3.setTotalPartakeTimes(5L);
+			p3.setContactTelephone("1398822111222");
+			p3.setContactName("胥明忠2");
+			p3.setContactAddress("江苏2");
+			p3.setPromotionProviderSellerCode("801781");
+			p3.setCreateId(123L);
+			p3.setCreateName("sa");
+			p3.setCreateTime(new Date());
+			promotionBargainInfoList.add(p1);
+			promotionBargainInfoList.add(p2);
+			promotionBargainInfoList.add(p3);
+			ExecuteResult<List<PromotionBargainInfoResDTO>> result = promotionBargainInfoService.addPromotionBargainInfoRedis(promotionBargainInfoList);
+			System.out.println(result.getErrorMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 //	@Test
 //	public void getPromotionInfo() {
@@ -134,12 +141,12 @@ public class PromotionInfoTestUnit {
 //		System.out.println(JSON.toJSONString(data));
 //	}
 //
-//	@Test
-//	@Rollback(false) 
-//	public void delRedisPromotionInfo() {
-//		promotionRedisDB.del("B2B_MIDDLE_BARGAIN");
-//		promotionRedisDB.del("B2B_MIDDLE_BARGAIN_VALID");
-//	}
+	@Test
+	@Rollback(false) 
+	public void delRedisPromotionInfo() {
+		promotionRedisDB.del("B2B_MIDDLE_BARGAIN");
+		promotionRedisDB.del("B2B_MIDDLE_BARGAIN_VALID");
+	}
 	
 //	@Test
 //	@Rollback(false) 

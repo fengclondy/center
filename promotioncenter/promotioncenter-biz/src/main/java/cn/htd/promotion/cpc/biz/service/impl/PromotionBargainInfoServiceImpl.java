@@ -390,14 +390,22 @@ public class PromotionBargainInfoServiceImpl implements
                 }
             }
             promotionInfoDAO.upDownShelvesBargainInfo(dto);
+            promotionInfoRedis = new PromotionInfoDTO();
             if(StringUtils.isNotEmpty(dto.getTemlateFlag())){
             	PromotionExtendInfoDTO extendDTO = new PromotionExtendInfoDTO();
+            	extendDTO.setPromotionId(dto.getPromotionId());
             	extendDTO.setModifyId(dto.getOperatorId());
             	extendDTO.setModifyName(dto.getOperatorName());
             	extendDTO.setTemplateFlag(Integer.parseInt(dto.getTemlateFlag()));
             	promotionInfoExtendDAO.update(extendDTO);
+            	List<PromotionBargainInfoResDTO> promotionBargainList = promotionBargainRedisHandle.getRedisBargainInfoList(dto.getPromotionId());
+                if(null != promotionBargainList && !promotionBargainList.isEmpty()){
+                	for (PromotionBargainInfoResDTO res : promotionBargainList) {
+    					res.setTemplateFlag(Integer.parseInt(dto.getTemlateFlag()));
+    				}
+                	promotionBargainRedisHandle.addBargainInfo2Redis(promotionBargainList);
+                }
             }
-            promotionInfoRedis = new PromotionInfoDTO();
             promotionInfoRedis.setPromotionId(dto.getPromotionId());
             promotionInfoRedis.setShowStatus(statusCurrent);
         	promotionBargainRedisHandle.saveBargainValidStatus2Redis(promotionInfoRedis);

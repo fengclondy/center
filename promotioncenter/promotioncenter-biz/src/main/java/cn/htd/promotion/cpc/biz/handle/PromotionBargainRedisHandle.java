@@ -58,15 +58,15 @@ public class PromotionBargainRedisHandle {
 		String validStatus = "";
 		validStatus = promotionRedisDB.getHash(RedisConst.REDIS_BARGAIN_VALID,
 				promotionId);
-		if (!StringUtils.isEmpty(validStatus)
-				&& !dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
-						.equals(validStatus)) {
-			throw new PromotionCenterBusinessException(
-					ResultCodeEnum.BARGAIN_NOT_VALID.getCode(), "砍价活动ID:"
-							+ promotionId + " 该砍价活动未启用");
-		}
+//		if (!StringUtils.isEmpty(validStatus)
+//				&& !dictionary.getValueByCode(
+//						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
+//						.equals(validStatus)) {
+//			throw new PromotionCenterBusinessException(
+//					ResultCodeEnum.BARGAIN_NOT_VALID.getCode(), "砍价活动ID:"
+//							+ promotionId + " 该砍价活动未启用");
+//		}
 		promotionBargainInfoJsonStr = promotionRedisDB.getHash(
 				RedisConst.REDIS_BARGAIN, promotionId);
 		promotionBargainInfoList = JSON.parseArray(promotionBargainInfoJsonStr,

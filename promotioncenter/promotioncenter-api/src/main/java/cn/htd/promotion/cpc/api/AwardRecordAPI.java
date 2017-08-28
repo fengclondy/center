@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.api;
 import cn.htd.common.DataGrid;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
+import cn.htd.promotion.cpc.dto.response.ImportResultDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface AwardRecordAPI {
      * @return
      */
     public ExecuteResult<DataGrid<PromotionAwardDTO>> getAwardRecordByPromotionId(PromotionAwardReqDTO dto,String messageId);
+
+    ExecuteResult<ImportResultDTO> importWinningRecord(List<PromotionAwardReqDTO> list,String messageId);
 
 }

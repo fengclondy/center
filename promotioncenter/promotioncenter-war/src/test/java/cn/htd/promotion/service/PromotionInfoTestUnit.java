@@ -134,13 +134,13 @@ public class PromotionInfoTestUnit {
 		}
 	}
 	
-//	@Test
-//	public void getPromotionInfo() {
-//		ExecuteResult<List<PromotionBargainInfoResDTO>> data = promotionBargainInfoService.getPromotionBargainInfoList("00001", "22171625270069");
-//		List<PromotionBargainInfoResDTO> list = data.getResult();
-//		System.out.println(JSON.toJSONString(data));
-//	}
-//
+	@Test
+	public void getPromotionInfo() {
+		ExecuteResult<List<PromotionBargainInfoResDTO>> data = promotionBargainInfoService.getPromotionBargainInfoList("00001", "22171100370945");
+		List<PromotionBargainInfoResDTO> list = data.getResult();
+		System.out.println(JSON.toJSONString(data));
+	}
+
 	@Test
 	@Rollback(false) 
 	public void delRedisPromotionInfo() {

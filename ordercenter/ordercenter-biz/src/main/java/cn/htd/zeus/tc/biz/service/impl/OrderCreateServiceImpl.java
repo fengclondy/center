@@ -1737,6 +1737,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			return;
 		} else {
 			MemberInvoiceDTO memberInvoice = memberInvoiceInfo.getOtherCenterResult();
+			orderCreateInfoReqDTO.setIsNeedInvoice(1);
 			orderCreateInfoReqDTO.setInvoiceType("2");
 			orderCreateInfoReqDTO.setInvoiceCompanyName(memberInvoice.getInvoiceNotify());
 			orderCreateInfoReqDTO.setInvoiceAddress(memberInvoice.getInvoiceAddress());
@@ -1769,9 +1770,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			orderCreateInfoReqDTO.setDeliveryType("1");
 			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
 			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
-			
 			orderCreateInfoReqDTO
-					.setConsigneeName(memberBaseInfoDTO.getContactName());
+					.setConsigneeName(memberBaseInfoDTO.getArtificialPersonName());
+			orderCreateInfoReqDTO.setConsigneePhoneNum(memberBaseInfoDTO.getArtificialPersonMobile());
 			orderCreateInfoReqDTO
 					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());
 			orderCreateInfoReqDTO.setConsigneeAddressDetail(memberBaseInfoDTO.getLocationDetail());

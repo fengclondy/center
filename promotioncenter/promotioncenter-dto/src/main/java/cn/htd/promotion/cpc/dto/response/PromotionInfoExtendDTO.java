@@ -48,6 +48,14 @@ public class PromotionInfoExtendDTO extends PromotionInfoDTO implements
 	
 	private String contactAddress;//联系地址
 	
+	private String templateFlag; //模版标记
+	
+	public String getTemplateFlag() {
+		return templateFlag;
+	}
+	public void setTemplateFlag(String templateFlag) {
+		this.templateFlag = templateFlag;
+	}
 	public Date getEachStartTime() {
 		return eachStartTime;
 	}

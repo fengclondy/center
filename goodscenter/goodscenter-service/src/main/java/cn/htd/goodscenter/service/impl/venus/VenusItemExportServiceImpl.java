@@ -1188,9 +1188,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 //						venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName()));
 //				threadPool.shutdown();
 //			}
-			
-			itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(),
-					venusItemSkuPublishInDTO.getItemId());
+			if (venusItemSkuPublishInDTO.getPreSaleFlag() != null) {
+				itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(),
+						venusItemSkuPublishInDTO.getItemId());
+			}
+
 			//更新价格
 			if(venusItemSkuPublishInDTO.getStandardPrice()!=null){
 				Integer isBoxFlag="1".equals(venusItemSkuPublishInDTO.getShelfType()) ? 1 : 0;

@@ -1709,7 +1709,6 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			orderCreateInfoReqDTO.setTaxManId(memberInvoice.getTaxManId());
 			orderCreateInfoReqDTO.setBankName(memberInvoice.getBankName());
 			orderCreateInfoReqDTO.setBankAccount(memberInvoice.getBankAccount());
-			orderCreateInfoReqDTO.setContactPhone(memberInvoice.getContactPhone());
 		}
 	}
 
@@ -1735,9 +1734,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			orderCreateInfoReqDTO.setDeliveryType("1");
 			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
 			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
-			
 			orderCreateInfoReqDTO
 					.setConsigneeName(memberBaseInfoDTO.getContactName());
+			orderCreateInfoReqDTO.setContactPhone(memberBaseInfoDTO.getArtificialPersonMobile());
 			orderCreateInfoReqDTO
 					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());
 			orderCreateInfoReqDTO.setConsigneeAddressDetail(memberBaseInfoDTO.getLocationDetail());

@@ -97,6 +97,8 @@ public class OrderQueryParamResDTO extends GenricResDTO implements Serializable 
 	 * 售卖类型
 	 */
 	private String salesType;
+	
+	private Integer orderType;
 
 	/**
 	 * 销售部门编码
@@ -1146,6 +1148,14 @@ public class OrderQueryParamResDTO extends GenricResDTO implements Serializable 
 
 	public void setOrderDeleteStatus(Integer orderDeleteStatus) {
 		this.orderDeleteStatus = orderDeleteStatus;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 
 }

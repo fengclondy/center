@@ -140,7 +140,7 @@ public class OrderCreateAPIImplTestUnit {
 		skuList2.add(sku2);
 		
 		order2.setSkuList(skuList2);
-		orderList.add(order2);
+		//orderList.add(order2);
 		
 		orderCreate4huilinReqDTO.setOrderList(orderList);
 		

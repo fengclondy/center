@@ -1071,15 +1071,18 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		}
 		orderItemSkuPriceDTORes = priceCenterRAO.queryOrderItemSkuPrice(queryCommonItemSkuPriceDTO,
 				messageId);
-		//预售商品取预售价格|预售vip价格
-		String orderFrom = orderTemp.getOrderFrom();
-		if(orderFrom.equals(OrderStatusEnum.ORDER_FROM_PRESALE.getCode())){
-			HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
-			if(null != hzgPrice){
-				if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
-					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
-				}else{
-					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+		
+		Map<String, Object> extendMap = orderTemp.getExtendMap();
+		if(null != extendMap){
+			String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
+			if(StringUtilHelper.isNotNull(orderType) && orderType.equals(OrderStatusEnum.ORDER_PRE_SALE_TYPE.getCode())){
+				HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
+				if(null != hzgPrice){
+					if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
+						orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
+					}else{
+						orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+					}
 				}
 			}
 		}

@@ -936,7 +936,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
             mallSkuOutDTO.setErpFiveCategoryCode(item.getErpFiveCategoryCode()); // erp五级类目
             // 预售
             mallSkuOutDTO.setIsPreSale(item.getIsPreSale());
-            if ("1".equals(item.getIsPreSale())) {
+            if (1 == item.getIsPreSale()) {
                 mallSkuOutDTO.setPreSaleStartTime(item.getPreSaleStarttime());
                 mallSkuOutDTO.setPreSaleEndTime(item.getPreSaleEndtime());
             }
@@ -1067,7 +1067,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
             mallSkuOutDTO.setErpFirstCategoryCode(item.getErpFirstCategoryCode());
             // 预售
             mallSkuOutDTO.setIsPreSale(item.getIsPreSale());
-            if ("1".equals(item.getIsPreSale())) {
+            if (1 == item.getIsPreSale()) {
                 mallSkuOutDTO.setPreSaleStartTime(item.getPreSaleStarttime());
                 mallSkuOutDTO.setPreSaleEndTime(item.getPreSaleEndtime());
             }

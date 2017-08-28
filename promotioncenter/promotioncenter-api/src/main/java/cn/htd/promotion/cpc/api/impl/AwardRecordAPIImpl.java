@@ -8,12 +8,15 @@ import cn.htd.promotion.cpc.biz.service.AwardRecordService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
+import cn.htd.promotion.cpc.dto.response.ImportResultDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by tangjiayong on 2017/8/22.
@@ -57,5 +60,10 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
                     dto.getPromotionId() + ":" + e.toString());
         }
         return result;
+    }
+
+    @Override
+    public ExecuteResult<ImportResultDTO> importWinningRecord(List<PromotionAwardReqDTO> list, String messageId) {
+        return null;
     }
 }

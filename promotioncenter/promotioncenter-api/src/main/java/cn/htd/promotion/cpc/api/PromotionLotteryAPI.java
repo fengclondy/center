@@ -57,4 +57,19 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String shareLinkHandle(String shareLinkHandleReqDTOJson);
+
+	/**
+	 * 开始抽奖处理
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	public String beginDrawLottery(String drawLotteryParam);
+
+	/**
+	 * 查询抽奖结果
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	public String getDrawLotteryResult(String drawLotteryParam);
+
 }

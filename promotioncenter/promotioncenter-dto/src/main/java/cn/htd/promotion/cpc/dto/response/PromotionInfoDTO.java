@@ -1,10 +1,8 @@
 package cn.htd.promotion.cpc.dto.response;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -12,9 +10,8 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * 促销活动DTO
  */
-public class PromotionInfoDTO implements Serializable {
+public class PromotionInfoDTO extends GenricResDTO {
 
-    private static final long serialVersionUID = -1587859622731343639L;
     /**
      * 促销活动ID
      */
@@ -42,7 +39,7 @@ public class PromotionInfoDTO implements Serializable {
      * 促销活动发起方商家编码
      */
     private String promotionProviderSellerCode;
-    
+
     /**
      * 促销活动商家名称
      */
@@ -82,7 +79,7 @@ public class PromotionInfoDTO implements Serializable {
      * 促销活动状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
      */
     private String status;
-    
+
     /**
      * 促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
      */
@@ -158,7 +155,7 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 活动层级列表
      */
-    private List<PromotionAccumulatyDTO> promotionAccumulatyList;
+    private List<? extends PromotionAccumulatyDTO> promotionAccumulatyList;
     /**
      * 促销活动状态履历
      */
@@ -187,7 +184,7 @@ public class PromotionInfoDTO implements Serializable {
     private String effectiveTimeStr;
 
     private String invalidTimeStr;
-    
+
     /**
      * 中奖总数量
      */
@@ -204,24 +201,24 @@ public class PromotionInfoDTO implements Serializable {
      * 是否清除redis
      */
     private Integer hasRedisClean;
-    
+
     public Integer getDealFlag() {
-		return dealFlag;
-	}
+        return dealFlag;
+    }
 
-	public void setDealFlag(Integer dealFlag) {
-		this.dealFlag = dealFlag;
-	}
+    public void setDealFlag(Integer dealFlag) {
+        this.dealFlag = dealFlag;
+    }
 
-	public Integer getHasRedisClean() {
-		return hasRedisClean;
-	}
+    public Integer getHasRedisClean() {
+        return hasRedisClean;
+    }
 
-	public void setHasRedisClean(Integer hasRedisClean) {
-		this.hasRedisClean = hasRedisClean;
-	}
+    public void setHasRedisClean(Integer hasRedisClean) {
+        this.hasRedisClean = hasRedisClean;
+    }
 
-	public String getEffectiveTimeStr() {
+    public String getEffectiveTimeStr() {
         return effectiveTimeStr;
     }
 
@@ -302,14 +299,14 @@ public class PromotionInfoDTO implements Serializable {
     }
 
     public String getSellerName() {
-		return sellerName;
-	}
+        return sellerName;
+    }
 
-	public void setSellerName(String sellerName) {
-		this.sellerName = sellerName;
-	}
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
 
-	public Long getPromotionProviderShopId() {
+    public Long getPromotionProviderShopId() {
         return promotionProviderShopId;
     }
 
@@ -517,11 +514,12 @@ public class PromotionInfoDTO implements Serializable {
         this.categoryItemRuleDesc = categoryItemRuleDesc;
     }
 
-    public List<PromotionAccumulatyDTO> getPromotionAccumulatyList() {
+    public List<? extends PromotionAccumulatyDTO> getPromotionAccumulatyList() {
         return promotionAccumulatyList;
     }
 
-    public void setPromotionAccumulatyList(List<PromotionAccumulatyDTO> promotionAccumulatyList) {
+    public void setPromotionAccumulatyList(
+            List<? extends PromotionAccumulatyDTO> promotionAccumulatyList) {
         this.promotionAccumulatyList = promotionAccumulatyList;
     }
 
@@ -556,26 +554,25 @@ public class PromotionInfoDTO implements Serializable {
     public void setVerifyStatusList(List<String> verifyStatusList) {
         this.verifyStatusList = verifyStatusList;
     }
-    
-    
 
     public String getWinningNum() {
-		return winningNum;
-	}
+        return winningNum;
+    }
 
-	public void setWinningNum(String winningNum) {
-		this.winningNum = winningNum;
-	}
+    public void setWinningNum(String winningNum) {
+        this.winningNum = winningNum;
+    }
 
-	public String getWinningTodayNum() {
-		return winningTodayNum;
-	}
+    public String getWinningTodayNum() {
+        return winningTodayNum;
+    }
 
-	public void setWinningTodayNum(String winningTodayNum) {
-		this.winningTodayNum = winningTodayNum;
-	}
+    public void setWinningTodayNum(String winningTodayNum) {
+        this.winningTodayNum = winningTodayNum;
+    }
 
-	public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
+    public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
+        super.setMessageId(promotionInfoDTO.getMessageId());
         this.id = promotionInfoDTO.getId();
         this.promotionId = promotionInfoDTO.getPromotionId();
         this.promotionName = promotionInfoDTO.getPromotionName();

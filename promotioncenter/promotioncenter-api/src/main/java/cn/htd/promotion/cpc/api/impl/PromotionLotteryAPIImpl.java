@@ -35,8 +35,7 @@ import com.alibaba.fastjson.JSONObject;
 @Service("promotionLotteryAPI")
 public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(PromotionLotteryAPIImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
 
 	@Resource
 	private PromotionInfoService promotionInfoService;
@@ -205,5 +204,27 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 					messageId, requestDTO.getPromotionId(), w.toString());
 		}
 		return JSON.toJSONString(result);
+	}
+
+	/**
+	 * 开始抽奖处理
+	 *
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	@Override
+	public String beginDrawLottery(String drawLotteryParam) {
+		return null;
+	}
+
+	/**
+	 * 查询抽奖结果
+	 *
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	@Override
+	public String getDrawLotteryResult(String drawLotteryParam) {
+		return null;
 	}
 }

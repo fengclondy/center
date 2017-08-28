@@ -1204,7 +1204,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				itemSkuPriceService.updateItemSkuStandardPrice(venusItemSkuPublishInDTO.getStandardPrice(),isBoxFlag);
 				// add by zhangxiaolong for presale 20170815 start
 				HzgPriceDTO hzgPriceDTO=venusItemSkuPublishInDTO.getStandardPrice().getHzgPriceDTO();
-				if(1==venusItemSkuPublishInDTO.getPreSaleFlag()&&hzgPriceDTO!=null){
+				if(venusItemSkuPublishInDTO.getPreSaleFlag() != null && 1==venusItemSkuPublishInDTO.getPreSaleFlag()&&hzgPriceDTO!=null){
 					HzgPriceInDTO hzgPriceInDTO=new HzgPriceInDTO();
 					hzgPriceInDTO.setItemId(itemSkuFromDb.getItemId());
 					hzgPriceInDTO.setOperatorId(venusItemSkuPublishInDTO.getOperatorId());

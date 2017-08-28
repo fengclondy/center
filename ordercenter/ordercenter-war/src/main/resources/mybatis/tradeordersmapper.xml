@@ -318,6 +318,9 @@
 			<if test="sellerType != null">
 				seller_type = #{sellerType,jdbcType=VARCHAR},
 			</if>
+			<if test="orderType != null">
+				order_type = #{orderType,jdbcType=TINYINT},
+			</if>
 			<if test="sellerName != null">
 				seller_name = #{sellerName,jdbcType=VARCHAR},
 			</if>
@@ -1166,6 +1169,9 @@ and b.customer_manager_code = #{customerManagerID}
 			<if test="salesType != null">
 				sales_type,
 			</if>
+			<if test="orderType != null">
+				order_type,
+			</if>
 			<if test="salesDepartmentCode != null">
 				sales_department_code,
 			</if>
@@ -1413,6 +1419,9 @@ and b.customer_manager_code = #{customerManagerID}
 			</if>
 			<if test="salesType != null">
 				#{salesType,jdbcType=VARCHAR},
+			</if>
+			<if test="orderType != null">
+				#{orderType,jdbcType=VARCHAR},
 			</if>
 			<if test="salesDepartmentCode != null">
 				#{salesDepartmentCode,jdbcType=VARCHAR},

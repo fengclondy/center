@@ -1280,6 +1280,11 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrdersDMO.setContactPhone(orderCreateInfoReqDTO.getContactPhone());
 		tradeOrdersDMO.setInvoiceAddress(orderCreateInfoReqDTO.getInvoiceAddress());
 		tradeOrdersDMO.setDeliveryType(orderCreateInfoReqDTO.getDeliveryType());
+		Map<String, Object> extendMap = orderTemp.getExtendMap();
+		String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
+		if(StringUtilHelper.isNotNull(orderType)){
+			tradeOrdersDMO.setOrderType(Integer.valueOf(orderType));
+		}
 		// 自提的时候 使用会员注册的电话地址等信息
 		String consigneeName = "";
 		String consigneePhoneNum = "";
@@ -1815,6 +1820,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 							OrderCreateListInfoReqDTO inforeqDto = new OrderCreateListInfoReqDTO();
 							inforeqDto.setOrderFrom(order.getOrderFrom());
 							inforeqDto.setOrderNo(orderNo);
+							Map<String,Object> extendMap = new HashMap<String,Object>();
+							extendMap.put("orderType", OrderStatusEnum.ORDER_PRE_SALE_TYPE.getCode());
+							inforeqDto.setExtendMap(extendMap);
 							// 根据买家ID查询买家编码
 							OtherCenterResDTO<String> sellerInfo = memberCenterRAO
 									.queryMemberCodeByMemberId(order.getSellerId(),

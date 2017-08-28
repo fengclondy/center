@@ -56,6 +56,8 @@ public class OrderPaymentResultResDTO extends GenricResDTO implements Serializab
 
 	private String payStatus;
 
+	private Integer orderType;
+	
 	public String getOrderNo() {
 		return orderNo;
 	}
@@ -118,6 +120,14 @@ public class OrderPaymentResultResDTO extends GenricResDTO implements Serializab
 
 	public void setPayStatus(String payStatus) {
 		this.payStatus = payStatus;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 
 }

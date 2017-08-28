@@ -22,6 +22,7 @@ import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
@@ -45,6 +46,7 @@ import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
@@ -81,6 +83,8 @@ public class PromotionBargainInfoServiceImpl implements
     private PromotionAccumulatyDAO promotionAccumulatyDAO;
 	@Resource
 	private BuyerLaunchBargainInfoDAO buyerLaunchBargainInfoDAO;
+	@Resource
+	private PromotionInfoExtendDAO promotionInfoExtendDAO;
 
 
     @Resource
@@ -386,6 +390,13 @@ public class PromotionBargainInfoServiceImpl implements
                 }
             }
             promotionInfoDAO.upDownShelvesBargainInfo(dto);
+            if(StringUtils.isNotEmpty(dto.getTemlateFlag())){
+            	PromotionExtendInfoDTO extendDTO = new PromotionExtendInfoDTO();
+            	extendDTO.setModifyId(dto.getOperatorId());
+            	extendDTO.setModifyName(dto.getOperatorName());
+            	extendDTO.setTemplateFlag(Integer.parseInt(dto.getTemlateFlag()));
+            	promotionInfoExtendDAO.update(extendDTO);
+            }
             promotionInfoRedis = new PromotionInfoDTO();
             promotionInfoRedis.setPromotionId(dto.getPromotionId());
             promotionInfoRedis.setShowStatus(statusCurrent);

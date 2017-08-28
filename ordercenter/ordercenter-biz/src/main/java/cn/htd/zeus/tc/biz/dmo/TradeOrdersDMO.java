@@ -36,6 +36,8 @@ public class TradeOrdersDMO extends GenericDMO {
 	private String orderFrom;
 
 	private String salesType;
+	
+	private Integer orderType;
 
 	private String salesDepartmentCode;
 
@@ -880,4 +882,11 @@ public class TradeOrdersDMO extends GenericDMO {
 		this.orderNoList = orderNoList;
 	}
 
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
+	}
 }

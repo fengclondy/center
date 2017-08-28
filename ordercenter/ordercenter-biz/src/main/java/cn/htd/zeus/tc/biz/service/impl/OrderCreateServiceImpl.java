@@ -1737,6 +1737,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			return;
 		} else {
 			MemberInvoiceDTO memberInvoice = memberInvoiceInfo.getOtherCenterResult();
+			orderCreateInfoReqDTO.setIsNeedInvoice(1);
 			orderCreateInfoReqDTO.setInvoiceType("2");
 			orderCreateInfoReqDTO.setInvoiceCompanyName(memberInvoice.getInvoiceNotify());
 			orderCreateInfoReqDTO.setInvoiceAddress(memberInvoice.getInvoiceAddress());

@@ -22,6 +22,7 @@
     <result column="contact_name" jdbcType="VARCHAR" property="contactName"/>
     <result column="contact_telephone" jdbcType="VARCHAR" property="contactTelephone"/>
     <result column="contact_address" jdbcType="VARCHAR" property="contactAddress"/>
+    <result column="template_flag" jdbcType="TINYINT" property="templateFlag" />
     <result column="create_id" jdbcType="BIGINT" property="createId"/>
     <result column="create_name" jdbcType="VARCHAR" property="createName"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -136,6 +137,9 @@
       <if test="contactAddress != null and contactAddress != ''">
       	contact_address,
       </if>
+      <if test="templateFlag != null and templateFlag != ''">
+      	template_flag,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -198,6 +202,9 @@
       </if>
       <if test="contactAddress != null and contactAddress != ''">
       	#{contactAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="templateFlag != null and templateFlag != ''">
+      	#{templateFlag,jdbcType=TINYINT},
       </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
@@ -263,6 +270,9 @@
       </if>
       <if test="contactAddress != null and contactAddress != ''">
         contact_address = #{contactAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="templateFlag != null and templateFlag != ''">
+      	template_flag = #{templateFlag,jdbcType=TINYINT}
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

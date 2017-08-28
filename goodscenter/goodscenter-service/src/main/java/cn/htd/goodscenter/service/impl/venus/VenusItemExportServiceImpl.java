@@ -1410,7 +1410,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		}
 		
 		//汇掌柜价格
-		if(1==venusItemSkuPublishInDTO.getPreSaleFlag()&&venusItemSkuPublishInDTO.getStandardPrice()!=null){
+		if(venusItemSkuPublishInDTO.getPreSaleFlag() != null && (1 == venusItemSkuPublishInDTO.getPreSaleFlag()) && venusItemSkuPublishInDTO.getStandardPrice()!=null){
 			HzgPriceDTO hzgPriceDTO=venusItemSkuPublishInDTO.getStandardPrice().getHzgPriceDTO();
 			if(hzgPriceDTO==null){
 				result.setCode(VenusErrorCodes.E1040014.name());

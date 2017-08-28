@@ -6,6 +6,7 @@
         <result column="item_id" property="itemId" jdbcType="BIGINT" />
         <result column="push_status" property="pushStatus" jdbcType="TINYINT" />
         <result column="push_version" property="pushVersion" jdbcType="BIGINT" />
+        <result column="last_pre_sale_status" property="lastPreSaleStatus" jdbcType="TINYINT" />
         <result column="create_id" property="createId" jdbcType="BIGINT" />
         <result column="create_name" property="createName" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -53,18 +54,19 @@
 
     <insert id="insert" parameterType="cn.htd.goodscenter.domain.PreSaleProductPush" >
         insert into pre_sale_product_push_task (
-        item_id, push_status, push_version,
+        item_id, push_status, push_version, last_pre_sale_status,
         create_id, create_name, create_time,
         modify_id, modify_name, modify_time
         )
         values (
-        #{itemId,jdbcType=BIGINT}, #{pushStatus,jdbcType=BIGINT}, #{pushVersion, jdbcType=BIGINT},
+        #{itemId,jdbcType=BIGINT}, #{pushStatus,jdbcType=BIGINT}, #{pushVersion, jdbcType=BIGINT}, #{lastPreSaleStatus, jdbcType=TINYINT},
         #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
         #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
         )
          ON DUPLICATE KEY UPDATE
         push_version = push_version + 1,
         push_status = 0,
+        last_pre_sale_status = #{lastPreSaleStatus, jdbcType=TINYINT},
         modify_time = now()
     </insert>
 

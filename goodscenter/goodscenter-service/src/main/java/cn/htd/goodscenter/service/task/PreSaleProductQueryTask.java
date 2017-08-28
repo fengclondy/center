@@ -92,9 +92,10 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                             save2PushInfo(item);
                         } else { // 如果不是预售的，查询之前有没有预售推送过，如果有，则插入，作为变更数据
                             PreSaleProductPush preSaleProductPush = this.preSaleProductPushMapper.getByItemId(item.getItemId());
-                            if (preSaleProductPush != null) {
-                                save2PushInfo(item);
+                            if (preSaleProductPush == null || preSaleProductPush.getLastPreSaleStatus() == 0) { // 如果上次也是非预售，此次也是非预售则不推送
+                                continue;
                             }
+                            save2PushInfo(item);
                         }
                     }
                 }
@@ -115,6 +116,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
         preSaleProductPush.setItemId(item.getItemId());
         preSaleProductPush.setPushStatus(Constants.PRE_SALE_ITEM_PUSH_PRE);
         preSaleProductPush.setPushVersion(1);
+        preSaleProductPush.setLastPreSaleStatus(item.getIsPreSale());
         preSaleProductPush.setCreateId(Constants.SYSTEM_CREATE_ID);
         preSaleProductPush.setCreateName(Constants.SYSTEM_CREATE_NAME);
         preSaleProductPush.setCreateTime(date);

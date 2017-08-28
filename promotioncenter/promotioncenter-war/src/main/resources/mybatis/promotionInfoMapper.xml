@@ -353,8 +353,11 @@
   	<if test="dto.promotionName != null and dto.promotionName != ''">
   		AND promotion_name like concat('%', #{dto.promotionName} ,'%')
   	</if>
-  	<if test="dto.status != null">
+  	<if test="dto.status != null and dto.status!= ''">
   		AND status = #{dto.status}
+  	</if>
+  	<if test="dto.showStatus != null and dto.showStatus != ''">
+  		AND show_status = #{dto.showStatus}
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}
@@ -387,4 +390,13 @@
   	 	<![CDATA[AND effective_time <= #{dto.invalidTime}]]>
   	</if>
   </select>
+  
+  <update id="upDownShelvesBargainInfo">
+  	UPDATE promotion_info
+  	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+  	modify_id = #{dto.operatorId,jdbcType=BIGINT},
+    modify_name = #{dto.operatorName,jdbcType=VARCHAR},
+    modify_time = now()
+  	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
+  </update>
 </mapper>

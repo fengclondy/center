@@ -283,7 +283,7 @@ public class JdProductDataImportServiceImpl implements MessageListener {
             item.setOuterItemStatus(outerItemStatus);
             item.setItemStatus(itemStatus);
 
-            item.setPreSale(false);// 是否预售
+            item.setIsPreSale(0);// 是否预售
             item.setPreSaleStarttime(null); // 预售开始时间
             item.setPreSaleEndtime(null); // 预售结束时间
             item.setTimingListing(null); // 定时上架，为空则表示未设置定时上架
@@ -321,7 +321,7 @@ public class JdProductDataImportServiceImpl implements MessageListener {
             item.setOuterItemStatus(outerItemStatus);
             item.setItemStatus(newItemStatus);
 
-            item.setPreSale(itemOld.isPreSale());// 是否预售
+            item.setIsPreSale(itemOld.getIsPreSale());// 是否预售
             item.setPreSaleStarttime(itemOld.getPreSaleStarttime()); // 预售开始时间
             item.setPreSaleEndtime(itemOld.getPreSaleEndtime()); // 预售结束时间
             item.setTimingListing(itemOld.getTimingListing()); // 定时上架，为空则表示未设置定时上架

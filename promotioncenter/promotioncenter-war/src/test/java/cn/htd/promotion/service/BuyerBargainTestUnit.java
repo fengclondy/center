@@ -15,7 +15,9 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.service.BuyerBargainRecordService;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
+import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
@@ -197,15 +199,19 @@ public class BuyerBargainTestUnit {
 //  		}
 //    }
     
-//    @Test
-//    @Rollback(false) 
-//    public void queryPromotionInfoListBySellerCode(){
-//    	Pager<String> page = new Pager<String>();
-//    	page.setPageOffset(1);
-//    	page.setRows(10);
-//    	ExecuteResult<DataGrid<PromotonInfoResDTO>> list = promotionBargainInfoService.queryPromotionInfoListBySellerCode("801781", page);
-//    	System.out.println(JSON.toJSONString(list));
-//    }
+    @Test
+    @Rollback(false) 
+    public void queryPromotionInfoListBySellerCode(){
+    	Pager<PromotionInfoReqDTO> page = new Pager<PromotionInfoReqDTO>();
+    	page.setPageOffset(1);
+    	page.setRows(10);
+    	PromotionInfoReqDTO dto = new PromotionInfoReqDTO();
+    	dto.setPromotionProviderSellerCode("801781");
+    	dto.setEffectiveTime(DateUtil.getDateBySpecificDate("2017-08-09 12:00:00"));
+    	dto.setInvalidTime(DateUtil.getDateBySpecificDate("2017-08-12 12:00:00"));
+    	ExecuteResult<DataGrid<PromotonInfoResDTO>> list = promotionBargainInfoService.queryPromotionInfoListBySellerCode(dto, page);
+    	System.out.println(JSON.toJSONString(list));
+    }
 //    
 //    @Test
 //    @Rollback(false) 

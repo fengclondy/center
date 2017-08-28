@@ -60,11 +60,12 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
      */
     @Override
     public List<Item> selectTasks(String taskParameter, String ownSign, int taskQueueNum, List<TaskItemDefine> taskItemList, int eachFetchDataNum) throws Exception {
-        logger.info("查询预售商品数据【PreSaleProductQueryTask】任务开始");
+        logger.info("查询预售商品数据【PreSaleProductQueryTask】任务开始， taskQueueNum : {}, taskItemList : {}", taskQueueNum, taskItemList);
         List<Item> itemList = new ArrayList();
         try{
             if (taskItemList != null && taskItemList.size() > 0) {
                 String lastSyscTimeStr = this.redisDB.get(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME); // 从REDIS获取最近同步时间戳 格式：【yyyy-MM-dd HH:mm:ss】
+                logger.info("查询预售商品数据【PreSaleProductQueryTask】, 上次同步时间 ：{}", lastSyscTimeStr);
                 Date now = new Date();
                 if (StringUtils.isEmpty(lastSyscTimeStr)) { // 第一次走全量只查询预售商品
                     lastSyscTimeStr = "2017-05-03 00:00:00"; // 默认开始时间
@@ -87,7 +88,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     map.put("isIncrement", 1);
                     itemList = this.itemMybatisDAO.queryPreSaleItemList(map); // 增量
                     for (Item item : itemList) {
-                        if (item.isPreSale()) { // 如果是预售推直接插入
+                        if ("1".equals(item.getIsPreSale())) { // 如果是预售推直接插入
                             save2PushInfo(item);
                         } else { // 如果不是预售的，查询之前有没有预售推送过，如果有，则插入，作为变更数据
                             PreSaleProductPush preSaleProductPush = this.preSaleProductPushMapper.getByItemId(item.getItemId());
@@ -97,6 +98,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                         }
                     }
                 }
+                logger.info("查询预售商品数据【PreSaleProductQueryTask】, 设置此次同步时间 ：{}", sp.format(now));
                 this.redisDB.set(Constants.LAST_SYSC_PRE_SALE_PRODUCT_TIME, sp.format(now));
             }
         } catch (Exception e){

@@ -3,11 +3,14 @@ package cn.htd.promotion.cpc.biz.handle;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
@@ -19,7 +22,6 @@ import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerUseBargainLogDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-
 import com.alibaba.fastjson.JSON;
 
 @Service("promotionBargainRedisHandle")
@@ -123,7 +125,12 @@ public class PromotionBargainRedisHandle {
 			}
 			promotionRedisDB.setHash(RedisConst.REDIS_BARGAIN, promotionId,
 					JSON.toJSONString(promotionBargainInfoList));
-			saveBargainValidStatus2Redis(promotionBargainInfoList.get(0));
+			PromotionBargainInfoResDTO bargainDTO = promotionBargainInfoList.get(0);
+			if("1".equals(bargainDTO.getUpFlag())){
+				bargainDTO.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+			}
+			saveBargainValidStatus2Redis(bargainDTO);
 		}
 	}
 

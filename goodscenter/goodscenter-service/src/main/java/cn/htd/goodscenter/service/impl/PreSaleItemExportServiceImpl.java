@@ -96,7 +96,7 @@ public class PreSaleItemExportServiceImpl implements PreSaleItemExportService{
 			ItemSkuPublishInfo itemSkuPublishInfo=itemSkuPublishInfoMapper.selectBySkuCodeAndShelfType(preSaleProdQueryDTO.getSkuCode(),isHtdDepartment ? 0 : 1);
 
 			if(itemSkuPublishInfo!=null){
-				preSaleProdQueryDTO.setKcNum(itemSkuPublishInfo.getDisplayQuantity());
+				preSaleProdQueryDTO.setKcNum(itemSkuPublishInfo.getDisplayQuantity() - itemSkuPublishInfo.getReserveQuantity()); // 虚拟总库存 - 锁定库存
 				preSaleProdQueryDTO.setListStatus(itemSkuPublishInfo.getIsVisable()==1 ?1 : 2);
 			}else{
 				preSaleProdQueryDTO.setKcNum(0);

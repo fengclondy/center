@@ -155,13 +155,13 @@
 		INNER JOIN promotion_info as pi on pi.promotion_id = pbi.promotion_id
 		WHERE pi.status != 9
 		<if test="promotionId != null and promotionId != ''">
-			AND promotion_id = #{promotionId}
+			AND pbi.promotion_id = #{promotionId}
 		</if>
 		<if test="sellerCode != null and sellerCode != ''">
 			AND pi.promotion_provider_seller_code = #{sellerCode}
 		</if>
 		<if test="levelCode != null and levelCode != ''">
-			AND level_code = #{levelCode}
+			AND pbi.level_code = #{levelCode}
 		</if>
 	</select>
 </mapper>

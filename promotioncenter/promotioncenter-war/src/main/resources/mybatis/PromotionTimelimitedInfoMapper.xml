@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionTimelimitedInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.TimelimitedInfoDMO" >
+    <id column="timelimited_id" property="timelimitedId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="sku_name" property="skuName" jdbcType="VARCHAR" />
+    <result column="first_category_code" property="firstCategoryCode" jdbcType="VARCHAR" />
+    <result column="second_category_code" property="secondCategoryCode" jdbcType="VARCHAR" />
+    <result column="third_category_code" property="thirdCategoryCode" jdbcType="VARCHAR" />
+    <result column="sku_category_name" property="skuCategoryName" jdbcType="VARCHAR" />
+    <result column="sku_pic_url" property="skuPicUrl" jdbcType="VARCHAR" />
+    <result column="sku_cost_price" property="skuCostPrice" jdbcType="DECIMAL" />
+    <result column="sku_timelimited_price" property="skuTimelimitedPrice" jdbcType="DECIMAL" />
+    <result column="timelimited_sku_count" property="timelimitedSkuCount" jdbcType="INTEGER" />
+    <result column="timelimited_threshold" property="timelimitedThreshold" jdbcType="INTEGER" />
+    <result column="timelimited_valid_interval" property="timelimitedValidInterval" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    timelimited_id, promotion_id, level_code, seller_code, item_id, sku_code, sku_name, 
+    first_category_code, second_category_code, third_category_code, sku_category_name, 
+    sku_pic_url, sku_cost_price, sku_timelimited_price, timelimited_sku_count, timelimited_threshold, 
+    timelimited_valid_interval, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+    </sql>
+  
+    <select id="selectTimelimitedInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from timelimited_info
+    where sku_code = #{skuCode,jdbcType=BIGINT}
+  </select>
+
+</mapper>

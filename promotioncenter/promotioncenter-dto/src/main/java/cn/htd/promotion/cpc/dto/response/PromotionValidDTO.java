@@ -31,6 +31,19 @@ public class PromotionValidDTO implements Serializable {
 	 */
 	@NotBlank(message = "操作人名称不能为空")
 	private String operatorName;
+	
+	/**
+	 * 模版标记
+	 */
+	private String temlateFlag;
+
+	public String getTemlateFlag() {
+		return temlateFlag;
+	}
+
+	public void setTemlateFlag(String temlateFlag) {
+		this.temlateFlag = temlateFlag;
+	}
 
 	public String getPromotionId() {
 		return promotionId;

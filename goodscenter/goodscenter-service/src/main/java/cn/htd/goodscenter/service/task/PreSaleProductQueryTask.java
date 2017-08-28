@@ -88,7 +88,7 @@ public class PreSaleProductQueryTask implements IScheduleTaskDealMulti<Item> {
                     map.put("isIncrement", 1);
                     itemList = this.itemMybatisDAO.queryPreSaleItemList(map); // 增量
                     for (Item item : itemList) {
-                        if (item.isPreSale()) { // 如果是预售推直接插入
+                        if ("1".equals(item.getIsPreSale())) { // 如果是预售推直接插入
                             save2PushInfo(item);
                         } else { // 如果不是预售的，查询之前有没有预售推送过，如果有，则插入，作为变更数据
                             PreSaleProductPush preSaleProductPush = this.preSaleProductPushMapper.getByItemId(item.getItemId());

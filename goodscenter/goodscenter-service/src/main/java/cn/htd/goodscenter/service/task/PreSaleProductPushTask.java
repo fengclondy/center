@@ -181,7 +181,7 @@ public class PreSaleProductPushTask implements IScheduleTaskDealMulti<PreSalePro
         preSaleProductPushDTO.setSellerId(String.valueOf(sellerId));
         preSaleProductPushDTO.setSellerCode(sellerCode);
         preSaleProductPushDTO.setSellerName(sellerName);
-        preSaleProductPushDTO.setIsPreSell(item.isPreSale() ? ("0801".equals(companyCode) ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
+        preSaleProductPushDTO.setIsPreSell("1".equals(item.getIsPreSale()) ? ("0801".equals(companyCode) ? 2 : 3) : 0); //0.非预售，1.是预售，2.总部预售，3.分部预售
         is0801 = "0801".equals(companyCode);
         /** 设置item **/
         preSaleProductPushDTO.setSpxxname(item.getItemName());

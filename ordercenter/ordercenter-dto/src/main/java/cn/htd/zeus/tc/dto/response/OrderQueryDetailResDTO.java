@@ -85,6 +85,8 @@ public class OrderQueryDetailResDTO extends GenricResDTO implements Serializable
 	 * 卖家类型
 	 */
 	private String sellerType;
+	
+	private Integer orderType;
 
 	/**
 	 * 卖家名称
@@ -1163,6 +1165,14 @@ public class OrderQueryDetailResDTO extends GenricResDTO implements Serializable
 	 */
 	public void setChargeConditionInfoList(List<ChargeConditionInfoDTO> chargeConditionInfoList) {
 		this.chargeConditionInfoList = chargeConditionInfoList;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 
 }

@@ -1281,9 +1281,11 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrdersDMO.setInvoiceAddress(orderCreateInfoReqDTO.getInvoiceAddress());
 		tradeOrdersDMO.setDeliveryType(orderCreateInfoReqDTO.getDeliveryType());
 		Map<String, Object> extendMap = orderTemp.getExtendMap();
-		String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
-		if(StringUtilHelper.isNotNull(orderType)){
-			tradeOrdersDMO.setOrderType(Integer.valueOf(orderType));
+		if(null != extendMap){
+			String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
+			if(StringUtilHelper.isNotNull(orderType)){
+				tradeOrdersDMO.setOrderType(Integer.valueOf(orderType));
+			}
 		}
 		// 自提的时候 使用会员注册的电话地址等信息
 		String consigneeName = "";

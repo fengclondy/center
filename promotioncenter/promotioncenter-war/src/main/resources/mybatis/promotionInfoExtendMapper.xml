@@ -272,7 +272,7 @@
         contact_address = #{contactAddress,jdbcType=VARCHAR},
       </if>
       <if test="templateFlag != null and templateFlag != ''">
-      	template_flag = #{templateFlag,jdbcType=TINYINT}
+      	template_flag = #{templateFlag,jdbcType=TINYINT},
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

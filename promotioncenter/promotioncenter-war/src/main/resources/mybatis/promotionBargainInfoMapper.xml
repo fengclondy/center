@@ -46,7 +46,7 @@
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
-	    	   pi.promotion_provider_seller_code sellerName,
+	    	   pi.promotion_provider_seller_code sellerNameD,
 	     	   pi.effective_time effectiveTime,
 			   pi.invalid_time invalidTime
 	    from promotion_bargain_info pbi

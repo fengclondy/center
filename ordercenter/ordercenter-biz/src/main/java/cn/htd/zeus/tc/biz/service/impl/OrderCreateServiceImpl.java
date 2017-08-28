@@ -1770,7 +1770,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
 			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
 			orderCreateInfoReqDTO
-					.setConsigneeName(memberBaseInfoDTO.getContactName());
+					.setConsigneeName(memberBaseInfoDTO.getArtificialPersonName());
 			orderCreateInfoReqDTO.setContactPhone(memberBaseInfoDTO.getArtificialPersonMobile());
 			orderCreateInfoReqDTO
 					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());

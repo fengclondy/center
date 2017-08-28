@@ -104,6 +104,8 @@ public class OrderPaymentResultDMO extends GenericDMO {
 	private String orderErrorReason;
 
 	private Integer isCancelOrder;
+	
+	private Integer orderType;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -337,6 +339,14 @@ public class OrderPaymentResultDMO extends GenericDMO {
 	 */
 	public void setIsCancelOrder(Integer isCancelOrder) {
 		this.isCancelOrder = isCancelOrder;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
 	}
 
 }

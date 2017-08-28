@@ -2,7 +2,6 @@ package cn.htd.zeus.tc.service.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,14 +14,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.htd.zeus.tc.api.OrderQueryAPI;
 import cn.htd.zeus.tc.biz.dmo.OrderQueryListDMO;
-import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
 import cn.htd.zeus.tc.biz.service.OrderQueryService;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
+import cn.htd.zeus.tc.dto.response.OrderQueryDetailResDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
+import cn.htd.zeus.tc.dto.response.OrdersQueryParamListResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprMangerReqDTO;
+
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,6 +35,9 @@ public class OrderQueryTestUnit {
 
 	@Resource
 	private OrderQueryService orderQueryService;
+	
+	@Resource
+	private OrderQueryAPI orderQueryAPI;
 
     @Before
     public void setUp() throws Exception
@@ -66,13 +73,14 @@ public class OrderQueryTestUnit {
     {
     	try {
 			OrderQueryParamReqDTO reqDTO = new  OrderQueryParamReqDTO();
-			reqDTO.setBuyerCode("HTD_13125455");
+			reqDTO.setBuyerCode("htd657126");
 			reqDTO.setMessageId(GenerateIdsUtil.generateId(null));
 			reqDTO.setStart(0);
 			reqDTO.setRows(10);
-			OrderQueryListDMO orderQueryDMO = orderQueryService.selectOrderByBuyerId(reqDTO);
-			String resultCode = orderQueryDMO.getResultCode();
-			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());
+			OrdersQueryParamListResDTO orderQueryDMO = orderQueryAPI.selectOrderByBuyerId(reqDTO);
+			System.out.println(JSONObject.toJSONString(orderQueryDMO));
+		/*	String resultCode = orderQueryDMO.getResultCode();
+			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());*/
     	} catch (Exception e) {
 		}
     }
@@ -128,11 +136,13 @@ public class OrderQueryTestUnit {
     {
     	try {
 			OrderQueryParamReqDTO reqDTO = new  OrderQueryParamReqDTO();
-			reqDTO.setOrderNo("10017021609364200202");
+			reqDTO.setOrderNo("60017082810291800164");
 			reqDTO.setMessageId(GenerateIdsUtil.generateId(null));
-			TradeOrdersDMO resultDMO = orderQueryService.selectOrderByPrimaryKey(reqDTO);
-			String resultCode = resultDMO.getResultCode();
-			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());
+			reqDTO.setBuyerCode("htd657126");
+			OrderQueryDetailResDTO resultDMO = orderQueryAPI.selectOrderByPrimaryKey(reqDTO);
+			System.out.println(JSONObject.toJSONString(resultDMO));
+			/*String resultCode = resultDMO.getResultCode();
+			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());*/
     	} catch (Exception e) {
 		}
     }

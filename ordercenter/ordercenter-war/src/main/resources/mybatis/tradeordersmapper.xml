@@ -16,6 +16,7 @@
 		<result column="shop_name" property="shopName" jdbcType="VARCHAR" />
 		<result column="order_from" property="orderFrom" jdbcType="VARCHAR" />
 		<result column="sales_type" property="salesType" jdbcType="VARCHAR" />
+		<result column="order_type" property="orderType" jdbcType="TINYINT" />
 		<result column="sales_department_code" property="salesDepartmentCode"
 			jdbcType="VARCHAR" />
 		<result column="has_productplus_flag" property="hasProductplusFlag"
@@ -243,7 +244,7 @@
 		logistics_status, logistics_company, logistics_no,
 		used_activity_account_amount,
 		order_delete_status, PK, create_id, create_name, create_time, modify_id, modify_name,
-		modify_time
+		modify_time,order_type
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.Long">
@@ -317,6 +318,9 @@
 			</if>
 			<if test="sellerType != null">
 				seller_type = #{sellerType,jdbcType=VARCHAR},
+			</if>
+			<if test="orderType != null">
+				order_type = #{orderType,jdbcType=TINYINT},
 			</if>
 			<if test="sellerName != null">
 				seller_name = #{sellerName,jdbcType=VARCHAR},
@@ -1166,6 +1170,9 @@ and b.customer_manager_code = #{customerManagerID}
 			<if test="salesType != null">
 				sales_type,
 			</if>
+			<if test="orderType != null">
+				order_type,
+			</if>
 			<if test="salesDepartmentCode != null">
 				sales_department_code,
 			</if>
@@ -1413,6 +1420,9 @@ and b.customer_manager_code = #{customerManagerID}
 			</if>
 			<if test="salesType != null">
 				#{salesType,jdbcType=VARCHAR},
+			</if>
+			<if test="orderType != null">
+				#{orderType,jdbcType=VARCHAR},
 			</if>
 			<if test="salesDepartmentCode != null">
 				#{salesDepartmentCode,jdbcType=VARCHAR},

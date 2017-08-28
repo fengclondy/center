@@ -15,7 +15,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 @Repository("cn.htd.promotion.cpc.biz.dao.promotionBargainInfoDAO")
 public interface PromotionBargainInfoDAO extends BaseDAO<PromotionBargainInfoResDTO> {
 	
-	public PromotionBargainInfoDMO getPromotionBargainInfoDetail(BuyerBargainLaunchReqDTO buyerBargainLaunch);
+	public PromotionBargainInfoDMO getPromotionBargainInfoDetail(@Param("buyerBargainLaunch") BuyerBargainLaunchReqDTO buyerBargainLaunch);
 	
     public PromotionBargainInfoDMO queryPromotionBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch);
 

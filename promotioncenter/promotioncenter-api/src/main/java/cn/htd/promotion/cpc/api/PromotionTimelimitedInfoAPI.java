@@ -11,13 +11,23 @@ import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 public interface PromotionTimelimitedInfoAPI {
 
 	/**
-	 * 汇掌柜APP -  取得秒杀信息，用于判断会员店是否有总部秒杀
+	 * 根据商品编码取得秒杀信息
 	 * 
 	 * @param messageId
 	 * @param skuCode
 	 * @return
 	 */
 	public ExecuteResult<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId, String skuCode);
+
+	
+	/**
+	 * 汇掌柜APP -  根据会员编码查询是否有总部秒杀信息
+	 * 
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedBySellerCode(String messageId, String buyerCode,String promotionId);
 
 
 	/**

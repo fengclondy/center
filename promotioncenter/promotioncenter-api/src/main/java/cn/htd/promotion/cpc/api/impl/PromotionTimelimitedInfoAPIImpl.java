@@ -78,4 +78,25 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
         return result;
 	}
 
+	@Override
+	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId,
+			String promotionId, String buyerCode, String buyerGrade) {
+        ExecuteResult<PromotionTimelimitedShowDTO> result = new ExecuteResult<PromotionTimelimitedShowDTO>();
+        TimelimitedInfoResDTO tmpTimelimitedDTO = null;
+        PromotionTimelimitedShowDTO timelimitedDTO = null;
+        try {
+            tmpTimelimitedDTO = promotionTimelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
+            timelimitedDTO = new PromotionTimelimitedShowDTO();
+            timelimitedDTO.setTimelimitedInfo(tmpTimelimitedDTO);
+            result.setResult(timelimitedDTO);
+        } catch (PromotionCenterBusinessException bcbe) {
+            result.setCode(bcbe.getCode());
+            result.setErrorMessage(bcbe.getMessage());
+        } catch (Exception e) {
+            result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+            result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+        }
+        return result;
+	}
+
 }

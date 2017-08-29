@@ -5,7 +5,6 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
-
 /**
  * 秒杀活动服务
  */
@@ -30,4 +29,17 @@ public interface PromotionTimelimitedInfoAPI {
 	 */
 	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,
 			Pager<TimelimitedInfoResDTO> page);
+	
+	
+	/**
+	 * 汇掌柜APP - 查询秒杀活动详情
+	 * 
+	 * @param messageId
+	 * @param promotionId
+	 * @param buyerCode
+	 * @param buyerGrade
+	 * @return
+	 */
+	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId, String promotionId,
+			String buyerCode, String buyerGrade);
 }

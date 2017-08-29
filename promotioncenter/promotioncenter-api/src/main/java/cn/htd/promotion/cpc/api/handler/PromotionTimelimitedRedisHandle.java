@@ -18,6 +18,7 @@ import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedResultDTO;
 
@@ -42,7 +43,7 @@ public class PromotionTimelimitedRedisHandle {
 
     /**
      * 从Redis中查询对应skuCode的秒杀活动信息
-     * @param skuCodeList
+     * @param skuCodeList 商品编码集合
      * @return
      */
     public List<TimelimitedInfoResDTO> getRedisTimelimitedInfoBySkuCode(List<String> skuCodeList) {
@@ -171,4 +172,67 @@ public class PromotionTimelimitedRedisHandle {
                 Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT)));
         return resultDTO;
     }
+    
+    
+    
+
+    /**
+     * 从Redis中查询秒杀活动列表
+     *
+     * @param sellerCode
+     * @param page
+     * @return
+     */
+    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String sellerCode,
+            Pager<TimelimitedInfoResDTO> page) {
+        DataGrid<PromotionTimelimitedShowDTO> datagrid = new DataGrid<PromotionTimelimitedShowDTO>();
+        //所有有效秒杀活动集合,用于返回前端
+        List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
+        //所有有效秒杀活动集合,用于排序
+        List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
+        List<String> promotionIdList = null;
+        TimelimitedInfoResDTO timelimitedInfoDTO = null;
+        PromotionTimelimitedShowDTO timelimitedMallDTO = null;
+        int count = 0;
+        long total = 0;
+        int offset = 0;
+        int rows = Integer.MAX_VALUE;
+        if (page != null) {
+            offset = page.getPageOffset();
+            rows = page.getRows();
+        }
+        promotionIdList = getRedisTimelimitedIndex(null);
+        if (promotionIdList == null || promotionIdList.isEmpty()) {
+            return datagrid;
+        }
+        for (String promotionId : promotionIdList) {
+            try {
+                timelimitedInfoDTO = getRedisTimelimitedInfo(promotionId);
+                timelimitedMallDTO = new PromotionTimelimitedShowDTO();
+                timelimitedMallDTO.setTimelimitedInfo(timelimitedInfoDTO);
+                timelimitedAllDTOList.add(timelimitedMallDTO);
+            } catch (PromotionCenterBusinessException bcbe) {
+                continue;
+            }
+        }
+        if (!timelimitedAllDTOList.isEmpty()) {
+            total = timelimitedAllDTOList.size();
+            logger.info("************ mallAllDTO-Size: " + total + "************");
+            Collections.sort(timelimitedAllDTOList);
+            while (total > count) {
+                if (count >= offset && timelimitedDTOList.size() < rows) {
+                	timelimitedDTOList.add(timelimitedAllDTOList.get(count));
+                }
+                if (timelimitedDTOList.size() >= rows) {
+                    break;
+                }
+                count++;
+            }
+            datagrid.setTotal(total);
+            datagrid.setRows(timelimitedDTOList);
+        }
+        return datagrid;
+
+    }
+
 }

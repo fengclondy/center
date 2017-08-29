@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
-import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
@@ -25,8 +24,6 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
-import cn.htd.promotion.cpc.dto.response.WinningRecordListResDTO;
-import cn.htd.promotion.cpc.dto.response.WinningRecordResDTO;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -75,6 +72,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			// TODO
 			result.setPromotionName("");
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -95,6 +93,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		try{
 			//TODO 
 			//promotionInfoDAO 从数据库里查出活动规则
+			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		}catch(Exception e){
 			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -142,6 +142,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			buyerWinningRecordDMO.setEndNo(endNo);
 			List<BuyerWinningRecordDMO> winningRecordList = awardRecordDAO.queryWinningRecord(buyerWinningRecordDMO);
 			result.setWinningRecordList(winningRecordList);
+			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		}catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());

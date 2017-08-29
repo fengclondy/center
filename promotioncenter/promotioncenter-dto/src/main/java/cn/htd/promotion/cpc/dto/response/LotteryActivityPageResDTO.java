@@ -27,6 +27,11 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 	 * 粉丝剩余抽奖次数
 	 */
 	private String remainingTimes;
+	
+	/**
+	 * 活动页图片路径
+	 */
+	private String pictureUrl;
 
 	public String getPromotionName() {
 		return promotionName;
@@ -58,5 +63,13 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 
 	public void setRemainingTimes(String remainingTimes) {
 		this.remainingTimes = remainingTimes;
+	}
+
+	public String getPictureUrl() {
+		return pictureUrl;
+	}
+
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
 	}
 }

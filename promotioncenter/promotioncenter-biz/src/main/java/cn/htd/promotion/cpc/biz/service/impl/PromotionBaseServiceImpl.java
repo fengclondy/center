@@ -299,6 +299,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         				!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
         			slogan.setPromotionId(bargainDTO.getPromotionId());
         			slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        			logger.info("slogan dataMessage:" + JSON.toJSONString(slogan));
         			promotionSloganDAO.update(slogan);
         		}
         	}else{

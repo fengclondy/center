@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.biz.service.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -9,17 +10,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
+import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
+import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+import cn.htd.promotion.cpc.dto.response.WinningRecordListResDTO;
+import cn.htd.promotion.cpc.dto.response.WinningRecordResDTO;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -30,7 +37,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			.getLogger(LuckDrawServiceImpl.class);
 	
 	@Resource
-    private PromotionInfoDAO promotionInfoDAO;
+    AwardRecordDAO awardRecordDAO;
 
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
@@ -116,6 +123,32 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
 					"MessageId:{} 调用方法LuckDrawServiceImpl.shareLinkHandle出现异常 request：{}",
+					messageId, JSONObject.toJSONString(request), w.toString());
+		}
+		return result;
+	}
+
+	@Override
+	public WinningRecordResDMO queryWinningRecord(
+			WinningRecordReqDTO request) {
+		String messageId = request.getMessageId();
+		WinningRecordResDMO result = new WinningRecordResDMO();
+		try{
+			BuyerWinningRecordDMO buyerWinningRecordDMO = new BuyerWinningRecordDMO();
+			buyerWinningRecordDMO.setBuyerCode(request.getMemberNo());
+			Integer startNo = request.getStartNo()==null?new Integer(1):request.getStartNo();
+			Integer endNo = request.getEndNo()==null?new Integer(10):request.getEndNo();
+			buyerWinningRecordDMO.setStartNo(startNo);
+			buyerWinningRecordDMO.setEndNo(endNo);
+			List<BuyerWinningRecordDMO> winningRecordList = awardRecordDAO.queryWinningRecord(buyerWinningRecordDMO);
+			result.setWinningRecordList(winningRecordList);
+		}catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawServiceImpl.queryWinningRecord出现异常 request：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;

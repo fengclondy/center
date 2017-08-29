@@ -345,4 +345,6 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	
 	PreSaleProdQueryDTO queryPreSaleItemInfo(@Param("skuCode") String skuCode);
 
+	void updateItemModifiedByItemId(Long itemId);
+
 }

@@ -82,4 +82,11 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         }
         return dataGrid;
     }
+
+    @Override
+    public int updateLogisticsInfo(PromotionAwardReqDTO dto, String messageId) {
+        logger.info("promotionId{}:AwardRecordServiceImpl.updateLogisticsInfo（）方法,入参{}",messageId , JSON.toJSONString(dto));
+
+        return awardRecordDAO.updateLogisticsInfo(dto);
+    }
 }

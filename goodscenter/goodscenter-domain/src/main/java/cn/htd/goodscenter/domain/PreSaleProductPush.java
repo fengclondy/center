@@ -15,6 +15,8 @@ public class PreSaleProductPush {
 
     private Integer pushVersion;
 
+    private Integer lastPreSaleStatus;
+
     private Date createTime;// 创建日期
 
     private Long createId;// 创建人ID
@@ -105,5 +107,13 @@ public class PreSaleProductPush {
 
     public void setPushVersion(Integer pushVersion) {
         this.pushVersion = pushVersion;
+    }
+
+    public Integer getLastPreSaleStatus() {
+        return lastPreSaleStatus;
+    }
+
+    public void setLastPreSaleStatus(Integer lastPreSaleStatus) {
+        this.lastPreSaleStatus = lastPreSaleStatus;
     }
 }

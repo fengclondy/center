@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.PromotionTimelimitedInfoAPI;
-import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
+import cn.htd.promotion.cpc.api.handler.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionTimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -23,6 +23,11 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
     @Resource
     private PromotionTimelimitedInfoService promotionTimelimitedInfoService;
     
+    
+    @Resource
+    private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
+    
+    
     @Override
     public ExecuteResult<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId, String skuCode) {
         ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
@@ -33,7 +38,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
                 throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            tmpTimelimitedDTOList =  promotionTimelimitedInfoService.getSkuPromotionTimelimitedInfo(messageId,skuCode);
+            tmpTimelimitedDTOList = promotionTimelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList); 
             if (tmpTimelimitedDTOList == null || tmpTimelimitedDTOList.isEmpty()) {
                 throw new PromotionCenterBusinessException(PromotionCenterConst.SKU_NO_TIMELIMITED, "该商品没有参加秒杀活动");
             }
@@ -47,7 +52,5 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
         }
         return result;
     }
-
-
 
 }

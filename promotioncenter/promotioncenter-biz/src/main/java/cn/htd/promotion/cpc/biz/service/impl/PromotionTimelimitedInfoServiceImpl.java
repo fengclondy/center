@@ -33,13 +33,9 @@ public class PromotionTimelimitedInfoServiceImpl implements PromotionTimelimited
 	@Override
 	public List<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId, String skuCode)
 			throws PromotionCenterBusinessException {
-		List<TimelimitedInfoDMO> timelimitedInfoDMOList = null;
 		List<TimelimitedInfoResDTO> timelimitedInfoDTOList = null;
-		timelimitedInfoDMOList = promotionTimelimitedInfoDAO.selectTimelimitedInfo(skuCode);
+		timelimitedInfoDTOList = promotionTimelimitedInfoDAO.selectTimelimitedInfo(skuCode);
 	
-		String marketCouponListString = JSON.toJSONString(timelimitedInfoDMOList);
-		timelimitedInfoDTOList = JSON.parseObject(marketCouponListString,new TypeReference<ArrayList<TimelimitedInfoResDTO>>() {});
-		
 		return timelimitedInfoDTOList;
 	}
 

@@ -87,6 +87,16 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	private String modifyName;//更新人名称
 	
 	private Date modifyTime;//更新时间
+	
+	private Integer templateFlagD;//模板类型
+
+	public Integer getTemplateFlagD() {
+		return templateFlagD;
+	}
+
+	public void setTemplateFlagD(Integer templateFlagD) {
+		this.templateFlagD = templateFlagD;
+	}
 
 	public BigDecimal getHasBargainPrice() {
 		return hasBargainPrice;

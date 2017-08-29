@@ -445,4 +445,13 @@
     modify_time = now()
   	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
+  
+  <select id="queryUpPromotionBargainCount" resultType="java.lang.Integer">
+  		SELECT COUNT(0)
+        FROM promotion_info
+        WHERE promotion_type = 22
+        AND show_status = 3 
+        AND promotion_provider_seller_code = #{sellerCode}
+        AND now() between effective_time and invalid_time
+  </select>
 </mapper>

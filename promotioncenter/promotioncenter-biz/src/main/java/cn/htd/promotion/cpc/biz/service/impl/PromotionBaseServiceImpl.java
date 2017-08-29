@@ -155,6 +155,11 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
             }
         }
+        //判断时间段内可有活动上架
+        Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfo.getPromotionProviderSellerCode());
+        if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+        	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
+        }
         setPromotionStatusInfo(promotionInfo);
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);

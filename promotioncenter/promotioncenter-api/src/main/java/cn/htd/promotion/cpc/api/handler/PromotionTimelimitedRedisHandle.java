@@ -43,7 +43,7 @@ public class PromotionTimelimitedRedisHandle {
 
 
     /**
-     * 从Redis中查询对应skuCode的秒杀活动信息
+     * @DESC 从Redis中查询对应skuCode的秒杀活动信息
      * @param skuCodeList 商品编码集合
      * @return
      */
@@ -51,7 +51,7 @@ public class PromotionTimelimitedRedisHandle {
         List<String> promotionIdList = null;
         TimelimitedInfoResDTO timelimitedInfoDTO = null;
         List<TimelimitedInfoResDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoResDTO>();
-        promotionIdList = getRedisTimelimitedIndex(skuCodeList);
+        promotionIdList = getRedisTimelimitedIndex("",skuCodeList);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return timelimitedInfoList;
         }
@@ -83,7 +83,7 @@ public class PromotionTimelimitedRedisHandle {
      *
      * @param skuCodeList
      */
-    public List<String> getRedisTimelimitedIndex(List<String> skuCodeList) {
+    public List<String> getRedisTimelimitedIndex(String isVip,List<String> skuCodeList) {
         List<String> promotionIdList = new ArrayList<String>();
         Map<String, String> indexMap = null;
         String key = "";
@@ -117,9 +117,8 @@ public class PromotionTimelimitedRedisHandle {
     }
 
     /**
-     * 取得Redis秒杀活动信息
-     *
-     * @param promotionId
+     * @DESC 取得Redis秒杀活动信息
+     * @param promotionId  促销活动编码
      */
     public TimelimitedInfoResDTO getRedisTimelimitedInfo(String promotionId) throws PromotionCenterBusinessException {
     	TimelimitedInfoResDTO timelimitedInfo = null;
@@ -178,14 +177,13 @@ public class PromotionTimelimitedRedisHandle {
     
 
     /**
-     * 从Redis中查询秒杀活动列表
+     * @DESC 从Redis中查询秒杀活动列表
      *
-     * @param sellerCode
+     * @param isVip 会员vip 标志，暂时未用的，考虑后期扩展用
      * @param page
      * @return
      */
-    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String sellerCode,
-            Pager<TimelimitedInfoResDTO> page) {
+    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String isVip, Pager<TimelimitedInfoResDTO> page) {
         DataGrid<PromotionTimelimitedShowDTO> datagrid = new DataGrid<PromotionTimelimitedShowDTO>();
         //所有有效秒杀活动集合,用于返回前端
         List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
@@ -202,7 +200,7 @@ public class PromotionTimelimitedRedisHandle {
             offset = page.getPageOffset();
             rows = page.getRows();
         }
-        promotionIdList = getRedisTimelimitedIndex(null);
+        promotionIdList = getRedisTimelimitedIndex(isVip,null);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return datagrid;
         }
@@ -218,7 +216,7 @@ public class PromotionTimelimitedRedisHandle {
         }
         if (!timelimitedAllDTOList.isEmpty()) {
             total = timelimitedAllDTOList.size();
-            logger.info("************ mallAllDTO-Size: " + total + "************");
+            logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
             Collections.sort(timelimitedAllDTOList);
             while (total > count) {
                 if (count >= offset && timelimitedDTOList.size() < rows) {

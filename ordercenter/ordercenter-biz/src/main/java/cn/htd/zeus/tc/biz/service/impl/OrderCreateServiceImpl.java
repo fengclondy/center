@@ -1071,15 +1071,18 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		}
 		orderItemSkuPriceDTORes = priceCenterRAO.queryOrderItemSkuPrice(queryCommonItemSkuPriceDTO,
 				messageId);
-		//预售商品取预售价格|预售vip价格
-		String orderFrom = orderTemp.getOrderFrom();
-		if(orderFrom.equals(OrderStatusEnum.ORDER_FROM_PRESALE.getCode())){
-			HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
-			if(null != hzgPrice){
-				if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
-					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
-				}else{
-					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+		
+		Map<String, Object> extendMap = orderTemp.getExtendMap();
+		if(null != extendMap){
+			String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
+			if(StringUtilHelper.isNotNull(orderType) && orderType.equals(OrderStatusEnum.ORDER_PRE_SALE_TYPE.getCode())){
+				HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
+				if(null != hzgPrice){
+					if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
+						orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
+					}else{
+						orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+					}
 				}
 			}
 		}
@@ -1280,6 +1283,13 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrdersDMO.setContactPhone(orderCreateInfoReqDTO.getContactPhone());
 		tradeOrdersDMO.setInvoiceAddress(orderCreateInfoReqDTO.getInvoiceAddress());
 		tradeOrdersDMO.setDeliveryType(orderCreateInfoReqDTO.getDeliveryType());
+		Map<String, Object> extendMap = orderTemp.getExtendMap();
+		if(null != extendMap){
+			String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
+			if(StringUtilHelper.isNotNull(orderType)){
+				tradeOrdersDMO.setOrderType(Integer.valueOf(orderType));
+			}
+		}
 		// 自提的时候 使用会员注册的电话地址等信息
 		String consigneeName = "";
 		String consigneePhoneNum = "";
@@ -1727,6 +1737,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			return;
 		} else {
 			MemberInvoiceDTO memberInvoice = memberInvoiceInfo.getOtherCenterResult();
+			orderCreateInfoReqDTO.setIsNeedInvoice(1);
 			orderCreateInfoReqDTO.setInvoiceType("2");
 			orderCreateInfoReqDTO.setInvoiceCompanyName(memberInvoice.getInvoiceNotify());
 			orderCreateInfoReqDTO.setInvoiceAddress(memberInvoice.getInvoiceAddress());
@@ -1759,9 +1770,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			orderCreateInfoReqDTO.setDeliveryType("1");
 			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
 			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
-			
 			orderCreateInfoReqDTO
-					.setConsigneeName(memberBaseInfoDTO.getContactName());
+					.setConsigneeName(memberBaseInfoDTO.getArtificialPersonName());
+			orderCreateInfoReqDTO.setConsigneePhoneNum(memberBaseInfoDTO.getArtificialPersonMobile());
 			orderCreateInfoReqDTO
 					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());
 			orderCreateInfoReqDTO.setConsigneeAddressDetail(memberBaseInfoDTO.getLocationDetail());
@@ -1815,6 +1826,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 							OrderCreateListInfoReqDTO inforeqDto = new OrderCreateListInfoReqDTO();
 							inforeqDto.setOrderFrom(order.getOrderFrom());
 							inforeqDto.setOrderNo(orderNo);
+							Map<String,Object> extendMap = new HashMap<String,Object>();
+							extendMap.put("orderType", OrderStatusEnum.ORDER_PRE_SALE_TYPE.getCode());
+							inforeqDto.setExtendMap(extendMap);
 							// 根据买家ID查询买家编码
 							OtherCenterResDTO<String> sellerInfo = memberCenterRAO
 									.queryMemberCodeByMemberId(order.getSellerId(),

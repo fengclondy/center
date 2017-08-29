@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
 /**
  * 秒杀活动信息DTO
  * @author zf.zhang
  * @since  2017-8-22 15:14
  *
  */
-public class TimelimitedInfoResDTO implements Serializable {
+public class TimelimitedInfoResDTO  extends PromotionAccumulatyDTO  implements Serializable {
 
 	/**
 	 * 
@@ -65,6 +66,10 @@ public class TimelimitedInfoResDTO implements Serializable {
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
 	
+	/**
+	 * 秒杀活动结果
+	 */
+	private TimelimitedResultDTO timelimitedResult;
 	
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -205,7 +210,27 @@ public class TimelimitedInfoResDTO implements Serializable {
 		this.modifyTime = modifyTime;
 	}
 	
-	
 
+	public TimelimitedResultDTO getTimelimitedResult() {
+		return timelimitedResult;
+	}
+	public void setTimelimitedResult(TimelimitedResultDTO timelimitedResult) {
+		this.timelimitedResult = timelimitedResult;
+	}
+	
+	public void setTimelimitedInfo(TimelimitedInfoResDTO timelimitedInfo) {
+		super.setPromotionAccumulaty(timelimitedInfo);
+		this.timelimitedId = timelimitedInfo.getTimelimitedId();
+		this.sellerCode = timelimitedInfo.getSellerCode();
+		this.itemId = timelimitedInfo.getItemId();
+		this.skuCode = timelimitedInfo.getSkuCode();
+		this.skuName = timelimitedInfo.getSkuName();
+		this.skuPicUrl = timelimitedInfo.getSkuPicUrl();
+		this.skuTimelimitedPrice = timelimitedInfo.getSkuTimelimitedPrice();
+		this.timelimitedSkuCount = timelimitedInfo.getTimelimitedSkuCount();
+		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
+		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
+		this.timelimitedResult = timelimitedInfo.getTimelimitedResult();
+	}
 
 }

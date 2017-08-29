@@ -61,7 +61,9 @@ public class PreSaleProdQueryDTO implements Serializable{
 	//1 是全国
 	private Integer isWholeCountry;
 	//销售区域
-	private List<PreSaleItemRegion> preSaleItemRegionList;
+	//private List<PreSaleItemRegion> preSaleItemRegionList;
+	
+	private List<PreSaleProductSaleAreaDTO> preSaleItemRegionList;
 	public String getBrandName() {
 		return brandName;
 	}
@@ -200,13 +202,7 @@ public class PreSaleProdQueryDTO implements Serializable{
 	public void setListStatus(Integer listStatus) {
 		this.listStatus = listStatus;
 	}
-	public List<PreSaleItemRegion> getPreSaleItemRegionList() {
-		return preSaleItemRegionList;
-	}
-	public void setPreSaleItemRegionList(
-			List<PreSaleItemRegion> preSaleItemRegionList) {
-		this.preSaleItemRegionList = preSaleItemRegionList;
-	}
+	
 	public Long getSellerId() {
 		return sellerId;
 	}
@@ -218,6 +214,13 @@ public class PreSaleProdQueryDTO implements Serializable{
 	}
 	public void setIsWholeCountry(Integer isWholeCountry) {
 		this.isWholeCountry = isWholeCountry;
+	}
+	public List<PreSaleProductSaleAreaDTO> getPreSaleItemRegionList() {
+		return preSaleItemRegionList;
+	}
+	public void setPreSaleItemRegionList(
+			List<PreSaleProductSaleAreaDTO> preSaleItemRegionList) {
+		this.preSaleItemRegionList = preSaleItemRegionList;
 	}
 	
 }

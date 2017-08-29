@@ -75,6 +75,7 @@ import cn.htd.goodscenter.dto.enums.ItemErpStatusEnum;
 import cn.htd.goodscenter.dto.enums.ItemStatusEnum;
 import cn.htd.goodscenter.dto.middleware.outdto.QueryItemWarehouseOutDTO;
 import cn.htd.goodscenter.dto.middleware.outdto.QuerySpecialItemOutDTO;
+import cn.htd.goodscenter.dto.presale.PreSaleProdQueryDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusBatchDeleteItemSkuInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
@@ -105,6 +106,8 @@ import cn.htd.goodscenter.service.utils.ItemCodeGenerator;
 import cn.htd.goodscenter.service.utils.ItemDTOToDomainUtil;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
+import cn.htd.membercenter.dto.SellerInfoDTO;
+import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.middleware.common.message.erp.ProductMessage;
 import cn.htd.pricecenter.common.constants.PriceConstants;
 import cn.htd.pricecenter.domain.InnerItemSkuPrice;
@@ -159,6 +162,8 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	private TimelimitedInfoService timelimitedInfoService;
 	@Resource
 	private DictionaryUtils dictionaryUtils;
+	@Resource
+	private MemberBaseInfoService memberBaseInfoService;
 	
 	
 	@Transactional
@@ -1188,16 +1193,18 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 //						venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName()));
 //				threadPool.shutdown();
 //			}
-			
-			itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(),
-					venusItemSkuPublishInDTO.getItemId());
+			if (venusItemSkuPublishInDTO.getPreSaleFlag() != null) {
+				itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(),
+						venusItemSkuPublishInDTO.getItemId());
+			}
+
 			//更新价格
 			if(venusItemSkuPublishInDTO.getStandardPrice()!=null){
 				Integer isBoxFlag="1".equals(venusItemSkuPublishInDTO.getShelfType()) ? 1 : 0;
 				itemSkuPriceService.updateItemSkuStandardPrice(venusItemSkuPublishInDTO.getStandardPrice(),isBoxFlag);
 				// add by zhangxiaolong for presale 20170815 start
 				HzgPriceDTO hzgPriceDTO=venusItemSkuPublishInDTO.getStandardPrice().getHzgPriceDTO();
-				if(1==venusItemSkuPublishInDTO.getPreSaleFlag()&&hzgPriceDTO!=null){
+				if(venusItemSkuPublishInDTO.getPreSaleFlag() != null && 1==venusItemSkuPublishInDTO.getPreSaleFlag()&&hzgPriceDTO!=null){
 					HzgPriceInDTO hzgPriceInDTO=new HzgPriceInDTO();
 					hzgPriceInDTO.setItemId(itemSkuFromDb.getItemId());
 					hzgPriceInDTO.setOperatorId(venusItemSkuPublishInDTO.getOperatorId());
@@ -1408,7 +1415,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		}
 		
 		//汇掌柜价格
-		if(1==venusItemSkuPublishInDTO.getPreSaleFlag()&&venusItemSkuPublishInDTO.getStandardPrice()!=null){
+		if(venusItemSkuPublishInDTO.getPreSaleFlag() != null && (1 == venusItemSkuPublishInDTO.getPreSaleFlag()) && venusItemSkuPublishInDTO.getStandardPrice()!=null){
 			HzgPriceDTO hzgPriceDTO=venusItemSkuPublishInDTO.getStandardPrice().getHzgPriceDTO();
 			if(hzgPriceDTO==null){
 				result.setCode(VenusErrorCodes.E1040014.name());
@@ -1626,6 +1633,38 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 					//处理item表的主状态,判断当前商品如果是非上架状态，则要修改为上架状态
 					dealWithPublishItemStatus(itemSku.getSkuId(),"0",
 							venusItemSetShelfStatusInDTO.getOperatorId(),venusItemSetShelfStatusInDTO.getOperatorName(), item);
+					
+					//add by zhangxiaolong @20170828 for pre sale item start
+					PreSaleProdQueryDTO preSaleProdQueryDTO=itemMybatisDAO.queryPreSaleItemInfo(itemSku.getSkuCode());
+
+					boolean isHtdDepartment=false;
+
+					//补足会员信息
+					if(preSaleProdQueryDTO!=null&&preSaleProdQueryDTO.getSellerId()!=null){
+						 ExecuteResult<SellerInfoDTO> selleInfoResult=memberBaseInfoService.querySellerBaseInfo(preSaleProdQueryDTO.getSellerId());
+
+						 if(selleInfoResult!=null&&selleInfoResult.isSuccess()&&selleInfoResult.getResult()!=null){
+							 SellerInfoDTO sellerInfo=selleInfoResult.getResult();
+							 if(1==preSaleProdQueryDTO.getIsPreSell()){
+								//公司编码是0801的为总部预售
+								if("0801".equals(sellerInfo.getCompanyCode())){
+									isHtdDepartment=true;
+								}
+							 }
+
+						 }
+					}
+					
+					//总部的区域下架
+					boolean isHtdDownShelf=isHtdDepartment&&"2".equals(venusItemSetShelfStatusInDTO.getShelfType());
+					//非总部包厢下架
+					boolean isPlatformDownShelf=!isHtdDepartment&&"1".equals(venusItemSetShelfStatusInDTO.getShelfType());
+					
+					if(isHtdDownShelf||isPlatformDownShelf){
+						itemMybatisDAO.updatePreSaleFlagByItemId(0,itemSku.getItemId());
+					}
+					
+					//add by zhangxiaolong @20170828 for pre sale item end
 				}
 				
 				ItemSalesArea itemSalesArea=null;

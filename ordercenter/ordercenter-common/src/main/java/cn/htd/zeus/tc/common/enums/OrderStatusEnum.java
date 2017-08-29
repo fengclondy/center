@@ -46,6 +46,8 @@ public enum OrderStatusEnum {
 
 	//订单表销售方式
 	ORDER_SALE_TYPE1("01","正常销售"),
+	//订单类型
+	ORDER_PRE_SALE_TYPE("1","预售订单"),
 
 	//有外接渠道商品
 	HAS_PRODUCTPLUS_FLAG("1","有外接渠道商品"),

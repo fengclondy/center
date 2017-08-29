@@ -63,7 +63,7 @@ public class Item implements Serializable {
 	private Long shopFreightTemplateId;// 运费模版id 平台:必填；商家:必填
 	private BigDecimal freightAmount;// 运费金额
 	private Long payType;// 支付方式，1：货到付款
-	private boolean isPreSale;// 是否预售
+	private Integer isPreSale;// 是否预售
 	private Date preSaleStarttime;// 预售开始时间
 	private Date preSaleEndtime;// 预售结束时间
 	private String erpFirstCategoryCode;// ERP一级类目编码
@@ -431,12 +431,12 @@ public class Item implements Serializable {
 		this.freightAmount = freightAmount;
 	}
 
-	public boolean isPreSale() {
+	public Integer getIsPreSale() {
 		return isPreSale;
 	}
 
-	public void setPreSale(boolean preSale) {
-		isPreSale = preSale;
+	public void setIsPreSale(Integer isPreSale) {
+		this.isPreSale = isPreSale;
 	}
 
 	public Date getPreSaleStarttime() {

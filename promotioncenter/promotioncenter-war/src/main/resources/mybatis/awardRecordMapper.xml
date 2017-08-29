@@ -74,6 +74,21 @@
     <if test="params.winningEndTime!=null and params.winningEndTime!=''">
       and date_format(bwr.WINNING_TIME , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
     </if>
+    <if test="params.sellerCode!=null and params.sellerCode!=''">
+      and bwr.SELLER_CODE = #{params.sellerCode}
+    </if>
+    <if test="params.promotionName!=null and params.promotionName!=''">
+      and bwr.PROMOTION_NAME = #{params.promotionName}
+    </if>
+    <if test="params.rewardName!=null and params.rewardName!=''">
+      and bwr.REWARD_NAME = #{params.rewardName}
+    </if>
+    <if test="params.winnerName!=null and params.winnerName!=''">
+      and bwr.WINNER_NAME = #{params.winnerName}
+    </if>
+    <if test="params.winningContact!=null and params.winningContact!=''">
+      and bwr.WINNING_CONTACT = #{params.winningContact}
+    </if>
   </sql>
 
   <!-- mysql 分页 -->

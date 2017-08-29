@@ -823,6 +823,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			List<String> orderStatusList = new ArrayList<String>();
 			orderStatusList.add(OrderStatusEnum.PRE_PAY.getCode());
 			tradeOrdersParamDMO.setOrderStatus(orderStatusList);
+			tradeOrdersParamDMO.setIsCancelOrder(Integer.valueOf(OrderStatusEnum.NOT_CANCLE.getCode()));
 			// 查询预售订单
 			tradeOrdersParamDMO.setOrderFrom("5");
 			Integer pageSize = traderdersDAO

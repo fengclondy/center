@@ -255,6 +255,7 @@ public class PromotionBargainInfoServiceImpl implements
 	 @Override
 	    public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList)
 	    	throws PromotionCenterBusinessException {
+		 LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.updateBargainInfo（）方法开始,入参{}", JSON.toJSONString(bargainInfoList));
 	        ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
 	        PromotionAccumulatyDTO accuDTO = null;
 	        PromotionInfoDTO promotionInfoDTO = null;

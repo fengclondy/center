@@ -13,6 +13,10 @@ import org.hibernate.validator.constraints.NotBlank;
 public class PromotionInfoDTO extends GenricResDTO {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
      * 促销活动ID
      */
     private Long id;
@@ -201,6 +205,8 @@ public class PromotionInfoDTO extends GenricResDTO {
      * 是否清除redis
      */
     private Integer hasRedisClean;
+    
+    private PromotionSellerDetailDTO sellerDetailDTO;
 
     public Integer getDealFlag() {
         return dealFlag;
@@ -571,7 +577,16 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.winningTodayNum = winningTodayNum;
     }
 
-    public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
+    
+    public PromotionSellerDetailDTO getSellerDetailDTO() {
+		return sellerDetailDTO;
+	}
+
+	public void setSellerDetailDTO(PromotionSellerDetailDTO sellerDetailDTO) {
+		this.sellerDetailDTO = sellerDetailDTO;
+	}
+
+	public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
         super.setMessageId(promotionInfoDTO.getMessageId());
         this.id = promotionInfoDTO.getId();
         this.promotionId = promotionInfoDTO.getPromotionId();

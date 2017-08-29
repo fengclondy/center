@@ -19,6 +19,7 @@
     	AND ps.delete_flag = 0
     	AND pi.promotion_provider_seller_code = #{providerSellerCode}
     	AND now() between pi.effective_time and pi.invalid_time
+    	ORDER BY pi.effective_time
         limit 0,1
 	</select>
 	

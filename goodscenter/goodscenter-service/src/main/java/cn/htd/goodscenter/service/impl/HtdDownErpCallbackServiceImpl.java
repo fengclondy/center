@@ -126,7 +126,7 @@ public class HtdDownErpCallbackServiceImpl implements HtdDownErpCallbackService{
 		            ItemDescribe describe=itemDraftDescribeMapper.selectByItemId(dbItem.getItemId());
 		            ItemDescribe dbDescribe=itemDescribeDAO.getDescByItemId(dbItem.getItemId());
 		            if(dbDescribe!=null){
-		            	dbDescribe.setDescribeContent(describe==null?"":describe.getDescribeContent());
+		            	dbDescribe.setDescribeContent(describe==null?dbDescribe.getDescribeContent():describe.getDescribeContent());
 		            	itemDescribeDAO.updateByPrimaryKeySelective(dbDescribe);
 		            } else {
 						dbDescribe = new ItemDescribe();

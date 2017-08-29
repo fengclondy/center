@@ -317,9 +317,7 @@ public class PromotionBargainInfoServiceImpl implements
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());
 	            historyDTO.setPromotionStatusText("修改砍价活动信息");
-	            historyDTO.setCreateId(accuDTO.getCreateId());
-	            historyDTO.setCreateName(accuDTO.getCreateName());
-	            promotionStatusHistoryDAO.add(historyDTO);
+	            promotionStatusHistoryDAO.update(historyDTO);
 	            historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
 	            accuDTO.setPromotionStatusHistoryList(historyList);
 	            promotionBargainRedisHandle.deleteRedisBargainInfo(promotionId);

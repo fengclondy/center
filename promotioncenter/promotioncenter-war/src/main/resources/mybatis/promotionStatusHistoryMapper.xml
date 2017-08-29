@@ -44,4 +44,16 @@
     	now(),
   	</trim>
   </insert>
+  <update id="update">
+  	UPDATE promotion_status_history SET
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+	  	<if test="promotionStatus != null and promotionStatus != ''">
+	  		promotion_status = #{promotionStatus},
+	  	</if>
+	  	<if test="promotionStatusText != null and promotionStatusText != ''">
+	  		promotion_status_text = #{promotionStatusText}
+  		</if>
+  	</trim>
+  	WHERE promotion_id = #{promotionId}
+  </update>
 </mapper>

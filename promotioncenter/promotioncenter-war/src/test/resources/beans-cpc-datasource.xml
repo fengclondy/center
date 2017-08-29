@@ -9,7 +9,7 @@
 	default-autowire="byName">
 	<bean id="dataSource" class="cn.htd.promotion.cpc.common.util.XBasicDataSource"
 		destroy-method="close">
-		<property name="url" value="jdbc:mysql://172.16.1.185:3306/promotioncenter?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="url" value="jdbc:mysql://172.16.1.224:3306/promotioncenter?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="username" value="htd_zeus" />
 		<property name="password" value="htd_zeus" />

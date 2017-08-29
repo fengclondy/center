@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -42,7 +45,6 @@ import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
-import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
@@ -52,9 +54,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 @Service("promotionBargainInfoService")
 public class PromotionBargainInfoServiceImpl implements
@@ -95,7 +94,7 @@ public class PromotionBargainInfoServiceImpl implements
      */
     @Override
     public PromotionBargainInfoResDTO getPromotionBargainInfoDetail(BuyerBargainLaunchReqDTO buyerBargainLaunch) {
-        PromotionBargainInfoResDTO promotionBargainInfoResDTO = new PromotionBargainInfoResDTO();
+        PromotionBargainInfoResDTO promotionBargainInfoResDTO = null;
         //查询活动详情
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch));
@@ -123,8 +122,8 @@ public class PromotionBargainInfoServiceImpl implements
         if (promotionBargainInfo != null) {
             String str = JSONObject.toJSONString(promotionBargainInfo);
             promotionBargainInfoResDTO = JSONObject.parseObject(str, PromotionBargainInfoResDTO.class);
+            promotionBargainInfoResDTO.setBuyerBargainRecordList(buyerBargainRecordResList);
         }
-        promotionBargainInfoResDTO.setBuyerBargainRecordList(buyerBargainRecordResList);
         return promotionBargainInfoResDTO;
     }
 
@@ -309,10 +308,10 @@ public class PromotionBargainInfoServiceImpl implements
 	                        "砍价活动:" + promotionId + " 只有在已结束状态时不能进行修改");
 	            }
 	            modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
-	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
-	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_MODIFIED.getCode(),
-	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
-	            }
+//	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
+//	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_MODIFIED.getCode(),
+//	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
+//	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());

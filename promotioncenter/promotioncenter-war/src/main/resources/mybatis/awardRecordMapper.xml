@@ -88,5 +88,27 @@
   <sql id="pagination_tail">
     limit #{page.pageOffset} , #{page.rows}
   </sql>
+  <!-- 更新物流信息 -->
+  <update id="updateLogisticsInfo" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
+    update buyer_winning_record
+    <set>
+      <if test="logisticsCompany != null and logisticsCompany != ''">
+        logistics_company = #{logisticsCompany},
+      </if>
+      <if test="logisticsStatus != null and logisticsStatus != ''">
+        logistics_status = #{logisticsStatus},
+      </if>
+      <if test="logisticsNo != null and logisticsNo != ''">
+        logistics_no = #{logisticsNo},
+      </if>
+
+      modify_id = #{modifyId},
+      modify_name = #{modifyName},
+      modify_time = #{modifyTime}
+    </set>
+    <where>
+      promotion_id = #{promotionId}
+    </where>
+  </update>
 
 </mapper>

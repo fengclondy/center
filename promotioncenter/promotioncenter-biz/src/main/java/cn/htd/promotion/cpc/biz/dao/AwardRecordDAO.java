@@ -18,4 +18,6 @@ public interface AwardRecordDAO {
     List<PromotionAwardDTO> getAwardRecordByPromotionId (@Param("params") Map<String, Object> params , @Param("page") Pager<PromotionAwardReqDTO> page);
 
     long getTotalAwardRecord(@Param("params") Map<String, Object> params);
+
+    int updateLogisticsInfo(PromotionAwardReqDTO dto);
 }

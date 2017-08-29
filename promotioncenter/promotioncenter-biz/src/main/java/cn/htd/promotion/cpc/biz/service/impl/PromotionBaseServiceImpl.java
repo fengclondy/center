@@ -108,8 +108,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             accumulaty.setPromoionInfo(promotionInfo);
             promotionAccumulatyDAO.delete(accumulaty);
             slogan.setPromotionId(validDTO.getPromotionId());
-            slogan.setModifyId(validDTO.getOperatorId());
-            slogan.setModifyName(validDTO.getOperatorName());
             promotionSloganDAO.delete(slogan);
             promotionInfoDAO.updatePromotionStatusById(promotionInfo);
         } catch (PromotionCenterBusinessException mcbe) {

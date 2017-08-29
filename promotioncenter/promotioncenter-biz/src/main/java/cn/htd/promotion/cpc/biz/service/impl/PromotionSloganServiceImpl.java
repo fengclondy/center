@@ -43,9 +43,7 @@ public class PromotionSloganServiceImpl implements PromotionSloganService{
 				promotionSloganDTOList = new ArrayList<PromotionSloganResDTO>();
 				for (PromotionSloganDMO dmo : promotionSloganDMOList) {
 					PromotionSloganResDTO dto = new PromotionSloganResDTO();
-					LOGGER.info("PromotionId dmo:" + dmo.getPromotionId());
 					dto.setPromotionId(dmo.getPromotionId());
-					LOGGER.info("PromotionId dto:" + dto.getPromotionId());
 					if(StringUtils.isNotEmpty(dmo.getPromotionSlogan())){
 						dto.setSloganList(JSON.parseArray(dmo.getPromotionSlogan(), String.class));
 					}

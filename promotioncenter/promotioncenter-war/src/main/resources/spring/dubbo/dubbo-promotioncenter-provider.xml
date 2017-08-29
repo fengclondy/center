@@ -19,4 +19,8 @@
   <!--扭蛋接口-->
   <dubbo:service interface="cn.htd.promotion.cpc.api.PromotionLotteryAPI" ref="promotionLotteryAPI"
                  version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+                 
+   <!--秒杀接口-->
+  <dubbo:service interface="cn.htd.promotion.cpc.api.PromotionTimelimitedInfoAPI" ref="promotionTimelimitedInfoAPI"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>                
 </beans>

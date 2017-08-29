@@ -1071,15 +1071,18 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		}
 		orderItemSkuPriceDTORes = priceCenterRAO.queryOrderItemSkuPrice(queryCommonItemSkuPriceDTO,
 				messageId);
-		//预售商品取预售价格|预售vip价格
-		String orderFrom = orderTemp.getOrderFrom();
-		if(orderFrom.equals(OrderStatusEnum.ORDER_FROM_PRESALE.getCode())){
-			HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
-			if(null != hzgPrice){
-				if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
-					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
-				}else{
-					orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+		
+		Map<String, Object> extendMap = orderTemp.getExtendMap();
+		if(null != extendMap){
+			String orderType = extendMap.get("orderType")==null?"":extendMap.get("orderType").toString();
+			if(StringUtilHelper.isNotNull(orderType) && orderType.equals(OrderStatusEnum.ORDER_PRE_SALE_TYPE.getCode())){
+				HzgPriceDTO hzgPrice = orderItemSkuPriceDTORes.getOtherCenterResult().getHzgPrice();
+				if(null != hzgPrice){
+					if(buyerGrade.equals(OrderStatusEnum.BUYER_GRADE_VIP.getCode())){
+						orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getVipPrice());
+					}else{
+						orderItemSkuPriceDTORes.getOtherCenterResult().setGoodsPrice(hzgPrice.getSalePrice());
+					}
 				}
 			}
 		}
@@ -1734,6 +1737,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			return;
 		} else {
 			MemberInvoiceDTO memberInvoice = memberInvoiceInfo.getOtherCenterResult();
+			orderCreateInfoReqDTO.setIsNeedInvoice(1);
 			orderCreateInfoReqDTO.setInvoiceType("2");
 			orderCreateInfoReqDTO.setInvoiceCompanyName(memberInvoice.getInvoiceNotify());
 			orderCreateInfoReqDTO.setInvoiceAddress(memberInvoice.getInvoiceAddress());
@@ -1766,9 +1770,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			orderCreateInfoReqDTO.setDeliveryType("1");
 			MemberDetailInfo memberTemp = consigAddress.getOtherCenterResult();
 			MemberBaseInfoDTO memberBaseInfoDTO = memberTemp.getMemberBaseInfoDTO();
-			
 			orderCreateInfoReqDTO
-					.setConsigneeName(memberBaseInfoDTO.getContactName());
+					.setConsigneeName(memberBaseInfoDTO.getArtificialPersonName());
+			orderCreateInfoReqDTO.setConsigneePhoneNum(memberBaseInfoDTO.getArtificialPersonMobile());
 			orderCreateInfoReqDTO
 					.setConsigneeAddress(memberBaseInfoDTO.getLocationAddr());
 			orderCreateInfoReqDTO.setConsigneeAddressDetail(memberBaseInfoDTO.getLocationDetail());

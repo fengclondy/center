@@ -30,7 +30,7 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoExtendDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
@@ -131,10 +131,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throws  Exception {
         String promotionType = "";
         String promotionId = "";
-        List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
+        List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         PromotionBargainInfoResDTO bargainDTO = null;
-        PromotionInfoExtendDTO extendDTO = new PromotionInfoExtendDTO();
+        PromotionExtendInfoDTO extendDTO = new PromotionExtendInfoDTO();
         int vipFlg = -1;
         if (promotionInfo == null) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
@@ -175,7 +175,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         	promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                  DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
         }
-        extendDTO = (PromotionInfoExtendDTO)bargainDTO;
+        extendDTO = (PromotionExtendInfoDTO)bargainDTO;
         promotionInfoExtendDAO.add(extendDTO);
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.add(promotionInfo);
@@ -226,12 +226,12 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throws  Exception {
         String promotionType = "";
         String promotionId = "";
-        List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
+        List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         PromotionBargainInfoResDTO bargainDTO = null;
         PromotionSloganResDTO slogan = null;
         List<PromotionAccumulatyDTO> accumulatyDTOList = null;
-        PromotionInfoExtendDTO extendDTO = null;
+        PromotionExtendInfoDTO extendDTO = null;
         Map<String, PromotionAccumulatyDTO> oldAccumulatyMap = new HashMap<String, PromotionAccumulatyDTO>();
         int maxLevelNum = 0;
         int vipFlg = -1;
@@ -299,7 +299,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
                 promotionSloganDAO.update(slogan);
         	}
-        	 extendDTO = (PromotionInfoExtendDTO)accumulatyDTO;
+        	 extendDTO = (PromotionExtendInfoDTO)accumulatyDTO;
              promotionInfoExtendDAO.update(extendDTO);
         }
         promotionInfo.setIsVip(vipFlg);
@@ -314,7 +314,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @return
      */
     public PromotionAccumulatyDTO convertSingleAccumulatyPromotion2Info(PromotionInfoDTO promotionInfo) {
-        List<PromotionAccumulatyDTO> accumulatyList = promotionInfo.getPromotionAccumulatyList();
+        List<? extends PromotionAccumulatyDTO> accumulatyList = promotionInfo.getPromotionAccumulatyList();
         PromotionAccumulatyDTO accumulatyLevelDTO = null;
         PromotionAccumulatyDTO accumulatyDTO = new PromotionAccumulatyDTO();
         if (accumulatyList.size() == 1) {
@@ -329,14 +329,14 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     /**
      * 将只有一个层级的促销活动转换成层级列表形式DTO
      *
-     * @param promotionAccuDTO
+     * @param promotionAccuDTOList
      * @return
      */
-    public PromotionInfoDTO convertSingleAccumulatyPromotion2DTO(List<PromotionAccumulatyDTO> promotionAccumulatyList) {
+    public PromotionInfoDTO convertSingleAccumulatyPromotion2DTO(List<PromotionAccumulatyDTO> promotionAccuDTOList) {
         PromotionInfoDTO resultDTO = new PromotionInfoDTO();
-    	if(null != promotionAccumulatyList && !promotionAccumulatyList.isEmpty()){
-    		resultDTO.setPromoionInfo(promotionAccumulatyList.get(0));
-    		resultDTO.setPromotionAccumulatyList(promotionAccumulatyList);
+    	if(null != promotionAccuDTOList && !promotionAccuDTOList.isEmpty()){
+    		resultDTO.setPromoionInfo(promotionAccuDTOList.get(0));
+    		resultDTO.setPromotionAccumulatyList(promotionAccuDTOList);
     	}
         return resultDTO;
     }
@@ -362,14 +362,14 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     /**
      * 插入多个层级的促销活动信息
      *
-     * @param promotionAccuDTO
+     * @param promotionAccuDTOList
      * @return
      * @throws PromotionCenterBusinessException
      * @throws PromotionCenterBusinessException,Exception
      */
-    public PromotionAccumulatyDTO insertManyAccumulatyPromotionInfo(List<PromotionAccumulatyDTO> promotionAccumulatyList)
+    public PromotionAccumulatyDTO insertManyAccumulatyPromotionInfo(List<PromotionAccumulatyDTO> promotionAccuDTOList)
             throws  Exception {
-        PromotionInfoDTO promotionInfo = convertSingleAccumulatyPromotion2DTO(promotionAccumulatyList);
+        PromotionInfoDTO promotionInfo = convertSingleAccumulatyPromotion2DTO(promotionAccuDTOList);
         logger.info("*********** promotionInfo:" + JSON.toJSONString(promotionInfo) + "***********");
         promotionInfo = insertPromotionInfo(promotionInfo);
         PromotionAccumulatyDTO accuDTO = convertSingleAccumulatyPromotion2Info(promotionInfo);
@@ -380,7 +380,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     /**
      * 更新多个层级的促销活动信息
      *
-     * @param promotionAccuDTO
+     * @param promotionAccuDTOList
      * @return
      * @throws PromotionCenterBusinessException
      * @throws PromotionCenterBusinessException,Exception

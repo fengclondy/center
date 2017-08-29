@@ -1,11 +1,7 @@
 package cn.htd.promotion.service;
 
-import cn.htd.common.DataGrid;
 import cn.htd.promotion.cpc.biz.service.AwardRecordService;
-import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

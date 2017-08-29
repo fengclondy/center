@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.PromotionLotteryAPI;
+import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -19,11 +20,13 @@ import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
+import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+import cn.htd.promotion.cpc.dto.response.WinningRecordResDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +38,7 @@ import com.alibaba.fastjson.JSONObject;
 @Service("promotionLotteryAPI")
 public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(PromotionLotteryAPIImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
 
 	@Resource
 	private PromotionInfoService promotionInfoService;
@@ -171,8 +173,36 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
 	@Override
 	public String queryWinningRecord(String winningRecordReqDTOJson) {
-		// TODO Auto-generated method stub
-		return null;
+		WinningRecordResDTO result = new WinningRecordResDTO();
+		WinningRecordReqDTO requestDTO = new WinningRecordReqDTO();
+		String messageId = "";
+		try {
+			JSONObject jsonObject = JSON.parseObject(winningRecordReqDTOJson);
+			requestDTO = JSONObject.toJavaObject(jsonObject,
+					WinningRecordReqDTO.class);
+			/* 验空2017-02-13 */
+			ValidateResult validateResult = DTOValidateUtil
+					.validate(requestDTO);
+			if (!validateResult.isPass()) {
+				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+						.getCode());
+				result.setResponseMsg(validateResult.getReponseMsg());
+				return JSON.toJSONString(result);
+			}
+			messageId = requestDTO.getMessageId();
+			WinningRecordResDMO resultDMO = luckDrawService.queryWinningRecord(requestDTO);
+			JSONObject jsonObj = (JSONObject) JSONObject.toJSON(resultDMO);
+			result = JSONObject.toJavaObject(jsonObj, WinningRecordResDTO.class);
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法PromotionLotteryAPIImpl.queryWinningRecord出现异常 request：{}",
+					messageId, winningRecordReqDTOJson, w.toString());
+		}
+		return JSON.toJSONString(result);
 	}
 
 	@Override
@@ -205,5 +235,27 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 					messageId, requestDTO.getPromotionId(), w.toString());
 		}
 		return JSON.toJSONString(result);
+	}
+
+	/**
+	 * 开始抽奖处理
+	 *
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	@Override
+	public String beginDrawLottery(String drawLotteryParam) {
+		return null;
+	}
+
+	/**
+	 * 查询抽奖结果
+	 *
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	@Override
+	public String getDrawLotteryResult(String drawLotteryParam) {
+		return null;
 	}
 }

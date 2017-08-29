@@ -35,7 +35,7 @@ import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoExtendDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -103,7 +103,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.addBuyerBargainLaunch（）方法开始,入参{}",messageId,JSON.toJSONString(bargainInfoDTO)+":"+messageId);
 		ExecuteResult<BuyerLaunchBargainInfoResDTO> result = new ExecuteResult<BuyerLaunchBargainInfoResDTO>();
 		PromotionInfoDTO promotionInfo = null;
-		PromotionInfoExtendDTO promotionInfoExtend = null;
+		PromotionExtendInfoDTO promotionInfoExtend = null;
 		BuyerBargainLaunchReqDTO paramDTO = new BuyerBargainLaunchReqDTO();
 		try {
 			if(StringUtils.isNotEmpty(bargainInfoDTO.getPromotionId()) && StringUtils.isNotEmpty(bargainInfoDTO.getLevelCode())){

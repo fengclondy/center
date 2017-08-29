@@ -1,8 +1,12 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
+import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
+import cn.htd.promotion.cpc.dto.response.WinningRecordListResDTO;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +24,11 @@ public interface AwardRecordDAO {
     long getTotalAwardRecord(@Param("params") Map<String, Object> params);
 
     int updateLogisticsInfo(PromotionAwardReqDTO dto);
+
+	/**
+	 * 查询买家中奖
+	 * @param winningRecordReqDTO
+	 * @return
+	 */
+	public List<BuyerWinningRecordDMO> queryWinningRecord(BuyerWinningRecordDMO buyerWinningRecordDMO);
 }

@@ -202,13 +202,12 @@ public class BuyerBargainTestUnit {
     @Test
     @Rollback(false) 
     public void queryPromotionInfoListBySellerCode(){
+    	System.out.println(11);
     	Pager<PromotionInfoReqDTO> page = new Pager<PromotionInfoReqDTO>();
     	page.setPageOffset(1);
     	page.setRows(10);
     	PromotionInfoReqDTO dto = new PromotionInfoReqDTO();
     	dto.setPromotionProviderSellerCode("801781");
-    	dto.setEffectiveTime(DateUtil.getDateBySpecificDate("2017-08-09 12:00:00"));
-    	dto.setInvalidTime(DateUtil.getDateBySpecificDate("2017-08-12 12:00:00"));
     	ExecuteResult<DataGrid<PromotonInfoResDTO>> list = promotionBargainInfoService.queryPromotionInfoListBySellerCode(dto, page);
     	System.out.println(JSON.toJSONString(list));
     }

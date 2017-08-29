@@ -46,7 +46,7 @@
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
-	    	   pi.promotion_provider_seller_code sellerName,
+	    	   pi.promotion_provider_seller_code sellerNameD,
 	     	   pi.effective_time effectiveTime,
 			   pi.invalid_time invalidTime
 	    from promotion_bargain_info pbi
@@ -155,13 +155,13 @@
 		INNER JOIN promotion_info as pi on pi.promotion_id = pbi.promotion_id
 		WHERE pi.status != 9
 		<if test="promotionId != null and promotionId != ''">
-			AND promotion_id = #{promotionId}
+			AND pbi.promotion_id = #{promotionId}
 		</if>
 		<if test="sellerCode != null and sellerCode != ''">
 			AND pi.promotion_provider_seller_code = #{sellerCode}
 		</if>
 		<if test="levelCode != null and levelCode != ''">
-			AND level_code = #{levelCode}
+			AND pbi.level_code = #{levelCode}
 		</if>
 	</select>
 </mapper>

@@ -13,7 +13,7 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 	
 	private String cycleTimeType;//周期时间类型
 	
-	private String cycleTimeValue;//周期时间值
+	private String cycleTimeValue;//周期时间值 
 
 	private Date eachStartTime;//周期活动开始时间
 

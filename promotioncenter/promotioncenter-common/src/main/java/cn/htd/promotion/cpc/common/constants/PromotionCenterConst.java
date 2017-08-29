@@ -19,7 +19,7 @@ public class PromotionCenterConst {
 	public static final String PROMOTION_HAS_EXPIRED = "15003";
 	// 促销活动未过有效期
 	public static final String PROMOTION_NOT_EXPIRED = "15004";
-	// 促销活动未启用
+	// 促销活动未上架
 	public static final String PROMOTION_NOT_VALID = "15005";
 	// 促销活动状态不正确
 	public static final String PROMOTION_STATUS_NOT_CORRECT = "15006";

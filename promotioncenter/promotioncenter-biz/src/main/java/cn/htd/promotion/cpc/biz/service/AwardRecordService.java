@@ -9,5 +9,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
  */
 public interface AwardRecordService {
 
-    public DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto , String messageId);
+    DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto , String messageId);
+
+    int updateLogisticsInfo(PromotionAwardReqDTO dto, String messageId);
 }

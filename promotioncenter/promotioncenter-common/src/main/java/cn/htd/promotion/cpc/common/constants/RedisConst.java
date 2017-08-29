@@ -27,4 +27,28 @@ public class RedisConst {
 	public static final String REDIS_BUYER_BARGAIN_USELOG =  "BUYER_BARGAIN_USELOG";
 	//Redis砍价活动金额拆分
 	public static final String REDIS_BARGAIN_PRICE_SPLIT = "BARGAIN_PRICE_SPLIT";
+	
+	
+
+    // Redis会员促销活动有效信息
+    public static final String PROMOTION_REDIS_TIMELIMITED_VALID = "PROMOTION_B2C_MIDDLE_TIMELIMITED_VALID";
+    // Redis秒杀活动数据
+    public static final String PROMOTION_REDIS_TIMELIMITED = "PROMOTION_B2C_MIDDLE_TIMELIMITED";
+    // Redis秒杀活动结果数据
+    public static final String PROMOTION_REDIS_TIMELIMITED_RESULT = "PROMOTION_B2C_MIDDLE_TIMELIMITED_RESULT";
+    // Redis秒杀活动数据
+    public static final String PROMOTION_REDIS_TIMELIMITED_INDEX = "PROMOTION_B2C_MIDDLE_TIMELIMITED_INDEX";
+    // Redis秒杀商品总数量
+    public static final String PROMOTION_REDIS_TIMELIMITED_TOTAL_COUNT = "PROMOTION_B2C_TOTAL_COUNT";
+    // Redis展示已秒杀商品数量
+    public static final String PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT = "PROMOTION_B2C_SHOW_REMAIN_COUNT";
+    // Redis展示参与秒杀人数
+    public static final String PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT = "PROMOTION_B2C_SHOW_ACTOR_COUNT";
+    // Redis真实秒杀商品数量
+    public static final String PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT = "PROMOTION_B2C_REAL_REMAIN_COUNT";
+    // Redis真实参与秒杀人数
+    public static final String PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT = "PROMOTION_B2C_REAL_ACTOR_COUNT";
+    // Redis会员秒杀活动参加信息
+    public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT = "PROMOTION_B2C_MIDDLE_BUYER_TIMELIMITED_COUNT";
+
 }

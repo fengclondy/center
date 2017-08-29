@@ -42,7 +42,7 @@ public class PromotionBargainInfoDMO{
 	
 	private String promotionDesc;//宣传标语
 	
-	private String sellerName;//店铺名称
+	private String sellerNameD;//店铺名称
 	
 	private String contactNameD;//联系人电话
 	
@@ -172,12 +172,12 @@ public class PromotionBargainInfoDMO{
 		this.promotionDesc = promotionDesc;
 	}
 
-	public String getSellerName() {
-		return sellerName;
+	public String getSellerNameD() {
+		return sellerNameD;
 	}
 
-	public void setSellerName(String sellerName) {
-		this.sellerName = sellerName;
+	public void setSellerNameD(String sellerNameD) {
+		this.sellerNameD = sellerNameD;
 	}
 
 	public String getContactNameD() {

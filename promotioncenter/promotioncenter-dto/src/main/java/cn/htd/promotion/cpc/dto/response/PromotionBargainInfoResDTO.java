@@ -83,6 +83,16 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String upFlag; //上架标记 1:保存暂不上架  默认为空，表示立即上架
 	
+	private Integer templateFlagD;//模板类型
+	
+	public Integer getTemplateFlagD() {
+		return templateFlagD;
+	}
+
+	public void setTemplateFlagD(Integer templateFlagD) {
+		this.templateFlagD = templateFlagD;
+	}
+
 	public String getUpFlag() {
 		return upFlag;
 	}

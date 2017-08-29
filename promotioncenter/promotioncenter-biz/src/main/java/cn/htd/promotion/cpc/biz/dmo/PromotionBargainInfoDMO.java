@@ -76,6 +76,16 @@ public class PromotionBargainInfoDMO{
 	
 	private BigDecimal hasBargainPrice;//已经砍得价格
 	
+	private Integer templateFlagD;//模板类型
+	
+	public Integer getTemplateFlagD() {
+		return templateFlagD;
+	}
+
+	public void setTemplateFlagD(Integer templateFlagD) {
+		this.templateFlagD = templateFlagD;
+	}
+
 	public Date getEffectiveTime() {
 		return effectiveTime;
 	}

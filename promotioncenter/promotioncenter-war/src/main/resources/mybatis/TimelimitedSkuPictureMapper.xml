@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO" >
-  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.TimelimitedSkuPictureDMO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO" >
     <id column="picture_id" property="pictureId" jdbcType="BIGINT" />
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
@@ -16,21 +16,8 @@
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    picture_id, promotion_id, level_code, picture_url, is_first, sort_num, delete_flag, 
-    create_id, create_name, create_time, modify_id, modify_name, modify_time
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from timelimited_sku_picture
-    where picture_id = #{pictureId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from timelimited_sku_picture
-    where picture_id = #{pictureId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
+  
+    <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
     insert into timelimited_sku_picture (picture_id, promotion_id, level_code, 
       picture_url, is_first, sort_num, 
       delete_flag, create_id, create_name, 
@@ -42,7 +29,8 @@
       #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
+  
+   <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
     insert into timelimited_sku_picture
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="pictureId != null" >
@@ -52,7 +40,7 @@
         promotion_id,
       </if>
       <if test="levelCode != null" >
-        level_code,
+	level_code,
       </if>
       <if test="pictureUrl != null" >
         picture_url,
@@ -127,7 +115,25 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
+  
+    <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
+    update timelimited_sku_picture
+    set promotion_id = #{promotionId,jdbcType=VARCHAR},
+      level_code = #{levelCode,jdbcType=VARCHAR},
+      picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      is_first = #{isFirst,jdbcType=TINYINT},
+      sort_num = #{sortNum,jdbcType=TINYINT},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where picture_id = #{pictureId,jdbcType=BIGINT}
+  </update>
+  
+    <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
     update timelimited_sku_picture
     <set >
       <if test="promotionId != null" >
@@ -169,20 +175,25 @@
     </set>
     where picture_id = #{pictureId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO" >
-    update timelimited_sku_picture
-    set promotion_id = #{promotionId,jdbcType=VARCHAR},
-      level_code = #{levelCode,jdbcType=VARCHAR},
-      picture_url = #{pictureUrl,jdbcType=VARCHAR},
-      is_first = #{isFirst,jdbcType=TINYINT},
-      sort_num = #{sortNum,jdbcType=TINYINT},
-      delete_flag = #{deleteFlag,jdbcType=TINYINT},
-      create_id = #{createId,jdbcType=BIGINT},
-      create_name = #{createName,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      modify_id = #{modifyId,jdbcType=BIGINT},
-      modify_name = #{modifyName,jdbcType=VARCHAR},
-      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+  
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+	delete from timelimited_sku_picture
+	where picture_id = #{pictureId,jdbcType=BIGINT}
+  </delete>
+  
+  <sql id="Base_Column_List" >
+    picture_id, promotion_id, level_code, picture_url, is_first, sort_num, delete_flag, 
+    create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from timelimited_sku_picture
     where picture_id = #{pictureId,jdbcType=BIGINT}
-  </update>
+  </select>
+
+
+ 
+
+
 </mapper>

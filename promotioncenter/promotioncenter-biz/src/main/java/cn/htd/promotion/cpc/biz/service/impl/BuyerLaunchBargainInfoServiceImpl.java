@@ -25,10 +25,12 @@ import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
@@ -50,6 +52,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
+    
+    @Resource
+	private PromotionRedisDB promotionRedisDB;
     
     @Resource
     private DictionaryUtils dictionary;
@@ -183,7 +188,8 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			buyerBargainRecord.setCreateName(bargainInfoDTO.getCreateName());
 			buyerBargainRecord.setCreateTime(new Date());
 			buyerBargainRecord.setBargainTime(new Date());
-			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
+			promotionRedisDB.tailPush(RedisConst.BUYER_BARGAIN_RECORD, JSON.toJSONString(buyerBargainRecord));//从右边插入队列
+//			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
 			result.setResult(bargainInfoDTO);
 		} catch (PromotionCenterBusinessException pbs){
 			result.setCode(pbs.getCode());

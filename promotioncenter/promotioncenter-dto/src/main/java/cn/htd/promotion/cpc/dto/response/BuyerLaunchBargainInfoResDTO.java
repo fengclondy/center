@@ -72,6 +72,8 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	
 	private BigDecimal surplusPrice;//还剩多少价没砍
 	
+	private BigDecimal hasBargainPrice;//已经看的价格
+	
 	@NotNull(message = "创建人id不能为空")
 	private Integer createId;//创建人ID
 	
@@ -85,6 +87,24 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	private String modifyName;//更新人名称
 	
 	private Date modifyTime;//更新时间
+	
+	private Integer templateFlagD;//模板类型
+
+	public Integer getTemplateFlagD() {
+		return templateFlagD;
+	}
+
+	public void setTemplateFlagD(Integer templateFlagD) {
+		this.templateFlagD = templateFlagD;
+	}
+
+	public BigDecimal getHasBargainPrice() {
+		return hasBargainPrice;
+	}
+
+	public void setHasBargainPrice(BigDecimal hasBargainPrice) {
+		this.hasBargainPrice = hasBargainPrice;
+	}
 
 	public Integer getId() {
 		return id;

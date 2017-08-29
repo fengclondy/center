@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.dto.response;
 
+import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class ImportResultDTO implements Serializable {
 
     private Integer failCount;
 
-    private List<PromotionAwardDTO> promotionAwardList;
+    private List<PromotionAwardReqDTO> promotionAwardList;
 
     public Integer getSuccessCount() {
         return successCount;
@@ -32,11 +34,11 @@ public class ImportResultDTO implements Serializable {
         this.failCount = failCount;
     }
 
-    public List<PromotionAwardDTO> getPromotionAwardList() {
+    public List<PromotionAwardReqDTO> getPromotionAwardList() {
         return promotionAwardList;
     }
 
-    public void setPromotionAwardList(List<PromotionAwardDTO> promotionAwardList) {
+    public void setPromotionAwardList(List<PromotionAwardReqDTO> promotionAwardList) {
         this.promotionAwardList = promotionAwardList;
     }
 }

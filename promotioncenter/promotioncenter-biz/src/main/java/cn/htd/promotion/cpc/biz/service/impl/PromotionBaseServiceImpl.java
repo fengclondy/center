@@ -108,8 +108,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             accumulaty.setPromoionInfo(promotionInfo);
             promotionAccumulatyDAO.delete(accumulaty);
             slogan.setPromotionId(validDTO.getPromotionId());
-            slogan.setModifyId(validDTO.getOperatorId());
-            slogan.setModifyName(validDTO.getOperatorName());
             promotionSloganDAO.delete(slogan);
             promotionInfoDAO.updatePromotionStatusById(promotionInfo);
         } catch (PromotionCenterBusinessException mcbe) {
@@ -294,8 +292,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         	if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
         			!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
         		slogan.setPromotionId(bargainDTO.getPromotionId());
-                slogan.setModifyId(bargainDTO.getModifyId());
-                slogan.setModifyName(bargainDTO.getModifyName());
                 slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
                 promotionSloganDAO.update(slogan);
         	}

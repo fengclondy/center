@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import cn.htd.promotion.cpc.biz.dmo.PromotionSloganDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.response.BuyerBargainRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
 
 @Service("promotionSloganService")
@@ -41,11 +43,8 @@ public class PromotionSloganServiceImpl implements PromotionSloganService{
 			List<PromotionSloganResDTO> promotionSloganDTOList = null;
 			if(null != promotionSloganDMOList){
 				promotionSloganDTOList = new ArrayList<PromotionSloganResDTO>();
-				for (PromotionSloganDMO dmo : promotionSloganDMOList) {
-					PromotionSloganResDTO dto = new PromotionSloganResDTO();
-					dto.setPromotionId(dmo.getPromotionId());
-					promotionSloganDTOList.add(dto);
-				}
+				String str = JSONObject.toJSONString(promotionSloganDMOList);
+				promotionSloganDTOList = JSONObject.parseArray(str, PromotionSloganResDTO.class);
 				result.setResult(promotionSloganDTOList);
 			}
 		}catch(PromotionCenterBusinessException psb){

@@ -308,10 +308,10 @@ public class PromotionBargainInfoServiceImpl implements
 	                        "砍价活动:" + promotionId + " 只有在已结束状态时不能进行修改");
 	            }
 	            modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
-	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
-	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_MODIFIED.getCode(),
-	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
-	            }
+//	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
+//	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_MODIFIED.getCode(),
+//	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
+//	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());

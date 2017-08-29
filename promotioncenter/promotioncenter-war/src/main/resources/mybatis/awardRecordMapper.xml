@@ -97,7 +97,7 @@
   </sql>
   <!-- 更新物流信息 -->
   <update id="updateLogisticsInfo" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
-    update buyer_winning_record
+    UPDATE buyer_winning_record
     <set>
       <if test="logisticsCompany != null and logisticsCompany != ''">
         logistics_company = #{logisticsCompany},
@@ -113,9 +113,9 @@
       modify_name = #{modifyName},
       modify_time = #{modifyTime}
     </set>
-    <where>
-      promotion_id = #{promotionId}
-    </where>
+    WHERE
+      id = #{id}
+
   </update>
 
 </mapper>

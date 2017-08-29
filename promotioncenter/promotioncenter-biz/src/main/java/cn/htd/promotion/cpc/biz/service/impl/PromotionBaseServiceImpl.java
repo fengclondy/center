@@ -294,11 +294,20 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         	slogan =  promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         	accumulatyDTO = promotionAccumulatyList.get(0);
         	bargainDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
-        	if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
-        			!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
-        		slogan.setPromotionId(bargainDTO.getPromotionId());
-                slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
-                promotionSloganDAO.update(slogan);
+        	if(null != slogan){ 
+        		if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
+        				!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
+        			slogan.setPromotionId(bargainDTO.getPromotionId());
+        			slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        			promotionSloganDAO.update(slogan);
+        		}
+        	}else{
+        		slogan = new PromotionSloganResDTO();
+        		slogan.setPromotionId(promotionId);
+        		slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        		slogan.setCreateId(promotionInfo.getModifyId());
+        		slogan.setCreateName(promotionInfo.getModifyName());
+        		promotionSloganDAO.add(slogan);
         	}
         	 extendDTO = (PromotionExtendInfoDTO)accumulatyDTO;
              promotionInfoExtendDAO.update(extendDTO);

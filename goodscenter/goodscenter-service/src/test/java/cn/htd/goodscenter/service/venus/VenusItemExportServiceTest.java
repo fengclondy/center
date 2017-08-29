@@ -406,11 +406,11 @@ public class VenusItemExportServiceTest extends CommonTest {
 		List<Long> spuIdList =Lists.newArrayList();
 		spuIdList.add(16802L);
 		
-		Pager<String> pager=new Pager<String>();
+		Pager<String> pager=new Pager <String>();
 		pager.setRows(10);
 		pager.setPage(1);
 		ExecuteResult<String> s=venusItemExportService.applyItemSpu2HtdProduct(spuIdList, 
-				"2", "0", "1", "zhangxiaolong");
+				"1002", "0", "1", "zhangxiaolong");
 				
 		
 		Assert.assertTrue(s.isSuccess());

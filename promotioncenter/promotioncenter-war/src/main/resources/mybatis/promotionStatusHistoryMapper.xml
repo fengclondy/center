@@ -46,7 +46,7 @@
   </insert>
   <update id="update">
   	UPDATE promotion_status_history SET
-  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  	<trim prefix="" suffix="" suffixOverrides=",">
 	  	<if test="promotionStatus != null and promotionStatus != ''">
 	  		promotion_status = #{promotionStatus},
 	  	</if>

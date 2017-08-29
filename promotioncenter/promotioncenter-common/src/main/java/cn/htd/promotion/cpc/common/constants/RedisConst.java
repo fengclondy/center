@@ -28,6 +28,8 @@ public class RedisConst {
 	//Redis砍价活动金额拆分
 	public static final String REDIS_BARGAIN_PRICE_SPLIT = "BARGAIN_PRICE_SPLIT";
 	
+	public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
+	
 	
 
     // Redis会员促销活动有效信息
@@ -50,5 +52,8 @@ public class RedisConst {
     public static final String PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT = "PROMOTION_B2C_REAL_ACTOR_COUNT";
     // Redis会员秒杀活动参加信息
     public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT = "PROMOTION_B2C_MIDDLE_BUYER_TIMELIMITED_COUNT";
-
+    // Redis会员秒杀log信息
+    public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG = "PROMOTION_B2B_MIDDLE_BUYER_TIMELIMITED_USELOG";
+    // Redis会员秒杀的使用log信息
+    public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG = "PROMOTION_B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
 }

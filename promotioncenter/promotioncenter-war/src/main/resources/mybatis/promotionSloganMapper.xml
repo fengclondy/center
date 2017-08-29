@@ -50,6 +50,12 @@
 		</trim>
 	</insert>
 	
+	<update id="update">
+		update promotion_slogan
+		set promotion_slogan = #{promotionSlogan}
+		where promotion_id = #{promotionId}
+	</update>
+	
 	<update id="delete" >
 		update promotion_slogan
 		<set>

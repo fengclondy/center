@@ -31,6 +31,8 @@
 	<rabbit:queue name="middleware-jd.skuPrice"/>
 	<!-- 京东增量上下架队列-->
 	<rabbit:queue name="middleware-jd.skuStatus"/>
+	<!-- 预售数据推送 -->
+	<rabbit:queue name="presaleitem.push.queue"/>
 	<!-- 定义queue end -->
 
 	<!-- exchange重新定义并与上边的模本中保持一致，binding中的queue和key也要用自己重新定义的 start -->
@@ -38,6 +40,7 @@
 		<rabbit:bindings>
 			<rabbit:binding queue="item.down.erp.queue" key="itemDownErpKey"/>
 			<rabbit:binding queue="brand.down.erp.queue" key="brandDownErpKey"/>
+			<rabbit:binding queue="presaleitem.push.queue" key="preSaleItemPushKey"/>
 		</rabbit:bindings>
 	</rabbit:direct-exchange>
 	<!--exchange重新定义 end -->

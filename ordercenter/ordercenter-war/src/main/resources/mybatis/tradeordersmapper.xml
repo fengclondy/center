@@ -16,6 +16,7 @@
 		<result column="shop_name" property="shopName" jdbcType="VARCHAR" />
 		<result column="order_from" property="orderFrom" jdbcType="VARCHAR" />
 		<result column="sales_type" property="salesType" jdbcType="VARCHAR" />
+		<result column="order_type" property="orderType" jdbcType="TINYINT" />
 		<result column="sales_department_code" property="salesDepartmentCode"
 			jdbcType="VARCHAR" />
 		<result column="has_productplus_flag" property="hasProductplusFlag"
@@ -243,7 +244,7 @@
 		logistics_status, logistics_company, logistics_no,
 		used_activity_account_amount,
 		order_delete_status, PK, create_id, create_name, create_time, modify_id, modify_name,
-		modify_time
+		modify_time,order_type
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.Long">
@@ -317,6 +318,9 @@
 			</if>
 			<if test="sellerType != null">
 				seller_type = #{sellerType,jdbcType=VARCHAR},
+			</if>
+			<if test="orderType != null">
+				order_type = #{orderType,jdbcType=TINYINT},
 			</if>
 			<if test="sellerName != null">
 				seller_name = #{sellerName,jdbcType=VARCHAR},
@@ -933,6 +937,29 @@ and b.customer_manager_code = #{customerManagerID}
 		and t.order_delete_status != 2
 	</select>
 	
+	<select id="queryPresaleOrderCountByBuyerId" resultType="java.lang.Integer"
+		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
+		select
+		count(0)
+		from trade_orders t
+		where 1=1
+		<if test="buyerCode != null">
+			and t.buyer_code = #{buyerCode}
+		</if>
+		<if test="orderStatus != null">
+			<foreach collection="orderStatus" item="orderStatus"
+				open=" and t.order_status in(" close=")" separator=",">
+				#{orderStatus}
+			</foreach>
+		</if>
+		<if test="orderFrom != null">
+			and t.order_from = #{orderFrom}
+		</if>
+		<if test="isCancelOrder != null">
+			and t.is_cancel_order = #{isCancelOrder}
+		</if>
+	</select>
+	
 	
 	<select id="selectOrderCountBySupperBoss" resultType="java.lang.Integer"
 		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
@@ -1142,6 +1169,9 @@ and b.customer_manager_code = #{customerManagerID}
 			</if>
 			<if test="salesType != null">
 				sales_type,
+			</if>
+			<if test="orderType != null">
+				order_type,
 			</if>
 			<if test="salesDepartmentCode != null">
 				sales_department_code,
@@ -1390,6 +1420,9 @@ and b.customer_manager_code = #{customerManagerID}
 			</if>
 			<if test="salesType != null">
 				#{salesType,jdbcType=VARCHAR},
+			</if>
+			<if test="orderType != null">
+				#{orderType,jdbcType=VARCHAR},
 			</if>
 			<if test="salesDepartmentCode != null">
 				#{salesDepartmentCode,jdbcType=VARCHAR},
@@ -1671,4 +1704,18 @@ and b.customer_manager_code = #{customerManagerID}
 		AND trade_order_items.modify_time > #{timeLimit}
 		ORDER BY trade_order_items.modify_time  DESC
 	</select>
+	
+	<update id="updateTradeOrdersByOrderNoList" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO">
+		update trade_orders
+		<set>
+			<if test="payTimeLimit != null">
+				pay_time_limit = #{payTimeLimit,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where 1=1
+		<foreach collection="orderNoList" item="orderNoTemp"
+			open=" and order_no in(" close=")" separator=",">
+			#{orderNoTemp}
+		</foreach>
+	</update>
 </mapper>

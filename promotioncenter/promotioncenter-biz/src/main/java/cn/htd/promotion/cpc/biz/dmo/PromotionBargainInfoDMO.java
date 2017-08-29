@@ -39,6 +39,186 @@ public class PromotionBargainInfoDMO{
 	private String modifyName;//更新人名称
 	
 	private Date modifyTime;//更新时间
+	
+	private String promotionDesc;//宣传标语
+	
+	private String sellerNameD;//店铺名称
+	
+	private String contactNameD;//联系人电话
+	
+	private String contactTelphoneD;//联系电话
+	
+	private String contactAddressD;//联系地址
+	
+	private Date effectiveTime;//活动开始有效期
+	
+	private Date invalidTime;//活动结束有效期
+	
+	private Date eachStartTimeD;//活动开始时间
+	
+	private Date eachEndTimeD;//活动结束时间
+	
+	private Date offlineStartTimeD;//到店购买开始时间
+	
+	private Date offlineEndTimeD;//到店购买结束时间
+	
+	private Date launchTime;//发起时间
+	
+	private Date bargainOverTime;//砍完时间
+	
+	private Integer isBargainOver;//是否砍完  0：没有砍完 1：砍完   2：已售完
+	
+	private BigDecimal goodsCurrentPrice;//商品当前价格
+	
+	private Integer bargainPersonNum;//帮忙砍价人数
+	
+	private BigDecimal surplusPrice;//还剩多少价没砍
+	
+	private BigDecimal hasBargainPrice;//已经砍得价格
+	
+	public Date getEffectiveTime() {
+		return effectiveTime;
+	}
+
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+
+	public Date getInvalidTime() {
+		return invalidTime;
+	}
+
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+
+	public BigDecimal getHasBargainPrice() {
+		return hasBargainPrice;
+	}
+
+	public void setHasBargainPrice(BigDecimal hasBargainPrice) {
+		this.hasBargainPrice = hasBargainPrice;
+	}
+
+	public Date getLaunchTime() {
+		return launchTime;
+	}
+
+	public void setLaunchTime(Date launchTime) {
+		this.launchTime = launchTime;
+	}
+
+	public Date getBargainOverTime() {
+		return bargainOverTime;
+	}
+
+	public void setBargainOverTime(Date bargainOverTime) {
+		this.bargainOverTime = bargainOverTime;
+	}
+
+	public Integer getIsBargainOver() {
+		return isBargainOver;
+	}
+
+	public void setIsBargainOver(Integer isBargainOver) {
+		this.isBargainOver = isBargainOver;
+	}
+
+	public BigDecimal getGoodsCurrentPrice() {
+		return goodsCurrentPrice;
+	}
+
+	public void setGoodsCurrentPrice(BigDecimal goodsCurrentPrice) {
+		this.goodsCurrentPrice = goodsCurrentPrice;
+	}
+
+	public Integer getBargainPersonNum() {
+		return bargainPersonNum;
+	}
+
+	public void setBargainPersonNum(Integer bargainPersonNum) {
+		this.bargainPersonNum = bargainPersonNum;
+	}
+
+	public BigDecimal getSurplusPrice() {
+		return surplusPrice;
+	}
+
+	public void setSurplusPrice(BigDecimal surplusPrice) {
+		this.surplusPrice = surplusPrice;
+	}
+
+	public Date getOfflineStartTimeD() {
+		return offlineStartTimeD;
+	}
+
+	public void setOfflineStartTimeD(Date offlineStartTimeD) {
+		this.offlineStartTimeD = offlineStartTimeD;
+	}
+
+	public Date getOfflineEndTimeD() {
+		return offlineEndTimeD;
+	}
+
+	public void setOfflineEndTimeD(Date offlineEndTimeD) {
+		this.offlineEndTimeD = offlineEndTimeD;
+	}
+
+	public String getPromotionDesc() {
+		return promotionDesc;
+	}
+
+	public void setPromotionDesc(String promotionDesc) {
+		this.promotionDesc = promotionDesc;
+	}
+
+	public String getSellerNameD() {
+		return sellerNameD;
+	}
+
+	public void setSellerNameD(String sellerNameD) {
+		this.sellerNameD = sellerNameD;
+	}
+
+	public String getContactNameD() {
+		return contactNameD;
+	}
+
+	public void setContactNameD(String contactNameD) {
+		this.contactNameD = contactNameD;
+	}
+
+	public String getContactTelphoneD() {
+		return contactTelphoneD;
+	}
+
+	public void setContactTelphoneD(String contactTelphoneD) {
+		this.contactTelphoneD = contactTelphoneD;
+	}
+
+	public String getContactAddressD() {
+		return contactAddressD;
+	}
+
+	public void setContactAddressD(String contactAddressD) {
+		this.contactAddressD = contactAddressD;
+	}
+
+	public Date getEachStartTimeD() {
+		return eachStartTimeD;
+	}
+
+	public void setEachStartTimeD(Date eachStartTimeD) {
+		this.eachStartTimeD = eachStartTimeD;
+	}
+
+	public Date getEachEndTimeD() {
+		return eachEndTimeD;
+	}
+
+	public void setEachEndTimeD(Date eachEndTimeD) {
+		this.eachEndTimeD = eachEndTimeD;
+	}
 
 	public Integer getBargainId() {
 		return bargainId;

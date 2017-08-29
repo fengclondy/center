@@ -36,6 +36,8 @@ public class TradeOrdersDMO extends GenericDMO {
 	private String orderFrom;
 
 	private String salesType;
+	
+	private Integer orderType;
 
 	private String salesDepartmentCode;
 
@@ -181,6 +183,8 @@ public class TradeOrdersDMO extends GenericDMO {
 	private List<TradeOrderStatusHistoryDMO> orderTail;
 
 	private Integer count;
+	
+	private List<String> orderNoList;
 
 	public Long getId() {
 		return id;
@@ -870,4 +874,19 @@ public class TradeOrdersDMO extends GenericDMO {
 		this.count = count;
 	}
 
+	public List<String> getOrderNoList() {
+		return orderNoList;
+	}
+
+	public void setOrderNoList(List<String> orderNoList) {
+		this.orderNoList = orderNoList;
+	}
+
+	public Integer getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(Integer orderType) {
+		this.orderType = orderType;
+	}
 }

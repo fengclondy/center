@@ -5,12 +5,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class ItemSkuTerminalPrice implements Serializable{
-    /**
+	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
-	private Long skuId;
+	private static final long serialVersionUID = 5437070595115394269L;
+	private Long id;
+    private Long skuId;
 
     private Long itemId;
 
@@ -149,4 +149,13 @@ public class ItemSkuTerminalPrice implements Serializable{
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+    
 }

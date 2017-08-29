@@ -41,6 +41,7 @@ import cn.htd.goodscenter.dto.venus.po.QueryVenusItemListParamDTO;
 import cn.htd.goodscenter.service.utils.ItemCodeGenerator;
 import cn.htd.goodscenter.test.common.CommonTest;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
+import cn.htd.pricecenter.dto.HzgPriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
 
 import com.google.common.collect.Lists;
@@ -219,12 +220,15 @@ public class VenusItemExportServiceTest extends CommonTest {
 		VenusItemSkuPublishInDTO venusItemSkuPublishInDTO=new VenusItemSkuPublishInDTO();
 		
 		venusItemSkuPublishInDTO.setSubTitle("zhangxiaolong unit test subtitle");
-		venusItemSkuPublishInDTO.setSkuId(1000029361L);
-		venusItemSkuPublishInDTO.setSkuCode("HTDH_100000000");
+		venusItemSkuPublishInDTO.setSkuId(99L);
+		venusItemSkuPublishInDTO.setSkuCode("99");
 		venusItemSkuPublishInDTO.setDisplayQty("100");
 		venusItemSkuPublishInDTO.setShelfType("1");
 		venusItemSkuPublishInDTO.setOperatorId(1234L);
 		venusItemSkuPublishInDTO.setOperatorName("jerry");
+		venusItemSkuPublishInDTO.setSupplierCode("0801");
+		
+		venusItemSkuPublishInDTO.setPreSaleFlag(1);
 		
 		StandardPriceDTO standardPrice=new StandardPriceDTO();
 		ItemSkuBasePrice itemSkuBasePrice=new ItemSkuBasePrice();
@@ -236,6 +240,13 @@ public class VenusItemExportServiceTest extends CommonTest {
 		itemSkuBasePrice.setSkuId(1000029361L);
 		standardPrice.setItemSkuBasePrice(itemSkuBasePrice);
 		venusItemSkuPublishInDTO.setStandardPrice(standardPrice);
+		//
+		HzgPriceDTO hzgPriceInDTO=new HzgPriceDTO();
+		hzgPriceInDTO.setRetailPrice(new BigDecimal("38.90"));
+		hzgPriceInDTO.setSalePrice(new BigDecimal("37.90"));
+		hzgPriceInDTO.setVipPrice(new BigDecimal("36.90"));
+		standardPrice.setHzgPriceDTO(hzgPriceInDTO);
+		
 		ExecuteResult<String> result=venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
 		Assert.assertTrue(result.isSuccess());
 	}
@@ -395,11 +406,11 @@ public class VenusItemExportServiceTest extends CommonTest {
 		List<Long> spuIdList =Lists.newArrayList();
 		spuIdList.add(16802L);
 		
-		Pager<String> pager=new Pager<String>();
+		Pager<String> pager=new Pager <String>();
 		pager.setRows(10);
 		pager.setPage(1);
 		ExecuteResult<String> s=venusItemExportService.applyItemSpu2HtdProduct(spuIdList, 
-				"2", "0", "1", "zhangxiaolong");
+				"1002", "0", "1", "zhangxiaolong");
 				
 		
 		Assert.assertTrue(s.isSuccess());

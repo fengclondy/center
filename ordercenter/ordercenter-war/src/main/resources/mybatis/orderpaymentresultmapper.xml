@@ -14,6 +14,7 @@
     <result column="pay_type" property="payType" jdbcType="VARCHAR" />
     <result column="pay_channel" property="payChannel" jdbcType="VARCHAR" />
     <result column="pay_order_time" property="payOrderTime" jdbcType="TIMESTAMP" />
+    <result column="order_type" property="orderType" jdbcType="TINYINT" />
 </resultMap>
 
 <select id="seleteCountByTradeNo" resultType="java.lang.Integer"
@@ -30,7 +31,7 @@
 
 <select id="selectPaymentResultByOrderNo" resultMap="BaseResultMap"
 		parameterType="cn.htd.zeus.tc.biz.dmo.OrderPaymentResultDMO">
-	select order_no,order_pay_amount,delivery_type,seller_name,shop_name,pay_status
+	select order_no,order_pay_amount,delivery_type,seller_name,shop_name,pay_status,order_type
 	from trade_orders
 	where 1 = 1
    <if test="orderNoList != null">

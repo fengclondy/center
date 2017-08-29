@@ -14,12 +14,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
+
+import cn.htd.zeus.tc.api.OrderPaymentResultAPI;
 import cn.htd.zeus.tc.biz.dmo.OrderPayResultInfoDMO;
 import cn.htd.zeus.tc.biz.dmo.OrderPaymentResultDMO;
 import cn.htd.zeus.tc.biz.dmo.OrderPaymentResultListDMO;
 import cn.htd.zeus.tc.biz.service.OrderPaymentResultService;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
+import cn.htd.zeus.tc.dto.response.OrderPaymentResultListResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderPaymentResultReqDTO;
 
 @Transactional
@@ -29,6 +33,9 @@ public class OrderPaymentResultAPITestUnit {
 
 	@Resource
 	private OrderPaymentResultService orderPaymentResultService;
+	
+	@Resource
+	private OrderPaymentResultAPI orderPaymentResultAPI;
 
     @Before
     public void setUp() throws Exception
@@ -44,12 +51,14 @@ public class OrderPaymentResultAPITestUnit {
     {
     	try {
     		OrderPaymentResultReqDTO reqDTO = new  OrderPaymentResultReqDTO();
-    		String batchPayInfos = "[{\"amount\":\"0.00\",\"distributionStatus\":\"PROFIT_INIT\",\"merchantOrderNo\":\"10017021513490700137\",\"tradeStatus\":\"SUCCESS\",\"tradeType\":\"BALANCE_PAY\"}]";
+    		String batchPayInfos = "[{\"amount\":\"0.00\",\"distributionStatus\":\"PROFIT_INIT\",\"merchantOrderNo\":\"60017082810291800164\",\"tradeStatus\":\"SUCCESS\",\"tradeType\":\"BALANCE_PAY\"}]";
     		reqDTO.setBatchPayInfos(batchPayInfos);
 			reqDTO.setMessageId(GenerateIdsUtil.generateId(null));
-			OrderPaymentResultListDMO resultDMO = orderPaymentResultService.selectPaymentResultByTradeNo(reqDTO);
-			String resultCode = resultDMO.getResultCode();
-			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());
+			OrderPaymentResultListResDTO resultDMO = orderPaymentResultAPI.selectPaymentResultByTradeNo(reqDTO);
+			//OrderPaymentResultListDMO resultDMO = orderPaymentResultAPI.selectPaymentResultByTradeNo(reqDTO);
+			/*String resultCode = resultDMO.getResultCode();
+			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());*/
+			System.out.println(JSONObject.toJSONString(resultDMO));
     	} catch (Exception e) {
 		}
     }

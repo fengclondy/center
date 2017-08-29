@@ -1194,9 +1194,7 @@
   <select id="queryItemCountBySaleAreaCode" resultType="Long" parameterType="cn.htd.goodscenter.dto.indto.JudgeRecevieAddressInDTO">
 	select count(1) from item_sku sku
 	join item_sales_area sa on sa.item_id=sku.item_id and sa.delete_flag=0
-	<if test="isBoxFlag == '0' ">
-		and sa.is_box_flag='0'
-	</if>
+	and sa.is_box_flag=#{isBoxFlag}
 	join item_sales_area_detail sad on sad.sales_area_id=sa.sales_area_id and sad.delete_flag=0
 	AND (1=0
 		<if test="provinceCode !=null and provinceCode !='' ">

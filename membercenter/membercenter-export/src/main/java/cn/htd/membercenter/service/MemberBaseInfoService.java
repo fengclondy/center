@@ -22,6 +22,7 @@ import cn.htd.membercenter.dto.MemberDetailInfo;
 import cn.htd.membercenter.dto.MemberImportSuccInfoDTO;
 import cn.htd.membercenter.dto.MemberInfoMotifyDTO;
 import cn.htd.membercenter.dto.SalemanDTO;
+import cn.htd.membercenter.dto.SellerInfoDTO;
 import cn.htd.membercenter.dto.SellerTypeInfoDTO;
 import cn.htd.membercenter.dto.VerifyDetailInfoDTO;
 
@@ -366,4 +367,12 @@ public interface MemberBaseInfoService {
 	 * @return
 	*/
 	public  ExecuteResult<String> queryCompanyCodeBySellerId(Long sellerId);
+	
+	/**
+	 * 通过sellerId查询大b基础信息
+	 * 
+	 * @param sellerId
+	 * @return
+	 */
+	public ExecuteResult<SellerInfoDTO> querySellerBaseInfo(Long sellerId);
 }

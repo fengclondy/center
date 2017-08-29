@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO" >
+   <id column="BARGAIN_ID" property="bargainId" jdbcType="BIGINT" />
+    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR" />
+    <result column="LEVEL_CODE" property="levelCode" jdbcType="VARCHAR" />
+    <result column="GOODS_PICTURE" property="goodsPicture" jdbcType="VARCHAR" />
+    <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
+    <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
+    <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
+    <result column="PARTAKE_TIMESE" property="partakeTimes" jdbcType="TINYINT" />
+    <result column="GOODS_NUM" property="goodsNum" jdbcType="TINYINT" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
+	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
+	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+    <sql id="pagination_tail">
+	 	limit #{page.pageOffset} , #{page.rows}
+	</sql>
+  
+     <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" 
+     				parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
+	    select pbi.bargain_id bargainId ,
+	    	   pbi.promotion_id promotionId,
+	    	   pbi.level_code levelCode,
+	    	   pbi.goods_picture goodsPicture,
+	    	   pbi.goods_name goodsName,
+	    	   pbi.goods_cost_price goodsCostPrice,
+	    	   pbi.goods_floor_price goodsFloorPrice,
+	    	   pbi.goods_num goodsNum,
+	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
+	    	   ps.promotion_slogan promotionDesc,
+	    	   pei.contact_name contactNameD,
+	    	   pei.contact_telephone contactTelphoneD,
+	    	   pei.contact_address contactAddressD,
+	    	   pei.each_start_time eachStartTimeD,
+	    	   pei.each_end_time eachEndTimeD,
+	    	   pei.offline_start_time offlineStartTimeD,
+	    	   pei.offline_end_time offlineEndTimeD,
+	    	   plb.launch_time launchTime,
+	    	   plb.bargain_over_time bargainOverTime,
+	    	   plb.is_bargain_over isBargainOver,
+	    	   plb.goods_current_price goodsCurrentPrice,
+	    	   pi.promotion_provider_seller_code sellerNameD,
+	     	   pi.effective_time effectiveTime,
+			   pi.invalid_time invalidTime
+	    from promotion_bargain_info pbi
+	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
+	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
+		left join promotion_info pi on pi.promotion_id = pbi.promotion_id
+	    left join buyer_launch_bargain_info plb on (plb.promotion_id = pbi.promotion_id and plb.level_code = pbi.level_code)
+	    where pbi.promotion_id = #{promotionId} 
+	    and pbi.level_code = #{levelCode}
+	    <if test="buyerCode != null and buyerCode != ''">
+			and plb.buyer_code = #{buyerCode}
+		</if>
+    </select>
+    
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into promotion_bargain_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			promotion_id,
+			level_code,
+			goods_picture,
+			goods_name,
+			goods_cost_price,
+			goods_floor_price,
+			partake_times,
+			goods_num,
+			create_id,
+			create_name,
+			create_time,
+			modify_id,
+			modify_name,
+			modify_time,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{promotionId,jdbcType=VARCHAR},
+			#{levelCode,jdbcType=VARCHAR},
+			#{goodsPicture,jdbcType=VARCHAR}, 
+			#{goodsName,jdbcType=VARCHAR}, 
+			#{goodsCostPrice,jdbcType=VARCHAR}, 
+			#{goodsFloorPrice,jdbcType=VARCHAR}, 
+			#{partakeTimes,jdbcType=VARCHAR}, 
+			#{goodsNum,jdbcType=VARCHAR}, 
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+			#{createId,jdbcType=BIGINT},
+			#{createName,jdbcType=VARCHAR},
+			now(),
+		</trim>
+	</insert>
+	<update id="update">
+		update promotion_accumulaty
+		<set>
+			<if test="addupType != null and addupType != ''">
+				addup_type = #{addupType,jdbcType=VARCHAR},
+			</if>
+			<if test="levelAmount != null and levelAmount != ''">
+				level_amount = #{levelAmount,jdbcType=VARCHAR},
+			</if>
+			<if test="quantifierType != null and quantifierType != ''">
+				quantifier_type = #{quantifierType,jdbcType=VARCHAR},
+			</if>
+			modify_id = #{modifyId,jdbcType=BIGINT},
+			modify_name = #{modifyName,jdbcType=VARCHAR},
+			modify_time = now(),
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+		  and level_code = #{levelCode,jdbcType=VARCHAR}
+	</update>
+	<update id="delete" >
+		update promotion_accumulaty
+		<set>
+			delete_flag = 1,
+			modify_id = #{modifyId,jdbcType=BIGINT},
+			modify_name = #{modifyName,jdbcType=VARCHAR},
+			modify_time = now(),
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR}
+		  and level_code = #{levelCode,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="queryPromotionBargainStockSum" resultType="java.lang.Integer">
+		SELECT SUM(goods_num) 
+		FROM promotion_bargain_info
+		WHERE promotion_id = #{promotionId}
+	</select>
+	
+	<select id="queryPromotionBargainBySellerCode" resultMap="BaseResultMap">
+		SELECT * FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_provider_seller_code = #{sellerCode}
+  	    AND pi.status != 9
+  	    <if test="page!=null">
+	      <include refid="pagination_tail"/>
+	    </if>
+	</select>
+	
+	<select id="queryPromotionBargainCountBySellerCode" resultType="java.lang.Long">
+		SELECT COUNT(0) FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_provider_seller_code = #{sellerCode}
+  	    AND pi.status != 9
+	</select>
+	
+	<select id="queryPromotionBargainInfo" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO">
+		SELECT * FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pi.promotion_id = pbi.promotion_id
+		WHERE pi.status != 9
+		<if test="promotionId != null and promotionId != ''">
+			AND pbi.promotion_id = #{promotionId}
+		</if>
+		<if test="sellerCode != null and sellerCode != ''">
+			AND pi.promotion_provider_seller_code = #{sellerCode}
+		</if>
+		<if test="levelCode != null and levelCode != ''">
+			AND pbi.level_code = #{levelCode}
+		</if>
+	</select>
+</mapper>

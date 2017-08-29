@@ -44,5 +44,9 @@
     
     <!-- 商品下行异常通知 -->
 	<bean id="itemDownErpWarnTask" class="cn.htd.goodscenter.service.task.ItemDownErpWarnTask"></bean>
+
+    <bean id="preSaleProductQueryTask" class="cn.htd.goodscenter.service.task.PreSaleProductQueryTask"/>
+
+    <bean id="preSaleProductPushTask" class="cn.htd.goodscenter.service.task.PreSaleProductPushTask"/>
     
 </beans>

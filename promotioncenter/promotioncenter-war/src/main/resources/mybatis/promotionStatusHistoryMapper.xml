@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId" />
+    <result column="promotion_status" jdbcType="VARCHAR" property="promotionStatus" />
+    <result column="promotion_status_text" jdbcType="VARCHAR" property="promotionStatusText" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,
+	promotion_id,
+	promotion_status,
+	promotion_status_text,
+	create_id,
+	create_name,
+	create_time
+  </sql>
+  <select id="queryByPromotionId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_status_history
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into promotion_status_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+	    promotion_id,
+		promotion_status,
+		promotion_status_text,
+		create_id,
+		create_name,
+		create_time,
+	</trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    	#{promotionId,jdbcType=VARCHAR},
+    	#{promotionStatus,jdbcType=VARCHAR},
+      	#{promotionStatusText,jdbcType=VARCHAR},
+    	#{createId},
+    	#{createName},
+    	now(),
+  	</trim>
+  </insert>
+</mapper>

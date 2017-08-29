@@ -97,6 +97,8 @@ public class VenusItemSkuPublishInDTO implements Serializable{
 	private Date modifyTime;
 	@NotEmpty(message="supplierCode不能为空")
 	private String supplierCode;
+	//1 是预售
+	private Integer preSaleFlag;
 
 	public Long getSkuId() {
 		return skuId;
@@ -331,5 +333,12 @@ public class VenusItemSkuPublishInDTO implements Serializable{
 	public void setSupplierCode(String supplierCode) {
 		this.supplierCode = supplierCode;
 	}
-	
+
+	public Integer getPreSaleFlag() {
+		return preSaleFlag;
+	}
+
+	public void setPreSaleFlag(Integer preSaleFlag) {
+		this.preSaleFlag = preSaleFlag;
+	}
 }

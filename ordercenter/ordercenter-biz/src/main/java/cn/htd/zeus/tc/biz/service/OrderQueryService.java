@@ -9,7 +9,6 @@ import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
 import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
-import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsOutDTO;
 import cn.htd.zeus.tc.dto.response.ChargeConditionInfoDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
 import cn.htd.zeus.tc.dto.response.OrdersQueryParamListResDTO;
@@ -52,6 +51,13 @@ public interface OrderQueryService {
 	public OrderQueryPageSizeResDTO selectOrderCountByBuyerId(
 			OrderQueryParamReqDTO orderQueryParamReqDTO);
 
+	/**
+	 * 查询预售待支付订单数量 @Title: selectOrderCountByBuyerId @param
+	 * orderQueryParamReqDTO @return OrderQueryPageSizeResDTO @throws
+	 */
+	public OrderQueryPageSizeResDTO queryPresaleOrderCountByBuyerId(
+			OrderQueryParamReqDTO orderQueryParamReqDTO);
+
 	public OrderQueryListDMO selectSupperBossOrderByTradeOrdersParam(
 			OrderQueryParamReqDTO orderQueryParamReqDTO);
 
@@ -89,13 +95,15 @@ public interface OrderQueryService {
 	 * @return
 	 */
 	OrderQueryListDMO queryListOrderByCondition(OrderQuerySupprMangerReqDTO recoed);
-	
+
 	/**
 	 * 查询最近三个月订单--提供给超级经理人
+	 * 
 	 * @param recoed
 	 * @return
 	 */
-	public OrderQueryListDMO queryListOrderByCondition4SuperManager(OrderQuerySupprMangerReqDTO recoed);
+	public OrderQueryListDMO queryListOrderByCondition4SuperManager(
+			OrderQuerySupprMangerReqDTO recoed);
 
 	/*
 	 * 查询vip订单
@@ -110,12 +118,15 @@ public interface OrderQueryService {
 	/**
 	 * 查询小B最近有购买记录的大B的code，排除没有经营关系的大B
 	 */
-	public String querySellerCodeWithPurchaseRecordsByBuyerCode(OrderQueryPurchaseRecordInDTO orderQueryPurchaseRecordInDTO);
+	public String querySellerCodeWithPurchaseRecordsByBuyerCode(
+			OrderQueryPurchaseRecordInDTO orderQueryPurchaseRecordInDTO);
 
 	/**
 	 * 查询小B最近的购买记录
+	 * 
 	 * @param orderRecentQueryPurchaseRecordsInDTO
 	 * @return
 	 */
-	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO);
+	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(
+			OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO);
 }

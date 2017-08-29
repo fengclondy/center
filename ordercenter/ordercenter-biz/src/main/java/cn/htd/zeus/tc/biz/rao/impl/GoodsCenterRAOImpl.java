@@ -14,6 +14,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.goodscenter.dto.indto.JudgeRecevieAddressInDTO;
+import cn.htd.goodscenter.dto.mall.MallSkuInDTO;
+import cn.htd.goodscenter.dto.mall.MallSkuOutDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockInDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockOutDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
@@ -463,6 +465,35 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error("MessageId:{} 调用方法GoodsCenterRAOImpl.queryVipItemList出现异常{}", messageId,
+					w.toString());
+			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return other;
+	}
+
+	@Override
+	public OtherCenterResDTO<List<MallSkuOutDTO>> queryCartItemList(
+			List<MallSkuInDTO> mallSkuInDTOList, String messageId) {
+		OtherCenterResDTO<List<MallSkuOutDTO>> other = new OtherCenterResDTO<List<MallSkuOutDTO>>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{}调用商品中心--根据skucode查询商品集合信息--组装查询参数开始:{}", messageId,
+					JSONObject.toJSONString(mallSkuInDTOList));
+			ExecuteResult<List<MallSkuOutDTO>> mallSkuOutExuList = mallItemExportService
+					.queryCartItemList(mallSkuInDTOList);
+			LOGGER.info("MessageId:{} 商品中心--根据skucode查询商品集合信息--返回结果:{}", messageId,
+					JSONObject.toJSONString(mallSkuOutExuList));
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{} 商品中心--根据skucode查询商品集合信息 耗时:{}", messageId,
+					endTime - startTime);
+			other.setOtherCenterResult(mallSkuOutExuList.getResult());
+			other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			other.setOtherCenterResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法GoodsCenterRAOImpl.queryCartItemList出现异常{}", messageId,
 					w.toString());
 			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());

@@ -1,6 +1,5 @@
 package cn.htd.promotion.cpc.dto.response;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -11,9 +10,8 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * 促销活动DTO
  */
-public class PromotionInfoDTO implements Serializable {
+public class PromotionInfoDTO extends GenricResDTO {
 
-    private static final long serialVersionUID = -1587859622731343639L;
     /**
      * 促销活动ID
      */
@@ -41,6 +39,11 @@ public class PromotionInfoDTO implements Serializable {
      * 促销活动发起方商家编码
      */
     private String promotionProviderSellerCode;
+
+    /**
+     * 促销活动商家名称
+     */
+    private String sellerName;
     /**
      * 促销活动发起方商家店铺ID
      */
@@ -52,7 +55,6 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 成本分摊类型
      */
-    @NotBlank(message = "成本分摊类型不能为空")
     private String costAllocationType;
     /**
      * 促销活动类型
@@ -74,13 +76,14 @@ public class PromotionInfoDTO implements Serializable {
      */
     private int isVip;
     /**
-     * 促销活动展示状态
-     */
-    private String showStatus;
-    /**
-     * 促销活动状态
+     * 促销活动状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
      */
     private String status;
+
+    /**
+     * 促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+     */
+    private String showStatus;
     /**
      * 审核人ID
      */
@@ -104,12 +107,10 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 创建人ID
      */
-    @NotNull(message = "创建人ID不能为空")
     private Long createId;
     /**
      * 创建人名称
      */
-    @NotNull(message = "创建人名称不能为空")
     private String createName;
     /**
      * 创建时间
@@ -154,7 +155,7 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 活动层级列表
      */
-    private List<PromotionAccumulatyDTO> promotionAccumulatyList;
+    private List<? extends PromotionAccumulatyDTO> promotionAccumulatyList;
     /**
      * 促销活动状态履历
      */
@@ -183,6 +184,39 @@ public class PromotionInfoDTO implements Serializable {
     private String effectiveTimeStr;
 
     private String invalidTimeStr;
+
+    /**
+     * 中奖总数量
+     */
+    private String winningNum;
+    /**
+     * 今日中奖总数量
+     */
+    private String winningTodayNum;
+    /**
+     * 处理标记
+     */
+    private Integer dealFlag;
+    /**
+     * 是否清除redis
+     */
+    private Integer hasRedisClean;
+
+    public Integer getDealFlag() {
+        return dealFlag;
+    }
+
+    public void setDealFlag(Integer dealFlag) {
+        this.dealFlag = dealFlag;
+    }
+
+    public Integer getHasRedisClean() {
+        return hasRedisClean;
+    }
+
+    public void setHasRedisClean(Integer hasRedisClean) {
+        this.hasRedisClean = hasRedisClean;
+    }
 
     public String getEffectiveTimeStr() {
         return effectiveTimeStr;
@@ -262,6 +296,14 @@ public class PromotionInfoDTO implements Serializable {
 
     public void setPromotionProviderSellerCode(String promotionProviderSellerCode) {
         this.promotionProviderSellerCode = promotionProviderSellerCode;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
     }
 
     public Long getPromotionProviderShopId() {
@@ -472,11 +514,12 @@ public class PromotionInfoDTO implements Serializable {
         this.categoryItemRuleDesc = categoryItemRuleDesc;
     }
 
-    public List<PromotionAccumulatyDTO> getPromotionAccumulatyList() {
+    public List<? extends PromotionAccumulatyDTO> getPromotionAccumulatyList() {
         return promotionAccumulatyList;
     }
 
-    public void setPromotionAccumulatyList(List<PromotionAccumulatyDTO> promotionAccumulatyList) {
+    public void setPromotionAccumulatyList(
+            List<? extends PromotionAccumulatyDTO> promotionAccumulatyList) {
         this.promotionAccumulatyList = promotionAccumulatyList;
     }
 
@@ -512,7 +555,24 @@ public class PromotionInfoDTO implements Serializable {
         this.verifyStatusList = verifyStatusList;
     }
 
+    public String getWinningNum() {
+        return winningNum;
+    }
+
+    public void setWinningNum(String winningNum) {
+        this.winningNum = winningNum;
+    }
+
+    public String getWinningTodayNum() {
+        return winningTodayNum;
+    }
+
+    public void setWinningTodayNum(String winningTodayNum) {
+        this.winningTodayNum = winningTodayNum;
+    }
+
     public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
+        super.setMessageId(promotionInfoDTO.getMessageId());
         this.id = promotionInfoDTO.getId();
         this.promotionId = promotionInfoDTO.getPromotionId();
         this.promotionName = promotionInfoDTO.getPromotionName();
@@ -546,5 +606,7 @@ public class PromotionInfoDTO implements Serializable {
         this.categoryItemRuleDesc = promotionInfoDTO.getCategoryItemRuleDesc();
         this.promotionAccumulatyList = promotionInfoDTO.getPromotionAccumulatyList();
         this.promotionStatusHistoryList = promotionInfoDTO.getPromotionStatusHistoryList();
+        this.dealFlag = promotionInfoDTO.getDealFlag();
+        this.hasRedisClean = promotionInfoDTO.getHasRedisClean();
     }
 }

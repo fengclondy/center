@@ -92,7 +92,7 @@ public class ItemDTO implements Serializable {
 								// 7： 申请解锁
 
 	private BigDecimal freightAmount;//运费金额
-	private boolean isPreSale;//是否预售
+	private Integer isPreSale;//是否预售
 	private Date preSaleStarttime;//预售开始时间
 	private Date preSaleEndtime;//预售结束时间
 	private String erpStatus; //商品下行erp状态 1 待下行 2 下行中 3 下行失败 4已下行
@@ -627,12 +627,12 @@ public class ItemDTO implements Serializable {
 		this.freightAmount = freightAmount;
 	}
 
-	public boolean isPreSale() {
+	public Integer getIsPreSale() {
 		return isPreSale;
 	}
 
-	public void setPreSale(boolean preSale) {
-		isPreSale = preSale;
+	public void setIsPreSale(Integer isPreSale) {
+		this.isPreSale = isPreSale;
 	}
 
 	public Date getPreSaleStarttime() {

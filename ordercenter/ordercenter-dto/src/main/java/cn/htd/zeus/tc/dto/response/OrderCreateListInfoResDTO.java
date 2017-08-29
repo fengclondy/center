@@ -24,6 +24,9 @@ public class OrderCreateListInfoResDTO  extends GenricResDTO implements Serializ
 	//卖家编号
 	private String sellerUserId;
 	
+	//卖家id
+    private String sellerId;
+	
 	//交易金额
 	private BigDecimal amount;
 	
@@ -142,6 +145,14 @@ public class OrderCreateListInfoResDTO  extends GenricResDTO implements Serializ
 
 	public void setPayTimeLimit(Date payTimeLimit) {
 		this.payTimeLimit = payTimeLimit;
+	}
+
+	public String getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(String sellerId) {
+		this.sellerId = sellerId;
 	}
 	
 }

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO" >
+   <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="BARGAIN_CODE" property="bargainCode" jdbcType="VARCHAR" />
+    <result column="HEAD_SCULPTURE_URL" property="headSculptureUrl" jdbcType="VARCHAR" />
+    <result column="BARGAIN_PRESON_CODE" property="bargainPersonCode" jdbcType="VARCHAR" />
+    <result column="BARGAIN_PRESON_NAME" property="bargainPresonName" jdbcType="VARCHAR" />
+    <result column="BARGAIN_AMOUNT" property="bargainAmount" jdbcType="DECIMAL" />
+    <result column="BARGAIN_TIME" property="bargainTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
+	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
+	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+    <select id="getBuyerBargainRecordByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    	select * from buyer_bargain_record
+    	where bargain_code = #{bargainCode}
+	</select>
+	
+	<select id="getThisPersonIsBargain" resultMap="BaseResultMap"  parameterType="map">
+    	select * from buyer_bargain_record
+    	where bargain_code = #{bargainCode} and bargain_preson_code = #{bargainPersonCode}
+	</select>
+	
+	
+	<insert id="insertBuyerBargainRecord" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO">
+		insert into buyer_bargain_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="bargainCode != null">
+				bargain_code,
+			</if>
+			<if test="headSculptureUrl != null">
+				head_sculpture_url,
+			</if>
+			<if test="bargainPersonCode != null">
+				bargain_preson_code,
+			</if>
+			<if test="bargainPresonName != null">
+				bargain_preson_name,
+			</if>
+			<if test="bargainAmount != null">
+				bargain_amount,
+			</if>
+			<if test="bargainTime != null">
+				bargain_time,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createName != null">
+				create_name,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="bargainCode != null">
+				#{bargainCode,jdbcType=VARCHAR},
+			</if>
+			<if test="headSculptureUrl != null">
+				#{headSculptureUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="bargainPersonCode != null">
+				#{bargainPersonCode,jdbcType=VARCHAR},
+			</if>
+			<if test="bargainPresonName != null">
+				#{bargainPresonName,jdbcType=VARCHAR},
+			</if>
+			<if test="bargainAmount != null">
+				#{bargainAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="bargainTime != null">
+				#{bargainTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=BIGINT},
+			</if>
+			<if test="createName != null">
+				#{createName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="queryPromotionBargainJoinQTY" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM buyer_bargain_record 
+		WHERE bargain_code in (SELECT bargain_code FROM buyer_launch_bargain_info 
+		WHERE promotion_id = #{promotionId})
+	</select>
+	
+	<select id="queryPromotionBargainJoinTypeQTY" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM (SELECT bbr.* from buyer_bargain_record as bbr
+		INNER JOIN buyer_launch_bargain_info as blbi on bbr.bargain_code = blbi.bargain_code
+		WHERE blbi.promotion_id = #{promotionId}
+		GROUP BY bbr.bargain_code) t
+	</select>
+	
+</mapper>

@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context.xsd
-    http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	 <bean id="app" class="cn.htd.promotion.cpc.common.util.ApplicationUtil">
-	 </bean>
+  <bean id="app" class="cn.htd.promotion.cpc.common.util.ApplicationUtil">
+  </bean>
 
-	 <bean id="orderMethodInterceptor" class="cn.htd.promotion.cpc.interceptor.LogMethodInterceptor"></bean>
-	 <aop:config proxy-target-class="true">
-	 	<aop:pointcut  id="apiAopPointcut"
-	 	expression="execution(* cn.htd.promotion.cpc.api..*.*(..)) || execution(* cn.htd.promotion.cpc.web..*.*(..))
-	 	 || execution(* cn.htd.promotion.cpc.biz.service..*.*(..)) || execution(* cn.htd.promotion.cpc.biz.listenter..*.*(..))
-	 	 || execution(* cn.htd.promotion.cpc.biz.rao.impl..*.*(..))  " />
-	 	<aop:advisor pointcut-ref="apiAopPointcut" advice-ref="orderMethodInterceptor" />
-	 </aop:config>
-
+  <bean id="methodAccessLogInterceptor" class="cn.htd.common.interceptor.MethodAccessLogInterceptor"></bean>
+  <aop:config proxy-target-class="true">
+    <aop:pointcut id="apiAopPointcut" expression="execution(* cn.htd.promotion.cpc.api..*.*(..))
+        || execution(* cn.htd.promotion.cpc.biz.service..*.*(..))
+        || execution(* cn.htd.promotion.cpc.biz.rao..*.*(..))
+        || execution(* cn.htd.promotion.cpc.biz.task..*.*(..)) "/>
+    <aop:advisor pointcut-ref="apiAopPointcut" advice-ref="methodAccessLogInterceptor"/>
+  </aop:config>
 </beans>

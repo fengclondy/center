@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+  <!-- jedis pool配置 -->
+  <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+    <property name="maxTotal" value="${promotion.redis.maxTotal}"/>
+    <property name="maxIdle" value="${promotion.redis.maxIdle}"/>
+    <property name="maxWaitMillis" value="${promotion.redis.maxWaitMillis}"/>
+    <property name="testOnBorrow" value="${promotion.redis.testOnBorrow}"/>
+  </bean>
+
+  <!-- spring data redis -->
+  <bean id="jedisConnectionFactory"
+        class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+    <property name="usePool" value="true"></property>
+    <property name="hostName" value="${promotion.redis.host}"/>
+    <property name="port" value="${promotion.redis.port}"/>
+    <property name="timeout" value="${promotion.redis.timeout}"/>
+    <property name="database" value="${promotion.redis.default.db}"></property>
+    <constructor-arg index="0" ref="jedisPoolConfig"/>
+  </bean>
+
+  <!-- Redis Template -->
+  <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+    <property name="connectionFactory" ref="jedisConnectionFactory"/>
+  </bean>
+  
+  
+
+</beans>

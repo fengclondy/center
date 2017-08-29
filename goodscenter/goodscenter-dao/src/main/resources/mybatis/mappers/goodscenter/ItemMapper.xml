@@ -2495,4 +2495,9 @@
 		where sku.sku_code=#{skuCode}
 		limit 1
 	</select>
+
+	<update id="updateItemModifiedByItemId" parameterType="Long">
+		update item set modified = now()
+		where item_id = #{itemId}
+	</update>
 </mapper>

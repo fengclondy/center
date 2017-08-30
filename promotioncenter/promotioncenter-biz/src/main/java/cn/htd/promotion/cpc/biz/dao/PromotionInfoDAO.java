@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -119,5 +120,7 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
 	 * @param promotionProviderSellerCode
 	 * @return
 	 */
-	public Integer queryUpPromotionBargainCount(@Param("sellerCode") String promotionProviderSellerCode);
+	public Integer queryUpPromotionBargainCount(@Param("sellerCode") String promotionProviderSellerCode,
+												@Param("effectiveTime") Date effectiveTime,
+												@Param("invalidTime") Date invalidTime);
 }

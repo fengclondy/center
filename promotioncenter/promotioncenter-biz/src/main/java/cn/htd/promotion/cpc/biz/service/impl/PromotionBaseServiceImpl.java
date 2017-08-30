@@ -156,7 +156,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             }
         }
         //判断时间段内可有活动上架
-        Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfo.getPromotionProviderSellerCode());
+        Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfo.getPromotionProviderSellerCode(),
+        		promotionInfo.getEffectiveTime(),promotionInfo.getInvalidTime());
         if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
         	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
         }

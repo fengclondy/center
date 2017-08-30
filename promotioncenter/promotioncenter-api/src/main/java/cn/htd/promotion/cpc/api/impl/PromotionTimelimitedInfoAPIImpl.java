@@ -81,7 +81,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 * @return
 	 */
 	@Override
-	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedBySellerCode(String messageId,
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId,
 			String buyerCode,String promotionId) {
 	      ExecuteResult<TimelimitedInfoResDTO> result =
 	                new ExecuteResult<TimelimitedInfoResDTO>();
@@ -129,17 +129,17 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	/**
 	 * 汇掌柜APP - 查询秒杀活动列表
 	 * 
+	 *  粉丝 未登录 默认取汇通达O2O旗舰店的秒杀商品；已登录则取归属会员店的秒杀商品(根据buyerCode)
 	 * @param messageId
 	 * @param page
 	 * @return
 	 */
 	@Override
-	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,
-			Pager<TimelimitedInfoResDTO> page) {
+	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,String buyerCode,Pager<TimelimitedInfoResDTO> page) {
         ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> result = new ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>>();
         DataGrid<PromotionTimelimitedShowDTO> datagrid = null;
         try {
-            datagrid = promotionTimelimitedRedisHandle.getRedisTimelimitedInfoList("", page);
+            datagrid = promotionTimelimitedRedisHandle.getRedisTimelimitedInfoList(buyerCode, page);
             result.setResult(datagrid);
         } catch (PromotionCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());

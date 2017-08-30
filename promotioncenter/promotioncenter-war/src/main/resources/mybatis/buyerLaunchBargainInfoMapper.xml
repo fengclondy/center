@@ -50,6 +50,9 @@
 		FROM buyer_launch_bargain_info
 		WHERE promotion_id = #{bargainDTO.promotionId}
 		AND level_code = #{bargainDTO.levelCode}
+		<if test="bargainDTO.buyerCode != null and bargainDTO.buyerCode != ''">
+			AND buyer_code = #{bargainDTO.buyerCode}
+		</if>
 		<if test="bargainDTO.isBargainOver != null and bargainDTO.isBargainOver != ''">
 			AND is_bargain_over = 1
 		</if>

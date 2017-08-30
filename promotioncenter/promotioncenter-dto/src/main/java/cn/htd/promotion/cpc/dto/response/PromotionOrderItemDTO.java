@@ -34,7 +34,7 @@ public class PromotionOrderItemDTO implements Serializable {
 	@NotEmpty(message = "买家编号不能为空")
 	private String buyerCode;
 	/**
-	 * 促销活动类型 1：优惠券，2:秒杀
+	 * 促销活动类型 1：优惠券，2:秒杀 21：扭蛋机，22：砍价，23：总部秒杀
 	 */
 	@NotEmpty(message = "促销活动类型不能为空")
 	private String promotionType;

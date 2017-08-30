@@ -2,7 +2,6 @@ package cn.htd.promotion.cpc.api;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
-
 import java.util.List;
 
 /**
@@ -11,13 +10,13 @@ import java.util.List;
  */
 public interface PromotionInterestChangeAPI {
 	/**
-	 * 秒杀 - 锁定秒杀 （创建订单）
+	 * 秒杀 - 锁定 （创建订单）
 	 * 
 	 * @param messageId
 	 * @param orderItemPromotionList
 	 * @return
 	 */
-	public ExecuteResult<String> reserveBuyerPromotion(String messageId,
+	public ExecuteResult<String> reservePromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList);
 
 	/**
@@ -27,7 +26,7 @@ public interface PromotionInterestChangeAPI {
 	 * @param orderItemPromotionList
 	 * @return
 	 */
-	public ExecuteResult<String> reduceBuyerPromotion(String messageId,
+	public ExecuteResult<String> reducePromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList);
 
 	/**
@@ -37,8 +36,7 @@ public interface PromotionInterestChangeAPI {
 	 * @param orderItemPromotionList
 	 * @return
 	 */
-
-	public ExecuteResult<String> releaseBuyerPromotion(String messageId,
+	public ExecuteResult<String> releasePromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList);
 
 	/**
@@ -48,6 +46,6 @@ public interface PromotionInterestChangeAPI {
 	 * @param orderItemPromotionList
 	 * @return
 	 */
-	public ExecuteResult<String> rollbackBuyerPromotion(String messageId,
+	public ExecuteResult<String> rollbackPromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList);
 }

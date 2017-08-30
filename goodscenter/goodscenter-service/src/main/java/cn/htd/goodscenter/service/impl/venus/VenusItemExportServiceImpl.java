@@ -1758,7 +1758,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 						itemSkuPublishInfo.setModifyName(venusItemSetShelfStatusInDTO.getOperatorName());
 						itemSkuPublishInfo.setModifyTime(new Date());
 						//入库
-						itemSkuPublishInfoMapper.insert(itemSkuPublishInfo);
+						itemSkuPublishInfoMapper.insertSelective(itemSkuPublishInfo);
 					}else{
 						//如果已经是上架状态，则不处理
 						if(itemSkuPublishInfo.getIsVisable()==1){

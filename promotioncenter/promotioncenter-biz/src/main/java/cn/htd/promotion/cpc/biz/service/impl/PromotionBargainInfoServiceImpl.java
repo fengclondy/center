@@ -255,6 +255,7 @@ public class PromotionBargainInfoServiceImpl implements
 	 @Override
 	    public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList)
 	    	throws PromotionCenterBusinessException {
+		 LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.updateBargainInfo（）方法开始,入参{}", JSON.toJSONString(bargainInfoList));
 	        ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
 	        PromotionAccumulatyDTO accuDTO = null;
 	        PromotionInfoDTO promotionInfoDTO = null;
@@ -316,9 +317,7 @@ public class PromotionBargainInfoServiceImpl implements
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());
 	            historyDTO.setPromotionStatusText("修改砍价活动信息");
-	            historyDTO.setCreateId(accuDTO.getCreateId());
-	            historyDTO.setCreateName(accuDTO.getCreateName());
-	            promotionStatusHistoryDAO.add(historyDTO);
+	            promotionStatusHistoryDAO.update(historyDTO);
 	            historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
 	            accuDTO.setPromotionStatusHistoryList(historyList);
 	            promotionBargainRedisHandle.deleteRedisBargainInfo(promotionId);

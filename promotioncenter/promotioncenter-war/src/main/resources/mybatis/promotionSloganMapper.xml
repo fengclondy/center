@@ -18,6 +18,9 @@
     	AND pi.show_status = 3 
     	AND ps.delete_flag = 0
     	AND pi.promotion_provider_seller_code = #{providerSellerCode}
+    	AND now() between pi.effective_time and pi.invalid_time
+    	ORDER BY pi.effective_time
+        limit 0,1
 	</select>
 	
 	<select id="queryBargainSloganByPromotionId" resultType="cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO">
@@ -46,6 +49,12 @@
 			now(),
 		</trim>
 	</insert>
+	
+	<update id="update">
+		update promotion_slogan
+		set promotion_slogan = #{promotionSlogan}
+		where promotion_id = #{promotionId}
+	</update>
 	
 	<update id="delete" >
 		update promotion_slogan

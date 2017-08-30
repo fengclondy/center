@@ -71,23 +71,26 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
         ImportResultDTO importResult = new ImportResultDTO();
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
-        List<PromotionAwardReqDTO> promotionAwardReqDTO = new ArrayList<PromotionAwardReqDTO>();
+        List<PromotionAwardReqDTO> list = new ArrayList<PromotionAwardReqDTO>();
         int failCount = 0;
         int successCount = 0;
         try {
             for(PromotionAwardReqDTO dto : dtos){
-                if(StringUtils.isEmpty(""+dto.getId())){
+                if(!StringUtils.isEmpty(""+dto.getId())){
                     if(awardRecordService.updateLogisticsInfo(dto,messageId) > 0){
                         successCount ++;
                     }else{
                         failCount++;
+                        list.add(dto);
                     }
                 }else {
                     failCount++;
+                    list.add(dto);
                 }
             }
             importResult.setFailCount(failCount);
             importResult.setSuccessCount(successCount);
+            importResult.setPromotionAwardList(list);
             result.setResult(importResult);
         } catch (Exception e) {
             logger.error("\n 方法[{}]，异常：[{}]", "messageId : AwardRecordAPIImpl-importWinningRecord", messageId +" : "+ e.toString());

@@ -22,15 +22,13 @@ import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedResultDTO;
-
 import com.alibaba.fastjson.JSON;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-@Service("timelimitedRedisHandle")
+@Service("promotionTimelimitedRedisHandle")
 public class PromotionTimelimitedRedisHandle {
 
     protected static transient Logger logger = LoggerFactory.getLogger(PromotionTimelimitedRedisHandle.class);
@@ -41,9 +39,9 @@ public class PromotionTimelimitedRedisHandle {
     @Resource
     private PromotionRedisDB promotionRedisDB;
 
-
     /**
-     * 从Redis中查询对应skuCode的秒杀活动信息
+     * 秒杀 - 从Redis中查询对应skuCode的秒杀活动信息
+     * 
      * @param skuCodeList 商品编码集合
      * @return
      */
@@ -51,7 +49,7 @@ public class PromotionTimelimitedRedisHandle {
         List<String> promotionIdList = null;
         TimelimitedInfoResDTO timelimitedInfoDTO = null;
         List<TimelimitedInfoResDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoResDTO>();
-        promotionIdList = getRedisTimelimitedIndex(skuCodeList);
+        promotionIdList = getRedisTimelimitedIndex("",skuCodeList);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return timelimitedInfoList;
         }
@@ -76,14 +74,12 @@ public class PromotionTimelimitedRedisHandle {
         return timelimitedInfoList;
     }
     
-    
-    
     /**
-     * 根据商品SkuCode列表取得秒杀活动信息列表
-     *
+     * 秒杀 - 根据商品SkuCode列表取得秒杀活动信息列表
+     * 
      * @param skuCodeList
      */
-    public List<String> getRedisTimelimitedIndex(List<String> skuCodeList) {
+    public List<String> getRedisTimelimitedIndex(String isVip,List<String> skuCodeList) {
         List<String> promotionIdList = new ArrayList<String>();
         Map<String, String> indexMap = null;
         String key = "";
@@ -117,9 +113,9 @@ public class PromotionTimelimitedRedisHandle {
     }
 
     /**
-     * 取得Redis秒杀活动信息
-     *
-     * @param promotionId
+     * 秒杀 - 取得Redis秒杀活动信息
+     * 
+     * @param promotionId  促销活动编码
      */
     public TimelimitedInfoResDTO getRedisTimelimitedInfo(String promotionId) throws PromotionCenterBusinessException {
     	TimelimitedInfoResDTO timelimitedInfo = null;
@@ -144,14 +140,11 @@ public class PromotionTimelimitedRedisHandle {
         return timelimitedInfo;
     }
     
-    
-
     /**
-     * 查询Redis秒杀活动展示结果信息
+     * 秒杀 - 查询Redis秒杀活动展示结果信息
      *
      * @param promotionId
      * @return
-     * @throws MarketCenterBusinessException
      */
     public TimelimitedResultDTO getRedisTimelimitedResult(String promotionId) throws PromotionCenterBusinessException {
         Map<String, String> resultMap = null;
@@ -173,19 +166,15 @@ public class PromotionTimelimitedRedisHandle {
                 Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT)));
         return resultDTO;
     }
-    
-    
-    
 
     /**
-     * 从Redis中查询秒杀活动列表
+     * 秒杀 - 从Redis中查询秒杀活动列表
      *
-     * @param sellerCode
+     * @param isVip 会员vip 标志，暂时未用的，考虑后期扩展用
      * @param page
      * @return
      */
-    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String sellerCode,
-            Pager<TimelimitedInfoResDTO> page) {
+    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String isVip, Pager<TimelimitedInfoResDTO> page) {
         DataGrid<PromotionTimelimitedShowDTO> datagrid = new DataGrid<PromotionTimelimitedShowDTO>();
         //所有有效秒杀活动集合,用于返回前端
         List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
@@ -202,7 +191,7 @@ public class PromotionTimelimitedRedisHandle {
             offset = page.getPageOffset();
             rows = page.getRows();
         }
-        promotionIdList = getRedisTimelimitedIndex(null);
+        promotionIdList = getRedisTimelimitedIndex(isVip,null);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return datagrid;
         }
@@ -218,7 +207,7 @@ public class PromotionTimelimitedRedisHandle {
         }
         if (!timelimitedAllDTOList.isEmpty()) {
             total = timelimitedAllDTOList.size();
-            logger.info("************ mallAllDTO-Size: " + total + "************");
+            logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
             Collections.sort(timelimitedAllDTOList);
             while (total > count) {
                 if (count >= offset && timelimitedDTOList.size() < rows) {
@@ -236,14 +225,12 @@ public class PromotionTimelimitedRedisHandle {
 
     }
     
-    
-    /**
-     * 从Redis中取得非锁定时订单行秒杀log信息
-     *
-     * @param orderTimelimiteDTO
-     * @return
-     * @throws MarketCenterBusinessException
-     */
+	/**
+	 * 秒杀 -  从Redis中取得秒杀log信息
+	 * 
+	 * @param orderTimelimiteDTO
+	 * @return
+	 */
     public BuyerUseTimelimitedLogDMO getRedisReleaseBuyerTimelimitedUseLog(PromotionOrderItemDTO orderTimelimiteDTO)
             throws PromotionCenterBusinessException {
         String promotionId = orderTimelimiteDTO.getPromotionId();
@@ -270,13 +257,12 @@ public class PromotionTimelimitedRedisHandle {
         return useLog;
     }
     
-    
-
-    /**
-     * 从Redis中取得订单行秒杀log信息
-     * @param 
-     * @return
-     */
+	/**
+	 * 秒杀 - 从Redis中取得秒杀log信息
+	 * 
+	 * @param orderTimelimiteDTO
+	 * @return
+	 */
     private BuyerUseTimelimitedLogDMO getRedisBuyerTimelimitedUseLog(PromotionOrderItemDTO orderTimelimiteDTO)
             throws PromotionCenterBusinessException {
         String buyerCode = orderTimelimiteDTO.getBuyerCode();
@@ -289,14 +275,12 @@ public class PromotionTimelimitedRedisHandle {
         return useLog;
     }
     
-
-    /**
-     * 处理会员秒杀活动信息
-     *
-     * @param timelimitedList
-     * @param dealType
-     * @throws MarketCenterBusinessException
-     */
+	/**
+	 * 秒杀 - 根据状态（锁定、释放）处理会员秒杀
+	 *  @param dealType
+	 * @param orderTimelimiteDTO
+	 * @return
+	 */
     public void dealRedisBuyerTimelimitedList(List<PromotionOrderItemDTO> timelimitedList, String dealType)
             throws PromotionCenterBusinessException {
         List<PromotionOrderItemDTO> rollbackTimelimitedList = new ArrayList<PromotionOrderItemDTO>();
@@ -318,13 +302,11 @@ public class PromotionTimelimitedRedisHandle {
             throw bcbe;
         }
     }
-
     
     /**
      * 锁定会员参加秒杀活动商品数量
      *
      * @param buyerTimelimitedInfo
-     * @throws MarketCenterBusinessException
      */
     private void dealRedisReverseBuyerTimelimitedInfo(PromotionOrderItemDTO buyerTimelimitedInfo)
             throws PromotionCenterBusinessException {
@@ -404,13 +386,13 @@ public class PromotionTimelimitedRedisHandle {
         	promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT, buyerTimelimitedKey, "0");
         }
     }
-
     
-    /**
-     * 更新Redis中的秒杀活动参加记录并更新DB
-     *
-     * @param useLogList
-     */
+	/**
+	 * 秒杀 - 秒杀活动参加记录保存进Redis,并更新DB
+	 * 
+	 * @param useLogList
+	 * @return
+	 */
     public void updateRedisUseTimelimitedLog(List<BuyerUseTimelimitedLogDMO> useLogList) {
         String useLogRedisKey = "";
         if (useLogList == null || useLogList.isEmpty()) {
@@ -423,13 +405,10 @@ public class PromotionTimelimitedRedisHandle {
         }
     }
     
-    
     /**
-     * 从Redis中取得锁定时订单行秒杀log信息
+     * 秒杀 - 从Redis中取得锁定时订单行秒杀log信息
      *
      * @param orderTimelimiteDTO
-     * @return
-     * @throws MarketCenterBusinessException
      */
     public BuyerUseTimelimitedLogDMO getRedisReverseBuyerTimelimitedUseLog(PromotionOrderItemDTO orderTimelimiteDTO)
             throws PromotionCenterBusinessException {
@@ -492,12 +471,12 @@ public class PromotionTimelimitedRedisHandle {
         return useLog;
     }
     
-    
-    /**
-     * 更新未提交订单的Redis中的秒杀活动参加记录并更新DB
-     *
-     * @param useLogList
-     */
+	/**
+	 * 秒杀 - 清除未提交订单（预占订单）的Redis中的秒杀活动记录，并更新DB
+	 *
+	 * @param useLogList
+	 * @return
+	 */
     public void updateNoSubmitRedisUseTimelimitedLog(List<BuyerUseTimelimitedLogDMO> useLogList) {
         String useLogRedisKey = "";
         String useType = dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
@@ -513,14 +492,12 @@ public class PromotionTimelimitedRedisHandle {
         }
     }
 
-    
-
-    /**
-     * 取得没有提交的预占秒杀订单
-     *
-     * @param orderTimelimiteDTO
-     * @return
-     */
+	/**
+	 * 秒杀 - 立即抢购，生成预占订单，未提交生成正式订单
+	 * 
+	 * @param orderTimelimiteDTO
+	 * @return
+	 */
     public BuyerUseTimelimitedLogDMO getNoSubmitBuyerTimelimitedUseLog(PromotionOrderItemDTO orderTimelimiteDTO) {
         String seckillLockNo = orderTimelimiteDTO.getSeckillLockNo();
         String buyerCode = orderTimelimiteDTO.getBuyerCode();

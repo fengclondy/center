@@ -113,4 +113,11 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
 	 * @param dto
 	 */
 	public void upDownShelvesBargainInfo(@Param("dto") PromotionValidDTO dto);
+
+	/**
+	 * 查询时间段内是否有活动进行
+	 * @param promotionProviderSellerCode
+	 * @return
+	 */
+	public Integer queryUpPromotionBargainCount(@Param("sellerCode") String promotionProviderSellerCode);
 }

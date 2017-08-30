@@ -108,8 +108,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             accumulaty.setPromoionInfo(promotionInfo);
             promotionAccumulatyDAO.delete(accumulaty);
             slogan.setPromotionId(validDTO.getPromotionId());
-            slogan.setModifyId(validDTO.getOperatorId());
-            slogan.setModifyName(validDTO.getOperatorName());
             promotionSloganDAO.delete(slogan);
             promotionInfoDAO.updatePromotionStatusById(promotionInfo);
         } catch (PromotionCenterBusinessException mcbe) {
@@ -156,6 +154,11 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
             }
+        }
+        //判断时间段内可有活动上架
+        Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfo.getPromotionProviderSellerCode());
+        if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+        	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
         }
         setPromotionStatusInfo(promotionInfo);
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
@@ -291,13 +294,21 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         	slogan =  promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         	accumulatyDTO = promotionAccumulatyList.get(0);
         	bargainDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
-        	if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
-        			!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
-        		slogan.setPromotionId(bargainDTO.getPromotionId());
-                slogan.setModifyId(bargainDTO.getModifyId());
-                slogan.setModifyName(bargainDTO.getModifyName());
-                slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
-                promotionSloganDAO.update(slogan);
+        	if(null != slogan){ 
+        		if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
+        				!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
+        			slogan.setPromotionId(bargainDTO.getPromotionId());
+        			slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        			logger.info("slogan dataMessage:" + JSON.toJSONString(slogan));
+        			promotionSloganDAO.update(slogan);
+        		}
+        	}else{
+        		slogan = new PromotionSloganResDTO();
+        		slogan.setPromotionId(promotionId);
+        		slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        		slogan.setCreateId(promotionInfo.getModifyId());
+        		slogan.setCreateName(promotionInfo.getModifyName());
+        		promotionSloganDAO.add(slogan);
         	}
         	 extendDTO = (PromotionExtendInfoDTO)accumulatyDTO;
              promotionInfoExtendDAO.update(extendDTO);

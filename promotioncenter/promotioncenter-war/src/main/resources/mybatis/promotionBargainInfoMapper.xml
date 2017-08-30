@@ -42,6 +42,7 @@
 	    	   pei.each_end_time eachEndTimeD,
 	    	   pei.offline_start_time offlineStartTimeD,
 	    	   pei.offline_end_time offlineEndTimeD,
+	    	   pei.template_flag templateFlagD,
 	    	   plb.launch_time launchTime,
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,

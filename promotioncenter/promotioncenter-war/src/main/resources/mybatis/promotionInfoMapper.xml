@@ -143,10 +143,10 @@
         modify_promotion_id,
       </if>
       <if test="dealFlag != null">
-      	deal_flag = deal_flag,
+      	deal_flag,
       </if>
       <if test="hasRedisClean != null">
-      	has_redis_clean = hasRedisClean,
+      	has_redis_clean ,
       </if>
       create_id,
       create_name,
@@ -226,10 +226,18 @@
       <if test="isVip != null">
         is_vip = #{isVip,jdbcType=TINYINT},
       </if>
-      status = #{status,jdbcType=VARCHAR},
-      show_status = #{showStatus,jdbcType=VARCHAR},
-      deal_flag = #{dealFlag,jdbcType=TINYINT},
-      has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      <if test="status != null and status != ''">
+            status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null and showStatus != ''">
+            show_status = #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="dealFlag != null and dealFlag != ''">
+            deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasRedisClean != null and hasRedisClean != ''">
+            has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),
@@ -445,4 +453,13 @@
     modify_time = now()
   	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
+  
+  <select id="queryUpPromotionBargainCount" resultType="java.lang.Integer">
+  		SELECT COUNT(0)
+        FROM promotion_info
+        WHERE promotion_type = 22
+        AND show_status = 3 
+        AND promotion_provider_seller_code = #{sellerCode}
+        AND now() between effective_time and invalid_time
+  </select>
 </mapper>

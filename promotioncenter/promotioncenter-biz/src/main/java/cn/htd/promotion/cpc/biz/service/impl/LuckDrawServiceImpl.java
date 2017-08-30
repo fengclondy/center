@@ -51,7 +51,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseMsg(ResultCodeEnum.LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION
 					.getMsg());
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -74,7 +74,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -96,7 +96,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		}catch(Exception e){
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -117,7 +117,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			//更新粉丝抽奖次数成功
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -146,7 +146,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		}catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));

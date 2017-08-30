@@ -1,15 +1,13 @@
 package cn.htd.promotion.cpc.api.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.PromotionInterestChangeAPI;
+import cn.htd.promotion.cpc.api.handler.PromotionRedisHandle;
 import cn.htd.promotion.cpc.api.handler.PromotionTimelimitedHandle;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -20,6 +18,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import com.alibaba.fastjson.JSON;
 
 @Service("buyerInterestChangeService")
 public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAPI {
@@ -29,9 +28,18 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
     
     @Resource
     PromotionTimelimitedHandle promotionTimelimitedHandle;
-
-    private ExecuteResult<String> changeBuyerPromotion(String messageId,
-            List<PromotionOrderItemDTO> orderItemPromotionList) {
+    
+    @Resource
+    PromotionRedisHandle promotionRedisHandle;
+    
+	/**
+	 * 秒杀 - 参数合法性验证
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
+    private ExecuteResult<String> changePromotionTimelimited(String messageId,List<PromotionOrderItemDTO> orderItemPromotionList) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         List<PromotionOrderItemDTO> itemPromotionList = new ArrayList<PromotionOrderItemDTO>();
         String lockKey = "";
@@ -41,10 +49,8 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
         String buyerCode = "";
         String reverseStatus = dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                 DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE);
-        String couponType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                DictionaryConst.OPT_PROMOTION_TYPE_COUPON);
         String timelimitedType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+                DictionaryConst.OPT_PROMOTION_TYPE_HEAD_TIMELIMITED);
         if (orderItemPromotionList == null || orderItemPromotionList.isEmpty()) {
             return result;
         }
@@ -60,24 +66,8 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
                     throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
                             validateResult.getErrorMsg());
                 }
-                if (couponType.equals(promotionDTO.getPromotionType())) {
-                    if (BigDecimal.ZERO.compareTo(promotionDTO.getDiscountAmount()) >= 0) {
-                        continue;
-                    }
-                    if (StringUtils.isEmpty(promotionDTO.getOrderNo())) {
-                        throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
-                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的订单编号为空");
-                    }
-                    if (StringUtils.isEmpty(promotionDTO.getOrderItemNo())) {
-                        throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
-                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的子订单编号为空");
-                    }
-                    if (StringUtils.isEmpty(promotionDTO.getCouponCode())) {
-                        throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
-                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的会员优惠券编号为空");
-                    }
-                    lockKey = promotionDTO.getOrderItemNo();
-                } else if (timelimitedType.equals(promotionDTO.getPromotionType())) {
+                
+                if (timelimitedType.equals(promotionDTO.getPromotionType())) {
                     if (StringUtils.isEmpty(promotionDTO.getSeckillLockNo())
                             && StringUtils.isEmpty(promotionDTO.getOrderNo())) {
                         throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
@@ -93,7 +83,7 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
                 } else {
                     if (!oldPromotionType.equals(promotionDTO.getPromotionType())) {
                         throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
-                                "会员促销活动处理一次只能处理一种业务（优惠惠券或秒杀）");
+                                "会员促销活动处理一次只能处理一种业务（秒杀）");
                     }
                 }
                 buyerCode = promotionDTO.getBuyerCode();
@@ -104,14 +94,14 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
                     throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
                             "会员促销活动处理一次只能处理一个会员的业务");
                 }
-//                if (!promotionRedisHandle.lockRedisPromotionAction(messageId, lockKey)) {
-//                    throw new PromotionCenterBusinessException(PromotionCenterConst.LOCK_FAIL_ERROR,
-//                            "会员促销活动正在处理中不能重复处理 messageId:" + messageId + " 参数:" + JSON.toJSONString(promotionDTO));
-//                }
+                if (!promotionRedisHandle.lockRedisPromotionAction(messageId, lockKey)) {
+                   throw new PromotionCenterBusinessException(PromotionCenterConst.LOCK_FAIL_ERROR,
+                            "会员促销活动正在处理中不能重复处理 messageId:" + messageId + " 参数:" + JSON.toJSONString(promotionDTO));
+               }
                 itemPromotionList.add(promotionDTO);
                 lockKeyList.add(lockKey);
             }
-            saveBuyerPromotionChange(messageId, itemPromotionList);
+            savePromotionTimelimitedChange(messageId, itemPromotionList);
         } catch (PromotionCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());
             result.addErrorMessage(mcbe.getMessage());
@@ -121,72 +111,64 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
             result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } finally {
-           // promotionRedisHandle.unlockRedisPromotionAction(lockKeyList);
+            promotionRedisHandle.unlockRedisPromotionAction(lockKeyList);
         }
         return result;
     }
 
     /**
-     * 批量执行锁定、释放、扣减、回滚会员优惠券、秒杀活动
+     * 秒杀 - 执行 锁定、释放、扣减、回滚
      *
      * @param messageId
      * @param orderItemPromotionList
-     * @throws MarketCenterBusinessException
      * @throws Exception
      */
-    private void saveBuyerPromotionChange(String messageId, List<PromotionOrderItemDTO> orderItemPromotionList)
+    private void savePromotionTimelimitedChange(String messageId, List<PromotionOrderItemDTO> orderItemPromotionList)
             throws PromotionCenterBusinessException, Exception {
-      
-        String promotionType = "";
+    	
         String promotionChangeType = "";
-
         if (orderItemPromotionList != null && !orderItemPromotionList.isEmpty()) {
-            promotionType = orderItemPromotionList.get(0).getPromotionType();
             promotionChangeType = orderItemPromotionList.get(0).getPromoitionChangeType();
-            
             if (dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                     DictionaryConst.OPT_BUYER_PROMOTION_STATUS_ROLLBACK).equals(promotionChangeType)) {
-            	promotionTimelimitedHandle.rollbackBuyerPromotionDeal(messageId, orderItemPromotionList);
+            	promotionTimelimitedHandle.rollbackPromotionTimelimitedDeal(messageId, orderItemPromotionList);
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                     DictionaryConst.OPT_BUYER_PROMOTION_STATUS_RELEASE).equals(promotionChangeType)) {
-            	promotionTimelimitedHandle.releaseBuyerPromotionDeal(messageId, orderItemPromotionList);
+            	promotionTimelimitedHandle.releasePromotionTimelimitedDeal(messageId, orderItemPromotionList);
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                     DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REDUCE).equals(promotionChangeType)) {
-            	promotionTimelimitedHandle.reduceBuyerPromotionDeal(messageId, orderItemPromotionList);
+            	promotionTimelimitedHandle.reducePromotionTimelimitedDeal(messageId, orderItemPromotionList);
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                     DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE).equals(promotionChangeType)) {
-            	promotionTimelimitedHandle.reserveBuyerPromotionDeal(messageId, orderItemPromotionList);
+            	promotionTimelimitedHandle.reservePromotionTimelimitedDeal(messageId, orderItemPromotionList);
             }
         }
     }
     
+	/**
+	 * 秒杀 - 锁定 （创建订单）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
 	@Override
-	public ExecuteResult<String> reserveBuyerPromotion(String messageId,
+	public ExecuteResult<String> reservePromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         List<PromotionOrderItemDTO> targetPromotionList = new ArrayList<PromotionOrderItemDTO>();
         String status = dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                 DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE);
-        String couponType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                DictionaryConst.OPT_PROMOTION_TYPE_COUPON);
         String timelimitedType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+                DictionaryConst.OPT_PROMOTION_TYPE_HEAD_TIMELIMITED);
         if (orderItemPromotionList == null || orderItemPromotionList.isEmpty()) {
             return result;
         }
         for (PromotionOrderItemDTO promotionDTO : orderItemPromotionList) {
-            if (couponType.equals(promotionDTO.getPromotionType())) {
-                if (BigDecimal.ZERO.compareTo(promotionDTO.getDiscountAmount()) >= 0) {
-                    continue;
-                }
-                if (StringUtils.isEmpty(promotionDTO.getLevelCode())) {
-                    throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
-                            "促销活动ID:" + promotionDTO.getPromotionId() + " 的层级编码为空");
-                }
-            } else if (timelimitedType.equals(promotionDTO.getPromotionType())) {
+            if(timelimitedType.equals(promotionDTO.getPromotionType())) {
                 if (promotionDTO.getQuantity().intValue() < 1) {
                     throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
                             "促销活动ID:" + promotionDTO.getPromotionId() + " 的秒杀商品数量不能小于1");
@@ -195,12 +177,19 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
             promotionDTO.setPromoitionChangeType(status);
             targetPromotionList.add(promotionDTO);
         }
-        result = changeBuyerPromotion(messageId, targetPromotionList);
+        result = changePromotionTimelimited(messageId, targetPromotionList);
         return result;
 	}
 
+	/**
+	 * 秒杀 - 扣减 （支付完成）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
 	@Override
-	public ExecuteResult<String> reduceBuyerPromotion(String messageId,
+	public ExecuteResult<String> reducePromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         String status = "";
@@ -212,12 +201,19 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
         for (PromotionOrderItemDTO promotionDTO : orderItemPromotionList) {
             promotionDTO.setPromoitionChangeType(status);
         }
-        result = changeBuyerPromotion(messageId, orderItemPromotionList);
+        result = changePromotionTimelimited(messageId, orderItemPromotionList);
         return result;
 	}
 
+	/**
+	 * 秒杀 - 解锁 （取消未支付订单）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
 	@Override
-	public ExecuteResult<String> releaseBuyerPromotion(String messageId,
+	public ExecuteResult<String> releasePromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         String status = "";
@@ -229,12 +225,19 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
         for (PromotionOrderItemDTO promotionDTO : orderItemPromotionList) {
             promotionDTO.setPromoitionChangeType(status);
         }
-        result = changeBuyerPromotion(messageId, orderItemPromotionList);
+        result = changePromotionTimelimited(messageId, orderItemPromotionList);
         return result;
 	}
 
+	/**
+	 * 秒杀 - 回滚（取消已支付订单）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
 	@Override
-	public ExecuteResult<String> rollbackBuyerPromotion(String messageId,
+	public ExecuteResult<String> rollbackPromotionTimelimited(String messageId,
 			List<PromotionOrderItemDTO> orderItemPromotionList) {
 	     ExecuteResult<String> result = new ExecuteResult<String>();
 	        String status = "";
@@ -246,7 +249,7 @@ public class PromotionInterestChangeAPIImpl implements PromotionInterestChangeAP
 	        for (PromotionOrderItemDTO promotionDTO : orderItemPromotionList) {
 	            promotionDTO.setPromoitionChangeType(status);
 	        }
-	        result = changeBuyerPromotion(messageId, orderItemPromotionList);
+	        result = changePromotionTimelimited(messageId, orderItemPromotionList);
 	        return result;
 	}
 

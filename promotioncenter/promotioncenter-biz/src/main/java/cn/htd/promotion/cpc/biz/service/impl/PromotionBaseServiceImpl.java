@@ -155,6 +155,12 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
             }
         }
+        //判断时间段内可有活动上架
+        Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfo.getPromotionProviderSellerCode(),
+        		promotionInfo.getEffectiveTime(),promotionInfo.getInvalidTime());
+        if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+        	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
+        }
         setPromotionStatusInfo(promotionInfo);
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);
@@ -289,11 +295,21 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         	slogan =  promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         	accumulatyDTO = promotionAccumulatyList.get(0);
         	bargainDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
-        	if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
-        			!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
-        		slogan.setPromotionId(bargainDTO.getPromotionId());
-                slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
-                promotionSloganDAO.update(slogan);
+        	if(null != slogan){ 
+        		if(StringUtils.isNotEmpty(slogan.getPromotionSlogan()) && 
+        				!slogan.getPromotionSlogan().equals(bargainDTO.getPromotionSlogan())){
+        			slogan.setPromotionId(bargainDTO.getPromotionId());
+        			slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        			logger.info("slogan dataMessage:" + JSON.toJSONString(slogan));
+        			promotionSloganDAO.update(slogan);
+        		}
+        	}else{
+        		slogan = new PromotionSloganResDTO();
+        		slogan.setPromotionId(promotionId);
+        		slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
+        		slogan.setCreateId(promotionInfo.getModifyId());
+        		slogan.setCreateName(promotionInfo.getModifyName());
+        		promotionSloganDAO.add(slogan);
         	}
         	 extendDTO = (PromotionExtendInfoDTO)accumulatyDTO;
              promotionInfoExtendDAO.update(extendDTO);

@@ -136,7 +136,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		try{
 			BuyerWinningRecordDMO buyerWinningRecordDMO = new BuyerWinningRecordDMO();
 			buyerWinningRecordDMO.setBuyerCode(request.getMemberNo());
-			Integer startNo = request.getStartNo()==null?new Integer(1):request.getStartNo();
+			//页面传入的开始位置减一
+			Integer startNo = request.getStartNo()==null?new Integer(0):request.getStartNo()-1;
 			Integer endNo = request.getEndNo()==null?new Integer(10):request.getEndNo();
 			buyerWinningRecordDMO.setStartNo(startNo);
 			buyerWinningRecordDMO.setEndNo(endNo);

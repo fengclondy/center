@@ -76,7 +76,7 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
         int successCount = 0;
         try {
             for(PromotionAwardReqDTO dto : dtos){
-                if(StringUtils.isEmpty(""+dto.getId())){
+                if(!StringUtils.isEmpty(""+dto.getId())){
                     if(awardRecordService.updateLogisticsInfo(dto,messageId) > 0){
                         successCount ++;
                     }else{

@@ -10,6 +10,7 @@ public enum ResultCodeEnum {
 	NORESULT("11111","数据库没有查到信息！"),
 	PROMOTION_PARAM_IS_NULL("10001","调用砍价接口入参不能为空！"),
 	PROMOTION_AWARD_IS_NULL("10002","调用查询中奖记录接口入参不能为空！"),
+	PROMOTION_TIME_NOT_UP("10003","该时间段内已有活动进行"),
 	ERROR("99999","未知异常！"),
 
     PROMOTION_NOT_EXIST("26001", "促销活动数据不存在"),

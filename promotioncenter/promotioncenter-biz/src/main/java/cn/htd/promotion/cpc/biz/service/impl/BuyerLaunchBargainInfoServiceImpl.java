@@ -124,6 +124,8 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				bargainInfoDTO.setPartakeTimes(paramDMO.getPartakeTimes());
 				bargainInfoDTO.setGoodsNum(paramDMO.getGoodsNum());
 				bargainInfoDTO.setGoodsPicture(paramDMO.getGoodsPicture());
+				
+				System.out.println(paramDMO.getPartakeTimes()+"==="+paramDMO.getLevelCode());
 			}
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(bargainInfoDTO);
@@ -155,8 +157,14 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 
 			}
 			Integer launchTimes = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(bargainInfoDTO);
-			if(null != launchTimes && null != promotionInfoExtend.getTotalPartakeTimes()
-					&& launchTimes.intValue() >= promotionInfoExtend.getTotalPartakeTimes().intValue()){
+			if(null != launchTimes && launchTimes.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
+		                  "该砍价活动商品只能发起一次流程");
+			}
+			List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfo.getPromotionId());
+			if(null != launchList && !launchList.isEmpty() 
+					&& null != promotionInfoExtend.getTotalPartakeTimes()
+					&& launchList.size() >= promotionInfoExtend.getTotalPartakeTimes().intValue()){
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
 		                  "该砍价活动商品参与次数已上限");
 			}

@@ -460,6 +460,6 @@
         WHERE promotion_type = 22
         AND show_status = 3 
         AND promotion_provider_seller_code = #{sellerCode}
-        AND now() between #{effectiveTime} and #{invalid_time}
+        AND now() between #{effectiveTime} and #{invalidTime}
   </select>
 </mapper>

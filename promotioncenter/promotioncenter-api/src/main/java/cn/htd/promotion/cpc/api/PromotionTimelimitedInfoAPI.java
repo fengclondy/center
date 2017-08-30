@@ -27,18 +27,19 @@ public interface PromotionTimelimitedInfoAPI {
 	 * @param buyerCode
 	 * @return
 	 */
-	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedBySellerCode(String messageId, String buyerCode,String promotionId);
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId, String buyerCode,String promotionId);
 
 
 	/**
 	 * 汇掌柜APP - 查询秒杀活动列表
 	 * 
+	 * 粉丝 未登录 默认取汇通达O2O旗舰店的秒杀商品；已登录则取归属会员店的秒杀商品 (根据buyerCode)
 	 * @param messageId
+	 * @param buyerCode 会员编码
 	 * @param page
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,
-			Pager<TimelimitedInfoResDTO> page);
+	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,String buyerCode,Pager<TimelimitedInfoResDTO> page);
 	
 	
 	/**

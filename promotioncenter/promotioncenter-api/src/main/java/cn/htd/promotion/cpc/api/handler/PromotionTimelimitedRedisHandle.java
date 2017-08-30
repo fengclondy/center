@@ -79,7 +79,7 @@ public class PromotionTimelimitedRedisHandle {
      * 
      * @param skuCodeList
      */
-    public List<String> getRedisTimelimitedIndex(String isVip,List<String> skuCodeList) {
+    public List<String> getRedisTimelimitedIndex(String buyerCode,List<String> skuCodeList) {
         List<String> promotionIdList = new ArrayList<String>();
         Map<String, String> indexMap = null;
         String key = "";
@@ -87,7 +87,8 @@ public class PromotionTimelimitedRedisHandle {
         String promotionAllIdStr = "";
         String[] keyArr = null;
         String tmpSkuCode = "";
-        indexMap = promotionRedisDB.getHashOperations(RedisConst.PROMOTION_REDIS_TIMELIMITED_INDEX);
+        String tmpBuyerCode = "";
+        indexMap = promotionRedisDB.getHashOperations(RedisConst.PROMOTION_REDIS_TIMELIMITED_INDEX);//可跟志峰商量 key的命名格式，比如 促销商品编码+会员编码 1000033904&htd216511
         if (indexMap == null || indexMap.isEmpty()) {
             return null;
         }
@@ -99,8 +100,13 @@ public class PromotionTimelimitedRedisHandle {
                 continue;
             }
             keyArr = key.split("&");
-            tmpSkuCode = keyArr[0];
+            tmpSkuCode = keyArr[0];//商品编码
+            tmpBuyerCode = keyArr[1];//会员编码
             if (skuCodeList != null && !skuCodeList.isEmpty() && !skuCodeList.contains(tmpSkuCode)) {
+                continue;
+            }
+            //判断是否粉丝归属的会员（店铺）
+            if (StringUtils.isBlank(tmpBuyerCode) || !tmpBuyerCode.equals(buyerCode)) {
                 continue;
             }
             promotionAllIdStr += "," + promotionIdStr;
@@ -170,11 +176,12 @@ public class PromotionTimelimitedRedisHandle {
     /**
      * 秒杀 - 从Redis中查询秒杀活动列表
      *
-     * @param isVip 会员vip 标志，暂时未用的，考虑后期扩展用
+     * 粉丝 未登录 默认取汇通达O2O旗舰店的秒杀商品；已登录则取归属会员店的秒杀商品(根据buyerCode)
+     * @param buyerCode 会员编码
      * @param page
      * @return
      */
-    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String isVip, Pager<TimelimitedInfoResDTO> page) {
+    public DataGrid<PromotionTimelimitedShowDTO> getRedisTimelimitedInfoList(String buyerCode,Pager<TimelimitedInfoResDTO> page) {
         DataGrid<PromotionTimelimitedShowDTO> datagrid = new DataGrid<PromotionTimelimitedShowDTO>();
         //所有有效秒杀活动集合,用于返回前端
         List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
@@ -191,7 +198,7 @@ public class PromotionTimelimitedRedisHandle {
             offset = page.getPageOffset();
             rows = page.getRows();
         }
-        promotionIdList = getRedisTimelimitedIndex(isVip,null);
+        promotionIdList = getRedisTimelimitedIndex(buyerCode,null);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return datagrid;
         }

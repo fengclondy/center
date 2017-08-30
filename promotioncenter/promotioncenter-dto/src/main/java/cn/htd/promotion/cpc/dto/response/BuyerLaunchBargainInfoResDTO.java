@@ -34,7 +34,6 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	@NotBlank(message = "会员名称不能为空")
 	private String buyerName;//会员名称
 	
-	@NotBlank(message = "会员头像不能为空")
 	private String headSculptureURL; //会员头像
 	
 	@NotBlank(message = "会员电话号码不能为空")

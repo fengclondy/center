@@ -2,7 +2,7 @@ package cn.htd.promotion.cpc.common.constants;
 
 public class RedisConst {
 	// Redis操作Hash
-	public static final String REDIS_PROMOTION_ACTION_HASH = "B2B_MIDDLE_PROMOTION_ACTION_HASH";
+	public static final String PROMOTION_REDIS_PROMOTION_ACTION_HASH = "PROMOTION_B2B_MIDDLE_PROMOTION_ACTION_HASH";
 	// Redis砍价促销活动有效信息
 	public static final String REDIS_BARGAIN_VALID = "B2B_MIDDLE_BARGAIN_VALID";
 	// Redis砍价活动数据

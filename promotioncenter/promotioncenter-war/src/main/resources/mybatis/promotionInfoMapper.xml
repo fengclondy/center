@@ -448,6 +448,9 @@
   <update id="upDownShelvesBargainInfo">
   	UPDATE promotion_info
   	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+	<if test="dto.status != null and dto.status != ''">
+		status = #{dto.status,jdbcType=VARCHAR},
+	</if>  	
   	modify_id = #{dto.operatorId,jdbcType=BIGINT},
     modify_name = #{dto.operatorName,jdbcType=VARCHAR},
     modify_time = now()

@@ -387,6 +387,10 @@ public class PromotionBargainInfoServiceImpl implements
                             "砍价活动还未结束并有人参与");
                 }
             }
+            //活动状态转换
+            promotionInfoDTO.setShowStatus(statusCurrent);
+            String convertStatus = setPromotionStatusInfo(promotionInfoDTO);
+            dto.setStatus(convertStatus);
             promotionInfoDAO.upDownShelvesBargainInfo(dto);
             promotionInfoRedis = new PromotionInfoDTO();
             if(StringUtils.isNotEmpty(dto.getTemlateFlag())){
@@ -509,4 +513,40 @@ public class PromotionBargainInfoServiceImpl implements
 		}
 		return result;
 	}
+	
+	   /**
+     * 根据促销活动的有效期间设定促销活动状态
+     *
+     * @param promotionInfo
+     * @return
+     */
+    public String setPromotionStatusInfo(PromotionInfoDTO promotionInfo) {
+        Date nowDt = new Date();
+        String status = promotionInfo.getStatus();
+        String showStatus = promotionInfo.getShowStatus();
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                DictionaryConst.OPT_PROMOTION_STATUS_DELETE).equals(status)) {
+            return status;
+        }
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
+                .OPT_PROMOTION_VERIFY_STATUS_VALID).equals(showStatus) || dictionary.getValueByCode(DictionaryConst
+                .TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS).equals(showStatus)) {
+            if (nowDt.before(promotionInfo.getEffectiveTime())) {
+                status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst
+                        .OPT_PROMOTION_STATUS_NO_START);
+            } else if (!nowDt.before(promotionInfo.getEffectiveTime())
+                    && !nowDt.after(promotionInfo.getInvalidTime())) {
+                status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                        DictionaryConst.OPT_PROMOTION_STATUS_START);
+            } else {
+                status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                        DictionaryConst.OPT_PROMOTION_STATUS_END);
+            }
+        } else if (StringUtils.isEmpty(status)) {
+            status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                    DictionaryConst.OPT_PROMOTION_STATUS_NO_START);
+        }
+        promotionInfo.setStatus(status);
+        return status;
+    }
 }

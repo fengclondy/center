@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.dto.request;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class WinningRecordReqDTO extends GenricReqDTO {
 
 	/**
@@ -10,16 +12,19 @@ public class WinningRecordReqDTO extends GenricReqDTO {
 	/**
 	 * 粉丝号
 	 */
+	@NotEmpty(message = "memberNo不能为空")
 	private String memberNo;
 
 	/**
 	 * 开始位置
 	 */
+	@NotEmpty(message = "startNo不能为空")
 	private Integer startNo;
 
 	/**
 	 * 结束位置
 	 */
+	@NotEmpty(message = "endNo不能为空")
 	private Integer endNo;
 
 	public String getMemberNo() {

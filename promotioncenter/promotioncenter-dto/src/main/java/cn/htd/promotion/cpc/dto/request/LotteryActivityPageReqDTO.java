@@ -25,6 +25,7 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 	/**
 	 * 促销活动编码
 	 */
+	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;
 
 	public String getOrgId() {

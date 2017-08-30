@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.dto.request;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class ShareLinkHandleReqDTO extends GenricReqDTO{
 
 	/**
@@ -10,16 +12,19 @@ public class ShareLinkHandleReqDTO extends GenricReqDTO{
 	/**
 	 * 粉丝id
 	 */
+	@NotEmpty(message = "memberNo不能为空")
 	private String memberNo;
 
 	/**
 	 * 会员店id
 	 */
+	@NotEmpty(message = "orgId不能为空")
 	private String orgId;
 
 	/**
 	 * 促销活动编码
 	 */
+	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;
 
 	public String getMemberNo() {

@@ -62,7 +62,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 			}
 		} catch (Exception e) {
-			result.setCode(ResultCodeEnum.ERROR.getMsg());
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 		}
@@ -125,7 +125,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			messageId = requestDTO.getMessageId();
 			result = luckDrawService.lotteryActivityPage(requestDTO);
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -160,7 +160,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			messageId = requestDTO.getMessageId();
 			result = luckDrawService.lotteryActivityRulePage(requestDTO);
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -194,7 +194,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			JSONObject jsonObj = (JSONObject) JSONObject.toJSON(resultDMO);
 			result = JSONObject.toJavaObject(jsonObj, WinningRecordResDTO.class);
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
@@ -226,7 +226,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			messageId = requestDTO.getMessageId();
 			result = luckDrawService.shareLinkHandle(requestDTO);
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));

@@ -85,6 +85,26 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private Integer templateFlagD;//模板类型
 	
+	private String buyerCode;
+	
+	private String opendId;
+	
+	public String getBuyerCode() {
+		return buyerCode;
+	}
+
+	public void setBuyerCode(String buyerCode) {
+		this.buyerCode = buyerCode;
+	}
+
+	public String getOpendId() {
+		return opendId;
+	}
+
+	public void setOpendId(String opendId) {
+		this.opendId = opendId;
+	}
+
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
 	}

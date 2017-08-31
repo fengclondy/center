@@ -179,8 +179,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(ResultCodeEnum.POMOTION_SPLIT_PRICE_ERROR.getCode(),
 		                  "拆分金额失败");
 			}
-			BigDecimal goodsCurrentPrice = (bargainInfoDTO.getGoodsCostPrice().subtract(bargainInfoDTO.getGoodsFloorPrice()))
-					.subtract(popPrice);
+			BigDecimal goodsCurrentPrice = bargainInfoDTO.getGoodsCostPrice().subtract(popPrice);
 			bargainInfoDTO.setGoodsCurrentPrice(goodsCurrentPrice);
 			buyerLaunchBargainInfoDAO.addBuyerLaunchBargainInfo(bargainInfoDTO);
 			//插入砍价记录表

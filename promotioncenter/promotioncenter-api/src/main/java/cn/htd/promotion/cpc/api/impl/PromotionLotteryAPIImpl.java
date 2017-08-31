@@ -12,15 +12,20 @@ import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.common.util.ValidationUtils;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
@@ -245,17 +250,41 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	 */
 	@Override
 	public String beginDrawLottery(String drawLotteryParam) {
-		return null;
+		DrawLotteryReqDTO requestDTO = null;
+		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+		String ticket = "";
+		try {
+			requestDTO = JSON.parseObject(drawLotteryParam, DrawLotteryReqDTO.class);
+			if (requestDTO == null) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), ResultCodeEnum.ERROR.getMsg());
+			}
+			responseDTO.setMessageId(requestDTO.getMessageId());
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(requestDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+//			responseDTO = PromotionLottery
+		} catch (PromotionCenterBusinessException bcbe) {
+			responseDTO.setResponseCode(bcbe.getCode());
+			responseDTO.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(responseDTO);
 	}
 
 	/**
 	 * 查询抽奖结果
 	 *
-	 * @param drawLotteryParam
+	 * @param lotteryWinningParam
 	 * @return
 	 */
 	@Override
-	public String getDrawLotteryResult(String drawLotteryParam) {
+	public String getDrawLotteryResult(String lotteryWinningParam) {
 		return null;
 	}
 }

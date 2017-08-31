@@ -466,6 +466,10 @@
         WHERE promotion_type = 22
         AND show_status = 3 
         AND promotion_provider_seller_code = #{sellerCode}
+        AND status != 9
         AND now() between #{effectiveTime} and #{invalidTime}
+        <if test="promotionId != null and promotioniD != ''">
+        	AND promotion_id != #{promotionId,jdbcType=VARCHAR}
+        </if>
   </select>
 </mapper>

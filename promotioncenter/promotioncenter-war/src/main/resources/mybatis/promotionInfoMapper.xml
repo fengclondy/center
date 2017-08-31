@@ -468,7 +468,7 @@
         AND promotion_provider_seller_code = #{sellerCode}
         AND status != 9
         AND now() between #{effectiveTime} and #{invalidTime}
-        <if test="promotionId != null and promotioniD != ''">
+        <if test="promotionId != null and promotionId != ''">
         	AND promotion_id != #{promotionId,jdbcType=VARCHAR}
         </if>
   </select>

@@ -48,6 +48,8 @@ public class RedisConst {
 	public static final String REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES = "BUYER_SHARE_EXTRA_PARTAKE_TIMES ";
 	// Redis抽奖活动买家分享获得抽奖次数上限
 	public static final String REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES = "BUYER_TOP_EXTRA_PARTAKE_TIME";
+	// Redis抽奖活动奖品总数
+	public static final String REDIS_LOTTERY_AWARD_TOTAL_COUNT = "AWARD_TOTAL_COUNT";
 	// Redis抽奖活动索引
 	public static final String REDIS_LOTTERY_INDEX = "B2B_MIDDLE_LOTTERY_INDEX";
 	// Redis抽奖活动奖品池

@@ -1,9 +1,13 @@
 package cn.htd.promotion.cpc.api.impl;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
@@ -22,6 +26,7 @@ import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
@@ -34,17 +39,10 @@ import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.WinningRecordResDTO;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 @Service("promotionLotteryAPI")
 public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
 
 	@Resource
 	private PromotionInfoService promotionInfoService;
@@ -93,7 +91,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
 				result.setResponseMsg(validateResult.getReponseMsg());
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				return JSON.toJSONString(result);
 			}
@@ -121,7 +119,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -150,7 +148,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -177,7 +175,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -206,7 +204,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -287,4 +285,55 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 		}
 		return JSON.toJSONString(responseDTO);
 	}
+
+	@Override
+	public String addDrawLotteryInfo(String json) {
+		PromotionInfoEditReqDTO promotionInfoEditReqDTO = null;
+		DrawLotteryResDTO rt = new DrawLotteryResDTO();
+		try {
+			promotionInfoEditReqDTO = JSON.parseObject(json, PromotionInfoEditReqDTO.class);
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			rt = luckDrawService.addDrawLotteryInfo(promotionInfoEditReqDTO);
+			rt.setMessageId(promotionInfoEditReqDTO.getMessageId());
+		} catch (PromotionCenterBusinessException bcbe) {
+			rt.setResponseCode(bcbe.getCode());
+			rt.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			rt.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(rt);
+	}
+
+	@Override
+	public String editDrawLotteryInfo(String json) {
+		PromotionInfoEditReqDTO promotionInfoEditReqDTO = null;
+		DrawLotteryResDTO rt = new DrawLotteryResDTO();
+		try {
+			promotionInfoEditReqDTO = JSON.parseObject(json, PromotionInfoEditReqDTO.class);
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			rt = luckDrawService.editDrawLotteryInfo(promotionInfoEditReqDTO);
+			rt.setMessageId(promotionInfoEditReqDTO.getMessageId());
+		} catch (PromotionCenterBusinessException bcbe) {
+			rt.setResponseCode(bcbe.getCode());
+			rt.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			rt.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(rt);
+	}
+
 }

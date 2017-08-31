@@ -1,53 +1,27 @@
-package cn.htd.promotion.cpc.dto.response;
+package cn.htd.promotion.cpc.biz.dmo;
 
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 促销活动宣传语表
- */
-public class PromotionSloganDTO extends GenricResDTO {
+public class PromotionDetailDescribeDMO {
+    private Long id;
 
-	/**
-	 * id
- 	 */
-	private Long id;
-	/**
-	 * 促销活动编码
-	 */
-	private String promotionId;
-	/**
-	 * 促销活动宣传语
-	 */
-	private String promotionSlogan;
-	/**
-	 * 删除标记 0:未删除，1:已删除
-	 */
-    private int deleteFlag;
-	/**
-	 * 创建人ID
-	 */
-	private Long createId;
-	/**
-	 * 创建人名称
-	 */
-	private String createName;
-	/**
-	 * 创建时间
-	 */
-	private Date createTime;
-	/**
-	 * 更新人ID
-	 */
-	private Long modifyId;
-	/**
-	 * 更新人名称
-	 */
-	private String modifyName;
-	/**
-	 * 更新时间
-	 */
-	private Date modifyTime;
+    private String promotionId;
+
+    private Integer deleteFlag;
+
+    private Long createId;
+
+    private String createName;
+
+    private Date createTime;
+
+    private Long modifyId;
+
+    private String modifyName;
+
+    private Date modifyTime;
+
+    private String describeContent;
 
 	public Long getId() {
 		return id;
@@ -65,19 +39,11 @@ public class PromotionSloganDTO extends GenricResDTO {
 		this.promotionId = promotionId;
 	}
 
-	public String getPromotionSlogan() {
-		return promotionSlogan;
-	}
-
-	public void setPromotionSlogan(String promotionSlogan) {
-		this.promotionSlogan = promotionSlogan;
-	}
-
-	public int getDeleteFlag() {
+	public Integer getDeleteFlag() {
 		return deleteFlag;
 	}
 
-	public void setDeleteFlag(int deleteFlag) {
+	public void setDeleteFlag(Integer deleteFlag) {
 		this.deleteFlag = deleteFlag;
 	}
 
@@ -127,5 +93,13 @@ public class PromotionSloganDTO extends GenricResDTO {
 
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public String getDescribeContent() {
+		return describeContent;
+	}
+
+	public void setDescribeContent(String describeContent) {
+		this.describeContent = describeContent;
 	}
 }

@@ -78,6 +78,8 @@ public class PromotionBargainInfoDMO{
 	
 	private Integer templateFlagD;//模板类型
 	
+	private String showStatus;//上下架状态
+	
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
 	}
@@ -348,6 +350,14 @@ public class PromotionBargainInfoDMO{
 
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public String getShowStatus() {
+		return showStatus;
+	}
+
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
 	}
 
 }

@@ -422,6 +422,7 @@
   	<if test="dto.invalidTime != null">
   	 	<![CDATA[AND effective_time <= #{dto.invalidTime}]]>
   	</if>
+  	order by create_time desc
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
 	</if>

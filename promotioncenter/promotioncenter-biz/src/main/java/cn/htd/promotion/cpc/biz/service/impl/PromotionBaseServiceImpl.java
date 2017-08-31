@@ -243,6 +243,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         Integer isUpPromotionFlag =
                 promotionInfoDAO.queryUpPromotionBargainCount(promotionInfo.getPromotionProviderSellerCode(),
                         promotionInfo.getEffectiveTime(), promotionInfo.getInvalidTime(), null);
+        logger.info("isUpPromotionFlag:" + isUpPromotionFlag);
         if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
         }

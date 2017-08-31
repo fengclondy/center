@@ -44,7 +44,7 @@ import com.alibaba.fastjson.JSONObject;
 @Service("promotionLotteryAPI")
 public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PromotionLotteryAPIImpl.class);
 
 	@Resource
 	private PromotionInfoService promotionInfoService;

@@ -122,5 +122,6 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
 	 */
 	public Integer queryUpPromotionBargainCount(@Param("sellerCode") String promotionProviderSellerCode,
 												@Param("effectiveTime") Date effectiveTime,
-												@Param("invalidTime") Date invalidTime);
+												@Param("invalidTime") Date invalidTime,
+												@Param("promotionId") String promotionId);
 }

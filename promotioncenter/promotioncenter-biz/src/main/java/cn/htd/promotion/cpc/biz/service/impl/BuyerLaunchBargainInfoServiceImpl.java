@@ -146,7 +146,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		                  "砍价活动时间未开始");
 			}
 			if((new Date()).after(promotionInfo.getInvalidTime())){
-				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_VALID.getCode(),
+				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_UNAVAILABLE.getCode(),
 		                  "砍价活动时间已结束");
 			}
 			promotionInfoExtend = promotionInfoExtendDAO.queryById(bargainInfoDTO.getPromotionId());
@@ -179,8 +179,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(ResultCodeEnum.POMOTION_SPLIT_PRICE_ERROR.getCode(),
 		                  "拆分金额失败");
 			}
-			BigDecimal goodsCurrentPrice = (bargainInfoDTO.getGoodsCostPrice().subtract(bargainInfoDTO.getGoodsFloorPrice()))
-					.subtract(popPrice);
+			BigDecimal goodsCurrentPrice = bargainInfoDTO.getGoodsCostPrice().subtract(popPrice);
 			bargainInfoDTO.setGoodsCurrentPrice(goodsCurrentPrice);
 			buyerLaunchBargainInfoDAO.addBuyerLaunchBargainInfo(bargainInfoDTO);
 			//插入砍价记录表

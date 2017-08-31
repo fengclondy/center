@@ -139,6 +139,7 @@
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
   	    AND pi.status != 9
+  	    order by pi.create_time desc
   	    <if test="page!=null">
 	      <include refid="pagination_tail"/>
 	    </if>

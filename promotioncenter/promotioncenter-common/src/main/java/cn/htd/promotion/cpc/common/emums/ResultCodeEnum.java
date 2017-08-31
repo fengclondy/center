@@ -29,7 +29,8 @@ public enum ResultCodeEnum {
 
     PROMOTION_LOTTERY_NO_RESULT("26200", "抽奖进行中请继续等待"),
 	LUCK_DRAW_PARAM_IS_NULL("26201","调用扭蛋抽奖接口入参不能为空！"),
-	LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION("26202","该会员店没有抽奖权限");
+	LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION("26202","该会员店没有抽奖权限"),
+	PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT("26203","没有查到抽奖规则");
 	
     private ResultCodeEnum(String code, String msg) {
         this.code = code;

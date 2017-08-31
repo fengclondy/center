@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 public class GenricResDTO implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -1186301269812058781L;
 
     private String messageId = null;

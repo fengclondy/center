@@ -31,7 +31,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 import com.alibaba.fastjson.JSON;
@@ -74,7 +74,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     public void deletePromotionInfo(PromotionValidDTO validDTO) throws PromotionCenterBusinessException,Exception {
         PromotionInfoDTO promotionInfo = null;
         PromotionAccumulatyDTO accumulaty = new PromotionAccumulatyDTO();
-        PromotionSloganResDTO slogan = new PromotionSloganResDTO();
+        PromotionSloganDTO slogan = new PromotionSloganDTO();
         try {
             // 根据活动ID获取活动信息
             promotionInfo = promotionInfoDAO.queryById(validDTO.getPromotionId());
@@ -233,7 +233,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         PromotionBargainInfoResDTO bargainDTO = null;
-        PromotionSloganResDTO slogan = null;
+        PromotionSloganDTO slogan = null;
         List<PromotionAccumulatyDTO> accumulatyDTOList = null;
         PromotionExtendInfoDTO extendDTO = null;
         Map<String, PromotionAccumulatyDTO> oldAccumulatyMap = new HashMap<String, PromotionAccumulatyDTO>();
@@ -304,7 +304,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         			promotionSloganDAO.update(slogan);
         		}
         	}else{
-        		slogan = new PromotionSloganResDTO();
+        		slogan = new PromotionSloganDTO();
         		slogan.setPromotionId(promotionId);
         		slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
         		slogan.setCreateId(promotionInfo.getModifyId());

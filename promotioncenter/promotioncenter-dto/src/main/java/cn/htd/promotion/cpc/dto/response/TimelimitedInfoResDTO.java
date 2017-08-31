@@ -11,12 +11,7 @@ import java.util.Date;
  * @since  2017-8-22 15:14
  *
  */
-public class TimelimitedInfoResDTO  extends PromotionAccumulatyDTO  implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7808915998930305388L;
+public class TimelimitedInfoResDTO extends PromotionAccumulatyDTO {
 
 	// 秒杀活动ID
 	private Long timelimitedId;

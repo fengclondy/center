@@ -3,36 +3,23 @@ package cn.htd.promotion.cpc.dto.response;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PromotionSellerDetailDTO extends GenricResDTO {
+/**
+ * 促销活动宣传语表
+ */
+public class PromotionSloganDTO extends GenricResDTO {
 
-	/**
-	 * ID
-	 */
-	private Long id;
 	/**
 	 * 促销活动编码
 	 */
 	private String promotionId;
 	/**
-	 * 规则ID
+	 * 促销活动宣传语
 	 */
-	private Long ruleId;
+	private String promotionSlogan;
 	/**
-	 * 卖家编码
+	 * 删除标记 0:未删除，1:已删除
 	 */
-	private String sellerCode;
-	/**
-	 * 卖家名称
-	 */
-	private String sellerName;
-	/**
-	 * 归属上级公司名称
-	 */
-	private String belongSuperiorName;
-	/**
-	 * 删除标记
-	 */
-	private int deleteFlag;
+    private int deleteFlag;
 	/**
 	 * 创建人ID
 	 */
@@ -58,14 +45,6 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 */
 	private Date modifyTime;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getPromotionId() {
 		return promotionId;
 	}
@@ -74,36 +53,12 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 		this.promotionId = promotionId;
 	}
 
-	public Long getRuleId() {
-		return ruleId;
+	public String getPromotionSlogan() {
+		return promotionSlogan;
 	}
 
-	public void setRuleId(Long ruleId) {
-		this.ruleId = ruleId;
-	}
-
-	public String getSellerCode() {
-		return sellerCode;
-	}
-
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
-	}
-
-	public String getSellerName() {
-		return sellerName;
-	}
-
-	public void setSellerName(String sellerName) {
-		this.sellerName = sellerName;
-	}
-
-	public String getBelongSuperiorName() {
-		return belongSuperiorName;
-	}
-
-	public void setBelongSuperiorName(String belongSuperiorName) {
-		this.belongSuperiorName = belongSuperiorName;
+	public void setPromotionSlogan(String promotionSlogan) {
+		this.promotionSlogan = promotionSlogan;
 	}
 
 	public int getDeleteFlag() {

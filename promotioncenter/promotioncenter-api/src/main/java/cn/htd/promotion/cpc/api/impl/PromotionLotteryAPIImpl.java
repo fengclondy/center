@@ -68,8 +68,8 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			}
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+			
 		}
 		return result;
 	}
@@ -97,12 +97,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.validateLuckDrawPermission(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.validateLuckDrawPermission出现异常 OrgId：{}",
-					messageId, requestDTO.getOrgId(), w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 
 		return JSON.toJSONString(result);
@@ -131,13 +126,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.lotteryActivityPage(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.lotteryActivityPage出现异常 requestDTO：{}",
-					messageId, JSONObject.toJSONString(requestDTO),
-					w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -166,12 +155,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.lotteryActivityRulePage(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.lotteryActivityRulePage出现异常 promotionId：{}",
-					messageId, requestDTO.getPromotionId(), w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -200,12 +184,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = JSONObject.toJavaObject(jsonObj, WinningRecordResDTO.class);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.queryWinningRecord出现异常 request：{}",
-					messageId, winningRecordReqDTOJson, w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -232,12 +211,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.shareLinkHandle(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.shareLinkHandle出现异常 promotionId：{}",
-					messageId, requestDTO.getPromotionId(), w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}

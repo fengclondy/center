@@ -359,6 +359,7 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
 		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
 		this.sloganList = promotionBargainInfoResDTO.getSloganList();
+		this.showStatus = promotionBargainInfoResDTO.getShowStatus();
 	}
 	
 }

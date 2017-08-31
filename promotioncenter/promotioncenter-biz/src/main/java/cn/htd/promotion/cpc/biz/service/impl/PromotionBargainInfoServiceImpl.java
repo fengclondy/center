@@ -121,7 +121,9 @@ public class PromotionBargainInfoServiceImpl implements
 
         if (promotionBargainInfo != null) {
             String str = JSONObject.toJSONString(promotionBargainInfo);
+            LOGGER.info("before convert:" + str);
             promotionBargainInfoResDTO = JSONObject.parseObject(str, PromotionBargainInfoResDTO.class);
+            LOGGER.info("after convert:" + JSON.toJSONString(promotionBargainInfoResDTO));
             promotionBargainInfoResDTO.setBuyerBargainRecordList(buyerBargainRecordResList);
         }
         return promotionBargainInfoResDTO;

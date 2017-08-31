@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,10 @@ import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.emums.PromotionCodeEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
@@ -35,6 +39,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	
 	@Resource
     AwardRecordDAO awardRecordDAO;
+	
+	@Resource
+	private PromotionRedisDB promotionRedisDB;
 
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
@@ -42,14 +49,28 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		String messageId = requestDTO.getMessageId();
 		ValidateLuckDrawResDTO result = new ValidateLuckDrawResDTO();
 		try {
-			// TODO 查询redis 查到数据返回 有值
-			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			result.setPromotionId("");// TODO pomotionId
-			// TODO 查询redis 查到数据返回 空
 			result.setResponseCode(ResultCodeEnum.LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION
 					.getCode());
 			result.setResponseMsg(ResultCodeEnum.LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION
 					.getMsg());
+			
+			String orgId = requestDTO.getOrgId();
+			String promotionIds = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_INDEX, RedisConst.REDIS_GASHAPON_PREFIX+orgId);
+			if(StringUtils.isNotEmpty(promotionIds)){
+				String[] promotionArray = promotionIds.split(",");
+				if(null != promotionArray && promotionArray.length>0){
+					for(int i=0;i<promotionArray.length;i++){
+						String promotionId = promotionArray[i];
+						String gashaponStatus = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
+						if(PromotionCodeEnum.LOTTERY_EFFECTIVE.getCode().equals(gashaponStatus)){
+							result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+							result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+							result.setPromotionId(promotionId);
+							return result;
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -59,7 +80,6 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					"MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}",
 					messageId, requestDTO.getOrgId(), w.toString());
 		}
-
 		return result;
 	}
 

@@ -88,4 +88,6 @@ public class RedisConst {
     public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG = "PROMOTION_B2B_MIDDLE_BUYER_TIMELIMITED_USELOG";
     // Redis会员秒杀的使用log信息
     public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG = "PROMOTION_B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
+    //扭蛋活动前缀
+    public static final String REDIS_GASHAPON_PREFIX = "GASHAPON_";
 }

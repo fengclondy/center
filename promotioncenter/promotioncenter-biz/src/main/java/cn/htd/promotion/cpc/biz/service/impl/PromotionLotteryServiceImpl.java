@@ -1,6 +1,5 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -9,7 +8,6 @@ import javax.annotation.Resource;
 import cn.htd.promotion.cpc.biz.handle.PromotionLotteryRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
-import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DateUtil;
@@ -19,10 +17,6 @@ import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -60,14 +54,16 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String sellerCode = requestDTO.getSellerCode();
         String promotionId = requestDTO.getPromotionId();
         String ticket = "";
-        String redisKey = "";
-        Map<String, String> dictMap = baseService.initPromotionDictMap();
-
-        ticket = keyGenerator.generateLotteryTicket(promotionId + sellerCode+buyerCode);
-        redisKey = promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket;
+        Map<String, String> dictMap = null;
+        PromotionExtendInfoDTO promotionInfoDTO = null;
 
         responseDTO.setMessageId(requestDTO.getMessageId());
-        responseDTO.setTicket(ticket);
+        promotionInfoDTO = lotteryRedisHandle.getRedisLotteryInfo(promotionId);
+        dictMap = baseService.initPromotionDictMap();
+        if (checkPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
+            ticket = keyGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
+            responseDTO.setTicket(ticket);
+        }
         return responseDTO;
     }
 
@@ -87,18 +83,19 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 
     /**
      * 取得扭蛋促销活动信息
+     *
+     * @param promotionInfoDTO
      * @param requestDTO
+     * @param dictMap
      * @return
      * @throws PromotionCenterBusinessException
      */
-    private PromotionExtendInfoDTO getPromotionLotteryValid(DrawLotteryReqDTO requestDTO, Map<String, String> dictMap)
-            throws PromotionCenterBusinessException {
+    private boolean checkPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO, DrawLotteryReqDTO requestDTO,
+            Map<String, String> dictMap) throws PromotionCenterBusinessException {
         String promotionId = requestDTO.getPromotionId();
-        PromotionExtendInfoDTO promotionInfoDTO = null;
         Date nowDt = new Date();
         BuyerCheckInfo buyerCheckInfo = new BuyerCheckInfo();
 
-        promotionInfoDTO = lotteryRedisHandle.getRedisLotteryInfo(promotionId);
         if (nowDt.before(promotionInfoDTO.getEffectiveTime())) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_START.getCode(),
                     "抽奖活动编号:" + promotionId + " 该活动未开始");
@@ -113,22 +110,22 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                     "抽奖活动编号:" + promotionId + " 时间段:" + DateUtil.format(promotionInfoDTO.getEachStartTime()) + "~" +
                             DateUtil.format(promotionInfoDTO.getEachEndTime()) + " 该活动当前不在抽奖时间段");
         }
-
         buyerCheckInfo.setBuyerCode(requestDTO.getBuyerCode());
         buyerCheckInfo.setIsFirstLogin(requestDTO.getIsBuyerFirstLogin());
         if (!baseService.checkPromotionBuyerRule(promotionInfoDTO, buyerCheckInfo, dictMap)) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY.getCode(),
-                    "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode()  + " 抽奖粉丝编号:" +
+                    "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode() + " 抽奖粉丝编号:" +
                             requestDTO.getBuyerCode() + " 是否首次登陆:" + requestDTO.getIsBuyerFirstLogin()
                             + " 该活动粉丝没有秒杀权限");
         }
         if (!baseService.checkPromotionSellerRule(promotionInfoDTO, requestDTO.getSellerCode(), dictMap)) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getCode(),
-                    "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode()  + " 抽奖粉丝编号:" +
+                    "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode() + " 抽奖粉丝编号:" +
                             requestDTO.getBuyerCode() + " 是否首次登陆:" + requestDTO.getIsBuyerFirstLogin()
                             + " 会员店没有参加本次抽奖活动");
         }
-
-        return promotionInfoDTO;
+        return true;
     }
+
+
 }

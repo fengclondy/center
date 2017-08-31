@@ -3,7 +3,6 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,15 +22,19 @@ import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
+import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.PromotionCodeEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
@@ -53,6 +56,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
+	
+	@Resource
+	private PromotionBaseService promotionBaseService;
 
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
@@ -274,4 +280,42 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		}
 		return result;
 	}
+
+	@Override
+	public DrawLotteryResDTO addDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+		DrawLotteryResDTO result = new DrawLotteryResDTO();
+		try {
+			if (promotionInfoEditReqDTO == null) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+			}
+			promotionInfoEditReqDTO.setPromotionType("NDJ");
+			result = (DrawLotteryResDTO) promotionBaseService.addPromotionInfo(promotionInfoEditReqDTO);
+
+		} catch (PromotionCenterBusinessException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	@Override
+	public DrawLotteryResDTO editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+		DrawLotteryResDTO result = new DrawLotteryResDTO();
+		try {
+			if (promotionInfoEditReqDTO == null) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+			}
+			result = (DrawLotteryResDTO) promotionBaseService.editPromotionInfo(promotionInfoEditReqDTO);
+
+		} catch (PromotionCenterBusinessException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 }

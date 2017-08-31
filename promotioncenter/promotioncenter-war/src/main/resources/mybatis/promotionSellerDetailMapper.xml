@@ -42,12 +42,9 @@
       #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
     insert into promotion_seller_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="promotionId != null" >
         promotion_id,
       </if>
@@ -72,23 +69,16 @@
       <if test="createName != null" >
         create_name,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
       <if test="modifyId != null" >
         modify_id,
       </if>
       <if test="modifyName != null" >
         modify_name,
       </if>
-      <if test="modifyTime != null" >
-        modify_time,
-      </if>
+        modify_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="promotionId != null" >
         #{promotionId,jdbcType=VARCHAR},
       </if>
@@ -113,21 +103,17 @@
       <if test="createName != null" >
         #{createName,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
+        now(),
       <if test="modifyId != null" >
         #{modifyId,jdbcType=BIGINT},
       </if>
       <if test="modifyName != null" >
         #{modifyName,jdbcType=VARCHAR},
       </if>
-      <if test="modifyTime != null" >
-        #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
+        now()
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
+  <update id="update" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
     update promotion_seller_detail
     <set >
       <if test="promotionId != null" >
@@ -148,24 +134,13 @@
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=TINYINT},
       </if>
-      <if test="createId != null" >
-        create_id = #{createId,jdbcType=BIGINT},
-      </if>
-      <if test="createName != null" >
-        create_name = #{createName,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="modifyId != null" >
         modify_id = #{modifyId,jdbcType=BIGINT},
       </if>
       <if test="modifyName != null" >
         modify_name = #{modifyName,jdbcType=VARCHAR},
       </if>
-      <if test="modifyTime != null" >
-        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
+        modify_time = now()
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>

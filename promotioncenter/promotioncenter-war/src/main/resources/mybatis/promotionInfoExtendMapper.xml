@@ -211,7 +211,7 @@
       now(),
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
-      now(),
+      now()
     </trim>
   </insert>
   <update id="update">
@@ -276,7 +276,7 @@
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
-      modify_time = now(),
+      modify_time = now()
     </set>
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
   </update>

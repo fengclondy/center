@@ -121,7 +121,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO" >
+  <update id="update" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO" >
     update promotion_seller_rule
     <set >
       <if test="promotionId != null" >

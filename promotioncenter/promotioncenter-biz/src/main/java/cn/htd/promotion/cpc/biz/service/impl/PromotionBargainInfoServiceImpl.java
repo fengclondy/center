@@ -309,7 +309,7 @@ public class PromotionBargainInfoServiceImpl implements
 	            Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfoDTO.getPromotionProviderSellerCode(),
 	            		bargainInfoList.get(0).getEffectiveTime(),bargainInfoList.get(0).getInvalidTime(), promotionInfoDTO.getPromotionId());
 	            if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
-	           	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
+	           	 	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
 	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());

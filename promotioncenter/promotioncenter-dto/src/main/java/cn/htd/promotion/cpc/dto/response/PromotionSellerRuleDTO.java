@@ -2,9 +2,12 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-public class PromotionSellerDetailDTO extends GenricResDTO {
-
+/**
+ * 促销活动供应商规则
+ */
+public class PromotionSellerRuleDTO extends GenricResDTO {
 	/**
 	 * ID
 	 */
@@ -18,17 +21,17 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 */
 	private Long ruleId;
 	/**
-	 * 卖家编码
+	 * 规则名称
 	 */
-	private String sellerCode;
+	private String ruleName;
 	/**
-	 * 卖家名称
+	 * 卖家规则对象种类 ：1：指定供应商类型，2：部分供应商
 	 */
-	private String sellerName;
+	private String ruleTargetType;
 	/**
-	 * 归属上级公司名称
+	 * 卖家规则对象种类为1时使用 0：全部通用 1（平台公司），2（商品+），3（外部供应商）
 	 */
-	private String belongSuperiorName;
+	private String targetSellerType;
 	/**
 	 * 删除标记
 	 */
@@ -57,6 +60,10 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 * 更新时间
 	 */
 	private Date modifyTime;
+	/**
+	 * 指定卖家信息
+	 */
+	private List<PromotionSellerDetailDTO> sellerDetailList;
 
 	public Long getId() {
 		return id;
@@ -82,28 +89,28 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 		this.ruleId = ruleId;
 	}
 
-	public String getSellerCode() {
-		return sellerCode;
+	public String getRuleName() {
+		return ruleName;
 	}
 
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
 	}
 
-	public String getSellerName() {
-		return sellerName;
+	public String getRuleTargetType() {
+		return ruleTargetType;
 	}
 
-	public void setSellerName(String sellerName) {
-		this.sellerName = sellerName;
+	public void setRuleTargetType(String ruleTargetType) {
+		this.ruleTargetType = ruleTargetType;
 	}
 
-	public String getBelongSuperiorName() {
-		return belongSuperiorName;
+	public String getTargetSellerType() {
+		return targetSellerType;
 	}
 
-	public void setBelongSuperiorName(String belongSuperiorName) {
-		this.belongSuperiorName = belongSuperiorName;
+	public void setTargetSellerType(String targetSellerType) {
+		this.targetSellerType = targetSellerType;
 	}
 
 	public int getDeleteFlag() {
@@ -160,5 +167,13 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public List<PromotionSellerDetailDTO> getSellerDetailList() {
+		return sellerDetailList;
+	}
+
+	public void setSellerDetailList(List<PromotionSellerDetailDTO> sellerDetailList) {
+		this.sellerDetailList = sellerDetailList;
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 
 public interface PromotionSloganService {
 
@@ -16,6 +16,6 @@ public interface PromotionSloganService {
 	 * @return
 	 * @throws Exception
 	 */
-	public  ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(
+	public  ExecuteResult<List<PromotionSloganDTO>> queryBargainSloganBySellerCode(
 			String providerSellerCode, String messageId) throws PromotionCenterBusinessException;
 }

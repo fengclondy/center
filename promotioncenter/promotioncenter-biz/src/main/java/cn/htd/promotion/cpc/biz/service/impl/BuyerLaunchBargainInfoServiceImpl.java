@@ -194,8 +194,8 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			buyerBargainRecord.setCreateName(bargainInfoDTO.getCreateName());
 			buyerBargainRecord.setCreateTime(new Date());
 			buyerBargainRecord.setBargainTime(new Date());
-			promotionRedisDB.tailPush(RedisConst.BUYER_BARGAIN_RECORD, JSON.toJSONString(buyerBargainRecord));//从右边插入队列
-//			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
+//			promotionRedisDB.tailPush(RedisConst.BUYER_BARGAIN_RECORD, JSON.toJSONString(buyerBargainRecord));//从右边插入队列
+			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
 			result.setResult(bargainInfoDTO);
 		} catch (PromotionCenterBusinessException pbs){
 			result.setCode(pbs.getCode());

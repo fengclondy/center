@@ -16,6 +16,10 @@ public class PromotionTimelimitedShowDTO extends TimelimitedInfoResDTO
 	 */
 	private int remainCount = 0;
 	/**
+	 * 会员已秒商品数量（含提交订单未支付）
+	 */
+	private int hasBuyProductCount;
+	/**
 	 * 秒杀活动状态 1:进行中，2:未开始，3:已抢光，4:已结束
 	 */
 	private int compareStatus;
@@ -46,6 +50,15 @@ public class PromotionTimelimitedShowDTO extends TimelimitedInfoResDTO
 
 	public void setShowStatusStr(String showStatusStr) {
 		this.showStatusStr = showStatusStr;
+	}
+
+	
+	public int getHasBuyProductCount() {
+		return hasBuyProductCount;
+	}
+
+	public void setHasBuyProductCount(int hasBuyProductCount) {
+		this.hasBuyProductCount = hasBuyProductCount;
 	}
 
 	@Override

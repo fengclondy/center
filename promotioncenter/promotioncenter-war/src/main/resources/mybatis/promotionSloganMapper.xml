@@ -23,7 +23,7 @@
         limit 0,1
 	</select>
 	
-	<select id="queryBargainSloganByPromotionId" resultType="cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO">
+	<select id="queryBargainSloganByPromotionId" resultType="cn.htd.promotion.cpc.dto.response.PromotionSloganDTO">
 		SELECT  ps.* FROM promotion_slogan as ps
 		WHERE ps.delete_flag = 0
 		AND ps.promotion_id = #{promotionId}

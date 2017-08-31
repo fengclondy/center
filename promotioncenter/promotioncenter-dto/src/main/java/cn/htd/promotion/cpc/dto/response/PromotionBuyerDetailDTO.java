@@ -3,7 +3,10 @@ package cn.htd.promotion.cpc.dto.response;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PromotionSellerDetailDTO extends GenricResDTO {
+/**
+ * 促销活动会员明细
+ */
+public class PromotionBuyerDetailDTO extends  GenricResDTO {
 
 	/**
 	 * ID
@@ -18,17 +21,13 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 */
 	private Long ruleId;
 	/**
-	 * 卖家编码
+	 * 会员编码
 	 */
-	private String sellerCode;
+	private String buyerCode;
 	/**
-	 * 卖家名称
+	 * 会员名称
 	 */
-	private String sellerName;
-	/**
-	 * 归属上级公司名称
-	 */
-	private String belongSuperiorName;
+	private String buyerName;
 	/**
 	 * 删除标记
 	 */
@@ -82,28 +81,20 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 		this.ruleId = ruleId;
 	}
 
-	public String getSellerCode() {
-		return sellerCode;
+	public String getBuyerCode() {
+		return buyerCode;
 	}
 
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
+	public void setBuyerCode(String buyerCode) {
+		this.buyerCode = buyerCode;
 	}
 
-	public String getSellerName() {
-		return sellerName;
+	public String getBuyerName() {
+		return buyerName;
 	}
 
-	public void setSellerName(String sellerName) {
-		this.sellerName = sellerName;
-	}
-
-	public String getBelongSuperiorName() {
-		return belongSuperiorName;
-	}
-
-	public void setBelongSuperiorName(String belongSuperiorName) {
-		this.belongSuperiorName = belongSuperiorName;
+	public void setBuyerName(String buyerName) {
+		this.buyerName = buyerName;
 	}
 
 	public int getDeleteFlag() {

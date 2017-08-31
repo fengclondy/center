@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionSloganDMO;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 
 @Repository("cn.htd.promotion.cpc.biz.dao.promotionSloganDAO")
-public interface PromotionSloganDAO extends BaseDAO<PromotionSloganResDTO> {
+public interface PromotionSloganDAO extends BaseDAO<PromotionSloganDTO> {
 
 	List<PromotionSloganDMO> queryBargainSloganBySellerCode(@Param("providerSellerCode") String providerSellerCode);
 
-	PromotionSloganResDTO queryBargainSloganByPromotionId(@Param("promotionId") String promotionId);
+	PromotionSloganDTO queryBargainSloganByPromotionId(@Param("promotionId") String promotionId);
 	
 }

@@ -11,16 +11,22 @@ import cn.htd.promotion.cpc.api.PromotionLotteryAPI;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionInfoService;
+import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.common.util.ValidationUtils;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
@@ -46,6 +52,9 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	@Resource
 	private LuckDrawService luckDrawService;
 
+	@Resource
+	private PromotionLotteryService promotionLotteryService;
+
 	@Override
 	public ExecuteResult<DataGrid<PromotionInfoDTO>> getPromotionGashaponByInfo(
 			PromotionInfoReqDTO promotionInfoReqDTO,
@@ -63,8 +72,8 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			}
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+			
 		}
 		return result;
 	}
@@ -92,12 +101,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.validateLuckDrawPermission(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.validateLuckDrawPermission出现异常 OrgId：{}",
-					messageId, requestDTO.getOrgId(), w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 
 		return JSON.toJSONString(result);
@@ -126,13 +130,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.lotteryActivityPage(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.lotteryActivityPage出现异常 requestDTO：{}",
-					messageId, JSONObject.toJSONString(requestDTO),
-					w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -161,12 +159,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.lotteryActivityRulePage(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.lotteryActivityRulePage出现异常 promotionId：{}",
-					messageId, requestDTO.getPromotionId(), w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -195,12 +188,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = JSONObject.toJavaObject(jsonObj, WinningRecordResDTO.class);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.queryWinningRecord出现异常 request：{}",
-					messageId, winningRecordReqDTOJson, w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -227,12 +215,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result = luckDrawService.shareLinkHandle(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-			StringWriter w = new StringWriter();
-			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error(
-					"MessageId:{} 调用方法PromotionLotteryAPIImpl.shareLinkHandle出现异常 promotionId：{}",
-					messageId, requestDTO.getPromotionId(), w.toString());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(result);
 	}
@@ -245,17 +228,63 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	 */
 	@Override
 	public String beginDrawLottery(String drawLotteryParam) {
-		return null;
+		DrawLotteryReqDTO requestDTO = null;
+		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+		try {
+			requestDTO = JSON.parseObject(drawLotteryParam, DrawLotteryReqDTO.class);
+			if (requestDTO == null) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), ResultCodeEnum.ERROR.getMsg());
+			}
+			responseDTO.setMessageId(requestDTO.getMessageId());
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(requestDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			responseDTO = promotionLotteryService.beginDrawLottery(requestDTO);
+		} catch (PromotionCenterBusinessException bcbe) {
+			responseDTO.setResponseCode(bcbe.getCode());
+			responseDTO.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(responseDTO);
 	}
 
 	/**
 	 * 查询抽奖结果
 	 *
-	 * @param drawLotteryParam
+	 * @param lotteryWinningParam
 	 * @return
 	 */
 	@Override
-	public String getDrawLotteryResult(String drawLotteryParam) {
-		return null;
+	public String getDrawLotteryResult(String lotteryWinningParam) {
+		DrawLotteryReqDTO requestDTO = null;
+		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+		try {
+			requestDTO = JSON.parseObject(lotteryWinningParam, DrawLotteryReqDTO.class);
+			if (requestDTO == null) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), ResultCodeEnum.ERROR.getMsg());
+			}
+			responseDTO.setMessageId(requestDTO.getMessageId());
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(requestDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			responseDTO = promotionLotteryService.getDrawLotteryResult(requestDTO);
+		} catch (PromotionCenterBusinessException bcbe) {
+			responseDTO.setResponseCode(bcbe.getCode());
+			responseDTO.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(responseDTO);
 	}
 }

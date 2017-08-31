@@ -2,8 +2,12 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-public class PromotionSellerDetailDTO extends GenricResDTO {
+/**
+ * 促销活动会员规则
+ */
+public class PromotionBuyerRuleDTO extends GenricResDTO {
 
 	/**
 	 * ID
@@ -18,17 +22,17 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 */
 	private Long ruleId;
 	/**
-	 * 卖家编码
+	 * 规则名称
 	 */
-	private String sellerCode;
+	private String ruleName;
 	/**
-	 * 卖家名称
+	 * 会员规则对象
 	 */
-	private String sellerName;
+	private String ruleTargetType;
 	/**
-	 * 归属上级公司名称
+	 * 对象会员级别
 	 */
-	private String belongSuperiorName;
+	private String targetBuyerLevel;
 	/**
 	 * 删除标记
 	 */
@@ -57,6 +61,24 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 * 更新时间
 	 */
 	private Date modifyTime;
+	/**
+	 * 指定买家信息
+	 */
+	private List<PromotionBuyerDetailDTO> buyerDetailList;
+	/**
+	 * 对象会员级别列表
+	 */
+	private List<String> targetBuyerLevelList;
+	
+	/**
+	 * 会员分组
+	 */
+	private String targetBuyerGroup;
+	
+	/**
+	 * 会员分组列表
+	 */
+	private List<String> targetBuyerGroupList;
 
 	public Long getId() {
 		return id;
@@ -82,28 +104,28 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 		this.ruleId = ruleId;
 	}
 
-	public String getSellerCode() {
-		return sellerCode;
+	public String getRuleName() {
+		return ruleName;
 	}
 
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
 	}
 
-	public String getSellerName() {
-		return sellerName;
+	public String getRuleTargetType() {
+		return ruleTargetType;
 	}
 
-	public void setSellerName(String sellerName) {
-		this.sellerName = sellerName;
+	public void setRuleTargetType(String ruleTargetType) {
+		this.ruleTargetType = ruleTargetType;
 	}
 
-	public String getBelongSuperiorName() {
-		return belongSuperiorName;
+	public String getTargetBuyerLevel() {
+		return targetBuyerLevel;
 	}
 
-	public void setBelongSuperiorName(String belongSuperiorName) {
-		this.belongSuperiorName = belongSuperiorName;
+	public void setTargetBuyerLevel(String targetBuyerLevel) {
+		this.targetBuyerLevel = targetBuyerLevel;
 	}
 
 	public int getDeleteFlag() {
@@ -161,4 +183,39 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
+
+	public List<PromotionBuyerDetailDTO> getBuyerDetailList() {
+		return buyerDetailList;
+	}
+
+	public void setBuyerDetailList(List<PromotionBuyerDetailDTO> buyerDetailList) {
+		this.buyerDetailList = buyerDetailList;
+	}
+
+	public List<String> getTargetBuyerLevelList() {
+		return targetBuyerLevelList;
+	}
+
+	public void setTargetBuyerLevelList(List<String> targetBuyerLevelList) {
+		this.targetBuyerLevelList = targetBuyerLevelList;
+	}
+
+	public String getTargetBuyerGroup() {
+		return targetBuyerGroup;
+	}
+
+	public void setTargetBuyerGroup(String targetBuyerGroup) {
+		this.targetBuyerGroup = targetBuyerGroup;
+	}
+
+	public List<String> getTargetBuyerGroupList() {
+		return targetBuyerGroupList;
+	}
+
+	public void setTargetBuyerGroupList(List<String> targetBuyerGroupList) {
+		this.targetBuyerGroupList = targetBuyerGroupList;
+	}
+	
+	
+
 }

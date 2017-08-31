@@ -32,11 +32,12 @@ public enum ResultCodeEnum {
 
 
     LOTTERY_NO_RESULT("26200", "抽奖进行中请继续等待"),
-    LUCK_DRAW_PARAM_IS_NULL("26201", "调用扭蛋抽奖接口入参不能为空！"),
-    LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION("26202", "该会员店没有抽奖权限"),
+    LOTTERY_NO_DESCRIBE_CONTENT("26201","该活动没有抽奖规则"),
     LOTTERY_NOT_IN_TIME_INTERVAL("26203", "抽奖活动不在当前时间段内"),
-    LOTTERY_BUYER_NO_AUTHIORITY("25204", "粉丝没有抽奖权限"),
-    LOTTERY_SELLER_NO_AUTHIORITY("25205", "会员店没有参加本次抽奖活动");
+    LOTTERY_BUYER_NO_AUTHIORITY("26204", "粉丝没有抽奖权限"),
+    LOTTERY_SELLER_NO_AUTHIORITY("26205", "会员店没有参加本次抽奖活动"),
+    LOTTERY_NO_ENOUGH_AWARD("26206", "抽奖活动目前奖品数量不足"),
+            ;
 
     private ResultCodeEnum(String code, String msg) {
         this.code = code;

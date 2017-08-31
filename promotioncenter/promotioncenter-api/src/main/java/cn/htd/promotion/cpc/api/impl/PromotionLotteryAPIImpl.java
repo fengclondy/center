@@ -93,7 +93,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
 				result.setResponseMsg(validateResult.getReponseMsg());
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				return JSON.toJSONString(result);
 			}
@@ -121,7 +121,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -150,7 +150,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -177,7 +177,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);
@@ -206,7 +206,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
-				result.setResponseCode(ResultCodeEnum.LUCK_DRAW_PARAM_IS_NULL
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR
 						.getCode());
 				result.setResponseMsg(validateResult.getReponseMsg());
 				return JSON.toJSONString(result);

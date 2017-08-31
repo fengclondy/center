@@ -124,8 +124,6 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				bargainInfoDTO.setPartakeTimes(paramDMO.getPartakeTimes());
 				bargainInfoDTO.setGoodsNum(paramDMO.getGoodsNum());
 				bargainInfoDTO.setGoodsPicture(paramDMO.getGoodsPicture());
-				
-				System.out.println(paramDMO.getPartakeTimes()+"==="+paramDMO.getLevelCode());
 			}
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(bargainInfoDTO);

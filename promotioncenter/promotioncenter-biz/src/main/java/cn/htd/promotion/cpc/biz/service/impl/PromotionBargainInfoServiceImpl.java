@@ -50,7 +50,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
@@ -132,7 +132,7 @@ public class PromotionBargainInfoServiceImpl implements
             List<PromotionBargainInfoResDTO> promotionBargainInfoList) throws PromotionCenterBusinessException {
         ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
         PromotionAccumulatyDTO accuDTO = null;
-        PromotionSloganResDTO sloganDTO = new PromotionSloganResDTO();
+        PromotionSloganDTO sloganDTO = new PromotionSloganDTO();
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
         List<PromotionStatusHistoryDTO> historyList = new ArrayList<PromotionStatusHistoryDTO>();
         List<PromotionAccumulatyDTO> accuDTOList = new ArrayList<PromotionAccumulatyDTO>();

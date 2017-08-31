@@ -67,9 +67,9 @@ public interface PromotionLotteryAPI {
 
 	/**
 	 * 查询抽奖结果
-	 * @param drawLotteryParam
+	 * @param lotteryWinningParam
 	 * @return
 	 */
-	public String getDrawLotteryResult(String drawLotteryParam);
+	public String getDrawLotteryResult(String lotteryWinningParam);
 
 }

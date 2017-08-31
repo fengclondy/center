@@ -6,9 +6,7 @@ import java.util.Date;
 /**
  * 促销活动状态履历表
  */
-public class PromotionStatusHistoryDTO implements Serializable {
-
-	private static final long serialVersionUID = -3562287193169657409L;
+public class PromotionStatusHistoryDTO extends GenricResDTO {
 
 	private Long id;
 

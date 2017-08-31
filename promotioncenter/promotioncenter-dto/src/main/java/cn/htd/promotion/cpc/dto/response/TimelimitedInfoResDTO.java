@@ -1,8 +1,8 @@
 package cn.htd.promotion.cpc.dto.response;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -13,6 +13,12 @@ import java.util.Date;
  */
 public class TimelimitedInfoResDTO extends PromotionAccumulatyDTO {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4284500647853447096L;
+	
+	
 	// 秒杀活动ID
 	private Long timelimitedId;
 	// 促销活动编码
@@ -60,6 +66,11 @@ public class TimelimitedInfoResDTO extends PromotionAccumulatyDTO {
 	private String modifyName;
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
+	
+	//商品图片
+	private List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList;
+	//商品详情
+	private TimelimitedSkuDescribeResDTO timelimitedSkuDescribe;
 	
 	/**
 	 * 秒杀活动结果
@@ -228,5 +239,21 @@ public class TimelimitedInfoResDTO extends PromotionAccumulatyDTO {
 		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
 		this.timelimitedResult = timelimitedInfo.getTimelimitedResult(); 
 	}
+	public List<TimelimitedSkuDescribeResDTO> getTimelimitedSkuDescribeList() {
+		return timelimitedSkuDescribeList;
+	}
+	public void setTimelimitedSkuDescribeList(
+			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList) {
+		this.timelimitedSkuDescribeList = timelimitedSkuDescribeList;
+	}
+	public TimelimitedSkuDescribeResDTO getTimelimitedSkuDescribe() {
+		return timelimitedSkuDescribe;
+	}
+	public void setTimelimitedSkuDescribe(
+			TimelimitedSkuDescribeResDTO timelimitedSkuDescribe) {
+		this.timelimitedSkuDescribe = timelimitedSkuDescribe;
+	}
+	
+	
 
 }

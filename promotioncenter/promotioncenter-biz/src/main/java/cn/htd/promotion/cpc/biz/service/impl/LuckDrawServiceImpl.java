@@ -172,12 +172,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (null != promotionDetailDescribeInfo
 					&& StringUtils.isNotEmpty(promotionDetailDescribeInfo
 							.getDescribeContent())) {
-				result.setActivityRuleContent(promotionDetailDescribeInfo.getDescribeContent());
+				result.setActivityRuleContent(promotionDetailDescribeInfo
+						.getDescribeContent());
 				result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 				result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-			}else{
-				result.setResponseCode(ResultCodeEnum.PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT.getCode());
-				result.setResponseMsg(ResultCodeEnum.PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT.getMsg());
+			} else {
+				result.setResponseCode(ResultCodeEnum.PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT
+						.getCode());
+				result.setResponseMsg(ResultCodeEnum.PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT
+						.getMsg());
 			}
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
@@ -196,7 +199,37 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		String messageId = request.getMessageId();
 		ShareLinkHandleResDTO result = new ShareLinkHandleResDTO();
 		try {
-			// TODO
+			String promotionId = request.getPromotionId();
+			String lotteryTimesInfo = RedisConst.REDIS_LOTTERY_TIMES_INFO + "_"
+					+ promotionId;
+			// 粉丝每日抽奖次数限制
+			String buyerDailyDrawTimes = promotionRedisDB.getHash(
+					lotteryTimesInfo,
+					RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES);
+			// 每次分享获得抽奖次数
+			String buyerShareExtraPartakeTimes = promotionRedisDB.getHash(
+					lotteryTimesInfo,
+					RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES);
+			// 粉丝分享获得抽奖次数上限
+			String buyerTopExtraPartakeTime = promotionRedisDB.getHash(
+					lotteryTimesInfo,
+					RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES);
+
+			String buyerCode = request.getMemberNo();
+			String lotteryBuyerTimes = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO+"_"+buyerCode;
+			//粉丝分享次数
+			promotionRedisDB.incrHash(lotteryBuyerTimes,RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES);
+			Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
+			if(StringUtils.isEmpty(buyerTopExtraPartakeTime)){
+				//粉丝活动粉丝当日参与次数--总共参与次数
+				promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,partakeTime);
+			}else{
+				//粉丝活动粉丝当日参与次数--总共参与次数
+				Long totalTimes = Long.valueOf(buyerDailyDrawTimes)+Long.valueOf(buyerTopExtraPartakeTime);
+				if(promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,partakeTime)>totalTimes){
+					promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,-partakeTime);
+				}
+			}
 			// 更新粉丝抽奖次数成功
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {

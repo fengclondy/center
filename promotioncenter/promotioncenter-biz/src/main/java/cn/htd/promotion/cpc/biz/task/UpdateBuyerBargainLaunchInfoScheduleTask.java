@@ -2,20 +2,22 @@ package cn.htd.promotion.cpc.biz.task;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
@@ -53,10 +55,20 @@ public class UpdateBuyerBargainLaunchInfoScheduleTask implements IScheduleTaskDe
 				JSON.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
 		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
 		String str = promotionRedisDB.headPop(BUYER_LAUNCH_BARGAIN_INFO);
+		if(!StringUtils.isEmpty(str)){
+			buyerBargainLaunch = JSON.parseObject(str, BuyerBargainLaunchReqDTO.class);
+		}
 		logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "UpdateBuyerBargainRecordScheduleTask-更新砍价发起表",str);
 		List<BuyerBargainLaunchReqDTO> buyerBargainLaunchList = new ArrayList<BuyerBargainLaunchReqDTO>();;
-		buyerBargainLaunch = JSON.parseObject(str, BuyerBargainLaunchReqDTO.class);
+		String key = RedisConst.REDIS_BARGAIN_PRICE_SPLIT + "_" + buyerBargainLaunch.getPromotionId() + "_" + 
+				buyerBargainLaunch.getLevelCode() + "_" + buyerBargainLaunch.getBargainCode();
 		try {
+			//队列长度为0或者队列为不存在的时候则说明已经砍完
+			if(!promotionRedisDB.exists(key)){
+				//更新发起砍价表
+				buyerBargainLaunch.setBargainOverTime(new Date());
+				buyerBargainLaunch.setIsBargainOver(1);
+			}
 			if (taskQueueList != null && taskQueueList.size() > 0) {
 				buyerBargainLaunchList.add(buyerBargainLaunch);
 			}

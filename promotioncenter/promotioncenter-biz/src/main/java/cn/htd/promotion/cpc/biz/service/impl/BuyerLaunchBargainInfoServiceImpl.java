@@ -146,7 +146,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		                  "砍价活动时间未开始");
 			}
 			if((new Date()).after(promotionInfo.getInvalidTime())){
-				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_VALID.getCode(),
+				throw new PromotionCenterBusinessException(ResultCodeEnum.BARGAIN_NOT_UNAVAILABLE.getCode(),
 		                  "砍价活动时间已结束");
 			}
 			promotionInfoExtend = promotionInfoExtendDAO.queryById(bargainInfoDTO.getPromotionId());

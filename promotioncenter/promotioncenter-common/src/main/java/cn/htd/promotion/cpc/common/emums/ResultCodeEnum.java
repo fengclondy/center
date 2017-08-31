@@ -29,6 +29,8 @@ public enum ResultCodeEnum {
     PROMOTION_NO_STOCK("26009", "促销活动商品库存不足"),
     POMOTION_SPLIT_PRICE_ERROR("26010", "促销活动拆分金额失败"),
     PROMOTION_BARGAIN_JOIN_QTY("26011", "促销活动参与次数已上限"),
+    BARGAIN_NOT_UNAVAILABLE("26012", "砍价活动已结束"),
+
 
 
     LOTTERY_NO_RESULT("26200", "抽奖进行中请继续等待"),

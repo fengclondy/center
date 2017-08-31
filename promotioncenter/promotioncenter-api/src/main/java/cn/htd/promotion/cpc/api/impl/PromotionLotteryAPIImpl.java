@@ -11,6 +11,7 @@ import cn.htd.promotion.cpc.api.PromotionLotteryAPI;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionInfoService;
+import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
@@ -50,6 +51,9 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
 	@Resource
 	private LuckDrawService luckDrawService;
+
+	@Resource
+	private PromotionLotteryService promotionLotteryService;
 
 	@Override
 	public ExecuteResult<DataGrid<PromotionInfoDTO>> getPromotionGashaponByInfo(
@@ -226,7 +230,6 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	public String beginDrawLottery(String drawLotteryParam) {
 		DrawLotteryReqDTO requestDTO = null;
 		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
-		String ticket = "";
 		try {
 			requestDTO = JSON.parseObject(drawLotteryParam, DrawLotteryReqDTO.class);
 			if (requestDTO == null) {
@@ -240,7 +243,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 						validateResult.getErrorMsg());
 			}
-//			responseDTO = PromotionLottery
+			responseDTO = promotionLotteryService.beginDrawLottery(requestDTO);
 		} catch (PromotionCenterBusinessException bcbe) {
 			responseDTO.setResponseCode(bcbe.getCode());
 			responseDTO.setResponseMsg(bcbe.getMessage());
@@ -259,6 +262,29 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	 */
 	@Override
 	public String getDrawLotteryResult(String lotteryWinningParam) {
-		return null;
+		DrawLotteryReqDTO requestDTO = null;
+		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+		try {
+			requestDTO = JSON.parseObject(lotteryWinningParam, DrawLotteryReqDTO.class);
+			if (requestDTO == null) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), ResultCodeEnum.ERROR.getMsg());
+			}
+			responseDTO.setMessageId(requestDTO.getMessageId());
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(requestDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			responseDTO = promotionLotteryService.getDrawLotteryResult(requestDTO);
+		} catch (PromotionCenterBusinessException bcbe) {
+			responseDTO.setResponseCode(bcbe.getCode());
+			responseDTO.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(responseDTO);
 	}
 }

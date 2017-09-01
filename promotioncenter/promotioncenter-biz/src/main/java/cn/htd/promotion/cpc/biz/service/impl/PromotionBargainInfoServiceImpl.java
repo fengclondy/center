@@ -471,6 +471,7 @@ public class PromotionBargainInfoServiceImpl implements
 	@Override
 	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(
 			PromotionInfoReqDTO reqDTO, Pager<PromotionInfoReqDTO> page) throws PromotionCenterBusinessException {
+		LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.queryPromotionInfoListBySellerCode（）方法开始,入参{}", JSON.toJSONString(reqDTO));
 		DataGrid<PromotonInfoResDTO> dataGrid = new DataGrid<PromotonInfoResDTO>();
 		ExecuteResult<DataGrid<PromotonInfoResDTO>> result = new ExecuteResult<DataGrid<PromotonInfoResDTO>>();
 		List<PromotonInfoResDTO> resList = new ArrayList<PromotonInfoResDTO>();

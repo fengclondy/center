@@ -2,7 +2,7 @@ package cn.htd.promotion.cpc.dto.request;
 
 import java.util.Date;
 
-public class PromotionPictureReqDTO  extends GenricReqDTO{
+public class PromotionSloganReqDTO  extends GenricReqDTO{
     /**
 	 * 
 	 */
@@ -12,9 +12,7 @@ public class PromotionPictureReqDTO  extends GenricReqDTO{
 
     private String promotionId;
 
-    private String promotionPictureType;
-
-    private String promotionPictureUrl;
+    private String promotionSlogan;
 
     private Byte deleteFlag;
 
@@ -23,36 +21,8 @@ public class PromotionPictureReqDTO  extends GenricReqDTO{
     private String createName;
 
     private Date createTime;
-    private Long modifyId;//更新ID
 
-    private String modifyName;//更新名称
-
-    private Date modifyTime;//更新时间
-    public Long getModifyId() {
-		return modifyId;
-	}
-
-	public void setModifyId(Long modifyId) {
-		this.modifyId = modifyId;
-	}
-
-	public String getModifyName() {
-		return modifyName;
-	}
-
-	public void setModifyName(String modifyName) {
-		this.modifyName = modifyName;
-	}
-
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-
-	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-
-	public Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -68,20 +38,12 @@ public class PromotionPictureReqDTO  extends GenricReqDTO{
         this.promotionId = promotionId == null ? null : promotionId.trim();
     }
 
-    public String getPromotionPictureType() {
-        return promotionPictureType;
+    public String getPromotionSlogan() {
+        return promotionSlogan;
     }
 
-    public void setPromotionPictureType(String promotionPictureType) {
-        this.promotionPictureType = promotionPictureType == null ? null : promotionPictureType.trim();
-    }
-
-    public String getPromotionPictureUrl() {
-        return promotionPictureUrl;
-    }
-
-    public void setPromotionPictureUrl(String promotionPictureUrl) {
-        this.promotionPictureUrl = promotionPictureUrl == null ? null : promotionPictureUrl.trim();
+    public void setPromotionSlogan(String promotionSlogan) {
+        this.promotionSlogan = promotionSlogan == null ? null : promotionSlogan.trim();
     }
 
     public Byte getDeleteFlag() {

@@ -6,6 +6,7 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 
 public interface PromotionLotteryAPI {
 	
@@ -86,4 +87,11 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO);
+	
+	/**
+	 * 查看扭蛋
+	 * @param json
+	 * @return
+	 */
+	public PromotionInfoEditResDTO viewDrawLotteryInfo(String promotionInfoId, String messageId);
 }

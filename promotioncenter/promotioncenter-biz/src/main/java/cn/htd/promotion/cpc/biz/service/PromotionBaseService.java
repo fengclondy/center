@@ -6,9 +6,9 @@ import java.util.Map;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
-import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 
@@ -145,4 +145,6 @@ public interface PromotionBaseService {
 	public PromotionInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
 
 	public PromotionInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
+
+	public PromotionInfoEditResDTO viewPromotionInfo(String promotionInfoId);
 }

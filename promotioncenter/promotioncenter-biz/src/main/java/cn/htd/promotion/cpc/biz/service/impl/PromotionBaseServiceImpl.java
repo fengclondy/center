@@ -22,6 +22,7 @@ import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBuyerRuleDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionConfigureDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
@@ -39,18 +40,24 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.request.PromotionAccumulatyReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionBuyerRuleReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionConfigureReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionDetailDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionExtendInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionPictureReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionSellerDetailReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionSellerRuleReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionSloganReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionDetailDescribeDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
@@ -102,7 +109,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 	
 	@Resource
 	private PromotionSellerRuleDAO promotionSellerRuleDAO;
-
+	@Resource
+	private PromotionConfigureDAO promotionConfigureDAO;
     /**
      * 初始化校验用字典信息
      *
@@ -795,7 +803,31 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			psd.setDeleteFlag(YesNoEnum.NO.getValue());
 			promotionSellerDetailDAO.add(psd);
 		}
-
+		PromotionSloganReqDTO psrd = pied.getPromotionSloganReqDTO();
+		if(psrd!=null){
+			PromotionSloganDTO slogan = new PromotionSloganDTO();
+            slogan.setPromotionId(promotionId);
+            slogan.setPromotionSlogan(psrd.getPromotionSlogan());
+            slogan.setCreateId(pied.getCreateId());
+            slogan.setCreateName(pied.getCreateName());
+            slogan.setModifyId(pied.getCreateId());
+            slogan.setModifyName(pied.getCreateName());
+            promotionSloganDAO.add(slogan);
+		}
+		List<PromotionConfigureReqDTO> pclist = pied.getPromotionConfigureList();
+		if(pclist!=null && pclist.size()>0){
+			PromotionConfigureDTO pcd = null;
+			for (PromotionConfigureReqDTO promotionConfigureReqDTO : pclist) {
+				pcd = new PromotionConfigureDTO();
+				pcd.setConfType(promotionConfigureReqDTO.getConfType());
+				pcd.setConfValue(promotionConfigureReqDTO.getConfValue());
+				pcd.setPromotionId(promotionId);
+				pcd.setCreateId(pied.getCreateId());
+				pcd.setCreateName(pied.getCreateName());
+				pcd.setDeleteFlag(YesNoEnum.NO.getValue());
+				promotionConfigureDAO.add(pcd);
+			}
+		}
 		return pid;
 	}
 
@@ -968,8 +1000,130 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			psd.setDeleteFlag(promotionSellerDetailReqDTO.getDeleteFlag());
 			promotionSellerDetailDAO.update(psd);
 		}
+PromotionSloganReqDTO psrd = pied.getPromotionSloganReqDTO();
+		if(psrd!=null){
+			PromotionSloganDTO slogan = new PromotionSloganDTO();
+			slogan.setId(psrd.getId());
+            slogan.setPromotionId(pied.getPromotionId());
+            slogan.setPromotionSlogan(psrd.getPromotionSlogan());
+            slogan.setModifyId(pied.getModifyId());
+            slogan.setModifyName(pied.getModifyName());
+            promotionSloganDAO.update(slogan);
+		}
+		List<PromotionConfigureReqDTO> pclist = pied.getPromotionConfigureList();
+		if(pclist!=null && pclist.size()>0){
+			PromotionConfigureDTO pcd = null;
+			for (PromotionConfigureReqDTO promotionConfigureReqDTO : pclist) {
+				pcd = new PromotionConfigureDTO();
+				pcd.setId(promotionConfigureReqDTO.getId());
+				pcd.setConfType(promotionConfigureReqDTO.getConfType());
+				pcd.setConfValue(promotionConfigureReqDTO.getConfValue());
+				pcd.setPromotionId(pied.getPromotionId());
+				pcd.setDeleteFlag(promotionConfigureReqDTO.getDeleteFlag());
+				promotionConfigureDAO.update(pcd);
+			}
+		}
 		return pid;
 	
 	}
+@Override
+	public PromotionInfoEditResDTO viewPromotionInfo(String promotionInfoId) {
+		PromotionInfoEditResDTO pid = new PromotionInfoEditResDTO();
+		
+        PromotionInfoDTO pied = promotionInfoDAO.queryById(promotionInfoId);
+        if (pied == null) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "促销活动不存在");
+        }
+        pid.setId(pied.getId());
+		pid.setCostAllocationType(pied.getCostAllocationType());
+		pid.setDealFlag(pied.getDealFlag());
+		pid.setEffectiveTime(pied.getEffectiveTime());
+		pid.setHasRedisClean(pied.getHasRedisClean());
+		pid.setInvalidTime(pied.getInvalidTime());
+		pid.setIsVip(pied.getIsVip());
+		pid.setModifyPromotionId(pied.getModifyPromotionId());
+		pid.setPromotionDescribe(pied.getPromotionDescribe());
+		pid.setPromotionName(pied.getPromotionName());
+		pid.setPromotionProviderSellerCode(pied.getPromotionProviderSellerCode());
+		pid.setPromotionProviderShopId(pied.getPromotionProviderShopId());
+		pid.setPromotionProviderType(pied.getPromotionProviderType());
+		pid.setPromotionType(pied.getPromotionType());
+		pid.setShowStatus(pied.getShowStatus());
+		pid.setStatus(pied.getStatus());
+		pid.setVerifierId(pied.getVerifierId());
+		pid.setVerifierName(pied.getVerifierName());
+		pid.setVerifyRemark(pied.getVerifyRemark());
+		pid.setVerifyTime(pied.getVerifyTime());
+		pid.setCreateId(pied.getCreateId());
+		pid.setCreateName(pied.getCreateName());
+		pid.setModifyId(pied.getModifyId());
+		pid.setModifyName(pied.getModifyName());
+		pid.setCreateTime(pied.getCreateTime());
+		pid.setModifyTime(pied.getModifyTime());
+		
+		pid.setPromotionId(pied.getPromotionId());
+		
+        List<PromotionAccumulatyResDTO> promotionAccumulatyResList = new ArrayList<PromotionAccumulatyResDTO>();
+        List<PromotionAccumulatyDTO> promotionAccumulatyList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfoId, null);
+        PromotionAccumulatyResDTO accDTO = null;
+        for (PromotionAccumulatyDTO accumulatyDTO : promotionAccumulatyList) {
+        	accDTO = new PromotionAccumulatyResDTO();
+            accDTO.setPromotionId(pied.getPromotionId());
+            accDTO.setLevelNumber(accumulatyDTO.getLevelNumber());
+            accDTO.setLevelCode(accumulatyDTO.getLevelCode());
+            accDTO.setDeleteFlag(accumulatyDTO.getDeleteFlag());
+            
+            accDTO.setCreateId(accumulatyDTO.getCreateId());
+            accDTO.setCreateName(accumulatyDTO.getCreateName());
+            accDTO.setModifyId(accumulatyDTO.getModifyId());
+            accDTO.setModifyName(accumulatyDTO.getModifyName());
+            
+            accDTO.setAddupType(accumulatyDTO.getAddupType());
+            accDTO.setLevelAmount(accumulatyDTO.getLevelAmount());
+            accDTO.setQuantifierType(accumulatyDTO.getQuantifierType());
+        	promotionAccumulatyResList.add(accDTO);
+		}
+        pid.setPromotionAccumulatyList(promotionAccumulatyResList);
+        
+         
+        PromotionExtendInfoDTO pteDTO = promotionInfoExtendDAO.queryById(promotionInfoId);
+        
+        pid.setPromotionExtendInfoDTO(pteDTO);
+		
+        PromotionDetailDescribeDMO record = new PromotionDetailDescribeDMO();
+        record.setPromotionId(promotionInfoId);
+		PromotionDetailDescribeDMO promotionDetailDescribeInfo = promotionDetailDescribeDAO
+				.selectByPromotionId(record);
+		PromotionDetailDescribeDTO promotionDetailDescribeDTO = new PromotionDetailDescribeDTO();
+		promotionDetailDescribeDTO.setDescribeContent(promotionDetailDescribeInfo.getDescribeContent());
+		promotionDetailDescribeDTO.setCreateId(promotionDetailDescribeInfo.getCreateId());
+		promotionDetailDescribeDTO.setCreateName(promotionDetailDescribeInfo.getCreateName());
+		promotionDetailDescribeDTO.setCreateTime(promotionDetailDescribeInfo.getCreateTime());
+		promotionDetailDescribeDTO.setModifyId(promotionDetailDescribeInfo.getModifyId());
+		promotionDetailDescribeDTO.setModifyName(promotionDetailDescribeInfo.getModifyName());
+		promotionDetailDescribeDTO.setModifyTime(promotionDetailDescribeInfo.getModifyTime());
+		promotionDetailDescribeDTO.setPromotionId(promotionInfoId);
+		promotionDetailDescribeDTO.setDeleteFlag(promotionDetailDescribeInfo.getDeleteFlag());
+		pid.setPromotionDetailDescribeDTO(promotionDetailDescribeDTO);
+		
+		List<PromotionPictureDTO> piclist = promotionPictureDAO.selectByPromotionInfoId(promotionInfoId);
+		pid.setPromotionPictureDTO(piclist);
 
+		PromotionBuyerRuleDTO promotionBuyerRuleDTO = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionInfoId);
+		pid.setPromotionBuyerRuleDTO(promotionBuyerRuleDTO);
+		
+		PromotionSellerRuleDTO psr = promotionSellerRuleDAO.selectByPromotionInfoId(promotionInfoId);
+		pid.setPromotionSellerRuleDTO(psr);
+		
+		PromotionSloganDTO psd = promotionSloganDAO.queryBargainSloganByPromotionId(promotionInfoId);
+		pid.setPromotionSloganDTO(psd);
+		
+		
+		List<PromotionConfigureDTO> pclist = promotionConfigureDAO.selectByPromotionId(promotionInfoId);
+		if(pclist!=null && pclist.size()>0){
+			pid.setPromotionConfigureList(pclist);
+		}
+        
+        return pid;
+	}
 }

@@ -35,6 +35,7 @@ import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.WinningRecordResDTO;
@@ -335,5 +336,19 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 		}
 		return JSON.toJSONString(rt);
 	}
-
+	@Override
+	public PromotionInfoEditResDTO viewDrawLotteryInfo(String promotionInfoId, String messageId) {
+		PromotionInfoEditResDTO rt = null;
+		try {
+			rt = luckDrawService.viewDrawLotteryInfo(promotionInfoId);
+			rt.setMessageId(messageId);
+		} catch (PromotionCenterBusinessException bcbe) {
+			rt.setResponseCode(bcbe.getCode());
+			rt.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			rt.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return rt;
+	}
 }

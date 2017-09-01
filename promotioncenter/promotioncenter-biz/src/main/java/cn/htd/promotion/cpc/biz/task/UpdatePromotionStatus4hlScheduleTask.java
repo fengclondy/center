@@ -9,12 +9,14 @@ import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,12 +24,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * job for 汇掌柜 更新秒杀活动状态
  * 根据系统时间、促销活动开始时间、结束时间和促销活动状态修改促销活动状态
- * 若秒杀商品已到结束时间，运营人员未进行下架操作，则超过24小时后，秒杀商品会自动下架
  */
-public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
+public class UpdatePromotionStatus4hlScheduleTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
 
-	protected static transient Logger logger = LoggerFactory.getLogger(UpdateTimelimitedStatusScheduleTask.class);
+	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionStatus4hlScheduleTask.class);
 
 	@Resource
 	private DictionaryUtils dictionary;
@@ -71,7 +73,7 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 	@Override
 	public List<PromotionInfoDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
 			List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
-		logger.info("\n 方法:[{}],入参:[{}]", "UpdateTimelimitedStatusScheduleTask-selectTasks",
+		logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "UpdatePromotionStatusScheduleTask-selectTasks",
 				"taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
 				JSON.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
 		PromotionInfoDTO condition = new PromotionInfoDTO();
@@ -91,9 +93,13 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 					taskIdList.add(taskItem.getTaskItemId());
 				}
 				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_END));
+						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_START));
 				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));
 				condition.setVerifyStatusList(verifyStatusList);
 				condition.setStatusList(statusList);
 				condition.setTaskQueueNum(taskQueueNum);
@@ -101,10 +107,10 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 				promotionInfoDTOList = promotionInfoDAO.queryPromotionList4Task(condition, pager);
 			}
 		} catch (Exception e) {
-			logger.error("\n 方法:[{}],异常:[{}]", "UpdateTimelimitedStatusScheduleTask-selectTasks",
+			logger.error("\n 方法:[{}],异常:[{}]", "UpdatePromotionStatusScheduleTask-selectTasks",
 					ExceptionUtils.getStackTraceAsString(e));
 		} finally {
-			logger.info("\n 方法:[{}],出参:[{}]", "UpdateTimelimitedStatusScheduleTask-selectTasks",
+			logger.info("\n 方法:[{}],出参:[{}]", "UpdatePromotionStatusScheduleTask-selectTasks",
 					JSONObject.toJSONString(promotionInfoDTOList));
 		}
 		return promotionInfoDTOList;
@@ -122,12 +128,17 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 	 */
 	@Override
 	public boolean execute(PromotionInfoDTO[] tasks, String ownSign) throws Exception {
-		logger.info("\n 方法:[{}],入参:[{}][{}]", "UpdateTimelimitedStatusScheduleTask-execute",JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
+		logger.info("\n 方法:[{}],入参:[{}][{}]", "UpdatePromotionStatusScheduleTask-execute",
+				JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
 		boolean result = true;
 		Date nowDt = new Date();
 		List<PromotionInfoDTO> promotionInfoList = new ArrayList<PromotionInfoDTO>();
 		String status = "";
 		String timeStatus = "";
+		String noStartStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+				DictionaryConst.OPT_PROMOTION_STATUS_NO_START);
+		String startStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+				DictionaryConst.OPT_PROMOTION_STATUS_START);
 		String endStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 				DictionaryConst.OPT_PROMOTION_STATUS_END);
 
@@ -135,11 +146,25 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfo : tasks) {
 					status = promotionInfo.getStatus();
-                    if(status.equals(endStatus)){
-    					promotionInfo.setStatus(timeStatus);
-    					promotionInfoList.add(promotionInfo);	
-                    }
-						promotionTimelimitedRedisHandle.saveTimelimitedValidStatus2Redis(promotionInfo);
+					if (nowDt.before(promotionInfo.getEffectiveTime())) {
+						timeStatus = noStartStatus;
+					} else if (!nowDt.before(promotionInfo.getEffectiveTime())
+							&& !nowDt.after(promotionInfo.getInvalidTime())) {
+						timeStatus = startStatus;
+					} else {
+						timeStatus = endStatus;
+					}
+					if (timeStatus.equals(status)) {
+						continue;
+					}
+					promotionInfo.setStatus(timeStatus);
+					promotionInfoList.add(promotionInfo);
+					if (dictionary
+							.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+									DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+							.equals(promotionInfo.getPromotionType())) {
+						promotionTimelimitedRedisHandle.updateRedisTimeilimitedStatus(promotionInfo);
+					}
 				}
 				for (PromotionInfoDTO tmpPromotionInfo : promotionInfoList) {
 					updatePromotionStatus(tmpPromotionInfo);
@@ -147,10 +172,10 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 			}
 		} catch (Exception e) {
 			result = false;
-			logger.error("\n 方法:[{}],异常:[{}]", "UpdateTimelimitedStatusScheduleTask-execute",
+			logger.error("\n 方法:[{}],异常:[{}]", "UpdateExpiredBuyerCouponScheduleTask-execute",
 					ExceptionUtils.getStackTraceAsString(e));
 		} finally {
-			logger.info("\n 方法:[{}],出参:[{}]", "UpdateTimelimitedStatusScheduleTask-execute",
+			logger.info("\n 方法:[{}],出参:[{}]", "UpdateExpiredBuyerCouponScheduleTask-execute",
 					JSON.toJSONString(result));
 		}
 		return result;
@@ -164,14 +189,17 @@ public class UpdateTimelimitedStatusScheduleTask implements IScheduleTaskDealMul
 	 */
 	public void updatePromotionStatus(PromotionInfoDTO promotionInfo) throws Exception {
 		PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+
 		historyDTO.setPromotionId(promotionInfo.getPromotionId());
 		historyDTO.setPromotionStatus(promotionInfo.getStatus());
 		historyDTO.setPromotionStatusText(
 				dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, promotionInfo.getStatus()));
 		historyDTO.setCreateId(new Long("0"));
 		historyDTO.setCreateName("sys");
+
 		promotionInfo.setModifyId(0L);
 		promotionInfo.setModifyName("sys");
+
 		promotionInfoDAO.updatePromotionStatusById(promotionInfo);
 		promotionStatusHistoryDAO.add(historyDTO);
 	}

@@ -15,9 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
@@ -52,9 +49,13 @@ import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -510,5 +511,33 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		String filed = "GASHAPON_1517406643033_1517406644033";
 		String[] fieldArray = filed.split("_");
 		System.out.println(fieldArray.length);
+	}
+
+	@Override
+	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId) {
+		PromotionSellerRuleDTO result = new PromotionSellerRuleDTO();
+		try {
+			String promotionId = queryEffectivePromotion();
+			if (StringUtils.isEmpty(promotionId)) {
+				result.setResponseCode(ResultCodeEnum.LOTTERY_NO_SELLER.getCode());
+				result.setResponseMsg(ResultCodeEnum.LOTTERY_NO_SELLER.getMsg());
+				return result;
+			}
+			Map<String, String> dictMap = null;
+			PromotionExtendInfoDTO promotionInfoDTO = null;
+			dictMap = baseService.initPromotionDictMap();
+			promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(
+					promotionId, dictMap);
+			result.setSellerDetailList(promotionInfoDTO.getSellerRuleDTO().getSellerDetailList());
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawServiceImpl.participateActivitySellerInfo出现异常 request：{}",
+					messageId, messageId, w.toString());
+		}
+		return result;
 	}
 }

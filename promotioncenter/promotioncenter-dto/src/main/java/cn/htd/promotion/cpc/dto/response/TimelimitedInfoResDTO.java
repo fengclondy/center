@@ -68,7 +68,7 @@ public class TimelimitedInfoResDTO extends PromotionAccumulatyDTO {
 	private Date modifyTime;
 	
 	//商品图片
-	private List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList;
+	private List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList;
 	//商品详情
 	private TimelimitedSkuDescribeResDTO timelimitedSkuDescribe;
 	
@@ -239,12 +239,12 @@ public class TimelimitedInfoResDTO extends PromotionAccumulatyDTO {
 		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
 		this.timelimitedResult = timelimitedInfo.getTimelimitedResult(); 
 	}
-	public List<TimelimitedSkuDescribeResDTO> getTimelimitedSkuDescribeList() {
-		return timelimitedSkuDescribeList;
+
+	public List<TimelimitedSkuPictureResDTO> getTimelimitedSkuPictureList() {
+		return timelimitedSkuPictureList;
 	}
-	public void setTimelimitedSkuDescribeList(
-			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList) {
-		this.timelimitedSkuDescribeList = timelimitedSkuDescribeList;
+	public void setTimelimitedSkuPictureList(List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList) {
+		this.timelimitedSkuPictureList = timelimitedSkuPictureList;
 	}
 	public TimelimitedSkuDescribeResDTO getTimelimitedSkuDescribe() {
 		return timelimitedSkuDescribe;

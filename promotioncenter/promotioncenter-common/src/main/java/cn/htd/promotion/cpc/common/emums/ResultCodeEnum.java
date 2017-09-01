@@ -39,6 +39,7 @@ public enum ResultCodeEnum {
     LOTTERY_NO_MORE_AWARD_NUM("26206", "抽奖活动目前奖品数量不足"),
     LOTTERY_BUYER_NO_MORE_DRAW_CHANCE("26207", "粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机会"),
     LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE("26208", "粉丝已经用完了自有和分享额外获取的抽奖机会"),
+    LOTTERY_NO_SELLER("26209","没有查到参与活动的会员店"),
     ;
 
     private ResultCodeEnum(String code, String msg) {

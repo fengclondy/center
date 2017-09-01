@@ -19,7 +19,6 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 	/**
 	 * 粉丝id
 	 */
-	@NotEmpty(message = "memberNo不能为空")
 	private String memberNo;
 	
 	/**

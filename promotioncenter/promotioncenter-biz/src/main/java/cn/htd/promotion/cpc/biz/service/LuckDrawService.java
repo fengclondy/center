@@ -11,6 +11,7 @@ import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
@@ -72,4 +73,6 @@ public interface LuckDrawService {
 	 * @return
 	 */
 	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId);
+
+	public PromotionInfoEditResDTO viewDrawLotteryInfo(String promotionInfoId);
 }

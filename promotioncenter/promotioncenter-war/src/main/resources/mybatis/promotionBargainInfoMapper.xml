@@ -128,7 +128,7 @@
   	    AND pi.status != 9
 	</select>
 	
-		<select id="queryPromotionBargainByPromotionId" resultMap="BaseResultMap">
+	<select id="queryPromotionBargainByPromotionId" resultMap="BaseResultMap">
 		SELECT * FROM promotion_bargain_info as pbi
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_id = #{promotionId}
@@ -139,7 +139,7 @@
 	    </if>
 	</select>
 	
-	<select id="queryPromotionBargainByPromotionId" resultType="java.lang.Long">
+	<select id="queryPromotionBargainCountByPromotionId" resultType="java.lang.Long">
 		SELECT COUNT(0) FROM promotion_bargain_info as pbi
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_id = #{promotionId}

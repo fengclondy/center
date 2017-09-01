@@ -113,6 +113,8 @@ public class DictionaryConst {
     public static final String TYPE_PROMOTION_ADDUP_TYPE = "PROMOTION_ADDUP_TYPE";
     //字典类型-促销活动数值单位类型
     public static final String TYPE_PROMOTION_QUANTIFIER_TYPE = "PROMOTION_QUANTIFIER_TYPE";
+    //字典类型-促销活动渠道类型
+    public static final String TYPE_PROMOTION_CHANNEL_TYPE = "PROMOTION_CHANNEL_TYPE";
 
 
     // 字典信息-优惠券种类-满减券
@@ -790,6 +792,14 @@ public class DictionaryConst {
     public static final String OPT_REFUND_STATUS_REFUND = "REFUND_STATUS_REFUND";
 
     //******************* add by jiangkun on 20170817 for B2C Start *******************
+    //字典信息-促销活动渠道类型-B2B商城
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_MALL = "PROMOTION_CHANNEL_TYPE_MALL";
+    //字典信息-促销活动渠道类型-超级老板
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_SUPERBOSS = "PROMOTION_CHANNEL_TYPE_SUPERBOSS";
+    //字典信息-促销活动渠道类型-汇掌柜
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_HZG = "PROMOTION_CHANNEL_TYPE_HZG";
+    //字典信息-促销活动渠道类型-智慧门店
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_STORE = "PROMOTION_CHANNEL_TYPE_STORE";
     //字典信息-订单来源-汇掌柜预售下单
     public static final String OPT_ORDER_FROM_SHOP_KEEPER_PRESELL = "ORDER_FROM_SHOP_KEEPER_PRESELL";
     //字典信息-促销活动类型-扭蛋机

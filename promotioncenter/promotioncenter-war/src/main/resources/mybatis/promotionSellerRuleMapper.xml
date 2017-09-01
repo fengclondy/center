@@ -26,6 +26,13 @@
     from promotion_seller_rule
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
+  <select id="selectByPromotionInfoId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_seller_rule
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from promotion_seller_rule
     where id = #{id,jdbcType=BIGINT}

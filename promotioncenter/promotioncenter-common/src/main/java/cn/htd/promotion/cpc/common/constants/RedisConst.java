@@ -54,6 +54,8 @@ public class RedisConst {
 	public static final String REDIS_LOTTERY_AWARD_TOTAL_COUNT = "AWARD_TOTAL_COUNT";
 	// Redis抽奖活动索引
 	public static final String REDIS_LOTTERY_INDEX = "B2B_MIDDLE_LOTTERY_INDEX";
+    // Redis抽奖活动索引-扭蛋活动前缀
+    public static final String REDIS_GASHAPON_PREFIX = "GASHAPON_";
 	// Redis抽奖活动奖品池
 	public static final String REDIS_LOTTERY_AWARD_PREFIX = "B2B_MIDDLE_LOTTERY_";
 	// Redis抽奖活动买家抽奖次数信息
@@ -97,6 +99,4 @@ public class RedisConst {
 	public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG = "PROMOTION_B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
 	// Redis秒杀订单信息
 	public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_ORDER_INFO = "PROMOTION_B2B_MIDDLE_BUYER_TIMELIMITED_ORDER_INFO";
-	// 扭蛋活动前缀
-	public static final String REDIS_GASHAPON_PREFIX = "GASHAPON_";
 }

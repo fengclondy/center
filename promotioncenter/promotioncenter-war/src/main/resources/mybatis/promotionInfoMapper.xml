@@ -452,7 +452,7 @@
   		AND has_up_flag = 1
   	</if>
   	<if test="dto.hasUpFlag != null">
-  		AND has_up_flag = #{dto.hasUpFlag}
+  		AND has_up_flag = #{dto.hasUpFlag} 
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}

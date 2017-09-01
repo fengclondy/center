@@ -17,4 +17,6 @@ public interface PromotionSellerRuleDAO extends BaseDAO<PromotionSellerRuleDTO>{
     int updateByPrimaryKeySelective(PromotionSellerRuleDTO record);
 
     int updateByPrimaryKey(PromotionSellerRuleDTO record);
+
+	PromotionSellerRuleDTO selectByPromotionInfoId(String promotionId);
 }

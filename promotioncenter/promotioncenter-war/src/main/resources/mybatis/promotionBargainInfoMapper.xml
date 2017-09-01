@@ -49,7 +49,8 @@
 	    	   plb.goods_current_price goodsCurrentPrice,
 	    	   pi.promotion_provider_seller_code sellerNameD,
 	     	   pi.effective_time effectiveTime,
-			   pi.invalid_time invalidTime
+			   pi.invalid_time invalidTime,
+			   pi.show_status showStatusD
 	    from promotion_bargain_info pbi
 	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
 	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
@@ -139,6 +140,7 @@
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
   	    AND pi.status != 9
+  	    order by pi.create_time desc
   	    <if test="page!=null">
 	      <include refid="pagination_tail"/>
 	    </if>

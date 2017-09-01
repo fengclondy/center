@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.api;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 
@@ -72,4 +73,17 @@ public interface PromotionLotteryAPI {
 	 */
 	public String getDrawLotteryResult(String lotteryWinningParam);
 
+	/**
+	 * 新建扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String addDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO);
+
+	/**
+	 * 编辑扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO);
 }

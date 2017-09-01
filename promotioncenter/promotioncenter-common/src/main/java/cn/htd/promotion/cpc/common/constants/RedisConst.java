@@ -45,9 +45,11 @@ public class RedisConst {
 	// Redis抽奖活动卖家每日中奖总次数
 	public static final String REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES = "SELLER_DAILY_TOTAL_TIMES";
 	// Redis抽奖活动买家每次分享获得抽奖次数
-	public static final String REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES = "BUYER_SHARE_EXTRA_PARTAKE_TIMES ";
+	public static final String REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES = "BUYER_SHARE_EXTRA_PARTAKE_TIMES";
 	// Redis抽奖活动买家分享获得抽奖次数上限
 	public static final String REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES = "BUYER_TOP_EXTRA_PARTAKE_TIME";
+	// Redis抽奖活动奖品总数
+	public static final String REDIS_LOTTERY_AWARD_TOTAL_COUNT = "AWARD_TOTAL_COUNT";
 	// Redis抽奖活动索引
 	public static final String REDIS_LOTTERY_INDEX = "B2B_MIDDLE_LOTTERY_INDEX";
 	// Redis抽奖活动奖品池
@@ -60,8 +62,12 @@ public class RedisConst {
 	public static final String REDIS_LOTTERY_BUYER_WINNING_TIMES = "BUYER_WINNING_TIMES";
 	// Redis抽奖活动买家分享次数
 	public static final String REIDS_LOTTERY_BUYER_SHARE_TIMES = "BUYER_SHARE_TIMES";
+	// Redis粉丝已经达到分享获得抽奖次数上限
+	public static final String REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES = "BUYER_HAS_TOP_EXTRA_TIMES";
 	// Redis抽奖活动卖家每日中奖次数
 	public static final String REDIS_LOTTERY_SELLER_WINED_TIMES = "B2B_MIDDLE_LOTTERY_SELLER_WINED_TIMES";
+	// Redis粉丝抽奖结果信息
+	public static final String REDIS_LOTTERY_BUYER_AWARD_INFO = "B2B_MIDDLE_LOTTERY_BUYER_AWARD_INFO";
 
 	// Redis会员促销活动有效信息
 	public static final String PROMOTION_REDIS_TIMELIMITED_VALID = "PROMOTION_B2C_MIDDLE_TIMELIMITED_VALID";

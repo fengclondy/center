@@ -121,7 +121,9 @@ public class PromotionBargainInfoServiceImpl implements
 
         if (promotionBargainInfo != null) {
             String str = JSONObject.toJSONString(promotionBargainInfo);
+            LOGGER.info("before convert:" + str);
             promotionBargainInfoResDTO = JSONObject.parseObject(str, PromotionBargainInfoResDTO.class);
+            LOGGER.info("after convert:" + JSON.toJSONString(promotionBargainInfoResDTO));
             promotionBargainInfoResDTO.setBuyerBargainRecordList(buyerBargainRecordResList);
         }
         return promotionBargainInfoResDTO;
@@ -263,8 +265,6 @@ public class PromotionBargainInfoServiceImpl implements
 			List<PromotionAccumulatyDTO> accuDTOList = new ArrayList<PromotionAccumulatyDTO>();
 	        List<PromotionStatusHistoryDTO> historyList = null;
 	        String promotionId = "";
-	        String modifyTimeStr = "";
-	        String paramModifyTimeStr = "";
 	        String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
 	                .OPT_PROMOTION_STATUS_END);
 	        try {
@@ -298,7 +298,6 @@ public class PromotionBargainInfoServiceImpl implements
 	            if (StringUtils.isEmpty(promotionId)) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "修改砍价活动ID不能为空");
 	            }
-	            paramModifyTimeStr = DateUtils.format(bargainInfoList.get(0).getModifyTime(), DateUtils.YMDHMS);
 	            // 根据活动ID获取活动信息
 	            promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
 	            if (promotionInfoDTO == null) {
@@ -306,13 +305,14 @@ public class PromotionBargainInfoServiceImpl implements
 	            }
 	            if (status.equals(promotionInfoDTO.getShowStatus())) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(),
-	                        "砍价活动:" + promotionId + " 只有在已结束状态时不能进行修改");
+	                        "砍价活动:" + promotionId + " 在已结束状态时不能进行修改");
 	            }
-	            modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
-//	            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
-//	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_MODIFIED.getCode(),
-//	                        "砍价活动:" + promotionId + " 已被修改请重新确认");
-//	            }
+	            //判断时间段内可有活动上架
+	            Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfoDTO.getPromotionProviderSellerCode(),
+	            		bargainInfoList.get(0).getEffectiveTime(),bargainInfoList.get(0).getInvalidTime(), promotionInfoDTO.getPromotionId());
+	            if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+	           	 	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
+	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
 	            historyDTO.setPromotionId(accuDTO.getPromotionId());
 	            historyDTO.setPromotionStatus(accuDTO.getShowStatus());
@@ -384,7 +384,7 @@ public class PromotionBargainInfoServiceImpl implements
             			buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfoDTO.getPromotionId());
             	if (null != buyerLaunchList && !buyerLaunchList.isEmpty()) {
                     throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),
-                            "砍价活动还未结束并有人参与");
+                            "存在砍价记录不能删除");
                 }
             }
             //活动状态转换

@@ -181,7 +181,7 @@ public class PromotionInfoDTO extends GenricResDTO {
     private List<String> statusList;
     /**
      * 查询条件的审核状态列表
-     */
+     */    
     private List<String> verifyStatusList;
 
     private String effectiveTimeStr;
@@ -189,6 +189,14 @@ public class PromotionInfoDTO extends GenricResDTO {
     private String invalidTimeStr;
 
     private PromotionSellerDetailDTO sellerDetailDTO;
+    /**
+    * 中奖总数量
+    */
+    private String winningNum;
+    /**
+    * 今日中奖总数量
+    */
+    private String winningTodayNum;
 
     public Long getId() {
         return id;
@@ -546,7 +554,24 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.sellerDetailDTO = sellerDetailDTO;
     }
 
-    public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
+    
+    public String getWinningNum() {
+		return winningNum;
+	}
+
+	public void setWinningNum(String winningNum) {
+		this.winningNum = winningNum;
+	}
+
+	public String getWinningTodayNum() {
+		return winningTodayNum;
+	}
+
+	public void setWinningTodayNum(String winningTodayNum) {
+		this.winningTodayNum = winningTodayNum;
+	}
+
+	public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
         super.setMessageId(promotionInfoDTO.getMessageId());
         this.id = promotionInfoDTO.getId();
         this.promotionId = promotionInfoDTO.getPromotionId();
@@ -582,5 +607,7 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
         this.dealFlag = promotionInfoDTO.getDealFlag();
         this.hasRedisClean = promotionInfoDTO.getHasRedisClean();
+        this.winningNum = promotionInfoDTO.getWinningNum();
+        this.winningTodayNum = promotionInfoDTO.getWinningTodayNum();
     }
 }

@@ -8,7 +8,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.PromotionTimelimitedInfoAPI;
-import cn.htd.promotion.cpc.api.handler.PromotionTimelimitedRedisHandle;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionTimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.emums.TimelimitedStatusEnum;
@@ -81,7 +81,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 * @return
 	 */
 	@Override
-	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId,
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCodeAndPromotionId(String messageId,
 			String buyerCode,String promotionId) {
 	      ExecuteResult<TimelimitedInfoResDTO> result =
 	                new ExecuteResult<TimelimitedInfoResDTO>();
@@ -203,6 +203,22 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
             result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
         }
         return result;
+	}
+
+	/**
+	 * 汇掌柜APP -  根据会员编码查询是否有总部秒杀信息
+	 * 
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	@Override
+	public boolean getPromotionTimelimitedByBuyerCode(String messageId,String buyerCode) {
+		List<String> list = promotionTimelimitedRedisHandle.getRedisTimelimitedIndex(buyerCode, null);
+		if(null !=list && list.size()>0){
+			return true;
+		}
+		return false;
 	}
 
 }

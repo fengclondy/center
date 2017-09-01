@@ -64,4 +64,8 @@ public interface BuyerBargainAPI {
 	 */
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page);
 	
+	
+	public ExecuteResult<String> optationbargain(String buyerCode, String promotionId, String levelCode,
+			String bargainCode, String helperPicture, String helperName, String openedId,String messageId);
+	
 }

@@ -131,7 +131,12 @@ public class PromotionBargainInfoServiceImpl implements
       //查询活动详情
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch));
-        PromotionBargainInfoDMO promotionBargainInfo1 = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+        PromotionBargainInfoDMO promotionBargainInfo1 = new PromotionBargainInfoDMO();
+        if(StringUtils.isEmpty(buyerBargainLaunch.getBargainCode()) && StringUtils.isEmpty(buyerBargainLaunch.getBuyerCode())){//微信用户查看
+        	promotionBargainInfo1 = null;
+        }else{
+        	promotionBargainInfo1 = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+        }
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,出参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(promotionBargainInfo));
         if(promotionBargainInfo1 != null){//曾经发起过砍价

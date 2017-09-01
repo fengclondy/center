@@ -147,8 +147,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                 RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
             promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
                     RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT);
-            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_ENOUGH_AWARD.getCode(),
-                    "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
+//            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_ENOUGH_AWARD.getCode(),
+//                   "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
         }
         buyerCheckInfo.setBuyerCode(requestDTO.getBuyerCode());
         buyerCheckInfo.setIsFirstLogin(requestDTO.getIsBuyerFirstLogin());

@@ -471,7 +471,7 @@
         AND promotion_provider_seller_code = #{sellerCode}
         AND status != 9
         <if test="effectiveTime != null">
-  		AND invalid_time >= #{effectiveTime}
+  		AND invalid_time >= #{effectiveTime} 
   		</if>
   		<if test="invalidTime != null">
   	 		<![CDATA[AND effective_time <= #{invalidTime}]]>

@@ -1,6 +1,5 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +71,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         if (checkPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
             ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
             responseDTO.setTicket(ticket);
+            new Thread(new DoPromotionLotteryDealTask(requestDTO, ticket)).start();
         }
         return responseDTO;
     }
@@ -216,71 +216,83 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 
         public void run() {
             String promotionId = reqDTO.getPromotionId();
-            PromotionAwardInfoDTO awardInfoDTO = new PromotionAwardInfoDTO();
+            PromotionAwardInfoDTO awardInfoDTO = null;
             String awardPercentStr = "";
+            List<PromotionAccumulatyDTO> accuList = null;
             try {
                 awardPercentStr = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
                         RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE);
                 if (StringUtils.isEmpty(awardPercentStr)) {
-
-
+                    throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),
+                            "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
                 }
-            } catch (Exception e) {
-
+                accuList = JSON.parseArray(awardPercentStr, PromotionAccumulatyDTO.class);
+                awardInfoDTO = drawLotteryAward(promotionId, accuList);
+                if (awardInfoDTO == null) {
+                    throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
+                            "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
+                }
+            } catch (PromotionCenterBusinessException pcbe) {
+                if (awardInfoDTO == null) {
+                    awardInfoDTO = new PromotionAwardInfoDTO();
+                }
+                awardInfoDTO.setResponseCode(pcbe.getCode());
+                awardInfoDTO.setResponseMsg(pcbe.getMessage());
             }
-
+            promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+                    promotionId + "_" + reqDTO.getSellerCode() + "_" + reqDTO.getBuyerCode() + "_" + ticket,
+                    JSON.toJSONString(awardInfoDTO));
         }
 
-    }
+        private PromotionAwardInfoDTO drawLotteryAward(String promotionId, List<PromotionAccumulatyDTO> accuList)
+                throws PromotionCenterBusinessException {
+            int luckNo = 0;
+            PromotionAccumulatyDTO goalAccuDTO = null;
+            String lotteryKey = "";
+            String awardJsonStr = "";
+            PromotionAwardInfoDTO awardInfoDTO = null;
+            int loopSize = 0;
 
-    public static int drawLottery(List<PromotionAccumulatyDTO> accuList, int luckNo) {
-//            int luckNo = noGenerator.getRandomNum();
-        int low = 0;
-        int high = accuList.size() - 1;
-        int middle = 0;
-        while (low <= high) {
-            middle = (low + high) / 2;
-            if (low == high) {
-                return low;
-            } else if (Integer.parseInt(accuList.get(middle).getLevelAmount()) > luckNo) {
-                high = middle;
-            } else if (Integer.parseInt(accuList.get(middle).getLevelAmount()) <= luckNo) {
-                low = middle;
+            if (accuList == null || !accuList.isEmpty()) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),
+                        "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
+            } else if ("100".equals(accuList.get(accuList.size() - 1).getLevelAmount())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),
+                        "奖项设置异常没有合适奖项 luckNo:" + luckNo + " level:" + JSON.toJSONString(accuList));
             }
+            try {
+                if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, RedisConst
+                        .REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
+                    throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
+                            "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
+                }
+                while (loopSize++ < 10) {
+                    if (accuList.size() == 1) {
+                        goalAccuDTO = accuList.get(0);
+                    } else {
+                        luckNo = noGenerator.getRandomNum();
+                        for (PromotionAccumulatyDTO accuDTO : accuList) {
+                            if (luckNo <= Integer.parseInt(accuDTO.getLevelAmount())) {
+                                goalAccuDTO = accuDTO;
+                                break;
+                            }
+                        }
+                    }
+                    lotteryKey =
+                            RedisConst.REDIS_LOTTERY_AWARD_PREFIX + goalAccuDTO.getPromotionId() + "_" + goalAccuDTO
+                                    .getLevelCode();
+                    awardJsonStr = promotionRedisDB.headPop(lotteryKey);
+                    if (StringUtils.isEmpty(awardJsonStr)) {
+                        continue;
+                    }
+                    awardInfoDTO = JSON.parseObject(awardJsonStr, PromotionAwardInfoDTO.class);
+                    break;
+                }
+            } catch (PromotionCenterBusinessException pcbe) {
+                promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, RedisConst
+                        .REDIS_LOTTERY_AWARD_TOTAL_COUNT);
+            }
+            return awardInfoDTO;
         }
-        return -1;
-    }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-        int[] src = new int[] {1, 3, 5, 7, 8, 9};
-
-        List<PromotionAccumulatyDTO> accuList = new ArrayList<PromotionAccumulatyDTO>();
-        PromotionAccumulatyDTO accumulatyDTO = new PromotionAccumulatyDTO();
-        accumulatyDTO.setLevelAmount("5");
-        accuList.add(accumulatyDTO);
-
-         accumulatyDTO = new PromotionAccumulatyDTO();
-        accumulatyDTO.setLevelAmount("30");
-        accuList.add(accumulatyDTO);
-
-        accumulatyDTO = new PromotionAccumulatyDTO();
-        accumulatyDTO.setLevelAmount("50");
-        accuList.add(accumulatyDTO);
-
-        accumulatyDTO = new PromotionAccumulatyDTO();
-        accumulatyDTO.setLevelAmount("75");
-        accuList.add(accumulatyDTO);
-
-
-        accumulatyDTO = new PromotionAccumulatyDTO();
-        accumulatyDTO.setLevelAmount("100");
-        accuList.add(accumulatyDTO);
-        int luckNo = (int)(1+Math.random()*100);
-        System.out.println("luckNo:" + luckNo);
-        System.out.println(drawLottery(accuList, luckNo));
     }
 }

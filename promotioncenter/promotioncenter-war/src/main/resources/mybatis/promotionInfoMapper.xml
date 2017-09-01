@@ -415,6 +415,9 @@
   	</if>
   	<if test="dto.showStatus != null and dto.showStatus != ''">
   		AND show_status = #{dto.showStatus}
+  		<if test="dto.showStatus == 4">
+  			AND status ＝ 1
+  		</if>
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}

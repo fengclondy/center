@@ -30,7 +30,7 @@
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
 	    	   plb.bargain_code bargainCodeD
-	    from buyer_launch_bargain_info plb
+	    from buyer_launch_bargain_info plb   
 	    where plb.promotion_id = #{promotionId} 
 	    and plb.level_code = #{levelCode}
 	    <if test="buyerCode != null and buyerCode != ''">

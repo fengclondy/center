@@ -21,10 +21,12 @@ import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoExtendDAO;
+import cn.htd.promotion.cpc.biz.dmo.BuyerBargainRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
+import cn.htd.promotion.cpc.common.constants.Constants;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -36,6 +38,7 @@ import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 
@@ -267,5 +270,162 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
             result.setErrorMessage(e.toString());
 		}
 		return result;
+	}
+	
+	@Override
+	public ExecuteResult<String> optationbargain(String buyerCode, String promotionId, String levelCode,
+			String bargainCode, String helperPicture, String helperName, String openedId, String messageId) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		try {
+		  String key = RedisConst.REDIS_BARGAIN_PRICE_SPLIT + "_" + promotionId + "_" + levelCode + "_" + bargainCode;
+		  //根据条件查询当前的砍价商品
+		  BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+		  buyerBargainLaunch.setBuyerCode(buyerCode);
+		  buyerBargainLaunch.setLevelCode(levelCode);
+		  buyerBargainLaunch.setPromotionId(promotionId);
+		  buyerBargainLaunch.setMessageId(messageId);
+		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",messageId,
+				  JSON.toJSONString(buyerBargainLaunch));
+		  PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法结束,出参{}",messageId,
+				  JSON.toJSONString(promotionBargainInfo));
+			  if(promotionBargainInfo != null){
+				  //查看该种商品是否已经售罄
+				    BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo = new BuyerLaunchBargainInfoResDTO();
+					buyerLaunchBargainInfo.setPromotionId(promotionId);
+					buyerLaunchBargainInfo.setLevelCode(levelCode);
+					buyerLaunchBargainInfo.setIsBargainOver(1);
+					LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber（）方法开始,入参{}",messageId,
+							JSON.toJSONString(buyerLaunchBargainInfo));
+					Integer num = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(buyerLaunchBargainInfo);
+					LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber（）方法结束,出参{}",messageId,num);
+					  if(num == promotionBargainInfo.getGoodsNum()){//已经砍完的商品和商品数量相等就说明此商品已经售罄
+						  List<PromotionBargainInfoResDTO> list = new ArrayList<PromotionBargainInfoResDTO>();
+						  String str = promotionRedisDB.getHash(RedisConst.REDIS_BARGAIN, promotionId);
+						  list = JSON.parseArray(str, PromotionBargainInfoResDTO.class);
+						  if(list != null && list.size() > 0){
+							  for(PromotionBargainInfoResDTO promotionBargain : list){
+								  if(promotionBargain.getLevelCode().equals(levelCode)){
+									  promotionBargain.setIsBargainOver(2);
+								  }
+							  }
+							  promotionRedisDB.setHash(RedisConst.REDIS_BARGAIN, promotionId, JSON.toJSONString(list));
+						  }
+						  result.setCode(Constants.PROMOTION_NO_STOCK);
+						  result.setErrorMessage("该商品已经售罄");
+						  result.setResult(openedId);
+						  return result;
+					  }
+				  //判断当前砍价人数是否超过规定的限制
+				  Integer partakeTimes = promotionBargainInfo.getPartakeTimes();//可以参与砍价的人数
+				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法开始,入参{}",messageId,
+							JSON.toJSONString(buyerLaunchBargainInfo));
+				  List<BuyerBargainRecordDMO> buyerBargainRecordList= buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode(bargainCode);
+				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法结束,出参{}",messageId,
+							JSON.toJSONString(buyerBargainRecordList));
+					  if(buyerBargainRecordList.size() == partakeTimes){
+						  result.setCode(Constants.PROMOTION_PATYIESIN_IS_EXCEED);
+						  result.setErrorMessage("参与砍价人数超过上限");
+						  result.setResult(openedId);
+						  return result;
+					  }
+				  //判断砍价是否过期
+				  Long effectiveTime = promotionBargainInfo.getEffectiveTime().getTime();
+				  Long invalidTime = promotionBargainInfo.getInvalidTime().getTime();
+				  Long currentTime = (new Date()).getTime();
+				  if(currentTime > invalidTime){//当前时间大于结束时间说明已经结束
+					  result.setCode(Constants.PROMOTION_DATETIME_IS_OVER);
+					  result.setErrorMessage("该促销活动已经结束");
+					  result.setResult(openedId);
+					  return result;
+				  }
+				  //判断砍价是否开始
+				  if(currentTime < effectiveTime){//当前时间小于开始时间说明活动还未开始
+					  result.setCode(Constants.PROMOTION_DATETIME_IS_NOSTART);
+					  result.setErrorMessage("该促销活动还未开始");
+					  result.setResult(openedId);
+					  return result;
+				  }
+				  //查看该商品是否已经被砍完
+				  BigDecimal goodsCurrentPrice = new BigDecimal(0);
+				  LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法开始,入参{}",messageId,
+							JSON.toJSONString(buyerLaunchBargainInfo));
+				  BuyerLaunchBargainInfoDMO buyer = buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode(bargainCode);
+				  LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法结束,出参{}",messageId,
+							JSON.toJSONString(buyer));
+				  if(promotionRedisDB.exists(key)){//红包队列不存在说明已经砍完
+					  if(buyer != null){
+						  if(buyer.getIsBargainOver() == 1){//已经砍完
+							  result.setCode(Constants.PROMOTION_IS_BARGAIN_OVER);
+							  result.setErrorMessage("该商品已经砍完");
+							  result.setResult(openedId);
+							  return result;
+						  }else{
+							  //取商品的当前价
+							  goodsCurrentPrice = buyer.getGoodsCurrentPrice();
+						  }
+					  }
+				  }else{
+					  result.setCode(Constants.PROMOTION_IS_BARGAIN_OVER);
+					  result.setErrorMessage("该商品已经砍完");
+					  result.setResult(openedId);
+					  return result;
+				  }
+				  //判断当前砍价人是否参与过砍价
+				  String s = promotionRedisDB.getHash(Constants.IS_BUYER_BARGAIN, openedId+promotionId+levelCode);
+				  if(StringUtils.isEmpty(s)){//没有参与过砍价
+					  String bargainPrice = promotionRedisDB.headPop(key);//砍的价格
+					  if(!StringUtils.isEmpty(bargainPrice)){
+						  //获取该商品砍完之后的价格
+						  BuyerBargainLaunchReqDTO buyerBargainLaunchReqDTO =new BuyerBargainLaunchReqDTO();
+						  buyerBargainLaunchReqDTO.setGoodsCurrentPrice(new BigDecimal(bargainPrice));
+						  buyerBargainLaunchReqDTO.setMessageId(messageId);
+						  buyerBargainLaunchReqDTO.setModifyId(111);
+						  buyerBargainLaunchReqDTO.setModifyName(helperName);
+						  buyerBargainLaunchReqDTO.setModifyTime(new Date());
+						  buyerBargainLaunchReqDTO.setPromotionId(promotionId);
+						  buyerBargainLaunchReqDTO.setLevelCode(levelCode);
+						  buyerBargainLaunchReqDTO.setBargainCode(bargainCode);
+						  buyerBargainLaunchReqDTO.setPromotionId(promotionId);
+						  String buyerBargainLaunchJson = JSON.toJSONString(buyerBargainLaunchReqDTO);
+						  promotionRedisDB.tailPush(Constants.BUYER_LAUNCH_BARGAIN_INFO, buyerBargainLaunchJson);//从右边插入队列
+						  //插入砍价记录
+						  BuyerBargainRecordReqDTO buyerBargainRecord = new BuyerBargainRecordReqDTO();
+						  buyerBargainRecord.setBargainCode(bargainCode);
+						  buyerBargainRecord.setBargainPersonCode(openedId);
+						  buyerBargainRecord.setBargainAmount(new BigDecimal(bargainPrice));
+						  buyerBargainRecord.setBargainPresonName(helperName);
+						  buyerBargainRecord.setBargainTime(new Date());
+						  buyerBargainRecord.setCreateId(1);
+						  buyerBargainRecord.setCreateName(helperName);
+						  buyerBargainRecord.setCreateTime(new Date());
+						  buyerBargainRecord.setHeadSculptureUrl(helperPicture);
+						  buyerBargainRecord.setMessageId(messageId);
+						  String buyerBargainRecordJson = JSON.toJSONString(buyerBargainRecord);
+						  promotionRedisDB.tailPush(Constants.BUYER_BARGAIN_RECORD, buyerBargainRecordJson);//从右边插入队列
+						  //为判断是否砍过价做准备
+						  String str = "01";
+						  promotionRedisDB.setHash(Constants.IS_BUYER_BARGAIN, openedId+promotionId+levelCode,str);
+						  result.setCode(ResultCodeEnum.SUCCESS.getCode());
+						  result.setResultMessage("厉害了，砍价成功");
+						  result.setResult(openedId);
+						  return result;
+					  }else{
+						  result.setCode(Constants.PROMOTION_IS_BARGAIN_OVER);
+						  result.setErrorMessage("该商品已经砍完");
+						  result.setResult(openedId);
+						  return result;
+					  }
+				  }else{
+					  result.setCode(Constants.PROMOTION_IS_PATYIESIN);
+					  result.setErrorMessage("该粉丝已经参与过砍价，不能重复参与");
+					  result.setResult(openedId);
+					  return result;
+				  }
+			  }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		  return result;
 	}
 }

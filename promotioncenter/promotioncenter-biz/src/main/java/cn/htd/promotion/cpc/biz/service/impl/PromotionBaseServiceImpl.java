@@ -45,7 +45,6 @@ import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionPictureReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionSellerDetailReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionSellerRuleReqDTO;
-import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
@@ -610,7 +609,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     }
     
 	@Override
-	public GenricResDTO addPromotionInfo(PromotionInfoEditReqDTO pied) {
+	public PromotionInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pied) {
 		if (pied == null) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
         }
@@ -647,6 +646,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		
 		promotionInfoDAO.add(pid);
 		List<PromotionAccumulatyReqDTO> promotionAccumulatyList = pied.getPromotionAccumulatyList();
+		List<PromotionAccumulatyDTO> paList = new ArrayList<PromotionAccumulatyDTO>();
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动层级不能为空");
         }
@@ -672,7 +672,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             accDTO.setLevelAmount(accumulatyDTO.getLevelAmount());
             accDTO.setQuantifierType(accumulatyDTO.getQuantifierType());
             promotionAccumulatyDAO.add(accDTO);
-            
+            paList.add(accDTO);
 //            padrDTO = accumulatyDTO.getPromotionAwardInfoReqDTO();
 //            padDTO = new PromotionAwardInfoDTO();
 //            
@@ -691,6 +691,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 //            padDTO.setModifyName(pied.getCreateName());
 //            promotionAwardInfoDAO.add(padDTO);
         }
+        pid.setPromotionAccumulatyList(paList);
+        
         PromotionExtendInfoDTO pteDTO = new PromotionExtendInfoDTO();
         PromotionExtendInfoReqDTO ped = pied.getPromotionExtendInfoReqDTO();
         pteDTO.setContactAddress(ped.getContactAddress());
@@ -791,12 +793,12 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			psd.setDeleteFlag(YesNoEnum.NO.getValue());
 			promotionSellerDetailDAO.add(psd);
 		}
-		GenricResDTO rs = new GenricResDTO();
-		return rs;
+
+		return pid;
 	}
 
 	@Override
-	public GenricResDTO editPromotionInfo(PromotionInfoEditReqDTO pied) {
+	public PromotionInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pied) {
 
 		if (pied == null) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
@@ -830,6 +832,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		
 		promotionInfoDAO.update(pid);
 		List<PromotionAccumulatyReqDTO> promotionAccumulatyList = pied.getPromotionAccumulatyList();
+		List<PromotionAccumulatyDTO> paList = new ArrayList<PromotionAccumulatyDTO>();
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动层级不能为空");
         }
@@ -853,7 +856,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             accDTO.setLevelAmount(accumulatyDTO.getLevelAmount());
             accDTO.setQuantifierType(accumulatyDTO.getQuantifierType());
             promotionAccumulatyDAO.update(accDTO);
-            
+            paList.add(accDTO);
 //            padrDTO = accumulatyDTO.getPromotionAwardInfoReqDTO();
 //            padDTO = new PromotionAwardInfoDTO();
 //            padDTO.setAwardId(padrDTO.getAwardId());
@@ -869,6 +872,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 //            padDTO.setModifyName(pied.getModifyName());
 //            promotionAwardInfoDAO.update(padDTO);
         }
+        pid.setPromotionAccumulatyList(paList);
         PromotionExtendInfoDTO pteDTO = new PromotionExtendInfoDTO();
         PromotionExtendInfoReqDTO ped = pied.getPromotionExtendInfoReqDTO();
         pteDTO.setId(ped.getId());
@@ -962,8 +966,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			psd.setDeleteFlag(promotionSellerDetailReqDTO.getDeleteFlag());
 			promotionSellerDetailDAO.update(psd);
 		}
-		GenricResDTO rs = new GenricResDTO();
-		return rs;
+		return pid;
 	
 	}
 

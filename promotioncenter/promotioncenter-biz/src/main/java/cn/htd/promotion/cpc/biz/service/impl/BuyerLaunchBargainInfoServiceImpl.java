@@ -287,6 +287,35 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",messageId,
 				  JSON.toJSONString(buyerBargainLaunch));
 		  PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+	    	//从redis里面获取砍价详情
+	        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
+	        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+	        if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
+	        	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
+	            	if(p.getLevelCode().equals(p.getLevelCode())){
+	            		promotionBargainInfo.setPromotionId(p.getPromotionId());
+	            		promotionBargainInfo.setLevelCode(p.getLevelCode());
+	            		promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
+	            		promotionBargainInfo.setGoodsName(p.getGoodsName());
+	            		promotionBargainInfo.setGoodsCostPrice(p.getGoodsCostPrice());
+	            		promotionBargainInfo.setGoodsFloorPrice(p.getGoodsFloorPrice());
+	            		promotionBargainInfo.setGoodsNum(p.getGoodsNum());
+	            		promotionBargainInfo.setPartakeTimes(p.getPartakeTimes());
+	            		promotionBargainInfo.setPromotionDesc(p.getPromotionSlogan());
+	            		promotionBargainInfo.setContactNameD(p.getContactName());
+	            		promotionBargainInfo.setContactTelphoneD(p.getContactTelephone());
+	            		promotionBargainInfo.setContactAddressD(p.getContactAddress());
+	            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineStartTime());
+	            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineEndTime());
+	            		promotionBargainInfo.setTemplateFlagD(p.getTemplateFlag());
+	            		promotionBargainInfo.setSellerNameD(p.getPromotionProviderSellerCode());
+	            		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
+	            		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
+	            		promotionBargainInfo.setShowStatusD(p.getShowStatus());
+	            		break;
+	            	}
+	            }
+	        }
 		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法结束,出参{}",messageId,
 				  JSON.toJSONString(promotionBargainInfo));
 			  if(promotionBargainInfo != null){

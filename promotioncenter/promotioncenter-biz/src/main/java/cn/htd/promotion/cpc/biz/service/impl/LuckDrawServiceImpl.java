@@ -137,18 +137,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			String buyerDailyDrawTimes = promotionRedisDB.getHash(
 					RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
 					RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES);
-			String buyerNo = request.getMemberNo();
-			// 粉丝活动粉丝当日参与次数
-			String buyerPartakeTimes = promotionRedisDB.getHash(
-					RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + buyerNo,
-					RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
-			Integer remainingTimes = null;
-			if (StringUtils.isNotEmpty(buyerDailyDrawTimes)) {
-				remainingTimes = Integer.valueOf(buyerDailyDrawTimes)
-						- Integer.valueOf(buyerPartakeTimes == null ? "0"
-								: buyerPartakeTimes);
-			}
-			result.setRemainingTimes(remainingTimes);
+			
+			Integer remainingTimes = Integer.valueOf(buyerDailyDrawTimes);
 			result.setPictureUrl(pictureUrlList);
 			result.setActivityStartTime(promotionExtendInfoDTO
 					.getOfflineStartTime());
@@ -157,6 +147,26 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setPromotionName(promotionExtendInfoDTO.getPromotionName());
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			
+			String buyerNo = request.getMemberNo();
+			if(StringUtils.isNotEmpty(buyerNo)){
+				result.setRemainingTimes(remainingTimes);
+				// 粉丝活动粉丝当日次数信息
+				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + buyerNo;
+				
+				List<String> buyerTimeInfoList = promotionRedisDB.getHashFields(b2bMiddleLotteryBuyerTimesInfo);
+				if(CollectionUtils.isEmpty(buyerTimeInfoList)){
+					//粉丝活动粉丝当日剩余参与次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, remainingTimes.toString());
+					//粉丝当日中奖次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES, "0");
+					//粉丝分享次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES, "0");
+					//粉丝已经达到分享获得抽奖次数上限
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES, PromotionCodeEnum.BUYER_HAS_TOP_EXTRA_TIMES.getCode());
+				}
+				//TODO 校验
+			}
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -231,7 +241,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			promotionRedisDB.incrHash(lotteryBuyerTimes,RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES);
 			Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
 			if(StringUtils.isEmpty(buyerTopExtraPartakeTime)){
-				//粉丝活动粉丝当日参与次数--总共参与次数
+				//粉丝活动粉丝当日参与次数--总共剩余参与次数
 				promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,partakeTime);
 			}else{
 				//粉丝活动粉丝当日参与次数--总共参与次数

@@ -463,14 +463,19 @@
     modify_time = now()
   	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
-  
+
   <select id="queryUpPromotionBargainCount" resultType="java.lang.Integer">
   		SELECT COUNT(0)
         FROM promotion_info
         WHERE promotion_type = 22
         AND promotion_provider_seller_code = #{sellerCode}
         AND status != 9
-        AND now() between #{effectiveTime} and #{invalidTime}
+        <if test="effectiveTime != null">
+  		AND invalid_time >= #{effectiveTime} 
+  		</if>
+  		<if test="invalidTime != null">
+  	 		<![CDATA[AND effective_time <= #{invalidTime}]]>
+  		</if>
         <if test="promotionId != null and promotionId != ''">
         	AND promotion_id != #{promotionId,jdbcType=VARCHAR}
         </if>

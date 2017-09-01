@@ -36,7 +36,10 @@ public enum ResultCodeEnum {
     LOTTERY_NOT_IN_TIME_INTERVAL("26203", "抽奖活动不在当前时间段内"),
     LOTTERY_BUYER_NO_AUTHIORITY("26204", "粉丝没有抽奖权限"),
     LOTTERY_SELLER_NO_AUTHIORITY("26205", "会员店没有参加本次抽奖活动"),
-    LOTTERY_NO_ENOUGH_AWARD("26206", "抽奖活动目前奖品数量不足");
+    LOTTERY_NO_MORE_AWARD_NUM("26206", "抽奖活动目前奖品数量不足"),
+    LOTTERY_BUYER_NO_MORE_DRAW_CHANCE("26207", "粉丝已经用完了自有抽奖机会"),
+    LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE("26208", "粉丝已经用完了自有和分享额外获取的抽奖机会"),
+    ;
 
     private ResultCodeEnum(String code, String msg) {
         this.code = code;

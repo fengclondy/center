@@ -177,7 +177,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     if ((promotionInfo.getInvalidTime() != null && !(new Date()).after(promotionInfo.getInvalidTime()))
                             && (null != buyerLaunchList && !buyerLaunchList.isEmpty())) {
                         throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),
-                                "砍价活动还未结束并有人参与");
+                                "存在砍价记录不能删除");
                     }
                 }
             }

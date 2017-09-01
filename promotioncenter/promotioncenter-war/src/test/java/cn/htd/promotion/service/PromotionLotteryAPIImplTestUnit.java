@@ -50,7 +50,7 @@ public class PromotionLotteryAPIImplTestUnit {
     @Rollback(false) 
     public void validateLuckDrawPermission(){
     	ValidateLuckDrawReqDTO  dto = new ValidateLuckDrawReqDTO();
-    	dto.setOrgId("1234");
+    	dto.setOrgId("8131911");
     	dto.setMessageId("122121222");
     	
     	String validateLuckDrawReqDTOJson = JSONObject.toJSONString(dto);

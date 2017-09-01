@@ -1,9 +1,9 @@
-package cn.htd.promotion.cpc.dto.request;
+package cn.htd.promotion.cpc.dto.response;
 
 import java.util.Date;
 import java.util.List;
 
-public class PromotionInfoEditReqDTO extends GenricReqDTO {
+public class PromotionInfoEditResDTO  extends GenricResDTO {
 
 	/**
 	 * 
@@ -64,84 +64,84 @@ public class PromotionInfoEditReqDTO extends GenricReqDTO {
 
 	private int dealFlag;
 
-	private List<PromotionPictureReqDTO> promotionPictureReqDTO;
+	private List<PromotionPictureDTO> promotionPictureDTO;
 
-	private PromotionExtendInfoReqDTO promotionExtendInfoReqDTO;
+	private PromotionExtendInfoDTO promotionExtendInfoDTO;
 
-	private PromotionBuyerRuleReqDTO promotionBuyerRuleReqDTO;
+	private PromotionBuyerRuleDTO promotionBuyerRuleDTO;
 
-	private PromotionSellerRuleReqDTO promotionSellerRuleReqDTO;
+	private PromotionSellerRuleDTO promotionSellerRuleDTO;
 
-	private List<PromotionAccumulatyReqDTO> promotionAccumulatyList;
+	private List<PromotionAccumulatyResDTO> promotionAccumulatyList;
 
-	private PromotionDetailDescribeReqDTO promotionDetailDescribeReqDTO;
+	private PromotionDetailDescribeDTO promotionDetailDescribeDTO;
 
-	private PromotionSloganReqDTO promotionSloganReqDTO;
+	private PromotionSloganDTO promotionSloganDTO;
 	
-	private List<PromotionConfigureReqDTO> promotionConfigureList;
+	private List<PromotionConfigureDTO> promotionConfigureList;
 	
-	public PromotionSloganReqDTO getPromotionSloganReqDTO() {
-		return promotionSloganReqDTO;
+	public List<PromotionPictureDTO> getPromotionPictureDTO() {
+		return promotionPictureDTO;
 	}
 
-	public void setPromotionSloganReqDTO(PromotionSloganReqDTO promotionSloganReqDTO) {
-		this.promotionSloganReqDTO = promotionSloganReqDTO;
+	public void setPromotionPictureDTO(List<PromotionPictureDTO> promotionPictureDTO) {
+		this.promotionPictureDTO = promotionPictureDTO;
 	}
 
-	public List<PromotionConfigureReqDTO> getPromotionConfigureList() {
+	public PromotionDetailDescribeDTO getPromotionDetailDescribeDTO() {
+		return promotionDetailDescribeDTO;
+	}
+
+	public void setPromotionDetailDescribeDTO(PromotionDetailDescribeDTO promotionDetailDescribeDTO) {
+		this.promotionDetailDescribeDTO = promotionDetailDescribeDTO;
+	}
+
+	public PromotionSloganDTO getPromotionSloganDTO() {
+		return promotionSloganDTO;
+	}
+
+	public void setPromotionSloganDTO(PromotionSloganDTO promotionSloganDTO) {
+		this.promotionSloganDTO = promotionSloganDTO;
+	}
+
+	public List<PromotionConfigureDTO> getPromotionConfigureList() {
 		return promotionConfigureList;
 	}
 
-	public void setPromotionConfigureList(List<PromotionConfigureReqDTO> promotionConfigureList) {
+	public void setPromotionConfigureList(List<PromotionConfigureDTO> promotionConfigureList) {
 		this.promotionConfigureList = promotionConfigureList;
 	}
 
-	public List<PromotionPictureReqDTO> getPromotionPictureReqDTO() {
-		return promotionPictureReqDTO;
+	public PromotionExtendInfoDTO getPromotionExtendInfoDTO() {
+		return promotionExtendInfoDTO;
 	}
 
-	public void setPromotionPictureReqDTO(List<PromotionPictureReqDTO> promotionPictureReqDTO) {
-		this.promotionPictureReqDTO = promotionPictureReqDTO;
+	public void setPromotionExtendInfoDTO(PromotionExtendInfoDTO promotionExtendInfoDTO) {
+		this.promotionExtendInfoDTO = promotionExtendInfoDTO;
 	}
 
-	public PromotionDetailDescribeReqDTO getPromotionDetailDescribeReqDTO() {
-		return promotionDetailDescribeReqDTO;
+	public PromotionBuyerRuleDTO getPromotionBuyerRuleDTO() {
+		return promotionBuyerRuleDTO;
 	}
 
-	public void setPromotionDetailDescribeReqDTO(PromotionDetailDescribeReqDTO promotionDetailDescribeReqDTO) {
-		this.promotionDetailDescribeReqDTO = promotionDetailDescribeReqDTO;
+	public void setPromotionBuyerRuleDTO(PromotionBuyerRuleDTO promotionBuyerRuleDTO) {
+		this.promotionBuyerRuleDTO = promotionBuyerRuleDTO;
 	}
 
-	public PromotionExtendInfoReqDTO getPromotionExtendInfoReqDTO() {
-		return promotionExtendInfoReqDTO;
+	public PromotionSellerRuleDTO getPromotionSellerRuleDTO() {
+		return promotionSellerRuleDTO;
 	}
 
-	public void setPromotionExtendInfoReqDTO(PromotionExtendInfoReqDTO promotionExtendInfoReqDTO) {
-		this.promotionExtendInfoReqDTO = promotionExtendInfoReqDTO;
+	public void setPromotionSellerRuleDTO(PromotionSellerRuleDTO promotionSellerRuleDTO) {
+		this.promotionSellerRuleDTO = promotionSellerRuleDTO;
 	}
 
-	public PromotionBuyerRuleReqDTO getPromotionBuyerRuleReqDTO() {
-		return promotionBuyerRuleReqDTO;
-	}
-
-	public void setPromotionBuyerRuleReqDTO(PromotionBuyerRuleReqDTO promotionBuyerRuleReqDTO) {
-		this.promotionBuyerRuleReqDTO = promotionBuyerRuleReqDTO;
-	}
-
-	public PromotionSellerRuleReqDTO getPromotionSellerRuleReqDTO() {
-		return promotionSellerRuleReqDTO;
-	}
-
-	public void setPromotionSellerRuleReqDTO(PromotionSellerRuleReqDTO promotionSellerRuleReqDTO) {
-		this.promotionSellerRuleReqDTO = promotionSellerRuleReqDTO;
-	}
-
-	public List<PromotionAccumulatyReqDTO> getPromotionAccumulatyList() {
+	public List<PromotionAccumulatyResDTO> getPromotionAccumulatyList() {
 		return promotionAccumulatyList;
 	}
 
-	public void setPromotionAccumulatyList(List<PromotionAccumulatyReqDTO> promotionAccumulatyList) {
-		this.promotionAccumulatyList = promotionAccumulatyList;
+	public void setPromotionAccumulatyList(List<PromotionAccumulatyResDTO> promotionAccumulatyResList) {
+		this.promotionAccumulatyList = promotionAccumulatyResList;
 	}
 
 	public Long getId() {

@@ -472,4 +472,15 @@
         	AND promotion_id != #{promotionId,jdbcType=VARCHAR}
         </if>
   </select>
+  
+    <update id="updatePromotionStatus4InvalidById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      show_status = #{showStatus,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
 </mapper>

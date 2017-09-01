@@ -536,4 +536,22 @@ public class PromotionTimelimitedRedisHandle {
         }
         return null;
     }
+    
+    /**
+     * 更新秒杀变化活动状态
+     *
+     * @param promotionInfo
+     */
+    public void updateRedisTimeilimitedStatus(PromotionInfoDTO promotionInfo) {
+    	TimelimitedInfoResDTO timelimitedInfo = null;
+        String promotionId = promotionInfo.getPromotionId();
+        String timelimitedJsonStr = "";
+        timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
+        timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
+        if (timelimitedInfo == null) {
+            return;
+        }
+        timelimitedInfo.setStatus(promotionInfo.getStatus());
+        promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
+    }
 }

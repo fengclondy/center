@@ -124,4 +124,13 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
 												@Param("effectiveTime") Date effectiveTime,
 												@Param("invalidTime") Date invalidTime,
 												@Param("promotionId") String promotionId);
+	
+    /**
+     * 更新活动状态已结束超过24小时的促销活动状态为下架
+     *
+     * @param promotionInfo
+     * @return
+     */
+    public Integer updatePromotionStatus4InvalidById(PromotionInfoDTO promotionInfo);
+
 }

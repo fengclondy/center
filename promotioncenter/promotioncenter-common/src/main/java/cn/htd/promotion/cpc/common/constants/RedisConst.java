@@ -66,7 +66,8 @@ public class RedisConst {
     public static final String REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES = "BUYER_HAS_TOP_EXTRA_TIMES";
     // Redis抽奖活动卖家每日中奖次数
     public static final String REDIS_LOTTERY_SELLER_WINED_TIMES = "B2B_MIDDLE_LOTTERY_SELLER_WINED_TIMES";
-
+    // Redis粉丝抽奖结果信息
+    public static final String REDIS_LOTTERY_BUYER_AWARD_INFO = "B2B_MIDDLE_LOTTERY_BUYER_AWARD_INFO";
 
     // Redis会员促销活动有效信息
     public static final String PROMOTION_REDIS_TIMELIMITED_VALID = "PROMOTION_B2C_MIDDLE_TIMELIMITED_VALID";

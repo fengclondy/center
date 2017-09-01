@@ -35,6 +35,7 @@ import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.WinningRecordResDTO;
@@ -334,6 +335,21 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(rt);
+	}
+
+	/**
+	 * 参与有效活动的所有卖家信息
+	 */
+	@Override
+	public String participateActivitySellerInfo(String messageId) {
+		PromotionSellerRuleDTO result = new PromotionSellerRuleDTO();
+		try {
+			result = luckDrawService.participateActivitySellerInfo(messageId);
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(result);
 	}
 
 }

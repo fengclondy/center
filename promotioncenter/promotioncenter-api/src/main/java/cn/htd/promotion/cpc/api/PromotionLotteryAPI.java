@@ -86,4 +86,10 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO);
+	
+	/**
+	 * 参与有效活动的所有卖家信息
+	 * @return
+	 */
+	public String participateActivitySellerInfo(String messageId);
 }

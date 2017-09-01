@@ -25,39 +25,14 @@
   
      <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" 
      				parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
-	    select pbi.bargain_id bargainId ,
-	    	   pbi.promotion_id promotionId,
-	    	   pbi.level_code levelCode,
-	    	   pbi.goods_picture goodsPicture,
-	    	   pbi.goods_name goodsName,
-	    	   pbi.goods_cost_price goodsCostPrice,
-	    	   pbi.goods_floor_price goodsFloorPrice,
-	    	   pbi.goods_num goodsNum,
-	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
-	    	   ps.promotion_slogan promotionDesc,
-	    	   pei.contact_name contactNameD,
-	    	   pei.contact_telephone contactTelphoneD,
-	    	   pei.contact_address contactAddressD,
-	    	   pei.each_start_time eachStartTimeD,
-	    	   pei.each_end_time eachEndTimeD,
-	    	   pei.offline_start_time offlineStartTimeD,
-	    	   pei.offline_end_time offlineEndTimeD,
-	    	   pei.template_flag templateFlagD,
-	    	   plb.launch_time launchTime,
+	    select plb.launch_time launchTime,
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
-	    	   pi.promotion_provider_seller_code sellerNameD,
-	     	   pi.effective_time effectiveTime,
-			   pi.invalid_time invalidTime,
-			   pi.show_status showStatusD
-	    from promotion_bargain_info pbi
-	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
-	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
-		left join promotion_info pi on pi.promotion_id = pbi.promotion_id
-	    left join buyer_launch_bargain_info plb on (plb.promotion_id = pbi.promotion_id and plb.level_code = pbi.level_code)
-	    where pbi.promotion_id = #{promotionId} 
-	    and pbi.level_code = #{levelCode}
+	    	   plb.bargain_code bargainCodeD
+	    from buyer_launch_bargain_info plb
+	    where plb.promotion_id = #{promotionId} 
+	    and plb.level_code = #{levelCode}
 	    <if test="buyerCode != null and buyerCode != ''">
 			and plb.buyer_code = #{buyerCode}
 		</if>
@@ -150,6 +125,24 @@
 		SELECT COUNT(0) FROM promotion_bargain_info as pbi
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
+  	    AND pi.status != 9
+	</select>
+	
+		<select id="queryPromotionBargainByPromotionId" resultMap="BaseResultMap">
+		SELECT * FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_id = #{promotionId}
+  	    AND pi.status != 9
+  	    order by pi.create_time desc
+  	    <if test="page!=null">
+	      <include refid="pagination_tail"/>
+	    </if>
+	</select>
+	
+	<select id="queryPromotionBargainByPromotionId" resultType="java.lang.Long">
+		SELECT COUNT(0) FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_id = #{promotionId}
   	    AND pi.status != 9
 	</select>
 	

@@ -40,6 +40,7 @@ import cn.htd.promotion.cpc.common.util.CalculateUtils;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
@@ -84,6 +85,9 @@ public class PromotionBargainInfoServiceImpl implements
 	private BuyerLaunchBargainInfoDAO buyerLaunchBargainInfoDAO;
 	@Resource
 	private PromotionInfoExtendDAO promotionInfoExtendDAO;
+	
+	@Resource
+	private PromotionRedisDB promotionRedisDB;
 
 
     @Resource
@@ -98,10 +102,37 @@ public class PromotionBargainInfoServiceImpl implements
         //查询活动详情
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch));
-        PromotionBargainInfoDMO promotionBargainInfo =
-                promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+        PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,出参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(promotionBargainInfo));
+        //从redis里面获取砍价详情
+        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
+        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+        if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
+        	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
+            	if(p.getLevelCode().equals(p.getLevelCode())){
+            		promotionBargainInfo.setLevelCode(p.getLevelCode());
+            		promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
+            		promotionBargainInfo.setGoodsName(p.getGoodsName());
+            		promotionBargainInfo.setGoodsCostPrice(p.getGoodsCostPrice());
+            		promotionBargainInfo.setGoodsFloorPrice(p.getGoodsFloorPrice());
+            		promotionBargainInfo.setGoodsNum(p.getGoodsNum());
+            		promotionBargainInfo.setPartakeTimes(p.getPartakeTimes());
+            		promotionBargainInfo.setPromotionDesc(p.getPromotionSlogan());
+            		promotionBargainInfo.setContactNameD(p.getContactName());
+            		promotionBargainInfo.setContactTelphoneD(p.getContactTelephone());
+            		promotionBargainInfo.setContactAddressD(p.getContactAddress());
+            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineStartTime());
+            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineEndTime());
+            		promotionBargainInfo.setTemplateFlagD(p.getTemplateFlag());
+            		promotionBargainInfo.setSellerNameD(p.getPromotionProviderSellerCode());
+            		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
+            		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
+            		promotionBargainInfo.setShowStatusD(p.getShowStatus());
+            		break;
+            	}
+            }
+        }
         //根据砍价编码查询砍价记录
         List<BuyerBargainRecordResDTO> buyerBargainRecordResList = new ArrayList<BuyerBargainRecordResDTO>();
         if (!StringUtils.isEmpty(buyerBargainLaunch.getBargainCode())) {
@@ -310,7 +341,7 @@ public class PromotionBargainInfoServiceImpl implements
 	            //判断时间段内可有活动上架
 	            Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfoDTO.getPromotionProviderSellerCode(),
 	            		bargainInfoList.get(0).getEffectiveTime(),bargainInfoList.get(0).getInvalidTime(), promotionInfoDTO.getPromotionId());
-	            if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+	            if(isUpPromotionFlag.intValue() > 0) {
 	           	 	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
 	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
@@ -469,14 +500,14 @@ public class PromotionBargainInfoServiceImpl implements
 
 	@Override
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
-			String sellerCode, Pager<String> page) {
+			String promotionId, Pager<String> page) {
 		DataGrid<PromotionBargainOverviewResDTO> dataGrid = new DataGrid<PromotionBargainOverviewResDTO>();
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
 		List<PromotionBargainOverviewResDTO> resList = new ArrayList<PromotionBargainOverviewResDTO>();
 		BuyerBargainLaunchReqDTO launchDTO = new BuyerBargainLaunchReqDTO();
 		try {
-			List<PromotionBargainInfoDMO> bargainList  = promotionBargainInfoDAO.queryPromotionBargainBySellerCode(sellerCode, page);
-			Long bargainCount = promotionBargainInfoDAO.queryPromotionBargainCountBySellerCode(sellerCode);
+			List<PromotionBargainInfoDMO> bargainList  = promotionBargainInfoDAO.queryPromotionBargainByPromotionId(promotionId, page);
+			Long bargainCount = promotionBargainInfoDAO.queryPromotionBargainCountByPromotionId(promotionId);
 			if(null != bargainList && !bargainList.isEmpty()){
 				for (PromotionBargainInfoDMO dmo : bargainList) {
 					PromotionBargainOverviewResDTO resDTO = new PromotionBargainOverviewResDTO();
@@ -514,7 +545,7 @@ public class PromotionBargainInfoServiceImpl implements
 		return result;
 	}
 	
-	   /**
+	/**
      * 根据促销活动的有效期间设定促销活动状态
      *
      * @param promotionInfo

@@ -18,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
-import cn.htd.common.util.DateUtils;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerBargainRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
@@ -105,59 +104,61 @@ public class PromotionBargainInfoServiceImpl implements
         PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,出参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(promotionBargainInfo));
-        //从redis里面获取砍价详情
-        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
-        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
-        if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
-        	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
-            	if(p.getLevelCode().equals(p.getLevelCode())){
-            		promotionBargainInfo.setLevelCode(p.getLevelCode());
-            		promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
-            		promotionBargainInfo.setGoodsName(p.getGoodsName());
-            		promotionBargainInfo.setGoodsCostPrice(p.getGoodsCostPrice());
-            		promotionBargainInfo.setGoodsFloorPrice(p.getGoodsFloorPrice());
-            		promotionBargainInfo.setGoodsNum(p.getGoodsNum());
-            		promotionBargainInfo.setPartakeTimes(p.getPartakeTimes());
-            		promotionBargainInfo.setPromotionDesc(p.getPromotionSlogan());
-            		promotionBargainInfo.setContactNameD(p.getContactName());
-            		promotionBargainInfo.setContactTelphoneD(p.getContactTelephone());
-            		promotionBargainInfo.setContactAddressD(p.getContactAddress());
-            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineStartTime());
-            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineEndTime());
-            		promotionBargainInfo.setTemplateFlagD(p.getTemplateFlag());
-            		promotionBargainInfo.setSellerNameD(p.getPromotionProviderSellerCode());
-            		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
-            		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
-            		promotionBargainInfo.setShowStatusD(p.getShowStatus());
-            		break;
-            	}
+        if(promotionBargainInfo != null){
+        	//从redis里面获取砍价详情
+            List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
+            		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+            if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
+            	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
+                	if(p.getLevelCode().equals(p.getLevelCode())){
+                		promotionBargainInfo.setLevelCode(p.getLevelCode());
+                		promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
+                		promotionBargainInfo.setGoodsName(p.getGoodsName());
+                		promotionBargainInfo.setGoodsCostPrice(p.getGoodsCostPrice());
+                		promotionBargainInfo.setGoodsFloorPrice(p.getGoodsFloorPrice());
+                		promotionBargainInfo.setGoodsNum(p.getGoodsNum());
+                		promotionBargainInfo.setPartakeTimes(p.getPartakeTimes());
+                		promotionBargainInfo.setPromotionDesc(p.getPromotionSlogan());
+                		promotionBargainInfo.setContactNameD(p.getContactName());
+                		promotionBargainInfo.setContactTelphoneD(p.getContactTelephone());
+                		promotionBargainInfo.setContactAddressD(p.getContactAddress());
+                		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineStartTime());
+                		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineEndTime());
+                		promotionBargainInfo.setTemplateFlagD(p.getTemplateFlag());
+                		promotionBargainInfo.setSellerNameD(p.getPromotionProviderSellerCode());
+                		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
+                		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
+                		promotionBargainInfo.setShowStatusD(p.getShowStatus());
+                		break;
+                	}
+                }
             }
-        }
-        //根据砍价编码查询砍价记录
-        List<BuyerBargainRecordResDTO> buyerBargainRecordResList = new ArrayList<BuyerBargainRecordResDTO>();
-        if (!StringUtils.isEmpty(buyerBargainLaunch.getBargainCode())) {
-            LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,入参{}",
-                    buyerBargainLaunch.getMessageId(),
-                    buyerBargainLaunch.getBargainCode() + ":" + buyerBargainLaunch.getMessageId());
-            List<BuyerBargainRecordDMO> buyerBargainRecordList =
-                    buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode(buyerBargainLaunch.getBargainCode());
-            LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,出参{}",
-                    buyerBargainLaunch.getMessageId(),
-                    JSON.toJSONString(buyerBargainRecordList));
-            if (buyerBargainRecordList != null) {
-                String str = JSONObject.toJSONString(buyerBargainRecordList);
-                buyerBargainRecordResList = JSONObject.parseArray(str, BuyerBargainRecordResDTO.class);
+            //根据砍价编码查询砍价记录
+            List<BuyerBargainRecordResDTO> buyerBargainRecordResList = new ArrayList<BuyerBargainRecordResDTO>();
+            if (!StringUtils.isEmpty(buyerBargainLaunch.getBargainCode())) {
+                LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,入参{}",
+                        buyerBargainLaunch.getMessageId(),
+                        buyerBargainLaunch.getBargainCode() + ":" + buyerBargainLaunch.getMessageId());
+                List<BuyerBargainRecordDMO> buyerBargainRecordList =
+                        buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode(buyerBargainLaunch.getBargainCode());
+                LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,出参{}",
+                        buyerBargainLaunch.getMessageId(),
+                        JSON.toJSONString(buyerBargainRecordList));
+                if (buyerBargainRecordList != null) {
+                    String str = JSONObject.toJSONString(buyerBargainRecordList);
+                    buyerBargainRecordResList = JSONObject.parseArray(str, BuyerBargainRecordResDTO.class);
+                }
             }
-        }
 
-        if (promotionBargainInfo != null) {
-            String str = JSONObject.toJSONString(promotionBargainInfo);
-            LOGGER.info("before convert:" + str);
-            promotionBargainInfoResDTO = JSONObject.parseObject(str, PromotionBargainInfoResDTO.class);
-            LOGGER.info("after convert:" + JSON.toJSONString(promotionBargainInfoResDTO));
-            promotionBargainInfoResDTO.setBuyerBargainRecordList(buyerBargainRecordResList);
+            if (promotionBargainInfo != null) {
+                String str = JSONObject.toJSONString(promotionBargainInfo);
+                LOGGER.info("before convert:" + str);
+                promotionBargainInfoResDTO = JSONObject.parseObject(str, PromotionBargainInfoResDTO.class);
+                LOGGER.info("after convert:" + JSON.toJSONString(promotionBargainInfoResDTO));
+                promotionBargainInfoResDTO.setBuyerBargainRecordList(buyerBargainRecordResList);
+            }
         }
-        return promotionBargainInfoResDTO;
+	        return promotionBargainInfoResDTO;
     }
 
     @Override

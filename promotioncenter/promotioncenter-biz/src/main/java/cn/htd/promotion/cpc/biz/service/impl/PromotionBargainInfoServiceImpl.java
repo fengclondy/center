@@ -336,6 +336,7 @@ public class PromotionBargainInfoServiceImpl implements
 						dto.setGoodsFloorPrice(CalculateUtils
 								.setScale(dto.getGoodsFloorPrice()));
 							accuDTOList.add(dto);
+					}
 	            if (StringUtils.isEmpty(promotionId)) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "修改砍价活动ID不能为空");
 	            }
@@ -365,7 +366,6 @@ public class PromotionBargainInfoServiceImpl implements
 	            promotionBargainRedisHandle.addBargainInfo2Redis(bargainInfoList);
 	            result.setResult(bargainInfoList);	
 				}
-			}
 	        } catch (PromotionCenterBusinessException pbe) {
 	            result.setCode(pbe.getCode());
 	            result.setErrorMessage(pbe.getMessage());

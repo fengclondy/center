@@ -225,4 +225,21 @@ public class BuyerBargainTestUnit {
 //    	ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> list = promotionBargainInfoService.queryPromotionBargainOverview("801781", page);
 //    	System.out.println(JSON.toJSONString(list));
 //    }
+    
+    
+	  @Test
+	  @Rollback(false) 
+	  public void Testoptationbargain(){
+	    ExecuteResult<String> result = new ExecuteResult<String>();
+	    String buyerCode = "24933406";
+	    String promotionId = "22171825051082";
+	    String levelCode = "2217182505108272";
+	    String bargainCode = "3170944350030";
+	    String helperPicture = "5365.png";
+	    String helperName = "单元测试帮忙";
+	    String openedId = "123";
+	    String messageId = "123";
+	    result = buyerLaunchBargainInfoService.optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId, messageId);
+	  	System.out.println(JSON.toJSONString(result));
+	  }
 }

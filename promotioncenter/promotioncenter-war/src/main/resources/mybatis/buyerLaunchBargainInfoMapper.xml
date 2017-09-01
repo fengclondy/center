@@ -32,7 +32,8 @@
     <select id="getBuyerLaunchBargainInfoByBuyerCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
     	select blbi.* , pei.template_flag templateFlagD from buyer_launch_bargain_info blbi
 		left join promotion_extend_info pei on (pei.promotion_id = blbi.promotion_id)
-    	where buyer_code = #{buyerCode}
+		left join promotion_info pi on pi.promotion_id = blbi.promotion_id
+    	where buyer_code = #{buyerCode} and pi.show_status = 3
 	</select>
 	
 	<select id="getBuyerBargainLaunchInfoByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">

@@ -384,7 +384,7 @@ public class PromotionBargainInfoServiceImpl implements
             			buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfoDTO.getPromotionId());
             	if (null != buyerLaunchList && !buyerLaunchList.isEmpty()) {
                     throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),
-                            "砍价活动还未结束并有人参与");
+                            "存在砍价记录不能删除");
                 }
             }
             //活动状态转换

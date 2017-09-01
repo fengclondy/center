@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.htd.promotion.cpc.api.PromotionLotteryAPI;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 
@@ -82,4 +83,18 @@ public class PromotionLotteryAPIImplTestUnit {
     	String res = promotionLotteryAPI.lotteryActivityRulePage(lotteryActivityRulePageReqDTOJson);
     	System.out.println("validateLuckDrawPermission:"+res);
     }
+    @Test
+    @Rollback(false) 
+    public void shareLinkHandle(){
+    	ShareLinkHandleReqDTO  dto = new ShareLinkHandleReqDTO();
+    	dto.setMemberNo("1234");
+    	dto.setOrgId("813191");
+    	dto.setPromotionId("2171730080044");
+    	dto.setMessageId("122121222");
+    	
+    	String shareLinkHandleReqDTOJson = JSONObject.toJSONString(dto);
+    	String res = promotionLotteryAPI.shareLinkHandle(shareLinkHandleReqDTOJson);
+    	System.out.println("shareLinkHandle:"+res);
+    }
+    
 }

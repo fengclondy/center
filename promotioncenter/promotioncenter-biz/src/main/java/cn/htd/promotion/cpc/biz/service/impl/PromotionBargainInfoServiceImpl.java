@@ -586,4 +586,35 @@ public class PromotionBargainInfoServiceImpl implements
         promotionInfo.setStatus(status);
         return status;
     }
+
+	@Override
+	public ExecuteResult<List<PromotionInfoDTO>> queryPromotionInfoEntry(
+			PromotionInfoReqDTO dto) throws PromotionCenterBusinessException {
+		ExecuteResult<List<PromotionInfoDTO>> result = new ExecuteResult<List<PromotionInfoDTO>>();
+		List<PromotionInfoDTO> resultList = new ArrayList<PromotionInfoDTO>();
+		Date currentDate = new Date();
+		try {
+			List<PromotionBargainInfoDMO> promotionInfoList = promotionInfoDAO.queryPromotionBargainEntry(dto.getPromotionProviderSellerCode());
+			PromotionInfoDTO resultDTO = null;
+			if(null != promotionInfoList && !promotionInfoList.isEmpty()){
+				for (int i = 0; i< promotionInfoList.size(); i++) {
+					if(currentDate.before(promotionInfoList.get(0).getInvalidTime())) {
+						resultDTO = new PromotionInfoDTO();
+						resultDTO.setPromotionId(promotionInfoList.get(0).getPromotionId());
+						break;
+					}
+				}
+				if(null == resultDTO){
+					resultDTO = new PromotionInfoDTO();
+					resultDTO.setPromotionId(promotionInfoList.get(promotionInfoList.size() - 1).getPromotionId());
+				}
+				resultList.add(resultDTO);
+			}
+			result.setResult(resultList);
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
 }

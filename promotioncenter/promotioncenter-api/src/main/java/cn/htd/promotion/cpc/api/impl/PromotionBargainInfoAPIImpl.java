@@ -161,4 +161,19 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
 		return result;
 	}
 
+	@Override
+	public ExecuteResult<List<PromotionInfoDTO>> queryPromotionEntry(
+			String sellerCode) {
+		ExecuteResult<List<PromotionInfoDTO>> result = new ExecuteResult<List<PromotionInfoDTO>>();
+		if(StringUtils.isNotEmpty(sellerCode)){
+			PromotionInfoReqDTO dto = new PromotionInfoReqDTO();
+			dto.setPromotionProviderSellerCode(sellerCode);
+			return promotionBargainInfoService.queryPromotionInfoEntry(dto);
+		}else{
+			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
+
 }

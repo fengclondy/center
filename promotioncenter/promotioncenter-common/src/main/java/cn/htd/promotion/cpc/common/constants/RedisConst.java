@@ -34,6 +34,8 @@ public class RedisConst {
 	public static final String REDIS_LOTTERY_VALID = "B2B_MIDDLE_LOTTERY_VALID";
 	// Redis抽奖活动信息
 	public static final String REDIS_LOTTERY_INFO = "B2B_MIDDLE_LOTTERY_INFO";
+    // Redis抽奖活动详细信息
+    public static final String REDIS_LOTTERY_DETAIL_INFO = "B2B_MIDDLE_LOTTERY_DETAIL_INFO";
 	// Redis抽奖次数信息
 	public static final String REDIS_LOTTERY_TIMES_INFO = "B2B_MIDDLE_LOTTERY_TIMES_INFO";
 	// Redis抽奖活动奖品中奖概率

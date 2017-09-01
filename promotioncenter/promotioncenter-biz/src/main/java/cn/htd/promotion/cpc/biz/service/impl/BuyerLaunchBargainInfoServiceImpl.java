@@ -339,10 +339,18 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 					  result.setResult(openedId);
 					  return result;
 				  }
-				  //判断砍价是否开始
-				  if(currentTime < effectiveTime){//当前时间小于开始时间说明活动还未开始
-					  result.setCode(Constants.PROMOTION_DATETIME_IS_NOSTART);
-					  result.setErrorMessage("该促销活动还未开始");
+				  
+				//判断砍价是否开始
+			    if(currentTime < effectiveTime){//当前时间小于开始时间说明活动还未开始
+				    result.setCode(Constants.PROMOTION_DATETIME_IS_NOSTART);
+				    result.setErrorMessage("该促销活动还未开始");
+				    result.setResult(openedId);
+				    return result;
+			    }
+			    //判断砍价是否开始
+				  if("4".equals(promotionBargainInfo.getShowStatusD())){//下架状态
+					  result.setCode(Constants.IS_DOWN_SELF);
+					  result.setErrorMessage("该促销活动已经下架");
 					  result.setResult(openedId);
 					  return result;
 				  }

@@ -38,6 +38,9 @@ public class Constants {
 	//判断是否帮忙砍过价
 	public static final String IS_BUYER_BARGAIN = "IS_BUYER_BARGAIN";
 	
+	//判断下架
+	public static final String IS_DOWN_SELF = "IS_DOWN_SELF";
+	
 	//砍价发起常量
 	public static final String BUYER_LAUNCH_BARGAIN_INFO = "BUYER_LAUNCH_BARGAIN_INFO";
 	

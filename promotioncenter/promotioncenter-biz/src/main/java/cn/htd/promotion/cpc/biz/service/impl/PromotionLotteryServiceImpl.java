@@ -8,17 +8,21 @@ import javax.annotation.Resource;
 import cn.htd.promotion.cpc.biz.handle.PromotionLotteryRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service("promotionLotteryService")
@@ -35,8 +39,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
     @Resource
     private PromotionLotteryRedisHandle lotteryRedisHandle;
 
-    @Resource
-    private PromotionRedisDB promotionRedisDB;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 开始抽奖处理
@@ -61,6 +65,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         promotionInfoDTO = lotteryRedisHandle.getRedisLotteryInfo(promotionId);
         dictMap = baseService.initPromotionDictMap();
         if (checkPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
+
             ticket = keyGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
             responseDTO.setTicket(ticket);
         }
@@ -127,5 +132,29 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         return true;
     }
 
+    /**
+     * 抽奖处理异步线程
+     */
+    private class DoPromotionLotteryDealTask extends Thread {
 
+        private DrawLotteryResDTO reqDTO;
+
+        private String ticket;
+
+        public DoPromotionLotteryDealTask(DrawLotteryResDTO reqDTO, String ticket) {
+            this.reqDTO = reqDTO;
+            this.ticket = ticket;
+        }
+
+        public void run() {
+            PromotionAwardInfoDTO resDTO = new PromotionAwardInfoDTO();
+            String awardPercentStr = "";
+            awardPercentStr = (String) stringRedisTemplate.opsForHash()
+                    .get(RedisConst.REDIS_LOTTERY_TIMES_INFO, RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE);
+            if (StringUtils.isEmpty(awardPercentStr)) {
+
+            }
+
+        }
+    }
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
+import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
+import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
@@ -140,5 +142,7 @@ public interface PromotionBaseService {
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap) throws PromotionCenterBusinessException;
 
+	public GenricResDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
 
+	public GenricResDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
 }

@@ -89,6 +89,8 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String opendId;
 	
+	private String showStatus; //上下架状态
+	
 	public String getBuyerCode() {
 		return buyerCode;
 	}
@@ -337,6 +339,14 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.sloganList = sloganList;
 	}
 
+	public String getShowStatus() {
+		return showStatus;
+	}
+
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
+	}
+
 	public void setPromotionBargainInfoResDTO(PromotionBargainInfoResDTO promotionBargainInfoResDTO) {
 		super.setPromotionAccumulaty(promotionBargainInfoResDTO);
 		this.bargainId = promotionBargainInfoResDTO.getBargainId();
@@ -349,6 +359,7 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
 		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
 		this.sloganList = promotionBargainInfoResDTO.getSloganList();
+		this.showStatus = promotionBargainInfoResDTO.getShowStatus();
 	}
 	
 }

@@ -72,4 +72,17 @@ public interface PromotionLotteryAPI {
 	 */
 	public String getDrawLotteryResult(String lotteryWinningParam);
 
+	/**
+	 * 新建扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String addDrawLotteryInfo(String json);
+
+	/**
+	 * 编辑扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String editDrawLotteryInfo(String json);
 }

@@ -422,6 +422,7 @@
   	<if test="dto.invalidTime != null">
   	 	<![CDATA[AND effective_time <= #{dto.invalidTime}]]>
   	</if>
+  	order by create_time desc
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
 	</if>
@@ -464,7 +465,6 @@
   		SELECT COUNT(0)
         FROM promotion_info
         WHERE promotion_type = 22
-        AND show_status = 3 
         AND promotion_provider_seller_code = #{sellerCode}
         AND status != 9
         AND now() between #{effectiveTime} and #{invalidTime}

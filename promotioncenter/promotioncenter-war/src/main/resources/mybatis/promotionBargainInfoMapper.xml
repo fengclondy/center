@@ -17,6 +17,7 @@
 	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
 	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+	<result column="SHOW_STATUS" property="showStatus" jdbcType="VARCHAR" />
   </resultMap>
   
     <sql id="pagination_tail">
@@ -49,7 +50,8 @@
 	    	   plb.goods_current_price goodsCurrentPrice,
 	    	   pi.promotion_provider_seller_code sellerNameD,
 	     	   pi.effective_time effectiveTime,
-			   pi.invalid_time invalidTime
+			   pi.invalid_time invalidTime,
+			   pi.show_status showStatus
 	    from promotion_bargain_info pbi
 	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
 	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id

@@ -361,7 +361,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         }
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);
-            if (StringUtils.isEmpty(accumulatyDTO.getLevelCode())) {
+            if (StringUtils.isEmpty(accumulatyDTO.getLevelCode()) || "0".equals(accumulatyDTO.getLevelCode())) {
                 accumulatyDTO.setPromotionId(promotionId);
                 accumulatyDTO.setLevelNumber(maxLevelNum + i + 1);
                 accumulatyDTO.setLevelCode(noGenerator.generatePromotionLevelCode(promotionId));

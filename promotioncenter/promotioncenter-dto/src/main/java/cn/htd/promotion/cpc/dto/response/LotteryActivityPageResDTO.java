@@ -1,5 +1,8 @@
 package cn.htd.promotion.cpc.dto.response;
 
+import java.util.Date;
+import java.util.List;
+
 
 public class LotteryActivityPageResDTO extends GenricResDTO{
 
@@ -16,17 +19,22 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 	/**
 	 * 活动每天开始时间
 	 */
-	private String activityStartTime;
+	private Date activityStartTime;
 	
 	/**
 	 * 活动每天结束时间
 	 */
-	private String activityEndTime;
+	private Date activityEndTime;
 	
 	/**
 	 * 粉丝剩余抽奖次数
 	 */
-	private String remainingTimes;
+	private Integer remainingTimes;
+	
+	/**
+	 * 活动页图片路径
+	 */
+	private List<String> pictureUrl;
 
 	public String getPromotionName() {
 		return promotionName;
@@ -36,27 +44,35 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 		this.promotionName = promotionName;
 	}
 
-	public String getActivityStartTime() {
+	public Date getActivityStartTime() {
 		return activityStartTime;
 	}
 
-	public void setActivityStartTime(String activityStartTime) {
+	public void setActivityStartTime(Date activityStartTime) {
 		this.activityStartTime = activityStartTime;
 	}
 
-	public String getActivityEndTime() {
+	public Date getActivityEndTime() {
 		return activityEndTime;
 	}
 
-	public void setActivityEndTime(String activityEndTime) {
+	public void setActivityEndTime(Date activityEndTime) {
 		this.activityEndTime = activityEndTime;
 	}
 
-	public String getRemainingTimes() {
+	public Integer getRemainingTimes() {
 		return remainingTimes;
 	}
 
-	public void setRemainingTimes(String remainingTimes) {
+	public void setRemainingTimes(Integer remainingTimes) {
 		this.remainingTimes = remainingTimes;
+	}
+
+	public List<String> getPictureUrl() {
+		return pictureUrl;
+	}
+
+	public void setPictureUrl(List<String> pictureUrl) {
+		this.pictureUrl = pictureUrl;
 	}
 }

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -107,9 +108,11 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             String skuCode = order4StockEntryDTO.getSkuCode();
             // 查询STOCK_ID
             ItemSkuPublishInfo itemSkuPublishInfo = null;
+            Long itemId = null;
             try {
                 ItemSku itemSku = this.itemSkuDAO.selectItemSkuBySkuCode(skuCode);
                 Item item = this.itemMybatisDAO.queryItemByPk(itemSku.getItemId());
+                itemId = item.getItemId();
                 if (ProductChannelEnum.INTERNAL_SUPPLIER.getCode().equals(item.getProductChannelCode())) {
                     if (order4StockEntryDTO.getIsBoxFlag() == null) {
                         throw new StockInParamIllegalException("内部供应商商品是否包厢关系必传");
@@ -133,6 +136,10 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             rLock.lock();
             // 做业务
             this.doChange(order4StockEntryDTO, stockId);
+            // 更新时间戳
+            if (itemId != null) {
+                this.itemMybatisDAO.updateItemModifiedByItemId(itemId);
+            }
         } finally {
             /** 释放锁资源 **/
             if (rLock != null) {

@@ -9,7 +9,7 @@
     <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
     <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
     <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
-    <result column="PARTAKE_TIMESE" property="partakeTimes" jdbcType="TINYINT" />
+    <result column="PARTAKE_TIMES" property="partakeTimes" jdbcType="TINYINT" />
     <result column="GOODS_NUM" property="goodsNum" jdbcType="TINYINT" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
 	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
@@ -17,6 +17,7 @@
 	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
 	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+	<result column="SHOW_STATUS" property="showStatus" jdbcType="VARCHAR" />
   </resultMap>
   
     <sql id="pagination_tail">
@@ -42,13 +43,15 @@
 	    	   pei.each_end_time eachEndTimeD,
 	    	   pei.offline_start_time offlineStartTimeD,
 	    	   pei.offline_end_time offlineEndTimeD,
+	    	   pei.template_flag templateFlagD,
 	    	   plb.launch_time launchTime,
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
 	    	   pi.promotion_provider_seller_code sellerNameD,
 	     	   pi.effective_time effectiveTime,
-			   pi.invalid_time invalidTime
+			   pi.invalid_time invalidTime,
+			   pi.show_status showStatusD
 	    from promotion_bargain_info pbi
 	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
 	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
@@ -138,6 +141,7 @@
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
   	    AND pi.status != 9
+  	    order by pi.create_time desc
   	    <if test="page!=null">
 	      <include refid="pagination_tail"/>
 	    </if>

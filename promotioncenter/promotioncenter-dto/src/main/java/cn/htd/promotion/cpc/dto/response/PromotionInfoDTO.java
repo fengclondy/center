@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class PromotionInfoDTO extends GenricResDTO {
 
-    /**
+	/**
      * 促销活动ID
      */
     private Long id;
@@ -28,7 +28,6 @@ public class PromotionInfoDTO extends GenricResDTO {
     /**
      * 促销活动描述
      */
-    //@NotBlank(message = "促销活动描述不能为空")
     private String promotionDescribe;
     /**
      * 促销活动发起方类型
@@ -105,6 +104,14 @@ public class PromotionInfoDTO extends GenricResDTO {
      */
     private String modifyPromotionId;
     /**
+     * 处理标记
+     */
+    private Integer dealFlag;
+    /**
+     * 是否清除redis
+     */
+    private Integer hasRedisClean;
+    /**
      * 创建人ID
      */
     private Long createId;
@@ -129,29 +136,13 @@ public class PromotionInfoDTO extends GenricResDTO {
      */
     private Date modifyTime;
     /**
-     * 会员规则ID: 新增优惠券活动时需要根据此ID获取会员规则信息
+     * 层级买家规则
      */
-    private Long buyerRuleId;
+    private PromotionBuyerRuleDTO buyerRuleDTO;
     /**
-     * 供应商规则ID, 新增优惠券活动时需要根据此ID获取供应商规则信息
+     * 层级卖家规则
      */
-    private Long sellerRuleId;
-    /**
-     * 品类商品规则ID, 新增优惠券活动时需要根据此ID获取品类商品规则信息
-     */
-    private Long categoryItemRuleId;
-    /**
-     * 会员规则描述
-     */
-    private String buyerRuleDesc;
-    /**
-     * 供应商规则描述
-     */
-    private String sellerRuleDesc;
-    /**
-     * 品类商品规则描述
-     */
-    private String categoryItemRuleDesc;
+    private PromotionSellerRuleDTO sellerRuleDTO;
     /**
      * 活动层级列表
      */
@@ -160,6 +151,18 @@ public class PromotionInfoDTO extends GenricResDTO {
      * 促销活动状态履历
      */
     private List<PromotionStatusHistoryDTO> promotionStatusHistoryList;
+    /**
+     * 促销活动图片信息
+     */
+    private List<PromotionPictureDTO> promotionPictureList;
+    /**
+     * 促销活动Slogan
+     */
+    private PromotionSloganDTO promotionSloganDTO;
+    /**
+     * 促销活动详情描述
+     */
+    private PromotionDetailDescribeDTO promotionDetailDescribeDTO;
     /**
      * 删除状态
      */
@@ -185,70 +188,7 @@ public class PromotionInfoDTO extends GenricResDTO {
 
     private String invalidTimeStr;
 
-    /**
-     * 中奖总数量
-     */
-    private String winningNum;
-    /**
-     * 今日中奖总数量
-     */
-    private String winningTodayNum;
-    /**
-     * 处理标记
-     */
-    private Integer dealFlag;
-    /**
-     * 是否清除redis
-     */
-    private Integer hasRedisClean;
-
-    public Integer getDealFlag() {
-        return dealFlag;
-    }
-
-    public void setDealFlag(Integer dealFlag) {
-        this.dealFlag = dealFlag;
-    }
-
-    public Integer getHasRedisClean() {
-        return hasRedisClean;
-    }
-
-    public void setHasRedisClean(Integer hasRedisClean) {
-        this.hasRedisClean = hasRedisClean;
-    }
-
-    public String getEffectiveTimeStr() {
-        return effectiveTimeStr;
-    }
-
-    public void setEffectiveTimeStr(String effectiveTimeStr) {
-        this.effectiveTimeStr = effectiveTimeStr;
-    }
-
-    public String getInvalidTimeStr() {
-        return invalidTimeStr;
-    }
-
-    public void setInvalidTimeStr(String invalidTimeStr) {
-        this.invalidTimeStr = invalidTimeStr;
-    }
-
-    public int getTaskQueueNum() {
-        return taskQueueNum;
-    }
-
-    public void setTaskQueueNum(int taskQueueNum) {
-        this.taskQueueNum = taskQueueNum;
-    }
-
-    public List<String> getTaskIdList() {
-        return taskIdList;
-    }
-
-    public void setTaskIdList(List<String> taskIdList) {
-        this.taskIdList = taskIdList;
-    }
+    private PromotionSellerDetailDTO sellerDetailDTO;
 
     public Long getId() {
         return id;
@@ -362,20 +302,20 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.isVip = isVip;
     }
 
-    public String getShowStatus() {
-        return showStatus;
-    }
-
-    public void setShowStatus(String showStatus) {
-        this.showStatus = showStatus;
-    }
-
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getShowStatus() {
+        return showStatus;
+    }
+
+    public void setShowStatus(String showStatus) {
+        this.showStatus = showStatus;
     }
 
     public Long getVerifierId() {
@@ -416,6 +356,22 @@ public class PromotionInfoDTO extends GenricResDTO {
 
     public void setModifyPromotionId(String modifyPromotionId) {
         this.modifyPromotionId = modifyPromotionId;
+    }
+
+    public Integer getDealFlag() {
+        return dealFlag;
+    }
+
+    public void setDealFlag(Integer dealFlag) {
+        this.dealFlag = dealFlag;
+    }
+
+    public Integer getHasRedisClean() {
+        return hasRedisClean;
+    }
+
+    public void setHasRedisClean(Integer hasRedisClean) {
+        this.hasRedisClean = hasRedisClean;
     }
 
     public Long getCreateId() {
@@ -466,52 +422,20 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.modifyTime = modifyTime;
     }
 
-    public Long getBuyerRuleId() {
-        return buyerRuleId;
+    public PromotionBuyerRuleDTO getBuyerRuleDTO() {
+        return buyerRuleDTO;
     }
 
-    public void setBuyerRuleId(Long buyerRuleId) {
-        this.buyerRuleId = buyerRuleId;
+    public void setBuyerRuleDTO(PromotionBuyerRuleDTO buyerRuleDTO) {
+        this.buyerRuleDTO = buyerRuleDTO;
     }
 
-    public Long getSellerRuleId() {
-        return sellerRuleId;
+    public PromotionSellerRuleDTO getSellerRuleDTO() {
+        return sellerRuleDTO;
     }
 
-    public void setSellerRuleId(Long sellerRuleId) {
-        this.sellerRuleId = sellerRuleId;
-    }
-
-    public Long getCategoryItemRuleId() {
-        return categoryItemRuleId;
-    }
-
-    public void setCategoryItemRuleId(Long categoryItemRuleId) {
-        this.categoryItemRuleId = categoryItemRuleId;
-    }
-
-    public String getBuyerRuleDesc() {
-        return buyerRuleDesc;
-    }
-
-    public void setBuyerRuleDesc(String buyerRuleDesc) {
-        this.buyerRuleDesc = buyerRuleDesc;
-    }
-
-    public String getSellerRuleDesc() {
-        return sellerRuleDesc;
-    }
-
-    public void setSellerRuleDesc(String sellerRuleDesc) {
-        this.sellerRuleDesc = sellerRuleDesc;
-    }
-
-    public String getCategoryItemRuleDesc() {
-        return categoryItemRuleDesc;
-    }
-
-    public void setCategoryItemRuleDesc(String categoryItemRuleDesc) {
-        this.categoryItemRuleDesc = categoryItemRuleDesc;
+    public void setSellerRuleDTO(PromotionSellerRuleDTO sellerRuleDTO) {
+        this.sellerRuleDTO = sellerRuleDTO;
     }
 
     public List<? extends PromotionAccumulatyDTO> getPromotionAccumulatyList() {
@@ -527,8 +451,35 @@ public class PromotionInfoDTO extends GenricResDTO {
         return promotionStatusHistoryList;
     }
 
-    public void setPromotionStatusHistoryList(List<PromotionStatusHistoryDTO> promotionStatusHistoryList) {
+    public void setPromotionStatusHistoryList(
+            List<PromotionStatusHistoryDTO> promotionStatusHistoryList) {
         this.promotionStatusHistoryList = promotionStatusHistoryList;
+    }
+
+    public List<PromotionPictureDTO> getPromotionPictureList() {
+        return promotionPictureList;
+    }
+
+    public void setPromotionPictureList(
+            List<PromotionPictureDTO> promotionPictureList) {
+        this.promotionPictureList = promotionPictureList;
+    }
+
+    public PromotionSloganDTO getPromotionSloganDTO() {
+        return promotionSloganDTO;
+    }
+
+    public void setPromotionSloganDTO(PromotionSloganDTO promotionSloganDTO) {
+        this.promotionSloganDTO = promotionSloganDTO;
+    }
+
+    public PromotionDetailDescribeDTO getPromotionDetailDescribeDTO() {
+        return promotionDetailDescribeDTO;
+    }
+
+    public void setPromotionDetailDescribeDTO(
+            PromotionDetailDescribeDTO promotionDetailDescribeDTO) {
+        this.promotionDetailDescribeDTO = promotionDetailDescribeDTO;
     }
 
     public String getDeleteStatus() {
@@ -537,6 +488,22 @@ public class PromotionInfoDTO extends GenricResDTO {
 
     public void setDeleteStatus(String deleteStatus) {
         this.deleteStatus = deleteStatus;
+    }
+
+    public int getTaskQueueNum() {
+        return taskQueueNum;
+    }
+
+    public void setTaskQueueNum(int taskQueueNum) {
+        this.taskQueueNum = taskQueueNum;
+    }
+
+    public List<String> getTaskIdList() {
+        return taskIdList;
+    }
+
+    public void setTaskIdList(List<String> taskIdList) {
+        this.taskIdList = taskIdList;
     }
 
     public List<String> getStatusList() {
@@ -555,20 +522,28 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.verifyStatusList = verifyStatusList;
     }
 
-    public String getWinningNum() {
-        return winningNum;
+    public String getEffectiveTimeStr() {
+        return effectiveTimeStr;
     }
 
-    public void setWinningNum(String winningNum) {
-        this.winningNum = winningNum;
+    public void setEffectiveTimeStr(String effectiveTimeStr) {
+        this.effectiveTimeStr = effectiveTimeStr;
     }
 
-    public String getWinningTodayNum() {
-        return winningTodayNum;
+    public String getInvalidTimeStr() {
+        return invalidTimeStr;
     }
 
-    public void setWinningTodayNum(String winningTodayNum) {
-        this.winningTodayNum = winningTodayNum;
+    public void setInvalidTimeStr(String invalidTimeStr) {
+        this.invalidTimeStr = invalidTimeStr;
+    }
+
+    public PromotionSellerDetailDTO getSellerDetailDTO() {
+        return sellerDetailDTO;
+    }
+
+    public void setSellerDetailDTO(PromotionSellerDetailDTO sellerDetailDTO) {
+        this.sellerDetailDTO = sellerDetailDTO;
     }
 
     public void setPromoionInfo(PromotionInfoDTO promotionInfoDTO) {
@@ -598,14 +573,13 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.modifyId = promotionInfoDTO.getModifyId();
         this.modifyName = promotionInfoDTO.getModifyName();
         this.modifyTime = promotionInfoDTO.getModifyTime();
-        this.buyerRuleId = promotionInfoDTO.getBuyerRuleId();
-        this.buyerRuleDesc = promotionInfoDTO.getBuyerRuleDesc();
-        this.sellerRuleId = promotionInfoDTO.getSellerRuleId();
-        this.sellerRuleDesc = promotionInfoDTO.getSellerRuleDesc();
-        this.categoryItemRuleId = promotionInfoDTO.getCategoryItemRuleId();
-        this.categoryItemRuleDesc = promotionInfoDTO.getCategoryItemRuleDesc();
         this.promotionAccumulatyList = promotionInfoDTO.getPromotionAccumulatyList();
         this.promotionStatusHistoryList = promotionInfoDTO.getPromotionStatusHistoryList();
+        this.promotionPictureList = promotionInfoDTO.getPromotionPictureList();
+        this.promotionDetailDescribeDTO = promotionInfoDTO.getPromotionDetailDescribeDTO();
+        this.promotionSloganDTO = promotionInfoDTO.getPromotionSloganDTO();
+        this.buyerRuleDTO = promotionInfoDTO.getBuyerRuleDTO();
+        this.sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
         this.dealFlag = promotionInfoDTO.getDealFlag();
         this.hasRedisClean = promotionInfoDTO.getHasRedisClean();
     }

@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
-import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import cn.htd.promotion.cpc.biz.dmo.PromotionSloganDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 
 @Service("promotionSloganService")
 public class PromotionSloganServiceImpl implements PromotionSloganService{
@@ -30,24 +30,19 @@ public class PromotionSloganServiceImpl implements PromotionSloganService{
 	private PromotionSloganDAO promotionSloganDAO;
 	
 	@Override
-	public ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(String providerSellerCode, String messageId)
+	public ExecuteResult<List<PromotionSloganDTO>> queryBargainSloganBySellerCode(String providerSellerCode, String messageId)
 			throws PromotionCenterBusinessException {
-		ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
+		ExecuteResult<List<PromotionSloganDTO>> result = new ExecuteResult<List<PromotionSloganDTO>>();
 		List<PromotionSloganDMO> promotionSloganDMOList = null;
 		LOGGER.info("MessageId{}:调用promotionSloganDAO.queryBargainSloganBySellerCode（）方法开始,入参{}",messageId,providerSellerCode+":"+messageId);
 		try {
 			promotionSloganDMOList = promotionSloganDAO.queryBargainSloganBySellerCode(providerSellerCode);;
 			LOGGER.info("MessageId{}:调用promotionSloganDAO.queryBargainSloganBySellerCode（）方法开始,出参{}",JSON.toJSONString(promotionSloganDMOList));
-			List<PromotionSloganResDTO> promotionSloganDTOList = null;
+			List<PromotionSloganDTO> promotionSloganDTOList = null;
 			if(null != promotionSloganDMOList){
-				promotionSloganDTOList = new ArrayList<PromotionSloganResDTO>();
+				promotionSloganDTOList = new ArrayList<PromotionSloganDTO>();
 				String str = JSONObject.toJSONString(promotionSloganDMOList);
-				promotionSloganDTOList = JSONObject.parseArray(str,PromotionSloganResDTO.class);
-				for (PromotionSloganResDTO dto : promotionSloganDTOList) {
-					if(StringUtils.isNotEmpty(dto.getPromotionSlogan())){
-						dto.setSloganList(JSON.parseArray(dto.getPromotionSlogan(), String.class));
-					}
-				}
+				promotionSloganDTOList = JSONObject.parseArray(str, PromotionSloganDTO.class);
 				result.setResult(promotionSloganDTOList);
 			}
 		}catch(PromotionCenterBusinessException psb){

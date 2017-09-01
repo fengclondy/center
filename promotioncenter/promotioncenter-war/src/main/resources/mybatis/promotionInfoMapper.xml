@@ -143,10 +143,10 @@
         modify_promotion_id,
       </if>
       <if test="dealFlag != null">
-      	deal_flag = deal_flag,
+      	deal_flag,
       </if>
       <if test="hasRedisClean != null">
-      	has_redis_clean = hasRedisClean,
+      	has_redis_clean ,
       </if>
       create_id,
       create_name,
@@ -226,10 +226,18 @@
       <if test="isVip != null">
         is_vip = #{isVip,jdbcType=TINYINT},
       </if>
-      status = #{status,jdbcType=VARCHAR},
-      show_status = #{showStatus,jdbcType=VARCHAR},
-      deal_flag = #{dealFlag,jdbcType=TINYINT},
-      has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      <if test="status != null and status != ''">
+            status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null and showStatus != ''">
+            show_status = #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="dealFlag != null and dealFlag != ''">
+            deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasRedisClean != null and hasRedisClean != ''">
+            has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),
@@ -401,6 +409,9 @@
   	</if>
   	<if test="dto.status != null and dto.status!= ''">
   		AND status = #{dto.status}
+  		<if test="dto.status == 1">
+  			AND show_status != 4
+  		</if>
   	</if>
   	<if test="dto.showStatus != null and dto.showStatus != ''">
   		AND show_status = #{dto.showStatus}
@@ -411,6 +422,7 @@
   	<if test="dto.invalidTime != null">
   	 	<![CDATA[AND effective_time <= #{dto.invalidTime}]]>
   	</if>
+  	order by create_time desc
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
 	</if>
@@ -440,9 +452,24 @@
   <update id="upDownShelvesBargainInfo">
   	UPDATE promotion_info
   	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+	<if test="dto.status != null and dto.status != ''">
+		status = #{dto.status,jdbcType=VARCHAR},
+	</if>  	
   	modify_id = #{dto.operatorId,jdbcType=BIGINT},
     modify_name = #{dto.operatorName,jdbcType=VARCHAR},
     modify_time = now()
   	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
+  
+  <select id="queryUpPromotionBargainCount" resultType="java.lang.Integer">
+  		SELECT COUNT(0)
+        FROM promotion_info
+        WHERE promotion_type = 22
+        AND promotion_provider_seller_code = #{sellerCode}
+        AND status != 9
+        AND now() between #{effectiveTime} and #{invalidTime}
+        <if test="promotionId != null and promotionId != ''">
+        	AND promotion_id != #{promotionId,jdbcType=VARCHAR}
+        </if>
+  </select>
 </mapper>

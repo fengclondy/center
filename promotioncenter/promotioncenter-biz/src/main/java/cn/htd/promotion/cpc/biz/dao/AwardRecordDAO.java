@@ -16,13 +16,15 @@ import java.util.Map;
 /**
  * Created by tangjiayong on 2017/8/22.
  */
-@Repository("cn.htd.promotion.cpc.biz.dao.AwardRecordDAO")
+@Repository("cn.htd.promotion.cpc.biz.dao.awardRecordDAO")
 public interface AwardRecordDAO {
 
     List<PromotionAwardDTO> getAwardRecordByPromotionId (@Param("params") Map<String, Object> params , @Param("page") Pager<PromotionAwardReqDTO> page);
 
     long getTotalAwardRecord(@Param("params") Map<String, Object> params);
-    
+
+    int updateLogisticsInfo( PromotionAwardReqDTO dto);
+
 	/**
 	 * 查询买家中奖
 	 * @param winningRecordReqDTO

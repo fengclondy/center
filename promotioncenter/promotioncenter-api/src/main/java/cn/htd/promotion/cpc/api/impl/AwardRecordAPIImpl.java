@@ -12,10 +12,12 @@ import cn.htd.promotion.cpc.dto.response.ImportResultDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,7 +65,40 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
     }
 
     @Override
-    public ExecuteResult<ImportResultDTO> importWinningRecord(List<PromotionAwardReqDTO> list, String messageId) {
-        return null;
+    public ExecuteResult<ImportResultDTO> importWinningRecord(List<PromotionAwardReqDTO> dtos, String messageId) {
+        logger.info("messageId{} : AwardRecordAPIImpl--->importWinningRecord--->parmas:" +messageId +":"+ JSONObject.toJSONString(dtos));
+        ExecuteResult<ImportResultDTO> result = new ExecuteResult<ImportResultDTO>();
+        ImportResultDTO importResult = new ImportResultDTO();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+        List<PromotionAwardReqDTO> list = new ArrayList<PromotionAwardReqDTO>();
+        int failCount = 0;
+        int successCount = 0;
+        try {
+            for(PromotionAwardReqDTO dto : dtos){
+                if(!StringUtils.isEmpty(""+dto.getId())){
+                    if(awardRecordService.updateLogisticsInfo(dto,messageId) > 0){
+                        successCount ++;
+                    }else{
+                        failCount++;
+                        list.add(dto);
+                    }
+                }else {
+                    failCount++;
+                    list.add(dto);
+                }
+            }
+            importResult.setFailCount(failCount);
+            importResult.setSuccessCount(successCount);
+            importResult.setPromotionAwardList(list);
+            result.setResult(importResult);
+        } catch (Exception e) {
+            logger.error("\n 方法[{}]，异常：[{}]", "messageId : AwardRecordAPIImpl-importWinningRecord", messageId +" : "+ e.toString());
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            result.setResult(null);
+        }
+        return result;
     }
 }

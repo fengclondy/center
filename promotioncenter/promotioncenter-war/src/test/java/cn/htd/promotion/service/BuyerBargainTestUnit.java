@@ -1,5 +1,7 @@
 package cn.htd.promotion.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -17,7 +19,10 @@ import cn.htd.promotion.cpc.biz.service.BuyerLaunchBargainInfoService;
 import cn.htd.promotion.cpc.biz.service.PromotionBargainInfoService;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerLaunchBargainInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
@@ -42,28 +47,27 @@ public class BuyerBargainTestUnit {
     	
     }
     
-//    @Test
-//    @Rollback(false) 
-//    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
-//    	try {
-//			String buyerCode = "htd20070002";
-//			String messageId ="001";
-//			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
-//			System.out.println(JSON.toJSONString(list));
-//    	} catch (Exception e) {
-//    		
-//		}
-//    }
+    @Test
+    @Rollback(false) 
+    public void testGetBuyerLaunchBargainInfoByBuyerCode() {
+    	try {
+			String buyerCode = "24933404";
+			String messageId ="001";
+			List<BuyerLaunchBargainInfoResDTO> list = buyerLaunchBargainInfoService.getBuyerLaunchBargainInfoByBuyerCode(buyerCode,messageId);
+			System.out.println(JSON.toJSONString(list));
+    	} catch (Exception e) {
+    		
+		}
+    }
     
 //    @Test
 //    @Rollback(false) 
 //    public void testGetPromotionBargainInfoDetail() {
 //    	try {
 //    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-////			String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
 //    		buyerBargainLaunch.setBuyerCode("htd20070002");
-//			buyerBargainLaunch.setPromotionId("22171657300933");
-//			buyerBargainLaunch.setLevelCode("2217165730093316");
+//			buyerBargainLaunch.setPromotionId("22172032410074");
+//			buyerBargainLaunch.setLevelCode("2217203241007491");
 //			buyerBargainLaunch.setMessageId("123456");
 //			buyerBargainLaunch.setBargainCode("123");
 //			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
@@ -221,4 +225,21 @@ public class BuyerBargainTestUnit {
 //    	ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> list = promotionBargainInfoService.queryPromotionBargainOverview("801781", page);
 //    	System.out.println(JSON.toJSONString(list));
 //    }
+    
+    
+	  @Test
+	  @Rollback(false) 
+	  public void Testoptationbargain(){
+	    ExecuteResult<String> result = new ExecuteResult<String>();
+	    String buyerCode = "24933406";
+	    String promotionId = "22171825051082";
+	    String levelCode = "2217182505108272";
+	    String bargainCode = "3170944350030";
+	    String helperPicture = "5365.png";
+	    String helperName = "单元测试帮忙";
+	    String openedId = "123";
+	    String messageId = "123";
+	    result = buyerLaunchBargainInfoService.optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId, messageId);
+	  	System.out.println(JSON.toJSONString(result));
+	  }
 }

@@ -36,6 +36,20 @@ public class PromotionValidDTO implements Serializable {
 	 * 模版标记
 	 */
 	private String temlateFlag;
+	
+	/**
+	 * 活动进行状态
+	 * @return
+	 */
+	private String status;
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public String getTemlateFlag() {
 		return temlateFlag;

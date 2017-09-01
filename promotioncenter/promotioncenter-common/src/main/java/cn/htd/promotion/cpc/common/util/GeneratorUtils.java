@@ -2,11 +2,16 @@ package cn.htd.promotion.cpc.common.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +39,7 @@ public class GeneratorUtils {
 	private static Map<String, String> map = new HashMap<String, String>();
 
 	@Resource
-	private PromotionRedisDB marketRedisDB;
+	private PromotionRedisDB promotionRedisDB;
 
 	/**
 	 * 促销活动编码生成方法
@@ -60,7 +65,7 @@ public class GeneratorUtils {
 	 * 促销砍价活动编码生成方法
 	 * 
 	 * @param platCode
-	 *            促销活动类型 1:优惠券，2:秒杀，3:扭蛋，4:砍价，5:总部秒杀
+	 *            促销活动类型 1:优惠券，2:秒杀，21:扭蛋，22:砍价，23:总部秒杀
 	 * @return
 	 */
 	public String generatePromotionGargainId(String platCode) {
@@ -111,52 +116,26 @@ public class GeneratorUtils {
 		return stringBuilder.toString();
 	}
 
-	/**
-	 * 优惠券编码生成方法
-	 * 
-	 * @param platCode
-	 *            优惠券类型 1：满减券，2:折扣券
-	 * @return
-	 */
-	public String generateCouponCode(String platCode) {
-		String couponCode = getCacheSeq(REDIS_COUPON_CODE_KEY, 100000000000L);
-		if (StringUtils.isEmpty(platCode)) {
-			platCode = "0";
-		}
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(platCode);
-		stringBuilder.append(couponCode);
-		return stringBuilder.toString();
-	}
+	public String generateLotteryTicket(String platCode) {
+		String ticket = "";
+		String uuid = "";
 
-	/**
-	 * 支付渠道流水生成 17位，13位时间戳+4位循环（0001-9999）左补0
-	 * 
-	 * @param ip
-	 * @return
-	 */
-	public synchronized String generateChannelId() {
-
-		String id = String.valueOf(System.currentTimeMillis());
-
-		if (null == map.get("pckey")) {// 初始化
-			map.put("pckey", "1");
-		} else if ("10000".equals(map.get("pckey"))) {// 复位
-			map.put("pckey", "1");
-		}
-		String sub3 = String.format("%04d", Integer.valueOf(map.get("pckey")));
-		id = id + sub3;
-		map.put("pckey", String.valueOf(Integer.valueOf(sub3) + 1));
-		return id;
+		uuid = platCode + UUID.randomUUID().toString().replaceAll("-", "") ;
+		uuid = new String(Hex.encodeHex(DigestUtils.md5(uuid)));
+		ticket = uuid;
+		return ticket;
 
 	}
 
+	/**
+	 * 获取抽奖ticket
+	 * @param seqKey
+	 * @param maxValue
+	 * @return
+	 */
 	private String getCacheSeq(String seqKey, Long maxValue) {
-		Long seqIndexLong = marketRedisDB.incr(seqKey);
-		if (seqIndexLong >= maxValue) {
-			marketRedisDB.set(seqKey, "1");
-			seqIndexLong = 1L;
-		}
+		Long seqIndexLong = promotionRedisDB.incr(seqKey);
+		seqIndexLong = seqIndexLong % maxValue;
 		int maxStrLength = maxValue.toString().length() - 1;
 		String zeroString = String.format("%0" + maxStrLength + "d", seqIndexLong);
 		return zeroString;
@@ -170,14 +149,28 @@ public class GeneratorUtils {
 		return ip;
 	}
 
-	public static void main(String[] args) throws InterruptedException {
+	/**
+	 * 获取随机数
+	 * @return
+	 */
+	public int getRandomNum() {
+		return (int)(1+Math.random()*100);
+	}
 
+	public static void main(String[] args) throws InterruptedException {
+		String[] chars = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G",
+									   "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+		GeneratorUtils gg = new GeneratorUtils();
+		for(int i=0;i<100;i++){
+			System.out.println(gg.generateLotteryTicket("aaa"));
+
+		}
 		// System.out.println(GenerateIdsUtil.generateId("199.168.3.76"));
 		// System.out.println(GenerateIdsUtil.generateId("199.168.3.76"));
 		// System.out.println(GenerateIdsUtil.customGenerateId("test","192.168.110.6"));
 		// System.out.println(GenerateIdsUtil.generateOrgCode("1","99"));
-		Long dateString = 9998888L;
-		System.out.println(DateUtils.getCurrentDate("yyHHmmss"));
+//		Long dateString = 9998888L;
+//		System.out.println(DateUtils.getCurrentDate("yyHHmmss"));
 
 	}
 }

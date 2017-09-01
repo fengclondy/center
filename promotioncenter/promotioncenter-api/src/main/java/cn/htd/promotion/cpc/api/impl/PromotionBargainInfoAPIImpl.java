@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.api.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -64,10 +65,8 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
             result.setErrorMessage(pbs.getMessage());
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
-            LOGGER.error("MessageId:{} 调用方法promotionBargainInfoService.getPromotionBargainInfoDetail出现异常{}",
-                    buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch), w.toString());
+            LOGGER.error(MessageFormat.format("MessageId:{0} 调用方法promotionBargainInfoService.getPromotionBargainInfoDetail出现异常{1}",
+                    buyerBargainLaunch.getMessageId(), JSON.toJSONString(buyerBargainLaunch)), e);
         }
         return result;
     }

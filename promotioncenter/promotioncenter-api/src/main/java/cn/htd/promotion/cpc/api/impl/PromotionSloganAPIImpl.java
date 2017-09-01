@@ -8,7 +8,7 @@ import cn.htd.promotion.cpc.api.PromotionSloganAPI;
 import cn.htd.promotion.cpc.biz.service.PromotionSloganService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.dto.response.PromotionSloganResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ public class PromotionSloganAPIImpl implements PromotionSloganAPI {
     private PromotionSloganService promotionSloganService;
 
     @Override
-    public ExecuteResult<List<PromotionSloganResDTO>> queryBargainSloganBySellerCode(
+    public ExecuteResult<List<PromotionSloganDTO>> queryBargainSloganBySellerCode(
             String providerSellerCode, String messageId) {
-        ExecuteResult<List<PromotionSloganResDTO>> result = new ExecuteResult<List<PromotionSloganResDTO>>();
+        ExecuteResult<List<PromotionSloganDTO>> result = new ExecuteResult<List<PromotionSloganDTO>>();
         if (!StringUtils.isEmpty(providerSellerCode) && !StringUtils.isEmpty(messageId)) {
             return promotionSloganService.queryBargainSloganBySellerCode(providerSellerCode, messageId);
         } else {

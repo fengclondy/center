@@ -1,4 +1,4 @@
-package cn.htd.promotion.cpc.api.handler;
+package cn.htd.promotion.cpc.biz.handle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +18,7 @@ import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
@@ -39,6 +40,19 @@ public class PromotionTimelimitedRedisHandle {
     @Resource
     private PromotionRedisDB promotionRedisDB;
 
+    
+    /**
+     * 秒杀 - 保存秒杀活动的启用状态
+     * 
+     * @param skuCodeList 商品编码集合
+     * @return
+     */
+    public void saveTimelimitedValidStatus2Redis(PromotionInfoDTO promotionInfo) {
+    	promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED_VALID, promotionInfo.getPromotionId(),
+                promotionInfo.getShowStatus());
+    }
+
+    
     /**
      * 秒杀 - 从Redis中查询对应skuCode的秒杀活动信息
      * 
@@ -521,5 +535,23 @@ public class PromotionTimelimitedRedisHandle {
             return useLog;
         }
         return null;
+    }
+    
+    /**
+     * 更新秒杀变化活动状态
+     *
+     * @param promotionInfo
+     */
+    public void updateRedisTimeilimitedStatus(PromotionInfoDTO promotionInfo) {
+    	TimelimitedInfoResDTO timelimitedInfo = null;
+        String promotionId = promotionInfo.getPromotionId();
+        String timelimitedJsonStr = "";
+        timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
+        timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
+        if (timelimitedInfo == null) {
+            return;
+        }
+        timelimitedInfo.setStatus(promotionInfo.getStatus());
+        promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
     }
 }

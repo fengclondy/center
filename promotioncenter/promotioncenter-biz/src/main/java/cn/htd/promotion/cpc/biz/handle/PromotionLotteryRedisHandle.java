@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.handle;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import cn.htd.common.constant.DictionaryConst;
@@ -26,30 +28,5 @@ public class PromotionLotteryRedisHandle {
     @Resource
     private PromotionRedisDB promotionRedisDB;
 
-    /**
-     * 取得Redis抽奖活动信息
-     *
-     * @param promotionId
-     */
-    public PromotionExtendInfoDTO getRedisLotteryInfo(String promotionId) throws PromotionCenterBusinessException {
-        PromotionExtendInfoDTO lotteryInfo = null;
-        String lotteryJsonStr = "";
-        String validStatus = "";
-
-        validStatus = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
-        if (!StringUtils.isEmpty(validStatus)
-                && !dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validStatus)) {
-            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_VALID.getCode(),
-                    "抽奖活动ID:" + promotionId + " 该活动未上架");
-        }
-        lotteryJsonStr = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_INFO, promotionId);
-        lotteryInfo = JSON.parseObject(lotteryJsonStr, PromotionExtendInfoDTO.class);
-        if (lotteryInfo == null) {
-            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
-                    "抽奖活动ID:" + promotionId + " 该活动不存在");
-        }
-        return lotteryInfo;
-    }
 
 }

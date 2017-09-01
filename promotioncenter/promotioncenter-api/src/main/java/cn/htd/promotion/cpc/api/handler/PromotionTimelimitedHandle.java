@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;

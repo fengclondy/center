@@ -153,8 +153,8 @@ public class GeneratorUtils {
 	 * 获取随机数
 	 * @return
 	 */
-	public long getRandomNum() {
-		return (long)(1+Math.random()*100);
+	public int getRandomNum() {
+		return (int)(1+Math.random()*100);
 	}
 
 	public static void main(String[] args) throws InterruptedException {

@@ -287,11 +287,11 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	}
 
 	@Override
-	public String addDrawLotteryInfo(String json) {
-		PromotionInfoEditReqDTO promotionInfoEditReqDTO = null;
+	public String addDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+		//PromotionInfoEditReqDTO promotionInfoEditReqDTO = null;
 		DrawLotteryResDTO rt = new DrawLotteryResDTO();
 		try {
-			promotionInfoEditReqDTO = JSON.parseObject(json, PromotionInfoEditReqDTO.class);
+			//promotionInfoEditReqDTO = JSON.parseObject(json, PromotionInfoEditReqDTO.class);
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
 			// 有错误信息时返回错误信息
@@ -312,11 +312,11 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	}
 
 	@Override
-	public String editDrawLotteryInfo(String json) {
-		PromotionInfoEditReqDTO promotionInfoEditReqDTO = null;
+	public String editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+		//PromotionInfoEditReqDTO promotionInfoEditReqDTO = null;
 		DrawLotteryResDTO rt = new DrawLotteryResDTO();
 		try {
-			promotionInfoEditReqDTO = JSON.parseObject(json, PromotionInfoEditReqDTO.class);
+			//promotionInfoEditReqDTO = JSON.parseObject(json, PromotionInfoEditReqDTO.class);
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
 			// 有错误信息时返回错误信息

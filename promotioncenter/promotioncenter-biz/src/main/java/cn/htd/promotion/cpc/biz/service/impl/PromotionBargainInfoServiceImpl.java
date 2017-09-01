@@ -104,6 +104,10 @@ public class PromotionBargainInfoServiceImpl implements
         PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
         LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,出参{}",
                 buyerBargainLaunch.getMessageId(), JSON.toJSONString(promotionBargainInfo));
+	    if(promotionBargainInfo == null){//是从聚合页进来且没有砍价记录
+		    buyerBargainLaunch.setBuyerCode("");
+		    promotionBargainInfo  = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+	    }
         if(promotionBargainInfo != null){
         	//从redis里面获取砍价详情
             List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.

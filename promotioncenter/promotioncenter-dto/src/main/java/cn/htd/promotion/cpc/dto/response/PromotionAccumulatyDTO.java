@@ -3,7 +3,7 @@ package cn.htd.promotion.cpc.dto.response;
 /**
  * 促销活动层级DTO
  */
-public class PromotionAccumulatyDTO extends PromotionExtendInfoDTO {
+public class PromotionAccumulatyDTO extends PromotionExtendInfoDTO implements Comparable<PromotionAccumulatyDTO> {
 
     /**
      * ID
@@ -112,5 +112,10 @@ public class PromotionAccumulatyDTO extends PromotionExtendInfoDTO {
         this.quantifierType = accuDTO.getQuantifierType();
         this.levelDescribe = accuDTO.getLevelDescribe();
         this.deleteFlag = accuDTO.getDeleteFlag();
+    }
+
+    @Override
+    public int compareTo(PromotionAccumulatyDTO o) {
+        return this.levelNumber - o.levelNumber;
     }
 }

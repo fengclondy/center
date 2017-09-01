@@ -187,9 +187,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 				result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 			} else {
-				result.setResponseCode(ResultCodeEnum.PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT
+				result.setResponseCode(ResultCodeEnum.LOTTERY_NO_DESCRIBE_CONTENT
 						.getCode());
-				result.setResponseMsg(ResultCodeEnum.PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT
+				result.setResponseMsg(ResultCodeEnum.LOTTERY_NO_DESCRIBE_CONTENT
 						.getMsg());
 			}
 		} catch (Exception e) {

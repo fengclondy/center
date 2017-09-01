@@ -27,6 +27,10 @@ public class PromotionRedisDB {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    public StringRedisTemplate getStringRedisTemplate() {
+        return stringRedisTemplate;
+    }
+
     /**
      * 判断redis中是否存在key
      *
@@ -525,6 +529,17 @@ public class PromotionRedisDB {
     public Long incrHash(String key, String field) {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-incrHash", "key=" + key, "field=" + field);
         return incrHashBy(key, field, 1);
+    }
+    /**
+     * 通过redis取得自减数据
+     *
+     * @param key
+     * @param field
+     * @return
+     */
+    public Long decrHash(String key, String field) {
+        logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-decrHash", "key=" + key, "field=" + field);
+        return incrHashBy(key, field, -1);
     }
 
     /**

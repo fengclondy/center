@@ -142,7 +142,7 @@ public interface PromotionBaseService {
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap) throws PromotionCenterBusinessException;
 
-	public GenricResDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
+	public PromotionInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
 
-	public GenricResDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
+	public PromotionInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
 }

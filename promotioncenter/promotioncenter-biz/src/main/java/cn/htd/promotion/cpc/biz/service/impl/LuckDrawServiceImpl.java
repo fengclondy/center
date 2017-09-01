@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
@@ -38,6 +39,7 @@ import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
@@ -59,7 +61,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	
 	@Resource
 	private PromotionBaseService promotionBaseService;
-
+	
+	@Resource
+	private PromotionAwardInfoDAO promotionAwardInfoDAO;
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
 			ValidateLuckDrawReqDTO requestDTO) {
@@ -289,12 +293,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
 			promotionInfoEditReqDTO.setPromotionType("NDJ");
-			result = (DrawLotteryResDTO) promotionBaseService.addPromotionInfo(promotionInfoEditReqDTO);
-
+			PromotionInfoDTO rtobj = promotionBaseService.addPromotionInfo(promotionInfoEditReqDTO);
+			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			e.printStackTrace();
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		} catch (Exception e) {
-			e.printStackTrace();
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		}
 
 		return result;
@@ -307,12 +314,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			result = (DrawLotteryResDTO) promotionBaseService.editPromotionInfo(promotionInfoEditReqDTO);
-
+			PromotionInfoDTO rtobj = promotionBaseService.editPromotionInfo(promotionInfoEditReqDTO);
+			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			e.printStackTrace();
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		} catch (Exception e) {
-			e.printStackTrace();
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		}
 
 		return result;

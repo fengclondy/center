@@ -57,9 +57,9 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			result.setResult(promotionInfoList);
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			if (promotionInfoList.getSize() == 0 || promotionInfoList == null) {
-				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
-			} else {
 				result.setResultMessage(ResultCodeEnum.NORESULT.getMsg());
+			} else {
+				result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 			}
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getMsg());

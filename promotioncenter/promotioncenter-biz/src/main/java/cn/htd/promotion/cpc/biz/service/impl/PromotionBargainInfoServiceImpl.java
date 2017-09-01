@@ -348,7 +348,7 @@ public class PromotionBargainInfoServiceImpl implements
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT.getCode(),
 	                        "砍价活动:" + promotionId + " 在已结束状态时不能进行修改");
 	            }
-	            //判断时间段内可有活动上架
+	            //判断时间段内可有活动上架 
 	            Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfoDTO.getPromotionProviderSellerCode(),
 	            		bargainInfoList.get(0).getEffectiveTime(),bargainInfoList.get(0).getInvalidTime(), promotionInfoDTO.getPromotionId());
 	            if(isUpPromotionFlag.intValue() > 0) {

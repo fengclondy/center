@@ -60,22 +60,22 @@ public class BuyerBargainTestUnit {
 		}
     }
     
-//    @Test
-//    @Rollback(false) 
-//    public void testGetPromotionBargainInfoDetail() {
-//    	try {
-//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-//    		buyerBargainLaunch.setBuyerCode("htd20070002");
-//			buyerBargainLaunch.setPromotionId("22172032410074");
-//			buyerBargainLaunch.setLevelCode("2217203241007491");
-//			buyerBargainLaunch.setMessageId("123456");
-//			buyerBargainLaunch.setBargainCode("123");
-//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
-//			System.out.println(JSON.toJSONString(promotionBargainInfo));
-//    	} catch (Exception e) {
-//    		
-//		}
-//    }
+    @Test
+    @Rollback(false) 
+    public void testGetPromotionBargainInfoDetail() {
+    	try {
+    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+    		buyerBargainLaunch.setBuyerCode("24933406");
+			buyerBargainLaunch.setPromotionId("22172342371125");
+			buyerBargainLaunch.setLevelCode("2217234237112571");
+			buyerBargainLaunch.setMessageId("123456");
+			buyerBargainLaunch.setBargainCode("3171928120048");
+			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+			System.out.println(JSON.toJSONString(promotionBargainInfo));
+    	} catch (Exception e) {
+    		
+		}
+    }
     
     
 //    @Test

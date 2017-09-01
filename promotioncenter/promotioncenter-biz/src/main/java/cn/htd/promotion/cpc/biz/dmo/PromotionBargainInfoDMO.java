@@ -80,6 +80,8 @@ public class PromotionBargainInfoDMO{
 	
 	private String showStatusD;//上下架状态
 	
+	private String bargainCodeD;//砍价编码
+	
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
 	}
@@ -358,6 +360,14 @@ public class PromotionBargainInfoDMO{
 
 	public void setShowStatusD(String showStatusD) {
 		this.showStatusD = showStatusD;
+	}
+
+	public String getBargainCodeD() {
+		return bargainCodeD;
+	}
+
+	public void setBargainCodeD(String bargainCodeD) {
+		this.bargainCodeD = bargainCodeD;
 	}
 
 }

@@ -10,16 +10,26 @@
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, promotion_id, promotion_picture_type, promotion_picture_url, delete_flag, create_id, 
-    create_name, create_time
+    create_name, create_time, modify_id, modify_name, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from promotion_picture
     where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPromotionInfoId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_picture
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from promotion_picture
@@ -28,10 +38,11 @@
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.PromotionPictureDTO" >
     insert into promotion_picture (id, promotion_id, promotion_picture_type, 
       promotion_picture_url, delete_flag, create_id, 
-      create_name, create_time)
+      create_name, create_time, modify_id, modify_name, 
+    modify_time)
     values (#{id,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{promotionPictureType,jdbcType=VARCHAR}, 
       #{promotionPictureUrl,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, 
-      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="add" parameterType="cn.htd.promotion.cpc.dto.response.PromotionPictureDTO" >
     insert into promotion_picture
@@ -54,7 +65,14 @@
       <if test="createName != null" >
         create_name,
       </if>
-        create_time
+        create_time,
+        <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      modify_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="promotionId != null" >
@@ -75,6 +93,13 @@
       <if test="createName != null" >
         #{createName,jdbcType=VARCHAR},
       </if>
+        now(),
+        <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
         now()
     </trim>
   </insert>
@@ -93,13 +118,13 @@
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=TINYINT},
       </if>
-      <if test="createId != null" >
-        create_id = #{createId,jdbcType=BIGINT},
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
       </if>
-      <if test="createName != null" >
-        create_name = #{createName,jdbcType=VARCHAR},
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
       </if>
-        create_time = now()
+        modify_time = now()
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -109,9 +134,9 @@
       promotion_picture_type = #{promotionPictureType,jdbcType=VARCHAR},
       promotion_picture_url = #{promotionPictureUrl,jdbcType=VARCHAR},
       delete_flag = #{deleteFlag,jdbcType=TINYINT},
-      create_id = #{createId,jdbcType=BIGINT},
-      create_name = #{createName,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

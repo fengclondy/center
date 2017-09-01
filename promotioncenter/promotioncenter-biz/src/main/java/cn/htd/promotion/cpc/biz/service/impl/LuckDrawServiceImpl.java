@@ -15,12 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
@@ -34,6 +34,8 @@ import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionAccumulatyReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionAwardInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
@@ -41,12 +43,19 @@ import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -62,7 +71,12 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
-
+	@Resource
+    private DictionaryUtils dictionary;
+	@Resource
+	private PromotionBaseService promotionBaseService;
+    @Resource
+    private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
 	@Resource
 	private PromotionAwardInfoDAO promotionAwardInfoDAO;
 
@@ -316,18 +330,53 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		return result;
 	}
 
-	@Override
-	public DrawLotteryResDTO addDrawLotteryInfo(
-			PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+		@Override
+	public DrawLotteryResDTO addDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+
 		DrawLotteryResDTO result = new DrawLotteryResDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+
 			}
 			promotionInfoEditReqDTO.setPromotionType("NDJ");
-			PromotionInfoDTO rtobj = baseService
-					.addPromotionInfo(promotionInfoEditReqDTO);
+			PromotionInfoDTO rtobj = promotionBaseService.addPromotionInfo(promotionInfoEditReqDTO);
+			if(rtobj.getPromotionAccumulatyList()!=null){
+				List<PromotionAccumulatyReqDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+				List<? extends PromotionAccumulatyDTO> aclist = rtobj.getPromotionAccumulatyList();
+				PromotionAwardInfoReqDTO padrDTO = null;
+				PromotionAwardInfoDTO padDTO = null;
+				for (int i = 0; i < aclist.size(); i++) {
+		            padrDTO = promotionAccumulatyList.get(i).getPromotionAwardInfoReqDTO();
+		            padDTO = new PromotionAwardInfoDTO();
+		            
+		            padDTO.setPromotionId(rtobj.getPromotionId());
+		            padDTO.setLevelCode(aclist.get(i).getLevelCode());
+		            
+		            padDTO.setAwardName(padrDTO.getAwardName());
+		            padDTO.setAwardRuleDescribe(padrDTO.getAwardRuleDescribe());
+		            padDTO.setAwardType(padrDTO.getAwardType());
+		            padDTO.setAwardValue(padrDTO.getAwardValue());
+		            padDTO.setProvideCount(padrDTO.getProvideCount());
+		            padDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+		            padDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+		            padDTO.setModifyId(promotionInfoEditReqDTO.getCreateId());
+		            padDTO.setModifyName(promotionInfoEditReqDTO.getCreateName());
+		            promotionAwardInfoDAO.add(padDTO);
+				}
+
+			}
+			PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+			historyDTO.setPromotionId(rtobj.getPromotionId());
+            historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+            historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+                    DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+            historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+            historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+            promotionStatusHistoryDAO.add(historyDTO);
+            
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
@@ -342,16 +391,67 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public DrawLotteryResDTO editDrawLotteryInfo(
-			PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+	public DrawLotteryResDTO editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
 		DrawLotteryResDTO result = new DrawLotteryResDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			PromotionInfoDTO rtobj = baseService
-					.editPromotionInfo(promotionInfoEditReqDTO);
+			PromotionInfoDTO rtobj = promotionBaseService.editPromotionInfo(promotionInfoEditReqDTO);
+			if(rtobj.getPromotionAccumulatyList()!=null){
+				List<PromotionAccumulatyReqDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+				List<? extends PromotionAccumulatyDTO> aclist = rtobj.getPromotionAccumulatyList();
+				PromotionAwardInfoReqDTO padrDTO = null;
+				PromotionAwardInfoDTO padDTO = null;
+				for (int i = 0; i < aclist.size(); i++) {
+		            padrDTO = promotionAccumulatyList.get(i).getPromotionAwardInfoReqDTO();
+		            padDTO = new PromotionAwardInfoDTO();
+		            padDTO.setAwardId(padrDTO.getAwardId());
+		            padDTO.setPromotionId(rtobj.getPromotionId());
+		            padDTO.setLevelCode(aclist.get(i).getLevelCode());
+		            
+		            padDTO.setAwardName(padrDTO.getAwardName());
+		            padDTO.setAwardRuleDescribe(padrDTO.getAwardRuleDescribe());
+		            padDTO.setAwardType(padrDTO.getAwardType());
+		            padDTO.setAwardValue(padrDTO.getAwardValue());
+		            padDTO.setProvideCount(padrDTO.getProvideCount());
+		            padDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+		            padDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+		            padDTO.setModifyId(promotionInfoEditReqDTO.getCreateId());
+		            padDTO.setModifyName(promotionInfoEditReqDTO.getCreateName());
+		            promotionAwardInfoDAO.update(padDTO);
+				}
+
+			}
+			PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+			historyDTO.setPromotionId(rtobj.getPromotionId());
+            historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+            historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+                    DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+            historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+            historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+            promotionStatusHistoryDAO.add(historyDTO);
+			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+		} catch (PromotionCenterBusinessException e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+		}
+
+		return result;
+	}
+
+	@Override
+	public PromotionInfoEditResDTO viewDrawLotteryInfo(String promotionInfoId) {
+		PromotionInfoEditResDTO  result = new PromotionInfoEditResDTO();
+		try {
+
+			result = promotionBaseService.viewPromotionInfo(promotionInfoId);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
@@ -411,5 +511,33 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		String filed = "GASHAPON_1517406643033_1517406644033";
 		String[] fieldArray = filed.split("_");
 		System.out.println(fieldArray.length);
+	}
+
+	@Override
+	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId) {
+		PromotionSellerRuleDTO result = new PromotionSellerRuleDTO();
+		try {
+			String promotionId = queryEffectivePromotion();
+			if (StringUtils.isEmpty(promotionId)) {
+				result.setResponseCode(ResultCodeEnum.LOTTERY_NO_SELLER.getCode());
+				result.setResponseMsg(ResultCodeEnum.LOTTERY_NO_SELLER.getMsg());
+				return result;
+			}
+			Map<String, String> dictMap = null;
+			PromotionExtendInfoDTO promotionInfoDTO = null;
+			dictMap = baseService.initPromotionDictMap();
+			promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(
+					promotionId, dictMap);
+			result.setSellerDetailList(promotionInfoDTO.getSellerRuleDTO().getSellerDetailList());
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawServiceImpl.participateActivitySellerInfo出现异常 request：{}",
+					messageId, messageId, w.toString());
+		}
+		return result;
 	}
 }

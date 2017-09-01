@@ -36,7 +36,8 @@ public enum ResultCodeEnum {
     LUCK_DRAW_NOT_HAVE_DRAW_PERMISSION("26202", "该会员店没有抽奖权限"),
     LOTTERY_NOT_IN_TIME_INTERVAL("26203", "抽奖活动不在当前时间段内"),
     LOTTERY_BUYER_NO_AUTHIORITY("25204", "粉丝没有抽奖权限"),
-    LOTTERY_SELLER_NO_AUTHIORITY("25205", "会员店没有参加本次抽奖活动");
+    LOTTERY_SELLER_NO_AUTHIORITY("25205", "会员店没有参加本次抽奖活动"),
+    PROMOTION_LOTTERY_NO_DESCRIBE_CONTENT("25206","没有查询到活动规则");
 
     private ResultCodeEnum(String code, String msg) {
         this.code = code;

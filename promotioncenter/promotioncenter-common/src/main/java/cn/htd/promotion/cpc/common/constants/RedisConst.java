@@ -45,7 +45,7 @@ public class RedisConst {
 	// Redis抽奖活动卖家每日中奖总次数
 	public static final String REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES = "SELLER_DAILY_TOTAL_TIMES";
 	// Redis抽奖活动买家每次分享获得抽奖次数
-	public static final String REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES = "BUYER_SHARE_EXTRA_PARTAKE_TIMES ";
+	public static final String REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES = "BUYER_SHARE_EXTRA_PARTAKE_TIMES";
 	// Redis抽奖活动买家分享获得抽奖次数上限
 	public static final String REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES = "BUYER_TOP_EXTRA_PARTAKE_TIME";
 	// Redis抽奖活动奖品总数

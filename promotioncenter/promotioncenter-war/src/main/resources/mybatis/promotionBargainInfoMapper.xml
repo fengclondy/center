@@ -17,7 +17,6 @@
 	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
 	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
-	<result column="SHOW_STATUS" property="showStatus" jdbcType="VARCHAR" />
   </resultMap>
   
     <sql id="pagination_tail">

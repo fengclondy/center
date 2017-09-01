@@ -40,9 +40,9 @@ public class UserSyncServiceImpl implements UserSyncService {
         ExecuteResult<Boolean> res = new ExecuteResult<Boolean>();
 
         try {
-            // 非平台公司的时候，区域默认空格
-            if (!TYPE_SUBCOMPANY.equals(dto.getType())) {
-                dto.setArea(" ");
+            // 区域不存在时，默认空串
+            if (dto.getArea() == null) {
+                dto.setArea("");
             }
         	
             // 同步HTD公司信息

@@ -139,6 +139,6 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @param sellerCode
      * @return
      */
-	public List<PromotionBargainInfoDMO> queryPromotionBargainEntry(@Param("sellerCode") String sellerCode);
+	public List<PromotionInfoDTO> queryPromotionBargainEntry(@Param("sellerCode") String sellerCode);
 
 }

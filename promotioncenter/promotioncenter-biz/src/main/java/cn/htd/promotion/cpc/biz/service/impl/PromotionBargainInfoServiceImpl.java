@@ -599,19 +599,17 @@ public class PromotionBargainInfoServiceImpl implements
 		List<PromotionInfoDTO> resultList = new ArrayList<PromotionInfoDTO>();
 		Date currentDate = new Date();
 		try {
-			List<PromotionBargainInfoDMO> promotionInfoList = promotionInfoDAO.queryPromotionBargainEntry(dto.getPromotionProviderSellerCode());
+			List<PromotionInfoDTO> promotionInfoList = promotionInfoDAO.queryPromotionBargainEntry(dto.getPromotionProviderSellerCode());
 			PromotionInfoDTO resultDTO = null;
 			if(null != promotionInfoList && !promotionInfoList.isEmpty()){
 				for (int i = 0; i< promotionInfoList.size(); i++) {
 					if(currentDate.before(promotionInfoList.get(0).getInvalidTime())) {
-						resultDTO = new PromotionInfoDTO();
-						resultDTO.setPromotionId(promotionInfoList.get(0).getPromotionId());
+						resultDTO = promotionInfoList.get(0);
 						break;
 					}
 				}
 				if(null == resultDTO){
-					resultDTO = new PromotionInfoDTO();
-					resultDTO.setPromotionId(promotionInfoList.get(promotionInfoList.size() - 1).getPromotionId());
+					resultDTO = promotionInfoList.get(promotionInfoList.size() - 1);
 				}
 				resultList.add(resultDTO);
 			}

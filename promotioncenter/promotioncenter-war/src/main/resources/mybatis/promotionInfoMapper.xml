@@ -496,5 +496,14 @@
       modify_time = now()
     </set>
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
-  </update>
+  	</update>
+  
+  	
+	<select id="queryPromotionBargainEntry" resultMap="BaseResultMap">
+		SELECT * from promotion_info 
+		WHERE promotion_provider_seller_code = #{sellerCode}
+        AND show_status = 3
+        AND status != 9
+        ORDER BY effective_time asc
+	</select>
 </mapper>

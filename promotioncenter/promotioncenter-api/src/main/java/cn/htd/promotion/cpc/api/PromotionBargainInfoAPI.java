@@ -55,5 +55,11 @@ public interface PromotionBargainInfoAPI {
 	 * @throws PromotionCenterBusinessException
 	 */
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList);
-
+	
+	/**
+	 * 砍价活动入口
+	 * @param sellerCode
+	 * @return
+	 */
+	public ExecuteResult<List<PromotionInfoDTO>> queryPromotionEntry(String sellerCode);
 }

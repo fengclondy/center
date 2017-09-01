@@ -84,5 +84,14 @@ public interface PromotionBargainInfoService {
      * @return
      */
     public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(PromotionValidDTO dto) throws PromotionCenterBusinessException;
+
+    /**
+     * 砍价活动入口
+     * @param dto
+     * @return
+     * @throws PromotionCenterBusinessException
+     */
+	public ExecuteResult<List<PromotionInfoDTO>> queryPromotionInfoEntry(
+			PromotionInfoReqDTO dto) throws PromotionCenterBusinessException;
     
 }

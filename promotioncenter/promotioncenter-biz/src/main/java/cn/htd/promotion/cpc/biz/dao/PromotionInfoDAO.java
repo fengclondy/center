@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
+import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
@@ -132,5 +133,12 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public Integer updatePromotionStatus4InvalidById(PromotionInfoDTO promotionInfo);
+
+    /**
+     * 砍价活动入口
+     * @param sellerCode
+     * @return
+     */
+	public List<PromotionInfoDTO> queryPromotionBargainEntry(@Param("sellerCode") String sellerCode);
 
 }

@@ -181,7 +181,14 @@ public class PromotionInfoDTO extends GenricResDTO {
     private List<String> statusList;
     /**
      * 查询条件的审核状态列表
-     */
+     */    
+    private List<String> verifyStatusList;
+
+    private String effectiveTimeStr;
+
+    private String invalidTimeStr;
+
+    private PromotionSellerDetailDTO sellerDetailDTO;
     /**
     * 中奖总数量
     */
@@ -190,14 +197,6 @@ public class PromotionInfoDTO extends GenricResDTO {
     * 今日中奖总数量
     */
     private String winningTodayNum;
-    
-    private List<String> verifyStatusList;
-
-    private String effectiveTimeStr;
-
-    private String invalidTimeStr;
-
-    private PromotionSellerDetailDTO sellerDetailDTO;
 
     public Long getId() {
         return id;

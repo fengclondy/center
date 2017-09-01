@@ -420,6 +420,7 @@
   	</if>
   	<if test="dto.status != null and dto.status != ''">
   		AND status = #{dto.status}
+  		AND has_up_flag = 1
   	</if>
   	<if test="dto.hasUpFlag != null and dto.hasUpFlag != ''">
   		AND has_up_flag = #{dto.hasUpFlag}

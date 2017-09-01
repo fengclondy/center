@@ -3,7 +3,9 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -24,6 +26,7 @@ import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
+import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.PromotionCodeEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -41,6 +44,7 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
@@ -58,45 +62,44 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
-	
-	@Resource
-	private PromotionBaseService promotionBaseService;
-	
+
 	@Resource
 	private PromotionAwardInfoDAO promotionAwardInfoDAO;
+
+	@Resource
+	private PromotionBaseService baseService;
+
+	@Resource
+	private PromotionLotteryCommonService promotionLotteryCommonService;
+
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
 			ValidateLuckDrawReqDTO requestDTO) {
 		String messageId = requestDTO.getMessageId();
 		ValidateLuckDrawResDTO result = new ValidateLuckDrawResDTO();
 		try {
-			result.setResponseCode(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY
+			result.setResponseCode(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY
 					.getCode());
-			result.setResponseMsg(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY
+			result.setResponseMsg(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY
 					.getMsg());
 
 			String orgId = requestDTO.getOrgId();
-			String promotionIds = promotionRedisDB.getHash(
-					RedisConst.REDIS_LOTTERY_INDEX,
-					RedisConst.REDIS_GASHAPON_PREFIX + orgId);
-			if (StringUtils.isNotEmpty(promotionIds)) {
-				String[] promotionArray = promotionIds.split(",");
-				if (null != promotionArray && promotionArray.length > 0) {
-					for (int i = 0; i < promotionArray.length; i++) {
-						String promotionId = promotionArray[i];
-						String gashaponStatus = promotionRedisDB.getHash(
-								RedisConst.REDIS_LOTTERY_VALID, promotionId);
-						if (PromotionCodeEnum.LOTTERY_EFFECTIVE.getCode()
-								.equals(gashaponStatus)) {
-							result.setResponseCode(ResultCodeEnum.SUCCESS
-									.getCode());
-							result.setResponseMsg(ResultCodeEnum.SUCCESS
-									.getMsg());
-							result.setPromotionId(promotionId);
-							return result;
-						}
-					}
-				}
+			String promotionId = queryEffectivePromotion();
+			if (StringUtils.isEmpty(promotionId)) {
+				return result;
+			}
+
+			Map<String, String> dictMap = null;
+			PromotionExtendInfoDTO promotionInfoDTO = null;
+			dictMap = baseService.initPromotionDictMap();
+			promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(
+					promotionId, dictMap);
+			if (baseService.checkPromotionSellerRule(promotionInfoDTO, orgId,
+					dictMap)) {
+				result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+				result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+				result.setPromotionId(promotionId);
+				return result;
 			}
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
@@ -137,7 +140,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			String buyerDailyDrawTimes = promotionRedisDB.getHash(
 					RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
 					RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES);
-			
+
 			Integer remainingTimes = Integer.valueOf(buyerDailyDrawTimes);
 			result.setPictureUrl(pictureUrlList);
 			result.setActivityStartTime(promotionExtendInfoDTO
@@ -147,25 +150,34 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setPromotionName(promotionExtendInfoDTO.getPromotionName());
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-			
+
 			String buyerNo = request.getMemberNo();
-			if(StringUtils.isNotEmpty(buyerNo)){
+			if (StringUtils.isNotEmpty(buyerNo)) {
 				result.setRemainingTimes(remainingTimes);
 				// 粉丝活动粉丝当日次数信息
-				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + buyerNo;
-				
-				List<String> buyerTimeInfoList = promotionRedisDB.getHashFields(b2bMiddleLotteryBuyerTimesInfo);
-				if(CollectionUtils.isEmpty(buyerTimeInfoList)){
-					//粉丝活动粉丝当日剩余参与次数
-					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, remainingTimes.toString());
-					//粉丝当日中奖次数
-					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES, "0");
-					//粉丝分享次数
-					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES, "0");
-					//粉丝已经达到分享获得抽奖次数上限
-					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES, PromotionCodeEnum.BUYER_HAS_TOP_EXTRA_TIMES.getCode());
+				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO
+						+ "_" + buyerNo;
+
+				List<String> buyerTimeInfoList = promotionRedisDB
+						.getHashFields(b2bMiddleLotteryBuyerTimesInfo);
+				if (CollectionUtils.isEmpty(buyerTimeInfoList)) {
+					// 粉丝活动粉丝当日剩余参与次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
+							remainingTimes.toString());
+					// 粉丝当日中奖次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES, "0");
+					// 粉丝分享次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES, "0");
+					// 粉丝已经达到分享获得抽奖次数上限
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES,
+							PromotionCodeEnum.BUYER_HAS_TOP_EXTRA_TIMES
+									.getCode());
 				}
-				//TODO 校验
+				// TODO 校验
 			}
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
@@ -236,18 +248,27 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES);
 
 			String buyerCode = request.getMemberNo();
-			String lotteryBuyerTimes = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO+"_"+buyerCode;
-			//粉丝分享次数
-			promotionRedisDB.incrHash(lotteryBuyerTimes,RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES);
+			String lotteryBuyerTimes = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO
+					+ "_" + buyerCode;
+			// 粉丝分享次数
+			promotionRedisDB.incrHash(lotteryBuyerTimes,
+					RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES);
 			Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
-			if(StringUtils.isEmpty(buyerTopExtraPartakeTime)){
-				//粉丝活动粉丝当日参与次数--总共剩余参与次数
-				promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,partakeTime);
-			}else{
-				//粉丝活动粉丝当日参与次数--总共参与次数
-				Long totalTimes = Long.valueOf(buyerDailyDrawTimes)+Long.valueOf(buyerTopExtraPartakeTime);
-				if(promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,partakeTime)>totalTimes){
-					promotionRedisDB.incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,-partakeTime);
+			if (StringUtils.isEmpty(buyerTopExtraPartakeTime)) {
+				// 粉丝活动粉丝当日参与次数--总共剩余参与次数
+				promotionRedisDB.incrHashBy(lotteryBuyerTimes,
+						RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
+						partakeTime);
+			} else {
+				// 粉丝活动粉丝当日参与次数--总共参与次数
+				Long totalTimes = Long.valueOf(buyerDailyDrawTimes)
+						+ Long.valueOf(buyerTopExtraPartakeTime);
+				if (promotionRedisDB.incrHashBy(lotteryBuyerTimes,
+						RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
+						partakeTime) > totalTimes) {
+					promotionRedisDB.incrHashBy(lotteryBuyerTimes,
+							RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
+							-partakeTime);
 				}
 			}
 			// 更新粉丝抽奖次数成功
@@ -296,14 +317,17 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public DrawLotteryResDTO addDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+	public DrawLotteryResDTO addDrawLotteryInfo(
+			PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
 		DrawLotteryResDTO result = new DrawLotteryResDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
 			promotionInfoEditReqDTO.setPromotionType("NDJ");
-			PromotionInfoDTO rtobj = promotionBaseService.addPromotionInfo(promotionInfoEditReqDTO);
+			PromotionInfoDTO rtobj = baseService
+					.addPromotionInfo(promotionInfoEditReqDTO);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
@@ -318,13 +342,16 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public DrawLotteryResDTO editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+	public DrawLotteryResDTO editDrawLotteryInfo(
+			PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
 		DrawLotteryResDTO result = new DrawLotteryResDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			PromotionInfoDTO rtobj = promotionBaseService.editPromotionInfo(promotionInfoEditReqDTO);
+			PromotionInfoDTO rtobj = baseService
+					.editPromotionInfo(promotionInfoEditReqDTO);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
@@ -338,4 +365,51 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		return result;
 	}
 
+	/**
+	 * 查询正在进行的有效的促销活动id
+	 * 
+	 * @return
+	 */
+	public String queryEffectivePromotion() {
+		String promotionId = "";
+		String b2bMiddleLotteryIndex = RedisConst.REDIS_LOTTERY_INDEX;
+		Map<String,String> indexMap = promotionRedisDB.getHashOperations(b2bMiddleLotteryIndex);
+		if(null != indexMap && !indexMap.isEmpty()){
+			Date nowDate = new Date();
+			for(Map.Entry<String,String> m : indexMap.entrySet()){
+				String field = m.getKey();
+				String[] fieldArray = field.split("_");
+				if (null != fieldArray && fieldArray.length > 2) {
+					Long startTime = new Long(fieldArray[1]);
+					Long endTime = new Long(fieldArray[2]);
+					Date stratDate = new Date(startTime);
+					Date endDate = new Date(endTime);
+					if (nowDate.after(stratDate) && nowDate.before(endDate)) {
+						promotionId = m.getValue();
+						if (StringUtils.isNotEmpty(promotionId)) {
+							// 验证抽奖活动的有效状态
+							String promotionStatus = promotionRedisDB
+									.getHash(RedisConst.REDIS_LOTTERY_VALID,
+											promotionId);
+							if (PromotionCodeEnum.LOTTERY_EFFECTIVE.getCode()
+									.equals(promotionStatus))
+								return promotionId;
+						}
+					}
+				}
+			}
+		}
+		return promotionId;
+	}
+
+	public static void main(String[] args) {
+		Date nowDate = new Date();
+		Long time = new Long("1517406643033");
+		Date startTime = new Date(time);
+		System.out.println(nowDate.after(startTime));
+
+		String filed = "GASHAPON_1517406643033_1517406644033";
+		String[] fieldArray = filed.split("_");
+		System.out.println(fieldArray.length);
+	}
 }

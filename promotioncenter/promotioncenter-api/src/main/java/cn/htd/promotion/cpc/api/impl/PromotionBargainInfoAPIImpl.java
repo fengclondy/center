@@ -101,10 +101,10 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
     
     @Override
     public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
-			String sellerCode,  Pager<String> page) {
+			String promotionId,  Pager<String> page) {
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
-		if(!StringUtils.isEmpty(sellerCode)){
-			return promotionBargainInfoService.queryPromotionBargainOverview(sellerCode, page);
+		if(!StringUtils.isEmpty(promotionId)){
+			return promotionBargainInfoService.queryPromotionBargainOverview(promotionId, page);
 		}else{
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());

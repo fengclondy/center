@@ -29,6 +29,7 @@
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
     <result column="deal_flag" jdbcType="TINYINT" property="dealFlag" />
     <result column="has_redis_clean" jdbcType="TINYINT" property="hasRedisClean" />
+    <result column="has_up_flag" jdbcType="TINYINT" property="hasUpFlag"/>
   </resultMap>
   <sql id="Base_Column_List">
 		id,
@@ -50,6 +51,7 @@
 		verify_time,
 		verify_remark,
 		modify_promotion_id,
+		has_up_flag,
 		create_id,
 		create_name,
 		create_time,
@@ -148,6 +150,9 @@
       <if test="hasRedisClean != null">
       	has_redis_clean ,
       </if>
+      <if test="hasUpFlag != null">
+      	has_up_flag,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -198,6 +203,9 @@
       <if test="hasRedisClean != null">
       	#{hasRedisClean,jdbcType=TINYINT},
       </if>
+      <if test="hasUpFlag != null">
+      	#{hasUpFlag,jdbcType=TINYINT},
+      </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -237,6 +245,9 @@
       </if>
       <if test="hasRedisClean != null and hasRedisClean != ''">
             has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null">
+      	has_up_flag = #{hasUpFlag,jdbcType=TINYINT},
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
@@ -413,11 +424,8 @@
   			AND show_status != 4
   		</if>
   	</if>
-  	<if test="dto.showStatus != null and dto.showStatus != ''">
-  		AND show_status = #{dto.showStatus}
-  		<if test="dto.showStatus == 4">
-  			AND status ＝ 1
-  		</if>
+  	<if test="dto.hasUpFlag != null and dto.hasUpFlag != ''">
+  		AND has_up_flag = #{dto.hasUpFlag}
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}
@@ -457,7 +465,8 @@
   	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
 	<if test="dto.status != null and dto.status != ''">
 		status = #{dto.status,jdbcType=VARCHAR},
-	</if>  	
+	</if>
+	has_up_flag = 1,
   	modify_id = #{dto.operatorId,jdbcType=BIGINT},
     modify_name = #{dto.operatorName,jdbcType=VARCHAR},
     modify_time = now()

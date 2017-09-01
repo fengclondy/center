@@ -128,6 +128,24 @@
   	    AND pi.status != 9
 	</select>
 	
+		<select id="queryPromotionBargainByPromotionId" resultMap="BaseResultMap">
+		SELECT * FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_id = #{promotionId}
+  	    AND pi.status != 9
+  	    order by pi.create_time desc
+  	    <if test="page!=null">
+	      <include refid="pagination_tail"/>
+	    </if>
+	</select>
+	
+	<select id="queryPromotionBargainByPromotionId" resultType="java.lang.Long">
+		SELECT COUNT(0) FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_id = #{promotionId}
+  	    AND pi.status != 9
+	</select>
+	
 	<select id="queryPromotionBargainInfo" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO">
 		SELECT * FROM promotion_bargain_info as pbi
 		INNER JOIN promotion_info as pi on pi.promotion_id = pbi.promotion_id

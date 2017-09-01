@@ -23,7 +23,10 @@ public interface PromotionBargainInfoDAO extends BaseDAO<PromotionBargainInfoRes
 
 	public List<PromotionBargainInfoDMO> queryPromotionBargainBySellerCode(@Param("sellerCode") String sellerCode,
 			@Param("page") Pager<String> page);
+	
+	public List<PromotionBargainInfoDMO> queryPromotionBargainByPromotionId(@Param("promotionId") String promotionId,
+			@Param("page") Pager<String> page);
 
-	public Long queryPromotionBargainCountBySellerCode(@Param("sellerCode") String sellerCode);
+	public Long queryPromotionBargainCountByPromotionId(@Param("sellerCode") String sellerCode);
 
 }

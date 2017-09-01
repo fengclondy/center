@@ -23,7 +23,7 @@ public interface PromotionBargainInfoAPI {
 	
 	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(PromotionInfoReqDTO reqDTO, Pager<PromotionInfoReqDTO> page);
 	
-	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(String sellerCode, Pager<String> page);
+	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(String promotionId, Pager<String> page);
 	
     /**
      * 促销活动砍价上下架

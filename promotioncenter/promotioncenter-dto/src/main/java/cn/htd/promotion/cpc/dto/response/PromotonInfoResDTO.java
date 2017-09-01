@@ -49,7 +49,17 @@ public class PromotonInfoResDTO implements Serializable{
      * @return
      */
     private String showStatus;
+    /**
+     * 是否上过架
+     */
+    private Integer hasUpFlag;
     
+	public Integer getHasUpFlag() {
+		return hasUpFlag;
+	}
+	public void setHasUpFlag(Integer hasUpFlag) {
+		this.hasUpFlag = hasUpFlag;
+	}
 	public String getShowStatus() {
 		return showStatus;
 	}

@@ -75,7 +75,7 @@ public interface PromotionBargainInfoService {
 	 * @return
 	 */
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
-			String sellerCode,  Pager<String> page);
+			String promotionId,  Pager<String> page);
 	
     
     /**

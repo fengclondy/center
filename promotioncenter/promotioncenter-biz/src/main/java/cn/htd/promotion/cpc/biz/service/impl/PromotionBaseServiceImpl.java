@@ -258,6 +258,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
         }
         if (null != bargainDTO && "1".equals(bargainDTO.getUpFlag())) {
+        	promotionInfo.setHasUpFlag(0);
             promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
         }
@@ -396,6 +397,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             extendDTO = (PromotionExtendInfoDTO) accumulatyDTO;
             promotionInfoExtendDAO.update(extendDTO);
         }
+        promotionInfo.setHasUpFlag(1);
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.update(promotionInfo);
         return promotionInfo;

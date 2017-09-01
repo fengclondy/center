@@ -447,8 +447,12 @@
   	<if test="dto.promotionName != null and dto.promotionName != ''">
   		AND promotion_name like concat('%', #{dto.promotionName} ,'%')
   	</if>
-  	<if test="dto.status != null">
+  	<if test="dto.status != null and dto.status != ''">
   		AND status = #{dto.status}
+  		AND has_up_flag = 1
+  	</if>
+  	<if test="dto.hasUpFlag != null">
+  		AND has_up_flag = #{dto.hasUpFlag} 
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}

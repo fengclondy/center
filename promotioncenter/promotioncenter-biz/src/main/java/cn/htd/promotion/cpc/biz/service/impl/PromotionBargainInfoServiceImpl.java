@@ -310,7 +310,7 @@ public class PromotionBargainInfoServiceImpl implements
 	            //判断时间段内可有活动上架
 	            Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionBargainCount(promotionInfoDTO.getPromotionProviderSellerCode(),
 	            		bargainInfoList.get(0).getEffectiveTime(),bargainInfoList.get(0).getInvalidTime(), promotionInfoDTO.getPromotionId());
-	            if(null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+	            if(isUpPromotionFlag.intValue() > 0) {
 	           	 	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(), "该时间段内已有活动进行");
 	            }
 	            accuDTO = baseService.updateSingleAccumulatyPromotionInfo(accuDTOList);
@@ -469,14 +469,14 @@ public class PromotionBargainInfoServiceImpl implements
 
 	@Override
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
-			String sellerCode, Pager<String> page) {
+			String promotionId, Pager<String> page) {
 		DataGrid<PromotionBargainOverviewResDTO> dataGrid = new DataGrid<PromotionBargainOverviewResDTO>();
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
 		List<PromotionBargainOverviewResDTO> resList = new ArrayList<PromotionBargainOverviewResDTO>();
 		BuyerBargainLaunchReqDTO launchDTO = new BuyerBargainLaunchReqDTO();
 		try {
-			List<PromotionBargainInfoDMO> bargainList  = promotionBargainInfoDAO.queryPromotionBargainBySellerCode(sellerCode, page);
-			Long bargainCount = promotionBargainInfoDAO.queryPromotionBargainCountBySellerCode(sellerCode);
+			List<PromotionBargainInfoDMO> bargainList  = promotionBargainInfoDAO.queryPromotionBargainByPromotionId(promotionId, page);
+			Long bargainCount = promotionBargainInfoDAO.queryPromotionBargainCountByPromotionId(promotionId);
 			if(null != bargainList && !bargainList.isEmpty()){
 				for (PromotionBargainInfoDMO dmo : bargainList) {
 					PromotionBargainOverviewResDTO resDTO = new PromotionBargainOverviewResDTO();
@@ -514,7 +514,7 @@ public class PromotionBargainInfoServiceImpl implements
 		return result;
 	}
 	
-	   /**
+	/**
      * 根据促销活动的有效期间设定促销活动状态
      *
      * @param promotionInfo

@@ -197,8 +197,20 @@ public class PromotionInfoDTO extends GenricResDTO {
     * 今日中奖总数量
     */
     private String winningTodayNum;
+    /**
+     * 是否上过架标记
+     */
+    private Integer hasUpFlag;
+    
+    public Integer getHasUpFlag() {
+		return hasUpFlag;
+	}
 
-    public Long getId() {
+	public void setHasUpFlag(Integer hasUpFlag) {
+		this.hasUpFlag = hasUpFlag;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -609,5 +621,6 @@ public class PromotionInfoDTO extends GenricResDTO {
         this.hasRedisClean = promotionInfoDTO.getHasRedisClean();
         this.winningNum = promotionInfoDTO.getWinningNum();
         this.winningTodayNum = promotionInfoDTO.getWinningTodayNum();
+        this.hasUpFlag = promotionInfoDTO.getHasUpFlag();
     }
 }

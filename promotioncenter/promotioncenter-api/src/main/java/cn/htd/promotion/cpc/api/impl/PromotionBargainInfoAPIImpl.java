@@ -1,7 +1,5 @@
 package cn.htd.promotion.cpc.api.impl;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -11,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
@@ -28,8 +28,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
-
-import com.alibaba.fastjson.JSON;
 
 @Service("promotionBargainInfoAPI")
 public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {

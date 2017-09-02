@@ -814,11 +814,11 @@ public class PromotionBargainInfoServiceImpl implements
 							.size());
 					resDTO.setOverTimes(overList == null ? 0 : overList.size());
 					// 剩余商品数量
-					if (resDTO.getPartakeTimes().intValue() == 0
-							|| resDTO.getPartakeTimes() < resDTO.getOverTimes()) {
+					if (dmo.getGoodsNum().intValue() == 0
+							|| dmo.getGoodsNum() < resDTO.getOverTimes()) {
 						resDTO.setSurplusTimes(0);
 					} else {
-						resDTO.setSurplusTimes(dmo.getPartakeTimes()
+						resDTO.setSurplusTimes(dmo.getGoodsNum()
 								- resDTO.getOverTimes());
 					}
 					resList.add(resDTO);

@@ -260,7 +260,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         } else{
         	promotionInfo.setHasUpFlag(1);
         }
-        extendDTO = (PromotionExtendInfoDTO) accumulatyDTO;
+        extendDTO = (PromotionExtendInfoDTO) promotionInfo;
         promotionInfoExtendDAO.add(extendDTO);
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.add(promotionInfo);
@@ -500,7 +500,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 slogan.setCreateName(promotionInfo.getModifyName());
                 promotionSloganDAO.add(slogan);
             }
-            extendDTO = (PromotionExtendInfoDTO) accumulatyDTO;
+            extendDTO = (PromotionExtendInfoDTO) promotionInfo;
             promotionInfoExtendDAO.update(extendDTO);
         }
         promotionInfo.setHasUpFlag(1);

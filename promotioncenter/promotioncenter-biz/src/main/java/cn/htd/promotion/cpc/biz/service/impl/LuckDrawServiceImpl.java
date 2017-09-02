@@ -324,17 +324,16 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionInfoDTO addDrawLotteryInfo(PromotionInfoDTO promotionInfoEditReqDTO) {
+	public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
 
-		PromotionInfoDTO result = new PromotionInfoDTO();
+		PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 
 			}
 			//promotionInfoEditReqDTO.setPromotionType("NDJ");
-			List<PromotionAccumulatyDTO> promotionAccuDTOList = (List<PromotionAccumulatyDTO>) promotionInfoEditReqDTO.getPromotionAccumulatyList();
-			PromotionAccumulatyDTO rtobj = promotionBaseService.insertManyAccumulatyPromotionInfo(promotionAccuDTOList);
+			PromotionInfoDTO rtobj = promotionBaseService.insertPromotionInfo(promotionInfoEditReqDTO);
 			if(rtobj.getPromotionAccumulatyList()!=null){
 				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padrDTO = null;
@@ -370,14 +369,13 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionInfoDTO editDrawLotteryInfo(PromotionInfoDTO promotionInfoEditReqDTO) {
-		PromotionInfoDTO result = new PromotionInfoDTO();
+	public PromotionExtendInfoDTO editDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
+		PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			List<PromotionAccumulatyDTO> promotionAccuDTOList = (List<PromotionAccumulatyDTO>) promotionInfoEditReqDTO.getPromotionAccumulatyList();
-			 PromotionAccumulatyDTO rtobj = promotionBaseService.updateSingleAccumulatyPromotionInfo(promotionAccuDTOList);
+			 PromotionInfoDTO rtobj = promotionBaseService.updatePromotionInfo(promotionInfoEditReqDTO);
 			if(rtobj.getPromotionAccumulatyList()!=null){
 				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padDTO = null;
@@ -411,11 +409,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionInfoDTO viewDrawLotteryInfo(String promotionInfoId) {
-		PromotionInfoDTO  result = new PromotionInfoDTO();
+	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId) {
+		PromotionExtendInfoDTO  result = new PromotionExtendInfoDTO();
 		try {
 
-			result = promotionBaseService.queryPromotionInfo(promotionInfoId);
+			result = (PromotionExtendInfoDTO) promotionBaseService.queryPromotionInfo(promotionInfoId);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {

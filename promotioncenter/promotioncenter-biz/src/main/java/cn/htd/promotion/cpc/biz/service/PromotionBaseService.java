@@ -5,10 +5,10 @@ import java.util.Map;
 
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
-import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 
@@ -38,7 +38,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO insertPromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionExtendInfoDTO insertPromotionInfo(PromotionInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -51,7 +51,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
+    public PromotionExtendInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -63,7 +63,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionExtendInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
     /**
@@ -125,10 +125,9 @@ public interface PromotionBaseService {
      * @param buyerInfo
      * @param dictMap
      * @return
-     * @throws PromotionCenterBusinessException
      */
     public boolean checkPromotionBuyerRule(PromotionInfoDTO promotionInfoDTO, BuyerCheckInfo buyerInfo,
-            Map<String, String> dictMap) throws PromotionCenterBusinessException;
+            Map<String, String> dictMap);
 
     /**
      * 校验促销活动卖家规则
@@ -137,14 +136,23 @@ public interface PromotionBaseService {
      * @param sellerCode
      * @param dictMap
      * @return
-     * @throws PromotionCenterBusinessException
      */
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
-            Map<String, String> dictMap) throws PromotionCenterBusinessException;
+            Map<String, String> dictMap);
 
-	public PromotionInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
+    /**
+     * 取得满足促销活动卖家规则的卖家信息
+     * @param promotionInfoDTO
+     * @param sellerCode
+     * @param dictMap
+     * @return
+     */
+    public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
+            Map<String, String> dictMap);
 
-	public PromotionInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
-
-	public PromotionInfoEditResDTO viewPromotionInfo(String promotionInfoId);
+//	public PromotionExtendInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
+//
+//	public PromotionExtendInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
+//
+//	public PromotionExtendInfoDTO viewPromotionInfo(String promotionInfoId);
 }

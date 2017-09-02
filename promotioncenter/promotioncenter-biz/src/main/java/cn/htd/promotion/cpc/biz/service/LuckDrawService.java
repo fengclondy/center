@@ -3,15 +3,13 @@ package cn.htd.promotion.cpc.biz.service;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
-import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
-import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
@@ -57,16 +55,16 @@ public interface LuckDrawService {
 	
 	
 	/**
-	 * @param promotionInfoEditReqDTO
+	 * @param promotionExtendInfoDTO
 	 * @return
 	 */
-	public DrawLotteryResDTO addDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO);
+	public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionExtendInfoDTO);
 
 	/**
-	 * @param promotionInfoEditReqDTO
+	 * @param promotionExtendInfoDTO
 	 * @return
 	 */
-	public DrawLotteryResDTO editDrawLotteryInfo(PromotionInfoEditReqDTO promotionInfoEditReqDTO);
+	public PromotionExtendInfoDTO editDrawLotteryInfo(PromotionExtendInfoDTO promotionExtendInfoDTO);
 	
 	/**
 	 * 参与有效活动的所有卖家信息
@@ -74,5 +72,5 @@ public interface LuckDrawService {
 	 */
 	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId);
 
-	public PromotionInfoEditResDTO viewDrawLotteryInfo(String promotionInfoId);
+	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId);
 }

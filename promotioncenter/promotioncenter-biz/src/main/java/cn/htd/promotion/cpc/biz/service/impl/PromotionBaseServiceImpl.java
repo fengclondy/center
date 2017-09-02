@@ -224,7 +224,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 				promotionType)) {
 			promotionInfo.setShowStatus(dictionary.getValueByCode(
 					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
 		} else {
 			if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
 				promotionInfo.setShowStatus(dictionary.getValueByCode(

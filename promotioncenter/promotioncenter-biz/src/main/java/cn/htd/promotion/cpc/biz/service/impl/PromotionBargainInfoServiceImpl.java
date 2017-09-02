@@ -492,6 +492,7 @@ public class PromotionBargainInfoServiceImpl implements
 				for (PromotionAccumulatyDTO accumulatyDTO : promotionExtendInfoDTO
 						.getPromotionAccumulatyList()) {
 					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
+					bagainInfoDTO.setPromotionId(promotionExtendInfoDTO.getPromotionId());
 					bagainInfoDTO.setGoodsCostPrice(CalculateUtils
 							.setScale(bagainInfoDTO.getGoodsCostPrice()));
 					bagainInfoDTO.setGoodsFloorPrice(CalculateUtils

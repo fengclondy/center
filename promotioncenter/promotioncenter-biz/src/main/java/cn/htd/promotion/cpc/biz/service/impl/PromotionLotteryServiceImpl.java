@@ -175,7 +175,9 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setChargeTelephone(requestDTO.getChargeTelephone());
         winningRecordDTO.setCreateId(0L);
         winningRecordDTO.setCreateName(requestDTO.getBuyerName());
-        promotionRedisDB.tailPush();
+        promotionRedisDB.tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
+        promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+                promotionId + "_" + sellerCode + "_" + requestDTO.getBuyerCode() + "_" + ticket);
         responseDTO.setMessageId(requestDTO.getMessageId());
         return responseDTO;
     }

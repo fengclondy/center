@@ -9,6 +9,9 @@ public enum ResultCodeEnum {
     SUCCESS("00000", "成功！"),
     ERROR("99999", "系统异常！"),
     PARAMETER_ERROR("00001", "促销活动参数不能为空"),
+    NO_BUYER_INFO("00002", "没有取到粉丝信息"),
+    NO_SELLER_INFO("00003", "没有取到会员店信息"),
+
     NORESULT("11111", "数据库没有查到信息！"),
     PROMOTION_PARAM_IS_NULL("10001", "调用砍价接口入参不能为空！"),
     PROMOTION_AWARD_IS_NULL("10002", "调用查询中奖记录接口入参不能为空！"),

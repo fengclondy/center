@@ -266,8 +266,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			accumulatyDTO.setCreateId(promotionInfo.getCreateId());
 			accumulatyDTO.setCreateName(promotionInfo.getCreateName());
 			promotionAccumulatyDAO.add(accumulatyDTO);
-			bargainDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
-			promotionBargainInfoDAO.add(bargainDTO);
 
 		}
 		extendDTO = (PromotionExtendInfoDTO) promotionInfo;

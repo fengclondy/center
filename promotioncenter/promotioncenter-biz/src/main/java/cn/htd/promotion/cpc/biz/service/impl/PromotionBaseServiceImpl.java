@@ -260,7 +260,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         } else{
         	promotionInfo.setHasUpFlag(1);
         }
-        extendDTO = (PromotionExtendInfoDTO) accumulatyDTO;
+        extendDTO = (PromotionExtendInfoDTO) promotionInfo;
         promotionInfoExtendDAO.add(extendDTO);
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.add(promotionInfo);
@@ -280,7 +280,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
 		
 		List<PromotionPictureDTO> piclist = accumulatyDTO.getPromotionPictureList();
-		PromotionPictureDTO ppic = null;
 		for (PromotionPictureDTO promotionPictureReqDTO : piclist) {
 			promotionPictureReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
 			promotionPictureReqDTO.setCreateId(promotionInfo.getCreateId());
@@ -288,10 +287,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			promotionPictureReqDTO.setModifyId(promotionInfo.getCreateId());
 			promotionPictureReqDTO.setModifyName(promotionInfo.getCreateName());
 			promotionPictureReqDTO.setPromotionId(promotionId);
-			promotionPictureDAO.add(ppic);
+			promotionPictureDAO.add(promotionPictureReqDTO);
 		}
 		
-		 PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = accumulatyDTO.getBuyerRuleDTO();
+		PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = accumulatyDTO.getBuyerRuleDTO();
 		promotionBuyerRuleReqDTO.setPromotionId(promotionId);
 		promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
 		promotionBuyerRuleReqDTO.setCreateId(promotionInfo.getCreateId());
@@ -301,13 +300,16 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		promotionBuyerRuleDAO.add(promotionBuyerRuleReqDTO);
 		
 		PromotionSellerRuleDTO psr = accumulatyDTO.getSellerRuleDTO();
-		psr.setPromotionId(promotionId);
-		psr.setDeleteFlag(YesNoEnum.NO.getValue());
-		psr.setCreateId(promotionInfo.getCreateId());
-		psr.setCreateName(promotionInfo.getCreateName());
-		psr.setModifyId(promotionInfo.getCreateId());
-		psr.setModifyName(promotionInfo.getCreateName());
-		promotionSellerRuleDAO.add(psr);
+		if(psr!=null){
+			psr.setPromotionId(promotionId);
+			psr.setDeleteFlag(YesNoEnum.NO.getValue());
+			psr.setCreateId(promotionInfo.getCreateId());
+			psr.setCreateName(promotionInfo.getCreateName());
+			psr.setModifyId(promotionInfo.getCreateId());
+			psr.setModifyName(promotionInfo.getCreateName());
+			promotionSellerRuleDAO.add(psr);
+		}
+
 		
 		  List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
 		for (PromotionSellerDetailDTO psd : sellerlist) {
@@ -376,15 +378,18 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		PromotionDetailDescribeDMO promotionDetailDescribeInfo = promotionDetailDescribeDAO
 				.selectByPromotionId(record);
 		PromotionDetailDescribeDTO promotionDetailDescribeDTO = new PromotionDetailDescribeDTO();
-		promotionDetailDescribeDTO.setDescribeContent(promotionDetailDescribeInfo.getDescribeContent());
-		promotionDetailDescribeDTO.setCreateId(promotionDetailDescribeInfo.getCreateId());
-		promotionDetailDescribeDTO.setCreateName(promotionDetailDescribeInfo.getCreateName());
-		promotionDetailDescribeDTO.setCreateTime(promotionDetailDescribeInfo.getCreateTime());
-		promotionDetailDescribeDTO.setModifyId(promotionDetailDescribeInfo.getModifyId());
-		promotionDetailDescribeDTO.setModifyName(promotionDetailDescribeInfo.getModifyName());
-		promotionDetailDescribeDTO.setModifyTime(promotionDetailDescribeInfo.getModifyTime());
-		promotionDetailDescribeDTO.setPromotionId(promotionId);
-		promotionDetailDescribeDTO.setDeleteFlag(promotionDetailDescribeInfo.getDeleteFlag());
+		if(promotionDetailDescribeInfo!=null){
+			promotionDetailDescribeDTO.setDescribeContent(promotionDetailDescribeInfo.getDescribeContent());
+			promotionDetailDescribeDTO.setCreateId(promotionDetailDescribeInfo.getCreateId());
+			promotionDetailDescribeDTO.setCreateName(promotionDetailDescribeInfo.getCreateName());
+			promotionDetailDescribeDTO.setCreateTime(promotionDetailDescribeInfo.getCreateTime());
+			promotionDetailDescribeDTO.setModifyId(promotionDetailDescribeInfo.getModifyId());
+			promotionDetailDescribeDTO.setModifyName(promotionDetailDescribeInfo.getModifyName());
+			promotionDetailDescribeDTO.setModifyTime(promotionDetailDescribeInfo.getModifyTime());
+			promotionDetailDescribeDTO.setPromotionId(promotionId);
+			promotionDetailDescribeDTO.setDeleteFlag(promotionDetailDescribeInfo.getDeleteFlag());		
+		}
+
 		promotionInfo.setPromotionDetailDescribeDTO(promotionDetailDescribeDTO);
 		
 		List<PromotionPictureDTO> piclist = promotionPictureDAO.selectByPromotionInfoId(promotionId);
@@ -500,7 +505,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 slogan.setCreateName(promotionInfo.getModifyName());
                 promotionSloganDAO.add(slogan);
             }
-            extendDTO = (PromotionExtendInfoDTO) accumulatyDTO;
+            extendDTO = (PromotionExtendInfoDTO) promotionInfo;
             promotionInfoExtendDAO.update(extendDTO);
         }
         promotionInfo.setHasUpFlag(1);
@@ -509,13 +514,16 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         
         PromotionDetailDescribeDMO promotionDetailDescribeDTO = new PromotionDetailDescribeDMO();
 		PromotionDetailDescribeDTO piddd = accumulatyDTO.getPromotionDetailDescribeDTO();
-		promotionDetailDescribeDTO.setDescribeContent(piddd.getDescribeContent());
-		promotionDetailDescribeDTO.setId(piddd.getId());
-		promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
-		promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
-		promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());
-		promotionDetailDescribeDTO.setDeleteFlag(piddd.getDeleteFlag());
-		promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
+		if(piddd!=null){
+			promotionDetailDescribeDTO.setDescribeContent(piddd.getDescribeContent());
+			promotionDetailDescribeDTO.setId(piddd.getId());
+			promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
+			promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
+			promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());
+			promotionDetailDescribeDTO.setDeleteFlag(piddd.getDeleteFlag());
+			promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
+		}
+
 		
 		List<PromotionPictureDTO> piclist = accumulatyDTO.getPromotionPictureList();
 		for (PromotionPictureDTO ppic : piclist) {
@@ -526,17 +534,23 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		}
 		
 		PromotionBuyerRuleDTO pbr= accumulatyDTO.getBuyerRuleDTO();
-		pbr.setPromotionId(promotionInfo.getPromotionId());
-		pbr.setModifyId(promotionInfo.getModifyId());
-		pbr.setModifyName(promotionInfo.getModifyName());
-		promotionBuyerRuleDAO.update(pbr);
+		if(pbr!=null){
+			pbr.setPromotionId(promotionInfo.getPromotionId());
+			pbr.setModifyId(promotionInfo.getModifyId());
+			pbr.setModifyName(promotionInfo.getModifyName());
+			promotionBuyerRuleDAO.update(pbr);
+		}
+
 		
 		PromotionSellerRuleDTO psr = accumulatyDTO.getSellerRuleDTO();
-		psr.setPromotionId(promotionInfo.getPromotionId());
-		psr.setModifyId(promotionInfo.getModifyId());
-		psr.setModifyName(promotionInfo.getModifyName());
+		if(psr!=null){
+			psr.setPromotionId(promotionInfo.getPromotionId());
+			psr.setModifyId(promotionInfo.getModifyId());
+			psr.setModifyName(promotionInfo.getModifyName());
 
-		promotionSellerRuleDAO.update(psr);
+			promotionSellerRuleDAO.update(psr);
+		}
+
 		
 		List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
 		for (PromotionSellerDetailDTO psd : sellerlist) {

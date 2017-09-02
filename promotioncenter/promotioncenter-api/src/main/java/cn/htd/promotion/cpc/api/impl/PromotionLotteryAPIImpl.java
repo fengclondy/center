@@ -24,6 +24,8 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryResultReqDTO;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryWinningReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
@@ -32,8 +34,10 @@ import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
+import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
@@ -242,10 +246,10 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
      */
     @Override
     public String getDrawLotteryResult(String lotteryWinningParam) {
-        DrawLotteryReqDTO requestDTO = null;
+        DrawLotteryResultReqDTO requestDTO = null;
         BuyerWinningRecordDTO responseDTO = new BuyerWinningRecordDTO();
         try {
-            requestDTO = JSON.parseObject(lotteryWinningParam, DrawLotteryReqDTO.class);
+            requestDTO = JSON.parseObject(lotteryWinningParam, DrawLotteryResultReqDTO.class);
             if (requestDTO == null) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),
                         ResultCodeEnum.ERROR.getMsg());
@@ -269,11 +273,46 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
         return JSON.toJSONString(responseDTO);
     }
 
+    /**
+     * 保存中奖信息
+     *
+     * @param winningInfoParam
+     * @return
+     */
+    @Override
+    public String saveDrawLotteryWinningInfo(String winningInfoParam) {
+        DrawLotteryWinningReqDTO requestDTO = null;
+        GenricResDTO responseDTO = new GenricResDTO();
+        try {
+            requestDTO = JSON.parseObject(winningInfoParam, DrawLotteryWinningReqDTO.class);
+            if (requestDTO == null) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),
+                        ResultCodeEnum.ERROR.getMsg());
+            }
+            responseDTO.setMessageId(requestDTO.getMessageId());
+            // 输入DTO的验证
+            ValidateResult validateResult = ValidationUtils.validateEntity(requestDTO);
+            // 有错误信息时返回错误信息
+            if (validateResult.isHasErrors()) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+                        validateResult.getErrorMsg());
+            }
+            responseDTO = promotionLotteryService.saveDrawLotteryWinning(requestDTO);
+        } catch (PromotionCenterBusinessException bcbe) {
+            responseDTO.setResponseCode(bcbe.getCode());
+            responseDTO.setResponseMsg(bcbe.getMessage());
+        } catch (Exception e) {
+            responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+            responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+        }
+        return JSON.toJSONString(responseDTO);
+    }
+
     @Override
 	public String addDrawLotteryInfo(String promotionInfoEditReqDTO) {
-    	PromotionInfoDTO  rt = new PromotionInfoDTO();
+    	PromotionExtendInfoDTO  rt = new PromotionExtendInfoDTO();
 		try {
-			PromotionInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionInfoDTO.class);
+			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(promotionExtendInfoDTO);
 			// 有错误信息时返回错误信息
@@ -295,9 +334,9 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
 	@Override
 	public String editDrawLotteryInfo(String promotionInfoEditReqDTO) {
-		PromotionInfoDTO rt = null;
+		PromotionExtendInfoDTO rt = null;
 		try {
-			PromotionInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionInfoDTO.class);
+			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
             // 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
             // 有错误信息时返回错误信息
@@ -334,7 +373,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
 	@Override
 	public String viewDrawLotteryInfo(String promotionInfoId, String messageId) {
-		PromotionInfoDTO rt = null;
+		PromotionExtendInfoDTO rt = null;
 		try {
 			rt = luckDrawService.viewDrawLotteryInfo(promotionInfoId);
 			rt.setMessageId(messageId);

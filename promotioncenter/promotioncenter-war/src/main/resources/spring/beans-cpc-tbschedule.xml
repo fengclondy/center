@@ -19,14 +19,13 @@
     </property>
   </bean>
   <!-- 更新砍价状态定时操作 -->
-  <bean id="updatePromotionBargainStstusScheduleTask"
-        class="cn.htd.promotion.cpc.biz.task.UpdatePromotionBargainStstusScheduleTask"/>
+  <bean id="updatePromotionBargainStstusScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdatePromotionBargainStstusScheduleTask"/>
   <!-- 清除redis中关于砍价活动的相关信息 -->
   <bean id="cleanPromotionBargainScheduleTask" class="cn.htd.promotion.cpc.biz.task.CleanPromotionBargainScheduleTask"/>
   <!-- 更新砍价发起表 -->
-  <bean id="updateBuyerBargainLaunchInfoScheduleTask"
-        class="cn.htd.promotion.cpc.biz.task.UpdateBuyerBargainLaunchInfoScheduleTask"/>
+  <bean id="updateBuyerBargainLaunchInfoScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateBuyerBargainLaunchInfoScheduleTask"/>
   <!-- 插入砍价记录 -->
-  <bean id="insertBuyerBargainRecordScheduleTask"
-        class="cn.htd.promotion.cpc.biz.task.InsertBuyerBargainRecordScheduleTask"/>
+  <bean id="insertBuyerBargainRecordScheduleTask" class="cn.htd.promotion.cpc.biz.task.InsertBuyerBargainRecordScheduleTask"/>
+  <!-- 保存粉丝中奖记录 -->
+  <bean id="updateBuyerWinningRecordScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateBuyerWinningRecordScheduleTask"/>
 </beans>

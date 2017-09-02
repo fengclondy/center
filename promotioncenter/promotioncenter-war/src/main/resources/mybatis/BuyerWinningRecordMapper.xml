@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO">
+    <id column="ID" property="id" jdbcType="BIGINT"/>
+    <result column="PROMOTION_ID" property="promotionId" jdbcType="VARCHAR"/>
+    <result column="LEVEL_CODE" property="levelCode" jdbcType="VARCHAR"/>
+    <result column="PROMOTION_TYPE" property="promotionType" jdbcType="VARCHAR"/>
+    <result column="PROMOTION_NAME" property="promotionName" jdbcType="VARCHAR"/>
+    <result column="BUYER_CODE" property="buyerCode" jdbcType="VARCHAR"/>
+    <result column="BUYER_NAME" property="buyerName" jdbcType="VARCHAR"/>
+    <result column="BUYER_TELEPHONE" property="buyerTelephone" jdbcType="VARCHAR"/>
+    <result column="SELLER_CODE" property="sellerCode" jdbcType="VARCHAR"/>
+    <result column="SELLER_ADDRESS" property="sellerAddress" jdbcType="VARCHAR"/>
+    <result column="BELONG_SUPERIOR_NAME" property="belongSuperiorName" jdbcType="VARCHAR"/>
+    <result column="REWARD_TYPE" property="rewardType" jdbcType="VARCHAR"/>
+    <result column="RELEVANCE_BARGAIN_CODE" property="relevanceBargainCode" jdbcType="VARCHAR"/>
+    <result column="REWARD_NAME" property="rewardName" jdbcType="VARCHAR"/>
+    <result column="AWARD_VALUE" property="awardValue" jdbcType="VARCHAR"/>
+    <result column="WINNING_TIME" property="winningTime" jdbcType="TIMESTAMP"/>
+    <result column="WINNER_NAME" property="winnerName" jdbcType="VARCHAR"/>
+    <result column="WINNING_CONTACT" property="winningContact" jdbcType="VARCHAR"/>
+    <result column="CHARGE_TELEPHONE" property="chargeTelephone" jdbcType="VARCHAR"/>
+    <result column="LOGISTICS_STATUS" property="logisticsStatus" jdbcType="VARCHAR"/>
+    <result column="LOGISTICS_COMPANY" property="logisticsCompany" jdbcType="VARCHAR"/>
+    <result column="LOGISTICS_NO" property="logisticsNo" jdbcType="VARCHAR"/>
+    <result column="DEAL_FLAG" property="dealFlag" jdbcType="TINYINT"/>
+    <result column="CREATE_ID" property="createId" jdbcType="BIGINT"/>
+    <result column="CREATE_NAME" property="createName" jdbcType="VARCHAR"/>
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+    <result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT"/>
+    <result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR"/>
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,
+    promotion_id,
+    level_code,
+    promotion_type,
+    promotion_name,
+    buyer_code,
+    buyer_name,
+    buyer_telephone,
+    seller_code,
+    seller_name,
+    seller_address,
+    belong_superior_name,
+    reward_type,
+    award_value,
+    winning_time,
+    winner_name,
+    winning_contact,
+    charge_telephone,
+    logistics_status,
+    logistics_company,
+    logistics_no,
+    deal_flag,
+    create_id,
+    create_name,
+    create_time,
+    modify_id,
+    modify_name,
+    modify_time
+  </sql>
+  <!-- 查询条件-->
+  <sql id="awardRecord_mid">
+    <if test="params.promotionId!=null and params.promotionId!=''">
+      and PROMOTION_ID = #{params.promotionId}
+    </if>
+    <if test="params.buyerCode!=null and params.buyerCode!=''">
+      and BUYER_CODE = #{params.buyerCode}
+    </if>
+    <if test="params.buyerName!=null and params.buyerName!=''">
+      and BUYER_NAME like concat('%', #{params.buyerName} ,'%')
+    </if>
+    <if test="params.rewardType!=null and params.rewardType!=''">
+      and REWARD_TYPE = #{params.rewardType}
+    </if>
+    <if test="params.winningStartTime!=null and params.winningStartTime!=''">
+      and date_format(WINNING_TIME , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.winningEndTime!=null and params.winningEndTime!=''">
+      and date_format(WINNING_TIME , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.sellerCode!=null and params.sellerCode!=''">
+      and SELLER_CODE = #{params.sellerCode}
+    </if>
+    <if test="params.promotionName!=null and params.promotionName!=''">
+      and PROMOTION_NAME = #{params.promotionName}
+    </if>
+    <if test="params.rewardName!=null and params.rewardName!=''">
+      and REWARD_NAME = #{params.rewardName}
+    </if>
+    <if test="params.winnerName!=null and params.winnerName!=''">
+      and WINNER_NAME = #{params.winnerName}
+    </if>
+    <if test="params.winningContact!=null and params.winningContact!=''">
+      and WINNING_CONTACT = #{params.winningContact}
+    </if>
+  </sql>
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+
+  <select id="getAwardRecordByPromotionId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_winning_record
+    where 1 = 1
+    <include refid="awardRecord_mid"/>
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+
+  <select id="getTotalAwardRecord" resultType="java.lang.Long">
+    select count(1) from buyer_winning_record bwr
+    where 1 = 1
+    <include refid="awardRecord_mid"/>
+  </select>
+
+  <select id="queryWinningRecord" resultMap="BaseResultMap"
+          parameterType="cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_winning_record
+    where 1 = 1
+    and buyer_code = #{buyerCode}
+    order by create_time desc
+    limit #{startNo}, #{endNo}
+  </select>
+
+  <!-- 更新物流信息 -->
+  <update id="updateLogisticsInfo" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
+    UPDATE buyer_winning_record
+    <set>
+      <if test="logisticsCompany != null and logisticsCompany != ''">
+        logistics_company = #{logisticsCompany},
+      </if>
+      <if test="logisticsStatus != null and logisticsStatus != ''">
+        logistics_status = #{logisticsStatus},
+      </if>
+      <if test="logisticsNo != null and logisticsNo != ''">
+        logistics_no = #{logisticsNo},
+      </if>
+      modify_id = #{modifyId},
+      modify_name = #{modifyName},
+      modify_time = #{modifyTime}
+    </set>
+    WHERE
+    id = #{id}
+  </update>
+
+  <insert id="addBuyerWinningRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into buyer_winning_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      promotion_id,
+      <if test="levelCode != null and levelCode != ''">
+        level_code,
+      </if>
+      promotion_type,
+      promotion_name,
+      <if test="buyerCode != null and buyerCode != ''">
+        buyer_code,
+      </if>
+      <if test="buyerName != null and buyerName != ''">
+        buyer_name,
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        buyer_telephone,
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code,
+      </if>
+      <if test="sellerName != null and sellerName != ''">
+        seller_name,
+      </if>
+      <if test="sellerAddress != null and sellerAddress != ''">
+        seller_address,
+      </if>
+      <if test="belongSuperiorName != null and belongSuperiorName != ''">
+        belong_superior_name,
+      </if>
+      <if test="rewardType != null and rewardType != ''">
+        reward_type,
+      </if>
+      <if test="awardValue != null and awardValue != ''">
+        award_value,
+      </if>
+      <if test="winningTime != null">
+        winning_time,
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name,
+      </if>
+      <if test="winningContact != null and winningContact != ''">
+        winning_contact,
+      </if>
+      <if test="chargeTelephone != null and chargeTelephone != ''">
+        charge_telephone,
+      </if>
+      <if test="logisticsStatus != null and logisticsStatus != ''">
+        logistics_status,
+      </if>
+      <if test="logisticsCompany != null and logisticsCompany != ''">
+        logistics_company,
+      </if>
+      <if test="logisticsNo != null and logisticsNo != ''">
+        logistics_no,
+      </if>
+      deal_flag,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{promotionId,jdbcType=VARCHAR},
+      <if test="levelCode != null and levelCode != ''">
+        #{levelCode,jdbcType=VARCHAR},
+      </if>
+      #{promotionType,jdbcType=VARCHAR},
+      #{promotionName,jdbcType=VARCHAR},
+      <if test="buyerCode != null and buyerCode != ''">
+        #{buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerName != null and buyerName != ''">
+        #{buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        #{buyerTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerName != null and sellerName != ''">
+        #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerAddress != null and sellerAddress != ''">
+        #{sellerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorName != null and belongSuperiorName != ''">
+        #{belongSuperiorName,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardType != null and rewardType != ''">
+        #{rewardType,jdbcType=VARCHAR},
+      </if>
+      <if test="awardValue != null and awardValue != ''">
+        #{awardValue,jdbcType=VARCHAR},
+      </if>
+      <if test="winningTime != null">
+        #{winningTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        #{winnerName,jdbcType=VARCHAR},
+      </if>
+      <if test="winningContact != null and winningContact != ''">
+        #{winningContact,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeTelephone != null and chargeTelephone != ''">
+        #{chargeTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsStatus != null and logisticsStatus != ''">
+        #{logisticsStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsCompany != null and logisticsCompany != ''">
+        #{logisticsCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsNo != null and logisticsNo != ''">
+        #{logisticsNo,jdbcType=VARCHAR},
+      </if>
+      1,
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+</mapper>

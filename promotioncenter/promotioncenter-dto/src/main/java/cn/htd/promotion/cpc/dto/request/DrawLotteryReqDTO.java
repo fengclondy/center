@@ -34,10 +34,6 @@ public class DrawLotteryReqDTO extends GenricReqDTO {
      */
     @NotEmpty(message = "活动编码不能为空")
     private String promotionId;
-    /**
-     * 领奖编码
-     */
-    private String ticket;
 
     public String getSellerCode() {
         return sellerCode;
@@ -71,11 +67,4 @@ public class DrawLotteryReqDTO extends GenricReqDTO {
         this.promotionId = promotionId;
     }
 
-    public String getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(String ticket) {
-        this.ticket = ticket;
-    }
 }

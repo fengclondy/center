@@ -201,7 +201,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI {
 			result = buyerLaunchBargainInfoService.
 					  optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId,messageId);
 		}else{
-			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
+			result.setCode(ResultCodeEnum.PARAMETER_ERROR.getCode());
 			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
 		}
 		return result;

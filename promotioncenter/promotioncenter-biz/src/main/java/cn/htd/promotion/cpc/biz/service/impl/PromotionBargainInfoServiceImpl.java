@@ -240,18 +240,29 @@ public class PromotionBargainInfoServiceImpl implements
 							.setScale(bagainInfoDTO.getGoodsCostPrice()));
 					bagainInfoDTO.setGoodsFloorPrice(CalculateUtils
 							.setScale(bagainInfoDTO.getGoodsFloorPrice()));
-					bagainInfoDTO.setEffectiveTime(promotionExtendInfoDTO.getEffectiveTime());
-					bagainInfoDTO.setInvalidTime(promotionExtendInfoDTO.getInvalidTime());
-					bagainInfoDTO.setTemplateFlag(promotionExtendInfoDTO.getTemplateFlag());
-					bagainInfoDTO.setPromotionName(promotionExtendInfoDTO.getPromotionName());
-					bagainInfoDTO.setPromotionDesc(promotionExtendInfoDTO.getPromotionDescribe());
-					bagainInfoDTO.setTotalPartakeTimes(promotionExtendInfoDTO.getTotalPartakeTimes());
-					bagainInfoDTO.setContactAddress(promotionExtendInfoDTO.getContactAddress());
-					bagainInfoDTO.setContactName(promotionExtendInfoDTO.getContactName());
-					bagainInfoDTO.setContactTelephone(promotionExtendInfoDTO.getContactTelephone());
-					bagainInfoDTO.setOfflineStartTime(promotionExtendInfoDTO.getOfflineStartTime());
-					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO.getOfflineEndTime());
-					
+					bagainInfoDTO.setEffectiveTime(promotionExtendInfoDTO
+							.getEffectiveTime());
+					bagainInfoDTO.setInvalidTime(promotionExtendInfoDTO
+							.getInvalidTime());
+					bagainInfoDTO.setTemplateFlag(promotionExtendInfoDTO
+							.getTemplateFlag());
+					bagainInfoDTO.setPromotionName(promotionExtendInfoDTO
+							.getPromotionName());
+					bagainInfoDTO.setPromotionDesc(promotionExtendInfoDTO
+							.getPromotionDescribe());
+					bagainInfoDTO.setTotalPartakeTimes(promotionExtendInfoDTO
+							.getTotalPartakeTimes());
+					bagainInfoDTO.setContactAddress(promotionExtendInfoDTO
+							.getContactAddress());
+					bagainInfoDTO.setContactName(promotionExtendInfoDTO
+							.getContactName());
+					bagainInfoDTO.setContactTelephone(promotionExtendInfoDTO
+							.getContactTelephone());
+					bagainInfoDTO.setOfflineStartTime(promotionExtendInfoDTO
+							.getOfflineStartTime());
+					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO
+							.getOfflineEndTime());
+
 				}
 
 				// 判断时间段内可有活动上架
@@ -267,7 +278,8 @@ public class PromotionBargainInfoServiceImpl implements
 							"该时间段内已有活动进行");
 				}
 
-				if (null != promotionExtendInfoDTO && "1".equals(firstBargainDTO.getUpFlag())) {
+				if (null != promotionExtendInfoDTO
+						&& "1".equals(firstBargainDTO.getUpFlag())) {
 					promotionExtendInfoDTO.setHasUpFlag(0);
 					promotionExtendInfoDTO
 							.setShowStatus(dictionary
@@ -334,6 +346,8 @@ public class PromotionBargainInfoServiceImpl implements
 	public ExecuteResult<String> deleteBargainInfo(PromotionValidDTO validDTO)
 			throws PromotionCenterBusinessException {
 		ExecuteResult<String> result = new ExecuteResult<String>();
+		PromotionInfoDTO promotionInfo = null;
+		PromotionAccumulatyDTO accumulaty = new PromotionAccumulatyDTO();
 		try {
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils
@@ -344,7 +358,53 @@ public class PromotionBargainInfoServiceImpl implements
 						ResultCodeEnum.PARAMETER_ERROR.getCode(),
 						validateResult.getErrorMsg());
 			}
-			baseService.deletePromotionInfo(validDTO);
+			// 根据活动ID获取活动信息
+			promotionInfo = promotionInfoDAO.queryById(validDTO
+					.getPromotionId());
+			if (promotionInfo == null) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
+						"该促销活动不存在");
+			}
+			// 活动已删除
+			if (dictionary.getValueByCode(
+					DictionaryConst.TYPE_PROMOTION_STATUS,
+					DictionaryConst.OPT_PROMOTION_STATUS_DELETE).equals(
+					promotionInfo.getStatus())) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
+						"该促销活动已被删除");
+			}
+			if (dictionary.getValueByCode(
+					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(
+					promotionInfo.getShowStatus())) {
+				if (!dictionary.getValueByCode(
+						DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_END).equals(
+						promotionInfo.getStatus())) {
+					List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
+							.getBuyerLaunchBargainInfoByPromotionId(validDTO
+									.getPromotionId());
+					if ((promotionInfo.getInvalidTime() != null && !(new Date())
+							.after(promotionInfo.getInvalidTime()))
+							&& (null != buyerLaunchList && !buyerLaunchList
+									.isEmpty())) {
+						throw new PromotionCenterBusinessException(
+								ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED
+										.getCode(),
+								"存在砍价记录不能删除");
+					}
+				}
+			}
+			promotionInfo.setStatus(dictionary.getValueByCode(
+					DictionaryConst.TYPE_PROMOTION_STATUS,
+					DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
+			promotionInfo.setModifyId(validDTO.getOperatorId());
+			promotionInfo.setModifyName(validDTO.getOperatorName());
+			accumulaty.setPromoionInfo(promotionInfo);
+			promotionAccumulatyDAO.delete(accumulaty);
+			promotionInfoDAO.updatePromotionStatusById(promotionInfo);
 			PromotionSloganDTO slogan = new PromotionSloganDTO();
 			slogan.setPromotionId(validDTO.getPromotionId());
 			promotionSloganDAO.delete(slogan);
@@ -436,17 +496,28 @@ public class PromotionBargainInfoServiceImpl implements
 							.setScale(bagainInfoDTO.getGoodsCostPrice()));
 					bagainInfoDTO.setGoodsFloorPrice(CalculateUtils
 							.setScale(bagainInfoDTO.getGoodsFloorPrice()));
-					bagainInfoDTO.setEffectiveTime(promotionExtendInfoDTO.getEffectiveTime());
-					bagainInfoDTO.setInvalidTime(promotionExtendInfoDTO.getInvalidTime());
-					bagainInfoDTO.setTemplateFlag(promotionExtendInfoDTO.getTemplateFlag());
-					bagainInfoDTO.setPromotionName(promotionExtendInfoDTO.getPromotionName());
-					bagainInfoDTO.setPromotionDesc(promotionExtendInfoDTO.getPromotionDescribe());
-					bagainInfoDTO.setTotalPartakeTimes(promotionExtendInfoDTO.getTotalPartakeTimes());
-					bagainInfoDTO.setContactAddress(promotionExtendInfoDTO.getContactAddress());
-					bagainInfoDTO.setContactName(promotionExtendInfoDTO.getContactName());
-					bagainInfoDTO.setContactTelephone(promotionExtendInfoDTO.getContactTelephone());
-					bagainInfoDTO.setOfflineStartTime(promotionExtendInfoDTO.getOfflineStartTime());
-					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO.getOfflineEndTime());
+					bagainInfoDTO.setEffectiveTime(promotionExtendInfoDTO
+							.getEffectiveTime());
+					bagainInfoDTO.setInvalidTime(promotionExtendInfoDTO
+							.getInvalidTime());
+					bagainInfoDTO.setTemplateFlag(promotionExtendInfoDTO
+							.getTemplateFlag());
+					bagainInfoDTO.setPromotionName(promotionExtendInfoDTO
+							.getPromotionName());
+					bagainInfoDTO.setPromotionDesc(promotionExtendInfoDTO
+							.getPromotionDescribe());
+					bagainInfoDTO.setTotalPartakeTimes(promotionExtendInfoDTO
+							.getTotalPartakeTimes());
+					bagainInfoDTO.setContactAddress(promotionExtendInfoDTO
+							.getContactAddress());
+					bagainInfoDTO.setContactName(promotionExtendInfoDTO
+							.getContactName());
+					bagainInfoDTO.setContactTelephone(promotionExtendInfoDTO
+							.getContactTelephone());
+					bagainInfoDTO.setOfflineStartTime(promotionExtendInfoDTO
+							.getOfflineStartTime());
+					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO
+							.getOfflineEndTime());
 				}
 				if (StringUtils.isEmpty(promotionId)) {
 					throw new PromotionCenterBusinessException(
@@ -487,12 +558,16 @@ public class PromotionBargainInfoServiceImpl implements
 					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
 					if (StringUtils.isEmpty(accumulatyDTO.getLevelCode())
 							|| "0".equals(accumulatyDTO.getLevelCode())) {
-						bagainInfoDTO.setCreateId(promotionExtendInfoDTO.getModifyId());
-						bagainInfoDTO.setCreateName(promotionExtendInfoDTO.getModifyName());
+						bagainInfoDTO.setCreateId(promotionExtendInfoDTO
+								.getModifyId());
+						bagainInfoDTO.setCreateName(promotionExtendInfoDTO
+								.getModifyName());
 						promotionBargainInfoDAO.add(bagainInfoDTO);
 					} else {
-						bagainInfoDTO.setModifyId(promotionExtendInfoDTO.getModifyId());
-						bagainInfoDTO.setModifyName(promotionExtendInfoDTO.getModifyName());
+						bagainInfoDTO.setModifyId(promotionExtendInfoDTO
+								.getModifyId());
+						bagainInfoDTO.setModifyName(promotionExtendInfoDTO
+								.getModifyName());
 						promotionBargainInfoDAO.update(bagainInfoDTO);
 					}
 				}

@@ -13,14 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.biz.dao.BuyerLaunchBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAccumulatyDAO;
-import cn.htd.promotion.cpc.biz.dao.PromotionBargainInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionBuyerRuleDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionConfigureDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
@@ -30,7 +26,6 @@ import cn.htd.promotion.cpc.biz.dao.PromotionPictureDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSellerDetailDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSellerRuleDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
-import cn.htd.promotion.cpc.biz.dmo.BuyerLaunchBargainInfoDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -39,7 +34,6 @@ import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
@@ -51,6 +45,8 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
+
+import com.alibaba.fastjson.JSON;
 
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
@@ -71,12 +67,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
 	@Resource
 	private PromotionSloganDAO promotionSloganDAO;
-
-	@Resource
-	private PromotionBargainInfoDAO promotionBargainInfoDAO;
-
-	@Resource
-	private BuyerLaunchBargainInfoDAO buyerLaunchBargainInfoDAO;
 
 	@Resource
 	private PromotionInfoExtendDAO promotionInfoExtendDAO;
@@ -117,6 +107,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             }
         }
     }
+ 
 
 	/**
 	 * 初始化校验优惠券用字典信息
@@ -157,7 +148,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			throws PromotionCenterBusinessException, Exception {
 		PromotionInfoDTO promotionInfo = null;
 		PromotionAccumulatyDTO accumulaty = new PromotionAccumulatyDTO();
-		PromotionSloganDTO slogan = new PromotionSloganDTO();
 		try {
 			// 根据活动ID获取活动信息
 			promotionInfo = promotionInfoDAO.queryById(validDTO
@@ -182,18 +172,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 						DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_END).equals(
 						promotionInfo.getStatus())) {
-					List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
-							.getBuyerLaunchBargainInfoByPromotionId(validDTO
-									.getPromotionId());
-					if ((promotionInfo.getInvalidTime() != null && !(new Date())
-							.after(promotionInfo.getInvalidTime()))
-							&& (null != buyerLaunchList && !buyerLaunchList
-									.isEmpty())) {
-						throw new PromotionCenterBusinessException(
-								ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED
-										.getCode(),
-								"存在砍价记录不能删除");
-					}
 				}
 			}
 			promotionInfo.setStatus(dictionary.getValueByCode(
@@ -226,7 +204,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		String promotionId = "";
 		List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
 		PromotionAccumulatyDTO accumulatyDTO = null;
-		PromotionBargainInfoResDTO bargainDTO = null;
 		PromotionExtendInfoDTO extendDTO = new PromotionExtendInfoDTO();
 		int vipFlg = -1;
 		if (promotionInfo == null) {
@@ -266,7 +243,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			accumulatyDTO.setCreateId(promotionInfo.getCreateId());
 			accumulatyDTO.setCreateName(promotionInfo.getCreateName());
 			promotionAccumulatyDAO.add(accumulatyDTO);
-
 		}
 		extendDTO = (PromotionExtendInfoDTO) promotionInfo;
 		promotionInfoExtendDAO.add(extendDTO);
@@ -468,7 +444,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		String promotionId = "";
 		List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
 		PromotionAccumulatyDTO accumulatyDTO = null;
-		PromotionBargainInfoResDTO bargainDTO = null;
 		PromotionSloganDTO slogan = null;
 		List<PromotionAccumulatyDTO> accumulatyDTOList = null;
 		PromotionExtendInfoDTO extendDTO = null;
@@ -530,28 +505,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			}
 		}
 		if (StringUtils.isNotEmpty(promotionId)) {
-			slogan = promotionSloganDAO
-					.queryBargainSloganByPromotionId(promotionId);
-			accumulatyDTO = promotionAccumulatyList.get(0);
-			bargainDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
-			if (null != slogan) {
-				if (StringUtils.isNotEmpty(slogan.getPromotionSlogan())
-						&& !slogan.getPromotionSlogan().equals(
-								bargainDTO.getPromotionSlogan())) {
-					slogan.setPromotionId(bargainDTO.getPromotionId());
-					slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
-					logger.info("slogan dataMessage:"
-							+ JSON.toJSONString(slogan));
-					promotionSloganDAO.update(slogan);
-				}
-			} else {
-				slogan = new PromotionSloganDTO();
-				slogan.setPromotionId(promotionId);
-				slogan.setPromotionSlogan(bargainDTO.getPromotionSlogan());
-				slogan.setCreateId(promotionInfo.getModifyId());
-				slogan.setCreateName(promotionInfo.getModifyName());
-				promotionSloganDAO.add(slogan);
-			}
 			extendDTO = (PromotionExtendInfoDTO) promotionInfo;
 			promotionInfoExtendDAO.update(extendDTO);
 		}

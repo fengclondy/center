@@ -299,6 +299,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",messageId,
 				  JSON.toJSONString(buyerBargainLaunch));
 		  PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
+		  if(promotionBargainInfo == null){
+			  promotionBargainInfo = new PromotionBargainInfoDMO();
+		  }
 	    	//从redis里面获取砍价详情
 	        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
 	        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());

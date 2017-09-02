@@ -13,6 +13,8 @@ public interface TimelimitedSkuPictureDAO {
     
     int updateByPrimaryKeySelective(TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO);
     
+    int pseudoDelete(TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO);
+    
     int deleteByPrimaryKey(Long pictureId);
 
     TimelimitedSkuPictureResDTO selectByPrimaryKey(Long pictureId);

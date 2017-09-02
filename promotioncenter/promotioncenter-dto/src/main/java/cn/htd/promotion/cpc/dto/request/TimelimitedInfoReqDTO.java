@@ -5,16 +5,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
-import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
-
 /**
  * 秒杀活动信息DTO
  * @author zf.zhang
  * @since  2017-8-22 15:14
  *
  */
-public class TimelimitedInfoReqDTO  extends PromotionAccumulatyDTO implements Serializable {
+public class TimelimitedInfoReqDTO implements Serializable {
 
 	/**
 	 * 
@@ -69,10 +66,12 @@ public class TimelimitedInfoReqDTO  extends PromotionAccumulatyDTO implements Se
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
 	
+	//活动信息
+	private PromotionInfoEditReqDTO promotionInfoEditReqDTO;
 	//商品图片
-	private List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList;
+	private List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList;
 	//商品详情
-	private TimelimitedSkuDescribeResDTO timelimitedSkuDescribe;
+	private TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO;
 	
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -212,21 +211,27 @@ public class TimelimitedInfoReqDTO  extends PromotionAccumulatyDTO implements Se
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-	public List<TimelimitedSkuDescribeResDTO> getTimelimitedSkuDescribeList() {
-		return timelimitedSkuDescribeList;
+	public PromotionInfoEditReqDTO getPromotionInfoEditReqDTO() {
+		return promotionInfoEditReqDTO;
 	}
-	public void setTimelimitedSkuDescribeList(
-			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList) {
-		this.timelimitedSkuDescribeList = timelimitedSkuDescribeList;
+	public void setPromotionInfoEditReqDTO(
+			PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
+		this.promotionInfoEditReqDTO = promotionInfoEditReqDTO;
 	}
-	public TimelimitedSkuDescribeResDTO getTimelimitedSkuDescribe() {
-		return timelimitedSkuDescribe;
+	public List<TimelimitedSkuPictureReqDTO> getTimelimitedSkuPictureReqDTOList() {
+		return timelimitedSkuPictureReqDTOList;
 	}
-	public void setTimelimitedSkuDescribe(
-			TimelimitedSkuDescribeResDTO timelimitedSkuDescribe) {
-		this.timelimitedSkuDescribe = timelimitedSkuDescribe;
+	public void setTimelimitedSkuPictureReqDTOList(
+			List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList) {
+		this.timelimitedSkuPictureReqDTOList = timelimitedSkuPictureReqDTOList;
 	}
-	
+	public TimelimitedSkuDescribeReqDTO getTimelimitedSkuDescribeReqDTO() {
+		return timelimitedSkuDescribeReqDTO;
+	}
+	public void setTimelimitedSkuDescribeReqDTO(
+			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO) {
+		this.timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTO;
+	}
 	
 	
 	

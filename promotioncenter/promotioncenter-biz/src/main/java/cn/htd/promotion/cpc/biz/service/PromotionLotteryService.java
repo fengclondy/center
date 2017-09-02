@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.biz.service;
 
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
+import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 
 public interface PromotionLotteryService {
@@ -25,6 +26,6 @@ public interface PromotionLotteryService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public DrawLotteryResDTO getDrawLotteryResult(DrawLotteryReqDTO requestDTO)
+    public BuyerWinningRecordDTO getDrawLotteryResult(DrawLotteryReqDTO requestDTO)
             throws PromotionCenterBusinessException, Exception;
 }

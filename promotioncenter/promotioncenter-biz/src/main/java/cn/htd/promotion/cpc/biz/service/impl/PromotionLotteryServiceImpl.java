@@ -1,8 +1,10 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -148,6 +150,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String recordJsonStr = "";
         GenricResDTO responseDTO = new GenricResDTO();
         BuyerWinningRecordDTO winningRecordDTO = null;
+        Map<String, String> dictMap = new HashMap<String, String>();
 
         responseDTO.setMessageId(requestDTO.getMessageId());
         responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
@@ -166,6 +169,27 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                     "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 领奖编号:" + ticket
                             + " 抽奖结果异常 " + recordJsonStr);
         }
+        baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_REWARD_TYPE);
+        if (dictMap.get(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE + "&"
+                + DictionaryConst.OPT_PROMOTION_REWARD_TYPE_PRACTICALITY).equals(winningRecordDTO.getRewardType())) {
+            if (StringUtils.isEmpty(requestDTO.getWinnerName())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "中奖人姓名不能为空");
+            }
+            if (StringUtils.isEmpty(requestDTO.getWinningContact())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "中奖人联系方式不能为空");
+            }
+        } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE + "&"
+                + DictionaryConst.OPT_PROMOTION_REWARD_TYPE_TEL_RECHARGE).equals(winningRecordDTO.getRewardType())) {
+            if (StringUtils.isEmpty(requestDTO.getWinnerName())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "中奖人姓名不能为空");
+            }
+            if (StringUtils.isEmpty(requestDTO.getChargeTelephone())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "充值手机号码不能为空");
+            }
+            if (!Pattern.matches("^1[34578]\\d{9}$", requestDTO.getChargeTelephone())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "充值手机号码不正确");
+            }
+        }
         winningRecordDTO.setBuyerName(requestDTO.getBuyerName());
         winningRecordDTO.setBuyerTelephone(requestDTO.getBuyerTelephone());
         winningRecordDTO.setSellerName(requestDTO.getSellerName());
@@ -175,7 +199,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setChargeTelephone(requestDTO.getChargeTelephone());
         winningRecordDTO.setCreateId(0L);
         winningRecordDTO.setCreateName(requestDTO.getBuyerName());
-        promotionRedisDB.tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
+        promotionRedisDB
+                .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
         promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
                 promotionId + "_" + sellerCode + "_" + requestDTO.getBuyerCode() + "_" + ticket);
         responseDTO.setMessageId(requestDTO.getMessageId());

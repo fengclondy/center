@@ -97,6 +97,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 	
 	@Resource
 	private PromotionSellerRuleDAO promotionSellerRuleDAO;
+
 	@Resource
 	private PromotionConfigureDAO promotionConfigureDAO;
     /**
@@ -105,7 +106,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @param dictMap
      * @param dictKey
      */
-    private void initDictionaryMap(Map<String, String> dictMap, String dictKey) {
+    public void initDictionaryMap(Map<String, String> dictMap, String dictKey) {
         List<DictionaryInfo> dictionaryList = null;
         dictionaryList = dictionary.getDictionaryOptList(dictKey);
         if (dictionaryList != null && !dictionaryList.isEmpty()) {

@@ -2,7 +2,7 @@ package cn.htd.promotion.cpc.dto.request;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO{
+public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 
     /**
      * 抽奖人名称

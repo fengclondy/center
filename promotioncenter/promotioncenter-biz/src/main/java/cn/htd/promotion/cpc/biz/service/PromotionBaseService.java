@@ -14,6 +14,13 @@ import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 public interface PromotionBaseService {
 
     /**
+     * 读取字典信息
+     * @param dictMap
+     * @param dictKey
+     */
+    public void initDictionaryMap(Map<String, String> dictMap, String dictKey);
+
+    /**
      * 初始化促销活动用字典信息
      *
      * @return

@@ -83,6 +83,7 @@ public class PromotionLotteryAPIImplTestUnit {
     	String res = promotionLotteryAPI.lotteryActivityRulePage(lotteryActivityRulePageReqDTOJson);
     	System.out.println("validateLuckDrawPermission:"+res);
     }
+    
     @Test
     @Rollback(false) 
     public void shareLinkHandle(){
@@ -97,4 +98,10 @@ public class PromotionLotteryAPIImplTestUnit {
     	System.out.println("shareLinkHandle:"+res);
     }
     
+    @Test
+    @Rollback(false) 
+    public void participateActivitySellerInfo(){
+    	String res = promotionLotteryAPI.participateActivitySellerInfo("122121222");
+    	System.out.println("participateActivitySellerInfo:"+res);
+    }
 }

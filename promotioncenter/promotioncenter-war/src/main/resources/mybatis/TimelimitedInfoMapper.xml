@@ -379,7 +379,95 @@
 		where timelimited_id =
 		#{timelimitedId,jdbcType=BIGINT}
 	</select>
+	
+	
+	<select id="selectByPromotionId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from timelimited_info
+		where promotion_id =
+		#{promotionId,jdbcType=VARCHAR}
+	</select>
 
+
+	<sql id="dynamic_fragment_timelimitedInfo">
+		<if test="dto.timelimitedId != null">
+			and timelimited_id = #{dto.timelimitedId,jdbcType=BIGINT} 
+		</if>
+		<if test="dto.promotionId != null">
+			and promotion_id = #{dto.promotionId,jdbcType=VARCHAR}  
+		</if>
+		   <if test="dto.skuName != null">
+			and	sku_name = #{dto.skuName,jdbcType=VARCHAR} 
+			</if>
+			<if test="dto.firstCategoryCode != null">
+			and	first_category_code = #{dto.firstCategoryCode,jdbcType=VARCHAR} 
+			</if>
+			<if test="dto.secondCategoryCode != null">
+			and	second_category_code = #{dto.secondCategoryCode,jdbcType=VARCHAR} 
+			</if>
+			<if test="dto.thirdCategoryCode != null">
+			and	third_category_code = #{dto.thirdCategoryCode,jdbcType=VARCHAR} 
+			</if>
+			
+			<!-- 
+	    <if test="dto.isPublish != null">
+			and is_publish = #{dto.isPublish,jdbcType=TINYINT}  
+		</if>
+		<if test="dto.startTime != null and dto.startTime != ''">
+		 <![CDATA[ 
+			and date_format(create_time,'%Y-%m-%d %H:%m:%s') >= #{dto.startTime,jdbcType=VARCHAR} 
+		  ]]> 
+		</if>
+		<if test="dto.endTime != null and dto.endTime != ''">
+		 <![CDATA[ 
+			and date_format(create_time,'%Y-%m-%d %H:%m:%s') <= #{dto.endTime,jdbcType=VARCHAR} 
+		 ]]>
+		</if>
+		 -->
+	</sql>
+
+	<select id="getTimelimitedInfosCount" resultType="java.lang.Integer">
+		select count(1)  from timelimited_info 
+		WHERE 1 = 1 
+		<include refid="dynamic_fragment_timelimitedInfo"/>
+	</select>
+
+	<select id="getTimelimitedInfosForPage" resultMap="BaseResultMap">
+		select
+			timelimited_id, promotion_id, level_code, seller_code,
+	        item_id,sku_code, sku_name,
+	        first_category_code, second_category_code,
+	        third_category_code, sku_category_name,
+	        sku_pic_url, sku_cost_price,
+	        sku_timelimited_price,
+	        timelimited_sku_count, timelimited_threshold,
+	        timelimited_valid_interval, create_id, create_name, create_time,
+	        modify_id, modify_name,modify_time
+		from timelimited_info
+		WHERE 1 = 1 
+        <include refid="dynamic_fragment_timelimitedInfo"/>
+		ORDER BY modify_time desc 
+		LIMIT #{page.pageOffset},#{page.rows}
+	</select>
+
+	<select id="getTimelimitedInfosByParams" resultMap="BaseResultMap">
+		select
+			timelimited_id, promotion_id, level_code, seller_code,
+	        item_id,sku_code, sku_name,
+	        first_category_code, second_category_code,
+	        third_category_code, sku_category_name,
+	        sku_pic_url, sku_cost_price,
+	        sku_timelimited_price,
+	        timelimited_sku_count, timelimited_threshold,
+	        timelimited_valid_interval, create_id, create_name, create_time,
+	        modify_id, modify_name,modify_time
+		from timelimited_info
+		WHERE 1 = 1 
+        <include refid="dynamic_fragment_timelimitedInfo"/>
+		ORDER BY modify_time desc 
+	</select>
 
 
 

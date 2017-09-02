@@ -98,25 +98,25 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
 	@Resource
 	private PromotionSellerRuleDAO promotionSellerRuleDAO;
+
 	@Resource
 	private PromotionConfigureDAO promotionConfigureDAO;
-
-	/**
-	 * 初始化校验用字典信息
-	 *
-	 * @param dictMap
-	 * @param dictKey
-	 */
-	private void initDictionaryMap(Map<String, String> dictMap, String dictKey) {
-		List<DictionaryInfo> dictionaryList = null;
-		dictionaryList = dictionary.getDictionaryOptList(dictKey);
-		if (dictionaryList != null && !dictionaryList.isEmpty()) {
-			for (DictionaryInfo dictionaryInfo : dictionaryList) {
-				dictMap.put(dictKey + "&" + dictionaryInfo.getCode(),
-						dictionaryInfo.getValue());
-			}
-		}
-	}
+	
+    /**
+     * 初始化校验用字典信息
+     *
+     * @param dictMap
+     * @param dictKey
+     */
+    public void initDictionaryMap(Map<String, String> dictMap, String dictKey) {
+        List<DictionaryInfo> dictionaryList = null;
+        dictionaryList = dictionary.getDictionaryOptList(dictKey);
+        if (dictionaryList != null && !dictionaryList.isEmpty()) {
+            for (DictionaryInfo dictionaryInfo : dictionaryList) {
+                dictMap.put(dictKey + "&" + dictionaryInfo.getCode(), dictionaryInfo.getValue());
+            }
+        }
+    }
 
 	/**
 	 * 初始化校验优惠券用字典信息

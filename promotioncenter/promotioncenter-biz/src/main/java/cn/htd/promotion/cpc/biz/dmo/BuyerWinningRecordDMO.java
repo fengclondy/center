@@ -21,6 +21,8 @@ public class BuyerWinningRecordDMO {
     private String buyerTelephone;
 
     private String sellerCode;
+    
+    private String sellerName;
 
     private String sellerAddress;
 
@@ -329,5 +331,13 @@ public class BuyerWinningRecordDMO {
     public void setWinningFrom(String winningFrom) {
         this.winningFrom = winningFrom;
     }
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
 
 }

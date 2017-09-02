@@ -19,7 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
+import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
@@ -57,7 +57,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			.getLogger(LuckDrawServiceImpl.class);
 
 	@Resource
-	private AwardRecordDAO awardRecordDAO;
+	private BuyerWinningRecordDAO awardRecordDAO;
 
 	@Resource
 	private PromotionDetailDescribeDAO promotionDetailDescribeDAO;

@@ -519,8 +519,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		try {
 			String promotionId = queryEffectivePromotion();
 			if (StringUtils.isEmpty(promotionId)) {
-				result.setResponseCode(ResultCodeEnum.LOTTERY_NO_SELLER.getCode());
-				result.setResponseMsg(ResultCodeEnum.LOTTERY_NO_SELLER.getMsg());
+				result.setResponseCode(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getCode());
+				result.setResponseMsg(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getMsg());
 				return result;
 			}
 			Map<String, String> dictMap = null;

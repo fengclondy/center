@@ -10,6 +10,7 @@ import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
@@ -30,8 +31,8 @@ public interface PromotionBargainInfoService {
 	 * 
 	 * @param promotionBargainInfoResDTO
 	 */
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> addPromotionBargainInfoRedis(
-			List<PromotionBargainInfoResDTO> promotionBargainInfoList)throws PromotionCenterBusinessException;
+	public ExecuteResult<PromotionExtendInfoDTO> addPromotionBargainInfo(
+            PromotionExtendInfoDTO promotionExtendInfoDTO) throws PromotionCenterBusinessException;
 	
 	/**
 	 * 删除砍价活动
@@ -53,11 +54,11 @@ public interface PromotionBargainInfoService {
 	
 	/**
 	 * 修改砍价活动信息
-	 * @param bargainInfoList
+	 * @param promotionExtendInfoDTO
 	 * @return
 	 * @throws PromotionCenterBusinessException
 	 */
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList)
+	public ExecuteResult<PromotionExtendInfoDTO> updateBargainInfo(PromotionExtendInfoDTO promotionExtendInfoDTO)
 	    	throws PromotionCenterBusinessException;
 
 	/**

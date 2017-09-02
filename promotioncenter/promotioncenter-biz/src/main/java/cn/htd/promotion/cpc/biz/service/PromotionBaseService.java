@@ -6,6 +6,7 @@ import java.util.Map;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
@@ -37,7 +38,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO insertPromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionExtendInfoDTO insertPromotionInfo(PromotionExtendInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -62,7 +63,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionExtendInfoDTO updatePromotionInfo(PromotionExtendInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
     /**
@@ -89,24 +90,6 @@ public interface PromotionBaseService {
      * @return
      */
     public PromotionAccumulatyDTO querySingleAccumulatyPromotionInfo(String promotionId, String... levelCode)
-            throws Exception;
-
-    /**
-     * 插入多个层级的促销活动信息
-     *
-     * @param promotionAccuDTOList
-     * @return
-     */
-    public PromotionAccumulatyDTO insertManyAccumulatyPromotionInfo(List<PromotionAccumulatyDTO> promotionAccuDTOList)
-            throws Exception;
-
-    /**
-     * 更新多个层级的促销活动信息
-     *
-     * @param promotionAccuDTOList
-     * @return
-     */
-    public PromotionAccumulatyDTO updateSingleAccumulatyPromotionInfo(List<PromotionAccumulatyDTO> promotionAccuDTOList)
             throws Exception;
 
     /**

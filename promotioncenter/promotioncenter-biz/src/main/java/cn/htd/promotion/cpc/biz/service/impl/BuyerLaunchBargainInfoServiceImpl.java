@@ -83,18 +83,18 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		List<BuyerLaunchBargainInfoDMO> buyerBargainInfoList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByBuyerCode(buyerCode);
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,出参{}",messageId,
 				JSON.toJSONString(buyerBargainInfoList));
-		for(BuyerLaunchBargainInfoDMO buyerL : buyerBargainInfoList){
-			// 从redis里面获取砍价详情
-			List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle
-					.getRedisBargainInfoList(buyerL.getPromotionId());
-			if (promotionBargainInfoResDTOList != null
-					&& promotionBargainInfoResDTOList.size() > 0) {
-				for (PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList) {
-					buyerL.setBargainPersonNum(p.getVirtualQuantity());
-					break;
-				}
-			}
-		}
+//		for(BuyerLaunchBargainInfoDMO buyerL : buyerBargainInfoList){
+//			// 从redis里面获取砍价详情
+//			List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle
+//					.getRedisBargainInfoList(buyerL.getPromotionId());
+//			if (promotionBargainInfoResDTOList != null
+//					&& promotionBargainInfoResDTOList.size() > 0) {
+//				for (PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList) {
+//					buyerL.setBargainPersonNum(p.getVirtualQuantity());
+//					break;
+//				}
+//			}
+//		}
 		List<BuyerLaunchBargainInfoResDTO> buyerLaunchBargainInfoResList = new ArrayList<BuyerLaunchBargainInfoResDTO>();
 		if(buyerBargainInfoList != null){
 			String str = JSONObject.toJSONString(buyerBargainInfoList);

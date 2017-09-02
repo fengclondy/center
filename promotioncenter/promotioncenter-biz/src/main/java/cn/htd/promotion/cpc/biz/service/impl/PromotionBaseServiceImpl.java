@@ -545,11 +545,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @param buyerInfo
      * @param dictMap
      * @return
-     * @throws PromotionCenterBusinessException
      */
     @Override
     public boolean checkPromotionBuyerRule(PromotionInfoDTO promotionInfoDTO, BuyerCheckInfo buyerInfo,
-            Map<String, String> dictMap) throws PromotionCenterBusinessException {
+            Map<String, String> dictMap) {
         PromotionBuyerRuleDTO ruleDTO = promotionInfoDTO.getBuyerRuleDTO();
         List<String> levelList = null;
         List<String> groupList = null;
@@ -557,8 +556,9 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         if (ruleDTO == null) {
             return true;
         }
-        if (dictMap.get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&" +
-                DictionaryConst.OPT_PROMOTION_BUYER_RULE_APPIONT).equals(ruleDTO.getRuleTargetType())) {
+        if (dictMap
+                .get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&" + DictionaryConst.OPT_PROMOTION_BUYER_RULE_APPIONT)
+                .equals(ruleDTO.getRuleTargetType())) {
             detailList = ruleDTO.getBuyerDetailList();
             if (detailList == null || detailList.isEmpty()) {
                 return true;
@@ -569,8 +569,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 }
             }
             return false;
-        } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&" +
-                DictionaryConst.OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN).equals(ruleDTO.getRuleTargetType())) {
+        } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&"
+                + DictionaryConst.OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN).equals(ruleDTO.getRuleTargetType())) {
             if (buyerInfo.getIsFirstLogin() == 1) {
                 return true;
             }
@@ -586,38 +586,43 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @param sellerCode
      * @param dictMap
      * @return
-     * @throws PromotionCenterBusinessException
      */
     @Override
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
-            Map<String, String> dictMap) throws
-            PromotionCenterBusinessException {
-        PromotionSellerRuleDTO ruleDTO = promotionInfoDTO.getSellerRuleDTO();
-        List<PromotionSellerDetailDTO> detailList = null;
+            Map<String, String> dictMap) {
+        PromotionSellerDetailDTO sellerDetailDTO = null;
 
-        if (dictMap.get(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE + "&"
-                + DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP).equals(promotionInfoDTO.getPromotionProviderType())
-                && !promotionInfoDTO.getPromotionProviderSellerCode().equals(sellerCode)) {
-            return false;
-        }
-        if (ruleDTO == null) {
-            return true;
-        }
-        if (dictMap
-                .get(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&" + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)
-                .equals(ruleDTO.getRuleTargetType())) {
-            detailList = ruleDTO.getSellerDetailList();
-            if (detailList == null || detailList.isEmpty()) {
-                return true;
-            }
-            for (PromotionSellerDetailDTO detailDTO : detailList) {
-                if (detailDTO.getSellerCode().equals(sellerCode)) {
-                    return true;
-                }
-            }
+        sellerDetailDTO = getPromotionSellerInfo(promotionInfoDTO, sellerCode, dictMap);
+        if (sellerDetailDTO == null) {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 检查促销活动卖家规则
+     *
+     * @param promotionInfoDTO
+     * @param sellerCode
+     * @param dictMap
+     * @return
+     */
+    @Override
+    public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
+            Map<String, String> dictMap) {
+        PromotionSellerRuleDTO ruleDTO = promotionInfoDTO.getSellerRuleDTO();
+        List<PromotionSellerDetailDTO> detailList = null;
+
+        detailList = ruleDTO.getSellerDetailList();
+        if (detailList == null || detailList.isEmpty()) {
+            return null;
+        }
+        for (PromotionSellerDetailDTO detailDTO : detailList) {
+            if (detailDTO.getSellerCode().equals(sellerCode)) {
+                return detailDTO;
+            }
+        }
+        return null;
     }
     
 	@Override

@@ -9,6 +9,7 @@ import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoEditResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 
@@ -125,10 +126,9 @@ public interface PromotionBaseService {
      * @param buyerInfo
      * @param dictMap
      * @return
-     * @throws PromotionCenterBusinessException
      */
     public boolean checkPromotionBuyerRule(PromotionInfoDTO promotionInfoDTO, BuyerCheckInfo buyerInfo,
-            Map<String, String> dictMap) throws PromotionCenterBusinessException;
+            Map<String, String> dictMap);
 
     /**
      * 校验促销活动卖家规则
@@ -137,10 +137,19 @@ public interface PromotionBaseService {
      * @param sellerCode
      * @param dictMap
      * @return
-     * @throws PromotionCenterBusinessException
      */
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
-            Map<String, String> dictMap) throws PromotionCenterBusinessException;
+            Map<String, String> dictMap);
+
+    /**
+     * 取得满足促销活动卖家规则的卖家信息
+     * @param promotionInfoDTO
+     * @param sellerCode
+     * @param dictMap
+     * @return
+     */
+    public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
+            Map<String, String> dictMap);
 
 	public PromotionInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
 

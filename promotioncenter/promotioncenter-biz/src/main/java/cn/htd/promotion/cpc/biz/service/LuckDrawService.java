@@ -8,7 +8,7 @@ import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
@@ -58,13 +58,13 @@ public interface LuckDrawService {
 	 * @param promotionExtendInfoDTO
 	 * @return
 	 */
-	public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionExtendInfoDTO);
+	public PromotionInfoDTO addDrawLotteryInfo(PromotionInfoDTO promotionExtendInfoDTO);
 
 	/**
 	 * @param promotionExtendInfoDTO
 	 * @return
 	 */
-	public PromotionExtendInfoDTO editDrawLotteryInfo(PromotionExtendInfoDTO promotionExtendInfoDTO);
+	public PromotionInfoDTO editDrawLotteryInfo(PromotionInfoDTO promotionExtendInfoDTO);
 	
 	/**
 	 * 参与有效活动的所有卖家信息
@@ -72,5 +72,5 @@ public interface LuckDrawService {
 	 */
 	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId);
 
-	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId);
+	public PromotionInfoDTO viewDrawLotteryInfo(String promotionInfoId);
 }

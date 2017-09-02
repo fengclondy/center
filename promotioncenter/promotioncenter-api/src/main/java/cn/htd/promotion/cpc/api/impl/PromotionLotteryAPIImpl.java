@@ -34,7 +34,6 @@ import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
@@ -272,9 +271,9 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
     @Override
 	public String addDrawLotteryInfo(String promotionInfoEditReqDTO) {
-		PromotionExtendInfoDTO  rt = new PromotionExtendInfoDTO();
+    	PromotionInfoDTO  rt = new PromotionInfoDTO();
 		try {
-			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
+			PromotionInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionInfoDTO.class);
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(promotionExtendInfoDTO);
 			// 有错误信息时返回错误信息
@@ -296,9 +295,9 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
 	@Override
 	public String editDrawLotteryInfo(String promotionInfoEditReqDTO) {
-		PromotionExtendInfoDTO rt = null;
+		PromotionInfoDTO rt = null;
 		try {
-			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
+			PromotionInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionInfoDTO.class);
             // 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
             // 有错误信息时返回错误信息
@@ -335,7 +334,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 
 	@Override
 	public String viewDrawLotteryInfo(String promotionInfoId, String messageId) {
-		PromotionExtendInfoDTO rt = null;
+		PromotionInfoDTO rt = null;
 		try {
 			rt = luckDrawService.viewDrawLotteryInfo(promotionInfoId);
 			rt.setMessageId(messageId);

@@ -6,7 +6,6 @@ import java.util.Map;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
@@ -38,7 +37,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionExtendInfoDTO insertPromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionInfoDTO insertPromotionInfo(PromotionInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -51,7 +50,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionExtendInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
+    public PromotionInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -63,7 +62,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionExtendInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
     /**

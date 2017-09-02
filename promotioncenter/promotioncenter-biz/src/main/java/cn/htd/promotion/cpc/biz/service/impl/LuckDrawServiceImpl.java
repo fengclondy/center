@@ -44,6 +44,7 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
@@ -323,9 +324,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
+	public PromotionInfoDTO addDrawLotteryInfo(PromotionInfoDTO promotionInfoEditReqDTO) {
 
-			PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
+		PromotionInfoDTO result = new PromotionInfoDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
@@ -369,8 +370,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionExtendInfoDTO editDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
-		PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
+	public PromotionInfoDTO editDrawLotteryInfo(PromotionInfoDTO promotionInfoEditReqDTO) {
+		PromotionInfoDTO result = new PromotionInfoDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
@@ -410,11 +411,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId) {
-		PromotionExtendInfoDTO  result = new PromotionExtendInfoDTO();
+	public PromotionInfoDTO viewDrawLotteryInfo(String promotionInfoId) {
+		PromotionInfoDTO  result = new PromotionInfoDTO();
 		try {
 
-			result = (PromotionExtendInfoDTO) promotionBaseService.queryPromotionInfo(promotionInfoId);
+			result = promotionBaseService.queryPromotionInfo(promotionInfoId);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {

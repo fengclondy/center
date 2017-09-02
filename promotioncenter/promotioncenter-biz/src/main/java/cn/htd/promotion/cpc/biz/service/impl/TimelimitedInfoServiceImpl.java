@@ -10,15 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
-import cn.htd.promotion.cpc.dto.request.PromotionInfoEditReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO;
+
+import com.alibaba.fastjson.JSONObject;
 
 @Service("timelimitedInfoService")
 public class TimelimitedInfoServiceImpl implements TimelimitedInfoService{
@@ -106,6 +112,58 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService{
 	}
 	
 	
+	@Override
+	public TimelimitedInfoResDTO getSingleTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
+		
+		TimelimitedInfoResDTO timelimitedInfoResDTO = null;
+		
+		try {
+
+			String promotionId = timelimitedInfoReqDTO.getPromotionId();
+			//查询活动信息
+			timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(timelimitedInfoReqDTO.getPromotionId());
+			//查询图片信息
+			List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureResDTOList = timelimitedSkuPictureDAO.selectByPromotionId(promotionId);
+			//查询详情信息
+			TimelimitedSkuDescribeResDTO timelimitedSkuDescribeResDTO = timelimitedSkuDescribeDAO.selectByPromotionId(promotionId);
+			
+			timelimitedInfoResDTO.setTimelimitedSkuPictureList(timelimitedSkuPictureResDTOList);
+			timelimitedInfoResDTO.setTimelimitedSkuDescribe(timelimitedSkuDescribeResDTO);
+			
+//			//修改促销活动信息
+//			PromotionInfoEditReqDTO PromotionInfoEditReqDTO = timelimitedInfoReqDTO.getPromotionInfoEditReqDTO();
+//			baseService.editPromotionInfo(PromotionInfoEditReqDTO);
+			
+		} catch (Exception e) {
+            logger.error("messageId{}:执行方法【getSingleTimelimitedInfo】报错：{}", messageId ,e.toString());
+            throw new RuntimeException(e);
+		}
+		
+		return timelimitedInfoResDTO;
+		
+	}
+	
+	@Override
+	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
+		
+		 logger.info("TimelimitedInfoServiceImpl--->getTimelimitedInfosForPage--->page:" + JSONObject.toJSONString(page));
+		 logger.info("TimelimitedInfoServiceImpl--->getTimelimitedInfosForPage--->timelimitedInfoReqDTO:" + JSONObject.toJSONString(timelimitedInfoReqDTO));
+		
+		DataGrid<TimelimitedInfoResDTO> dataGrid = null;
+		try {
+			dataGrid = new DataGrid<TimelimitedInfoResDTO>();
+			List<TimelimitedInfoResDTO> helpDocCategoryList = timelimitedInfoDAO.getTimelimitedInfosForPage(page, timelimitedInfoReqDTO);
+			int count = timelimitedInfoDAO.getTimelimitedInfosCount(timelimitedInfoReqDTO);
+			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+			dataGrid.setRows(helpDocCategoryList);
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【getTimelimitedInfosForPage】报错：{}", messageId ,e.toString());
+			throw new RuntimeException(e);
+		}
+		return dataGrid;
+	}
+	
+	
 	/**
 	 * 批量添加秒杀商品图片
 	 * @param timelimitedSkuDescribeList
@@ -173,6 +231,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService{
     	
     	timelimitedSkuDescribeDAO.updateByPrimaryKeySelective(timelimitedSkuDescribeReqDTO);
 	}
+
+
 	
 	
 	

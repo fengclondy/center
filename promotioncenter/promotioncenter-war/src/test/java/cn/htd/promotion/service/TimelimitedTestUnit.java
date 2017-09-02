@@ -16,11 +16,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 /**
  * Created by zf.zhang on 2017/9/1.
@@ -200,5 +203,44 @@ public class TimelimitedTestUnit {
         }
 
     }
+    
+    @Test
+    public void getSingleTimelimitedInfoTest(){
+    	
+        String messageId = "342453251349";
+        String promotionId = "5172134231225";
+        try {
+    		TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
+    		timelimitedInfoReqDTO.setPromotionId(promotionId);;
+    		
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleTimelimitedInfo(timelimitedInfoReqDTO, messageId);
+        	System.out.println("===>timelimitedInfoResDTO:" + timelimitedInfoResDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    @Test
+    public void getTimelimitedInfosForPageTest(){
+    	
+        String messageId = "342453251349";
+        
+        try {
+    		Pager<TimelimitedInfoReqDTO> page = new Pager<TimelimitedInfoReqDTO>();
+    		page.setPage(1);
+    		page.setRows(20);
+    		TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
+    		timelimitedInfoReqDTO.setFirstCategoryCode("一级类目");
+    		
+        	DataGrid<TimelimitedInfoResDTO> data = timelimitedInfoService.getTimelimitedInfosForPage(page, timelimitedInfoReqDTO, messageId);
+        	System.out.println("===>data:" + data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    
 
 }

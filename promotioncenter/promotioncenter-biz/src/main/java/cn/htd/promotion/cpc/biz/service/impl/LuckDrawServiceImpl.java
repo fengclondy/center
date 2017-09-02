@@ -332,14 +332,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 			}
 			//promotionInfoEditReqDTO.setPromotionType("NDJ");
-			List<PromotionAccumulatyDTO> promotionAccuDTOList = new ArrayList<PromotionAccumulatyDTO>();
-			promotionAccuDTOList.add((PromotionAccumulatyDTO) promotionInfoEditReqDTO);
+			List<PromotionAccumulatyDTO> promotionAccuDTOList = (List<PromotionAccumulatyDTO>) promotionInfoEditReqDTO.getPromotionAccumulatyList();
 			PromotionAccumulatyDTO rtobj = promotionBaseService.insertManyAccumulatyPromotionInfo(promotionAccuDTOList);
 			if(rtobj.getPromotionAccumulatyList()!=null){
-				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = rtobj.getPromotionAccumulatyList();
+				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padrDTO = null;
 				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
 		            padrDTO = (PromotionAwardInfoDTO)promotionAccumulatyList.get(i);
+		            padrDTO.setPromotionId(rtobj.getPromotionId());
 		            promotionAwardInfoDAO.add(padrDTO);
 				}
 
@@ -375,11 +375,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			List<PromotionAccumulatyDTO> promotionAccuDTOList = new ArrayList<PromotionAccumulatyDTO>();
-			promotionAccuDTOList.add((PromotionAccumulatyDTO) promotionInfoEditReqDTO);
+			List<PromotionAccumulatyDTO> promotionAccuDTOList = (List<PromotionAccumulatyDTO>) promotionInfoEditReqDTO.getPromotionAccumulatyList();
 			 PromotionAccumulatyDTO rtobj = promotionBaseService.updateSingleAccumulatyPromotionInfo(promotionAccuDTOList);
 			if(rtobj.getPromotionAccumulatyList()!=null){
-				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = rtobj.getPromotionAccumulatyList();
+				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padDTO = null;
 				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
 		            padDTO = (PromotionAwardInfoDTO)promotionAccumulatyList.get(i);

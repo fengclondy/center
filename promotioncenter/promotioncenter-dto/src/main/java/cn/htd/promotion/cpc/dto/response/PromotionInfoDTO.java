@@ -201,8 +201,17 @@ public class PromotionInfoDTO extends GenricResDTO {
      * 是否上过架标记
      */
     private Integer hasUpFlag;
+    private List<PromotionConfigureDTO> promotionConfigureList;
     
-    public Integer getHasUpFlag() {
+    public List<PromotionConfigureDTO> getPromotionConfigureList() {
+		return promotionConfigureList;
+	}
+
+	public void setPromotionConfigureList(List<PromotionConfigureDTO> promotionConfigureList) {
+		this.promotionConfigureList = promotionConfigureList;
+	}
+
+	public Integer getHasUpFlag() {
 		return hasUpFlag;
 	}
 

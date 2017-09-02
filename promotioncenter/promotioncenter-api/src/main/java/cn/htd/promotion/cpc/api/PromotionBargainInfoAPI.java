@@ -10,6 +10,7 @@ import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
@@ -37,8 +38,8 @@ public interface PromotionBargainInfoAPI {
 	 * 
 	 * @param promotionBargainInfoResDTO
 	 */
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> addPromotionBargainInfoRedis(
-			List<PromotionBargainInfoResDTO> promotionBargainInfoList);
+	public ExecuteResult<PromotionExtendInfoDTO> addPromotionBargainInfo(
+			PromotionExtendInfoDTO promotionExtendInfoDTO);
 	
 	/**
 	 * 删除砍价活动
@@ -54,7 +55,7 @@ public interface PromotionBargainInfoAPI {
 	 * @return
 	 * @throws PromotionCenterBusinessException
 	 */
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList);
+	public ExecuteResult<PromotionExtendInfoDTO> updateBargainInfo(PromotionExtendInfoDTO promotionExtendInfoDTO);
 	
 	/**
 	 * 砍价活动入口

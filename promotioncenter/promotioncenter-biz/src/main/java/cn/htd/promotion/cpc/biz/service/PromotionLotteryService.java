@@ -2,8 +2,11 @@ package cn.htd.promotion.cpc.biz.service;
 
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryResultReqDTO;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryWinningReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
+import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 
 public interface PromotionLotteryService {
 
@@ -26,6 +29,17 @@ public interface PromotionLotteryService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public BuyerWinningRecordDTO getDrawLotteryResult(DrawLotteryReqDTO requestDTO)
+    public BuyerWinningRecordDTO getDrawLotteryResult(DrawLotteryResultReqDTO requestDTO)
+            throws PromotionCenterBusinessException, Exception;
+
+    /**
+     * 保存中奖结果信息
+     *
+     * @param requestDTO
+     * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
+     */
+    public GenricResDTO saveDrawLotteryWinning(DrawLotteryWinningReqDTO requestDTO)
             throws PromotionCenterBusinessException, Exception;
 }

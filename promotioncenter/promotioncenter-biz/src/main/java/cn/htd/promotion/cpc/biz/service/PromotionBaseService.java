@@ -15,6 +15,13 @@ import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 public interface PromotionBaseService {
 
     /**
+     * 读取字典信息
+     * @param dictMap
+     * @param dictKey
+     */
+    public void initDictionaryMap(Map<String, String> dictMap, String dictKey);
+
+    /**
      * 初始化促销活动用字典信息
      *
      * @return
@@ -38,7 +45,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionExtendInfoDTO insertPromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionExtendInfoDTO insertPromotionInfo(PromotionExtendInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -51,7 +58,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionExtendInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
+    public PromotionInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -63,7 +70,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionExtendInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
+    public PromotionExtendInfoDTO updatePromotionInfo(PromotionExtendInfoDTO promotionInfo)
             throws PromotionCenterBusinessException, Exception;
 
     /**
@@ -90,24 +97,6 @@ public interface PromotionBaseService {
      * @return
      */
     public PromotionAccumulatyDTO querySingleAccumulatyPromotionInfo(String promotionId, String... levelCode)
-            throws Exception;
-
-    /**
-     * 插入多个层级的促销活动信息
-     *
-     * @param promotionAccuDTOList
-     * @return
-     */
-    public PromotionAccumulatyDTO insertManyAccumulatyPromotionInfo(List<PromotionAccumulatyDTO> promotionAccuDTOList)
-            throws Exception;
-
-    /**
-     * 更新多个层级的促销活动信息
-     *
-     * @param promotionAccuDTOList
-     * @return
-     */
-    public PromotionAccumulatyDTO updateSingleAccumulatyPromotionInfo(List<PromotionAccumulatyDTO> promotionAccuDTOList)
             throws Exception;
 
     /**

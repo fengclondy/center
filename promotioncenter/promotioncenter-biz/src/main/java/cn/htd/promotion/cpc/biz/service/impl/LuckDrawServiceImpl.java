@@ -19,7 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.biz.dao.AwardRecordDAO;
+import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
@@ -44,6 +44,7 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
@@ -56,7 +57,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			.getLogger(LuckDrawServiceImpl.class);
 
 	@Resource
-	private AwardRecordDAO awardRecordDAO;
+	private BuyerWinningRecordDAO awardRecordDAO;
 
 	@Resource
 	private PromotionDetailDescribeDAO promotionDetailDescribeDAO;
@@ -325,21 +326,20 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	@Override
 	public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
 
-			PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
+		PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 
 			}
 			//promotionInfoEditReqDTO.setPromotionType("NDJ");
-			List<PromotionAccumulatyDTO> promotionAccuDTOList = new ArrayList<PromotionAccumulatyDTO>();
-			promotionAccuDTOList.add((PromotionAccumulatyDTO) promotionInfoEditReqDTO);
-			PromotionAccumulatyDTO rtobj = promotionBaseService.insertManyAccumulatyPromotionInfo(promotionAccuDTOList);
+			PromotionInfoDTO rtobj = promotionBaseService.insertPromotionInfo(promotionInfoEditReqDTO);
 			if(rtobj.getPromotionAccumulatyList()!=null){
-				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = rtobj.getPromotionAccumulatyList();
+				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padrDTO = null;
 				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
 		            padrDTO = (PromotionAwardInfoDTO)promotionAccumulatyList.get(i);
+		            padrDTO.setPromotionId(rtobj.getPromotionId());
 		            promotionAwardInfoDAO.add(padrDTO);
 				}
 
@@ -375,11 +375,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			List<PromotionAccumulatyDTO> promotionAccuDTOList = new ArrayList<PromotionAccumulatyDTO>();
-			promotionAccuDTOList.add((PromotionAccumulatyDTO) promotionInfoEditReqDTO);
-			 PromotionAccumulatyDTO rtobj = promotionBaseService.updateSingleAccumulatyPromotionInfo(promotionAccuDTOList);
+			 PromotionInfoDTO rtobj = promotionBaseService.updatePromotionInfo(promotionInfoEditReqDTO);
 			if(rtobj.getPromotionAccumulatyList()!=null){
-				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = rtobj.getPromotionAccumulatyList();
+				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padDTO = null;
 				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
 		            padDTO = (PromotionAwardInfoDTO)promotionAccumulatyList.get(i);

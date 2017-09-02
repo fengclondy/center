@@ -42,6 +42,7 @@ public enum ResultCodeEnum {
     LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE("26208", "粉丝已经用完了自有和分享额外获取的抽奖机会"),
     LOTTERY_BUYER_REACH_WINNING_LIMMIT("26209", "粉丝已达中奖次数上限"),
     LOTTERY_SELLER_REACH_WINNING_LIMMIT("26210", "会员店已达中奖次数上限"),
+    LOTTERY_BUYER_NO_WINNING_RECORD("26211", "粉丝没有中奖记录"),
             ;
 
     private ResultCodeEnum(String code, String msg) {

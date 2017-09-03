@@ -151,9 +151,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			Integer remainingTimes = Integer.valueOf(buyerDailyDrawTimes);
 			result.setPictureUrl(pictureUrlList);
 			result.setActivityStartTime(promotionExtendInfoDTO
-					.getOfflineStartTime());
+					.getEachStartTime());
 			result.setActivityEndTime(promotionExtendInfoDTO
-					.getOfflineEndTime());
+					.getEachEndTime());
 			result.setPromotionName(promotionExtendInfoDTO.getPromotionName());
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());

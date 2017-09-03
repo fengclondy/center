@@ -694,6 +694,7 @@ public class PromotionBargainInfoServiceImpl implements
 				promotionInfoExtendDAO.update(extendDTO);
 				PromotionBargainInfoResDTO dtoRedis = new PromotionBargainInfoResDTO();
 				dtoRedis.setPromotionId(dto.getPromotionId());
+				dtoRedis.setPreviewFlag("1");
 				List<PromotionBargainInfoResDTO> promotionBargainList = promotionBargainRedisHandle
 						.getRedisBargainInfoList(dtoRedis);
 				if (null != promotionBargainList

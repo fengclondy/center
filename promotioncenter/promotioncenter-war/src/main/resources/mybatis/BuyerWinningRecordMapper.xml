@@ -47,6 +47,7 @@
     seller_address,
     belong_superior_name,
     reward_type,
+    reward_name,
     award_value,
     winning_time,
     winner_name,

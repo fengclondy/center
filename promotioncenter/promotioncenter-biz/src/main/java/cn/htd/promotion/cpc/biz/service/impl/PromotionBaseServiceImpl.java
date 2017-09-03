@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
@@ -45,8 +47,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
-
-import com.alibaba.fastjson.JSON;
 
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
@@ -308,7 +308,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
 			if (null != sellerlist && !sellerlist.isEmpty()) {
 				for (PromotionSellerDetailDTO psd : sellerlist) {
-
+					psd.setPromotionId(promotionId);
 					psd.setCreateId(promotionInfo.getCreateId());
 					psd.setCreateName(promotionInfo.getCreateName());
 					psd.setModifyId(promotionInfo.getCreateId());
@@ -555,11 +555,16 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			promotionSellerRuleDAO.update(psr);
 			
 			List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
+			promotionSellerDetailDAO.deleteByPromotionId(promotionId);
 			if(sellerlist != null && !sellerlist.isEmpty()){
 				for (PromotionSellerDetailDTO psd : sellerlist) {
+					psd.setPromotionId(promotionId);
+					psd.setCreateId(promotionInfo.getCreateId());
+					psd.setCreateName(promotionInfo.getCreateName());
+					psd.setDeleteFlag(YesNoEnum.NO.getValue());
 					psd.setModifyId(promotionInfo.getModifyId());
 					psd.setModifyName(promotionInfo.getModifyName());
-					promotionSellerDetailDAO.update(psd);
+					promotionSellerDetailDAO.add(psd);
 				}
 			}
 		}

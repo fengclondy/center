@@ -30,6 +30,11 @@
     delete from promotion_seller_detail
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteByPromotionId" parameterType="java.lang.String" >
+    update promotion_seller_detail set delete_flag = 1
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </delete>
+  
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
     insert into promotion_seller_detail (id, promotion_id, rule_id, 
       seller_code, seller_name, belong_superior_name, 

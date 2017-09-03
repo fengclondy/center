@@ -2,15 +2,13 @@ package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
-import cn.htd.promotion.cpc.biz.dmo.PromotionBargainInfoDMO;
+import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
@@ -149,4 +147,6 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      */
 	public int updatePromotionDealFlag(PromotionInfoDMO promotionInfo);
 
+	public List<PromotionInfoDTO> queryInitRedisPromotion4Task(@Param("entity") PromotionInfoDTO condition,
+            @Param("page") Pager<PromotionInfoDTO> page);
 }

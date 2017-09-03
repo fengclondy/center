@@ -116,6 +116,11 @@ public class GeneratorUtils {
 		return stringBuilder.toString();
 	}
 
+	/**
+	 * 获取抽奖ticket
+	 * @param platCode
+	 * @return
+	 */
 	public String generateLotteryTicket(String platCode) {
 		String ticket = "";
 		String uuid = "";
@@ -127,12 +132,6 @@ public class GeneratorUtils {
 
 	}
 
-	/**
-	 * 获取抽奖ticket
-	 * @param seqKey
-	 * @param maxValue
-	 * @return
-	 */
 	private String getCacheSeq(String seqKey, Long maxValue) {
 		Long seqIndexLong = promotionRedisDB.incr(seqKey);
 		seqIndexLong = seqIndexLong % maxValue;

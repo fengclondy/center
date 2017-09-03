@@ -102,6 +102,7 @@ public class PromotionBargainInfoServiceImpl implements
 		// 从redis里面获取砍价详情
 		List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle
 				.getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+		PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
 		if (promotionBargainInfoResDTOList != null
 				&& promotionBargainInfoResDTOList.size() > 0) {
 			for (PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList) {
@@ -133,6 +134,7 @@ public class PromotionBargainInfoServiceImpl implements
 					promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
 					promotionBargainInfo.setInvalidTime(p.getInvalidTime());
 					promotionBargainInfo.setShowStatusD(p.getShowStatus());
+					promotionBargainInfo.setShowStatusD(promotionInfo.getStatus());
 					break;
 				}
 			}

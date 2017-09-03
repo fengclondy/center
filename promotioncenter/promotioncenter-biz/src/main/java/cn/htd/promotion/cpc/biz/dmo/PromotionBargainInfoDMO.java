@@ -82,6 +82,8 @@ public class PromotionBargainInfoDMO{
 	
 	private String bargainCodeD;//砍价编码
 	
+	private String statusD;//活动状态
+	
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
 	}
@@ -368,6 +370,14 @@ public class PromotionBargainInfoDMO{
 
 	public void setBargainCodeD(String bargainCodeD) {
 		this.bargainCodeD = bargainCodeD;
+	}
+
+	public String getStatusD() {
+		return statusD;
+	}
+
+	public void setStatusD(String statusD) {
+		this.statusD = statusD;
 	}
 
 }

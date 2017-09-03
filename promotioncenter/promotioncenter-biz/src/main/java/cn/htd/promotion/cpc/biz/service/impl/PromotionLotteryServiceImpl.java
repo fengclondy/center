@@ -38,9 +38,6 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 
     private static final Logger logger = LoggerFactory.getLogger(PromotionLotteryServiceImpl.class);
 
-    @Value("promotion.lottery.max.loop.size")
-    private String lotteryMaxLoopSize;
-
     @Resource
     private GeneratorUtils noGenerator;
 
@@ -90,7 +87,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                     + DictionaryConst.OPT_PROMOTION_REWARD_TYPE_THANKS));
             ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
             responseDTO.setTicket(ticket);
-            new Thread(new DoPromotionLotteryDealTask(requestDTO, defaultWinningRecord, ticket)).start();
+            promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, defaultWinningRecord, ticket);
         }
         return responseDTO;
     }
@@ -205,132 +202,5 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                 promotionId + "_" + sellerCode + "_" + requestDTO.getBuyerCode() + "_" + ticket);
         responseDTO.setMessageId(requestDTO.getMessageId());
         return responseDTO;
-    }
-
-    /**
-     * 抽奖处理异步线程
-     */
-    private class DoPromotionLotteryDealTask extends Thread {
-
-        private BuyerWinningRecordDTO defaultWinningRecordDTO;
-
-        private String promotionId;
-
-        private String buyerCode;
-
-        private String sellerCode;
-
-        private String ticket;
-
-        public DoPromotionLotteryDealTask(DrawLotteryReqDTO reqDTO, BuyerWinningRecordDTO defaultWinningRecordDTO,
-                String ticket) {
-            this.promotionId = reqDTO.getPromotionId();
-            this.buyerCode = reqDTO.getBuyerCode();
-            this.sellerCode = reqDTO.getSellerCode();
-            this.defaultWinningRecordDTO = defaultWinningRecordDTO;
-            this.ticket = ticket;
-        }
-
-        public void run() {
-            BuyerWinningRecordDTO winningRecordDTO = null;
-            String awardPercentStr = "";
-            List<PromotionAccumulatyDTO> accuList = null;
-            try {
-                awardPercentStr = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
-                        RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE);
-                if (StringUtils.isEmpty(awardPercentStr)) {
-                    throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-                            "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
-                }
-                accuList = JSON.parseArray(awardPercentStr, PromotionAccumulatyDTO.class);
-                if (accuList == null || !accuList.isEmpty()) {
-                    throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-                            "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
-                } else if ("100".equals(accuList.get(accuList.size() - 1).getLevelAmount())) {
-                    throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-                            "抽奖活动编号:" + promotionId + " 奖项设置异常没有合适奖项 " + JSON.toJSONString(accuList));
-                }
-                winningRecordDTO = drawLotteryAward(accuList);
-                if (winningRecordDTO == null) {
-                    throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
-                            "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
-                }
-                winningRecordDTO.setBuyerCode(buyerCode);
-                winningRecordDTO.setSellerCode(sellerCode);
-                winningRecordDTO.setSellerName(defaultWinningRecordDTO.getSellerName());
-                winningRecordDTO.setBelongSuperiorName(defaultWinningRecordDTO.getBelongSuperiorName());
-                winningRecordDTO.setWinningTime(new Date());
-            } catch (PromotionCenterBusinessException pcbe) {
-                if (winningRecordDTO == null) {
-                    winningRecordDTO = defaultWinningRecordDTO;
-                }
-                winningRecordDTO.setResponseCode(pcbe.getCode());
-                winningRecordDTO.setResponseMsg(pcbe.getMessage());
-            }
-            promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
-                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket,
-                    JSON.toJSONString(winningRecordDTO));
-        }
-
-        private BuyerWinningRecordDTO drawLotteryAward(List<PromotionAccumulatyDTO> accuList)
-                throws PromotionCenterBusinessException {
-            int luckNo = 0;
-            PromotionAccumulatyDTO goalAccuDTO = null;
-            String lotteryKey = "";
-            String awardJsonStr = "";
-            BuyerWinningRecordDTO winningRecordDTO = null;
-            int maxLoopSize =
-                    StringUtils.isEmpty(lotteryMaxLoopSize) ? accuList.size() : Integer.parseInt(lotteryMaxLoopSize);
-            int loopSize = 0;
-
-            if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
-                    RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
-                        "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
-            }
-            if (promotionRedisDB
-                    .decrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
-                            RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES).longValue() < 0) {
-                promotionRedisDB
-                        .incrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
-                                RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
-                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
-                        "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 粉丝已经用完了所有抽奖机会");
-            }
-            if (promotionRedisDB
-                    .decrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
-                            RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES).longValue() < 0) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_REACH_WINNING_LIMMIT.getCode(),
-                        "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 粉丝已达中奖次数上限");
-
-            }
-            if (promotionRedisDB
-                    .decr(RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_" + sellerCode)
-                    .longValue() < 0) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_SELLER_REACH_WINNING_LIMMIT.getCode(),
-                        "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 会员店已达中奖次数上限");
-            }
-            while (loopSize++ < maxLoopSize) {
-                if (accuList.size() == 1) {
-                    goalAccuDTO = accuList.get(0);
-                } else {
-                    luckNo = noGenerator.getRandomNum();
-                    for (PromotionAccumulatyDTO accuDTO : accuList) {
-                        if (luckNo <= Integer.parseInt(accuDTO.getLevelAmount())) {
-                            goalAccuDTO = accuDTO;
-                            break;
-                        }
-                    }
-                }
-                lotteryKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + goalAccuDTO.getLevelCode();
-                awardJsonStr = promotionRedisDB.headPop(lotteryKey);
-                if (StringUtils.isEmpty(awardJsonStr)) {
-                    continue;
-                }
-                winningRecordDTO = JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);
-                break;
-            }
-            return winningRecordDTO;
-        }
     }
 }

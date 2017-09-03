@@ -302,12 +302,13 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  if(promotionBargainInfo == null){
 			  promotionBargainInfo = new PromotionBargainInfoDMO();
 		  }
+		  PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
 	    	//从redis里面获取砍价详情
 	        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
 	        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
 	        if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
 	        	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
-	            	if(p.getLevelCode().equals(p.getLevelCode())){
+	            	if(buyerBargainLaunch.getLevelCode().equals(p.getLevelCode())){
 	            		promotionBargainInfo.setPromotionId(p.getPromotionId());
 	            		promotionBargainInfo.setLevelCode(p.getLevelCode());
 	            		promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
@@ -320,13 +321,14 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	            		promotionBargainInfo.setContactNameD(p.getContactName());
 	            		promotionBargainInfo.setContactTelphoneD(p.getContactTelephone());
 	            		promotionBargainInfo.setContactAddressD(p.getContactAddress());
-	            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineStartTime());
+	            		promotionBargainInfo.setOfflineStartTimeD(p.getOfflineStartTime());
 	            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineEndTime());
 	            		promotionBargainInfo.setTemplateFlagD(p.getTemplateFlag());
 	            		promotionBargainInfo.setSellerNameD(p.getPromotionProviderSellerCode());
 	            		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
 	            		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
 	            		promotionBargainInfo.setShowStatusD(p.getShowStatus());
+	            		promotionBargainInfo.setShowStatusD(promotionInfo.getStatus());
 	            		break;
 	            	}
 	            }

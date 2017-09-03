@@ -93,6 +93,8 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String bargainCodeD;//砍价编码
 	
+	private String status;//活动状态
+	
 	public String getBuyerCode() {
 		return buyerCode;
 	}
@@ -357,20 +359,12 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.bargainCodeD = bargainCodeD;
 	}
 
-	public void setPromotionBargainInfoResDTO(PromotionBargainInfoResDTO promotionBargainInfoResDTO) {
-		super.setPromotionAccumulaty(promotionBargainInfoResDTO);
-		this.bargainId = promotionBargainInfoResDTO.getBargainId();
-		this.goodsPicture = promotionBargainInfoResDTO.getGoodsPicture();
-		this.goodsName = promotionBargainInfoResDTO.getGoodsName();
-		this.goodsCostPrice = promotionBargainInfoResDTO.getGoodsCostPrice();
-		this.goodsFloorPrice = promotionBargainInfoResDTO.getGoodsFloorPrice();
-		this.partakeTimes = promotionBargainInfoResDTO.getPartakeTimes();
-		this.goodsNum = promotionBargainInfoResDTO.getGoodsNum();
-		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
-		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
-		this.sloganList = promotionBargainInfoResDTO.getSloganList();
-		this.showStatusD = promotionBargainInfoResDTO.getShowStatusD();
-		this.bargainCodeD = promotionBargainInfoResDTO.getBargainCodeD();
+	public String getStatus() {
+		return status;
 	}
-	
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 }

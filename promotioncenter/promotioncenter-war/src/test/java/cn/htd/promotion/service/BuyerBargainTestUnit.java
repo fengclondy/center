@@ -231,13 +231,13 @@ public class BuyerBargainTestUnit {
 	  @Rollback(false) 
 	  public void Testoptationbargain(){
 	    ExecuteResult<String> result = new ExecuteResult<String>();
-	    String buyerCode = "24933406";
-	    String promotionId = "22171825051082";
-	    String levelCode = "2217182505108272";
-	    String bargainCode = "3170944350030";
+	    String buyerCode = "24933406000";
+	    String promotionId = "22172343460075";
+	    String levelCode = "2217234346007530";
+	    String bargainCode = "3172355370001";
 	    String helperPicture = "5365.png";
 	    String helperName = "单元测试帮忙";
-	    String openedId = "123";
+	    String openedId = "123123123";
 	    String messageId = "123";
 	    result = buyerLaunchBargainInfoService.optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId, messageId);
 	  	System.out.println(JSON.toJSONString(result));

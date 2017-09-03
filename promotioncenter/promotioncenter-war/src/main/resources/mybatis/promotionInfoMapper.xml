@@ -511,4 +511,13 @@
         AND status != 9
         ORDER BY effective_time asc
 	</select>
+
+  <update id="updatePromotionDealFlag" parameterType="cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO">
+    update promotion_info
+    <set>
+      deal_flag = #{dealflag,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
 </mapper>

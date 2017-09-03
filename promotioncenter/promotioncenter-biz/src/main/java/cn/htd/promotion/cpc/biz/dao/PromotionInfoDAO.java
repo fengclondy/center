@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -140,5 +141,12 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
 	public List<PromotionInfoDTO> queryPromotionBargainEntry(@Param("sellerCode") String sellerCode);
+
+    /**
+     * 更新促销活动表的处理标记
+     * @param promotionInfo
+     * @return
+     */
+	public int updatePromotionDealFlag(PromotionInfoDMO promotionInfo);
 
 }

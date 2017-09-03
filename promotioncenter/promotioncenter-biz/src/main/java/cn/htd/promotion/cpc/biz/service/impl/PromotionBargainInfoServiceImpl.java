@@ -100,8 +100,10 @@ public class PromotionBargainInfoServiceImpl implements
 		PromotionBargainInfoResDTO promotionBargainInfoResDTO = null;
 		PromotionBargainInfoDMO promotionBargainInfo = new PromotionBargainInfoDMO();
 		// 从redis里面获取砍价详情
+		PromotionBargainInfoResDTO dto = new PromotionBargainInfoResDTO();
+		dto.setPromotionId(buyerBargainLaunch.getPromotionId());
 		List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle
-				.getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+				.getRedisBargainInfoList(dto);
 		PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
 		if (promotionBargainInfoResDTOList != null
 				&& promotionBargainInfoResDTOList.size() > 0) {
@@ -690,8 +692,10 @@ public class PromotionBargainInfoServiceImpl implements
 				extendDTO
 						.setTemplateFlag(Integer.parseInt(dto.getTemlateFlag()));
 				promotionInfoExtendDAO.update(extendDTO);
+				PromotionBargainInfoResDTO dtoRedis = new PromotionBargainInfoResDTO();
+				dtoRedis.setPromotionId(dto.getPromotionId());
 				List<PromotionBargainInfoResDTO> promotionBargainList = promotionBargainRedisHandle
-						.getRedisBargainInfoList(dto.getPromotionId());
+						.getRedisBargainInfoList(dtoRedis);
 				if (null != promotionBargainList
 						&& !promotionBargainList.isEmpty()) {
 					for (PromotionBargainInfoResDTO res : promotionBargainList) {

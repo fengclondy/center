@@ -304,8 +304,10 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  }
 		  PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
 	    	//从redis里面获取砍价详情
+		  PromotionBargainInfoResDTO dto = new PromotionBargainInfoResDTO();
+		  dto.setPromotionId(buyerBargainLaunch.getPromotionId());
 	        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
-	        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+	        		getRedisBargainInfoList(dto);
 	        if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
 	        	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
 	            	if(buyerBargainLaunch.getLevelCode().equals(p.getLevelCode())){

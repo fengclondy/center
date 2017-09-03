@@ -107,7 +107,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	public List<BuyerLaunchBargainInfoResDTO> getBuyerLaunchBargainInfoByPromotionId(
 			String promotionId, String messageId) {
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId（）方法开始,入参{}",messageId,promotionId+":"+messageId);
-		List<BuyerLaunchBargainInfoDMO> buyerBargainInfoList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionId);
+		List<BuyerLaunchBargainInfoDMO> buyerBargainInfoList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionId, null);
 		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId（）方法开始,出参{}",messageId,JSON.toJSONString(buyerBargainInfoList));
 		List<BuyerLaunchBargainInfoResDTO> buyerLaunchBargainInfoResList = new ArrayList<BuyerLaunchBargainInfoResDTO>();
 		if(buyerBargainInfoList != null){
@@ -174,7 +174,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
 		                  "该砍价活动商品只能发起一次流程");
 			}
-			List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfo.getPromotionId());
+			List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfo.getPromotionId(), bargainInfoDTO.getBuyerCode());
 			if(null != launchList && !launchList.isEmpty() 
 					&& null != promotionInfoExtend.getTotalPartakeTimes()
 					&& launchList.size() >= promotionInfoExtend.getTotalPartakeTimes().intValue()){

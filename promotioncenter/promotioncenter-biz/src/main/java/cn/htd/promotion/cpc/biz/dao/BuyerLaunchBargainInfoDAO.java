@@ -19,7 +19,7 @@ public interface BuyerLaunchBargainInfoDAO {
 	public Integer updateBuyerLaunchBargainInfo(BuyerBargainLaunchReqDTO buyerBargainLaunch);
 
 	public List<BuyerLaunchBargainInfoDMO> getBuyerLaunchBargainInfoByPromotionId(
-			@Param("promotionId") String promotionId);
+			@Param("promotionId") String promotionId, @Param("buyerCode") String buyerCode);
 
 	public Integer queryBuyerLaunchBargainInfoNumber(
 			@Param("bargainDTO") BuyerLaunchBargainInfoResDTO barfainDTO);

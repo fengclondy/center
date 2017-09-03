@@ -372,7 +372,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_VALID, promotionId, promotionInfoDTO.getShowStatus());
                         stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INDEX,
                                 RedisConst.REDIS_GASHAPON_PREFIX + promotionInfoDTO.getEffectiveTime().getTime() + "_" + promotionInfoDTO.getInvalidTime().getTime(), promotionId);
-                        connection.closePipeline();
+                        stringRedisConnection.closePipeline();
                     } catch (Exception e) {
                         logger.info("初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
                                 JSON.toJSONString(promotionInfoDTO), ExceptionUtils.getFullStackTrace(e));

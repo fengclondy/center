@@ -11,6 +11,6 @@
   <mvc:annotation-driven/>
   <import resource="classpath*:/spring/beans-*.xml"/>
   <context:component-scan base-package="cn.htd.*"/>
-  <context:property-placeholder location="classpath:env.properties"/>
+  <context:property-placeholder location="classpath:application-env.properties"/>
   <!--  <context:annotation-config/> -->
 </beans>

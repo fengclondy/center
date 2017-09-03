@@ -262,7 +262,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             ResultCodeEnum.LOTTERY_SELLER_REACH_WINNING_LIMMIT.getCode(),
                             "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 会员店已达中奖次数上限");
                 }
-                while (loopSize++ < maxLoopSize) {
+                while (loopSize < maxLoopSize) {
                     if (accuList.size() == 1) {
                         goalAccuDTO = accuList.get(0);
                     } else {
@@ -277,6 +277,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     lotteryKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + goalAccuDTO.getLevelCode();
                     awardJsonStr = promotionRedisDB.headPop(lotteryKey);
                     if (StringUtils.isEmpty(awardJsonStr)) {
+                        loopSize ++;
                         continue;
                     }
                     winningRecordDTO = JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);

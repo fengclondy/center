@@ -18,4 +18,6 @@ public interface PromotionAwardInfoDAO extends BaseDAO<PromotionAwardInfoDTO> {
 	public int updateByPrimaryKeySelective(PromotionAwardInfoDTO record);
 
 	public int updateByPrimaryKey(PromotionAwardInfoDTO record);
+
+	public PromotionAwardInfoDTO queryByPIdAndLevel(PromotionAwardInfoDTO pai);
 }

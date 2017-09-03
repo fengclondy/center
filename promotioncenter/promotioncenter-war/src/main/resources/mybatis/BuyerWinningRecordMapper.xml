@@ -282,4 +282,23 @@
       now(),
     </trim>
   </insert>
+  
+  <select id="query4Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_winning_record
+    <if test="entity != null">
+     and promotion_type = '21'
+      and (reward_type = '3' or reward_type = '4')
+      and logistics_status = '00'
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    order by id desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
 </mapper>

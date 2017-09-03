@@ -27,6 +27,14 @@
     from promotion_award_info
     where award_id = #{awardId,jdbcType=BIGINT}
   </select>
+  
+  <select id="queryByPIdAndLevel" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_award_info
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and level_code = #{levelCode,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from promotion_award_info
     where award_id = #{awardId,jdbcType=BIGINT}

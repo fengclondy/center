@@ -250,7 +250,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		promotionInfoDAO.add(promotionInfo);
 
 		PromotionDetailDescribeDMO promotionDetailDescribeDTO = new PromotionDetailDescribeDMO();
-		PromotionDetailDescribeDTO piddd = accumulatyDTO
+		PromotionDetailDescribeDTO piddd = promotionInfo
 				.getPromotionDetailDescribeDTO();
 		if (piddd != null) {
 			promotionDetailDescribeDTO.setDescribeContent(piddd
@@ -266,7 +266,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			promotionDetailDescribeDAO.add(promotionDetailDescribeDTO);
 		}
 
-		List<PromotionPictureDTO> piclist = accumulatyDTO
+		List<PromotionPictureDTO> piclist = promotionInfo
 				.getPromotionPictureList();
 		if (null != piclist && !piclist.isEmpty()) {
 			for (PromotionPictureDTO promotionPictureReqDTO : piclist) {
@@ -281,7 +281,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 				promotionPictureDAO.add(promotionPictureReqDTO);
 			}
 		}
-		PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = accumulatyDTO
+		PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = promotionInfo
 				.getBuyerRuleDTO();
 		if (null != promotionBuyerRuleReqDTO) {
 			promotionBuyerRuleReqDTO.setPromotionId(promotionId);
@@ -295,7 +295,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			promotionBuyerRuleDAO.add(promotionBuyerRuleReqDTO);
 		}
 
-		PromotionSellerRuleDTO psr = accumulatyDTO.getSellerRuleDTO();
+		PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
 		if (psr != null) {
 			psr.setPromotionId(promotionId);
 			psr.setDeleteFlag(YesNoEnum.NO.getValue());
@@ -328,7 +328,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		// slogan.setModifyName(promotionInfo.getCreateName());
 		// promotionSloganDAO.add(slogan);
 		// }
-		List<PromotionConfigureDTO> pclist = accumulatyDTO
+		List<PromotionConfigureDTO> pclist = promotionInfo
 				.getPromotionConfigureList();
 		if (pclist != null && pclist.size() > 0) {
 			for (PromotionConfigureDTO pcd : pclist) {
@@ -513,7 +513,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		promotionInfoDAO.update(promotionInfo);
 
 		PromotionDetailDescribeDMO promotionDetailDescribeDTO = new PromotionDetailDescribeDMO();
-		PromotionDetailDescribeDTO piddd = accumulatyDTO
+		PromotionDetailDescribeDTO piddd = promotionInfo
 				.getPromotionDetailDescribeDTO();
 		if (piddd != null) {
 			promotionDetailDescribeDTO.setDescribeContent(piddd
@@ -528,7 +528,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
 		}
 
-		List<PromotionPictureDTO> piclist = accumulatyDTO
+		List<PromotionPictureDTO> piclist = promotionInfo
 				.getPromotionPictureList();
 		if(null != piclist && !piclist.isEmpty()){
 			for (PromotionPictureDTO ppic : piclist) {
@@ -539,7 +539,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			}
 		}
 
-		PromotionBuyerRuleDTO pbr = accumulatyDTO.getBuyerRuleDTO();
+		PromotionBuyerRuleDTO pbr = promotionInfo.getBuyerRuleDTO();
 		if (pbr != null) {
 			pbr.setPromotionId(promotionInfo.getPromotionId());
 			pbr.setModifyId(promotionInfo.getModifyId());
@@ -547,7 +547,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 			promotionBuyerRuleDAO.update(pbr);
 		}
 
-		PromotionSellerRuleDTO psr = accumulatyDTO.getSellerRuleDTO();
+		PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
 		if (psr != null) {
 			psr.setPromotionId(promotionInfo.getPromotionId());
 			psr.setModifyId(promotionInfo.getModifyId());
@@ -575,7 +575,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		// psrd.setModifyName(promotionInfo.getModifyName());
 		// promotionSloganDAO.update(slogan);
 		// }
-		List<PromotionConfigureDTO> pclist = accumulatyDTO
+		List<PromotionConfigureDTO> pclist = promotionInfo
 				.getPromotionConfigureList();
 		if (pclist != null && pclist.size() > 0) {
 			for (PromotionConfigureDTO pcd : pclist) {

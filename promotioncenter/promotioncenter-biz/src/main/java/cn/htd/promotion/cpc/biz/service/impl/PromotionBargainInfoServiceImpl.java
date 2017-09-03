@@ -136,7 +136,7 @@ public class PromotionBargainInfoServiceImpl implements
 					promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
 					promotionBargainInfo.setInvalidTime(p.getInvalidTime());
 					promotionBargainInfo.setShowStatusD(p.getShowStatus());
-					promotionBargainInfo.setShowStatusD(promotionInfo.getStatus());
+					promotionBargainInfo.setStatusD(promotionInfo.getStatus());
 					break;
 				}
 			}

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 
 /**
  * Created by tangjiayong on 2017/8/22.
@@ -58,6 +57,8 @@ public interface BuyerWinningRecordDAO {
      */
     public int addBuyerWinningRecord(BuyerWinningRecordDMO buyerWinningRecordDMO);
 
-	public List<PromotionAwardDTO> query4Task(@Param("entity") PromotionAwardDTO condition,
-            @Param("page") Pager<PromotionAwardDTO> pager);
+	public List<BuyerWinningRecordDMO> query4Task(@Param("entity") BuyerWinningRecordDMO condition,
+            @Param("page") Pager<BuyerWinningRecordDMO> pager);
+
+	public void updateDealFlag(BuyerWinningRecordDMO buyerWinningRecordDMO);
 }

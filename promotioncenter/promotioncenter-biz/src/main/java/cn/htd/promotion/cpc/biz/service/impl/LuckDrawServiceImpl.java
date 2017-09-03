@@ -159,7 +159,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (StringUtils.isNotEmpty(buyerNo)) {
 				result.setRemainingTimes(remainingTimes);
 				// 粉丝活动粉丝当日次数信息
-				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO
+				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO+"_"+promotionId
 						+ "_" + buyerNo;
 
 				List<String> buyerTimeInfoList = promotionRedisDB

@@ -105,7 +105,7 @@ public class PromotionBargainInfoServiceImpl implements
 		if (promotionBargainInfoResDTOList != null
 				&& promotionBargainInfoResDTOList.size() > 0) {
 			for (PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList) {
-				if (p.getLevelCode().equals(p.getLevelCode())) {
+				if (p.getLevelCode().equals(buyerBargainLaunch.getLevelCode())) {
 					promotionBargainInfo.setPromotionId(p.getPromotionId());
 					promotionBargainInfo.setLevelCode(p.getLevelCode());
 					promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
@@ -123,7 +123,7 @@ public class PromotionBargainInfoServiceImpl implements
 							.getContactTelephone());
 					promotionBargainInfo.setContactAddressD(p
 							.getContactAddress());
-					promotionBargainInfo.setOfflineEndTimeD(p
+					promotionBargainInfo.setOfflineStartTimeD(p
 							.getOfflineStartTime());
 					promotionBargainInfo.setOfflineEndTimeD(p
 							.getOfflineEndTime());

@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by tangjiayong on 2017/8/21.
@@ -68,8 +69,33 @@ public class PromotionAwardDTO implements Serializable{
 
     private Date modifyTime;//更新时间
 
+    /**
+     * 当前任务类型的任务队列数量
+     */
+    private int taskQueueNum;
+    /**
+     * 当前调度服务器，分配到的可处理队列
+     */
+    private List<String> taskIdList;
+    
+    
+    public int getTaskQueueNum() {
+		return taskQueueNum;
+	}
 
-    public Long getId() {
+	public void setTaskQueueNum(int taskQueueNum) {
+		this.taskQueueNum = taskQueueNum;
+	}
+
+	public List<String> getTaskIdList() {
+		return taskIdList;
+	}
+
+	public void setTaskIdList(List<String> taskIdList) {
+		this.taskIdList = taskIdList;
+	}
+
+	public Long getId() {
         return id;
     }
 

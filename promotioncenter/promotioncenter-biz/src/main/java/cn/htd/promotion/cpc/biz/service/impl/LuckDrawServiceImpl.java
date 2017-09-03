@@ -151,9 +151,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			Integer remainingTimes = Integer.valueOf(buyerDailyDrawTimes);
 			result.setPictureUrl(pictureUrlList);
 			result.setActivityStartTime(promotionExtendInfoDTO
-					.getOfflineStartTime());
+					.getEachStartTime());
 			result.setActivityEndTime(promotionExtendInfoDTO
-					.getOfflineEndTime());
+					.getEachEndTime());
 			result.setPromotionName(promotionExtendInfoDTO.getPromotionName());
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
@@ -414,6 +414,21 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		try {
 
 			result = (PromotionExtendInfoDTO) promotionBaseService.queryPromotionInfo(promotionInfoId);
+			if(result.getPromotionAccumulatyList()!=null){
+				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = result.getPromotionAccumulatyList();
+				  List<PromotionAwardInfoDTO> promotionAwardList = new ArrayList<PromotionAwardInfoDTO>();
+				PromotionAccumulatyDTO padDTO = null;
+				PromotionAwardInfoDTO pai = null;
+				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
+		            padDTO = promotionAccumulatyList.get(i);
+		            pai = new PromotionAwardInfoDTO();
+		            pai.setPromotionId(padDTO.getPromotionId());
+		            pai.setLevelCode(padDTO.getLevelCode());
+		            PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
+		            promotionAwardList.add(pad);
+				}
+				result.setPromotionAccumulatyList(promotionAwardList);
+			}
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {

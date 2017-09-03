@@ -2,8 +2,6 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.util.Date;
 
-import cn.htd.promotion.cpc.dto.response.GenricResDTO;
-
 public class BuyerWinningRecordDTO extends GenricResDTO {
 
     /**

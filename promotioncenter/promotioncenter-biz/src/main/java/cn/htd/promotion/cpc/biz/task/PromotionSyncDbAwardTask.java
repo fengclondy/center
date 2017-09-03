@@ -34,6 +34,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.hl.dao.GoldService;
+import org.hl.entity.GoldRecordEntity;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
@@ -47,8 +49,8 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
+import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 
 /**
  * 话费支付 汇金币充值
@@ -56,18 +58,21 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
  * @author admin
  *
  */
-public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<PromotionAwardDTO> {
+public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWinningRecordDMO> {
 
 	protected static transient Logger logger = LoggerFactory.getLogger(PromotionSyncDbAwardTask.class);
 
 	@Resource
-	public BuyerWinningRecordDAO awardRecordDAO;
-
+	public BuyerWinningRecordDAO buyerWinningRecordDAO;
+	
+	@Resource
+	public GoldService goldService;
+	
 	@Override
-	public Comparator<PromotionAwardDTO> getComparator() {
-		return new Comparator<PromotionAwardDTO>() {
+	public Comparator<BuyerWinningRecordDMO> getComparator() {
+		return new Comparator<BuyerWinningRecordDMO>() {
 			@Override
-			public int compare(PromotionAwardDTO o1, PromotionAwardDTO o2) {
+			public int compare(BuyerWinningRecordDMO o1, BuyerWinningRecordDMO o2) {
 				return o1.getId().compareTo(o2.getId());
 			}
 
@@ -91,18 +96,18 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<Promotio
 	 * @throws Exception
 	 */
 	@Override
-	public List<PromotionAwardDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
+	public List<BuyerWinningRecordDMO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
 			List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
 		logger.info("\n 方法[{}]，入参：[{}]", "PromotionSyncDbAwardTask-selectTasks", JSONObject.toJSONString(taskParameter),
 				JSONObject.toJSONString(ownSign), JSONObject.toJSONString(taskQueueNum),
 				JSONObject.toJSONString(taskQueueList), JSONObject.toJSONString(eachFetchDataNum));
 		Date jobDate = new Date();
-		PromotionAwardDTO condition = new PromotionAwardDTO();
-		Pager<PromotionAwardDTO> pager = null;
+		BuyerWinningRecordDMO condition = new BuyerWinningRecordDMO();
+		Pager<BuyerWinningRecordDMO> pager = null;
 		List<String> taskIdList = new ArrayList<String>();
-		List<PromotionAwardDTO> promotionAwardDTOList = null;
+		List<BuyerWinningRecordDMO> promotionAwardDTOList = null;
 		if (eachFetchDataNum > 0) {
-			pager = new Pager<PromotionAwardDTO>();
+			pager = new Pager<BuyerWinningRecordDMO>();
 			pager.setPageOffset(0);
 			pager.setRows(eachFetchDataNum);
 		}
@@ -115,7 +120,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<Promotio
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
 				// condition.setPromotionType(taskParameter);
-				promotionAwardDTOList = awardRecordDAO.query4Task(condition, pager);
+				promotionAwardDTOList = buyerWinningRecordDAO.query4Task(condition, pager);
 			}
 		} catch (Exception e) {
 			logger.error("\n 方法:[{}],异常:[{}]", "PromotionSyncDbAwardTask-selectTasks",
@@ -138,19 +143,22 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<Promotio
 	 * @throws Exception
 	 */
 	@Override
-	public boolean execute(PromotionAwardDTO[] tasks, String ownSign) throws Exception {
+	public boolean execute(BuyerWinningRecordDMO[] tasks, String ownSign) throws Exception {
 		boolean result = true;
 		try {
 			if (tasks != null && tasks.length > 0) {
-				for (PromotionAwardDTO promotionAwardDTO : tasks) {
+				for (BuyerWinningRecordDMO promotionAwardDTO : tasks) {
 					if (!StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
 						if (promotionAwardDTO.getRewardType().equals("3")) {
-							excuteRecharge(promotionAwardDTO);
+							if(excuteRecharge(promotionAwardDTO)){
+								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+							}
 						} else if (promotionAwardDTO.getRewardType().equals("4")) {
-
+							if(addGold(promotionAwardDTO)){
+								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+							}
 						}
 					}
-
 				}
 			}
 		} catch (Exception e) {
@@ -163,8 +171,24 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<Promotio
 		return result;
 	}
 
+	private boolean addGold(BuyerWinningRecordDMO promotionAwardDTO) {
+		GoldRecordEntity goldRecordEntity = new GoldRecordEntity();
+		goldRecordEntity.setMemberno(promotionAwardDTO.getBuyerCode());
+		if(!StringUtils.isEmpty(promotionAwardDTO.getAwardValue())){
+			goldRecordEntity.setGold(new Integer(promotionAwardDTO.getAwardValue()));
+		}else{
+			goldRecordEntity.setGold(0);
+		}
+		goldRecordEntity.setBptype("1");
+		goldRecordEntity.setDescribe("扭蛋机活动加金币");
+		goldRecordEntity.setRemark(promotionAwardDTO.getPromotionId()+":"+promotionAwardDTO.getId());
+		goldRecordEntity.setOperatorid("sys");
+		boolean rt = goldService.addGoldByPromotion(goldRecordEntity );
+		return rt;
+	}
+
 	public static void main(String[] args) {
-		PromotionAwardDTO s = new PromotionAwardDTO();
+		BuyerWinningRecordDMO s = new BuyerWinningRecordDMO();
 		s.setId(1l);
 		s.setPromotionId("11");
 		s.setAwardValue("1");
@@ -180,7 +204,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<Promotio
 		}
 	}
 
-	private static boolean excuteRecharge(PromotionAwardDTO promotionAwardDTO)
+	private static boolean excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		String responseMsg = "";

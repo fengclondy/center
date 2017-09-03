@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.biz.dmo;
 
 import java.util.Date;
+import java.util.List;
 
 public class BuyerWinningRecordDMO {
 
@@ -75,7 +76,31 @@ public class BuyerWinningRecordDMO {
     private Integer endNo;
 
     private String winningFrom;
+    /**
+     * 当前任务类型的任务队列数量
+     */
+    private int taskQueueNum;
+    /**
+     * 当前调度服务器，分配到的可处理队列
+     */
+    private List<String> taskIdList;
+    
+    
+    public int getTaskQueueNum() {
+		return taskQueueNum;
+	}
 
+	public void setTaskQueueNum(int taskQueueNum) {
+		this.taskQueueNum = taskQueueNum;
+	}
+
+	public List<String> getTaskIdList() {
+		return taskIdList;
+	}
+
+	public void setTaskIdList(List<String> taskIdList) {
+		this.taskIdList = taskIdList;
+	}
     public Long getId() {
         return id;
     }

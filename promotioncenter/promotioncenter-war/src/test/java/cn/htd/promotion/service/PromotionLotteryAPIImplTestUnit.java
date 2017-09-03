@@ -1,11 +1,13 @@
 package cn.htd.promotion.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,49 +50,111 @@ public class PromotionLotteryAPIImplTestUnit {
     @Test
     @Rollback(false) 
     public void promotion(){
+    	Date nowDt = new Date();
+		Calendar cal = Calendar.getInstance();
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH);
+		int day = cal.get(Calendar.DATE);
+		int hour = 10;
+		int minute = 0;
+		int second = 0;
+		cal.set(year, month, day, hour,minute,second);
+		Date startTime = cal.getTime();
+		hour = 22;
+		cal.set(year, month, day, hour,minute,second);
+		Date endTime = cal.getTime();
+
+
     	PromotionExtendInfoDTO promotionExtendInfoDTO = new PromotionExtendInfoDTO();
-    	promotionExtendInfoDTO.setPromotionName("扭蛋机23");
-    	promotionExtendInfoDTO.setCreateId(1l);
-    	promotionExtendInfoDTO.setCreateName("sss");
-    	promotionExtendInfoDTO.setPromotionProviderType("3");
+    	promotionExtendInfoDTO.setPromotionName("扭蛋机--蒋坤测试");
+    	promotionExtendInfoDTO.setCreateId(0L);
+    	promotionExtendInfoDTO.setCreateName("sys");
+    	promotionExtendInfoDTO.setPromotionProviderType("1");
     	promotionExtendInfoDTO.setPromotionType("21");
-    	promotionExtendInfoDTO.setIsShareTimesLimit(0);
-    	promotionExtendInfoDTO.setEffectiveTime(new Date());
-    	promotionExtendInfoDTO.setInvalidTime(new Date());
-    	List<PromotionConfigureDTO> promotionConfigureList = new ArrayList<PromotionConfigureDTO>();
-    	PromotionConfigureDTO e = new PromotionConfigureDTO();
-    	e.setConfType("1");
-    	e.setConfValue("2");
-		promotionConfigureList.add(e );
-		promotionExtendInfoDTO.setPromotionConfigureList(promotionConfigureList );
+    	promotionExtendInfoDTO.setEffectiveTime(nowDt);
+    	promotionExtendInfoDTO.setInvalidTime(DateUtils.addDays(nowDt, 1));
+    	promotionExtendInfoDTO.setStatus("2");
+    	promotionExtendInfoDTO.setShowStatus("3");
+    	promotionExtendInfoDTO.setDealFlag(1);
+//    	List<PromotionConfigureDTO> promotionConfigureList = new ArrayList<PromotionConfigureDTO>();
+//    	PromotionConfigureDTO e = new PromotionConfigureDTO();
+//    	e.setConfType("1");
+//    	e.setConfValue("2");
+//		promotionConfigureList.add(e );
+//		promotionExtendInfoDTO.setPromotionConfigureList(promotionConfigureList );
+		promotionExtendInfoDTO.setCycleTimeType("1");
+		promotionExtendInfoDTO.setEachStartTime(startTime);
+		promotionExtendInfoDTO.setEachEndTime(endTime);
+		promotionExtendInfoDTO.setIsTotalTimesLimit(0);
+		promotionExtendInfoDTO.setIsDailyTimesLimit(1);
+		promotionExtendInfoDTO.setDailyBuyerPartakeTimes(10L);
+		promotionExtendInfoDTO.setDailyBuyerWinningTimes(2L);
+		promotionExtendInfoDTO.setDailyWinningTimes(30L);
+		promotionExtendInfoDTO.setIsShareTimesLimit(0);
+		promotionExtendInfoDTO.setShareExtraPartakeTimes(1L);
+		promotionExtendInfoDTO.setTopExtraPartakeTimes(5L);
 		promotionExtendInfoDTO.setContactName("test");
 		PromotionDetailDescribeDTO promotionDetailDescribeDTO = new PromotionDetailDescribeDTO();
-		promotionDetailDescribeDTO.setDescribeContent("wert");
+		promotionDetailDescribeDTO.setDescribeContent("jiangkun test test test");
 		promotionExtendInfoDTO.setPromotionDetailDescribeDTO(promotionDetailDescribeDTO );
 		List<PromotionAwardInfoDTO> promotionAccumulatyList = new ArrayList<PromotionAwardInfoDTO>();
-		PromotionAwardInfoDTO ee = new PromotionAwardInfoDTO();
-		ee.setAwardName("qqwwee");
-		ee.setAddupType("1");
-		ee.setLevelAmount("5");
-		ee.setProvideCount(1);
-		promotionAccumulatyList.add(ee);
+		for (int i=1; i <=5; i++) {
+			PromotionAwardInfoDTO ee = new PromotionAwardInfoDTO();
+			if (i == 1) {
+				ee.setAwardType("2");
+				ee.setAwardValue("");
+				ee.setAwardName("iphone X 手机");
+				ee.setAwardName("iphone X 手机 蒋坤 测试");
+			} else if (i==2) {
+				ee.setAwardType("3");
+				ee.setAwardValue("1");
+				ee.setAwardName("话费1元");
+				ee.setAwardName("话费1元 蒋坤 测试");
+
+			} else if (i==3) {
+				ee.setAwardType("4");
+				ee.setAwardValue("10");
+				ee.setAwardName("汇金币10个");
+				ee.setAwardName("汇金币10个 蒋坤 测试");
+
+			} else if (i==4) {
+				ee.setAwardType("2");
+				ee.setAwardValue("");
+				ee.setAwardName("华为 mate 10 手机");
+				ee.setAwardName("华为 mate 10 手机 手机 蒋坤 测试");
+
+			} else if (i==5) {
+				ee.setAwardType("5");
+				ee.setAwardValue("");
+				ee.setAwardName("谢谢惠顾");
+				ee.setAwardName("谢谢惠顾 蒋坤 测试");
+			}
+			ee.setAwardRuleDescribe("xxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			ee.setProvideCount(100);
+			ee.setLevelAmount(String.valueOf(i*5 + 5));
+			ee.setQuantifierType("4");
+			ee.setAddupType("0");
+			promotionAccumulatyList.add(ee);
+		}
 		
 		promotionExtendInfoDTO.setPromotionAccumulatyList(promotionAccumulatyList);
-		List<PromotionPictureDTO> promotionPictureList = new ArrayList<PromotionPictureDTO>();
-		PromotionPictureDTO eee = new PromotionPictureDTO();
-		eee.setPromotionPictureType("1");
-		eee.setPromotionPictureUrl("http://ssssssssss");
-		promotionPictureList.add(eee );
-		promotionExtendInfoDTO.setPromotionPictureList(promotionPictureList );
-		PromotionBuyerRuleDTO buyerRuleDTO = new PromotionBuyerRuleDTO();
-		buyerRuleDTO.setRuleTargetType("1");
-		promotionExtendInfoDTO.setBuyerRuleDTO(buyerRuleDTO );
+//		List<PromotionPictureDTO> promotionPictureList = new ArrayList<PromotionPictureDTO>();
+//		PromotionPictureDTO eee = new PromotionPictureDTO();
+//		eee.setPromotionPictureType("1");
+//		eee.setPromotionPictureUrl("http://ssssssssss");
+//		promotionPictureList.add(eee );
+//		promotionExtendInfoDTO.setPromotionPictureList(promotionPictureList );
+//		PromotionBuyerRuleDTO buyerRuleDTO = new PromotionBuyerRuleDTO();
+//		buyerRuleDTO.setRuleTargetType("1");
+//		promotionExtendInfoDTO.setBuyerRuleDTO(buyerRuleDTO );
 		
 		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
-		sellerRuleDTO.setTargetSellerType("1");
+		sellerRuleDTO.setTargetSellerType("2");
 		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
 		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
 		rrrr.setSellerCode("801781");
+		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
+		rrrr.setBelongSuperiorName("上级测试公司 蒋坤");
 		sellerDetailList.add(rrrr );
 		sellerRuleDTO.setSellerDetailList(sellerDetailList );
 		promotionExtendInfoDTO.setSellerRuleDTO(sellerRuleDTO);

@@ -333,59 +333,57 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     long pushCnt = 0L;
                     long diffTime = promotionInfoDTO.getInvalidTime().getTime() - new Date().getTime();
                     int seconds = (int) (diffTime / 1000);
+                    try {
 
-                    timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES,
-                            String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
-                    timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_WINNING_TIMES,
-                            String.valueOf(promotionInfoDTO.getDailyBuyerWinningTimes()));
-                    timesInfoMap.put(RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES,
-                            String.valueOf(promotionInfoDTO.getDailyWinningTimes()));
-                    if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsShareTimesLimit().intValue()) {
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES,
-                                String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));
-                        if (promotionInfoDTO.getTopExtraPartakeTimes() != null) {
-                            timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES,
-                                    String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES, String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_WINNING_TIMES, String.valueOf(promotionInfoDTO.getDailyBuyerWinningTimes()));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES, String.valueOf(promotionInfoDTO.getDailyWinningTimes()));
+                        if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsShareTimesLimit().intValue()) {
+                            timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES, String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));
+                            if (promotionInfoDTO.getTopExtraPartakeTimes() != null) {
+                                timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES, String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
+                            }
                         }
-                    }
 
-                    stringRedisConnection.openPipeline();
-                    for (PromotionAwardInfoDTO awardInfoDTO : promotionAwardInfoDTOList) {
-                        accuDTO = new PromotionAccumulatyDTO();
-                        currentPercent += Integer.valueOf(awardInfoDTO.getLevelAmount());
-                        accuDTO.setPromotionAccumulaty(awardInfoDTO);
-                        accuDTO.setLevelAmount(String.valueOf(currentPercent));
-                        accuList.add(accuDTO);
-                        levelCode = awardInfoDTO.getLevelCode();
-                        redisKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + levelCode;
-                        pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey)
-                                .longValue();
-                        totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
-                        buyerWinningRecordDTO = new BuyerWinningRecordDTO();
-                        buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
-                        while (pushCnt-- <= 0) {
-                            stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
+                        stringRedisConnection.openPipeline();
+                        for (PromotionAwardInfoDTO awardInfoDTO : promotionAwardInfoDTOList) {
+                            accuDTO = new PromotionAccumulatyDTO();
+                            currentPercent += Integer.valueOf(awardInfoDTO.getLevelAmount());
+                            accuDTO.setPromotionAccumulaty(awardInfoDTO);
+                            accuDTO.setLevelAmount(String.valueOf(currentPercent));
+                            accuList.add(accuDTO);
+                            levelCode = awardInfoDTO.getLevelCode();
+                            redisKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + levelCode;
+                            pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey).longValue();
+                            totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
+                            buyerWinningRecordDTO = new BuyerWinningRecordDTO();
+                            buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
+                            while (pushCnt > 0) {
+                                stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
+                                pushCnt --;
+                            }
+                            stringRedisConnection.expire(redisKey, seconds);
                         }
-                        stringRedisConnection.expire(redisKey, seconds);
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT, String.valueOf(totalAwardCnt));
+                        stringRedisConnection
+                                .hMSet(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, timesInfoMap);
+                        stringRedisConnection.expire(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, seconds);
+                        stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INFO, promotionId, JSON.toJSONString(promotionInfoDTO));
+                        stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_VALID, promotionId, promotionInfoDTO.getShowStatus());
+                        stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INDEX,
+                                RedisConst.REDIS_GASHAPON_PREFIX + promotionInfoDTO.getEffectiveTime().getTime() + "_" + promotionInfoDTO.getInvalidTime().getTime(), promotionId);
+                        stringRedisConnection.closePipeline();
+                    } catch (Exception e) {
+                        logger.info("初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
+                                JSON.toJSONString(promotionInfoDTO), ExceptionUtils.getFullStackTrace(e));
+                        throw e;
                     }
-                    timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
-                    timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT, String.valueOf(totalAwardCnt));
-                    stringRedisConnection.hMSet(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, timesInfoMap);
-                    stringRedisConnection.expire(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, seconds);
-                    stringRedisConnection
-                            .hSet(RedisConst.REDIS_LOTTERY_INFO, promotionId, JSON.toJSONString(promotionInfoDTO));
-                    stringRedisConnection
-                            .hSet(RedisConst.REDIS_LOTTERY_VALID, promotionId, promotionInfoDTO.getShowStatus());
-                    stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INDEX,
-                            RedisConst.REDIS_GASHAPON_PREFIX + promotionInfoDTO.getEffectiveTime().getTime() + "_"
-                                    + promotionInfoDTO.getInvalidTime().getTime(), promotionId);
-                    return connection.closePipeline();
+                    return null;
                 }
             });
             promotionInfoDMO.setDealFlag(YesNoEnum.NO.getValue());
         } catch (Exception e) {
-            logger.info("初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
-                    JSON.toJSONString(promotionInfoDTO), ExceptionUtils.getFullStackTrace(e));
             promotionInfoDMO.setDealFlag(YesNoEnum.YES.getValue());
             throw e;
         } finally {

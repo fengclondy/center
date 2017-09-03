@@ -99,9 +99,9 @@ public class PromotionInfoTestUnit {
 	
 	@Test
 	public void getPromotionInfo() {
-		ExecuteResult<List<PromotionBargainInfoResDTO>> data = promotionBargainInfoService.getPromotionBargainInfoList("00001", "22171100370945");
-		List<PromotionBargainInfoResDTO> list = data.getResult();
-		System.out.println(JSON.toJSONString(data));
+//		ExecuteResult<List<PromotionBargainInfoResDTO>> data = promotionBargainInfoService.getPromotionBargainInfoList("00001", "22171100370945");
+//		List<PromotionBargainInfoResDTO> list = data.getResult();
+//		System.out.println(JSON.toJSONString(data));
 	}
 
 	@Test
@@ -133,23 +133,6 @@ public class PromotionInfoTestUnit {
 			String strSlogan = JSON.toJSONString(sloganList);
 			String messageId = "002";
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
-			PromotionBargainInfoResDTO p1 = new PromotionBargainInfoResDTO();
-			p1.setLevelCode("2217193455004158");
-			p1.setGoodsPicture("https://b2cimg.htd.cn/b2cBasicOrg/1504016691825t4gUiEk7.png");
-			p1.setGoodsName("现买现卖下1");
-			p1.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
-			p1.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
-			p1.setGoodsNum(3);
-			p1.setPartakeTimes(2);
-			p1.setPromotionSlogan(strSlogan);
-			PromotionBargainInfoResDTO p2 = new PromotionBargainInfoResDTO();
-			p2.setGoodsPicture("https://b2cimg.htd.cn/b2cBasicOrg/1504016691825t4gUiEk7.png");
-			p2.setGoodsName("现买现卖下2");
-			p2.setGoodsCostPrice(BigDecimal.valueOf(3000.00));
-			p2.setGoodsFloorPrice(BigDecimal.valueOf(2000.00));
-			p2.setGoodsNum(3);
-			p2.setPartakeTimes(2);
-			p2.setPromotionSlogan(strSlogan);
 			PromotionBargainInfoResDTO p3 = new PromotionBargainInfoResDTO();
 			p3.setGoodsPicture("https://b2cimg.htd.cn/b2cBasicOrg/1504016691825t4gUiEk7.png");
 			p3.setGoodsName("现买现卖下3");
@@ -158,8 +141,6 @@ public class PromotionInfoTestUnit {
 			p3.setGoodsNum(3);
 			p3.setPartakeTimes(2);
 			p3.setPromotionSlogan(strSlogan);
-			promotionBargainInfoList.add(p1);
-			promotionBargainInfoList.add(p2);
 			promotionBargainInfoList.add(p3);
 			PromotionExtendInfoDTO extendDTO = new PromotionExtendInfoDTO();
 			extendDTO.setPromotionId("22171934550041");
@@ -199,6 +180,8 @@ public class PromotionInfoTestUnit {
 	@Test
 	@Rollback(false)
 	public void upDown(){
-		promotionRedisDB.set("XM", "123");
+//		PromotionBargainInfoResDTO dto = new PromotionBargainInfoResDTO();
+//		dto.setPromotionId("");
+//		ExecuteResult<List<PromotionBargainInfoResDTO>> result = promotionBargainInfoService.getPromotionBargainInfoList(dto);
 	}
 }

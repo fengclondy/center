@@ -44,7 +44,6 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
@@ -325,15 +324,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 	@Override
 	public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
-
-		PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
+		PromotionExtendInfoDTO rtobj = new PromotionExtendInfoDTO();
 		try {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 
 			}
 			//promotionInfoEditReqDTO.setPromotionType("NDJ");
-			PromotionInfoDTO rtobj = promotionBaseService.insertPromotionInfo(promotionInfoEditReqDTO);
+			rtobj = promotionBaseService.insertPromotionInfo(promotionInfoEditReqDTO);
 			if(rtobj.getPromotionAccumulatyList()!=null){
 				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padrDTO = null;
@@ -342,7 +340,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		            padrDTO.setPromotionId(rtobj.getPromotionId());
 		            promotionAwardInfoDAO.add(padrDTO);
 				}
-
+				promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(rtobj);
 			}
 //			PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
 //			historyDTO.setPromotionId(rtobj.getPromotionId());
@@ -355,17 +353,17 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 //            historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
 //            promotionStatusHistoryDAO.add(historyDTO);
             
-			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			rtobj.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			rtobj.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			rtobj.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			rtobj.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		}
 
-		return result;
+		return rtobj;
 	}
 
 	@Override
@@ -375,15 +373,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
-			 PromotionInfoDTO rtobj = promotionBaseService.updatePromotionInfo(promotionInfoEditReqDTO);
-			if(rtobj.getPromotionAccumulatyList()!=null){
+			result = promotionBaseService.updatePromotionInfo(promotionInfoEditReqDTO);
+			if(result.getPromotionAccumulatyList()!=null){
 				  List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO.getPromotionAccumulatyList();
 				PromotionAwardInfoDTO padDTO = null;
 				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
 		            padDTO = (PromotionAwardInfoDTO)promotionAccumulatyList.get(i);
 		            promotionAwardInfoDAO.update(padDTO);
 				}
-
+				promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
 			}
 //			PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
 //			historyDTO.setPromotionId(rtobj.getPromotionId());
@@ -425,6 +423,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		            pai.setPromotionId(padDTO.getPromotionId());
 		            pai.setLevelCode(padDTO.getLevelCode());
 		            PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
+		            pad.setPromotionAccumulaty(padDTO);
 		            promotionAwardList.add(pad);
 				}
 				result.setPromotionAccumulatyList(promotionAwardList);

@@ -44,13 +44,11 @@ public interface PromotionBargainInfoService {
 
 	/**
 	 * 获取砍价活动信息
-	 * @param messageId
-	 * @param promotionId
-	 * @return
+	 * @param dto
 	 * @throws PromotionCenterBusinessException
 	 */
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(
-			String messageId, String promotionId) throws PromotionCenterBusinessException;
+			PromotionBargainInfoResDTO dto) throws PromotionCenterBusinessException;
 	
 	/**
 	 * 修改砍价活动信息

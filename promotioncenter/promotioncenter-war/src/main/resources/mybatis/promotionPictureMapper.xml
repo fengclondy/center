@@ -67,10 +67,10 @@
       </if>
         create_time,
         <if test="modifyId != null" >
-        #{modifyId,jdbcType=BIGINT},
+        modify_id,
       </if>
       <if test="modifyName != null" >
-        #{modifyName,jdbcType=VARCHAR},
+        modify_name,
       </if>
       modify_time
     </trim>

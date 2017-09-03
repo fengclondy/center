@@ -100,8 +100,10 @@ public class PromotionBargainInfoServiceImpl implements
 		PromotionBargainInfoResDTO promotionBargainInfoResDTO = null;
 		PromotionBargainInfoDMO promotionBargainInfo = new PromotionBargainInfoDMO();
 		// 从redis里面获取砍价详情
+		PromotionBargainInfoResDTO dto = new PromotionBargainInfoResDTO();
+		dto.setPromotionId(buyerBargainLaunch.getPromotionId());
 		List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle
-				.getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
+				.getRedisBargainInfoList(dto);
 		PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
 		if (promotionBargainInfoResDTOList != null
 				&& promotionBargainInfoResDTOList.size() > 0) {
@@ -134,7 +136,7 @@ public class PromotionBargainInfoServiceImpl implements
 					promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
 					promotionBargainInfo.setInvalidTime(p.getInvalidTime());
 					promotionBargainInfo.setShowStatusD(p.getShowStatus());
-					promotionBargainInfo.setShowStatusD(promotionInfo.getStatus());
+					promotionBargainInfo.setStatusD(promotionInfo.getStatus());
 					break;
 				}
 			}
@@ -437,13 +439,13 @@ public class PromotionBargainInfoServiceImpl implements
 
 	@Override
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(
-			String messageId, String promotionId)
+			PromotionBargainInfoResDTO dto)
 			throws PromotionCenterBusinessException {
 		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
 		List<PromotionBargainInfoResDTO> datagrid = null;
 		try {
 			datagrid = promotionBargainRedisHandle
-					.getRedisBargainInfoList(promotionId);
+					.getRedisBargainInfoList(dto);
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException pbe) {
 			result.setCode(pbe.getCode());
@@ -453,7 +455,7 @@ public class PromotionBargainInfoServiceImpl implements
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 			LOGGER.error(
 					"MessageId:{} 调用方法PromotionBargainInfoService.getPromotionBargainInfoList出现异常{}",
-					messageId, promotionId, e.toString());
+					JSON.toJSONString(dto), e.toString());
 		}
 		return result;
 	}
@@ -690,8 +692,10 @@ public class PromotionBargainInfoServiceImpl implements
 				extendDTO
 						.setTemplateFlag(Integer.parseInt(dto.getTemlateFlag()));
 				promotionInfoExtendDAO.update(extendDTO);
+				PromotionBargainInfoResDTO dtoRedis = new PromotionBargainInfoResDTO();
+				dtoRedis.setPromotionId(dto.getPromotionId());
 				List<PromotionBargainInfoResDTO> promotionBargainList = promotionBargainRedisHandle
-						.getRedisBargainInfoList(dto.getPromotionId());
+						.getRedisBargainInfoList(dtoRedis);
 				if (null != promotionBargainList
 						&& !promotionBargainList.isEmpty()) {
 					for (PromotionBargainInfoResDTO res : promotionBargainList) {

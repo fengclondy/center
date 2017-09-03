@@ -93,8 +93,18 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String bargainCodeD;//砍价编码
 	
-	private String status;//活动状态
+	private String previewFlag;//是否超级老板预览进入
 	
+	private String statusD;//活动状态
+	
+	public String getPreviewFlag() {
+		return previewFlag;
+	}
+
+	public void setPreviewFlag(String previewFlag) {
+		this.previewFlag = previewFlag;
+	}
+
 	public String getBuyerCode() {
 		return buyerCode;
 	}
@@ -359,12 +369,11 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.bargainCodeD = bargainCodeD;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getStatusD() {
+		return statusD;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatusD(String statusD) {
+		this.statusD = statusD;
 	}
-
 }

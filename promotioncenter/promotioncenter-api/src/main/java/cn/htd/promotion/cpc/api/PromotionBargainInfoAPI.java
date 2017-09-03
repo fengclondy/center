@@ -19,8 +19,14 @@ public interface PromotionBargainInfoAPI {
 
 	public ExecuteResult<PromotionBargainInfoResDTO> getPromotionBargainInfoDetail(BuyerBargainLaunchReqDTO buyerBargainLaunch);
 	
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(String messageId,
-            String promotionId);
+	/**
+	 * 
+	 * @param messageId
+	 * @param promotionId 活动编码
+	 * @param previewFlag 是否超级老板预览进入
+	 * @return
+	 */
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(PromotionBargainInfoResDTO dto);
 	
 	public ExecuteResult<DataGrid<PromotonInfoResDTO>> queryPromotionInfoListBySellerCode(PromotionInfoReqDTO reqDTO, Pager<PromotionInfoReqDTO> page);
 	

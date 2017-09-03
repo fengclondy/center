@@ -76,13 +76,10 @@ public class PromotionBargainInfoAPIImpl implements PromotionBargainInfoAPI {
 	}
 
 	@Override
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(
-			String messageId, String promotionId) {
+	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(PromotionBargainInfoResDTO dto) {
 		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
-		if (!StringUtils.isEmpty(promotionId)
-				&& !StringUtils.isEmpty(messageId)) {
-			return promotionBargainInfoService.getPromotionBargainInfoList(
-					messageId, promotionId);
+		if (null != dto) {
+			return promotionBargainInfoService.getPromotionBargainInfoList(dto);
 		} else {
 			result.setCode(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getCode());
 			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL

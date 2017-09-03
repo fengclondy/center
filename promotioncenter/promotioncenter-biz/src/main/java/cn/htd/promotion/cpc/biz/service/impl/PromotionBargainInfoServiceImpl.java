@@ -409,7 +409,7 @@ public class PromotionBargainInfoServiceImpl implements
 						promotionInfo.getStatus())) {
 					List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
 							.getBuyerLaunchBargainInfoByPromotionId(validDTO
-									.getPromotionId());
+									.getPromotionId(), null);
 					if ((promotionInfo.getInvalidTime() != null && !(new Date())
 							.after(promotionInfo.getInvalidTime()))
 							&& (null != buyerLaunchList && !buyerLaunchList
@@ -690,7 +690,7 @@ public class PromotionBargainInfoServiceImpl implements
 				}
 				List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
 						.getBuyerLaunchBargainInfoByPromotionId(promotionInfoDTO
-								.getPromotionId());
+								.getPromotionId(), null);
 				if (null != buyerLaunchList && !buyerLaunchList.isEmpty()) {
 					throw new PromotionCenterBusinessException(
 							ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),

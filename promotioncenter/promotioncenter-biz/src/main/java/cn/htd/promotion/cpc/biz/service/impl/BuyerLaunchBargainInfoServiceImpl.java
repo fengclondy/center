@@ -307,7 +307,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
 	        if(promotionBargainInfoResDTOList != null && promotionBargainInfoResDTOList.size()>0){
 	        	for(PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList){
-	            	if(p.getLevelCode().equals(p.getLevelCode())){
+	            	if(buyerBargainLaunch.getLevelCode().equals(p.getLevelCode())){
 	            		promotionBargainInfo.setPromotionId(p.getPromotionId());
 	            		promotionBargainInfo.setLevelCode(p.getLevelCode());
 	            		promotionBargainInfo.setGoodsPicture(p.getGoodsPicture());
@@ -320,7 +320,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	            		promotionBargainInfo.setContactNameD(p.getContactName());
 	            		promotionBargainInfo.setContactTelphoneD(p.getContactTelephone());
 	            		promotionBargainInfo.setContactAddressD(p.getContactAddress());
-	            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineStartTime());
+	            		promotionBargainInfo.setOfflineStartTimeD(p.getOfflineStartTime());
 	            		promotionBargainInfo.setOfflineEndTimeD(p.getOfflineEndTime());
 	            		promotionBargainInfo.setTemplateFlagD(p.getTemplateFlag());
 	            		promotionBargainInfo.setSellerNameD(p.getPromotionProviderSellerCode());

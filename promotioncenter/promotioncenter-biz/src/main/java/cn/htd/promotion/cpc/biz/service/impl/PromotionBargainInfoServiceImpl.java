@@ -123,7 +123,7 @@ public class PromotionBargainInfoServiceImpl implements
 							.getContactTelephone());
 					promotionBargainInfo.setContactAddressD(p
 							.getContactAddress());
-					promotionBargainInfo.setOfflineEndTimeD(p
+					promotionBargainInfo.setOfflineStartTimeD(p
 							.getOfflineStartTime());
 					promotionBargainInfo.setOfflineEndTimeD(p
 							.getOfflineEndTime());

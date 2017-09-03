@@ -3,11 +3,13 @@ package cn.htd.promotion.cpc.biz.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
+import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 
 /**
  * Created by tangjiayong on 2017/8/22.
@@ -55,4 +57,7 @@ public interface BuyerWinningRecordDAO {
      * @return
      */
     public int addBuyerWinningRecord(BuyerWinningRecordDMO buyerWinningRecordDMO);
+
+	public List<PromotionAwardDTO> query4Task(@Param("entity") PromotionAwardDTO condition,
+            @Param("page") Pager<PromotionAwardDTO> pager);
 }

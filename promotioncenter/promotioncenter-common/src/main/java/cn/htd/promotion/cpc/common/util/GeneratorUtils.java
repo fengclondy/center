@@ -32,9 +32,9 @@ public class GeneratorUtils {
 	// Redis优惠券编号数据
 	private static final String REDIS_COUPON_CODE_KEY = "B2B_MIDDLE_COUPONCODE_PSB_SEQ";
 	// Redis促销砍价活动编码数据
-	private static final String REDIS_BARGAIN_ID_KEY = "B2B_MIDDLE_BARGAIN_PSB_SEQ";
+	private static final String REDIS_BARGAIN_ID_KEY = "B2C_MIDDLE_BARGAIN_PSB_SEQ";
 	// Redis促销砍价活动发起数据
-	private static final String REDIS_BARGAIN_LAUNCH_KEY = "B2B_MIDDLE_BARGAIN_LAUNCH_PSB_SEQ";
+	private static final String REDIS_BARGAIN_LAUNCH_KEY = "B2C_MIDDLE_BARGAIN_LAUNCH_PSB_SEQ";
 
 	private static Map<String, String> map = new HashMap<String, String>();
 

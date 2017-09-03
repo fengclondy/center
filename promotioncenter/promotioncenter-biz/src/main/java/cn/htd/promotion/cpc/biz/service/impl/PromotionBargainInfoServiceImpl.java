@@ -193,6 +193,25 @@ public class PromotionBargainInfoServiceImpl implements
 				buyerBargainRecordResList = JSONObject.parseArray(str,
 						BuyerBargainRecordResDTO.class);
 			}
+		}else if (promotionBargainInfo1 != null) {// 聚合页进来并且曾经发起过砍价
+			LOGGER.info(
+					"MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,入参{}",
+					buyerBargainLaunch.getMessageId(),
+					buyerBargainLaunch.getBargainCode() + ":"
+							+ buyerBargainLaunch.getMessageId());
+			List<BuyerBargainRecordDMO> buyerBargainRecordList = buyerBargainRecordDAO
+					.getBuyerBargainRecordByBargainCode(promotionBargainInfo1
+							.getBargainCodeD());
+			LOGGER.info(
+					"MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,出参{}",
+					buyerBargainLaunch.getMessageId(),
+					JSON.toJSONString(buyerBargainRecordList));
+			if (buyerBargainRecordList != null) {
+				String str = JSONObject.toJSONString(buyerBargainRecordList);
+				buyerBargainRecordResList = JSONObject.parseArray(str,
+						BuyerBargainRecordResDTO.class);
+			
+			}
 		}
 
 		if (promotionBargainInfo != null) {

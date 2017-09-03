@@ -93,6 +93,16 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String bargainCodeD;//砍价编码
 	
+	private String previewFlag;//是否超级老板预览进入
+	
+	public String getPreviewFlag() {
+		return previewFlag;
+	}
+
+	public void setPreviewFlag(String previewFlag) {
+		this.previewFlag = previewFlag;
+	}
+
 	public String getBuyerCode() {
 		return buyerCode;
 	}

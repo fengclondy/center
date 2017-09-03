@@ -435,13 +435,13 @@ public class PromotionBargainInfoServiceImpl implements
 
 	@Override
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(
-			String messageId, String promotionId)
+			PromotionBargainInfoResDTO dto)
 			throws PromotionCenterBusinessException {
 		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
 		List<PromotionBargainInfoResDTO> datagrid = null;
 		try {
 			datagrid = promotionBargainRedisHandle
-					.getRedisBargainInfoList(promotionId);
+					.getRedisBargainInfoList(dto);
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException pbe) {
 			result.setCode(pbe.getCode());
@@ -451,7 +451,7 @@ public class PromotionBargainInfoServiceImpl implements
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 			LOGGER.error(
 					"MessageId:{} 调用方法PromotionBargainInfoService.getPromotionBargainInfoList出现异常{}",
-					messageId, promotionId, e.toString());
+					JSON.toJSONString(dto), e.toString());
 		}
 		return result;
 	}

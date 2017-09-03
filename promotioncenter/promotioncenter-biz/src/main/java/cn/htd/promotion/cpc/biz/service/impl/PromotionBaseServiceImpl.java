@@ -499,6 +499,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 				promotionAccumulatyDAO.add(accumulatyDTO);
 			} else {
 				oldAccumulatyMap.remove(accumulatyDTO.getLevelCode());
+				promotionAccumulatyDAO.update(accumulatyDTO);
 			}
 		}
 		if (oldAccumulatyMap.size() > 0) {

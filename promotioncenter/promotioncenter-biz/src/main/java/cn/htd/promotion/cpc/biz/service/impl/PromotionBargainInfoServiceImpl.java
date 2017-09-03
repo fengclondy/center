@@ -248,7 +248,7 @@ public class PromotionBargainInfoServiceImpl implements
 							.getTemplateFlag());
 					bagainInfoDTO.setPromotionName(promotionExtendInfoDTO
 							.getPromotionName());
-					bagainInfoDTO.setPromotionDesc(promotionExtendInfoDTO
+					bagainInfoDTO.setPromotionDescribe(promotionExtendInfoDTO
 							.getPromotionDescribe());
 					bagainInfoDTO.setTotalPartakeTimes(promotionExtendInfoDTO
 							.getTotalPartakeTimes());
@@ -262,7 +262,8 @@ public class PromotionBargainInfoServiceImpl implements
 							.getOfflineStartTime());
 					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO
 							.getOfflineEndTime());
-
+					bagainInfoDTO.setPromotionProviderSellerCode(promotionExtendInfoDTO
+							.getPromotionProviderSellerCode());
 				}
 
 				// 判断时间段内可有活动上架
@@ -505,7 +506,7 @@ public class PromotionBargainInfoServiceImpl implements
 							.getTemplateFlag());
 					bagainInfoDTO.setPromotionName(promotionExtendInfoDTO
 							.getPromotionName());
-					bagainInfoDTO.setPromotionDesc(promotionExtendInfoDTO
+					bagainInfoDTO.setPromotionDescribe(promotionExtendInfoDTO
 							.getPromotionDescribe());
 					bagainInfoDTO.setTotalPartakeTimes(promotionExtendInfoDTO
 							.getTotalPartakeTimes());
@@ -519,6 +520,7 @@ public class PromotionBargainInfoServiceImpl implements
 							.getOfflineStartTime());
 					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO
 							.getOfflineEndTime());
+					bagainInfoDTO.setPromotionProviderSellerCode(promotionExtendInfoDTO.getPromotionProviderSellerCode());
 				}
 				if (StringUtils.isEmpty(promotionId)) {
 					throw new PromotionCenterBusinessException(

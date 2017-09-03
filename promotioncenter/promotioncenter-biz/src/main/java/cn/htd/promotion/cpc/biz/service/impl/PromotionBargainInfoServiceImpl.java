@@ -580,16 +580,25 @@ public class PromotionBargainInfoServiceImpl implements
 							ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
 							"该时间段内已有活动进行");
 				}
-				PromotionExtendInfoDTO updateResult = baseService
-						.updatePromotionInfo(promotionExtendInfoDTO);
+				
+				// 新增商品index
+				List<Integer> addIndexList = new ArrayList<Integer>();
 				for (int i = 0; i < promotionExtendInfoDTO
 						.getPromotionAccumulatyList().size(); i++) {
 					PromotionAccumulatyDTO accumulatyDTO = (PromotionBargainInfoResDTO) promotionExtendInfoDTO
 							.getPromotionAccumulatyList().get(i);
-					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) updateResult
-							.getPromotionAccumulatyList().get(i);
 					if (StringUtils.isEmpty(accumulatyDTO.getLevelCode())
 							|| "0".equals(accumulatyDTO.getLevelCode())) {
+						addIndexList.add(i);
+					}
+				}
+				PromotionExtendInfoDTO updateResult = baseService
+						.updatePromotionInfo(promotionExtendInfoDTO);
+				for (int i = 0; i < promotionExtendInfoDTO
+						.getPromotionAccumulatyList().size(); i++) {
+					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) updateResult
+							.getPromotionAccumulatyList().get(i);
+					if (addIndexList.contains(i)) {
 						bagainInfoDTO.setCreateId(promotionExtendInfoDTO
 								.getModifyId());
 						bagainInfoDTO.setCreateName(promotionExtendInfoDTO

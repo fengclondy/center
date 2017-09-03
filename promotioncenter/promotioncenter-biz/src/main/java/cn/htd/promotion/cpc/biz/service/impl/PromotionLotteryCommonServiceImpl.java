@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
@@ -44,8 +45,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
 
     private static final Logger logger = LoggerFactory.getLogger(PromotionLotteryCommonServiceImpl.class);
 
-    @Value("promotion.lottery.max.loop.size")
-    private String lotteryMaxLoopSize;
+    private String LOTTERY_MAX_LOOP_SIZE = "promotion.lottery.max.loop.size";
 
     @Resource
     private PromotionRedisDB promotionRedisDB;
@@ -228,8 +228,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 String lotteryKey = "";
                 String awardJsonStr = "";
                 BuyerWinningRecordDTO winningRecordDTO = null;
-                int maxLoopSize = StringUtils.isEmpty(lotteryMaxLoopSize) ? accuList.size()
-                        : Integer.parseInt(lotteryMaxLoopSize);
+                String maxLoopConf = SysProperties.getProperty(LOTTERY_MAX_LOOP_SIZE);
+                int maxLoopSize = StringUtils.isEmpty(maxLoopConf) ? accuList.size() : Integer.parseInt(maxLoopConf);
                 int loopSize = 0;
 
                 if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,

@@ -28,7 +28,10 @@
   <bean id="insertBuyerBargainRecordScheduleTask" class="cn.htd.promotion.cpc.biz.task.InsertBuyerBargainRecordScheduleTask"/>
   <!-- 保存粉丝中奖记录 -->
   <bean id="updateBuyerWinningRecordScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateBuyerWinningRecordScheduleTask"/>
+<!--   	每日初始化投票值 -->
   	<bean id="promotionAddDailyTask" class="cn.htd.promotion.cpc.biz.task.PromotionAddDailyTask"/>
+<!-- 	初始化 活动redis -->
 	<bean id="promotionClearDailyTask" class="cn.htd.promotion.cpc.biz.task.PromotionClearDailyTask"/>
+<!-- 	处理话费，汇金币 -->
 	<bean id="promotionSyncDbTask" class="cn.htd.promotion.cpc.biz.task.PromotionSyncDbAwardTask"/>
 </beans>

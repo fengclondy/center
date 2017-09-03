@@ -302,6 +302,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  if(promotionBargainInfo == null){
 			  promotionBargainInfo = new PromotionBargainInfoDMO();
 		  }
+		  PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
 	    	//从redis里面获取砍价详情
 	        List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle.
 	        		getRedisBargainInfoList(buyerBargainLaunch.getPromotionId());
@@ -327,6 +328,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	            		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
 	            		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
 	            		promotionBargainInfo.setShowStatusD(p.getShowStatus());
+	            		promotionBargainInfo.setShowStatusD(promotionInfo.getStatus());
 	            		break;
 	            	}
 	            }

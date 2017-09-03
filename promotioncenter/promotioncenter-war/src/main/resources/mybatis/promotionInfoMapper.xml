@@ -515,7 +515,7 @@
   <update id="updatePromotionDealFlag" parameterType="cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO">
     update promotion_info
     <set>
-      deal_flag = #{dealflag,jdbcType=VARCHAR},
+      deal_flag = #{dealFlag,jdbcType=VARCHAR},
       modify_time = now(),
     </set>
     where promotion_id = #{promotionId,jdbcType=VARCHAR}

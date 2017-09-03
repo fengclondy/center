@@ -192,7 +192,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                 "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
                     }
                     accuList = JSON.parseArray(awardPercentStr, PromotionAccumulatyDTO.class);
-                    if (accuList == null || !accuList.isEmpty()) {
+                    if (accuList == null || accuList.isEmpty()) {
                         throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
                                 "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
                     } else if (!"100".equals(accuList.get(accuList.size() - 1).getLevelAmount())) {

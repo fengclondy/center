@@ -44,6 +44,9 @@
 	<select id="getBuyerLaunchBargainInfoByPromotionId" resultMap="BaseResultMap">
 		SELECT * FROM buyer_launch_bargain_info
 		WHERE promotion_id = #{promotionId}
+		<if test="buyerCode != null and buyerCode != ''">
+			AND buyer_code = #{buyerCode}
+		</if>
 	</select>
 	
 	<select id="queryBuyerLaunchBargainInfoNumber" resultType="java.lang.Integer">

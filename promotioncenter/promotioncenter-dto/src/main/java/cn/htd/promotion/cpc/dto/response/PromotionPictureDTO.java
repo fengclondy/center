@@ -7,6 +7,7 @@ import java.util.Date;
  */
 public class PromotionPictureDTO extends GenricResDTO {
 
+	private Long id;
 	/**
 	 * 促销活动编码
 	 */
@@ -47,6 +48,14 @@ public class PromotionPictureDTO extends GenricResDTO {
 	 * 更新时间
 	 */
 	private Date modifyTime;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getPromotionId() {
 		return promotionId;

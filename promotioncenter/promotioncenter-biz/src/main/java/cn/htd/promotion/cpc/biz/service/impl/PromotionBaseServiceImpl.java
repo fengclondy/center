@@ -352,16 +352,20 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 	 * @throws PromotionCenterBusinessException
 	 *             ,Exception
 	 */
-	public PromotionInfoDTO queryPromotionInfo(String promotionId,
+	public PromotionExtendInfoDTO queryPromotionInfo(String promotionId,
 			String... levelCodeArr) throws Exception {
-		PromotionInfoDTO promotionInfo = null;
+		PromotionInfoDTO promotion = new PromotionInfoDTO();
+		PromotionExtendInfoDTO promotionInfo = new PromotionExtendInfoDTO();
 		List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
 		List<String> levelCodeList = null;
-		promotionInfo = promotionInfoDAO.queryById(promotionId);
-		if (promotionInfo == null) {
+		promotion =  promotionInfoDAO.queryById(promotionId);
+		if (promotion == null) {
 			throw new PromotionCenterBusinessException(
 					ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "促销活动不存在");
 		}
+		promotionInfo = promotionInfoExtendDAO.queryById(promotionId);
+
+		promotionInfo.setPromoionInfo(promotion); 
 		if (levelCodeArr != null && levelCodeArr.length > 0) {
 			levelCodeList = new ArrayList<String>();
 			for (String levelCode : levelCodeArr) {

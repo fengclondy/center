@@ -425,6 +425,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		            pai.setPromotionId(padDTO.getPromotionId());
 		            pai.setLevelCode(padDTO.getLevelCode());
 		            PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
+		            pad.setPromotionAccumulaty(padDTO);
 		            promotionAwardList.add(pad);
 				}
 				result.setPromotionAccumulatyList(promotionAwardList);

@@ -428,7 +428,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 					  return result;
 				  }
 				  //判断当前砍价人是否参与过砍价
-				  String s = promotionRedisDB.getHash(Constants.IS_BUYER_BARGAIN, openedId+promotionId+levelCode);
+				  String s = promotionRedisDB.getHash(Constants.IS_BUYER_BARGAIN + promotionId, openedId+promotionId+levelCode+bargainCode);
 				  if(StringUtils.isEmpty(s)){//没有参与过砍价
 					  String bargainPrice = promotionRedisDB.headPop(key);//砍的价格
 					  if(!StringUtils.isEmpty(bargainPrice)){
@@ -463,7 +463,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 						  buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
 						  //为判断是否砍过价做准备
 						  String str = "01";
-						  promotionRedisDB.setHash(Constants.IS_BUYER_BARGAIN, openedId+promotionId+levelCode,str);
+						  promotionRedisDB.setHash(Constants.IS_BUYER_BARGAIN + promotionId , openedId+promotionId+levelCode+bargainCode,str);
 						  result.setCode(ResultCodeEnum.SUCCESS.getCode());
 						  result.setResultMessage("厉害了，砍价成功");
 						  result.setResult(openedId);
@@ -486,4 +486,5 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		}
 		  return result;
 	}
+	
 }

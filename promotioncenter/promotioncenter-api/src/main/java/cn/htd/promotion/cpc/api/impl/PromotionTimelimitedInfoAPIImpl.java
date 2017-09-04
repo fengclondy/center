@@ -339,7 +339,12 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	@Override
 	public ExecuteResult<String> reserveStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
-		stockChangeService.checkAndChangeStock(messageId, seckillInfoReqDTO);
+		try {
+			stockChangeService.checkAndChangeStock(messageId, seckillInfoReqDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 

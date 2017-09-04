@@ -504,6 +504,9 @@
   		<if test="invalidTime != null">
   	 		<![CDATA[AND  effective_time <= #{invalidTime} 	]]>
   		</if>
+  		<if test="promotionId != null" >
+  			and promotion_id not in(#{promotionId} )
+  		</if>
   </select>
     <update id="updatePromotionStatus4InvalidById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
     update promotion_info

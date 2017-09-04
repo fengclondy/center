@@ -365,7 +365,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			
 			// 判断时间段内可有活动上架
 			Integer isUpPromotionFlag = promotionInfoDAO
-					.queryUpPromotionLotteryCount(promotionInfoEditReqDTO.getEffectiveTime(),
+					.queryUpPromotionLotteryCount(null,promotionInfoEditReqDTO.getEffectiveTime(),
 							promotionInfoEditReqDTO.getInvalidTime());
 			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
@@ -438,7 +438,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
 			// 判断时间段内可有活动上架
-			Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionLotteryCount(
+			Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionLotteryCount(promotionInfoEditReqDTO.getPromotionId(),
 					promotionInfoEditReqDTO.getEffectiveTime(), promotionInfoEditReqDTO.getInvalidTime());
 			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
@@ -483,8 +483,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
 			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			 historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
-			 historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+			 historyDTO.setCreateId(promotionInfoEditReqDTO.getModifyId());
+			 historyDTO.setCreateName(promotionInfoEditReqDTO.getModifyName());
 			 promotionStatusHistoryDAO.add(historyDTO);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());

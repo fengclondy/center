@@ -364,6 +364,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
                             buyerWinningRecordDTO = new BuyerWinningRecordDTO();
                             buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
+                            buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
                             while (pushCnt > 0) {
                                 stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
                                 pushCnt--;

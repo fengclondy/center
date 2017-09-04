@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,10 @@ public class UpdateBuyerWinningRecordScheduleTask implements IScheduleTaskDealMu
                     if (dealTargetInfo == null) {
                         continue;
                     }
+                    dealTargetInfo.setCreateId(StringUtils.isNumeric(dealTargetInfo.getBuyerCode()) ? Long
+                            .valueOf(dealTargetInfo.getBuyerCode()) : 0L);
+                    dealTargetInfo.setCreateName(
+                            StringUtils.isEmpty(dealTargetInfo.getBuyerName()) ? "sys" : dealTargetInfo.getBuyerName());
                     buyerWinningRecordDAO.addBuyerWinningRecord(dealTargetInfo);
                     addCount++;
                 } catch (Exception e) {

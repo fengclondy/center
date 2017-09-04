@@ -67,7 +67,8 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	private String modifyName;
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
-	
+	//活动信息
+	private PromotionExtendInfoDTO promotionExtendInfoDTO;
 	//商品图片
 	private List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList;
 	//商品详情
@@ -225,6 +226,12 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	public void setTimelimitedSkuDescribe(
 			TimelimitedSkuDescribeResDTO timelimitedSkuDescribe) {
 		this.timelimitedSkuDescribe = timelimitedSkuDescribe;
+	}
+	public PromotionExtendInfoDTO getPromotionExtendInfoDTO() {
+		return promotionExtendInfoDTO;
+	}
+	public void setPromotionExtendInfoDTO(PromotionExtendInfoDTO promotionExtendInfoDTO) {
+		this.promotionExtendInfoDTO = promotionExtendInfoDTO;
 	}
 	
 	

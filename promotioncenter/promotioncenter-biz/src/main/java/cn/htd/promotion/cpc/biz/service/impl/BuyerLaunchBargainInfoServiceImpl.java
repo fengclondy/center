@@ -181,8 +181,11 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
 		                  "该砍价活动商品参与次数已上限");
 			}
-			bargainInfoDTO.setIsBargainOver(1);
-			Integer bargainLockingStockNumber = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(bargainInfoDTO);
+			BuyerLaunchBargainInfoResDTO stockDTO = new BuyerLaunchBargainInfoResDTO();
+			stockDTO.setPromotionId(bargainInfoDTO.getPromotionId());
+			stockDTO.setLevelCode(bargainInfoDTO.getLevelCode());
+			stockDTO.setIsBargainOver(1);
+			Integer bargainLockingStockNumber = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(stockDTO);
 			if(null != bargainLockingStockNumber && bargainLockingStockNumber.intValue() >= bargainInfoDTO.getGoodsNum()){
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_STOCK.getCode(),
 		                  "砍价商品库存不足");

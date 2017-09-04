@@ -1,42 +1,40 @@
 package cn.htd.promotion.cpc.biz.task;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
+import com.taobao.pamirs.schedule.TaskItemDefine;
+
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
-import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
 import cn.htd.promotion.cpc.common.constants.Constants;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
-import com.taobao.pamirs.schedule.TaskItemDefine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
 /**
  * 根据系统时间、促销活动开始时间、结束时间和促销活动状态修改促销活动状态
  */
-public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
+public class UpdatePromotionStatusTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
 
-	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionBargainStstusScheduleTask.class);
+	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionStatusTask.class);
 
 	@Resource
 	private DictionaryUtils dictionary;
-
-	@Resource
-	private PromotionBargainRedisHandle promotionBargainRedisHandle;
 
 	@Resource
 	private PromotionInfoDAO promotionInfoDAO;

@@ -298,6 +298,20 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	}
 
 	@Override
+	public void setTimelimitedReserveQueue(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception {
+		String promotionId = timelimitedInfoResDTO.getPromotionId();
+		String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_" + promotionId;
+		Long length = promotionRedisDB.getLlen(timeLimitedQueueKey);
+		if (length > 0) {
+			promotionRedisDB.del(timeLimitedQueueKey);
+		}
+		int timelimitedSkuCount = timelimitedInfoResDTO.getTimelimitedSkuCount();
+		for (int i = 0; i < timelimitedSkuCount; i++) {
+			promotionRedisDB.rpush(timeLimitedQueueKey, promotionId);
+		}
+	}
+
+	@Override
 	public TimelimitedInfoResDTO getTimelimitedInfo(String promotionId) throws Exception {
 		String timelimitedStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
 		if (StringUtils.isBlank(timelimitedStr)) {

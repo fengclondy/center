@@ -7,22 +7,18 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
     /**
      * 抽奖人名称
      */
-    @NotEmpty(message = "抽奖人名称不能为空")
     private String buyerName;
     /**
      * 抽奖人电话号码
      */
-    @NotEmpty(message = "抽奖人电话号码不能为空")
     private String buyerTelephone;
     /**
      * 会员店名称
      */
-    @NotEmpty(message = "会员店名称不能为空")
     private String sellerName;
     /**
      * 会员店地址
      */
-    @NotEmpty(message = "会员店地址不能为空")
     private String sellerAddress;
     /**
      * 中奖人姓名

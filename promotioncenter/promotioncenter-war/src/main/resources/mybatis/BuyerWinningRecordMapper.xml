@@ -188,6 +188,9 @@
       <if test="rewardType != null and rewardType != ''">
         reward_type,
       </if>
+      <if test="rewardName != null and rewardName != ''">
+        reward_name,
+      </if>
       <if test="awardValue != null and awardValue != ''">
         award_value,
       </if>
@@ -250,6 +253,9 @@
       </if>
       <if test="rewardType != null and rewardType != ''">
         #{rewardType,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardName != null and rewardName != ''">
+        #{rewardName,jdbcType=VARCHAR},
       </if>
       <if test="awardValue != null and awardValue != ''">
         #{awardValue,jdbcType=VARCHAR},

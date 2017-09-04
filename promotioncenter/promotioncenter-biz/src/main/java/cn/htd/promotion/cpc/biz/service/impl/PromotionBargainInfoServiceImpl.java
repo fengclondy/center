@@ -802,10 +802,10 @@ public class PromotionBargainInfoServiceImpl implements
 					
 					LOGGER.info("accumuList===" + JSON.toJSONString(accumuList));
 					if(null != accumuList && !accumuList.isEmpty()){
-						if(accumuList.size() <= bargainCount){
+						if(accumuList.size() <= resDTO.getBargainType()){
 							resDTO.setNoBargainItemQTY(0);
 						}else{
-							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
+							resDTO.setNoBargainItemQTY(accumuList.size() - resDTO.getBargainType());
 						}
 					}else{
 						resDTO.setNoBargainItemQTY(0);

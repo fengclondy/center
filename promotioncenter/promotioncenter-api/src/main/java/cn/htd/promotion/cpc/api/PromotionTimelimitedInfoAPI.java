@@ -13,15 +13,6 @@ import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 public interface PromotionTimelimitedInfoAPI {
 
 	/**
-	 * 根据商品编码取得秒杀信息
-	 * 
-	 * @param messageId
-	 * @param skuCode
-	 * @return
-	 */
-	public ExecuteResult<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId, String skuCode);
-
-	/**
 	 * 汇掌柜APP - 根据会员编码和促销活动id查询总部秒杀信息
 	 * 
 	 * @param messageId
@@ -30,15 +21,6 @@ public interface PromotionTimelimitedInfoAPI {
 	 */
 	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCodeAndPromotionId(String messageId,
 			String buyerCode, String promotionId);
-
-	/**
-	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀信息
-	 * 
-	 * @param messageId
-	 * @param buyerCode
-	 * @return
-	 */
-	public boolean getPromotionTimelimitedByBuyerCode(String messageId, String buyerCode);
 
 	/**
 	 * 汇掌柜APP - 查询秒杀活动列表
@@ -77,6 +59,11 @@ public interface PromotionTimelimitedInfoAPI {
 	public ExecuteResult<Boolean> checkTimelimitedIsAvailableByBuyerCode(String messageId, String buyerCode,
 			String promotionId);
 
+	
+	
+	
+	
+	
 	/**
 	 * 锁定秒杀库存
 	 * 

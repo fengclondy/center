@@ -794,20 +794,15 @@ public class PromotionBargainInfoServiceImpl implements
 					resDTO.setInvalidTime(promotionInfo.getInvalidTime());
 					resDTO.setStatus(promotionInfo.getStatus());
 					// 已被砍商品数
-					Integer bargainCount = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoCount(promotionInfo.getPromotionId());
-					resDTO.setBargainType(bargainCount == null ? 0
-							: bargainCount.intValue());
+					int bargainCount = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoCount(promotionInfo.getPromotionId());
+					resDTO.setBargainType(bargainCount);
 					// 未被砍商品数量
+					int noBargainCount = 0;
 					List<PromotionAccumulatyDTO> accumuList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfo.getPromotionId(), null);
-					if(null != accumuList && !accumuList.isEmpty()){
-						if(accumuList.size() <= bargainCount){
-							resDTO.setNoBargainItemQTY(0);
-						}else{
-							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
-						}
-					}else{
-						resDTO.setNoBargainItemQTY(0);
+					if(null != accumuList && accumuList.size() > bargainCount){
+						noBargainCount = accumuList.size() - bargainCount;
 					}
+					resDTO.setNoBargainItemQTY(noBargainCount);
 					// 发起砍价人数
 					Integer launchQTY = buyerBargainRecordDAO
 							.queryPromotionBargainJoinQTY(resDTO

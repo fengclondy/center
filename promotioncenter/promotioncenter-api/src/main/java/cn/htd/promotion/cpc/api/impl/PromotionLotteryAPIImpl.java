@@ -1,5 +1,8 @@
 package cn.htd.promotion.cpc.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -37,6 +40,7 @@ import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
@@ -313,6 +317,15 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
     	PromotionExtendInfoDTO  rt = new PromotionExtendInfoDTO();
 		try {
 			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
+			ArrayList templist = (ArrayList) promotionExtendInfoDTO.getPromotionAccumulatyList();
+			List<PromotionAwardInfoDTO> templist1 = new ArrayList<PromotionAwardInfoDTO>();
+			for (int j = 0; j < templist.size(); j++) {
+				
+				PromotionAwardInfoDTO promotionAwardInfoDTO  = JSONObject.toJavaObject(((JSONObject)templist.get(j)),  PromotionAwardInfoDTO.class);
+				templist1.add(promotionAwardInfoDTO);
+			}
+			promotionExtendInfoDTO.setPromotionAccumulatyList(templist1);
+			
 			// 输入DTO的验证
 			ValidateResult validateResult = ValidationUtils.validateEntity(promotionExtendInfoDTO);
 			// 有错误信息时返回错误信息
@@ -337,7 +350,15 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 		PromotionExtendInfoDTO rt = null;
 		try {
 			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
-            // 输入DTO的验证
+			ArrayList templist = (ArrayList) promotionExtendInfoDTO.getPromotionAccumulatyList();
+			List<PromotionAwardInfoDTO> templist1 = new ArrayList<PromotionAwardInfoDTO>();
+			for (int j = 0; j < templist.size(); j++) {
+				
+				PromotionAwardInfoDTO promotionAwardInfoDTO  = JSONObject.toJavaObject(((JSONObject)templist.get(j)),  PromotionAwardInfoDTO.class);
+				templist1.add(promotionAwardInfoDTO);
+			}
+			promotionExtendInfoDTO.setPromotionAccumulatyList(templist1);
+			// 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
             // 有错误信息时返回错误信息
             if (validateResult.isHasErrors()) {

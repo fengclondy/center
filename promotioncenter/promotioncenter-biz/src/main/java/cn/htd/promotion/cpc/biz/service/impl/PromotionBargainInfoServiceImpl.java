@@ -231,6 +231,7 @@ public class PromotionBargainInfoServiceImpl implements
 	public ExecuteResult<PromotionExtendInfoDTO> addPromotionBargainInfo(
 			PromotionExtendInfoDTO promotionExtendInfoDTO)
 			throws PromotionCenterBusinessException {
+		LOGGER.info("MessageId{}:调用PromotionBargainInfoServiceImpl.addPromotionBargainInfo（）方法开始,入参{}",JSON.toJSONString(promotionExtendInfoDTO));
 		ExecuteResult<PromotionExtendInfoDTO> result = new ExecuteResult<PromotionExtendInfoDTO>();
 		try {
 			if (null != promotionExtendInfoDTO.getPromotionAccumulatyList()
@@ -798,6 +799,8 @@ public class PromotionBargainInfoServiceImpl implements
 							: bargainCount.intValue());
 					// 未被砍商品数量
 					List<PromotionAccumulatyDTO> accumuList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfo.getPromotionId(), null);
+					
+					LOGGER.info("accumuList===" + JSON.toJSONString(accumuList));
 					if(null != accumuList && !accumuList.isEmpty()){
 						if(accumuList.size() <= bargainCount){
 							resDTO.setNoBargainItemQTY(0);

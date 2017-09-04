@@ -434,7 +434,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 					  if(!StringUtils.isEmpty(bargainPrice)){
 						  //获取该商品砍完之后的价格
 						  BuyerBargainLaunchReqDTO buyerBargainLaunchReqDTO =new BuyerBargainLaunchReqDTO();
-						  buyerBargainLaunchReqDTO.setGoodsCurrentPrice(new BigDecimal(bargainPrice));
+						  buyerBargainLaunchReqDTO.setGoodsCurrentPrice(goodsCurrentPrice.subtract(new BigDecimal(bargainPrice)));
 						  buyerBargainLaunchReqDTO.setMessageId(messageId);
 						  buyerBargainLaunchReqDTO.setModifyId(111);
 						  buyerBargainLaunchReqDTO.setModifyName(helperName);
@@ -442,7 +442,12 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 						  buyerBargainLaunchReqDTO.setPromotionId(promotionId);
 						  buyerBargainLaunchReqDTO.setLevelCode(levelCode);
 						  buyerBargainLaunchReqDTO.setBargainCode(bargainCode);
-						  buyerBargainLaunchReqDTO.setPromotionId(promotionId);
+						  //队列长度为0或者队列为不存在的时候则说明已经砍完
+						  if(!promotionRedisDB.exists(key)){
+							  //更新发起砍价表
+							  buyerBargainLaunchReqDTO.setBargainOverTime(new Date());
+							  buyerBargainLaunchReqDTO.setIsBargainOver(1);
+						  }
 						  buyerLaunchBargainInfoDAO.updateBuyerLaunchBargainInfo(buyerBargainLaunchReqDTO);
 //						  String buyerBargainLaunchJson = JSON.toJSONString(buyerBargainLaunchReqDTO);
 //						  promotionRedisDB.tailPush(Constants.BUYER_LAUNCH_BARGAIN_INFO, buyerBargainLaunchJson);//从右边插入队列

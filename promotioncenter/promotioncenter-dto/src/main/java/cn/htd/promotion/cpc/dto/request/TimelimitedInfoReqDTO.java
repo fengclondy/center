@@ -54,6 +54,8 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	private Integer timelimitedThreshold;
 	// 单位：分钟
 	private Integer timelimitedValidInterval;
+	// 商品描述
+	private String describeContent;
 
 	// 创建人ID
 	private Long createId;
@@ -81,7 +83,7 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	//商品图片
 	private List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList;
 	//商品详情
-	private TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO;
+	private List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList;
 	
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -228,13 +230,6 @@ public class TimelimitedInfoReqDTO implements Serializable {
 			List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList) {
 		this.timelimitedSkuPictureReqDTOList = timelimitedSkuPictureReqDTOList;
 	}
-	public TimelimitedSkuDescribeReqDTO getTimelimitedSkuDescribeReqDTO() {
-		return timelimitedSkuDescribeReqDTO;
-	}
-	public void setTimelimitedSkuDescribeReqDTO(
-			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO) {
-		this.timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTO;
-	}
 	public PromotionExtendInfoDTO getPromotionExtendInfoDTO() {
 		return promotionExtendInfoDTO;
 	}
@@ -259,6 +254,19 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	}
 	public void setShowStatus(String showStatus) {
 		this.showStatus = showStatus;
+	}
+	public String getDescribeContent() {
+		return describeContent;
+	}
+	public void setDescribeContent(String describeContent) {
+		this.describeContent = describeContent;
+	}
+	public List<TimelimitedSkuDescribeReqDTO> getTimelimitedSkuDescribeReqDTOList() {
+		return timelimitedSkuDescribeReqDTOList;
+	}
+	public void setTimelimitedSkuDescribeReqDTOList(
+			List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList) {
+		this.timelimitedSkuDescribeReqDTOList = timelimitedSkuDescribeReqDTOList;
 	}
 
 	

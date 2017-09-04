@@ -8,7 +8,6 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.marketcenter.consts.MarketCenterCodeConst;
 import cn.htd.promotion.cpc.api.PromotionTimelimitedInfoAPI;
 import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionTimelimitedInfoService;

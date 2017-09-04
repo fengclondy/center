@@ -160,8 +160,8 @@ public class PromotionLotteryAPIImplTestUnit {
 		promotionExtendInfoDTO.setSellerRuleDTO(sellerRuleDTO);
 		luckDrawService.addDrawLotteryInfo(promotionExtendInfoDTO );
 //    	
-//    	PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo("21171606370093");
-//    	luckDrawService.editDrawLotteryInfo(dbo);
+    	PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo("21171606370093");
+    	luckDrawService.editDrawLotteryInfo(dbo);
     }
 //    @Test
 //  @Rollback(false) 

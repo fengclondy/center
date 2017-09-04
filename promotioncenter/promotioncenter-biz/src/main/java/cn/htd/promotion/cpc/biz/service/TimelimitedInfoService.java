@@ -11,11 +11,25 @@ public interface TimelimitedInfoService {
 
 	public void updateTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 
-	public TimelimitedInfoResDTO getSingleTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO,
-			String messageId);
+	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
 
 	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
 			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
+	
+	
+    /**
+     * 异步初始化秒杀活动的Redis数据
+     *
+     * @param timelimitedInfoResDTO
+     */
+    public void initTimelimitedInfoRedisInfoWithThread(TimelimitedInfoResDTO timelimitedInfoResDTO);
+    
+    /**
+     * 初始化秒杀活动的Redis数据
+     *
+     * @param timelimitedInfoResDTO
+     */
+    public void initTimelimitedInfoRedisInfo(TimelimitedInfoResDTO timelimitedInfoResDTO);
 
 	/**
 	 * 保存秒杀活动信息到redis

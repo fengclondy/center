@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.htd.marketcenter.dao.BuyerUseTimelimitedLogDAO">
-  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.BuyerUseTimelimitedLogDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
     <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
@@ -37,7 +37,7 @@
   <sql id="pagination_tail">
     limit #{page.pageOffset} , #{page.rows}
   </sql>
-  <select id="queryUseLogByLockCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog"
+  <select id="queryUseLogByLockCode" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO"
           resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
@@ -47,7 +47,7 @@
     and promotion_id = #{promotionId,jdbcType=VARCHAR}
     and seckill_lock_no = #{seckillLockNo,jdbcType=VARCHAR}
   </select>
-  <select id="queryUseLogByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog"
+  <select id="queryUseLogByCode" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO"
           resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
@@ -96,7 +96,7 @@
       #{modifyTime,jdbcType=TIMESTAMP},
     </trim>
   </insert>
-  <update id="updateUseLogOrderNoByLockCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+  <update id="updateUseLogOrderNoByLockCode" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO">
     update buyer_use_timelimited_log
     <set>
       <if test="orderNo != null and orderNo != ''">
@@ -113,7 +113,7 @@
     and promotion_id = #{promotionId,jdbcType=VARCHAR}
     and seckill_lock_no = #{seckillLockNo,jdbcType=VARCHAR}
   </update>
-  <update id="updateUseLogStatusByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+  <update id="updateUseLogStatusByCode" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO">
     update buyer_use_timelimited_log
     <set>
       use_type = #{useType,jdbcType=VARCHAR},
@@ -163,7 +163,7 @@
       <include refid="pagination_tail"/>
     </if>
   </select>
-  <update id="updateTimelimitedReleaseStockStatus" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+  <update id="updateTimelimitedReleaseStockStatus" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO">
     update buyer_use_timelimited_log
     <set>
       has_released_stock = 1,

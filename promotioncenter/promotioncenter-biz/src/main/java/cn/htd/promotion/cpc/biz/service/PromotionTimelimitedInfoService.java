@@ -16,5 +16,5 @@ public interface PromotionTimelimitedInfoService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId,String skuCode) throws PromotionCenterBusinessException;
+	public List<TimelimitedInfoResDTO> getPromotionTimelimitedInfoByBuyerCode(String messageId,String buyerCode) throws PromotionCenterBusinessException;
 }

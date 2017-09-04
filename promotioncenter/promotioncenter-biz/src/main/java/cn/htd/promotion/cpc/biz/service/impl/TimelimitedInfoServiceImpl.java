@@ -71,7 +71,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
 
 			// 添加商品详情
-			addTimelimitedSkuDescribe(timelimitedInfoReqDTO, currentTime);
+			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
 			// 添加促销活动信息
 			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
@@ -104,12 +104,19 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			timelimitedSkuPictureReqDTO_delete.setModifyName(timelimitedInfoReqDTO.getModifyName());
 			timelimitedSkuPictureReqDTO_delete.setModifyTime(currentTime);
 			timelimitedSkuPictureDAO.pseudoDelete(timelimitedSkuPictureReqDTO_delete);
-
 			// 添加商品活动图片
 			addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
 
-			// 修改商品详情
-			updateTimelimitedSkuDescribe(timelimitedInfoReqDTO, currentTime);
+			// 伪删除商品详情的所有图片
+			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO_delete = new TimelimitedSkuDescribeReqDTO();
+			timelimitedSkuDescribeReqDTO_delete.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
+			timelimitedSkuDescribeReqDTO_delete.setDeleteFlag(Boolean.TRUE);
+			timelimitedSkuDescribeReqDTO_delete.setModifyId(timelimitedInfoReqDTO.getModifyId());
+			timelimitedSkuDescribeReqDTO_delete.setModifyName(timelimitedInfoReqDTO.getModifyName());
+			timelimitedSkuDescribeReqDTO_delete.setModifyTime(currentTime);
+			timelimitedSkuDescribeDAO.pseudoDelete(timelimitedSkuDescribeReqDTO_delete);
+			// 添加商品详情
+			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
 			// //修改促销活动信息
 			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
@@ -138,11 +145,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureResDTOList = timelimitedSkuPictureDAO
 					.selectByPromotionId(promotionId);
 			// 查询详情信息
-			TimelimitedSkuDescribeResDTO timelimitedSkuDescribeResDTO = timelimitedSkuDescribeDAO
+			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeResDTOList = timelimitedSkuDescribeDAO
 					.selectByPromotionId(promotionId);
 
 			timelimitedInfoResDTO.setTimelimitedSkuPictureList(timelimitedSkuPictureResDTOList);
-			timelimitedInfoResDTO.setTimelimitedSkuDescribe(timelimitedSkuDescribeResDTO);
+			timelimitedInfoResDTO.setTimelimitedSkuDescribeList(timelimitedSkuDescribeResDTOList);
+
 
 			// //修改促销活动信息
 			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
@@ -216,45 +224,39 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		}
 	}
 
+	
 	/**
-	 * 添加商品详情
+	 * 批量添加添加商品详情图片
 	 * 
 	 * @param timelimitedInfoReqDTO
 	 * @param currentTime
 	 */
-	public void addTimelimitedSkuDescribe(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
-		TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = timelimitedInfoReqDTO
-				.getTimelimitedSkuDescribeReqDTO();
-
-		timelimitedSkuDescribeReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
-		timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
-		timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
-		timelimitedSkuDescribeReqDTO.setCreateId(timelimitedInfoReqDTO.getCreateId());
-		timelimitedSkuDescribeReqDTO.setCreateName(timelimitedInfoReqDTO.getCreateName());
-		timelimitedSkuDescribeReqDTO.setCreateTime(currentTime);
-		timelimitedSkuDescribeReqDTO.setModifyId(timelimitedInfoReqDTO.getModifyId());
-		timelimitedSkuDescribeReqDTO.setModifyName(timelimitedInfoReqDTO.getModifyName());
-		timelimitedSkuDescribeReqDTO.setModifyTime(currentTime);
-
-		timelimitedSkuDescribeDAO.insert(timelimitedSkuDescribeReqDTO);
+	private void addTimelimitedSkuDescribeList(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
+		
+		List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList = timelimitedInfoReqDTO.getTimelimitedSkuDescribeReqDTOList();
+		if(null != timelimitedSkuDescribeReqDTOList && timelimitedSkuDescribeReqDTOList.size() >0){
+			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = null;
+			for (int i = 0; i < timelimitedSkuDescribeReqDTOList.size(); i++) {
+				timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTOList.get(i);
+				timelimitedSkuDescribeReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
+				timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
+				timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
+				timelimitedSkuDescribeReqDTO.setPictureUrl(timelimitedSkuDescribeReqDTO.getPictureUrl());
+				timelimitedSkuDescribeReqDTO.setSortNum(i+1);
+				timelimitedSkuDescribeReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
+				timelimitedSkuDescribeReqDTO.setCreateName(timelimitedInfoReqDTO.getModifyName());
+				timelimitedSkuDescribeReqDTO.setCreateTime(currentTime);
+				timelimitedSkuDescribeReqDTO.setModifyId(timelimitedInfoReqDTO.getModifyId());
+				timelimitedSkuDescribeReqDTO.setModifyName(timelimitedInfoReqDTO.getModifyName());
+				timelimitedSkuDescribeReqDTO.setModifyTime(currentTime);
+				timelimitedSkuDescribeDAO.insert(timelimitedSkuDescribeReqDTO);
+			}
+		}
+		
 	}
 
-	/**
-	 * 修改商品详情
-	 * 
-	 * @param timelimitedInfoReqDTO
-	 * @param currentTime
-	 */
-	public void updateTimelimitedSkuDescribe(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
-		TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = timelimitedInfoReqDTO
-				.getTimelimitedSkuDescribeReqDTO();
-
-		timelimitedSkuDescribeReqDTO.setModifyId(timelimitedInfoReqDTO.getModifyId());
-		timelimitedSkuDescribeReqDTO.setModifyName(timelimitedInfoReqDTO.getModifyName());
-		timelimitedSkuDescribeReqDTO.setModifyTime(currentTime);
-
-		timelimitedSkuDescribeDAO.updateByPrimaryKeySelective(timelimitedSkuDescribeReqDTO);
-	}
+	
+	
 
 	@Override
 	public void setTimelimitedInfo2Redis(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception {
@@ -295,6 +297,20 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 				String.valueOf(timelimitedInfoResDTO.getTimelimitedSkuCount()));
 		resultMap.put(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT, "0");
 		promotionRedisDB.setHash(timelimitedResultKey, resultMap);
+	}
+
+	@Override
+	public void setTimelimitedReserveQueue(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception {
+		String promotionId = timelimitedInfoResDTO.getPromotionId();
+		String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_" + promotionId;
+		Long length = promotionRedisDB.getLlen(timeLimitedQueueKey);
+		if (length > 0) {
+			promotionRedisDB.del(timeLimitedQueueKey);
+		}
+		int timelimitedSkuCount = timelimitedInfoResDTO.getTimelimitedSkuCount();
+		for (int i = 0; i < timelimitedSkuCount; i++) {
+			promotionRedisDB.rpush(timeLimitedQueueKey, promotionId);
+		}
 	}
 
 	@Override

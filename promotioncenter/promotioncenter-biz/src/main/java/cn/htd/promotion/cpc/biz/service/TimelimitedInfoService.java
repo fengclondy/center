@@ -26,6 +26,14 @@ public interface TimelimitedInfoService {
 	public void setTimelimitedInfo2Redis(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception;
 
 	/**
+	 * 创建秒杀活动时设置秒杀活动锁定库存队列
+	 * 
+	 * @param timelimitedInfoResDTO
+	 * @throws Exception
+	 */
+	public void setTimelimitedReserveQueue(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception;
+
+	/**
 	 * 从redis获取秒杀互动信息
 	 * 
 	 * @param promotionId

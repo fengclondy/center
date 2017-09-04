@@ -18,10 +18,12 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
@@ -47,6 +49,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
@@ -72,7 +75,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
 	@Resource
 	private PromotionAwardInfoDAO promotionAwardInfoDAO;
-
+    @Resource
+    private PromotionInfoDAO promotionInfoDAO;
 	@Resource
 	private PromotionBaseService baseService;
 
@@ -114,7 +118,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}异常信息：{}",
 					messageId, requestDTO.getOrgId(), w.toString());
 		}
 		return result;
@@ -158,7 +162,6 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 			String buyerNo = request.getMemberNo();
 			if (StringUtils.isNotEmpty(buyerNo)) {
-				result.setRemainingTimes(remainingTimes);
 				// 粉丝活动粉丝当日次数信息
 				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO
 						+ "_" + promotionId + "_" + buyerNo;
@@ -188,7 +191,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 							PromotionCodeEnum.BUYER_HAS_TOP_EXTRA_TIMES
 									.getCode());
 
+				}else{
+					String memberDayLotteryTimes = promotionRedisDB.getHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
+					if(StringUtils.isNotEmpty(memberDayLotteryTimes)){
+						remainingTimes = Integer.valueOf(memberDayLotteryTimes);
+					}
 				}
+				result.setRemainingTimes(remainingTimes);
 				String sellerWinedTimesKey = RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES
 						+ "_" + promotionId + "_" + request.getOrgId();
 				boolean sellerWinedTimes = promotionRedisDB
@@ -205,7 +215,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityPage出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityPage出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -240,7 +250,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityRulePage出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityRulePage出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -302,7 +312,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.shareLinkHandle出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.shareLinkHandle出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -333,7 +343,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.queryWinningRecord出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.queryWinningRecord出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -352,6 +362,32 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if(StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())){
 				promotionInfoEditReqDTO.setPromotionType("21");
 			}
+			
+			// 判断时间段内可有活动上架
+			Integer isUpPromotionFlag = promotionInfoDAO
+					.queryUpPromotionLotteryCount(promotionInfoEditReqDTO.getEffectiveTime(),
+							promotionInfoEditReqDTO.getInvalidTime());
+			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+						"该活动有效期和其他活动重叠，请重新设置");
+			}
+			List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+			if (plist != null && plist.size() > 8) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"奖项设置已经到达最大值！");
+			}
+			int allq = 0;
+			String qt = "";
+			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
+				qt = promotionAccumulatyDTO.getQuantifierType();
+				if (!StringUtils.isEmpty(qt)) {
+					allq = allq + Integer.parseInt(qt);
+				}
+			}
+			if (allq != 100) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
+			}
 			rtobj = promotionBaseService
 					.insertPromotionInfo(promotionInfoEditReqDTO);
 			if (rtobj.getPromotionAccumulatyList() != null) {
@@ -367,23 +403,23 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				promotionLotteryCommonService
 						.initPromotionLotteryRedisInfoWithThread(rtobj);
 			}
-			// PromotionStatusHistoryDTO historyDTO = new
-			// PromotionStatusHistoryDTO();
-			// historyDTO.setPromotionId(rtobj.getPromotionId());
-			// historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-			// DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
-			// historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
-			// promotionStatusHistoryDAO.add(historyDTO);
+			 PromotionStatusHistoryDTO historyDTO = new
+			 PromotionStatusHistoryDTO();
+			 historyDTO.setPromotionId(rtobj.getPromotionId());
+			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+			 historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+			 promotionStatusHistoryDAO.add(historyDTO);
 
 			rtobj.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			rtobj.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			rtobj.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			rtobj.setResponseCode(e.getCode());
+			rtobj.setResponseMsg(e.getMessage());
 		} catch (Exception e) {
 			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			rtobj.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
@@ -401,6 +437,30 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				throw new PromotionCenterBusinessException(
 						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 			}
+			// 判断时间段内可有活动上架
+			Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionLotteryCount(
+					promotionInfoEditReqDTO.getEffectiveTime(), promotionInfoEditReqDTO.getInvalidTime());
+			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+						"该活动有效期和其他活动重叠，请重新设置");
+			}
+			List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+			if (plist != null && plist.size() > 8) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"奖项设置已经到达最大值！");
+			}
+			int allq = 0;
+			String qt = "";
+			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
+				qt = promotionAccumulatyDTO.getQuantifierType();
+				if (!StringUtils.isEmpty(qt)) {
+					allq = allq + Integer.parseInt(qt);
+				}
+			}
+			if (allq != 100) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
+			}
 			result = promotionBaseService
 					.updatePromotionInfo(promotionInfoEditReqDTO);
 			if (result.getPromotionAccumulatyList() != null) {
@@ -415,22 +475,22 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				promotionLotteryCommonService
 						.initPromotionLotteryRedisInfoWithThread(result);
 			}
-			// PromotionStatusHistoryDTO historyDTO = new
-			// PromotionStatusHistoryDTO();
-			// historyDTO.setPromotionId(rtobj.getPromotionId());
-			// historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-			// DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
-			// historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
-			// promotionStatusHistoryDAO.add(historyDTO);
+			 PromotionStatusHistoryDTO historyDTO = new
+			 PromotionStatusHistoryDTO();
+			 historyDTO.setPromotionId(result.getPromotionId());
+			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+			 historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+			 promotionStatusHistoryDAO.add(historyDTO);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(e.getCode());
+			result.setResponseMsg(e.getMessage());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
@@ -467,8 +527,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(e.getCode());
+			result.setResponseMsg(e.getMessage());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
@@ -551,7 +611,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.participateActivitySellerInfo出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.participateActivitySellerInfo出现异常 request：{}异常信息：{}",
 					messageId, messageId, w.toString());
 		}
 		return result;

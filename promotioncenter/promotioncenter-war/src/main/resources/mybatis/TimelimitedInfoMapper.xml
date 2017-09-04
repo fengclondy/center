@@ -29,6 +29,7 @@
 			jdbcType="INTEGER" />
 		<result column="timelimited_valid_interval" property="timelimitedValidInterval"
 			jdbcType="INTEGER" />
+		<result column="describe_content" property="describeContent" jdbcType="LONGVARCHAR" />
 		<result column="create_id" property="createId" jdbcType="BIGINT" />
 		<result column="create_name" property="createName" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -50,6 +51,7 @@
 		timelimited_sku_count,
 		timelimited_threshold,
 		timelimited_valid_interval,
+		describe_content,
 		create_id, create_name, create_time,
 		modify_id, modify_name, modify_time
 		)
@@ -67,6 +69,7 @@
 		#{timelimitedSkuCount,jdbcType=INTEGER},
 		#{timelimitedThreshold,jdbcType=INTEGER},
 		#{timelimitedValidInterval,jdbcType=INTEGER},
+		#{describeContent,jdbcType=LONGVARCHAR},
 		#{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP},
 		#{modifyId,jdbcType=BIGINT},
@@ -128,6 +131,9 @@
 			</if>
 			<if test="timelimitedValidInterval != null">
 				timelimited_valid_interval,
+			</if>
+			<if test="describeContent != null">
+				describe_content,
 			</if>
 			<if test="createId != null">
 				create_id,
@@ -200,6 +206,9 @@
 			<if test="timelimitedValidInterval != null">
 				#{timelimitedValidInterval,jdbcType=INTEGER},
 			</if>
+			<if test="describeContent != null">
+				#{describeContent,jdbcType=LONGVARCHAR},
+			</if>
 			<if test="createId != null">
 				#{createId,jdbcType=BIGINT},
 			</if>
@@ -254,6 +263,7 @@
 		#{timelimitedThreshold,jdbcType=INTEGER},
 		timelimited_valid_interval =
 		#{timelimitedValidInterval,jdbcType=INTEGER},
+		describe_content=#{describeContent,jdbcType=LONGVARCHAR},
 		create_id =
 		#{createId,jdbcType=BIGINT},
 		create_name =
@@ -329,6 +339,9 @@
 				timelimited_valid_interval =
 				#{timelimitedValidInterval,jdbcType=INTEGER},
 			</if>
+			<if test="describeContent != null">
+				describe_content=#{describeContent,jdbcType=LONGVARCHAR},
+			</if>
 			<if test="createId != null">
 				create_id = #{createId,jdbcType=BIGINT},
 			</if>
@@ -367,7 +380,9 @@
 	sku_pic_url, sku_cost_price,
 	sku_timelimited_price,
 	timelimited_sku_count, timelimited_threshold,
-	timelimited_valid_interval, create_id, create_name, create_time,
+	timelimited_valid_interval, 
+	describe_content,
+	create_id, create_name, create_time,
 	modify_id, modify_name,
 	modify_time
 	</sql>

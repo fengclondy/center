@@ -1,8 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -23,14 +21,12 @@ import cn.htd.promotion.cpc.dto.request.DrawLotteryWinningReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.GenricResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service("promotionLotteryService")
@@ -109,6 +105,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String ticket = requestDTO.getTicket();
         String recordJsonStr = "";
         BuyerWinningRecordDTO responseDTO = new BuyerWinningRecordDTO();
+        long partakeTimes = 0L;
 
         responseDTO.setResponseCode(ResultCodeEnum.LOTTERY_NO_RESULT.getCode());
         responseDTO.setResponseMsg(ResultCodeEnum.LOTTERY_NO_RESULT.getMsg());
@@ -122,6 +119,10 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                         "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 领奖编号:" + ticket
                                 + " 抽奖结果异常 " + recordJsonStr);
             }
+            partakeTimes = Long.valueOf(promotionRedisDB
+                    .getHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
+                            RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES));
+            responseDTO.setRemainLotteryChance(partakeTimes < 0 ? 0 : partakeTimes);
             responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
             responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         }

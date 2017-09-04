@@ -16,8 +16,10 @@ public class TimelimitedSkuDescribeResDTO implements Serializable {
 	private String promotionId;
 	// 层级编码
 	private String levelCode;
-	// 商品描述
-	private String describeContent;
+	// 商品图片URL
+	private String pictureUrl;
+	// 排序号,排序号最小的作为主图，从1开始
+	private Integer sortNum;
 	// 删除标记
 	private Boolean deleteFlag;
 	// 创建人ID
@@ -51,12 +53,6 @@ public class TimelimitedSkuDescribeResDTO implements Serializable {
 	}
 	public void setLevelCode(String levelCode) {
 		this.levelCode = levelCode;
-	}
-	public String getDescribeContent() {
-		return describeContent;
-	}
-	public void setDescribeContent(String describeContent) {
-		this.describeContent = describeContent;
 	}
 	public Boolean getDeleteFlag() {
 		return deleteFlag;
@@ -99,6 +95,18 @@ public class TimelimitedSkuDescribeResDTO implements Serializable {
 	}
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+	public String getPictureUrl() {
+		return pictureUrl;
+	}
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
+	}
+	public Integer getSortNum() {
+		return sortNum;
+	}
+	public void setSortNum(Integer sortNum) {
+		this.sortNum = sortNum;
 	}
 	
 

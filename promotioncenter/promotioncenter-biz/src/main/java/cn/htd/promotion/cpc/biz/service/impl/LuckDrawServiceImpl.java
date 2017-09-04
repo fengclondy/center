@@ -286,14 +286,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					//粉丝分享获得的抽奖次数= 粉丝分享次数 * 粉丝分享一次获得的抽奖次数
 					if(StringUtils.isNotEmpty(buyerShareExtraPartakeTimes) && StringUtils.isNotEmpty(memberShareTimes)){
 						int memberShareGetTimes = Integer.valueOf(buyerShareExtraPartakeTimes) * Integer.valueOf(memberShareTimes);
-						if(memberShareGetTimes > Integer.valueOf(buyerTopExtraPartakeTime)){
+						if(memberShareGetTimes < Integer.valueOf(buyerTopExtraPartakeTime)){
+							promotionRedisDB.incrHashBy(lotteryBuyerTimes,
+									RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,Long.valueOf(buyerShareExtraPartakeTimes));
+						}else{
 							promotionRedisDB.setHash(lotteryBuyerTimes,
 									RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES,
 									PromotionCodeEnum.BUYER_NOT_HAS_TOP_EXTRA_TIMES
 											.getCode());
-						}else{
-							promotionRedisDB.incrHashBy(lotteryBuyerTimes,
-									RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,Long.valueOf(buyerShareExtraPartakeTimes));
 						}
 					}
 				}

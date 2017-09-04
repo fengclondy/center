@@ -17,6 +17,7 @@
     <select id="getBuyerBargainRecordByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
     	select * from buyer_bargain_record
     	where bargain_code = #{bargainCode}
+    	order by create_time desc
 	</select>
 	
 	<select id="getThisPersonIsBargain" resultMap="BaseResultMap"  parameterType="map">

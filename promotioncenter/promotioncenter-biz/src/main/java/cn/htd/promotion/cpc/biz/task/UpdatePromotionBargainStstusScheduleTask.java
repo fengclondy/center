@@ -6,7 +6,9 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
+import cn.htd.promotion.cpc.common.constants.Constants;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 
@@ -41,6 +43,9 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 
 	@Resource
 	private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+	
+	@Resource
+	private PromotionRedisDB promotionRedisDB;
 
 	@Override
 	public Comparator<PromotionInfoDTO> getComparator() {
@@ -195,6 +200,8 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 
 		promotionInfoDAO.updatePromotionStatusById(promotionInfo);
 		promotionStatusHistoryDAO.add(historyDTO);
+		//将过期的信息从redis删除掉
+		promotionRedisDB.del(Constants.IS_BUYER_BARGAIN + promotionInfo.getPromotionId());
 	}
 
 }

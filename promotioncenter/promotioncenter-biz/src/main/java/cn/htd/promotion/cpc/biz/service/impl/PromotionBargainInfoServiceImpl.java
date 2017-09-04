@@ -792,8 +792,12 @@ public class PromotionBargainInfoServiceImpl implements
 							.queryPromotionBargainStockSum(resDTO
 									.getPromotionId());
 					if (joinTypeQTY != null && bargainQTY != null) {
-						resDTO.setNoBargainItemQTY(bargainQTY.intValue()
-								- joinTypeQTY.intValue());
+						int resultQTY = bargainQTY.intValue() - joinTypeQTY.intValue();
+						if(resultQTY <= 0) {
+							resDTO.setNoBargainItemQTY(0);
+						}else{
+							resDTO.setNoBargainItemQTY(resultQTY);
+						}
 					} else {
 						resDTO.setNoBargainItemQTY(0);
 					}

@@ -73,4 +73,18 @@ public class PromotionCenterConst {
 	public static final String VMS_TIMELIMITED_RESULT_ERROR = "15304";
 	// *******************************************************
 
+	//秒杀活动编码不正确
+	public static final String TIMELIMITED_RESULT_PROMOTION_ID_ERROR = "15401";
+	//秒杀活动未开始
+	public static final String TIMELIMITED_RESULT_PROMOTION_NO_STAET_ERROR = "15402";
+	//秒杀活动已经结束
+	public static final String TIMELIMITED_RESULT_PROMOTION_HAS_ENDED_ERROR = "15403";
+	//秒杀活动进行中
+	public static final String TIMELIMITED_RESULT_PROMOTION_IS_PROCESSING_ERROR = "15404";
+	//秒杀活动未启用
+	public static final String TIMELIMITED_RESULT_PROMOTION_IS_DISABLE_ERROR = "15405";
+	//会员没有秒杀权限
+	public static final String TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR = "15406";
+	//会员有权限参加秒杀活动
+	public static final String TIMELIMITED_RESULT_PROMOTION_PERMISSION = "15407";
 }

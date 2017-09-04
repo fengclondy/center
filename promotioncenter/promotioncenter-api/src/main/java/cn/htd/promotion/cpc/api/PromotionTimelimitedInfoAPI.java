@@ -63,4 +63,16 @@ public interface PromotionTimelimitedInfoAPI {
 	 */
 	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId, String promotionId,
 			String buyerCode, String buyerGrade);
+	
+	/**
+	 * 汇掌柜APP -  根据会员编码查询是否有总部秒杀是否有效
+	 * 
+	 * @param messageId
+	 * @param buyerCode
+	 * @param promotionId
+	 * @return
+	 */
+	public ExecuteResult<Boolean> checkTimelimitedIsAvailableByBuyerCode(String messageId, String buyerCode,String promotionId);
+
+	
 }

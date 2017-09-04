@@ -736,6 +736,7 @@ public class PromotionBargainInfoServiceImpl implements
 					for (PromotionBargainInfoResDTO res : promotionBargainList) {
 						res.setTemplateFlag(Integer.parseInt(dto
 								.getTemlateFlag()));
+						res.setUpFlag("");
 					}
 					promotionBargainRedisHandle
 							.addBargainInfo2Redis(promotionBargainList);
@@ -784,15 +785,16 @@ public class PromotionBargainInfoServiceImpl implements
 							: bargainCount.intValue());
 					// 未被砍商品数量
 					List<PromotionAccumulatyDTO> accumuList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfo.getPromotionId(), null);
-					if(null != accumuList && !accumuList.isEmpty()){
-						if(accumuList.size() <= bargainCount){
-							resDTO.setNoBargainItemQTY(0);
-						}else{
-							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
-						}
-					}else{
-						resDTO.setNoBargainItemQTY(0);
-					}
+//					if(null != accumuList && !accumuList.isEmpty()){
+//						if(accumuList.size() <= bargainCount){
+//							resDTO.setNoBargainItemQTY(0);
+//						}else{
+//							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
+//						}
+//					}else{
+//						resDTO.setNoBargainItemQTY(0);
+//					}
+					resDTO.setNoBargainItemQTY(0);
 					// 发起砍价人数
 					Integer launchQTY = buyerBargainRecordDAO
 							.queryPromotionBargainJoinQTY(resDTO

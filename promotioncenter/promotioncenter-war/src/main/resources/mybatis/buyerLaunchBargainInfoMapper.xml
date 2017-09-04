@@ -185,9 +185,9 @@
 	</select>
 	
 	<select id="queryBuyerLaunchBargainInfoCount" resultType="java.lang.Integer">
-		select COUNT(0) from buyer_launch_bargain_info 
-		where promotion_id = #{promotionId}
-		group by level_code
+		select COUNT(0) FROM (SELECT blbi.* FROM buyer_launch_bargain_info AS blbi
+		where blbi.promotion_id = #{promotionId}
+		group by level_code) t
 	</select>
 	
 </mapper>

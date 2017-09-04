@@ -18,8 +18,8 @@
       </map>
     </property>
   </bean>
-  <!-- 更新砍价状态定时操作 -->
-  <bean id="updatePromotionBargainStstusScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdatePromotionBargainStstusScheduleTask"/>
+  <!-- 更新促销状态定时操作 -->
+  <bean id="updatePromotionStatusTask" class="cn.htd.promotion.cpc.biz.task.UpdatePromotionStatusTask"/>
   <!-- 清除redis中关于砍价活动的相关信息 -->
   <bean id="cleanPromotionBargainScheduleTask" class="cn.htd.promotion.cpc.biz.task.CleanPromotionBargainScheduleTask"/>
   <!-- 保存粉丝中奖记录 -->

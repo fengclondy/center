@@ -22,6 +22,7 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
@@ -72,7 +73,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
 	@Resource
 	private PromotionAwardInfoDAO promotionAwardInfoDAO;
-
+    @Resource
+    private PromotionInfoDAO promotionInfoDAO;
 	@Resource
 	private PromotionBaseService baseService;
 
@@ -357,13 +359,27 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			Integer isUpPromotionFlag = promotionInfoDAO
 					.queryUpPromotionLotteryCount(promotionInfoEditReqDTO.getEffectiveTime(),
 							promotionInfoEditReqDTO.getInvalidTime());
-			if (null != isUpPromotionFlag
-					&& isUpPromotionFlag.intValue() > 0) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
 						"该活动有效期和其他活动重叠，请重新设置");
 			}
-			
+			List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+			if (plist != null && plist.size() > 8) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"奖项设置已经到达最大值！");
+			}
+			int allq = 0;
+			String qt = "";
+			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
+				qt = promotionAccumulatyDTO.getQuantifierType();
+				if (!StringUtils.isEmpty(qt)) {
+					allq = allq + Integer.parseInt(qt);
+				}
+			}
+			if (allq != 100) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
+			}
 			rtobj = promotionBaseService
 					.insertPromotionInfo(promotionInfoEditReqDTO);
 			if (rtobj.getPromotionAccumulatyList() != null) {
@@ -412,6 +428,30 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if (promotionInfoEditReqDTO == null) {
 				throw new PromotionCenterBusinessException(
 						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+			}
+			// 判断时间段内可有活动上架
+			Integer isUpPromotionFlag = promotionInfoDAO.queryUpPromotionLotteryCount(
+					promotionInfoEditReqDTO.getEffectiveTime(), promotionInfoEditReqDTO.getInvalidTime());
+			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+						"该活动有效期和其他活动重叠，请重新设置");
+			}
+			List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+			if (plist != null && plist.size() > 8) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"奖项设置已经到达最大值！");
+			}
+			int allq = 0;
+			String qt = "";
+			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
+				qt = promotionAccumulatyDTO.getQuantifierType();
+				if (!StringUtils.isEmpty(qt)) {
+					allq = allq + Integer.parseInt(qt);
+				}
+			}
+			if (allq != 100) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+						"设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
 			}
 			result = promotionBaseService
 					.updatePromotionInfo(promotionInfoEditReqDTO);

@@ -5,15 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
@@ -35,7 +32,6 @@ import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO;
@@ -80,15 +76,15 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			
 			// 添加促销活动信息 
 			PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfoReqDTO.getPromotionExtendInfoDTO();
-			PromotionExtendInfoDTO returnPromotionExtendInfo = baseService.insertPromotionInfo(promotionExtendInfoDTO);
-			if (null == returnPromotionExtendInfo || null == returnPromotionExtendInfo.getPromotionId() || "".equals(returnPromotionExtendInfo.getPromotionId().trim())) {
+			PromotionExtendInfoDTO promotionExtendInfoReturn = baseService.insertPromotionInfo(promotionExtendInfoDTO);
+			if (null == promotionExtendInfoReturn || null == promotionExtendInfoReturn.getPromotionId() || "".equals(promotionExtendInfoReturn.getPromotionId().trim())) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),"新建秒杀促销活动失败！");
 			}
 			
 			//设置活动编码
-    		timelimitedInfoReqDTO.setPromotionId(returnPromotionExtendInfo.getPromotionId());
+    		timelimitedInfoReqDTO.setPromotionId(promotionExtendInfoReturn.getPromotionId());
     		//设置层级编码
-    		List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList =  returnPromotionExtendInfo.getPromotionAccumulatyList();
+    		List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList =  promotionExtendInfoReturn.getPromotionAccumulatyList();
     		if(null != promotionAccumulatyDTOList && promotionAccumulatyDTOList.size() == 1){
     			timelimitedInfoReqDTO.setLevelCode(promotionAccumulatyDTOList.get(0).getLevelCode());
     		}else{
@@ -107,7 +103,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 			
 			// 异步初始化秒杀活动的Redis数据
-			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(returnPromotionExtendInfo.getPromotionId(),messageId);
+			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(promotionExtendInfoReturn.getPromotionId(),messageId);
 			initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
 
 		} catch (Exception e) {
@@ -123,10 +119,25 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		try {
 			Calendar calendar = Calendar.getInstance();
 			Date currentTime = calendar.getTime();
+			
+			// 修改促销活动信息
+			PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfoReqDTO.getPromotionExtendInfoDTO();
+			PromotionExtendInfoDTO promotionExtendInfoReturn = baseService.updatePromotionInfo(promotionExtendInfoDTO);
+			if (null == promotionExtendInfoReturn || null == promotionExtendInfoReturn.getPromotionId() || "".equals(promotionExtendInfoReturn.getPromotionId().trim())) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),"修改秒杀促销活动失败！");
+			}
+			
+    		//设置层级编码
+    		List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList =  promotionExtendInfoReturn.getPromotionAccumulatyList();
+    		if(null != promotionAccumulatyDTOList && promotionAccumulatyDTOList.size() == 1){
+    			timelimitedInfoReqDTO.setLevelCode(promotionAccumulatyDTOList.get(0).getLevelCode());
+    		}else{
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),"查询秒杀促销活动层级失败！");
+    		}
 
 			// 修改秒杀商品
 			timelimitedInfoReqDTO.setModifyTime(currentTime);
-			timelimitedInfoDAO.updateByPrimaryKeySelective(timelimitedInfoReqDTO);
+			timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
 			// 伪删除商品活动的所有图片
 			TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO_delete = new TimelimitedSkuPictureReqDTO();
@@ -150,10 +161,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			// 添加商品详情
 			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
-			// //修改促销活动信息
-			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
-			// timelimitedInfoReqDTO.getPromotionInfoEditReqDTO();
-			// baseService.editPromotionInfo(PromotionInfoEditReqDTO);
+
+			// 异步初始化秒杀活动的Redis数据
+			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(timelimitedInfoReqDTO.getPromotionId(),messageId);
+			initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【updateTimelimitedInfo】报错：{}", messageId, e.toString());

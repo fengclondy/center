@@ -245,9 +245,7 @@ public class TimelimitedTestUnit {
     		 * @param platCode 促销活动类型 1:优惠券，2:秒杀，3:扭蛋，4:砍价，5:总部秒杀
     		 * @return
     		 */
-    		String promotionId = "5171620000132";
-    		
-    		String levelCode = "5171620000132";
+    		String promotionId = "23172108180146";
             
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
@@ -274,9 +272,7 @@ public class TimelimitedTestUnit {
     		//设置详情
     		timelimitedInfoReqDTO.setTimelimitedSkuDescribeReqDTOList(TimelimitedSkuDescribeReqDTOList);
 
-    		timelimitedInfoReqDTO.setTimelimitedId(5L);
     		timelimitedInfoReqDTO.setPromotionId(promotionId);
-    		timelimitedInfoReqDTO.setLevelCode(levelCode);
 //    		timelimitedInfoReqDTO.setSellerCode("1001");
 //    		timelimitedInfoReqDTO.setItemId(20001L);
 //    		timelimitedInfoReqDTO.setSkuCode("200001");
@@ -306,6 +302,15 @@ public class TimelimitedTestUnit {
 
         	timelimitedInfoReqDTO.setModifyId(userId);
         	timelimitedInfoReqDTO.setModifyName(userName);
+        	
+        	//设置活动信息（通用）
+        	PromotionExtendInfoDTO promotionExtendInfoDTO = new PromotionExtendInfoDTO();
+        	promotionExtendInfoDTO.setPromotionId(promotionId);
+        	promotionExtendInfoDTO.setModifyId(userId);
+        	promotionExtendInfoDTO.setModifyName(userName);
+        	setPromotionParam(promotionExtendInfoDTO);
+        	
+        	timelimitedInfoReqDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
             
             timelimitedInfoService.updateTimelimitedInfo(timelimitedInfoReqDTO, messageId);
             

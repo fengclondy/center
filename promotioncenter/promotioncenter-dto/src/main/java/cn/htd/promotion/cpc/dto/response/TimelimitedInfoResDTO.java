@@ -69,6 +69,14 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	private Date modifyTime;
 	// 商品描述
 	private String describeContent;
+	
+	//活动开始时间
+    private Date invalidTimeStr;
+    //活动结束时间
+    private Date effectiveTimeStr;
+    //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+    private String showStatus;
+    
 	//活动信息
 	private PromotionExtendInfoDTO promotionExtendInfoDTO;
 	//商品图片
@@ -243,6 +251,24 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	}
 	
 	
+	public Date getInvalidTimeStr() {
+		return invalidTimeStr;
+	}
+	public void setInvalidTimeStr(Date invalidTimeStr) {
+		this.invalidTimeStr = invalidTimeStr;
+	}
+	public Date getEffectiveTimeStr() {
+		return effectiveTimeStr;
+	}
+	public void setEffectiveTimeStr(Date effectiveTimeStr) {
+		this.effectiveTimeStr = effectiveTimeStr;
+	}
+	public String getShowStatus() {
+		return showStatus;
+	}
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
+	}
 	public void setTimelimitedInfo(TimelimitedInfoResDTO timelimitedInfo) {
 		this.timelimitedId = timelimitedInfo.getTimelimitedId();
 		this.sellerCode = timelimitedInfo.getSellerCode();

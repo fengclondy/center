@@ -19,6 +19,8 @@ public interface TimelimitedInfoDAO {
 	
     int updateByPrimaryKeySelective(TimelimitedInfoReqDTO timelimitedInfoReqDTO);
     
+    int updateTimelimitedInfoByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO);
+    
     int deleteByPrimaryKey(Long timelimitedId);
 
     TimelimitedInfoResDTO selectByPrimaryKey(Long timelimitedId);

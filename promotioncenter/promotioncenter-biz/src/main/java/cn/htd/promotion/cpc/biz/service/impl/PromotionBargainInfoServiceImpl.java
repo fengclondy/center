@@ -104,7 +104,8 @@ public class PromotionBargainInfoServiceImpl implements
 		dto.setPromotionId(buyerBargainLaunch.getPromotionId());
 		List<PromotionBargainInfoResDTO> promotionBargainInfoResDTOList = promotionBargainRedisHandle
 				.getRedisBargainInfoList(dto);
-		PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(buyerBargainLaunch.getPromotionId());
+		PromotionInfoDTO promotionInfo = promotionInfoDAO
+				.queryById(buyerBargainLaunch.getPromotionId());
 		if (promotionBargainInfoResDTOList != null
 				&& promotionBargainInfoResDTOList.size() > 0) {
 			for (PromotionBargainInfoResDTO p : promotionBargainInfoResDTOList) {
@@ -193,7 +194,7 @@ public class PromotionBargainInfoServiceImpl implements
 				buyerBargainRecordResList = JSONObject.parseArray(str,
 						BuyerBargainRecordResDTO.class);
 			}
-		}else if (promotionBargainInfo1 != null) {// 聚合页进来并且曾经发起过砍价
+		} else if (promotionBargainInfo1 != null) {// 聚合页进来并且曾经发起过砍价
 			LOGGER.info(
 					"MessageId{}:调用buyerBargainRecordDAO.getBuyerLaunchBargainInfoByBuyerCode（）方法开始,入参{}",
 					buyerBargainLaunch.getMessageId(),
@@ -210,7 +211,7 @@ public class PromotionBargainInfoServiceImpl implements
 				String str = JSONObject.toJSONString(buyerBargainRecordList);
 				buyerBargainRecordResList = JSONObject.parseArray(str,
 						BuyerBargainRecordResDTO.class);
-			
+
 			}
 		}
 
@@ -285,8 +286,9 @@ public class PromotionBargainInfoServiceImpl implements
 							.getOfflineStartTime());
 					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO
 							.getOfflineEndTime());
-					bagainInfoDTO.setPromotionProviderSellerCode(promotionExtendInfoDTO
-							.getPromotionProviderSellerCode());
+					bagainInfoDTO
+							.setPromotionProviderSellerCode(promotionExtendInfoDTO
+									.getPromotionProviderSellerCode());
 				}
 
 				// 判断时间段内可有活动上架
@@ -408,8 +410,8 @@ public class PromotionBargainInfoServiceImpl implements
 						DictionaryConst.OPT_PROMOTION_STATUS_END).equals(
 						promotionInfo.getStatus())) {
 					List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
-							.getBuyerLaunchBargainInfoByPromotionId(validDTO
-									.getPromotionId(), null);
+							.getBuyerLaunchBargainInfoByPromotionId(
+									validDTO.getPromotionId(), null);
 					if ((promotionInfo.getInvalidTime() != null && !(new Date())
 							.after(promotionInfo.getInvalidTime()))
 							&& (null != buyerLaunchList && !buyerLaunchList
@@ -463,8 +465,7 @@ public class PromotionBargainInfoServiceImpl implements
 		ExecuteResult<List<PromotionBargainInfoResDTO>> result = new ExecuteResult<List<PromotionBargainInfoResDTO>>();
 		List<PromotionBargainInfoResDTO> datagrid = null;
 		try {
-			datagrid = promotionBargainRedisHandle
-					.getRedisBargainInfoList(dto);
+			datagrid = promotionBargainRedisHandle.getRedisBargainInfoList(dto);
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException pbe) {
 			result.setCode(pbe.getCode());
@@ -516,7 +517,8 @@ public class PromotionBargainInfoServiceImpl implements
 				for (PromotionAccumulatyDTO accumulatyDTO : promotionExtendInfoDTO
 						.getPromotionAccumulatyList()) {
 					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
-					bagainInfoDTO.setPromotionId(promotionExtendInfoDTO.getPromotionId());
+					bagainInfoDTO.setPromotionId(promotionExtendInfoDTO
+							.getPromotionId());
 					bagainInfoDTO.setGoodsCostPrice(CalculateUtils
 							.setScale(bagainInfoDTO.getGoodsCostPrice()));
 					bagainInfoDTO.setGoodsFloorPrice(CalculateUtils
@@ -543,7 +545,9 @@ public class PromotionBargainInfoServiceImpl implements
 							.getOfflineStartTime());
 					bagainInfoDTO.setOfflineEndTime(promotionExtendInfoDTO
 							.getOfflineEndTime());
-					bagainInfoDTO.setPromotionProviderSellerCode(promotionExtendInfoDTO.getPromotionProviderSellerCode());
+					bagainInfoDTO
+							.setPromotionProviderSellerCode(promotionExtendInfoDTO
+									.getPromotionProviderSellerCode());
 				}
 				if (StringUtils.isEmpty(promotionId)) {
 					throw new PromotionCenterBusinessException(
@@ -576,14 +580,25 @@ public class PromotionBargainInfoServiceImpl implements
 							ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
 							"该时间段内已有活动进行");
 				}
-				PromotionExtendInfoDTO updateResult = baseService
-						.updatePromotionInfo(promotionExtendInfoDTO);
-
-				for (PromotionAccumulatyDTO accumulatyDTO : updateResult
-						.getPromotionAccumulatyList()) {
-					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
+				
+				// 新增商品index
+				List<Integer> addIndexList = new ArrayList<Integer>();
+				for (int i = 0; i < promotionExtendInfoDTO
+						.getPromotionAccumulatyList().size(); i++) {
+					PromotionAccumulatyDTO accumulatyDTO = (PromotionBargainInfoResDTO) promotionExtendInfoDTO
+							.getPromotionAccumulatyList().get(i);
 					if (StringUtils.isEmpty(accumulatyDTO.getLevelCode())
 							|| "0".equals(accumulatyDTO.getLevelCode())) {
+						addIndexList.add(i);
+					}
+				}
+				PromotionExtendInfoDTO updateResult = baseService
+						.updatePromotionInfo(promotionExtendInfoDTO);
+				for (int i = 0; i < promotionExtendInfoDTO
+						.getPromotionAccumulatyList().size(); i++) {
+					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) updateResult
+							.getPromotionAccumulatyList().get(i);
+					if (addIndexList.contains(i)) {
 						bagainInfoDTO.setCreateId(promotionExtendInfoDTO
 								.getModifyId());
 						bagainInfoDTO.setCreateName(promotionExtendInfoDTO
@@ -689,8 +704,8 @@ public class PromotionBargainInfoServiceImpl implements
 							"砍价活动已下架，不需要重复下架");
 				}
 				List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
-						.getBuyerLaunchBargainInfoByPromotionId(promotionInfoDTO
-								.getPromotionId(), null);
+						.getBuyerLaunchBargainInfoByPromotionId(
+								promotionInfoDTO.getPromotionId(), null);
 				if (null != buyerLaunchList && !buyerLaunchList.isEmpty()) {
 					throw new PromotionCenterBusinessException(
 							ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),

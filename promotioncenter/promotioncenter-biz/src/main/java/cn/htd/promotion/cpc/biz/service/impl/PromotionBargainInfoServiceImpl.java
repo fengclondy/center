@@ -356,6 +356,17 @@ public class PromotionBargainInfoServiceImpl implements
 				}
 				promotionBargainRedisHandle
 						.addBargainInfo2Redis(promotionBargainInfoList);
+				PromotionInfoDTO bargainDTO = new PromotionInfoDTO();
+				bargainDTO.setPromotionId(promotionExtendInfoDTO.getPromotionId());
+				String upFlag = promotionBargainInfoList.get(0).getUpFlag();
+				if("1".equals(upFlag)){
+					bargainDTO.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+	                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+				}else{
+					bargainDTO.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+				}
+				promotionBargainRedisHandle.saveBargainValidStatus2Redis(bargainDTO);
 				result.setResult(insertResult);
 			}
 		} catch (PromotionCenterBusinessException pbs) {
@@ -620,7 +631,6 @@ public class PromotionBargainInfoServiceImpl implements
 						.getShowStatus());
 				historyDTO.setPromotionStatusText("修改砍价活动信息");
 				promotionStatusHistoryDAO.update(historyDTO);
-
 				promotionBargainRedisHandle.deleteRedisBargainInfo(promotionId);
 				// 保存到redis
 				List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
@@ -736,10 +746,13 @@ public class PromotionBargainInfoServiceImpl implements
 					for (PromotionBargainInfoResDTO res : promotionBargainList) {
 						res.setTemplateFlag(Integer.parseInt(dto
 								.getTemlateFlag()));
-						res.setUpFlag("");
 					}
 					promotionBargainRedisHandle
 							.addBargainInfo2Redis(promotionBargainList);
+					PromotionInfoDTO bargainDTO = new PromotionInfoDTO();
+					bargainDTO.setPromotionId(dto.getPromotionId());
+					bargainDTO.setShowStatus(statusCurrent);
+					promotionBargainRedisHandle.saveBargainValidStatus2Redis(bargainDTO);
 				}
 			}
 			promotionInfoRedis.setPromotionId(dto.getPromotionId());
@@ -785,16 +798,15 @@ public class PromotionBargainInfoServiceImpl implements
 							: bargainCount.intValue());
 					// 未被砍商品数量
 					List<PromotionAccumulatyDTO> accumuList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfo.getPromotionId(), null);
-//					if(null != accumuList && !accumuList.isEmpty()){
-//						if(accumuList.size() <= bargainCount){
-//							resDTO.setNoBargainItemQTY(0);
-//						}else{
-//							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
-//						}
-//					}else{
-//						resDTO.setNoBargainItemQTY(0);
-//					}
-					resDTO.setNoBargainItemQTY(0);
+					if(null != accumuList && !accumuList.isEmpty()){
+						if(accumuList.size() <= bargainCount){
+							resDTO.setNoBargainItemQTY(0);
+						}else{
+							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
+						}
+					}else{
+						resDTO.setNoBargainItemQTY(0);
+					}
 					// 发起砍价人数
 					Integer launchQTY = buyerBargainRecordDAO
 							.queryPromotionBargainJoinQTY(resDTO

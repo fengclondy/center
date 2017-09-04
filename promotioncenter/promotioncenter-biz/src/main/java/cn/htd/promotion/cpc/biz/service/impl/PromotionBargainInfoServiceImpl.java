@@ -799,6 +799,8 @@ public class PromotionBargainInfoServiceImpl implements
 							: bargainCount.intValue());
 					// 未被砍商品数量
 					List<PromotionAccumulatyDTO> accumuList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfo.getPromotionId(), null);
+					
+					LOGGER.info("accumuList===" + JSON.toJSONString(accumuList));
 					if(null != accumuList && !accumuList.isEmpty()){
 						if(accumuList.size() <= bargainCount){
 							resDTO.setNoBargainItemQTY(0);

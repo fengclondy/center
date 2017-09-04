@@ -74,15 +74,17 @@ public class TimelimitedTestUnit {
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO);
         		
         	//商品详情
+        	List<TimelimitedSkuDescribeReqDTO> TimelimitedSkuDescribeReqDTOList = new ArrayList<TimelimitedSkuDescribeReqDTO>();
         	TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = new TimelimitedSkuDescribeReqDTO();
-        	timelimitedSkuDescribeReqDTO.setDescribeContent("测试商品详情^_^");
-            
+        	timelimitedSkuDescribeReqDTO.setPictureUrl("/img/aaa.jpg");
+        	TimelimitedSkuDescribeReqDTOList.add(timelimitedSkuDescribeReqDTO);
+        	
         	//秒杀商品信息
     		TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
     		//设置图片
     		timelimitedInfoReqDTO.setTimelimitedSkuPictureReqDTOList(timelimitedSkuPictureReqDTOList);
     		//设置详情
-    		timelimitedInfoReqDTO.setTimelimitedSkuDescribeReqDTO(timelimitedSkuDescribeReqDTO);
+    		timelimitedInfoReqDTO.setTimelimitedSkuDescribeReqDTOList(TimelimitedSkuDescribeReqDTOList);
 
     		timelimitedInfoReqDTO.setPromotionId(promotionId);
     		timelimitedInfoReqDTO.setLevelCode(levelCode);
@@ -110,6 +112,8 @@ public class TimelimitedTestUnit {
     		// 秒杀订单有效时间 单位：分钟
     		Integer timelimitedValidInterval = 15;
     		timelimitedInfoReqDTO.setTimelimitedValidInterval(timelimitedValidInterval);
+    		
+    		timelimitedInfoReqDTO.setDescribeContent("测试商品详情^_^");
 
     		timelimitedInfoReqDTO.setCreateId(userId);
         	timelimitedInfoReqDTO.setCreateName(userName);
@@ -137,9 +141,9 @@ public class TimelimitedTestUnit {
     		 * @param platCode 促销活动类型 1:优惠券，2:秒杀，3:扭蛋，4:砍价，5:总部秒杀
     		 * @return
     		 */
-    		String promotionId = "5172134231225";
+    		String promotionId = "5171620000132";
     		
-    		String levelCode = "5172134231225";
+    		String levelCode = "5171620000132";
             
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
@@ -154,18 +158,19 @@ public class TimelimitedTestUnit {
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO_2);
         		
         	//商品详情
+        	List<TimelimitedSkuDescribeReqDTO> TimelimitedSkuDescribeReqDTOList = new ArrayList<TimelimitedSkuDescribeReqDTO>();
         	TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = new TimelimitedSkuDescribeReqDTO();
-        	timelimitedSkuDescribeReqDTO.setDescId(4L);
-        	timelimitedSkuDescribeReqDTO.setDescribeContent("测试商品详情修改123^_^");
+        	timelimitedSkuDescribeReqDTO.setPictureUrl("/img/aaa123.jpg");
+        	TimelimitedSkuDescribeReqDTOList.add(timelimitedSkuDescribeReqDTO);
             
         	//秒杀商品信息
     		TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
     		//设置图片
     		timelimitedInfoReqDTO.setTimelimitedSkuPictureReqDTOList(timelimitedSkuPictureReqDTOList);
     		//设置详情
-    		timelimitedInfoReqDTO.setTimelimitedSkuDescribeReqDTO(timelimitedSkuDescribeReqDTO);
+    		timelimitedInfoReqDTO.setTimelimitedSkuDescribeReqDTOList(TimelimitedSkuDescribeReqDTOList);
 
-    		timelimitedInfoReqDTO.setTimelimitedId(4L);
+    		timelimitedInfoReqDTO.setTimelimitedId(5L);
     		timelimitedInfoReqDTO.setPromotionId(promotionId);
     		timelimitedInfoReqDTO.setLevelCode(levelCode);
 //    		timelimitedInfoReqDTO.setSellerCode("1001");
@@ -192,6 +197,8 @@ public class TimelimitedTestUnit {
     		// 秒杀订单有效时间 单位：分钟
     		Integer timelimitedValidInterval = 15;
     		timelimitedInfoReqDTO.setTimelimitedValidInterval(timelimitedValidInterval);
+    		
+    		timelimitedInfoReqDTO.setDescribeContent("测试商品详情修改^_^");
 
         	timelimitedInfoReqDTO.setModifyId(userId);
         	timelimitedInfoReqDTO.setModifyName(userName);
@@ -208,7 +215,7 @@ public class TimelimitedTestUnit {
     public void getSingleTimelimitedInfoTest(){
     	
         String messageId = "342453251349";
-        String promotionId = "5172134231225";
+        String promotionId = "5171620000132";
         try {
     		TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
     		timelimitedInfoReqDTO.setPromotionId(promotionId);;

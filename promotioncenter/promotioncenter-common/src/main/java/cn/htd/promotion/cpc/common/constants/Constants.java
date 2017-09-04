@@ -58,4 +58,7 @@ public class Constants {
 
 	// 砍价记录常量
 	public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
+
+	// 秒杀库存锁
+	public static final String REDIS_KEY_PREFIX_STOCK = "B2B_MIDDLE_SECKILL_STOCK";
 }

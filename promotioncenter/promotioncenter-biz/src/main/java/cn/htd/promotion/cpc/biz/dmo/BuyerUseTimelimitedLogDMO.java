@@ -8,181 +8,198 @@ import org.apache.commons.lang.StringUtils;
 
 public class BuyerUseTimelimitedLogDMO implements Serializable {
 
-    private static final long serialVersionUID = 7093820631512207342L;
+	private static final long serialVersionUID = 7093820631512207342L;
 
-    private Long id;
+	private Long id;
 
-    private String buyerCode;
+	private String buyerCode;
 
-    private String promotionId;
+	private String promotionId;
 
-    private String levelCode;
+	private String levelCode;
 
-    private String seckillLockNo;
+	private String seckillLockNo;
 
-    private String orderNo;
+	private String orderNo;
 
-    private String useType;
+	private String useType;
 
-    private Integer usedCount;
+	private Integer usedCount;
 
-    private Long createId;
+	private int hasReleasedStock;
 
-    private String createName;
+	private Long createId;
 
-    private Date createTime;
+	private String createName;
 
-    private Long modifyId;
+	private Date createTime;
 
-    private String modifyName;
+	private Long modifyId;
 
-    private Date modifyTime;
-    /**
-     * 当前任务类型的任务队列数量
-     */
-    private int taskQueueNum;
-    /**
-     * 当前调度服务器，分配到的可处理队列
-     */
-    private List<String> taskIdList;
-    /**
-     * 释放锁定库存的间隔（单位：小时）
-     */
-    private String releaseStockInterval;
+	private String modifyName;
 
-    public Long getId() {
-        return id;
-    }
+	private Date modifyTime;
+	/**
+	 * 当前任务类型的任务队列数量
+	 */
+	private int taskQueueNum;
+	/**
+	 * 当前调度服务器，分配到的可处理队列
+	 */
+	private List<String> taskIdList;
+	/**
+	 * 释放锁定库存的间隔（单位：小时）
+	 */
+	private String releaseStockInterval;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getBuyerCode() {
-        return buyerCode;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setBuyerCode(String buyerCode) {
-        this.buyerCode = buyerCode;
-    }
+	public String getBuyerCode() {
+		return buyerCode;
+	}
 
-    public String getPromotionId() {
-        return promotionId;
-    }
+	public void setBuyerCode(String buyerCode) {
+		this.buyerCode = buyerCode;
+	}
 
-    public void setPromotionId(String promotionId) {
-        this.promotionId = promotionId;
-    }
+	public String getPromotionId() {
+		return promotionId;
+	}
 
-    public String getLevelCode() {
-        return levelCode;
-    }
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
+	}
 
-    public void setLevelCode(String levelCode) {
-        this.levelCode = levelCode;
-    }
+	public String getLevelCode() {
+		return levelCode;
+	}
 
-    public String getSeckillLockNo() {
-        return StringUtils.isEmpty(seckillLockNo) ? "" : seckillLockNo;
-    }
+	public void setLevelCode(String levelCode) {
+		this.levelCode = levelCode;
+	}
 
-    public void setSeckillLockNo(String seckillLockNo) {
-        this.seckillLockNo = seckillLockNo;
-    }
+	public String getSeckillLockNo() {
+		return StringUtils.isEmpty(seckillLockNo) ? "" : seckillLockNo;
+	}
 
-    public String getOrderNo() {
-        return StringUtils.isEmpty(orderNo) ? "" : orderNo;
-    }
+	public void setSeckillLockNo(String seckillLockNo) {
+		this.seckillLockNo = seckillLockNo;
+	}
 
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
+	public String getOrderNo() {
+		return StringUtils.isEmpty(orderNo) ? "" : orderNo;
+	}
 
-    public String getUseType() {
-        return useType;
-    }
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
 
-    public void setUseType(String useType) {
-        this.useType = useType;
-    }
+	public String getUseType() {
+		return useType;
+	}
 
-    public Integer getUsedCount() {
-        return usedCount;
-    }
+	public void setUseType(String useType) {
+		this.useType = useType;
+	}
 
-    public void setUsedCount(Integer usedCount) {
-        this.usedCount = usedCount;
-    }
+	public Integer getUsedCount() {
+		return usedCount;
+	}
 
-    public Long getCreateId() {
-        return createId;
-    }
+	public void setUsedCount(Integer usedCount) {
+		this.usedCount = usedCount;
+	}
 
-    public void setCreateId(Long createId) {
-        this.createId = createId;
-    }
+	/**
+	 * @return the hasReleasedStock
+	 */
+	public int getHasReleasedStock() {
+		return hasReleasedStock;
+	}
 
-    public String getCreateName() {
-        return createName;
-    }
+	/**
+	 * @param hasReleasedStock
+	 *            the hasReleasedStock to set
+	 */
+	public void setHasReleasedStock(int hasReleasedStock) {
+		this.hasReleasedStock = hasReleasedStock;
+	}
 
-    public void setCreateName(String createName) {
-        this.createName = createName;
-    }
+	public Long getCreateId() {
+		return createId;
+	}
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+	public void setCreateId(Long createId) {
+		this.createId = createId;
+	}
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public String getCreateName() {
+		return createName;
+	}
 
-    public Long getModifyId() {
-        return modifyId;
-    }
+	public void setCreateName(String createName) {
+		this.createName = createName;
+	}
 
-    public void setModifyId(Long modifyId) {
-        this.modifyId = modifyId;
-    }
+	public Date getCreateTime() {
+		return createTime;
+	}
 
-    public String getModifyName() {
-        return modifyName;
-    }
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 
-    public void setModifyName(String modifyName) {
-        this.modifyName = modifyName;
-    }
+	public Long getModifyId() {
+		return modifyId;
+	}
 
-    public Date getModifyTime() {
-        return modifyTime;
-    }
+	public void setModifyId(Long modifyId) {
+		this.modifyId = modifyId;
+	}
 
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
+	public String getModifyName() {
+		return modifyName;
+	}
 
-    public int getTaskQueueNum() {
-        return taskQueueNum;
-    }
+	public void setModifyName(String modifyName) {
+		this.modifyName = modifyName;
+	}
 
-    public void setTaskQueueNum(int taskQueueNum) {
-        this.taskQueueNum = taskQueueNum;
-    }
+	public Date getModifyTime() {
+		return modifyTime;
+	}
 
-    public List<String> getTaskIdList() {
-        return taskIdList;
-    }
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
 
-    public void setTaskIdList(List<String> taskIdList) {
-        this.taskIdList = taskIdList;
-    }
+	public int getTaskQueueNum() {
+		return taskQueueNum;
+	}
 
-    public String getReleaseStockInterval() {
-        return releaseStockInterval;
-    }
+	public void setTaskQueueNum(int taskQueueNum) {
+		this.taskQueueNum = taskQueueNum;
+	}
 
-    public void setReleaseStockInterval(String releaseStockInterval) {
-        this.releaseStockInterval = releaseStockInterval;
-    }
+	public List<String> getTaskIdList() {
+		return taskIdList;
+	}
+
+	public void setTaskIdList(List<String> taskIdList) {
+		this.taskIdList = taskIdList;
+	}
+
+	public String getReleaseStockInterval() {
+		return releaseStockInterval;
+	}
+
+	public void setReleaseStockInterval(String releaseStockInterval) {
+		this.releaseStockInterval = releaseStockInterval;
+	}
 }

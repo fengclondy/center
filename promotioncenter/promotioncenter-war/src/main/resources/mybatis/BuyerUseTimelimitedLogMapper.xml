@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.marketcenter.dao.BuyerUseTimelimitedLogDAO">
+  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
+    <result column="seckill_lock_no" jdbcType="VARCHAR" property="seckillLockNo"/>
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+    <result column="use_type" jdbcType="VARCHAR" property="useType"/>
+    <result column="used_count" jdbcType="INTEGER" property="usedCount"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+  	id,
+  	buyer_code,
+	  promotion_id,
+	  level_code,
+	  seckill_lock_no,
+	  order_no,
+	  use_type,
+	  used_count,
+	  create_id,
+	  create_name,
+	  create_time,
+	  modify_id,
+	  modify_name,
+	  modify_time
+  </sql>
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+  <select id="queryUseLogByLockCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_use_timelimited_log
+    where 1 = 1
+    and buyer_code = #{buyerCode,jdbcType=VARCHAR}
+    and promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and seckill_lock_no = #{seckillLockNo,jdbcType=VARCHAR}
+  </select>
+  <select id="queryUseLogByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_use_timelimited_log
+    where 1 = 1
+    and buyer_code = #{buyerCode,jdbcType=VARCHAR}
+    and promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into buyer_use_timelimited_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      buyer_code,
+      promotion_id,
+      <if test="seckillLockNo != null and seckillLockNo != ''">
+        seckill_lock_no,
+      </if>
+      <if test="orderNo != null and orderNo != ''">
+        order_no,
+      </if>
+      used_count,
+      use_type,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{buyerCode,jdbcType=VARCHAR},
+      #{promotionId,jdbcType=VARCHAR},
+      <if test="seckillLockNo != null and seckillLockNo != ''">
+        #{seckillLockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null and orderNo != ''">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      #{usedCount,jdbcType=INTEGER},
+      #{useType,jdbcType=VARCHAR},
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},
+      #{modifyId,jdbcType=BIGINT},
+      #{modifyName,jdbcType=VARCHAR},
+      #{modifyTime,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  <update id="updateUseLogOrderNoByLockCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+    update buyer_use_timelimited_log
+    <set>
+      <if test="orderNo != null and orderNo != ''">
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="useType != null and useType != ''">
+        use_type = #{useType,jdbcType=VARCHAR},
+      </if>
+      modify_id = #{createId,jdbcType=BIGINT},
+      modify_name = #{createName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where buyer_code = #{buyerCode,jdbcType=VARCHAR}
+    and promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and seckill_lock_no = #{seckillLockNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateUseLogStatusByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+    update buyer_use_timelimited_log
+    <set>
+      use_type = #{useType,jdbcType=VARCHAR},
+      modify_id = #{createId,jdbcType=BIGINT},
+      modify_name = #{createName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where buyer_code = #{buyerCode,jdbcType=VARCHAR}
+    and promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and order_no = #{orderNo,jdbcType=VARCHAR}
+  </update>
+  <select id="queryNeedReleaseTimelimitedStock4Task" resultMap="BaseResultMap">
+    select
+      a.id id,
+      a.buyer_code buyerCode,
+      a.promotion_id promotionId,
+      a.level_code levelCode,
+      a.seckill_lock_no seckillLockNo,
+      a.order_no orderNo,
+      a.use_type useType,
+      a.used_count usedCount,
+      a.create_id createId,
+      a.create_name createName,
+      a.create_time createTime,
+      a.modify_id modifyId,
+      a.modify_name modifyName,
+      a.modify_time modifyTime
+    from buyer_use_timelimited_log a
+    where 1 = 1
+    and a.has_released_stock = 0
+    and a.order_no = ''
+    <if test="entity != null">
+      and a.use_type = #{entity.useType}
+      <![CDATA[ and a.create_time <= date_sub(now(), interval #{entity.releaseStockInterval} minute) ]]>
+      and mod(a.id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    and not exists (
+      select 1 from buyer_use_timelimited_log b
+      where a.seckill_lock_no = b.seckill_lock_no
+      and <![CDATA[ (b.order_no <> '' or (b.order_no = '' and a.use_type <> b.use_type))]]>
+    )
+    order by a.id desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <update id="updateTimelimitedReleaseStockStatus" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
+    update buyer_use_timelimited_log
+    <set>
+      has_released_stock = 1,
+      modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+    and has_released_stock = 0
+  </update>
+</mapper>

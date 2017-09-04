@@ -17,7 +17,7 @@
     <constructor-arg index="1" value="${redis.host}"/>
   </bean>
   
-  <bean id="redissonClientUtil" class="cn.htd.goodscenter.common.utils.RedissonClientUtil" init-method="init">
+  <bean id="redissonClientUtil" class="cn.htd.promotion.cpc.common.util.RedissonClientUtil" init-method="init">
 	<property name="redisAddress" value="${redis.host}:${redis.port}"/>
 	<property name="connectionPoolSize" value="${redis.maxTotal}"/>
   </bean>

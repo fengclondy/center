@@ -475,17 +475,17 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				promotionLotteryCommonService
 						.initPromotionLotteryRedisInfoWithThread(result);
 			}
-			 PromotionStatusHistoryDTO historyDTO = new
-			 PromotionStatusHistoryDTO();
-			 historyDTO.setPromotionId(result.getPromotionId());
-			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			 historyDTO.setCreateId(promotionInfoEditReqDTO.getModifyId());
-			 historyDTO.setCreateName(promotionInfoEditReqDTO.getModifyName());
-			 promotionStatusHistoryDAO.add(historyDTO);
+//			 PromotionStatusHistoryDTO historyDTO = new
+//			 PromotionStatusHistoryDTO();
+//			 historyDTO.setPromotionId(result.getPromotionId());
+//			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+//			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//			 historyDTO.setCreateId(promotionInfoEditReqDTO.getModifyId());
+//			 historyDTO.setCreateName(promotionInfoEditReqDTO.getModifyName());
+//			 promotionStatusHistoryDAO.add(historyDTO);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {

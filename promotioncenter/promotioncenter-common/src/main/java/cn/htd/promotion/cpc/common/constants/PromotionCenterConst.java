@@ -23,8 +23,7 @@ public class PromotionCenterConst {
 	public static final String PROMOTION_NOT_VALID = "15005";
 	// 促销活动状态不正确
 	public static final String PROMOTION_STATUS_NOT_CORRECT = "15006";
-	// 促销活动未开始
-	public static final String PROMOTION_NO_START = "15007";
+
     // 促销活动已被修改
     public static final String PROMOTION_HAS_MODIFIED = "15008";
 	// 促销规则数据不存在
@@ -47,10 +46,8 @@ public class PromotionCenterConst {
 	public static final String TIMELIMITED_DURING_REPEAT = "15204";
 	// 该商品没有秒杀活动
 	public static final String SKU_NO_TIMELIMITED = "15205";
-	// 会员没有秒杀权限
-	public static final String TIMELIMITED_BUYER_NO_AUTHIORITY = "15206";
-	// 秒杀商品已抢光
-	public static final String TIMELIMITED_SKU_NO_REMAIN = "15207";
+
+
 	// 订单中存在秒杀活动的商品
 	public static final String HAS_TIMELIMITED_SKU = "15210";
 	// 订单中存在参加秒杀活动的商品和购买商品不符合
@@ -73,6 +70,8 @@ public class PromotionCenterConst {
 	public static final String VMS_TIMELIMITED_RESULT_ERROR = "15304";
 	// *******************************************************
 
+	
+
 	//秒杀活动编码不正确
 	public static final String TIMELIMITED_RESULT_PROMOTION_ID_ERROR = "15401";
 	//秒杀活动未开始
@@ -87,4 +86,10 @@ public class PromotionCenterConst {
 	public static final String TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR = "15406";
 	//会员有权限参加秒杀活动
 	public static final String TIMELIMITED_RESULT_PROMOTION_PERMISSION = "15407";
+	// 秒杀商品已抢光
+	public static final String TIMELIMITED_RESULT_PROMOTION_SKU_NO_REMAIN = "15408";
+	// 秒杀活动参数不正确
+	public static final String TIMELIMITED_RESULT_PROMOTION_PARAM_ERROR = "15409";
+	// 会员没有秒杀权限
+	public static final String TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY = "15410";
 }

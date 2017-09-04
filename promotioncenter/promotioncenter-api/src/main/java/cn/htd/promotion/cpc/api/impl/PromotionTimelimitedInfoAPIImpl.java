@@ -124,66 +124,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return result;
 	}
-	
-
-
-	/**
-	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀信息
-	 * 
-	 * @param messageId
-	 * @param buyerCode
-	 *            会员编码
-	 * @param promotionId
-	 *            促销活动编码
-	 * @return
-	 */
-	@Override
-	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCodeAndPromotionId(String messageId,
-			String buyerCode, String promotionId) {
-		ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
-		TimelimitedInfoResDTO timelimitedInfo = null;
-		String returnCode = "";
-		try {
-			logger.info("促销活动编码为:" + promotionId + "会员编码为:" + buyerCode);
-			if (StringUtils.isEmpty(promotionId) || StringUtils.isEmpty(buyerCode)) {
-				throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编号和秒杀活动编号不能为空");
-			}
-			timelimitedInfo = promotionTimelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
-			if (!checkPromotionBuyerAuthority(timelimitedInfo, buyerCode)) {
-				returnCode = PromotionCenterConst.TIMELIMITED_BUYER_NO_AUTHIORITY;
-			}
-			result.setCode(returnCode);
-			result.setResult(timelimitedInfo);
-		} catch (PromotionCenterBusinessException bcbe) {
-			result.setCode(bcbe.getCode());
-			result.setErrorMessage(bcbe.getMessage());
-		} catch (Exception e) {
-			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
-			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-		}
-		return result;
-	}
-
-	/**
-	 * 汇掌柜APP - 校验会员是否有权限参加总部秒杀
-	 * 
-	 * @param timelimitedInfo
-	 *            秒杀信息
-	 * @param buyerCode
-	 *            会员编码
-	 * @return
-	 */
-	private boolean checkPromotionBuyerAuthority(TimelimitedInfoResDTO timelimitedInfo, String buyerCode) {
-		PromotionSellerDetailDTO sellerDetail = null;// timelimitedInfo.getSellerDetailDTO();
-		if (null == sellerDetail) {
-			return true;
-		}
-		if (buyerCode.equals(sellerDetail.getSellerCode())) {
-			return true;
-		}
-		return false;
-	}
-
 
 
 	/**
@@ -191,47 +131,52 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 * 
 	 * @param messageId
 	 * @param promotionId
-	 * @param buyerCode
-	 *            会员编码
-	 * @param buyerGrade
-	 *            目前未用的，考虑后期扩展
+	 * @param buyerCode 会员编码
 	 * @return
 	 */
 	@Override
-	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId,
-			String promotionId, String buyerCode, String buyerGrade) {
+	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId,String promotionId, String buyerCode) {
 		ExecuteResult<PromotionTimelimitedShowDTO> result = new ExecuteResult<PromotionTimelimitedShowDTO>();
 		TimelimitedInfoResDTO tmpTimelimitedDTO = null;
 		PromotionTimelimitedShowDTO timelimitedDTO = null;
-		TimelimitedResultDTO timelimitedResultDTO = null;
+		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 		String returnCode = "";
 		try {
-			tmpTimelimitedDTO = promotionTimelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
-			// timelimitedResultDTO = tmpTimelimitedDTO.getTimelimitedResult();
-			timelimitedDTO = new PromotionTimelimitedShowDTO();
-			// timelimitedDTO.setTimelimitedInfo(tmpTimelimitedDTO);
-			timelimitedDTO.setRemainCount(timelimitedResultDTO.getShowRemainSkuCount());
-			if (timelimitedResultDTO.getShowRemainSkuCount() <= 0) {
-				timelimitedDTO.setRemainCount(0);
-				timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.CLEAR.getValue());
-				returnCode = PromotionCenterConst.TIMELIMITED_SKU_NO_REMAIN;
-				// } else if ((new
-				// Date()).before(timelimitedDTO.getEffectiveTime())) {
-				// timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.NO_START.getValue());
-				// returnCode = PromotionCenterConst.PROMOTION_NO_START;
-				// } else if ((new
-				// Date()).after(timelimitedDTO.getInvalidTime())) {
-				// timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.ENDED.getValue());
-				// returnCode = PromotionCenterConst.PROMOTION_HAS_EXPIRED;
-			} else {
-				timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.PROCESSING.getValue());
-			}
-			timelimitedDTO.setShowStatusStr(TimelimitedStatusEnum.getName(timelimitedDTO.getCompareStatus()));
-			if (StringUtils.isEmpty(returnCode) && !StringUtils.isEmpty(buyerCode)) {
-				if (!checkPromotionBuyerAuthority(tmpTimelimitedDTO, buyerCode)) {
-					returnCode = PromotionCenterConst.TIMELIMITED_BUYER_NO_AUTHIORITY;
+			 String remaincount = promotionRedisDB.getHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
+			 tmpTimelimitedDTO = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(promotionId);
+		     if(null != tmpTimelimitedDTO){
+		    	 return result;
+		      }
+			 timelimitedDTO = new PromotionTimelimitedShowDTO();
+			 timelimitedDTO.setTimelimitedInfo(tmpTimelimitedDTO);
+			 if(StringUtils.isNotBlank(remaincount)){
+				 timelimitedDTO.setRemainCount(Integer.valueOf(remaincount)); 
+			 }
+			 if(Integer.valueOf(remaincount)<=0){ //剩余商品为0 被抢光
+					timelimitedDTO.setRemainCount(0);
+					timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.CLEAR.getValue()); 
+				    returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SKU_NO_REMAIN;
+			 }
+			 if(timelimitedDTO.getPromotionExtendInfoDTO() !=null){
+				 if ((new Date()).before(timelimitedDTO.getPromotionExtendInfoDTO().getEffectiveTime())) { //未开始
+					 timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.NO_START.getValue());
+					 returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NO_STAET_ERROR;
+					 } else if ((new Date()).after(timelimitedDTO.getPromotionExtendInfoDTO().getInvalidTime())) { //已结束
+				     timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.ENDED.getValue());
+					 returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_HAS_ENDED_ERROR;
+				 } else {
+					timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.PROCESSING.getValue());//活动进行中
+				 }
+			 }else{
+				 returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_PARAM_ERROR;	
+			 }
+			 timelimitedDTO.setShowStatusStr(TimelimitedStatusEnum.getName(timelimitedDTO.getCompareStatus()));
+			 
+			 if (StringUtils.isEmpty(returnCode) && !StringUtils.isEmpty(buyerCode)) {
+				if (!checkTimelimitedIsAvailableByBuyerCode(messageId, buyerCode,promotionId).getResult()) {
+					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY;
 				}
-			}
+			 }
 			result.setCode(returnCode);
 			result.setResult(timelimitedDTO);
 		} catch (PromotionCenterBusinessException bcbe) {
@@ -243,7 +188,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return result;
 	}
-
 	/**
 	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀是否有效
 	 * 

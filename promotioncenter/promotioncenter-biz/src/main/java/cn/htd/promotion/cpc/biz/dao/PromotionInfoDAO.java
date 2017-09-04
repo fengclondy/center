@@ -149,4 +149,7 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
 
 	public List<PromotionInfoDTO> queryInitRedisPromotion4Task(@Param("entity") PromotionInfoDTO condition,
             @Param("page") Pager<PromotionInfoDTO> page);
+
+	public Integer queryUpPromotionLotteryCount(@Param("effectiveTime") Date effectiveTime,
+			@Param("invalidTime") Date invalidTime);
 }

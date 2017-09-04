@@ -352,6 +352,18 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			if(StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())){
 				promotionInfoEditReqDTO.setPromotionType("21");
 			}
+			
+			// 判断时间段内可有活动上架
+			Integer isUpPromotionFlag = promotionInfoDAO
+					.queryUpPromotionLotteryCount(promotionInfoEditReqDTO.getEffectiveTime(),
+							promotionInfoEditReqDTO.getInvalidTime());
+			if (null != isUpPromotionFlag
+					&& isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+						"该活动有效期和其他活动重叠，请重新设置");
+			}
+			
 			rtobj = promotionBaseService
 					.insertPromotionInfo(promotionInfoEditReqDTO);
 			if (rtobj.getPromotionAccumulatyList() != null) {

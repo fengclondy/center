@@ -198,8 +198,13 @@ public class UpdatePromotionStatusTask implements IScheduleTaskDealMulti<Promoti
 
 		promotionInfoDAO.updatePromotionStatusById(promotionInfo);
 		promotionStatusHistoryDAO.add(historyDTO);
-		//将过期的信息从redis删除掉
-		promotionRedisDB.del(Constants.IS_BUYER_BARGAIN + promotionInfo.getPromotionId());
-	}
 
+		// 砍价促销
+		if (DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN.equals(promotionInfo.getPromotionType())) {
+			if (DictionaryConst.OPT_PROMOTION_STATUS_END.equals(promotionInfo.getStatus())) {
+				// 已结束的时候，删除redis中砍价买家记录
+				promotionRedisDB.del(Constants.IS_BUYER_BARGAIN + promotionInfo.getPromotionId());
+			}
+		}
+	}
 }

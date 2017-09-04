@@ -25,6 +25,15 @@ public class PromotionBargainOverviewResDTO implements Serializable{
 	private Integer overTimes;//已砍商品数量
 	
 	private Integer surplusTimes;//剩余商品数量
+	
+	private Integer goodsNum; //参砍数量
+	public Integer getGoodsNum() {
+		return goodsNum;
+	}
+
+	public void setGoodsNum(Integer goodsNum) {
+		this.goodsNum = goodsNum;
+	}
 
 	public String getPromotionId() {
 		return promotionId;

@@ -106,7 +106,7 @@ public class PromotionBargainRedisHandle {
 	 * @param BargainInfo
 	 */
 	public void addBargainInfo2Redis(
-			List<PromotionBargainInfoResDTO> promotionBargainInfoList) {
+			List<PromotionBargainInfoResDTO> promotionBargainInfoList, boolean isBargainLaunch) {
 		String promotionId = "";
 		String promotionSlogan = "";
 		List<String> sloganList = null;
@@ -124,12 +124,14 @@ public class PromotionBargainRedisHandle {
 				dto.setShowStatus(dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-				int goodsNum = dto.getGoodsNum();
-				String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + dto.getPromotionId() + "_" + dto.getLevelCode();
-				promotionRedisDB.del(stockKey);
-				if(goodsNum > 0) {
-					for (int i = 0; i < goodsNum; i++) {
-						promotionRedisDB.headPush(stockKey, i + 1 + "");
+				if(!isBargainLaunch){
+					int goodsNum = dto.getGoodsNum();
+					String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + dto.getPromotionId() + "_" + dto.getLevelCode();
+					promotionRedisDB.del(stockKey);
+					if(goodsNum > 0) {
+						for (int i = 0; i < goodsNum; i++) {
+							promotionRedisDB.headPush(stockKey, i + 1 + "");
+						}
 					}
 				}
 			}

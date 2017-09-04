@@ -347,7 +347,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 							JSON.toJSONString(buyerLaunchBargainInfo));
 					Integer num = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(buyerLaunchBargainInfo);
 					LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber（）方法结束,出参{}",messageId,num);
-					  if(num == promotionBargainInfo.getGoodsNum()){//已经砍完的商品和商品数量相等就说明此商品已经售罄
+					  if(num >= promotionBargainInfo.getGoodsNum()){//已经砍完的商品大于等于商品数量就说明此商品已经售罄
 						  List<PromotionBargainInfoResDTO> list = new ArrayList<PromotionBargainInfoResDTO>();
 						  String str = promotionRedisDB.getHash(RedisConst.REDIS_BARGAIN, promotionId);
 						  list = JSON.parseArray(str, PromotionBargainInfoResDTO.class);

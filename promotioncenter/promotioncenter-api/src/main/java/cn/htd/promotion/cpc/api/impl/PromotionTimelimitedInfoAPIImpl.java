@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -55,31 +56,65 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 
 	@Resource
 	private StockChangeService stockChangeService;
-
+	
+	
 	/**
-	 * 根据商品编码取得秒杀信息
+	 * 汇掌柜APP - 查询秒杀活动列表
+	 * 
+	 * 粉丝 未登录 默认取汇通达O2O旗舰店的秒杀商品；已登录则取归属会员店的秒杀商品(根据buyerCode)
 	 * 
 	 * @param messageId
-	 * @param skuCode
-	 *            商品SKU编码
+	 * @param page
 	 * @return
 	 */
 	@Override
-	public ExecuteResult<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId, String skuCode) {
-		ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
-		List<TimelimitedInfoResDTO> tmpTimelimitedDTOList = null;
-		List<String> skuCodeList = new ArrayList<String>();
+	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,
+			String buyerCode, Pager<TimelimitedInfoResDTO> page) {
+		ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> result = new ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>>();
+		DataGrid<PromotionTimelimitedShowDTO> datagrid = new DataGrid<PromotionTimelimitedShowDTO>();
+	     //所有有效秒杀活动集合,用于返回前端
+        List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
+        //所有有效秒杀活动集合,用于排序
+        List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
+        PromotionTimelimitedShowDTO timelimitedMallDTO = null;
+        int count = 0;
+        long total = 0;
+        int offset = 0;
+        int rows = Integer.MAX_VALUE;
+        if (page != null) {
+            offset = page.getPageOffset();
+            rows = page.getRows();
+        }
 		try {
-			logger.info("商品编码为:" + skuCode);
-			if (StringUtils.isEmpty(skuCode)) {
-				throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "商品编码不能为空");
+			List<TimelimitedInfoResDTO> timelitedInfoList=  promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+			if(null !=timelitedInfoList){
+				for(TimelimitedInfoResDTO timelitedinfo:timelitedInfoList){
+					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
+					if(null != timelited){
+						timelimitedMallDTO = new PromotionTimelimitedShowDTO();
+					    timelimitedMallDTO.setTimelimitedInfo(timelited);
+			            timelimitedAllDTOList.add(timelimitedMallDTO);
+					}
+				}
+				
 			}
-			skuCodeList.add(skuCode);
-			tmpTimelimitedDTOList = promotionTimelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
-			if (tmpTimelimitedDTOList == null || tmpTimelimitedDTOList.isEmpty()) {
-				throw new PromotionCenterBusinessException(PromotionCenterConst.SKU_NO_TIMELIMITED, "该商品没有参加秒杀活动");
-			}
-			result.setResult(tmpTimelimitedDTOList.get(0));
+	       if (!timelimitedAllDTOList.isEmpty()) {
+	            total = timelimitedAllDTOList.size();
+	            logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
+	            Collections.sort(timelimitedAllDTOList);
+	            while (total > count) {
+	                if (count >= offset && timelimitedDTOList.size() < rows) {
+	                	timelimitedDTOList.add(timelimitedAllDTOList.get(count));
+	                }
+	                if (timelimitedDTOList.size() >= rows) {
+	                    break;
+	                }
+	                count++;
+	            }
+	            datagrid.setTotal(total);
+	            datagrid.setRows(timelimitedDTOList);
+	        }
+			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.setErrorMessage(bcbe.getMessage());
@@ -89,6 +124,8 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return result;
 	}
+	
+
 
 	/**
 	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀信息
@@ -147,32 +184,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		return false;
 	}
 
-	/**
-	 * 汇掌柜APP - 查询秒杀活动列表
-	 * 
-	 * 粉丝 未登录 默认取汇通达O2O旗舰店的秒杀商品；已登录则取归属会员店的秒杀商品(根据buyerCode)
-	 * 
-	 * @param messageId
-	 * @param page
-	 * @return
-	 */
-	@Override
-	public ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> getPromotionTimelimitedList(String messageId,
-			String buyerCode, Pager<TimelimitedInfoResDTO> page) {
-		ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> result = new ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>>();
-		DataGrid<PromotionTimelimitedShowDTO> datagrid = null;
-		try {
-			datagrid = promotionTimelimitedRedisHandle.getRedisTimelimitedInfoList(buyerCode, page);
-			result.setResult(datagrid);
-		} catch (PromotionCenterBusinessException bcbe) {
-			result.setCode(bcbe.getCode());
-			result.setErrorMessage(bcbe.getMessage());
-		} catch (Exception e) {
-			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
-			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-		}
-		return result;
-	}
+
 
 	/**
 	 * 汇掌柜APP - 查询秒杀活动详情
@@ -230,22 +242,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
-	}
-
-	/**
-	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀信息
-	 * 
-	 * @param messageId
-	 * @param buyerCode
-	 * @return
-	 */
-	@Override
-	public boolean getPromotionTimelimitedByBuyerCode(String messageId, String buyerCode) {
-		List<String> list = promotionTimelimitedRedisHandle.getRedisTimelimitedIndex(buyerCode, null);
-		if (null != list && list.size() > 0) {
-			return true;
-		}
-		return false;
 	}
 
 	/**

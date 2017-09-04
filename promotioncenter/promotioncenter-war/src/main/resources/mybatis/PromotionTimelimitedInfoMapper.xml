@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionTimelimitedInfoDAO" >
-  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.biz.dmo.TimelimitedInfoDMO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO" >
     <id column="timelimited_id" property="timelimitedId" jdbcType="BIGINT" />
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
@@ -33,12 +33,14 @@
     timelimited_valid_interval, create_id, create_name, create_time, modify_id, modify_name, 
     modify_time
     </sql>
-  
-    <select id="selectTimelimitedInfo" resultMap="BaseResultMap">
+   
+   <!-- 根据buyercode取秒杀信息，如果结果的buyercode 为空，说明秒杀活动对所有粉丝有效，否则只对归属于改会员的粉丝有效-->
+   <select id="selectTimelimitedInfo" resultMap="BaseResultMap"> 
     select 
     <include refid="Base_Column_List" />
-    from timelimited_info
-    where sku_code = #{skuCode,jdbcType=BIGINT}
+     from promotion_info as p left join promotion_seller_detail as s
+     on p.promotion_id= s.promotion_id and s.delete_flag !=1 and s.seller_code=#{buyerCode}
+     where p.show_status=3 and p.promotion_type=23
   </select>
 
 </mapper>

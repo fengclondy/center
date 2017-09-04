@@ -11,6 +11,6 @@ import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 public interface PromotionTimelimitedInfoDAO {
 
-    List<TimelimitedInfoResDTO> selectTimelimitedInfo(@Param("skuCode") String skuCode);
+    List<TimelimitedInfoResDTO> selectTimelimitedInfo(@Param("buyerCode") String buyerCode);
 
 }

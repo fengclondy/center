@@ -84,7 +84,7 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 		Pager<PromotionInfoDTO> pager = null;
 		List<String> taskIdList = new ArrayList<String>();
 		List<String> statusList = new ArrayList<String>();
-		List<String> verifyStatusList = new ArrayList<String>();
+//		List<String> verifyStatusList = new ArrayList<String>();
 		List<PromotionInfoDTO> promotionInfoDTOList = null;
 		if (eachFetchDataNum > 0) {
 			pager = new Pager<PromotionInfoDTO>();
@@ -100,11 +100,12 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));//未开始
 				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_START));//进行中
-				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));//启用
-				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));//审核通过
-				condition.setVerifyStatusList(verifyStatusList);
+				// 不判断启用状态
+//				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));//启用
+//				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));//审核通过
+//				condition.setVerifyStatusList(verifyStatusList);
 				condition.setStatusList(statusList);
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
@@ -152,8 +153,7 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 					status = promotionInfo.getStatus();
 					if (nowDt.before(promotionInfo.getEffectiveTime())) {
 						timeStatus = noStartStatus;
-					} else if (!nowDt.before(promotionInfo.getEffectiveTime())
-							&& !nowDt.after(promotionInfo.getInvalidTime())) {
+					} else if (nowDt.before(promotionInfo.getInvalidTime())) {
 						timeStatus = startStatus;
 					} else {
 						timeStatus = endStatus;

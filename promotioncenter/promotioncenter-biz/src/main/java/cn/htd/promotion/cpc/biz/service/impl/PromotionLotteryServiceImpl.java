@@ -64,7 +64,6 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String ticket = "";
         Map<String, String> dictMap = null;
         PromotionExtendInfoDTO promotionInfoDTO = null;
-        PromotionSellerDetailDTO sellerDTO = null;
         BuyerWinningRecordDTO defaultWinningRecord = new BuyerWinningRecordDTO();
 
         responseDTO.setMessageId(requestDTO.getMessageId());
@@ -73,12 +72,9 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         dictMap = baseService.initPromotionDictMap();
         promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(promotionId, dictMap);
         if (promotionLotteryCommonService.checkPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
-            sellerDTO = baseService.getPromotionSellerInfo(promotionInfoDTO, sellerCode, dictMap);
             defaultWinningRecord.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
             defaultWinningRecord.setBuyerCode(buyerCode);
-            defaultWinningRecord.setSellerCode(sellerDTO.getSellerCode());
-            defaultWinningRecord.setSellerName(sellerDTO.getSellerName());
-            defaultWinningRecord.setBelongSuperiorName(sellerDTO.getBelongSuperiorName());
+            defaultWinningRecord.setSellerCode(sellerCode);
             defaultWinningRecord.setRewardType(dictMap.get(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE + "&"
                     + DictionaryConst.OPT_PROMOTION_REWARD_TYPE_THANKS));
             ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);

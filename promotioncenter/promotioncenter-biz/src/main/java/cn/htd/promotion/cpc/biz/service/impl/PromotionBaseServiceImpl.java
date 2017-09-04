@@ -657,38 +657,26 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap) {
         PromotionSellerDetailDTO sellerDetailDTO = null;
-
-        sellerDetailDTO = getPromotionSellerInfo(promotionInfoDTO, sellerCode, dictMap);
-        if (sellerDetailDTO == null) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 检查促销活动卖家规则
-     *
-     * @param promotionInfoDTO
-     * @param sellerCode
-     * @param dictMap
-     * @return
-     */
-    @Override
-    public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
-            Map<String, String> dictMap) {
         PromotionSellerRuleDTO ruleDTO = promotionInfoDTO.getSellerRuleDTO();
         List<PromotionSellerDetailDTO> detailList = null;
 
-        detailList = ruleDTO.getSellerDetailList();
-        if (detailList == null || detailList.isEmpty()) {
-            return null;
+        if (sellerDetailDTO == null) {
+            return true;
         }
-        for (PromotionSellerDetailDTO detailDTO : detailList) {
-            if (detailDTO.getSellerCode().equals(sellerCode)) {
-                return detailDTO;
+        if (dictMap
+                .get(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&" + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)
+                .equals(ruleDTO.getRuleTargetType())) {
+            detailList = ruleDTO.getSellerDetailList();
+            if (detailList == null || detailList.isEmpty()) {
+                return false;
+            }
+            for (PromotionSellerDetailDTO detailDTO : detailList) {
+                if (detailDTO.getSellerCode().equals(sellerCode)) {
+                    return true;
+                }
             }
         }
-        return null;
+        return false;
     }
 
     // @Override

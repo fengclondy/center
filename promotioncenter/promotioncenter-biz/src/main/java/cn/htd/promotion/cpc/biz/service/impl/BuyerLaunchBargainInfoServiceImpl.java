@@ -443,8 +443,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 						  buyerBargainLaunchReqDTO.setLevelCode(levelCode);
 						  buyerBargainLaunchReqDTO.setBargainCode(bargainCode);
 						  buyerBargainLaunchReqDTO.setPromotionId(promotionId);
-						  String buyerBargainLaunchJson = JSON.toJSONString(buyerBargainLaunchReqDTO);
-						  promotionRedisDB.tailPush(Constants.BUYER_LAUNCH_BARGAIN_INFO, buyerBargainLaunchJson);//从右边插入队列
+						  buyerLaunchBargainInfoDAO.updateBuyerLaunchBargainInfo(buyerBargainLaunchReqDTO);
+//						  String buyerBargainLaunchJson = JSON.toJSONString(buyerBargainLaunchReqDTO);
+//						  promotionRedisDB.tailPush(Constants.BUYER_LAUNCH_BARGAIN_INFO, buyerBargainLaunchJson);//从右边插入队列
 						  //插入砍价记录
 						  BuyerBargainRecordReqDTO buyerBargainRecord = new BuyerBargainRecordReqDTO();
 						  buyerBargainRecord.setBargainCode(bargainCode);
@@ -457,8 +458,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 						  buyerBargainRecord.setCreateTime(new Date());
 						  buyerBargainRecord.setHeadSculptureUrl(helperPicture);
 						  buyerBargainRecord.setMessageId(messageId);
-						  String buyerBargainRecordJson = JSON.toJSONString(buyerBargainRecord);
-						  promotionRedisDB.tailPush(Constants.BUYER_BARGAIN_RECORD, buyerBargainRecordJson);//从右边插入队列
+//						  String buyerBargainRecordJson = JSON.toJSONString(buyerBargainRecord);
+//						  promotionRedisDB.tailPush(Constants.BUYER_BARGAIN_RECORD, buyerBargainRecordJson);//从右边插入队列
+						  buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
 						  //为判断是否砍过价做准备
 						  String str = "01";
 						  promotionRedisDB.setHash(Constants.IS_BUYER_BARGAIN, openedId+promotionId+levelCode,str);

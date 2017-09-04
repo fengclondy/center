@@ -13,7 +13,9 @@ import com.alibaba.fastjson.JSON;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.service.StockChangeService;
 import cn.htd.promotion.cpc.common.constants.Constants;
+import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
@@ -32,16 +34,15 @@ public abstract class StockChangeImpl implements StockChangeService {
 	protected Logger logger = LoggerFactory.getLogger(StockChangeImpl.class);
 
 	@Override
-	public void checkAndChangeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
+	public void checkAndChangeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) throws Exception {
 		/* 验空2017-02-13 */
 		ValidateResult validateResult = DTOValidateUtil.validate(seckillInfoReqDTO);
 		if (!validateResult.isPass()) {
+			throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
+					validateResult.getErrorMsg());
 		}
-		try {
-			this.changeStock(messageId, seckillInfoReqDTO.getPromotionId());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		logger.info("MessageId:{} 调用方法StockChangeImpl.checkAndChangeStock入参{}", JSON.toJSONString(seckillInfoReqDTO));
+		this.changeStock(messageId, seckillInfoReqDTO.getPromotionId(), seckillInfoReqDTO.getBuyerCode());
 	}
 
 	/**
@@ -50,7 +51,7 @@ public abstract class StockChangeImpl implements StockChangeService {
 	 * @param promotionId
 	 * @return
 	 */
-	protected abstract void changeStock(String messageId, String promotionId) throws Exception;
+	protected abstract void changeStock(String messageId, String promotionId, String buyerCode) throws Exception;
 
 	/**
 	 * 更新Redis中的秒杀活动参加记录并更新DB

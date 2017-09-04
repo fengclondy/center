@@ -17,7 +17,7 @@ public class SeckillReduceImplHandle extends StockChangeImpl {
 	private RedissonClientUtil redissonClientUtil;
 
 	@Override
-	protected void changeStock(String messageId, String promotionId) throws Exception {
+	protected void changeStock(String messageId, String promotionId, String buyerCode) throws Exception {
 		RLock rLock = null;
 		BuyerUseTimelimitedLogDMO redisUseLog = null;
 		RedissonClient redissonClient = redissonClientUtil.getInstance();

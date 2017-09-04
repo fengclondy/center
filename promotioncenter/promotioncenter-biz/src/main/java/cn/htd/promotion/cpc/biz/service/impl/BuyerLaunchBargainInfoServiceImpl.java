@@ -461,6 +461,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 							    		if(levelCode.equals(p.getLevelCode())){
 							    			if(i == p.getGoodsNum()){
 							    				p.setIsBargainOver(2);
+							    				p.setUpFlag("0");
 							    				break;
 								    		}
 							    		}

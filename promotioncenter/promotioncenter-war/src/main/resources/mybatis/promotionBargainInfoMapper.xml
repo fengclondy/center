@@ -74,16 +74,25 @@
 		</trim>
 	</insert>
 	<update id="update">
-		update promotion_accumulaty
+		update promotion_bargain_info
 		<set>
-			<if test="addupType != null and addupType != ''">
-				addup_type = #{addupType,jdbcType=VARCHAR},
+			<if test="goodsPicture != null and goodsPicture != ''">
+				goods_picture = #{goodsPicture,jdbcType=VARCHAR},
 			</if>
-			<if test="levelAmount != null and levelAmount != ''">
-				level_amount = #{levelAmount,jdbcType=VARCHAR},
+			<if test="goodsName != null and goodsName != ''">
+				goods_name = #{goodsName,jdbcType=VARCHAR},
 			</if>
-			<if test="quantifierType != null and quantifierType != ''">
-				quantifier_type = #{quantifierType,jdbcType=VARCHAR},
+			<if test="goodsCostPrice != null">
+				goods_cost_price = #{goodsCostPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsFloorPrice != null">
+				goods_floor_price = #{goodsFloorPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="partakeTimes != null">
+				partake_times = #{partakeTimes,jdbcType=TINYINT},
+			</if>
+			<if test="goodsNum != null">
+				goods_num = #{goodsNum,jdbcType=TINYINT},
 			</if>
 			modify_id = #{modifyId,jdbcType=BIGINT},
 			modify_name = #{modifyName,jdbcType=VARCHAR},
@@ -92,18 +101,6 @@
 		where promotion_id = #{promotionId,jdbcType=VARCHAR}
 		  and level_code = #{levelCode,jdbcType=VARCHAR}
 	</update>
-	<update id="delete" >
-		update promotion_accumulaty
-		<set>
-			delete_flag = 1,
-			modify_id = #{modifyId,jdbcType=BIGINT},
-			modify_name = #{modifyName,jdbcType=VARCHAR},
-			modify_time = now(),
-		</set>
-		where promotion_id = #{promotionId,jdbcType=VARCHAR}
-		  and level_code = #{levelCode,jdbcType=VARCHAR}
-	</update>
-	
 	<select id="queryPromotionBargainStockSum" resultType="java.lang.Integer">
 		SELECT SUM(goods_num) 
 		FROM promotion_bargain_info

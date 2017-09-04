@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    <id column="award_id" property="awardId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
+    <result column="award_type" property="awardType" jdbcType="VARCHAR" />
+    <result column="award_value" property="awardValue" jdbcType="VARCHAR" />
+    <result column="award_name" property="awardName" jdbcType="VARCHAR" />
+    <result column="award_rule_describe" property="awardRuleDescribe" jdbcType="VARCHAR" />
+    <result column="provide_count" property="provideCount" jdbcType="INTEGER" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    award_id, promotion_id, level_code, award_type, award_value, award_name, award_rule_describe, 
+    provide_count, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_award_info
+    where award_id = #{awardId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="queryByPIdAndLevel" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_award_info
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and level_code = #{levelCode,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from promotion_award_info
+    where award_id = #{awardId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    insert into promotion_award_info (award_id, promotion_id, level_code, 
+      award_type, award_value, award_name, 
+      award_rule_describe, provide_count, create_id, 
+      create_name, create_time, modify_id, 
+      modify_name, modify_time)
+    values (#{awardId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{levelCode,jdbcType=VARCHAR}, 
+      #{awardType,jdbcType=VARCHAR}, #{awardValue,jdbcType=VARCHAR}, #{awardName,jdbcType=VARCHAR}, 
+      #{awardRuleDescribe,jdbcType=VARCHAR}, #{provideCount,jdbcType=INTEGER}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
+      #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    insert into promotion_award_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="promotionId != null" >
+        promotion_id,
+      </if>
+      <if test="levelCode != null" >
+        level_code,
+      </if>
+      <if test="awardType != null" >
+        award_type,
+      </if>
+      <if test="awardValue != null" >
+        award_value,
+      </if>
+      <if test="awardName != null" >
+        award_name,
+      </if>
+      <if test="awardRuleDescribe != null" >
+        award_rule_describe,
+      </if>
+      <if test="provideCount != null" >
+        provide_count,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+        create_time,
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+        modify_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="levelCode != null" >
+        #{levelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="awardType != null" >
+        #{awardType,jdbcType=VARCHAR},
+      </if>
+      <if test="awardValue != null" >
+        #{awardValue,jdbcType=VARCHAR},
+      </if>
+      <if test="awardName != null" >
+        #{awardName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardRuleDescribe != null" >
+        #{awardRuleDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="provideCount != null" >
+        #{provideCount,jdbcType=INTEGER},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+        now(),
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+        now()
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    update promotion_award_info
+    <set >
+      <if test="promotionId != null" >
+        promotion_id = #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="levelCode != null" >
+        level_code = #{levelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="awardType != null" >
+        award_type = #{awardType,jdbcType=VARCHAR},
+      </if>
+      <if test="awardValue != null" >
+        award_value = #{awardValue,jdbcType=VARCHAR},
+      </if>
+      <if test="awardName != null" >
+        award_name = #{awardName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardRuleDescribe != null" >
+        award_rule_describe = #{awardRuleDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="provideCount != null" >
+        provide_count = #{provideCount,jdbcType=INTEGER},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+        modify_time = now()
+    </set>
+    where award_id = #{awardId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
+    update promotion_award_info
+    set promotion_id = #{promotionId,jdbcType=VARCHAR},
+      level_code = #{levelCode,jdbcType=VARCHAR},
+      award_type = #{awardType,jdbcType=VARCHAR},
+      award_value = #{awardValue,jdbcType=VARCHAR},
+      award_name = #{awardName,jdbcType=VARCHAR},
+      award_rule_describe = #{awardRuleDescribe,jdbcType=VARCHAR},
+      provide_count = #{provideCount,jdbcType=INTEGER},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where award_id = #{awardId,jdbcType=BIGINT}
+  </update>
+</mapper>

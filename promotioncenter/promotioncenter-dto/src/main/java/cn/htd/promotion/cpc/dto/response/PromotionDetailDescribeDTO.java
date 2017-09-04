@@ -20,7 +20,7 @@ public class PromotionDetailDescribeDTO extends GenricResDTO {
     /**
      * 删除标记
      */
-    private Boolean deleteFlag;
+    private int deleteFlag;
     /**
      * 创建人ID
      */
@@ -70,11 +70,11 @@ public class PromotionDetailDescribeDTO extends GenricResDTO {
         this.describeContent = describeContent;
     }
 
-    public Boolean getDeleteFlag() {
+    public int getDeleteFlag() {
         return deleteFlag;
     }
 
-    public void setDeleteFlag(Boolean deleteFlag) {
+    public void setDeleteFlag(int deleteFlag) {
         this.deleteFlag = deleteFlag;
     }
 

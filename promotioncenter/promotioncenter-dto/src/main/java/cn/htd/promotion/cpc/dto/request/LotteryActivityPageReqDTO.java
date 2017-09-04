@@ -19,7 +19,6 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 	/**
 	 * 粉丝id
 	 */
-	@NotEmpty(message = "memberNo不能为空")
 	private String memberNo;
 	
 	/**
@@ -27,6 +26,11 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 	 */
 	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;
+	
+	/**
+	 * 是否是首次登陆 0:否，1:是
+	 */
+	private int isFirstLogin;
 
 	public String getOrgId() {
 		return orgId;
@@ -50,5 +54,13 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 
 	public void setPromotionId(String promotionId) {
 		this.promotionId = promotionId;
+	}
+
+	public int getIsFirstLogin() {
+		return isFirstLogin;
+	}
+
+	public void setIsFirstLogin(int isFirstLogin) {
+		this.isFirstLogin = isFirstLogin;
 	}
 }

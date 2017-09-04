@@ -10,7 +10,7 @@ public class PromotionAwardInfoDTO extends PromotionAccumulatyDTO {
      */
     private Long awardId;
     /**
-     * 奖励类型 1：实物奖品，2：话费，3：汇金币，4：谢谢惠顾
+     * 奖励类型 2：实物奖品，3：话费，4：汇金币，5：谢谢惠顾
      */
     private String awardType;
     /**

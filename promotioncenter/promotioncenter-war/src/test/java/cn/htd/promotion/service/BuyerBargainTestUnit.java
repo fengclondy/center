@@ -60,22 +60,22 @@ public class BuyerBargainTestUnit {
 		}
     }
     
-//    @Test
-//    @Rollback(false) 
-//    public void testGetPromotionBargainInfoDetail() {
-//    	try {
-//    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-//    		buyerBargainLaunch.setBuyerCode("htd20070002");
-//			buyerBargainLaunch.setPromotionId("22172032410074");
-//			buyerBargainLaunch.setLevelCode("2217203241007491");
-//			buyerBargainLaunch.setMessageId("123456");
-//			buyerBargainLaunch.setBargainCode("123");
-//			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
-//			System.out.println(JSON.toJSONString(promotionBargainInfo));
-//    	} catch (Exception e) {
-//    		
-//		}
-//    }
+    @Test
+    @Rollback(false) 
+    public void testGetPromotionBargainInfoDetail() {
+    	try {
+    		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
+    		buyerBargainLaunch.setBuyerCode("249334061");
+			buyerBargainLaunch.setPromotionId("22172342371125");
+			buyerBargainLaunch.setLevelCode("2217234237112569");
+			buyerBargainLaunch.setMessageId("123456");
+			buyerBargainLaunch.setBargainCode("3171928120048");
+			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
+			System.out.println(JSON.toJSONString(promotionBargainInfo));
+    	} catch (Exception e) {
+    		
+		}
+    }
     
     
 //    @Test
@@ -225,4 +225,21 @@ public class BuyerBargainTestUnit {
 //    	ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> list = promotionBargainInfoService.queryPromotionBargainOverview("801781", page);
 //    	System.out.println(JSON.toJSONString(list));
 //    }
+    
+    
+	  @Test
+	  @Rollback(false) 
+	  public void Testoptationbargain(){
+	    ExecuteResult<String> result = new ExecuteResult<String>();
+	    String buyerCode = "24933406000";
+	    String promotionId = "22172343460075";
+	    String levelCode = "2217234346007530";
+	    String bargainCode = "3172355370001";
+	    String helperPicture = "5365.png";
+	    String helperName = "单元测试帮忙";
+	    String openedId = "123123123";
+	    String messageId = "123";
+	    result = buyerLaunchBargainInfoService.optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId, messageId);
+	  	System.out.println(JSON.toJSONString(result));
+	  }
 }

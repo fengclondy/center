@@ -21,15 +21,25 @@ public interface PromotionTimelimitedInfoAPI {
 
 	
 	/**
+	 * 汇掌柜APP -  根据会员编码和促销活动id查询总部秒杀信息
+	 * 
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCodeAndPromotionId(String messageId, String buyerCode,String promotionId);
+
+
+	/**
 	 * 汇掌柜APP -  根据会员编码查询是否有总部秒杀信息
 	 * 
 	 * @param messageId
 	 * @param buyerCode
 	 * @return
 	 */
-	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId, String buyerCode,String promotionId);
+	public boolean getPromotionTimelimitedByBuyerCode(String messageId, String buyerCode);
 
-
+	
 	/**
 	 * 汇掌柜APP - 查询秒杀活动列表
 	 * 

@@ -18,4 +18,8 @@ public interface TimelimitedSkuDescribeDAO {
     int deleteByPrimaryKey(Long descId);
     
     TimelimitedSkuDescribeResDTO selectByPrimaryKey(Long descId);
+    
+    TimelimitedSkuDescribeResDTO selectByPromotionId(String promotionId);
+    
+    
 }

@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.List;
+
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO;
 
@@ -13,10 +15,13 @@ public interface TimelimitedSkuPictureDAO {
     
     int updateByPrimaryKeySelective(TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO);
     
+    int pseudoDelete(TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO);
+    
     int deleteByPrimaryKey(Long pictureId);
 
     TimelimitedSkuPictureResDTO selectByPrimaryKey(Long pictureId);
-
+    
+    List<TimelimitedSkuPictureResDTO> selectByPromotionId(String promotionId);
 
 
 

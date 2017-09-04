@@ -9,6 +9,11 @@
 
   <bean id="app" class="cn.htd.promotion.cpc.common.util.ApplicationUtil">
   </bean>
+  <!-- Srping getbean工具类 -->
+  <bean class="cn.htd.common.util.SpringApplicationContextHolder" />
+  <bean class="cn.htd.common.util.SystemBootstrap" >
+    <property name="configPath" value="/env.properties"/>
+  </bean>
 
   <bean id="methodAccessLogInterceptor" class="cn.htd.common.interceptor.MethodAccessLogInterceptor"></bean>
   <aop:config proxy-target-class="true">

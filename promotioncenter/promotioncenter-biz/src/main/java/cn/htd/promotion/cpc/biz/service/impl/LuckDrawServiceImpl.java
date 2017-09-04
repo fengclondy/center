@@ -349,7 +349,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
 
 			}
-			// promotionInfoEditReqDTO.setPromotionType("NDJ");
+			promotionInfoEditReqDTO.setPromotionType("21");
 			rtobj = promotionBaseService
 					.insertPromotionInfo(promotionInfoEditReqDTO);
 			if (rtobj.getPromotionAccumulatyList() != null) {

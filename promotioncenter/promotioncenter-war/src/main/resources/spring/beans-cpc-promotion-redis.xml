@@ -29,7 +29,8 @@
   </bean>
   
   <bean id="redissonClientUtil" class="cn.htd.promotion.cpc.common.util.RedissonClientUtil" init-method="init">
-	<property name="connectionFactory" ref="jedisConnectionFactory"/>
+ 	<property name="redisAddress" value="${redis.host}:${redis.port}"/>
+	<property name="connectionPoolSize" value="${redis.maxTotal}"/>  
   </bean>
 
 </beans>

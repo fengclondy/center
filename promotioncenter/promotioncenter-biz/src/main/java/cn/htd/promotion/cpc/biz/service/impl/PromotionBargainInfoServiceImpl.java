@@ -778,27 +778,19 @@ public class PromotionBargainInfoServiceImpl implements
 					resDTO.setEffectiveTime(promotionInfo.getEffectiveTime());
 					resDTO.setInvalidTime(promotionInfo.getInvalidTime());
 					resDTO.setStatus(promotionInfo.getStatus());
-					// 参砍商品种类
-					List<PromotionAccumulatyDTO> accumulatyList = promotionAccumulatyDAO
-							.queryPromotionAccumulatyByPromotionId(resDTO
-									.getPromotionId());
-					resDTO.setBargainType(accumulatyList == null ? 0
-							: accumulatyList.size());
-					// 未砍商品数量
-					Integer joinTypeQTY = buyerBargainRecordDAO
-							.queryPromotionBargainJoinTypeQTY(resDTO
-									.getPromotionId());
-					Integer bargainQTY = promotionBargainInfoDAO
-							.queryPromotionBargainStockSum(resDTO
-									.getPromotionId());
-					if (joinTypeQTY != null && bargainQTY != null) {
-						int resultQTY = bargainQTY.intValue() - joinTypeQTY.intValue();
-						if(resultQTY <= 0) {
+					// 已被砍商品数
+					Integer bargainCount = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoCount(promotionInfo.getPromotionId());
+					resDTO.setBargainType(bargainCount == null ? 0
+							: bargainCount.intValue());
+					// 未被砍商品数量
+					List<PromotionAccumulatyDTO> accumuList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionInfo.getPromotionId(), null);
+					if(null != accumuList && !accumuList.isEmpty()){
+						if(accumuList.size() <= bargainCount){
 							resDTO.setNoBargainItemQTY(0);
 						}else{
-							resDTO.setNoBargainItemQTY(resultQTY);
+							resDTO.setNoBargainItemQTY(accumuList.size() - bargainCount);
 						}
-					} else {
+					}else{
 						resDTO.setNoBargainItemQTY(0);
 					}
 					// 发起砍价人数
@@ -826,6 +818,7 @@ public class PromotionBargainInfoServiceImpl implements
 	@Override
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
 			String promotionId, Pager<String> page) {
+		LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.queryPromotionBargainByPromotionId（）方法开始,入参{}",promotionId);
 		DataGrid<PromotionBargainOverviewResDTO> dataGrid = new DataGrid<PromotionBargainOverviewResDTO>();
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
 		List<PromotionBargainOverviewResDTO> resList = new ArrayList<PromotionBargainOverviewResDTO>();

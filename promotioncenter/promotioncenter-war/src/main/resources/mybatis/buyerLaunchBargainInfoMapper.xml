@@ -183,4 +183,10 @@
         </if>
 	</select>
 	
+	<select id="queryBuyerLaunchBargainInfoCount" resultType="java.lang.Integer">
+		select COUNT(0) from buyer_launch_bargain_info 
+		where promotion_id = #{promotionId}
+		group by level_code
+	</select>
+	
 </mapper>

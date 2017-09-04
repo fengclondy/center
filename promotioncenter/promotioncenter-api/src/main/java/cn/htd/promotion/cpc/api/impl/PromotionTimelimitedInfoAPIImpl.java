@@ -56,8 +56,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 
 	@Resource
 	private StockChangeService stockChangeService;
-	
-	
+
 	/**
 	 * 汇掌柜APP - 查询秒杀活动列表
 	 * 
@@ -72,48 +71,50 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			String buyerCode, Pager<TimelimitedInfoResDTO> page) {
 		ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>> result = new ExecuteResult<DataGrid<PromotionTimelimitedShowDTO>>();
 		DataGrid<PromotionTimelimitedShowDTO> datagrid = new DataGrid<PromotionTimelimitedShowDTO>();
-	     //所有有效秒杀活动集合,用于返回前端
-        List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
-        //所有有效秒杀活动集合,用于排序
-        List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
-        PromotionTimelimitedShowDTO timelimitedMallDTO = null;
-        int count = 0;
-        long total = 0;
-        int offset = 0;
-        int rows = Integer.MAX_VALUE;
-        if (page != null) {
-            offset = page.getPageOffset();
-            rows = page.getRows();
-        }
+		// 所有有效秒杀活动集合,用于返回前端
+		List<PromotionTimelimitedShowDTO> timelimitedDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
+		// 所有有效秒杀活动集合,用于排序
+		List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
+		PromotionTimelimitedShowDTO timelimitedMallDTO = null;
+		int count = 0;
+		long total = 0;
+		int offset = 0;
+		int rows = Integer.MAX_VALUE;
+		if (page != null) {
+			offset = page.getPageOffset();
+			rows = page.getRows();
+		}
 		try {
-			List<TimelimitedInfoResDTO> timelitedInfoList=  promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
-			if(null !=timelitedInfoList){
-				for(TimelimitedInfoResDTO timelitedinfo:timelitedInfoList){
-					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
-					if(null != timelited){
+			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService
+					.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+			if (null != timelitedInfoList) {
+				for (TimelimitedInfoResDTO timelitedinfo : timelitedInfoList) {
+					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle
+							.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
+					if (null != timelited) {
 						timelimitedMallDTO = new PromotionTimelimitedShowDTO();
-					    timelimitedMallDTO.setTimelimitedInfo(timelited);
-			            timelimitedAllDTOList.add(timelimitedMallDTO);
+						timelimitedMallDTO.setTimelimitedInfo(timelited);
+						timelimitedAllDTOList.add(timelimitedMallDTO);
 					}
 				}
-				
+
 			}
-	       if (!timelimitedAllDTOList.isEmpty()) {
-	            total = timelimitedAllDTOList.size();
-	            logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
-	            Collections.sort(timelimitedAllDTOList);
-	            while (total > count) {
-	                if (count >= offset && timelimitedDTOList.size() < rows) {
-	                	timelimitedDTOList.add(timelimitedAllDTOList.get(count));
-	                }
-	                if (timelimitedDTOList.size() >= rows) {
-	                    break;
-	                }
-	                count++;
-	            }
-	            datagrid.setTotal(total);
-	            datagrid.setRows(timelimitedDTOList);
-	        }
+			if (!timelimitedAllDTOList.isEmpty()) {
+				total = timelimitedAllDTOList.size();
+				logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
+				Collections.sort(timelimitedAllDTOList);
+				while (total > count) {
+					if (count >= offset && timelimitedDTOList.size() < rows) {
+						timelimitedDTOList.add(timelimitedAllDTOList.get(count));
+					}
+					if (timelimitedDTOList.size() >= rows) {
+						break;
+					}
+					count++;
+				}
+				datagrid.setTotal(total);
+				datagrid.setRows(timelimitedDTOList);
+			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
@@ -124,8 +125,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return result;
 	}
-	
-
 
 	/**
 	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀信息
@@ -183,8 +182,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return false;
 	}
-
-
 
 	/**
 	 * 汇掌柜APP - 查询秒杀活动详情
@@ -341,11 +338,15 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		try {
 			stockChangeService.checkAndChangeStock(messageId, seckillInfoReqDTO);
+			result.setResult("success");
+		} catch (PromotionCenterBusinessException pcbe) {
+			result.setCode(pcbe.getCode());
+			result.setErrorMessage(pcbe.getMessage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+			result.setErrorMessage(e.getMessage());
 		}
-		return null;
+		return result;
 	}
 
 	@Override

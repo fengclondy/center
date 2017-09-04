@@ -447,6 +447,25 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 							  //更新发起砍价表
 							  buyerBargainLaunchReqDTO.setBargainOverTime(new Date());
 							  buyerBargainLaunchReqDTO.setIsBargainOver(1);
+							    BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo11 = new BuyerLaunchBargainInfoResDTO();
+							    buyerLaunchBargainInfo11.setPromotionId(promotionId);
+							    buyerLaunchBargainInfo11.setLevelCode(levelCode);
+							    buyerLaunchBargainInfo11.setIsBargainOver(1);
+								Integer i = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(buyerLaunchBargainInfo11);
+								PromotionBargainInfoResDTO redisDTO = new PromotionBargainInfoResDTO();
+							    redisDTO.setPromotionId(promotionId);
+							    List<PromotionBargainInfoResDTO> listPromotions  = promotionBargainRedisHandle.getRedisBargainInfoList(redisDTO);
+							    if(listPromotions != null && listPromotions.size()>0){
+							    	for(PromotionBargainInfoResDTO p : listPromotions){
+							    		if(levelCode.equals(p.getLevelCode())){
+							    			if(i == p.getGoodsNum()){
+							    				p.setIsBargainOver(2);
+							    				break;
+								    		}
+							    		}
+							    	}
+							    	promotionBargainRedisHandle.addBargainInfo2Redis(listPromotions);
+							    }
 						  }
 						  buyerLaunchBargainInfoDAO.updateBuyerLaunchBargainInfo(buyerBargainLaunchReqDTO);
 //						  String buyerBargainLaunchJson = JSON.toJSONString(buyerBargainLaunchReqDTO);

@@ -160,7 +160,6 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 			String buyerNo = request.getMemberNo();
 			if (StringUtils.isNotEmpty(buyerNo)) {
-				result.setRemainingTimes(remainingTimes);
 				// 粉丝活动粉丝当日次数信息
 				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO
 						+ "_" + promotionId + "_" + buyerNo;
@@ -190,7 +189,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 							PromotionCodeEnum.BUYER_HAS_TOP_EXTRA_TIMES
 									.getCode());
 
+				}else{
+					String memberDayLotteryTimes = promotionRedisDB.getHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
+					if(StringUtils.isNotEmpty(memberDayLotteryTimes)){
+						remainingTimes = Integer.valueOf(memberDayLotteryTimes);
+					}
 				}
+				result.setRemainingTimes(remainingTimes);
 				String sellerWinedTimesKey = RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES
 						+ "_" + promotionId + "_" + request.getOrgId();
 				boolean sellerWinedTimes = promotionRedisDB

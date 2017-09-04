@@ -231,6 +231,7 @@ public class PromotionBargainInfoServiceImpl implements
 	public ExecuteResult<PromotionExtendInfoDTO> addPromotionBargainInfo(
 			PromotionExtendInfoDTO promotionExtendInfoDTO)
 			throws PromotionCenterBusinessException {
+		LOGGER.info("MessageId{}:调用PromotionBargainInfoServiceImpl.addPromotionBargainInfo（）方法开始,入参{}",JSON.toJSONString(promotionExtendInfoDTO));
 		ExecuteResult<PromotionExtendInfoDTO> result = new ExecuteResult<PromotionExtendInfoDTO>();
 		try {
 			if (null != promotionExtendInfoDTO.getPromotionAccumulatyList()

@@ -116,7 +116,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}异常信息：{}",
 					messageId, requestDTO.getOrgId(), w.toString());
 		}
 		return result;
@@ -207,7 +207,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityPage出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityPage出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -242,7 +242,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityRulePage出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityRulePage出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -304,7 +304,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.shareLinkHandle出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.shareLinkHandle出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -335,7 +335,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.queryWinningRecord出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.queryWinningRecord出现异常 request：{}异常信息：{}",
 					messageId, JSONObject.toJSONString(request), w.toString());
 		}
 		return result;
@@ -603,7 +603,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法LuckDrawServiceImpl.participateActivitySellerInfo出现异常 request：{}",
+					"MessageId:{} 调用方法LuckDrawServiceImpl.participateActivitySellerInfo出现异常 request：{}异常信息：{}",
 					messageId, messageId, w.toString());
 		}
 		return result;

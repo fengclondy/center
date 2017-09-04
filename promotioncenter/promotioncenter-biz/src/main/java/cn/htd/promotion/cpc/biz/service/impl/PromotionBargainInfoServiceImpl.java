@@ -846,8 +846,9 @@ public class PromotionBargainInfoServiceImpl implements
 							: dmo.getGoodsCostPrice());
 					resDTO.setGoodsFloorPrice(dmo.getGoodsFloorPrice() == null ? BigDecimal.ZERO
 							: dmo.getGoodsFloorPrice());
-					resDTO.setPartakeTimes(dmo.getPartakeTimes() == null ? 0
-							: dmo.getPartakeTimes());
+					//参砍数量
+					resDTO.setGoodsNum(dmo.getGoodsNum() == null ? 0
+							: dmo.getGoodsNum());
 					// 已发起砍价数量
 					launchDTO.setLevelCode(dmo.getLevelCode());
 					launchDTO.setPromotionId(dmo.getPromotionId());

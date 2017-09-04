@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
@@ -48,6 +49,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 
@@ -160,7 +162,6 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 			String buyerNo = request.getMemberNo();
 			if (StringUtils.isNotEmpty(buyerNo)) {
-				result.setRemainingTimes(remainingTimes);
 				// 粉丝活动粉丝当日次数信息
 				String b2bMiddleLotteryBuyerTimesInfo = RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO
 						+ "_" + promotionId + "_" + buyerNo;
@@ -190,7 +191,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 							PromotionCodeEnum.BUYER_HAS_TOP_EXTRA_TIMES
 									.getCode());
 
+				}else{
+					String memberDayLotteryTimes = promotionRedisDB.getHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
+					if(StringUtils.isNotEmpty(memberDayLotteryTimes)){
+						remainingTimes = Integer.valueOf(memberDayLotteryTimes);
+					}
 				}
+				result.setRemainingTimes(remainingTimes);
 				String sellerWinedTimesKey = RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES
 						+ "_" + promotionId + "_" + request.getOrgId();
 				boolean sellerWinedTimes = promotionRedisDB
@@ -395,23 +403,23 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				promotionLotteryCommonService
 						.initPromotionLotteryRedisInfoWithThread(rtobj);
 			}
-			// PromotionStatusHistoryDTO historyDTO = new
-			// PromotionStatusHistoryDTO();
-			// historyDTO.setPromotionId(rtobj.getPromotionId());
-			// historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-			// DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
-			// historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
-			// promotionStatusHistoryDAO.add(historyDTO);
+			 PromotionStatusHistoryDTO historyDTO = new
+			 PromotionStatusHistoryDTO();
+			 historyDTO.setPromotionId(rtobj.getPromotionId());
+			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+			 historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+			 promotionStatusHistoryDAO.add(historyDTO);
 
 			rtobj.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			rtobj.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			rtobj.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			rtobj.setResponseCode(e.getCode());
+			rtobj.setResponseMsg(e.getMessage());
 		} catch (Exception e) {
 			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			rtobj.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
@@ -467,22 +475,22 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				promotionLotteryCommonService
 						.initPromotionLotteryRedisInfoWithThread(result);
 			}
-			// PromotionStatusHistoryDTO historyDTO = new
-			// PromotionStatusHistoryDTO();
-			// historyDTO.setPromotionId(rtobj.getPromotionId());
-			// historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-			// DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-			// DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			// historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
-			// historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
-			// promotionStatusHistoryDAO.add(historyDTO);
+			 PromotionStatusHistoryDTO historyDTO = new
+			 PromotionStatusHistoryDTO();
+			 historyDTO.setPromotionId(result.getPromotionId());
+			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
+			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+			 historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+			 historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+			 promotionStatusHistoryDAO.add(historyDTO);
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(e.getCode());
+			result.setResponseMsg(e.getMessage());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
@@ -519,8 +527,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (PromotionCenterBusinessException e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseCode(e.getCode());
+			result.setResponseMsg(e.getMessage());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));

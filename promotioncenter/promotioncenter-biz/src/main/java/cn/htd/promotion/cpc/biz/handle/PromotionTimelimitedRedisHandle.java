@@ -111,34 +111,7 @@ public class PromotionTimelimitedRedisHandle {
         }
         return promotionIdList;
     }
-    
-    /**
-     * 秒杀 - 取得Redis秒杀活动信息
-     * 
-     * @param promotionId  促销活动编码
-     */
-    public TimelimitedInfoResDTO getRedisTimelimitedInfo(String promotionId) throws PromotionCenterBusinessException {
-    	TimelimitedInfoResDTO timelimitedInfo = null;
-        TimelimitedResultDTO timelimitedResult = null;
-        String timelimitedJsonStr = "";
-        String validStatus = "";
-        validStatus = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED_VALID, promotionId);
-        if (!StringUtils.isEmpty(validStatus)
-                && !dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validStatus)) {
-            throw new PromotionCenterBusinessException(PromotionCenterConst.PROMOTION_NOT_VALID,
-                    "秒杀活动ID:" + promotionId + " 该秒杀活动未上架");
-        }
-        timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-        timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
-        if (timelimitedInfo == null) {
-            throw new PromotionCenterBusinessException(PromotionCenterConst.PROMOTION_NOT_EXIST,
-                    "秒杀活动ID:" + promotionId + " 该秒杀活动不存在!");
-        }
-        timelimitedResult = getRedisTimelimitedResult(promotionId);
-//        timelimitedInfo.setTimelimitedResult(timelimitedResult);
-        return timelimitedInfo;
-    }
+
     
     /**
      * 秒杀 - 查询Redis秒杀活动展示结果信息

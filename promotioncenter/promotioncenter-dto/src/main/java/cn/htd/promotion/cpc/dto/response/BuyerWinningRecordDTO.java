@@ -37,6 +37,10 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
      */
     private String buyerTelephone;
     /**
+     * 剩余抽奖次数
+     */
+    private Long remainLotteryChance;
+    /**
      * 卖家编码
      */
     private String sellerCode;
@@ -183,6 +187,14 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
 
     public void setBuyerTelephone(String buyerTelephone) {
         this.buyerTelephone = buyerTelephone;
+    }
+
+    public Long getRemainLotteryChance() {
+        return remainLotteryChance;
+    }
+
+    public void setRemainLotteryChance(Long remainLotteryChance) {
+        this.remainLotteryChance = remainLotteryChance;
     }
 
     public String getSellerCode() {

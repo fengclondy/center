@@ -4,6 +4,6 @@ import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
 
 public interface StockChangeService {
 
-	public void checkAndChangeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
+	public void checkAndChangeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) throws Exception;
 
 }

@@ -67,12 +67,14 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	private String modifyName;
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
+	// 商品描述
+	private String describeContent;
 	//活动信息
 	private PromotionExtendInfoDTO promotionExtendInfoDTO;
 	//商品图片
 	private List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList;
 	//商品详情
-	private TimelimitedSkuDescribeResDTO timelimitedSkuDescribe;
+	private List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList;
 	
 	
 	public Long getTimelimitedId() {
@@ -220,19 +222,26 @@ public class TimelimitedInfoResDTO implements Serializable  {
 			List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList) {
 		this.timelimitedSkuPictureList = timelimitedSkuPictureList;
 	}
-	public TimelimitedSkuDescribeResDTO getTimelimitedSkuDescribe() {
-		return timelimitedSkuDescribe;
-	}
-	public void setTimelimitedSkuDescribe(
-			TimelimitedSkuDescribeResDTO timelimitedSkuDescribe) {
-		this.timelimitedSkuDescribe = timelimitedSkuDescribe;
-	}
 	public PromotionExtendInfoDTO getPromotionExtendInfoDTO() {
 		return promotionExtendInfoDTO;
 	}
 	public void setPromotionExtendInfoDTO(PromotionExtendInfoDTO promotionExtendInfoDTO) {
 		this.promotionExtendInfoDTO = promotionExtendInfoDTO;
 	}
+	public String getDescribeContent() {
+		return describeContent;
+	}
+	public void setDescribeContent(String describeContent) {
+		this.describeContent = describeContent;
+	}
+	public List<TimelimitedSkuDescribeResDTO> getTimelimitedSkuDescribeList() {
+		return timelimitedSkuDescribeList;
+	}
+	public void setTimelimitedSkuDescribeList(
+			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList) {
+		this.timelimitedSkuDescribeList = timelimitedSkuDescribeList;
+	}
+	
 	
 	public void setTimelimitedInfo(TimelimitedInfoResDTO timelimitedInfo) {
 		this.timelimitedId = timelimitedInfo.getTimelimitedId();
@@ -248,5 +257,6 @@ public class TimelimitedInfoResDTO implements Serializable  {
 		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
 	}
 
+	
 
 }

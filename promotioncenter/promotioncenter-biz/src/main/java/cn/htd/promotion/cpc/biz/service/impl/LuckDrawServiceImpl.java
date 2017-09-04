@@ -33,6 +33,7 @@ import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.PromotionCodeEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
@@ -383,7 +384,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			rtobj.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		} catch (Exception e) {
 			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			rtobj.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			rtobj.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 
 		return rtobj;
@@ -430,7 +431,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 
 		return result;
@@ -468,7 +469,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 
 		return result;

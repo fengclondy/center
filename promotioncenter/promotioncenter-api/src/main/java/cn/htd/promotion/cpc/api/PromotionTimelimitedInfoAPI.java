@@ -78,15 +78,6 @@ public interface PromotionTimelimitedInfoAPI {
 			String promotionId);
 
 	/**
-	 * 校验是否有参加秒杀活动的资格
-	 * 
-	 * @param messageId
-	 * @param seckillInfoReqDTO
-	 * @return
-	 */
-	public ExecuteResult<String> checkSeckillQualifications(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
-
-	/**
 	 * 锁定秒杀库存
 	 * 
 	 * @param messageId

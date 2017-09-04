@@ -21,8 +21,10 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
+import cn.htd.promotion.cpc.biz.exception.PromotionCenterException;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
+import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
@@ -297,8 +299,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
 	@Override
 	public TimelimitedInfoResDTO getTimelimitedInfo(String promotionId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		String timelimitedStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
+		if (StringUtils.isBlank(timelimitedStr)) {
+			throw new PromotionCenterException(PromotionCenterConst.PROMOTION_NOT_EXIST, "查询不到该秒杀活动");
+		}
+		TimelimitedInfoResDTO timelimitedInfo = JSON.parseObject(timelimitedStr, TimelimitedInfoResDTO.class);
+		return timelimitedInfo;
 	}
 
 }

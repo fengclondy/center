@@ -341,11 +341,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	}
 
 	@Override
-	public ExecuteResult<String> checkSeckillQualifications(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
-		return null;
-	}
-
-	@Override
 	public ExecuteResult<String> reserveStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		stockChangeService.checkAndChangeStock(messageId, seckillInfoReqDTO);

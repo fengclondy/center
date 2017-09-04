@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.htd.zeus.tc.dto.response.OrderDayAmountResDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -198,5 +200,21 @@ public interface TradeOrdersDAO {
 	 * @return
 	 */
 	public Integer queryPresaleOrderCountByBuyerId(OrderQueryParamDMO orderQueryParamDMO);
+
+	/**
+	 * 查询每天订单支出明细
+	 *
+	 * @param orderAmountQueryReqDTO
+	 * @return
+	 */
+	public List<OrderDayAmountResDTO> queryOrderDayAmountResDTO(OrderAmountQueryReqDTO orderAmountQueryReqDTO);
+
+	/**
+	 * 查询订单总支出金额
+	 *
+	 * @param orderAmountQueryReqDTO
+	 * @return
+	 */
+	public String queryTotalOrderAmountByMemberCode(OrderAmountQueryReqDTO orderAmountQueryReqDTO);
 
 }

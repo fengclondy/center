@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.zeus.tc.dto.response.OrderAmountResDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -164,5 +166,15 @@ public class OrderQueryAPITestUnit {
 		List<String> orderNoList = new ArrayList<String>();
 		orderNoList.add("1001708011429357254");
 		orderStatusChangeCommonService.updateOrderPayTimeLimit(orderNoList);
+	}
+
+	@Test
+	public void testQueryOrderAmountForSuperboss(){
+		OrderAmountQueryReqDTO orderAmountQueryReqDTO=new OrderAmountQueryReqDTO();
+		orderAmountQueryReqDTO.setMemberCode("htd000662");
+		orderAmountQueryReqDTO.setStartDate("2017-04-24");
+		orderAmountQueryReqDTO.setEndDate("2017-07-18");
+		OrderAmountResDTO orderAmountResDTO =orderQueryService.queryOrderAmountForSuperboss(orderAmountQueryReqDTO);
+		System.out.println("dd"+orderAmountResDTO.getStatus());
 	}
 }

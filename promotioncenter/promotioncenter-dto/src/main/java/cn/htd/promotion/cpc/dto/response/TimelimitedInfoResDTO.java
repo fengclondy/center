@@ -243,6 +243,20 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	}
 	
 	
+	public void setTimelimitedInfo(TimelimitedInfoResDTO timelimitedInfo) {
+		this.timelimitedId = timelimitedInfo.getTimelimitedId();
+		this.sellerCode = timelimitedInfo.getSellerCode();
+		this.itemId = timelimitedInfo.getItemId();
+		this.skuCode = timelimitedInfo.getSkuCode();
+		this.skuName = timelimitedInfo.getSkuName();
+		this.skuPicUrl = timelimitedInfo.getSkuPicUrl();
+		this.skuCostPrice = timelimitedInfo.getSkuCostPrice();
+		this.skuTimelimitedPrice = timelimitedInfo.getSkuTimelimitedPrice();
+		this.timelimitedSkuCount = timelimitedInfo.getTimelimitedSkuCount();
+		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
+		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
+	}
+
 	
 
 }

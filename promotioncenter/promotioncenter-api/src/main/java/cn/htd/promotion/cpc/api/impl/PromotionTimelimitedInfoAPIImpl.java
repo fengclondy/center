@@ -125,62 +125,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		return result;
 	}
 
-	/**
-	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀信息
-	 * 
-	 * @param messageId
-	 * @param buyerCode
-	 *            会员编码
-	 * @param promotionId
-	 *            促销活动编码
-	 * @return
-	 */
-	@Override
-	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCodeAndPromotionId(String messageId,
-			String buyerCode, String promotionId) {
-		ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
-		TimelimitedInfoResDTO timelimitedInfo = null;
-		String returnCode = "";
-		try {
-			logger.info("促销活动编码为:" + promotionId + "会员编码为:" + buyerCode);
-			if (StringUtils.isEmpty(promotionId) || StringUtils.isEmpty(buyerCode)) {
-				throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编号和秒杀活动编号不能为空");
-			}
-			timelimitedInfo = promotionTimelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
-			if (!checkPromotionBuyerAuthority(timelimitedInfo, buyerCode)) {
-				returnCode = PromotionCenterConst.TIMELIMITED_BUYER_NO_AUTHIORITY;
-			}
-			result.setCode(returnCode);
-			result.setResult(timelimitedInfo);
-		} catch (PromotionCenterBusinessException bcbe) {
-			result.setCode(bcbe.getCode());
-			result.setErrorMessage(bcbe.getMessage());
-		} catch (Exception e) {
-			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
-			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-		}
-		return result;
-	}
-
-	/**
-	 * 汇掌柜APP - 校验会员是否有权限参加总部秒杀
-	 * 
-	 * @param timelimitedInfo
-	 *            秒杀信息
-	 * @param buyerCode
-	 *            会员编码
-	 * @return
-	 */
-	private boolean checkPromotionBuyerAuthority(TimelimitedInfoResDTO timelimitedInfo, String buyerCode) {
-		PromotionSellerDetailDTO sellerDetail = null;// timelimitedInfo.getSellerDetailDTO();
-		if (null == sellerDetail) {
-			return true;
-		}
-		if (buyerCode.equals(sellerDetail.getSellerCode())) {
-			return true;
-		}
-		return false;
-	}
 
 	/**
 	 * 汇掌柜APP - 查询秒杀活动详情

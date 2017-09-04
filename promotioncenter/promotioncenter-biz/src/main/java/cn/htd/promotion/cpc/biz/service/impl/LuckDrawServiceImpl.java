@@ -379,7 +379,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			int allq = 0;
 			String qt = "";
 			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
-				qt = promotionAccumulatyDTO.getQuantifierType();
+				qt = promotionAccumulatyDTO.getLevelAmount();
 				if (!StringUtils.isEmpty(qt)) {
 					allq = allq + Integer.parseInt(qt);
 				}
@@ -452,7 +452,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			int allq = 0;
 			String qt = "";
 			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
-				qt = promotionAccumulatyDTO.getQuantifierType();
+				qt = promotionAccumulatyDTO.getLevelAmount();
 				if (!StringUtils.isEmpty(qt)) {
 					allq = allq + Integer.parseInt(qt);
 				}

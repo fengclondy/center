@@ -177,7 +177,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfo.getPromotionId(), bargainInfoDTO.getBuyerCode());
 			if(null != launchList && !launchList.isEmpty() 
 					&& null != promotionInfoExtend.getTotalPartakeTimes()
-					&& launchList.size() >= promotionInfoExtend.getTotalPartakeTimes().intValue()){
+					&& launchList.size() > promotionInfoExtend.getTotalPartakeTimes().intValue()){
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
 		                  "该砍价活动商品参与次数已上限");
 			}

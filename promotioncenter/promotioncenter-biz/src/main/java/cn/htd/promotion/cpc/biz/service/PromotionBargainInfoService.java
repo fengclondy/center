@@ -10,6 +10,7 @@ import cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBargainOverviewResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
@@ -30,8 +31,8 @@ public interface PromotionBargainInfoService {
 	 * 
 	 * @param promotionBargainInfoResDTO
 	 */
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> addPromotionBargainInfoRedis(
-			List<PromotionBargainInfoResDTO> promotionBargainInfoList)throws PromotionCenterBusinessException;
+	public ExecuteResult<PromotionExtendInfoDTO> addPromotionBargainInfo(
+            PromotionExtendInfoDTO promotionExtendInfoDTO) throws PromotionCenterBusinessException;
 	
 	/**
 	 * 删除砍价活动
@@ -43,21 +44,19 @@ public interface PromotionBargainInfoService {
 
 	/**
 	 * 获取砍价活动信息
-	 * @param messageId
-	 * @param promotionId
-	 * @return
+	 * @param dto
 	 * @throws PromotionCenterBusinessException
 	 */
 	public ExecuteResult<List<PromotionBargainInfoResDTO>> getPromotionBargainInfoList(
-			String messageId, String promotionId) throws PromotionCenterBusinessException;
+			PromotionBargainInfoResDTO dto) throws PromotionCenterBusinessException;
 	
 	/**
 	 * 修改砍价活动信息
-	 * @param bargainInfoList
+	 * @param promotionExtendInfoDTO
 	 * @return
 	 * @throws PromotionCenterBusinessException
 	 */
-	public ExecuteResult<List<PromotionBargainInfoResDTO>> updateBargainInfo(List<PromotionBargainInfoResDTO> bargainInfoList)
+	public ExecuteResult<PromotionExtendInfoDTO> updateBargainInfo(PromotionExtendInfoDTO promotionExtendInfoDTO)
 	    	throws PromotionCenterBusinessException;
 
 	/**
@@ -75,7 +74,7 @@ public interface PromotionBargainInfoService {
 	 * @return
 	 */
 	public ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> queryPromotionBargainOverview(
-			String sellerCode,  Pager<String> page);
+			String promotionId,  Pager<String> page);
 	
     
     /**
@@ -84,5 +83,14 @@ public interface PromotionBargainInfoService {
      * @return
      */
     public ExecuteResult<PromotionInfoDTO> upDownShelvesPromotionInfo(PromotionValidDTO dto) throws PromotionCenterBusinessException;
+
+    /**
+     * 砍价活动入口
+     * @param dto
+     * @return
+     * @throws PromotionCenterBusinessException
+     */
+	public ExecuteResult<List<PromotionInfoDTO>> queryPromotionInfoEntry(
+			PromotionInfoReqDTO dto) throws PromotionCenterBusinessException;
     
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO" >
-  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO" >
     <id column="desc_id" property="descId" jdbcType="BIGINT" />
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
@@ -13,7 +13,7 @@
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO" extends="BaseResultMap" >
     <result column="describe_content" property="describeContent" jdbcType="LONGVARCHAR" />
   </resultMap>
 
@@ -191,5 +191,16 @@
     from timelimited_sku_describe
     where desc_id = #{descId,jdbcType=BIGINT}
   </select>
+  
+  
+   <select id="selectByPromotionId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from timelimited_sku_describe
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </select>
+  
   
 </mapper>

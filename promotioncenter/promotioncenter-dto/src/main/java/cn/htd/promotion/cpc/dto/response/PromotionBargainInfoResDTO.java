@@ -85,6 +85,44 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private Integer templateFlagD;//模板类型
 	
+	private String buyerCode;
+	
+	private String opendId;
+	
+	private String showStatusD; //上下架状态
+	
+	private String bargainCodeD;//砍价编码
+	
+	private String previewFlag;//是否超级老板预览进入
+	
+	private String statusD;//活动状态
+	
+	private String isMyBargainOver;
+	
+	public String getPreviewFlag() {
+		return previewFlag;
+	}
+
+	public void setPreviewFlag(String previewFlag) {
+		this.previewFlag = previewFlag;
+	}
+
+	public String getBuyerCode() {
+		return buyerCode;
+	}
+
+	public void setBuyerCode(String buyerCode) {
+		this.buyerCode = buyerCode;
+	}
+
+	public String getOpendId() {
+		return opendId;
+	}
+
+	public void setOpendId(String opendId) {
+		this.opendId = opendId;
+	}
+
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
 	}
@@ -317,18 +355,36 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 		this.sloganList = sloganList;
 	}
 
-	public void setPromotionBargainInfoResDTO(PromotionBargainInfoResDTO promotionBargainInfoResDTO) {
-		super.setPromotionAccumulaty(promotionBargainInfoResDTO);
-		this.bargainId = promotionBargainInfoResDTO.getBargainId();
-		this.goodsPicture = promotionBargainInfoResDTO.getGoodsPicture();
-		this.goodsName = promotionBargainInfoResDTO.getGoodsName();
-		this.goodsCostPrice = promotionBargainInfoResDTO.getGoodsCostPrice();
-		this.goodsFloorPrice = promotionBargainInfoResDTO.getGoodsFloorPrice();
-		this.partakeTimes = promotionBargainInfoResDTO.getPartakeTimes();
-		this.goodsNum = promotionBargainInfoResDTO.getGoodsNum();
-		this.promotionSlogan = promotionBargainInfoResDTO.getPromotionSlogan();
-		this.virtualQuantity = promotionBargainInfoResDTO.getVirtualQuantity();
-		this.sloganList = promotionBargainInfoResDTO.getSloganList();
+	public String getShowStatusD() {
+		return showStatusD;
+	}
+
+	public void setShowStatusD(String showStatusD) {
+		this.showStatusD = showStatusD;
+	}
+
+	public String getBargainCodeD() {
+		return bargainCodeD;
+	}
+
+	public void setBargainCodeD(String bargainCodeD) {
+		this.bargainCodeD = bargainCodeD;
+	}
+
+	public String getStatusD() {
+		return statusD;
+	}
+
+	public void setStatusD(String statusD) {
+		this.statusD = statusD;
+	}
+
+	public String getIsMyBargainOver() {
+		return isMyBargainOver;
+	}
+
+	public void setIsMyBargainOver(String isMyBargainOver) {
+		this.isMyBargainOver = isMyBargainOver;
 	}
 	
 }

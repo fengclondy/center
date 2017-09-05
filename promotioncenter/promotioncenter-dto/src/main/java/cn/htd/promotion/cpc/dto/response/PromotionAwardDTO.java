@@ -68,8 +68,7 @@ public class PromotionAwardDTO implements Serializable{
 
     private Date modifyTime;//更新时间
 
-
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 

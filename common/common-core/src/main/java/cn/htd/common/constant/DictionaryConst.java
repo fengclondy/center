@@ -105,6 +105,17 @@ public class DictionaryConst {
     public static final String TYPE_BUYER_TYPE = "BUYER_TYPE";
     // 字典类型-退货/退款状态
     public static final String TYPE_REFUND_STATUS = "REFUND_STATUS";
+    //字典类型-促销活动周期时间类型
+    public static final String TYPE_PROMOTION_CYCLE_TIME_TYPE = "PROMOTION_CYCLE_TIME_TYPE";
+    //字典类型-促销活动图片类型
+    public static final String TYPE_PROMOTION_PRICTURE_TYPE = "PROMOTION_PRICTURE_TYPE";
+    //字典类型-促销活动累进方式
+    public static final String TYPE_PROMOTION_ADDUP_TYPE = "PROMOTION_ADDUP_TYPE";
+    //字典类型-促销活动数值单位类型
+    public static final String TYPE_PROMOTION_QUANTIFIER_TYPE = "PROMOTION_QUANTIFIER_TYPE";
+    //字典类型-促销活动渠道类型
+    public static final String TYPE_PROMOTION_CHANNEL_TYPE = "PROMOTION_CHANNEL_TYPE";
+
 
     // 字典信息-优惠券种类-满减券
     public static final String OPT_COUPON_KIND_FULL_CUT = "COUPON_KIND_FULL_CUT";
@@ -781,6 +792,14 @@ public class DictionaryConst {
     public static final String OPT_REFUND_STATUS_REFUND = "REFUND_STATUS_REFUND";
 
     //******************* add by jiangkun on 20170817 for B2C Start *******************
+    //字典信息-促销活动渠道类型-B2B商城
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_MALL = "PROMOTION_CHANNEL_TYPE_MALL";
+    //字典信息-促销活动渠道类型-超级老板
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_SUPERBOSS = "PROMOTION_CHANNEL_TYPE_SUPERBOSS";
+    //字典信息-促销活动渠道类型-汇掌柜
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_HZG = "PROMOTION_CHANNEL_TYPE_HZG";
+    //字典信息-促销活动渠道类型-智慧门店
+    public static final String OPT_PROMOTION_CHANNEL_TYPE_STORE = "PROMOTION_CHANNEL_TYPE_STORE";
     //字典信息-订单来源-汇掌柜预售下单
     public static final String OPT_ORDER_FROM_SHOP_KEEPER_PRESELL = "ORDER_FROM_SHOP_KEEPER_PRESELL";
     //字典信息-促销活动类型-扭蛋机
@@ -791,5 +810,41 @@ public class DictionaryConst {
     public static final String OPT_PROMOTION_TYPE_HEAD_TIMELIMITED = "PROMOTION_TYPE_HEAD_TIMELIMITED";
     //字典信息-促销活动发起方类型-会员店
     public static final String OPT_PROMOTION_PROVIDER_TYPE_MEMBER_SHOP = "PROMOTION_PROVIDER_TYPE_MEMBER_SHOP";
+    //字典信息-促销活动周期时间类型-每天
+    public static final String OPT_PROMOTION_CYCLE_TIME_TYPE_DAILY = "PROMOTION_CYCLE_TIME_TYPE_DAILY";
+    //字典信息-促销活动周期时间类型-每周
+    public static final String OPT_PROMOTION_CYCLE_TIME_TYPE_WEEKLY = "PROMOTION_CYCLE_TIME_TYPE_WEEKLY";
+    //字典信息-促销活动周期时间类型-每月
+    public static final String OPT_PROMOTION_CYCLE_TIME_TYPE_MONTHLY = "PROMOTION_CYCLE_TIME_TYPE_MONTHLY";
+    //字典信息-促销活动会员规则-首次登陆会员
+    public static final String OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN = "PROMOTION_BUYER_RULE_FIRST_LOGIN";
+    //字典信息-促销活动奖励类型-实物奖品
+    public static final String OPT_PROMOTION_REWARD_TYPE_PRACTICALITY = "PROMOTION_REWARD_TYPE_PRACTICALITY";
+    //字典信息-促销活动奖励类型-话费
+    public static final String OPT_PROMOTION_REWARD_TYPE_TEL_RECHARGE = "PROMOTION_REWARD_TYPE_TEL_RECHARGE";
+    //字典信息-促销活动奖励类型-汇金币
+    public static final String OPT_PROMOTION_REWARD_TYPE_COIN = "PROMOTION_REWARD_TYPE_COIN";
+    //字典信息-促销活动奖励类型-谢谢回顾
+    public static final String OPT_PROMOTION_REWARD_TYPE_THANKS = "PROMOTION_REWARD_TYPE_THANKS";
+    //字典信息-促销活动图片类型-活动标题
+    public static final String OPT_PROMOTION_PRICTURE_TYPE_TITLE = "PROMOTION_PRICTURE_TYPE_TITLE";
+    //字典信息-促销活动累进方式-无
+    public static final String OPT_PROMOTION_ADDUP_TYPE_NONE = "PROMOTION_ADDUP_TYPE_NONE";
+    //字典信息-促销活动累进方式-固定值
+    public static final String OPT_PROMOTION_ADDUP_TYPE_FIX = "PROMOTION_ADDUP_TYPE_FIX";
+    //字典信息-促销活动累进方式-每
+    public static final String OPT_PROMOTION_ADDUP_TYPE_PER = "PROMOTION_ADDUP_TYPE_PER";
+    //字典信息-促销活动累进方式-满
+    public static final String OPT_PROMOTION_ADDUP_TYPE_FULL = "PROMOTION_ADDUP_TYPE_FULL";
+    //字典信息-促销活动累进方式-第
+    public static final String OPT_PROMOTION_ADDUP_TYPE_PIECE = "PROMOTION_ADDUP_TYPE_PIECE";
+    //字典信息-促销活动数值单位类型-金额
+    public static final String OPT_PROMOTION_QUANTIFIER_TYPE_MONEY = "PROMOTION_QUANTIFIER_TYPE_MONEY";
+    //字典信息-促销活动数值单位类型-人数
+    public static final String OPT_PROMOTION_QUANTIFIER_TYPE_BUYER = "PROMOTION_QUANTIFIER_TYPE_BUYER";
+    //字典信息-促销活动数值单位类型-件数
+    public static final String OPT_PROMOTION_QUANTIFIER_TYPE_PIECE = "PROMOTION_QUANTIFIER_TYPE_PIECE";
+    //字典信息-促销活动数值单位类型-概率
+    public static final String OPT_PROMOTION_QUANTIFIER_TYPE_PERCENT = "PROMOTION_QUANTIFIER_TYPE_PERCENT";
     //******************* add by jiangkun on 20170817 for B2C End *******************
 }

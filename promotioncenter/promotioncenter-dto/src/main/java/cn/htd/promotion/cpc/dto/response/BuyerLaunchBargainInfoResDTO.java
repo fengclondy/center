@@ -34,7 +34,6 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	@NotBlank(message = "会员名称不能为空")
 	private String buyerName;//会员名称
 	
-	@NotBlank(message = "会员头像不能为空")
 	private String headSculptureURL; //会员头像
 	
 	@NotBlank(message = "会员电话号码不能为空")
@@ -89,6 +88,8 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	private Date modifyTime;//更新时间
 	
 	private Integer templateFlagD;//模板类型
+	
+	private String isMyBargainCode;//是否是当前人的看完
 
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
@@ -313,4 +314,13 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	public void setHeadSculptureURL(String headSculptureURL) {
 		this.headSculptureURL = headSculptureURL;
 	}
+
+	public String getIsMyBargainCode() {
+		return isMyBargainCode;
+	}
+
+	public void setIsMyBargainCode(String isMyBargainCode) {
+		this.isMyBargainCode = isMyBargainCode;
+	}
+	
 }

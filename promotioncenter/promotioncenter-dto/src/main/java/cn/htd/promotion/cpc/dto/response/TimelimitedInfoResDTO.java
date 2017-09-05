@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.dto.response;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -11,13 +12,14 @@ import java.util.Date;
  * @since  2017-8-22 15:14
  *
  */
-public class TimelimitedInfoResDTO  extends PromotionAccumulatyDTO  implements Serializable {
-
+public class TimelimitedInfoResDTO implements Serializable  {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7808915998930305388L;
-
+	private static final long serialVersionUID = 4116195993542901847L;
+	
+	
 	// 秒杀活动ID
 	private Long timelimitedId;
 	// 促销活动编码
@@ -66,10 +68,11 @@ public class TimelimitedInfoResDTO  extends PromotionAccumulatyDTO  implements S
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
 	
-	/**
-	 * 秒杀活动结果
-	 */
-	private TimelimitedResultDTO timelimitedResult;
+	//商品图片
+	private List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList;
+	//商品详情
+	private TimelimitedSkuDescribeResDTO timelimitedSkuDescribe;
+	
 	
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -209,29 +212,22 @@ public class TimelimitedInfoResDTO  extends PromotionAccumulatyDTO  implements S
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
+	public List<TimelimitedSkuPictureResDTO> getTimelimitedSkuPictureList() {
+		return timelimitedSkuPictureList;
+	}
+	public void setTimelimitedSkuPictureList(
+			List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList) {
+		this.timelimitedSkuPictureList = timelimitedSkuPictureList;
+	}
+	public TimelimitedSkuDescribeResDTO getTimelimitedSkuDescribe() {
+		return timelimitedSkuDescribe;
+	}
+	public void setTimelimitedSkuDescribe(
+			TimelimitedSkuDescribeResDTO timelimitedSkuDescribe) {
+		this.timelimitedSkuDescribe = timelimitedSkuDescribe;
+	}
 	
-
-	public TimelimitedResultDTO getTimelimitedResult() {
-		return timelimitedResult;
-	}
-	public void setTimelimitedResult(TimelimitedResultDTO timelimitedResult) {
-		this.timelimitedResult = timelimitedResult;
-	}
 	
-	public void setTimelimitedInfo(TimelimitedInfoResDTO timelimitedInfo) {
-		super.setPromotionAccumulaty(timelimitedInfo);
-		this.timelimitedId = timelimitedInfo.getTimelimitedId();
-		this.sellerCode = timelimitedInfo.getSellerCode();
-		this.itemId = timelimitedInfo.getItemId();
-		this.skuCode = timelimitedInfo.getSkuCode();
-		this.skuName = timelimitedInfo.getSkuName();
-		this.skuPicUrl = timelimitedInfo.getSkuPicUrl();
-		this.skuCostPrice = timelimitedInfo.getSkuCostPrice();
-		this.skuTimelimitedPrice = timelimitedInfo.getSkuTimelimitedPrice();
-		this.timelimitedSkuCount = timelimitedInfo.getTimelimitedSkuCount();
-		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
-		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
-		this.timelimitedResult = timelimitedInfo.getTimelimitedResult(); 
-	}
+	
 
 }

@@ -67,9 +67,44 @@ public interface PromotionLotteryAPI {
 
 	/**
 	 * 查询抽奖结果
-	 * @param drawLotteryParam
+	 * @param lotteryWinningParam
 	 * @return
 	 */
-	public String getDrawLotteryResult(String drawLotteryParam);
+	public String getDrawLotteryResult(String lotteryWinningParam);
+
+	/**
+	 * 保存中奖信息
+	 * @param winningInfoParam
+	 * @return
+	 */
+	public String saveDrawLotteryWinningInfo(String winningInfoParam);
+
+	/**
+	 * 新建扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String addDrawLotteryInfo(String promotionInfoEditReqDTO);
+
+	/**
+	 * 编辑扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String editDrawLotteryInfo(String promotionInfoEditReqDTO);
+	
+	
+	/**
+	 * 参与有效活动的所有卖家信息
+	 * @return
+	 */
+	public String participateActivitySellerInfo(String messageId);
+	
+	 /**
+	 * 查看扭蛋
+	 * @param json
+	 * @return
+	 */
+	public String viewDrawLotteryInfo(String promotionInfoId, String messageId);
 
 }

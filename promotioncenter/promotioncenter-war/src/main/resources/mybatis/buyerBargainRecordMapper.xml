@@ -17,6 +17,7 @@
     <select id="getBuyerBargainRecordByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
     	select * from buyer_bargain_record
     	where bargain_code = #{bargainCode}
+    	order by create_time desc
 	</select>
 	
 	<select id="getThisPersonIsBargain" resultMap="BaseResultMap"  parameterType="map">
@@ -94,16 +95,9 @@
 	</insert>
 
 	<select id="queryPromotionBargainJoinQTY" resultType="java.lang.Integer">
-		SELECT COUNT(0) FROM buyer_bargain_record 
-		WHERE bargain_code in (SELECT bargain_code FROM buyer_launch_bargain_info 
-		WHERE promotion_id = #{promotionId})
-	</select>
-	
-	<select id="queryPromotionBargainJoinTypeQTY" resultType="java.lang.Integer">
-		SELECT COUNT(0) FROM (SELECT bbr.* from buyer_bargain_record as bbr
-		INNER JOIN buyer_launch_bargain_info as blbi on bbr.bargain_code = blbi.bargain_code
-		WHERE blbi.promotion_id = #{promotionId}
-		GROUP BY bbr.bargain_code) t
+		SELECT COUNT(0) FROM (
+		SELECT distinct(buyer_code) FROM buyer_launch_bargain_info 
+				where promotion_id = #{promotionId} ) t
 	</select>
 	
 </mapper>

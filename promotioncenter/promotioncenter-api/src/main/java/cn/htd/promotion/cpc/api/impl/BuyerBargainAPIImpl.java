@@ -190,4 +190,19 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI {
 		}
 		return result;
 	}
+
+	@Override
+	public ExecuteResult<String> optationbargain(String buyerCode, String promotionId, String levelCode,
+			String bargainCode, String helperPicture, String helperName, String openedId, String messageId) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		if(!StringUtils.isEmpty(buyerCode) && !StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(messageId)
+				&& !StringUtils.isEmpty(levelCode) && !StringUtils.isEmpty(bargainCode) && !StringUtils.isEmpty(openedId)){
+			result = buyerLaunchBargainInfoService.
+					  optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId,messageId);
+		}else{
+			result.setCode(ResultCodeEnum.PARAMETER_ERROR.getCode());
+			result.setErrorMessage(ResultCodeEnum.PROMOTION_PARAM_IS_NULL.getMsg());
+		}
+		return result;
+	}
 }

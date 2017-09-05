@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionConfigureDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="conf_type" property="confType" jdbcType="VARCHAR" />
+    <result column="conf_value" property="confValue" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, promotion_id, conf_type, conf_value, delete_flag, create_id, create_name, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_configure
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_configure
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from promotion_configure
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO" >
+    insert into promotion_configure (id, promotion_id, conf_type, 
+      conf_value, delete_flag, create_id, 
+      create_name, create_time)
+    values (#{id,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{confType,jdbcType=VARCHAR}, 
+      #{confValue,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO" >
+    insert into promotion_configure
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="promotionId != null" >
+        promotion_id,
+      </if>
+      <if test="confType != null" >
+        conf_type,
+      </if>
+      <if test="confValue != null" >
+        conf_value,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+        create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="confType != null" >
+        #{confType,jdbcType=VARCHAR},
+      </if>
+      <if test="confValue != null" >
+        #{confValue,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="update" parameterType="cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO" >
+    update promotion_configure
+    <set >
+      <if test="promotionId != null" >
+        promotion_id = #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="confType != null" >
+        conf_type = #{confType,jdbcType=VARCHAR},
+      </if>
+      <if test="confValue != null" >
+        conf_value = #{confValue,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+        create_time = now()
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO" >
+    update promotion_configure
+    set promotion_id = #{promotionId,jdbcType=VARCHAR},
+      conf_type = #{confType,jdbcType=VARCHAR},
+      conf_value = #{confValue,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

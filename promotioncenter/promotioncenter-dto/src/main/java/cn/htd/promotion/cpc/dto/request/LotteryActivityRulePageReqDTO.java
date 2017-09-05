@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.dto.request;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class LotteryActivityRulePageReqDTO extends GenricReqDTO{
 
 	/**
@@ -10,6 +12,7 @@ public class LotteryActivityRulePageReqDTO extends GenricReqDTO{
 	/**
 	 * 促销活动编码
 	 */
+	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;
 
 	public String getPromotionId() {

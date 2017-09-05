@@ -9,7 +9,7 @@
     <result column="GOODS_NAME" property="goodsName" jdbcType="VARCHAR" />
     <result column="GOODS_COST_PRICE" property="goodsCostPrice" jdbcType="DECIMAL" />
     <result column="GOODS_FLOOR_PRICE" property="goodsFloorPrice" jdbcType="DECIMAL" />
-    <result column="PARTAKE_TIMESE" property="partakeTimes" jdbcType="TINYINT" />
+    <result column="PARTAKE_TIMES" property="partakeTimes" jdbcType="TINYINT" />
     <result column="GOODS_NUM" property="goodsNum" jdbcType="TINYINT" />
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT" />
 	<result column="CREATE_NAME" property="createName" jdbcType="VARCHAR" />
@@ -25,40 +25,19 @@
   
      <select id="getPromotionBargainInfoDetail" resultMap="BaseResultMap" 
      				parameterType="cn.htd.promotion.cpc.dto.request.BuyerBargainLaunchReqDTO" >
-	    select pbi.bargain_id bargainId ,
-	    	   pbi.promotion_id promotionId,
-	    	   pbi.level_code levelCode,
-	    	   pbi.goods_picture goodsPicture,
-	    	   pbi.goods_name goodsName,
-	    	   pbi.goods_cost_price goodsCostPrice,
-	    	   pbi.goods_floor_price goodsFloorPrice,
-	    	   pbi.goods_num goodsNum,
-	    	   pbi.partake_times partakeTimes,pbi.goods_num goodsNum,
-	    	   ps.promotion_slogan promotionDesc,
-	    	   pei.contact_name contactNameD,
-	    	   pei.contact_telephone contactTelphoneD,
-	    	   pei.contact_address contactAddressD,
-	    	   pei.each_start_time eachStartTimeD,
-	    	   pei.each_end_time eachEndTimeD,
-	    	   pei.offline_start_time offlineStartTimeD,
-	    	   pei.offline_end_time offlineEndTimeD,
-	    	   pei.template_flag templateFlagD,
-	    	   plb.launch_time launchTime,
+	    select plb.launch_time launchTime,
 	    	   plb.bargain_over_time bargainOverTime,
 	    	   plb.is_bargain_over isBargainOver,
 	    	   plb.goods_current_price goodsCurrentPrice,
-	    	   pi.promotion_provider_seller_code sellerNameD,
-	     	   pi.effective_time effectiveTime,
-			   pi.invalid_time invalidTime
-	    from promotion_bargain_info pbi
-	    left join promotion_slogan ps on pbi.promotion_id = ps.promotion_id
-	    left join promotion_extend_info pei on pbi.promotion_id = pei.promotion_id
-		left join promotion_info pi on pi.promotion_id = pbi.promotion_id
-	    left join buyer_launch_bargain_info plb on (plb.promotion_id = pbi.promotion_id and plb.level_code = pbi.level_code)
-	    where pbi.promotion_id = #{promotionId} 
-	    and pbi.level_code = #{levelCode}
+	    	   plb.bargain_code bargainCodeD
+	    from buyer_launch_bargain_info plb   
+	    where plb.promotion_id = #{promotionId} 
+	    and plb.level_code = #{levelCode}
 	    <if test="buyerCode != null and buyerCode != ''">
 			and plb.buyer_code = #{buyerCode}
+		</if>
+		<if test="bargainCode != null and bargainCode != ''">
+			and plb.bargain_code = #{bargainCode}
 		</if>
     </select>
     
@@ -98,16 +77,25 @@
 		</trim>
 	</insert>
 	<update id="update">
-		update promotion_accumulaty
+		update promotion_bargain_info
 		<set>
-			<if test="addupType != null and addupType != ''">
-				addup_type = #{addupType,jdbcType=VARCHAR},
+			<if test="goodsPicture != null and goodsPicture != ''">
+				goods_picture = #{goodsPicture,jdbcType=VARCHAR},
 			</if>
-			<if test="levelAmount != null and levelAmount != ''">
-				level_amount = #{levelAmount,jdbcType=VARCHAR},
+			<if test="goodsName != null and goodsName != ''">
+				goods_name = #{goodsName,jdbcType=VARCHAR},
 			</if>
-			<if test="quantifierType != null and quantifierType != ''">
-				quantifier_type = #{quantifierType,jdbcType=VARCHAR},
+			<if test="goodsCostPrice != null">
+				goods_cost_price = #{goodsCostPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsFloorPrice != null">
+				goods_floor_price = #{goodsFloorPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="partakeTimes != null">
+				partake_times = #{partakeTimes,jdbcType=TINYINT},
+			</if>
+			<if test="goodsNum != null">
+				goods_num = #{goodsNum,jdbcType=TINYINT},
 			</if>
 			modify_id = #{modifyId,jdbcType=BIGINT},
 			modify_name = #{modifyName,jdbcType=VARCHAR},
@@ -116,18 +104,6 @@
 		where promotion_id = #{promotionId,jdbcType=VARCHAR}
 		  and level_code = #{levelCode,jdbcType=VARCHAR}
 	</update>
-	<update id="delete" >
-		update promotion_accumulaty
-		<set>
-			delete_flag = 1,
-			modify_id = #{modifyId,jdbcType=BIGINT},
-			modify_name = #{modifyName,jdbcType=VARCHAR},
-			modify_time = now(),
-		</set>
-		where promotion_id = #{promotionId,jdbcType=VARCHAR}
-		  and level_code = #{levelCode,jdbcType=VARCHAR}
-	</update>
-	
 	<select id="queryPromotionBargainStockSum" resultType="java.lang.Integer">
 		SELECT SUM(goods_num) 
 		FROM promotion_bargain_info
@@ -139,6 +115,7 @@
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
   	    AND pi.status != 9
+  	    order by pi.create_time desc
   	    <if test="page!=null">
 	      <include refid="pagination_tail"/>
 	    </if>
@@ -148,6 +125,24 @@
 		SELECT COUNT(0) FROM promotion_bargain_info as pbi
 		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
 		WHERE pi.promotion_provider_seller_code = #{sellerCode}
+  	    AND pi.status != 9
+	</select>
+	
+	<select id="queryPromotionBargainByPromotionId" resultMap="BaseResultMap">
+		SELECT * FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_id = #{promotionId}
+  	    AND pi.status != 9
+  	    order by pi.create_time desc
+  	    <if test="page!=null">
+	      <include refid="pagination_tail"/>
+	    </if>
+	</select>
+	
+	<select id="queryPromotionBargainCountByPromotionId" resultType="java.lang.Long">
+		SELECT COUNT(0) FROM promotion_bargain_info as pbi
+		INNER JOIN promotion_info as pi on pbi.promotion_id = pi.promotion_id
+		WHERE pi.promotion_id = #{promotionId}
   	    AND pi.status != 9
 	</select>
 	

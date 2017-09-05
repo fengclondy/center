@@ -29,6 +29,7 @@
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
     <result column="deal_flag" jdbcType="TINYINT" property="dealFlag" />
     <result column="has_redis_clean" jdbcType="TINYINT" property="hasRedisClean" />
+    <result column="has_up_flag" jdbcType="TINYINT" property="hasUpFlag"/>
   </resultMap>
   <sql id="Base_Column_List">
 		id,
@@ -50,6 +51,7 @@
 		verify_time,
 		verify_remark,
 		modify_promotion_id,
+		has_up_flag,
 		create_id,
 		create_name,
 		create_time,
@@ -73,11 +75,13 @@
       <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
         #{statusCode}
       </foreach>
+      <!-- 不判断是否启用
       and show_status in
       <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
                close=")">
         #{verifyStatusCode}
       </foreach>
+      -->
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}
@@ -143,10 +147,13 @@
         modify_promotion_id,
       </if>
       <if test="dealFlag != null">
-      	deal_flag = deal_flag,
+      	deal_flag,
       </if>
       <if test="hasRedisClean != null">
-      	has_redis_clean = hasRedisClean,
+      	has_redis_clean ,
+      </if>
+      <if test="hasUpFlag != null">
+      	has_up_flag,
       </if>
       create_id,
       create_name,
@@ -198,6 +205,9 @@
       <if test="hasRedisClean != null">
       	#{hasRedisClean,jdbcType=TINYINT},
       </if>
+      <if test="hasUpFlag != null">
+      	#{hasUpFlag,jdbcType=TINYINT},
+      </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -226,10 +236,21 @@
       <if test="isVip != null">
         is_vip = #{isVip,jdbcType=TINYINT},
       </if>
-      status = #{status,jdbcType=VARCHAR},
-      show_status = #{showStatus,jdbcType=VARCHAR},
-      deal_flag = #{dealFlag,jdbcType=TINYINT},
-      has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      <if test="status != null and status != ''">
+            status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null and showStatus != ''">
+            show_status = #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="dealFlag != null and dealFlag != ''">
+            deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasRedisClean != null and hasRedisClean != ''">
+            has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null">
+      	has_up_flag = #{hasUpFlag,jdbcType=TINYINT},
+      </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),
@@ -399,11 +420,12 @@
   	<if test="dto.promotionName != null and dto.promotionName != ''">
   		AND promotion_name like concat('%', #{dto.promotionName} ,'%')
   	</if>
-  	<if test="dto.status != null and dto.status!= ''">
+  	<if test="dto.status != null and dto.status != ''">
   		AND status = #{dto.status}
+  		AND has_up_flag = 1
   	</if>
-  	<if test="dto.showStatus != null and dto.showStatus != ''">
-  		AND show_status = #{dto.showStatus}
+  	<if test="dto.hasUpFlag != null and dto.hasUpFlag != '' or dto.hasUpFlag == 0">
+  		AND has_up_flag = #{dto.hasUpFlag}
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}
@@ -411,6 +433,7 @@
   	<if test="dto.invalidTime != null">
   	 	<![CDATA[AND effective_time <= #{dto.invalidTime}]]>
   	</if>
+  	order by create_time desc
   	<if test="page!=null">
 	   <include refid="pagination_tail"/>
 	</if>
@@ -426,8 +449,12 @@
   	<if test="dto.promotionName != null and dto.promotionName != ''">
   		AND promotion_name like concat('%', #{dto.promotionName} ,'%')
   	</if>
-  	<if test="dto.status != null">
+  	<if test="dto.status != null and dto.status != ''">
   		AND status = #{dto.status}
+  		AND has_up_flag = 1 
+  	</if>
+	<if test="dto.hasUpFlag != null and dto.hasUpFlag != '' or dto.hasUpFlag == 0">
+  		AND has_up_flag = #{dto.hasUpFlag}
   	</if>
   	<if test="dto.effectiveTime != null">
   		AND invalid_time >= #{dto.effectiveTime}
@@ -440,9 +467,81 @@
   <update id="upDownShelvesBargainInfo">
   	UPDATE promotion_info
   	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+	<if test="dto.status != null and dto.status != ''">
+		status = #{dto.status,jdbcType=VARCHAR},
+	</if>
+	has_up_flag = 1,
   	modify_id = #{dto.operatorId,jdbcType=BIGINT},
     modify_name = #{dto.operatorName,jdbcType=VARCHAR},
     modify_time = now()
   	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
+
+  <select id="queryUpPromotionBargainCount" resultType="java.lang.Integer">
+  		SELECT COUNT(0)
+        FROM promotion_info
+        WHERE promotion_type = 22
+        AND promotion_provider_seller_code = #{sellerCode}
+        AND status != 9
+        <if test="effectiveTime != null">
+  		AND invalid_time >= #{effectiveTime} 
+  		</if>
+  		<if test="invalidTime != null">
+  	 		<![CDATA[AND effective_time <= #{invalidTime}]]>
+  		</if>
+        <if test="promotionId != null and promotionId != ''">
+        	AND promotion_id != #{promotionId,jdbcType=VARCHAR}
+        </if>
+  </select>
+  
+    <update id="updatePromotionStatus4InvalidById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      show_status = #{showStatus,jdbcType=VARCHAR},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  	</update>
+  
+  	
+	<select id="queryPromotionBargainEntry" resultMap="BaseResultMap">
+		SELECT * from promotion_info 
+		WHERE promotion_provider_seller_code = #{sellerCode}
+        AND show_status = 3
+        AND status != 9
+        ORDER BY effective_time asc
+	</select>
+
+  <update id="updatePromotionDealFlag" parameterType="cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO">
+    update promotion_info
+    <set>
+      deal_flag = #{dealFlag,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryInitRedisPromotion4Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where deal_flag = '1'
+    <if test="entity != null">
+      <if test="entity.promotionType != null and entity.promotionType != ''">
+      and promotion_type = #{entity.promotionType}
+      </if>
+      and <![CDATA[ invalid_time < now() ]]>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    order by id desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  
 </mapper>

@@ -703,6 +703,8 @@ public class SearchSolrExportMobileServiceImpl implements
 			List<String> businessRelationSellerIdList, Long buyerId) {
 		logger.info("come in searchNewItemMobile start");
 		logger.info("searchNewItemMobile query:" + query);
+		logger.info("searchNewItemMobile filterQuery:" + filterQuery);
+		logger.info("searchNewItemMobile businessRelationSellerIdList:" + businessRelationSellerIdList);
 		// 构建搜索条件
 		List<Object> itemList = new ArrayList<Object>();
 		SolrQuery q = new SolrQuery();
@@ -735,6 +737,9 @@ public class SearchSolrExportMobileServiceImpl implements
 			Long buyerId, List<Object> newItemList) {
 		logger.info("come in searchPopularityItemMobile start");
 		logger.info("searchPopularityItemMobile query:" + query);
+		logger.info("searchPopularityItemMobile filterQuery:" + filterQuery);
+		logger.info("searchPopularityItemMobile businessRelationSellerIdList:" + businessRelationSellerIdList);
+		logger.info("searchPopularityItemMobile newItemList:" + newItemList);
 		// 构建搜索条件
 		List<Object> itemList = new ArrayList<Object>();
 		SolrQuery q = new SolrQuery();

@@ -5,7 +5,7 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
-import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
@@ -24,17 +24,18 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * job for 汇掌柜 更新秒杀活动状态
  * 根据系统时间、促销活动开始时间、结束时间和促销活动状态修改促销活动状态
  */
-public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
+public class UpdatePromotionStatus4hlScheduleTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
 
-	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionBargainStstusScheduleTask.class);
+	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionStatus4hlScheduleTask.class);
 
 	@Resource
 	private DictionaryUtils dictionary;
 
 	@Resource
-	private PromotionBargainRedisHandle promotionBargainRedisHandle;
+	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
 
 	@Resource
 	private PromotionInfoDAO promotionInfoDAO;
@@ -92,13 +93,13 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 					taskIdList.add(taskItem.getTaskItemId());
 				}
 				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));//未开始
+						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
 				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_START));//进行中
+						DictionaryConst.OPT_PROMOTION_STATUS_START));
 				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));//启用
+						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
 				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));//审核通过
+						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));
 				condition.setVerifyStatusList(verifyStatusList);
 				condition.setStatusList(statusList);
 				condition.setTaskQueueNum(taskQueueNum);
@@ -158,6 +159,12 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 					}
 					promotionInfo.setStatus(timeStatus);
 					promotionInfoList.add(promotionInfo);
+					if (dictionary
+							.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+									DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+							.equals(promotionInfo.getPromotionType())) {
+						promotionTimelimitedRedisHandle.updateRedisTimeilimitedStatus(promotionInfo);
+					}
 				}
 				for (PromotionInfoDTO tmpPromotionInfo : promotionInfoList) {
 					updatePromotionStatus(tmpPromotionInfo);

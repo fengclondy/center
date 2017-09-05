@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
@@ -21,11 +22,17 @@ public class PromotionTimelimitedHandle {
 
 	private static final Logger logger = LoggerFactory.getLogger(PromotionTimelimitedHandle.class);
 	
-    
     @Resource
     private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
 
-    public void reserveBuyerPromotionDeal(String messageId, List<PromotionOrderItemDTO> targetPromotionDTOList)
+	/**
+	 * 秒杀 - 锁定 （创建订单）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
+    public void reservePromotionTimelimitedDeal(String messageId, List<PromotionOrderItemDTO> targetPromotionDTOList)
 			throws PromotionCenterBusinessException, Exception {
 		List<PromotionOrderItemDTO> buyerPromotionDTOList = new ArrayList<PromotionOrderItemDTO>();
 		BuyerUseTimelimitedLogDMO useLog = null;
@@ -91,8 +98,14 @@ public class PromotionTimelimitedHandle {
 		}
 	}
 
-
-	public void reduceBuyerPromotionDeal(String messageId, List<PromotionOrderItemDTO> targetPromotionDTOList)
+	/**
+	 * 秒杀 - 扣减 （支付完成）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
+	public void reducePromotionTimelimitedDeal(String messageId, List<PromotionOrderItemDTO> targetPromotionDTOList)
 			throws PromotionCenterBusinessException, Exception {
 		List<PromotionOrderItemDTO> buyerPromotionDTOList = new ArrayList<PromotionOrderItemDTO>();
 		BuyerUseTimelimitedLogDMO useLog = null;
@@ -111,8 +124,14 @@ public class PromotionTimelimitedHandle {
 		promotionTimelimitedRedisHandle.updateRedisUseTimelimitedLog(useLogList);
 	}
 
-
-	public void releaseBuyerPromotionDeal(String messageId, List<PromotionOrderItemDTO> targetPromotionDTOList)
+	/**
+	 * 秒杀 - 解锁 （取消未支付订单）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
+	public void releasePromotionTimelimitedDeal(String messageId, List<PromotionOrderItemDTO> targetPromotionDTOList)
 			throws PromotionCenterBusinessException, Exception {
 		List<PromotionOrderItemDTO> buyerPromotionDTOList = new ArrayList<PromotionOrderItemDTO>();
 		BuyerUseTimelimitedLogDMO useLog = null;
@@ -134,9 +153,14 @@ public class PromotionTimelimitedHandle {
 		promotionTimelimitedRedisHandle.updateRedisUseTimelimitedLog(useLogList);
 	}
 
-
-	public void rollbackBuyerPromotionDeal(String messageId, List<PromotionOrderItemDTO> buyerPromotionDTOList)
+	/**
+	 * 秒杀 - 回滚（取消已支付订单）
+	 * 
+	 * @param messageId
+	 * @param orderItemPromotionList
+	 * @return
+	 */
+	public void rollbackPromotionTimelimitedDeal(String messageId, List<PromotionOrderItemDTO> buyerPromotionDTOList)
 			throws PromotionCenterBusinessException, Exception {
-
-	}
+	   }
 }

@@ -65,11 +65,11 @@ public class BuyerBargainTestUnit {
     public void testGetPromotionBargainInfoDetail() {
     	try {
     		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-    		buyerBargainLaunch.setBuyerCode("249334061");
-			buyerBargainLaunch.setPromotionId("22172342371125");
-			buyerBargainLaunch.setLevelCode("2217234237112569");
+    		buyerBargainLaunch.setBuyerCode("24296616");
+			buyerBargainLaunch.setPromotionId("22172123531318");
+			buyerBargainLaunch.setLevelCode("2217212353131855");
 			buyerBargainLaunch.setMessageId("123456");
-			buyerBargainLaunch.setBargainCode("3171928120048");
+//			buyerBargainLaunch.setBargainCode();
 			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
 			System.out.println(JSON.toJSONString(promotionBargainInfo));
     	} catch (Exception e) {

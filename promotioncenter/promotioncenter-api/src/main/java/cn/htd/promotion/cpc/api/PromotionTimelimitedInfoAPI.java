@@ -49,11 +49,6 @@ public interface PromotionTimelimitedInfoAPI {
 	public ExecuteResult<Boolean> checkTimelimitedIsAvailableByBuyerCode(String messageId, String buyerCode,
 			String promotionId);
 
-	
-	
-	
-	
-	
 	/**
 	 * 锁定秒杀库存
 	 * 
@@ -89,4 +84,13 @@ public interface PromotionTimelimitedInfoAPI {
 	 * @return
 	 */
 	public ExecuteResult<String> rollbackStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
+
+	/**
+	 * 更新秒杀活动日志接口
+	 * 
+	 * @param messageId
+	 * @param seckillInfoReqDTO
+	 * @return
+	 */
+	public ExecuteResult<String> updateSeckillPromotionLog(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
 }

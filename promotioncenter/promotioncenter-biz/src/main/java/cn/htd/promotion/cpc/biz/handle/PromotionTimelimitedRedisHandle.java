@@ -40,7 +40,6 @@ public class PromotionTimelimitedRedisHandle {
     @Resource
     private PromotionRedisDB promotionRedisDB;
     
-    
     public TimelimitedInfoResDTO getTimelitedInfoByPromotionId(String promotionId){
     	String timelimitedJsonStr = "";
     	 TimelimitedInfoResDTO timelimitedInfoDTO = null;
@@ -52,8 +51,6 @@ public class PromotionTimelimitedRedisHandle {
 		return null;
     }
 
-    
-    
     /**
      * 秒杀 - 保存秒杀活动的启用状态
      * 
@@ -65,54 +62,6 @@ public class PromotionTimelimitedRedisHandle {
                 promotionInfo.getShowStatus());
     }
 
-    
-      
-    
-    /**
-     * 秒杀 - 根据商品会员编码，取得suo列表取得秒杀活动信息列表
-     * 
-     * @param skuCodeList
-     */
-    public List<String> getRedisTimelimitedIndexByBuyerCode(String buyerCode,List<String> skuCodeList) {
-        List<String> promotionIdList = new ArrayList<String>();
-        Map<String, String> indexMap = null;
-        String key = "";
-        String promotionIdStr = "";
-        String promotionAllIdStr = "";
-        String[] keyArr = null;
-        String tmpSkuCode = "";
-        String tmpBuyerCode = "";
-        indexMap = promotionRedisDB.getHashOperations(RedisConst.PROMOTION_REDIS_TIMELIMITED_INDEX);//可跟志峰商量 key的命名格式，比如 促销商品编码+会员编码 1000033904&htd216511
-        if (indexMap == null || indexMap.isEmpty()) {
-            return null;
-        }
-        for (Entry<String, String> entry : indexMap.entrySet()) {
-            key = entry.getKey();
-            promotionIdStr = entry.getValue();
-            if (StringUtils.isEmpty(key) || StringUtils.isEmpty(promotionIdStr) || key.indexOf("&") < 0) {
-            	promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_TIMELIMITED_INDEX, key);
-                continue;
-            }
-            keyArr = key.split("&");
-            tmpSkuCode = keyArr[0];//商品编码
-            tmpBuyerCode = keyArr[1];//会员编码
-            if (skuCodeList != null && !skuCodeList.isEmpty() && !skuCodeList.contains(tmpSkuCode)) {
-                continue;
-            }
-            //判断是否粉丝归属的会员（店铺）
-            if (StringUtils.isBlank(tmpBuyerCode) || !tmpBuyerCode.equals(buyerCode)) {
-                continue;
-            }
-            promotionAllIdStr += "," + promotionIdStr;
-        }
-        if (!StringUtils.isEmpty(promotionAllIdStr)) {
-            promotionAllIdStr = promotionAllIdStr.substring(1);
-            promotionIdList = Arrays.asList(promotionAllIdStr.split(","));
-        }
-        return promotionIdList;
-    }
-
-    
     /**
      * 秒杀 - 查询Redis秒杀活动展示结果信息
      *
@@ -140,7 +89,6 @@ public class PromotionTimelimitedRedisHandle {
         return resultDTO;
     }
 
-     
 	/**
 	 * 秒杀 -  从Redis中取得秒杀log信息
 	 * 
@@ -226,59 +174,6 @@ public class PromotionTimelimitedRedisHandle {
      */
     private void dealRedisReverseBuyerTimelimitedInfo(PromotionOrderItemDTO buyerTimelimitedInfo)
             throws PromotionCenterBusinessException {
-//        Date nowDt = new Date();
-//        String promotionId = buyerTimelimitedInfo.getPromotionId();
-//        String buyerCode = buyerTimelimitedInfo.getBuyerCode();
-//        String orderNo = buyerTimelimitedInfo.getOrderNo();
-//        Integer skuCount = buyerTimelimitedInfo.getQuantity();
-//        TimelimitedInfoResDTO timelimitedInfo = null;
-//        String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-//        String buyerTimelimitedKey = buyerCode + "&" + promotionId;
-//        long timelimitedThreshold = 0;
-//        long remainCount = 0;
-//        long showRemainCount = 0;
-//        long buyerTimelimitedCount = 0;
-//
-//        timelimitedInfo = getRedisTimelimitedInfo(promotionId);
-//        try {
-//            if (nowDt.before(timelimitedInfo.getEffectiveTime())) {
-//                throw new PromotionCenterBusinessException(PromotionCenterConst.PROMOTION_NO_START,
-//                        "秒杀活动编号:" + promotionId + " 该活动未开始");
-//            } else if (nowDt.after(timelimitedInfo.getInvalidTime())) {
-//                throw new PromotionCenterBusinessException(PromotionCenterConst.PROMOTION_HAS_EXPIRED,
-//                        "秒杀活动编号:" + promotionId + " 该活动已结束");
-//            }
-//            timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold().longValue();
-//            promotionRedisDB.incrHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT);
-//            promotionRedisDB.incrHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT);
-//            showRemainCount = promotionRedisDB.incrHashBy(timelimitedResultKey,
-//                    RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, skuCount * -1);
-//            remainCount = promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
-//                    skuCount * -1);
-//            if (remainCount < 0 || showRemainCount < 0) {
-//                throw new PromotionCenterBusinessException(PromotionCenterConst.TIMELIMITED_SKU_NO_REMAIN,
-//                        "秒杀活动编号:" + promotionId + " 该活动已被抢光");
-//            }
-//            buyerTimelimitedCount = promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
-//                    buyerTimelimitedKey, skuCount);
-//            if (buyerTimelimitedCount > timelimitedThreshold) {
-//                throw new PromotionCenterBusinessException(PromotionCenterConst.TIMELIMITED_BUYER_NO_COUNT,
-//                        "订单号:" + orderNo + " 会员编号:" + buyerCode + " 秒杀活动编号:" + promotionId + " 会员已经超限秒数量");
-//            }
-//        } catch (PromotionCenterBusinessException mcbe) {
-//            if (PromotionCenterConst.TIMELIMITED_SKU_NO_REMAIN.equals(mcbe.getCode())
-//                    || PromotionCenterConst.TIMELIMITED_BUYER_NO_COUNT.equals(mcbe.getCode())) {
-//                if (PromotionCenterConst.TIMELIMITED_BUYER_NO_COUNT.equals(mcbe.getCode())) {
-//                	promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT, buyerTimelimitedKey,
-//                            skuCount * -1);
-//                }
-//                promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT,
-//                        skuCount);
-//                promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
-//                        skuCount);
-//            }
-//            throw mcbe;
-//        }
     }
 
     /**
@@ -438,15 +333,6 @@ public class PromotionTimelimitedRedisHandle {
      * @param promotionInfo
      */
     public void updateRedisTimeilimitedStatus(PromotionInfoDTO promotionInfo) {
-//    	TimelimitedInfoResDTO timelimitedInfo = null;
-//        String promotionId = promotionInfo.getPromotionId();
-//        String timelimitedJsonStr = "";
-//        timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-//        timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
-//        if (timelimitedInfo == null) {
-//            return;
-//        }
-//        timelimitedInfo.setStatus(promotionInfo.getStatus());
-//        promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
+
     }
 }

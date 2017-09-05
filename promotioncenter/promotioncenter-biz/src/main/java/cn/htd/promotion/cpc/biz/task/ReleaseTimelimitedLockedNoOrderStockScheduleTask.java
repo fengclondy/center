@@ -21,10 +21,8 @@ import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.common.Pager;
-import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.BuyerUseTimelimitedLogDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.common.constants.Constants;
@@ -46,6 +44,9 @@ public class ReleaseTimelimitedLockedNoOrderStockScheduleTask
 	 * RedisMessageId数据
 	 */
 	private static final String REDIS_MESSAGE_ID_KEY = "B2B_MIDDLE_MESSAGEID_MSB_SEQ";
+
+	// 默认15分钟未提交的订单释放库存
+	public static final String RELEASE_LOCK_STOCK_TIME = "15";
 
 	/**
 	 * 清除Reids中预锁但是没有提交订单的库存信息的时间间隔(单位：分钟)
@@ -117,9 +118,8 @@ public class ReleaseTimelimitedLockedNoOrderStockScheduleTask
 				}
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
-				condition.setUseType(dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
-						DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE));
-				condition.setReleaseStockInterval(SysProperties.getProperty(RELEASE_TIMELIMITED_LOCKED_STOCK_INTERVAL));
+				condition.setUseType(Constants.SECKILL_RESERVE);
+				condition.setReleaseStockInterval(RELEASE_LOCK_STOCK_TIME);
 				BuyerUseTimelimitedLogDMOList = buyerUseTimelimitedLogDAO
 						.queryNeedReleaseTimelimitedStock4Task(condition, pager);
 			}
@@ -148,17 +148,15 @@ public class ReleaseTimelimitedLockedNoOrderStockScheduleTask
 		logger.info("\n 方法:[{}],入参:[{}][{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
 				JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
 		boolean result = true;
-		String reverseStatus = dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
-				DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE);
-		String releaseStatus = dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
-				DictionaryConst.OPT_BUYER_PROMOTION_STATUS_RELEASE);
+		String reverseStatus = Constants.SECKILL_RESERVE;
+		String releaseStatus = Constants.SECKILL_RELEASE;
 		String seckillLockNo = "";
 		String promotionId = "";
 		String buyerCode = "";
 		String useLogJsonStr = "";
 		RLock rLock = null;
 		Integer skuCount = 0;
-		long buyerTimelimitedCount = 0L;
+		// long buyerTimelimitedCount = 0L;
 		BuyerUseTimelimitedLogDMO redisUseLog = null;
 		RedissonClient redissonClient = redissonClientUtil.getInstance();
 
@@ -187,12 +185,20 @@ public class ReleaseTimelimitedLockedNoOrderStockScheduleTask
 								RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT, skuCount);
 						promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId,
 								RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, skuCount);
-						buyerTimelimitedCount = promotionRedisDB.incrHashBy(
-								RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT, buyerCode + "&" + promotionId,
-								skuCount * -1);
-						if (buyerTimelimitedCount < 0) {
-							promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
-									buyerCode + "&" + promotionId, "0");
+						// buyerTimelimitedCount = promotionRedisDB.incrHashBy(
+						// RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
+						// buyerCode + "&" + promotionId,
+						// skuCount * -1);
+						// if (buyerTimelimitedCount < 0) {
+						// promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
+						// buyerCode + "&" + promotionId, "0");
+						// }
+						// 该秒杀活动对应库存队列
+						String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_"
+								+ promotionId;
+						for (int i = 0; i < skuCount; i++) {
+							// 释放库存则往队列插入一个请求
+							promotionRedisDB.rpush(timeLimitedQueueKey, promotionId);
 						}
 						redisUseLog.setUseType(releaseStatus);
 						redisUseLog.setModifyTime(new Date());

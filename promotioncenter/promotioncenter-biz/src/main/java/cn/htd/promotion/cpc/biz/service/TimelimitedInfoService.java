@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.biz.service;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
@@ -55,4 +56,11 @@ public interface TimelimitedInfoService {
 	 * @throws Exception
 	 */
 	public TimelimitedInfoResDTO getTimelimitedInfo(String promotionId) throws Exception;
+
+	/**
+	 * 保存秒杀活动操作记录到redis
+	 * 
+	 * @param seckillInfoReqDTO
+	 */
+	public void saveOrUpdateTimelimitedOperlog(BuyerUseTimelimitedLogDMO buyerUseTimelimitedLogDMO);
 }

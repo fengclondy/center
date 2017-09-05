@@ -12,6 +12,8 @@ public interface TimelimitedInfoService {
 
 	public void updateTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 
+	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
+	
 	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
 
 	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,

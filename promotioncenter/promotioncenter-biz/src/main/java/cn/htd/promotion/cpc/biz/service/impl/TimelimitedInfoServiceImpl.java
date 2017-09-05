@@ -19,7 +19,10 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
@@ -39,6 +42,7 @@ import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO;
@@ -65,6 +69,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
 	@Resource
 	private PromotionInfoDAO promotionInfoDAO;
+	
+    @Resource
+    private DictionaryUtils dictionary;
+    
+    @Resource
+    private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
 
 	@Override
 	public void addTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
@@ -74,9 +84,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		Date currentTime = calendar.getTime();
 
 		try {
-			if (null == timelimitedInfoReqDTO) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
-			}
 
 			// 添加促销活动信息
 			PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfoReqDTO.getPromotionExtendInfoDTO();
@@ -85,6 +92,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 					|| "".equals(promotionExtendInfoReturn.getPromotionId().trim())) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "新建秒杀促销活动失败！");
 			}
+			
+			// 添加秒杀活动履历
+			addPromotionStatusHistory(promotionExtendInfoReturn,timelimitedInfoReqDTO);
 
 			// 设置活动编码
 			timelimitedInfoReqDTO.setPromotionId(promotionExtendInfoReturn.getPromotionId());
@@ -110,7 +120,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
 			// 异步初始化秒杀活动的Redis数据
-			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(
+			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleFullTimelimitedInfoByPromotionId(
 					promotionExtendInfoReturn.getPromotionId(), messageId);
 			initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
 
@@ -135,6 +145,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 					|| "".equals(promotionExtendInfoReturn.getPromotionId().trim())) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "修改秒杀促销活动失败！");
 			}
+			
+			// 添加秒杀活动履历
+			addPromotionStatusHistory(promotionExtendInfoReturn,timelimitedInfoReqDTO);
 
 			// 设置层级编码
 			List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList = promotionExtendInfoReturn
@@ -173,7 +186,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
 			// 异步初始化秒杀活动的Redis数据
-			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(
+			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleFullTimelimitedInfoByPromotionId(
 					timelimitedInfoReqDTO.getPromotionId(), messageId);
 			initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
 
@@ -215,7 +228,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	}
 
 	@Override
-	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId, String messageId) {
+	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId, String messageId) {
 
 		TimelimitedInfoResDTO timelimitedInfoResDTO = null;
 
@@ -243,6 +256,29 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "查询秒杀促销活动失败！");
 			}
 			timelimitedInfoResDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
+
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【getSingleTimelimitedInfo】报错：{}", messageId, e.toString());
+			throw new RuntimeException(e);
+		}
+
+		return timelimitedInfoResDTO;
+
+	}
+	
+	@Override
+	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId, String messageId) {
+
+		TimelimitedInfoResDTO timelimitedInfoResDTO = null;
+
+		try {
+
+			if (null == promotionId) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动编号不能为空！");
+			}
+
+			// 查询活动信息
+			timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【getSingleTimelimitedInfo】报错：{}", messageId, e.toString());
@@ -340,6 +376,36 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			}
 		}
 
+	}
+	
+	/**
+	 * 添加秒杀活动履历
+	 * @param promotionExtendInfo
+	 * @param timelimitedInfoReqDTO
+	 */
+	private void addPromotionStatusHistory(PromotionExtendInfoDTO promotionExtendInfo,TimelimitedInfoReqDTO timelimitedInfoReqDTO){
+		
+		// 状态履历   状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
+        PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+        historyDTO.setPromotionId(promotionExtendInfo.getPromotionId());
+        historyDTO.setPromotionStatus(
+				dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, promotionExtendInfo.getStatus()));
+		historyDTO.setPromotionStatusText(
+				dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, promotionExtendInfo.getStatus()));
+        historyDTO.setCreateId(timelimitedInfoReqDTO.getCreateId());
+        historyDTO.setCreateName(timelimitedInfoReqDTO.getCreateName());
+        promotionStatusHistoryDAO.add(historyDTO);
+        
+        // 促销活动展示状态履历   状态   1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+        historyDTO = new PromotionStatusHistoryDTO();
+        historyDTO.setPromotionId(promotionExtendInfo.getPromotionId());
+        historyDTO.setPromotionStatus(
+				dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, promotionExtendInfo.getShowStatus()));
+		historyDTO.setPromotionStatusText(
+				dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, promotionExtendInfo.getShowStatus()));
+        historyDTO.setCreateId(timelimitedInfoReqDTO.getCreateId());
+        historyDTO.setCreateName(timelimitedInfoReqDTO.getCreateName());
+        promotionStatusHistoryDAO.add(historyDTO);
 	}
 
 	@Override

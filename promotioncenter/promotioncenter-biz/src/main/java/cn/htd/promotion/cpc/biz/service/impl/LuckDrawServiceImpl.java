@@ -3,11 +3,21 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
@@ -43,13 +53,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -326,6 +329,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				promotionInfoEditReqDTO
 						.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 								DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+			}
+			Date itime = promotionInfoEditReqDTO.getInvalidTime();
+			if(itime!=null){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(itime);
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE,59);
+				cal.set(Calendar.SECOND,59);
+				promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
 			}
             // 判断时间段内可有活动上架
             Integer isUpPromotionFlag = promotionInfoDAO

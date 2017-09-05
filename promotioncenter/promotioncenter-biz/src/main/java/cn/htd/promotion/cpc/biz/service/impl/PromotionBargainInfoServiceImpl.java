@@ -971,9 +971,9 @@ public class PromotionBargainInfoServiceImpl implements
 			PromotionInfoDTO resultDTO = null;
 			if (null != promotionInfoList && !promotionInfoList.isEmpty()) {
 				for (int i = 0; i < promotionInfoList.size(); i++) {
-					if (currentDate.before(promotionInfoList.get(0)
+					if (currentDate.before(promotionInfoList.get(i)
 							.getInvalidTime())) {
-						resultDTO = promotionInfoList.get(0);
+						resultDTO = promotionInfoList.get(i);
 						break;
 					}
 				}

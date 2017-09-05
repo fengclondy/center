@@ -209,6 +209,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     }
                     winningRecordDTO.setResponseCode(pcbe.getCode());
                     winningRecordDTO.setResponseMsg(pcbe.getMessage());
+                    winningRecordDTO.setRewardName(ResultCodeEnum.getName(winningRecordDTO.getResponseCode()));
+                    winningRecordDTO.setWinningTime(new Date());
                 }
                 promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
                         promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket,

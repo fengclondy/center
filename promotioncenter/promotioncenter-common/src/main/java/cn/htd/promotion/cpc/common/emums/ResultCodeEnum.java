@@ -32,7 +32,7 @@ public enum ResultCodeEnum {
     PROMOTION_NO_STOCK("26009", "促销活动商品库存不足"),
     POMOTION_SPLIT_PRICE_ERROR("26010", "促销活动拆分金额失败"),
     PROMOTION_BARGAIN_JOIN_QTY("26011", "促销活动参与次数已上限"),
-    BARGAIN_NOT_UNAVAILABLE("26012","砍价活动不可用"),
+    BARGAIN_NOT_UNAVAILABLE("26012", "砍价活动不可用"),
 
     LOTTERY_NO_RESULT("26200", "抽奖进行中请继续等待"),
     LOTTERY_NO_DESCRIBE_CONTENT("26201", "抽奖没有活动规则信息"),
@@ -46,9 +46,8 @@ public enum ResultCodeEnum {
     LOTTERY_BUYER_REACH_WINNING_LIMMIT("26209", "粉丝已达中奖次数上限"),
     LOTTERY_SELLER_REACH_WINNING_LIMMIT("26210", "会员店已达中奖次数上限"),
     LOTTERY_BUYER_NO_WINNING_RECORD("26211", "粉丝没有中奖记录"),
-    LOTTERY_ALL_ORG_HAS_AUTHIORITY("26212","所有会员店都有参加抽奖的权限"),
-    LOTTERY_NOT_HAS_PROMOTION_INFO("26213","没有查到抽奖信息"),
-            ;
+    LOTTERY_ALL_ORG_HAS_AUTHIORITY("26212", "所有会员店都有参加抽奖的权限"),
+    LOTTERY_NOT_HAS_PROMOTION_INFO("26213", "没有查到抽奖信息"),;
 
     private ResultCodeEnum(String code, String msg) {
         this.code = code;
@@ -73,5 +72,15 @@ public enum ResultCodeEnum {
 
     public void setMsg(String msg) {
         Msg = msg;
+    }
+
+    // 获取枚举value对应名字方法
+    public static String getName(String code) {
+        for (ResultCodeEnum resultCodeEnum : ResultCodeEnum.values()) {
+            if (code.equals(resultCodeEnum.getCode())) {
+                return resultCodeEnum.Msg;
+            }
+        }
+        return "";
     }
 }

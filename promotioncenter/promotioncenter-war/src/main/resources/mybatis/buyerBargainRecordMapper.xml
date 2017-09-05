@@ -95,8 +95,9 @@
 	</insert>
 
 	<select id="queryPromotionBargainJoinQTY" resultType="java.lang.Integer">
-		select count(bargain_code) from buyer_launch_bargain_info 
-		where promotion_id = #{promotionId}
+		SELECT COUNT(0) FROM (
+		SELECT distinct(buyer_code) FROM buyer_launch_bargain_info 
+				where promotion_id = #{promotionId} ) t
 	</select>
 	
 </mapper>

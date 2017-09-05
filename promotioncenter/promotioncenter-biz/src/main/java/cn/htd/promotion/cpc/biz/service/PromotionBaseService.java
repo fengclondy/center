@@ -128,15 +128,4 @@ public interface PromotionBaseService {
      */
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap);
-
-    /**
-     * 取得满足促销活动卖家规则的卖家信息
-     * @param promotionInfoDTO
-     * @param sellerCode
-     * @param dictMap
-     * @return
-     */
-    public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
-            Map<String, String> dictMap);
-
 }

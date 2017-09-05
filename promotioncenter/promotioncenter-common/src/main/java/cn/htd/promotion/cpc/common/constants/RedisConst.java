@@ -31,7 +31,9 @@ public class RedisConst {
     public static final String REDIS_BUYER_BARGAIN_USELOG = "BUYER_BARGAIN_USELOG";
     // Redis砍价活动金额拆分
     public static final String REDIS_BARGAIN_PRICE_SPLIT = "BARGAIN_PRICE_SPLIT";
-
+    //Redis砍价商品库存
+    public static final String REDIS_BARGAIN_ITEM_STOCK = "BARGAIN_ITEM_STOCK";
+    
     public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
 
     // Redis抽奖活动有效信息

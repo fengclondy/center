@@ -120,7 +120,7 @@
 				is_bargain_over = #{isBargainOver,jdbcType=TINYINT},
 			</if>
 			<if test="goodsCurrentPrice != null">
-				goods_current_price = #{goodsCurrentPrice,jdbcType=DECIMAL},
+				goods_current_price = goods_current_price - #{goodsCurrentPrice,jdbcType=DECIMAL},
 			</if>
 			<if test="modifyId != null">
 				modify_id = #{modifyId,jdbcType=BIGINT},

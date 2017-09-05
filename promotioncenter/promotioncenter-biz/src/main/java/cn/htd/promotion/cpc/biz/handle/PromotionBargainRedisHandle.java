@@ -59,6 +59,7 @@ public class PromotionBargainRedisHandle {
 		String promotionId = dto.getPromotionId();
 		validStatus = promotionRedisDB.getHash(RedisConst.REDIS_BARGAIN_VALID,
 				promotionId);
+		//预览进入不需要判断是否启用
 		if (!"1".equals(dto.getPreviewFlag()) && !StringUtils.isEmpty(validStatus)
 				&& !dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
@@ -105,6 +106,46 @@ public class PromotionBargainRedisHandle {
 	 * @param BargainInfo
 	 */
 	public void addBargainInfo2Redis(
+			List<PromotionBargainInfoResDTO> promotionBargainInfoList, boolean isBargainLaunch) {
+		String promotionId = "";
+		String promotionSlogan = "";
+		List<String> sloganList = null;
+		if (null != promotionBargainInfoList
+				&& !promotionBargainInfoList.isEmpty()) {
+			promotionId = promotionBargainInfoList.get(0).getPromotionId();
+			promotionSlogan = promotionBargainInfoList.get(0).getPromotionSlogan();
+			if(StringUtils.isNotEmpty(promotionSlogan)){
+				sloganList = JSON.parseArray(promotionSlogan, String.class);
+			}
+			for (PromotionBargainInfoResDTO dto : promotionBargainInfoList) {
+				dto.setCreateTime(new Date());
+				dto.setModifyTime(new Date());
+				dto.setSloganList(sloganList);
+				dto.setShowStatus(dictionary.getValueByCode(
+						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+				if(!isBargainLaunch){
+					int goodsNum = dto.getGoodsNum();
+					String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + dto.getPromotionId() + "_" + dto.getLevelCode();
+					promotionRedisDB.del(stockKey);
+					if(goodsNum > 0) {
+						for (int i = 0; i < goodsNum; i++) {
+							promotionRedisDB.headPush(stockKey, i + 1 + "");
+						}
+					}
+				}
+			}
+			promotionRedisDB.setHash(RedisConst.REDIS_BARGAIN, promotionId,
+					JSON.toJSONString(promotionBargainInfoList));
+		}
+	}
+	
+	/**
+	 * 砍完商品时砍价活动信息进Redis
+	 *
+	 * @param BargainInfo
+	 */
+	public void addBargainInfo3Redis(
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList) {
 		String promotionId = "";
 		String promotionSlogan = "";

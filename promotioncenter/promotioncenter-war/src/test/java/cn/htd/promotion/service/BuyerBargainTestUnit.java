@@ -231,10 +231,10 @@ public class BuyerBargainTestUnit {
 	  @Rollback(false) 
 	  public void Testoptationbargain(){
 	    ExecuteResult<String> result = new ExecuteResult<String>();
-	    String buyerCode = "24933406000";
-	    String promotionId = "22172343460075";
-	    String levelCode = "2217234346007530";
-	    String bargainCode = "3172355370001";
+	    String buyerCode = "24933414";
+	    String promotionId = "22171029530119";
+	    String levelCode = "2217102953011912";
+	    String bargainCode = "3171133340037";
 	    String helperPicture = "5365.png";
 	    String helperName = "单元测试帮忙";
 	    String openedId = "123123123";

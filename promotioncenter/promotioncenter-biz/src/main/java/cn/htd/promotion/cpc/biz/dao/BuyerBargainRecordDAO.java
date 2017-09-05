@@ -20,6 +20,4 @@ public interface BuyerBargainRecordDAO {
 
 	public Integer queryPromotionBargainJoinQTY(@Param("promotionId") String promotionId);
 	
-	public Integer queryPromotionBargainJoinTypeQTY(@Param("promotionId") String promotionId);
-
 }

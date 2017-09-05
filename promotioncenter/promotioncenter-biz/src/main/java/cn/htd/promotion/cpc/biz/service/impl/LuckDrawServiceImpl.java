@@ -108,6 +108,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 result.setPromotionId(promotionId);
                 return result;
             }
+        } catch (PromotionCenterBusinessException e) {
+        	result.setResponseCode(e.getCode());
+        	result.setResponseMsg(e.getMessage());
         } catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());

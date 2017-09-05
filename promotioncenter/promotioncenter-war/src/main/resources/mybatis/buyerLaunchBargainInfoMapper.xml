@@ -132,7 +132,7 @@
 				modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 			</if>
 		</set>
-		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR}
+		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR} and bargain_code = #{bargainCode,jdbcType=VARCHAR}
 	</update>
 	
 	<select id="queryLaunchBargainInfoList" resultMap="BaseResultMap">

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,7 +157,7 @@ public class UpdatePromotionStatusTask implements IScheduleTaskDealMulti<Promoti
 					} else {
 						timeStatus = endStatus;
 					}
-					if (timeStatus.equals(status)) {
+					if (timeStatus.equals(status) || StringUtils.isEmpty(timeStatus)) {
 						continue;
 					}
 					promotionInfo.setStatus(timeStatus);

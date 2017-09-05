@@ -169,15 +169,10 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "砍价活动不存在");
 
 			}
-			String launchFlag = promotionRedisDB.getHash(Constants.IS_BUYER_BARGAIN + bargainInfoDTO.getPromotionId(), bargainInfoDTO.getBuyerCode() + "_" + bargainInfoDTO.getLevelCode());
-			if(!StringUtils.isNotEmpty(launchFlag)){
-				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
-		                  "该砍价活动商品只能发起一次流程");
-			}
-			promotionRedisDB.setHash(Constants.IS_BUYER_BARGAIN + bargainInfoDTO.getPromotionId(), bargainInfoDTO.getBuyerCode() + "_" + bargainInfoDTO.getLevelCode(), "1");
 			Integer launchTimes = buyerLaunchBargainInfoDAO.queryBuyerLaunchBargainInfoNumber(bargainInfoDTO);
 			if(null != launchTimes && launchTimes.intValue() > 0) {
-				
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_BARGAIN_JOIN_QTY.getCode(),
+		                  "该砍价活动商品只能发起一次流程");
 			}
 			List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO.getBuyerLaunchBargainInfoByPromotionId(promotionInfo.getPromotionId(), bargainInfoDTO.getBuyerCode());
 			if(null != launchList && !launchList.isEmpty() 
@@ -220,11 +215,9 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 			buyerBargainRecordDAO.insertBuyerBargainRecord(buyerBargainRecord);
 			result.setResult(bargainInfoDTO);
 		} catch (PromotionCenterBusinessException pbs){
-			promotionRedisDB.decrHash(Constants.IS_BUYER_BARGAIN + bargainInfoDTO.getPromotionId(), bargainInfoDTO.getBuyerCode() + "_" + bargainInfoDTO.getLevelCode());
 			result.setCode(pbs.getCode());
 			result.setErrorMessage(pbs.getMessage());
 		}catch (Exception e) {
-			promotionRedisDB.decrHash(Constants.IS_BUYER_BARGAIN + bargainInfoDTO.getPromotionId(), bargainInfoDTO.getBuyerCode() + "_" + bargainInfoDTO.getLevelCode());
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setErrorMessage(e.toString());
         }

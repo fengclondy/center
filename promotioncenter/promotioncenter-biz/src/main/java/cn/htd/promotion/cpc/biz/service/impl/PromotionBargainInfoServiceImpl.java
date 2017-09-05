@@ -314,9 +314,6 @@ public class PromotionBargainInfoServiceImpl implements
 				promotionExtendInfoDTO.setShowStatus(dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-				promotionExtendInfoDTO.setStatus(dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
 				if (null != promotionExtendInfoDTO
 						&& "1".equals(firstBargainDTO.getUpFlag())) {
 					promotionExtendInfoDTO.setHasUpFlag(0);

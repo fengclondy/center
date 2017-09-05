@@ -897,6 +897,8 @@ public class PromotionBargainInfoServiceImpl implements
 			dataGrid.setTotal(bargainCount);
 			dataGrid.setRows(resList);
 			result.setResult(dataGrid);
+			LOGGER.info(
+					"MessageId{}:调用promotionBargainInfoDAO.queryPromotionBargainOverview（）方法开始,入参{}", JSON.toJSONString(result));
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));

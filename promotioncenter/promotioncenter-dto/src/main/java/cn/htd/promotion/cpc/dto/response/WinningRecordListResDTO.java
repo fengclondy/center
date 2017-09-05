@@ -33,6 +33,11 @@ public class WinningRecordListResDTO extends GenricResDTO{
 	 * 归属会员店名称
 	 */
 	private String sellerName;
+	
+	/**
+	 * 1：返券，2：实物奖品，3：话费，4：汇金币，5：谢谢惠顾
+	 */
+	private String rewardType;
 
 	public String getRewardName() {
 		return rewardName;
@@ -72,6 +77,14 @@ public class WinningRecordListResDTO extends GenricResDTO{
 
 	public void setSellerName(String sellerName) {
 		this.sellerName = sellerName;
+	}
+
+	public String getRewardType() {
+		return rewardType;
+	}
+
+	public void setRewardType(String rewardType) {
+		this.rewardType = rewardType;
 	}
 	
 }

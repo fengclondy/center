@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,18 +19,26 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
+import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
+import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.exception.PromotionCenterException;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.emums.YesNoEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO;
@@ -54,6 +63,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
 
+	@Resource
+	private PromotionInfoDAO promotionInfoDAO;
+
 	@Override
 	public void addTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
 
@@ -62,6 +74,30 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		Date currentTime = calendar.getTime();
 
 		try {
+			if (null == timelimitedInfoReqDTO) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
+			}
+
+			// 添加促销活动信息
+			PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfoReqDTO.getPromotionExtendInfoDTO();
+			PromotionExtendInfoDTO promotionExtendInfoReturn = baseService.insertPromotionInfo(promotionExtendInfoDTO);
+			if (null == promotionExtendInfoReturn || null == promotionExtendInfoReturn.getPromotionId()
+					|| "".equals(promotionExtendInfoReturn.getPromotionId().trim())) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "新建秒杀促销活动失败！");
+			}
+
+			// 设置活动编码
+			timelimitedInfoReqDTO.setPromotionId(promotionExtendInfoReturn.getPromotionId());
+			// 设置层级编码
+			List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList = promotionExtendInfoReturn
+					.getPromotionAccumulatyList();
+			if (null != promotionAccumulatyDTOList && promotionAccumulatyDTOList.size() == 1) {
+				timelimitedInfoReqDTO.setLevelCode(promotionAccumulatyDTOList.get(0).getLevelCode());
+			} else {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
+						"新建秒杀促销活动层级失败！");
+			}
+
 			// 添加秒杀商品
 			timelimitedInfoReqDTO.setCreateTime(currentTime);
 			timelimitedInfoReqDTO.setModifyTime(currentTime);
@@ -73,10 +109,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			// 添加商品详情
 			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
-			// 添加促销活动信息
-			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
-			// timelimitedInfoReqDTO.getPromotionInfoEditReqDTO();
-			// baseService.addPromotionInfo(PromotionInfoEditReqDTO);
+			// 异步初始化秒杀活动的Redis数据
+			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(
+					promotionExtendInfoReturn.getPromotionId(), messageId);
+			initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【addTimelimitedInfo】报错：{}", messageId, e.toString());
@@ -92,9 +128,27 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			Calendar calendar = Calendar.getInstance();
 			Date currentTime = calendar.getTime();
 
+			// 修改促销活动信息
+			PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfoReqDTO.getPromotionExtendInfoDTO();
+			PromotionExtendInfoDTO promotionExtendInfoReturn = baseService.updatePromotionInfo(promotionExtendInfoDTO);
+			if (null == promotionExtendInfoReturn || null == promotionExtendInfoReturn.getPromotionId()
+					|| "".equals(promotionExtendInfoReturn.getPromotionId().trim())) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "修改秒杀促销活动失败！");
+			}
+
+			// 设置层级编码
+			List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList = promotionExtendInfoReturn
+					.getPromotionAccumulatyList();
+			if (null != promotionAccumulatyDTOList && promotionAccumulatyDTOList.size() == 1) {
+				timelimitedInfoReqDTO.setLevelCode(promotionAccumulatyDTOList.get(0).getLevelCode());
+			} else {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
+						"查询秒杀促销活动层级失败！");
+			}
+
 			// 修改秒杀商品
 			timelimitedInfoReqDTO.setModifyTime(currentTime);
-			timelimitedInfoDAO.updateByPrimaryKeySelective(timelimitedInfoReqDTO);
+			timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
 			// 伪删除商品活动的所有图片
 			TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO_delete = new TimelimitedSkuPictureReqDTO();
@@ -118,10 +172,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			// 添加商品详情
 			addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
 
-			// //修改促销活动信息
-			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
-			// timelimitedInfoReqDTO.getPromotionInfoEditReqDTO();
-			// baseService.editPromotionInfo(PromotionInfoEditReqDTO);
+			// 异步初始化秒杀活动的Redis数据
+			TimelimitedInfoResDTO timelimitedInfoResDTO = getSingleTimelimitedInfoByPromotionId(
+					timelimitedInfoReqDTO.getPromotionId(), messageId);
+			initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【updateTimelimitedInfo】报错：{}", messageId, e.toString());
@@ -131,16 +185,48 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	}
 
 	@Override
-	public TimelimitedInfoResDTO getSingleTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO,
-			String messageId) {
+	public void initTimelimitedInfoRedisInfoWithThread(final TimelimitedInfoResDTO timelimitedInfoResDTO) {
+		new Thread() {
+			public void run() {
+				initTimelimitedInfoRedisInfo(timelimitedInfoResDTO);
+			}
+		}.start();
+	}
+
+	@Override
+	public void initTimelimitedInfoRedisInfo(TimelimitedInfoResDTO timelimitedInfoResDTO) {
+
+		PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
+		promotionInfoDMO.setPromotionId(timelimitedInfoResDTO.getPromotionExtendInfoDTO().getPromotionId());
+		try {
+			setTimelimitedInfo2Redis(timelimitedInfoResDTO);
+			setTimelimitedReserveQueue(timelimitedInfoResDTO);
+
+			promotionInfoDMO.setDealFlag(YesNoEnum.NO.getValue());
+		} catch (Exception e) {
+			promotionInfoDMO.setDealFlag(YesNoEnum.YES.getValue());
+
+			logger.info("初始化秒杀活动Redis数据TimelimitedInfoServiceImpl-initTimelimitedInfoRedisInfo:入参:{},异常:{}",
+					JSON.toJSONString(timelimitedInfoResDTO), ExceptionUtils.getFullStackTrace(e));
+			throw new RuntimeException(e);
+		} finally {
+			promotionInfoDAO.updatePromotionDealFlag(promotionInfoDMO);
+		}
+	}
+
+	@Override
+	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId, String messageId) {
 
 		TimelimitedInfoResDTO timelimitedInfoResDTO = null;
 
 		try {
 
-			String promotionId = timelimitedInfoReqDTO.getPromotionId();
+			if (null == promotionId) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动编号不能为空！");
+			}
+
 			// 查询活动信息
-			timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(timelimitedInfoReqDTO.getPromotionId());
+			timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
 			// 查询图片信息
 			List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureResDTOList = timelimitedSkuPictureDAO
 					.selectByPromotionId(promotionId);
@@ -151,11 +237,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			timelimitedInfoResDTO.setTimelimitedSkuPictureList(timelimitedSkuPictureResDTOList);
 			timelimitedInfoResDTO.setTimelimitedSkuDescribeList(timelimitedSkuDescribeResDTOList);
 
-
-			// //修改促销活动信息
-			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
-			// timelimitedInfoReqDTO.getPromotionInfoEditReqDTO();
-			// baseService.editPromotionInfo(PromotionInfoEditReqDTO);
+			// 查询销活动信息
+			PromotionExtendInfoDTO promotionExtendInfoDTO = baseService.queryPromotionInfo(promotionId);
+			if (null == promotionExtendInfoDTO) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "查询秒杀促销活动失败！");
+			}
+			timelimitedInfoResDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【getSingleTimelimitedInfo】报错：{}", messageId, e.toString());
@@ -224,7 +311,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		}
 	}
 
-	
 	/**
 	 * 批量添加添加商品详情图片
 	 * 
@@ -232,9 +318,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	 * @param currentTime
 	 */
 	private void addTimelimitedSkuDescribeList(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
-		
-		List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList = timelimitedInfoReqDTO.getTimelimitedSkuDescribeReqDTOList();
-		if(null != timelimitedSkuDescribeReqDTOList && timelimitedSkuDescribeReqDTOList.size() >0){
+
+		List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList = timelimitedInfoReqDTO
+				.getTimelimitedSkuDescribeReqDTOList();
+		if (null != timelimitedSkuDescribeReqDTOList && timelimitedSkuDescribeReqDTOList.size() > 0) {
 			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = null;
 			for (int i = 0; i < timelimitedSkuDescribeReqDTOList.size(); i++) {
 				timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTOList.get(i);
@@ -242,7 +329,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 				timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
 				timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
 				timelimitedSkuDescribeReqDTO.setPictureUrl(timelimitedSkuDescribeReqDTO.getPictureUrl());
-				timelimitedSkuDescribeReqDTO.setSortNum(i+1);
+				timelimitedSkuDescribeReqDTO.setSortNum(i + 1);
 				timelimitedSkuDescribeReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
 				timelimitedSkuDescribeReqDTO.setCreateName(timelimitedInfoReqDTO.getModifyName());
 				timelimitedSkuDescribeReqDTO.setCreateTime(currentTime);
@@ -252,27 +339,18 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 				timelimitedSkuDescribeDAO.insert(timelimitedSkuDescribeReqDTO);
 			}
 		}
-		
-	}
 
-	
-	
+	}
 
 	@Override
 	public void setTimelimitedInfo2Redis(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception {
 		if (timelimitedInfoResDTO != null) {
 			String promotionId = timelimitedInfoResDTO.getPromotionId();
 			String jsonObj = JSON.toJSONString(timelimitedInfoResDTO);
-			// 设置秒杀活动到redis 如果是update则删除原有活动插入新活动
-			String timelimitedStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-			if (StringUtils.isNotBlank(timelimitedStr)) {
-				promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-			}
 			promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId, jsonObj);
 			// 设置秒杀活动具体数量
 			this.addTimelimitedResult2Redis(timelimitedInfoResDTO);
 		}
-
 	}
 
 	/**
@@ -321,6 +399,17 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		}
 		TimelimitedInfoResDTO timelimitedInfo = JSON.parseObject(timelimitedStr, TimelimitedInfoResDTO.class);
 		return timelimitedInfo;
+	}
+
+	@Override
+	public void saveOrUpdateTimelimitedOperlog(BuyerUseTimelimitedLogDMO buyerUseTimelimitedLogDMO) {
+		String promotionId = buyerUseTimelimitedLogDMO.getPromotionId();
+		String buyerCode = buyerUseTimelimitedLogDMO.getBuyerCode();
+		String key = buyerCode + "&" + promotionId;
+		promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, key,
+				JSON.toJSONString(buyerUseTimelimitedLogDMO));
+		promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
+				JSON.toJSONString(buyerUseTimelimitedLogDMO));
 	}
 
 }

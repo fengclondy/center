@@ -3,30 +3,35 @@ package cn.htd.promotion.cpc.biz.handle;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import cn.htd.promotion.cpc.biz.service.impl.StockChangeImpl;
+import cn.htd.promotion.cpc.common.constants.Constants;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
 
+@Service("seckillReserveImplHandle")
 public class SeckillReserveImplHandle extends StockChangeImpl {
 
-	/**
-	 * 日志
-	 */
-	protected Logger logger = LoggerFactory.getLogger(SeckillReserveImplHandle.class);
+	@Resource
+	private GeneratorUtils noGenerator;
 
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
 
 	@Override
-	protected void changeStock(String messageId, String promotionId, String buyerCode) throws Exception {
+	protected void changeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) throws Exception {
+		String promotionId = seckillInfoReqDTO.getPromotionId();
+		String buyerCode = seckillInfoReqDTO.getBuyerCode();
+		int count = seckillInfoReqDTO.getCount();
 		String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_" + promotionId;
 		String reserveResult = promotionRedisDB.getHash(reserveHashKey, buyerCode);
-		if (StringUtils.isBlank(reserveResult)) {
+		if (StringUtils.isBlank(reserveResult)
+				&& this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_RESERVE)) {
 			String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_" + promotionId;
 			// 获取该秒杀活动库存锁定队列的值
 			String result = promotionRedisDB.lpop(timeLimitedQueueKey);
@@ -34,9 +39,20 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			if (StringUtils.isBlank(result)) {
 				throw new PromotionCenterBusinessException(PromotionCenterConst.TIMELIMITED_BUYER_NO_COUNT, "秒杀商品已抢光");
 			}
+			// 设置该买家抢到秒杀资格标志
+			promotionRedisDB.setHash(reserveHashKey, buyerCode, Constants.SECKILL_RESERVE);
 			String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 			promotionRedisDB.incrHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT);
 			promotionRedisDB.incrHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT);
+			promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, timelimitedResultKey,
+					count * -1);
+			String lockNo = noGenerator.generateSeckillLockNo(Constants.ORDER_PREHOLDING_NUMBER);
+			seckillInfoReqDTO.setSeckillLockNo(lockNo);
+			// 保存秒杀操作日志
+			this.setTimelimitedLog(seckillInfoReqDTO, Constants.SECKILL_RESERVE);
+		} else {
+			throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
+					"买家已参加该秒杀活动不能再次秒杀");
 		}
 	}
 

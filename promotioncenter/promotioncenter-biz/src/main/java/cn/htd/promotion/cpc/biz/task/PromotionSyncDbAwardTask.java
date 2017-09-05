@@ -119,7 +119,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 				}
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
-				// condition.setPromotionType(taskParameter);
+				condition.setPromotionType("21");
 				promotionAwardDTOList = buyerWinningRecordDAO.query4Task(condition, pager);
 			}
 		} catch (Exception e) {

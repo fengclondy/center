@@ -20,8 +20,11 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.PromotionTimelimitedInfoAPI;
 import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
+import cn.htd.promotion.cpc.biz.handle.SeckillReduceImplHandle;
+import cn.htd.promotion.cpc.biz.handle.SeckillReleaseImplHandle;
+import cn.htd.promotion.cpc.biz.handle.SeckillReserveImplHandle;
+import cn.htd.promotion.cpc.biz.handle.SeckillRollbackImplHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionTimelimitedInfoService;
-import cn.htd.promotion.cpc.biz.service.StockChangeService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.TimelimitedStatusEnum;
@@ -54,7 +57,16 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	private PromotionRedisDB promotionRedisDB;
 
 	@Resource
-	private StockChangeService stockChangeService;
+	private SeckillReserveImplHandle seckillReserveImplHandle;
+
+	@Resource
+	private SeckillReleaseImplHandle seckillReleaseImplHandle;
+
+	@Resource
+	private SeckillReduceImplHandle seckillReduceImplHandle;
+
+	@Resource
+	private SeckillRollbackImplHandle seckillRollbackImplHandle;
 
 	/**
 	 * 汇掌柜APP - 查询秒杀活动列表
@@ -125,7 +137,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		return result;
 	}
 
-
 	/**
 	 * 汇掌柜APP - 查询秒杀活动详情
 	 * 
@@ -139,19 +150,19 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId,
 			String promotionId, String buyerCode) {
 		ExecuteResult<PromotionTimelimitedShowDTO> result = new ExecuteResult<PromotionTimelimitedShowDTO>();
-		TimelimitedInfoResDTO tmpTimelimitedDTO = null;
+		TimelimitedInfoResDTO tmpTimelimitedInfoDTO = null;
 		PromotionTimelimitedShowDTO timelimitedDTO = null;
 		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-		String returnCode = "";
+		String returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
 		try {
 			String remaincount = promotionRedisDB.getHash(timelimitedResultKey,
 					RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
-			tmpTimelimitedDTO = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(promotionId);
-			if (null != tmpTimelimitedDTO) {
+			tmpTimelimitedInfoDTO = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(promotionId);
+			if (null == tmpTimelimitedInfoDTO) {
 				return result;
 			}
 			timelimitedDTO = new PromotionTimelimitedShowDTO();
-			timelimitedDTO.setTimelimitedInfo(tmpTimelimitedDTO);
+			timelimitedDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
 			if (StringUtils.isNotBlank(remaincount)) {
 				timelimitedDTO.setRemainCount(Integer.valueOf(remaincount));
 			}
@@ -160,11 +171,11 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.CLEAR.getValue());
 				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SKU_NO_REMAIN;
 			}
-			if (timelimitedDTO.getPromotionExtendInfoDTO() != null) {
-				if ((new Date()).before(timelimitedDTO.getPromotionExtendInfoDTO().getEffectiveTime())) { // 未开始
+			if (tmpTimelimitedInfoDTO.getPromotionExtendInfoDTO() != null) {
+				if ((new Date()).before(tmpTimelimitedInfoDTO.getPromotionExtendInfoDTO().getEffectiveTime())) { // 未开始
 					timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.NO_START.getValue());
 					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NO_STAET_ERROR;
-				} else if ((new Date()).after(timelimitedDTO.getPromotionExtendInfoDTO().getInvalidTime())) { // 已结束
+				} else if ((new Date()).after(tmpTimelimitedInfoDTO.getPromotionExtendInfoDTO().getInvalidTime())) { // 已结束
 					timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.ENDED.getValue());
 					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_HAS_ENDED_ERROR;
 				} else {
@@ -288,7 +299,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	public ExecuteResult<String> reserveStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		try {
-			stockChangeService.checkAndChangeStock(messageId, seckillInfoReqDTO);
+			seckillReserveImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
@@ -302,18 +313,54 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 
 	@Override
 	public ExecuteResult<String> releaseStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		try {
+			seckillReleaseImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
+			result.setResult("success");
+		} catch (PromotionCenterBusinessException pcbe) {
+			result.setCode(pcbe.getCode());
+			result.setErrorMessage(pcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+			result.setErrorMessage(e.getMessage());
+		}
+		return result;
 	}
 
 	@Override
 	public ExecuteResult<String> reduceStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		try {
+			seckillReduceImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
+			result.setResult("success");
+		} catch (PromotionCenterBusinessException pcbe) {
+			result.setCode(pcbe.getCode());
+			result.setErrorMessage(pcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+			result.setErrorMessage(e.getMessage());
+		}
+		return result;
 	}
 
 	@Override
 	public ExecuteResult<String> rollbackStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		try {
+			seckillRollbackImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
+			result.setResult("success");
+		} catch (PromotionCenterBusinessException pcbe) {
+			result.setCode(pcbe.getCode());
+			result.setErrorMessage(pcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+			result.setErrorMessage(e.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<String> updateSeckillPromotionLog(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
 		// TODO Auto-generated method stub
 		return null;
 	}

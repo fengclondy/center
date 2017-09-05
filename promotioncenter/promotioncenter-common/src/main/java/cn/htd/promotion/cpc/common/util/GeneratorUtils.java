@@ -2,10 +2,8 @@ package cn.htd.promotion.cpc.common.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -35,6 +33,8 @@ public class GeneratorUtils {
 	private static final String REDIS_BARGAIN_ID_KEY = "B2C_MIDDLE_BARGAIN_PSB_SEQ";
 	// Redis促销砍价活动发起数据
 	private static final String REDIS_BARGAIN_LAUNCH_KEY = "B2C_MIDDLE_BARGAIN_LAUNCH_PSB_SEQ";
+	// Redis预占秒杀号编码数据
+	private static final String REDIS_SECKILL_LOCKNO_KEY = "B2C_MIDDLE_SECKILL_LOCKNO_SEQ";
 
 	private static Map<String, String> map = new HashMap<String, String>();
 
@@ -60,7 +60,7 @@ public class GeneratorUtils {
 		stringBuilder.append(promotionId);
 		return stringBuilder.toString();
 	}
-	
+
 	/**
 	 * 促销砍价活动编码生成方法
 	 * 
@@ -80,9 +80,30 @@ public class GeneratorUtils {
 		stringBuilder.append(promotionId);
 		return stringBuilder.toString();
 	}
-	
+
+	/**
+	 * 秒杀预占秒杀号生成方法
+	 * 
+	 * @param prefix
+	 *            汇掌柜秒杀编码前缀60
+	 * @return
+	 */
+	public String generateSeckillLockNo(String prefix) {
+		String promotionId = getCacheSeq(REDIS_SECKILL_LOCKNO_KEY, 10000L);
+		String yy = DateUtils.getCurrentDate("yyHHmmss");
+		if (StringUtils.isEmpty(prefix)) {
+			prefix = "0";
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(prefix);
+		stringBuilder.append(yy);
+		stringBuilder.append(promotionId);
+		return stringBuilder.toString();
+	}
+
 	/**
 	 * 促销活动砍价发起信息编码生成方法
+	 * 
 	 * @param platCode
 	 * @return
 	 */
@@ -98,7 +119,7 @@ public class GeneratorUtils {
 		stringBuilder.append(promotionId);
 		return stringBuilder.toString();
 	}
-	
+
 	/**
 	 * 促销活动层级编码生成方法
 	 * 
@@ -118,6 +139,7 @@ public class GeneratorUtils {
 
 	/**
 	 * 获取抽奖ticket
+	 * 
 	 * @param platCode
 	 * @return
 	 */
@@ -125,7 +147,7 @@ public class GeneratorUtils {
 		String ticket = "";
 		String uuid = "";
 
-		uuid = platCode + UUID.randomUUID().toString().replaceAll("-", "") ;
+		uuid = platCode + UUID.randomUUID().toString().replaceAll("-", "");
 		uuid = new String(Hex.encodeHex(DigestUtils.md5(uuid)));
 		ticket = uuid;
 		return ticket;
@@ -150,17 +172,18 @@ public class GeneratorUtils {
 
 	/**
 	 * 获取随机数
+	 * 
 	 * @return
 	 */
 	public int getRandomNum() {
-		return (int)(1+Math.random()*100);
+		return (int) (1 + Math.random() * 100);
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		String[] chars = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G",
-									   "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+		String[] chars = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+				"G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 		GeneratorUtils gg = new GeneratorUtils();
-		for(int i=0;i<100;i++){
+		for (int i = 0; i < 100; i++) {
 			System.out.println(gg.generateLotteryTicket("aaa"));
 
 		}
@@ -168,8 +191,8 @@ public class GeneratorUtils {
 		// System.out.println(GenerateIdsUtil.generateId("199.168.3.76"));
 		// System.out.println(GenerateIdsUtil.customGenerateId("test","192.168.110.6"));
 		// System.out.println(GenerateIdsUtil.generateOrgCode("1","99"));
-//		Long dateString = 9998888L;
-//		System.out.println(DateUtils.getCurrentDate("yyHHmmss"));
+		// Long dateString = 9998888L;
+		// System.out.println(DateUtils.getCurrentDate("yyHHmmss"));
 
 	}
 }

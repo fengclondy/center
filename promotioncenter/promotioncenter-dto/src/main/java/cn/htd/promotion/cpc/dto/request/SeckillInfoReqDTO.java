@@ -19,6 +19,10 @@ public class SeckillInfoReqDTO implements Serializable {
 	 */
 	private String orderNo;
 	/**
+	 * 锁定订单号
+	 */
+	private String seckillLockNo;
+	/**
 	 * 买家编号
 	 */
 	@NotEmpty(message = "买家编号不能为空")
@@ -71,6 +75,21 @@ public class SeckillInfoReqDTO implements Serializable {
 	 */
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+
+	/**
+	 * @return the seckillLockNo
+	 */
+	public String getSeckillLockNo() {
+		return seckillLockNo;
+	}
+
+	/**
+	 * @param seckillLockNo
+	 *            the seckillLockNo to set
+	 */
+	public void setSeckillLockNo(String seckillLockNo) {
+		this.seckillLockNo = seckillLockNo;
 	}
 
 	/**

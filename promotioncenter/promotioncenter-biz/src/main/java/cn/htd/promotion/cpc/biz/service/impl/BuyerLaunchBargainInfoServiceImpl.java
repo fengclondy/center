@@ -30,6 +30,7 @@ import cn.htd.promotion.cpc.common.constants.Constants;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
@@ -489,10 +490,14 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				  result.setResult(openedId);
 				  return result;
 			  }
+		} catch (PromotionCenterBusinessException pbe) {
+			result.setCode(pbe.getCode());
+			result.setErrorMessage(pbe.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
-		  return result;
+		return result;
 	}
 	
 }

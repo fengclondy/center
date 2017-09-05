@@ -883,8 +883,6 @@ public class PromotionBargainInfoServiceImpl implements
 					overTimeDTO.setIsBargainOver(1);
 					List<BuyerLaunchBargainInfoDMO> overList = buyerLaunchBargainInfoDAO
 							.queryLaunchBargainInfoList(overTimeDTO, null);
-					resDTO.setLaunchTimes(launchList == null ? 0 : overList
-							.size());
 					resDTO.setOverTimes(overList == null ? 0 : overList.size());
 					// 剩余商品数量
 					if (dmo.getGoodsNum().intValue() == 0

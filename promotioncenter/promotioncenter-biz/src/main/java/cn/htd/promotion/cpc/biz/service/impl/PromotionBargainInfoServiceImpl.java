@@ -851,7 +851,6 @@ public class PromotionBargainInfoServiceImpl implements
 		DataGrid<PromotionBargainOverviewResDTO> dataGrid = new DataGrid<PromotionBargainOverviewResDTO>();
 		ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>> result = new ExecuteResult<DataGrid<PromotionBargainOverviewResDTO>>();
 		List<PromotionBargainOverviewResDTO> resList = new ArrayList<PromotionBargainOverviewResDTO>();
-		BuyerBargainLaunchReqDTO launchDTO = new BuyerBargainLaunchReqDTO();
 		try {
 			List<PromotionBargainInfoDMO> bargainList = promotionBargainInfoDAO
 					.queryPromotionBargainByPromotionId(promotionId, page);
@@ -870,16 +869,20 @@ public class PromotionBargainInfoServiceImpl implements
 					resDTO.setGoodsNum(dmo.getGoodsNum() == null ? 0 : dmo
 							.getGoodsNum());
 					// 已发起砍价数量
-					launchDTO.setLevelCode(dmo.getLevelCode());
-					launchDTO.setPromotionId(dmo.getPromotionId());
+					BuyerBargainLaunchReqDTO LaunchTimeDTO = new BuyerBargainLaunchReqDTO();
+					LaunchTimeDTO.setLevelCode(dmo.getLevelCode());
+					LaunchTimeDTO.setPromotionId(dmo.getPromotionId());
 					List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO
-							.queryLaunchBargainInfoList(launchDTO, null);
+							.queryLaunchBargainInfoList(LaunchTimeDTO, null);
 					resDTO.setLaunchTimes(launchList == null ? 0 : launchList
 							.size());
 					// 已砍完数量
-					launchDTO.setIsBargainOver(1);
+					BuyerBargainLaunchReqDTO overTimeDTO = new BuyerBargainLaunchReqDTO();
+					overTimeDTO.setLevelCode(dmo.getLevelCode());
+					overTimeDTO.setPromotionId(dmo.getPromotionId());
+					overTimeDTO.setIsBargainOver(1);
 					List<BuyerLaunchBargainInfoDMO> overList = buyerLaunchBargainInfoDAO
-							.queryLaunchBargainInfoList(launchDTO, null);
+							.queryLaunchBargainInfoList(overTimeDTO, null);
 					resDTO.setLaunchTimes(launchList == null ? 0 : overList
 							.size());
 					resDTO.setOverTimes(overList == null ? 0 : overList.size());

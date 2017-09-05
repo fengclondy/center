@@ -224,8 +224,13 @@ public class PromotionBargainInfoServiceImpl implements
 					+ JSON.toJSONString(promotionBargainInfoResDTO));
 			promotionBargainInfoResDTO
 					.setBuyerBargainRecordList(buyerBargainRecordResList);
+<<<<<<< HEAD
 			if (promotionBargainInfo1 != null) {// 曾经发起过砍价
+				if (1 == promotionBargainInfo1.getIsBargainOver()) {// 该用户发起的砍价已经砍完了
+=======
+			if (!StringUtils.isEmpty(buyerBargainLaunch.getBuyerCode())) {// 曾经发起过砍价
 				if(1 == promotionBargainInfo1.getIsBargainOver()){//该用户发起的砍价已经砍完了
+>>>>>>> 31f274384395555d8b983467f4beeae95aaf01f4
 					promotionBargainInfoResDTO.setIsMyBargainOver("true");
 				}
 			}
@@ -311,15 +316,15 @@ public class PromotionBargainInfoServiceImpl implements
 							ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
 							"该时间段内已有活动进行");
 				}
-
+				promotionExtendInfoDTO.setShowStatus(dictionary.getValueByCode(
+						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+				promotionExtendInfoDTO.setStatus(dictionary.getValueByCode(
+						DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
 				if (null != promotionExtendInfoDTO
 						&& "1".equals(firstBargainDTO.getUpFlag())) {
 					promotionExtendInfoDTO.setHasUpFlag(0);
-					promotionExtendInfoDTO
-							.setShowStatus(dictionary
-									.getValueByCode(
-											DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-											DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
 				} else {
 					promotionExtendInfoDTO.setHasUpFlag(1);
 				}
@@ -650,14 +655,14 @@ public class PromotionBargainInfoServiceImpl implements
 					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
 					promotionBargainInfoList.add(bagainInfoDTO);
 				}
-				//写入reids操作
+				// 写入reids操作
 				if (dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_NO_START).equals(
 						promotionInfoDTO.getStatus())) {
 					promotionBargainRedisHandle.addBargainInfo2Redis(
 							promotionBargainInfoList, false);
-				}else{
+				} else {
 					promotionBargainRedisHandle.addBargainInfo2Redis(
 							promotionBargainInfoList, true);
 				}
@@ -877,9 +882,10 @@ public class PromotionBargainInfoServiceImpl implements
 					LaunchTimeDTO.setPromotionId(dmo.getPromotionId());
 					List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO
 							.queryLaunchBargainInfoList(LaunchTimeDTO, null);
-					LOGGER.info("LaunchTimeDTO====",JSON.toJSONString(LaunchTimeDTO)); 
-					LOGGER.info("LaunchTimes=====", launchList == null ? 0 : launchList
-							.size());
+					LOGGER.info("LaunchTimeDTO====",
+							JSON.toJSONString(LaunchTimeDTO));
+					LOGGER.info("LaunchTimes=====", launchList == null ? 0
+							: launchList.size());
 					resDTO.setLaunchTimes(launchList == null ? 0 : launchList
 							.size());
 					// 已砍完数量
@@ -905,7 +911,8 @@ public class PromotionBargainInfoServiceImpl implements
 			dataGrid.setRows(resList);
 			result.setResult(dataGrid);
 			LOGGER.info(
-					"MessageId{}:调用promotionBargainInfoDAO.queryPromotionBargainOverview（）方法开始,入参{}", JSON.toJSONString(result));
+					"MessageId{}:调用promotionBargainInfoDAO.queryPromotionBargainOverview（）方法开始,入参{}",
+					JSON.toJSONString(result));
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));

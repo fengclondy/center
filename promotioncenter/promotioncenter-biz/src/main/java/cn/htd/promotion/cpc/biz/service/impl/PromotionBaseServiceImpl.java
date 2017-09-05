@@ -219,19 +219,19 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 					ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动层级不能为空");
 		}
 		promotionInfo.setPromotionId(promotionId);
-		if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-				DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN).equals(
-				promotionType)) {
-			promotionInfo.setShowStatus(dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-		} else {
-			if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
-				promotionInfo.setShowStatus(dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-			}
-		}
+//		if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+//				DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN).equals(
+//				promotionType)) {
+//			promotionInfo.setShowStatus(dictionary.getValueByCode(
+//					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+//		} else {
+//			if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
+//				promotionInfo.setShowStatus(dictionary.getValueByCode(
+//						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//			}
+//		}
 		setPromotionStatusInfo(promotionInfo);
 		for (int i = 0; i < promotionAccumulatyList.size(); i++) {
 			accumulatyDTO = promotionAccumulatyList.get(i);

@@ -373,7 +373,7 @@
 	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id ) as winningNum,
 	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and to_days(bw.winning_time) = to_days(now())) as winningTodayNum,
 	a.modify_time
-	FROM promotion_info a WHERE a.promotion_type = '22'
+	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
 	and  a.promotion_name = #{entity.promotionName}
 	</if>
@@ -503,6 +503,9 @@
   		</if>
   		<if test="invalidTime != null">
   	 		<![CDATA[AND  effective_time <= #{invalidTime} 	]]>
+  		</if>
+  		<if test="promotionId != null" >
+  			and promotion_id not in(#{promotionId} )
   		</if>
   </select>
     <update id="updatePromotionStatus4InvalidById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">

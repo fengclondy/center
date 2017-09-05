@@ -359,7 +359,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			}
 			promotionExtendInfoDTO.setPromotionAccumulatyList(templist1);
 			// 输入DTO的验证
-            ValidateResult validateResult = ValidationUtils.validateEntity(promotionInfoEditReqDTO);
+            ValidateResult validateResult = ValidationUtils.validateEntity(promotionExtendInfoDTO);
             // 有错误信息时返回错误信息
             if (validateResult.isHasErrors()) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),

@@ -86,6 +86,28 @@ public class MiddlewareInterfaceUtil {
 		}
 		return null;
 	}
+	
+	public static void refreshAcceccToken(){
+		RedisDB redisClient = SpringApplicationContextHolder.getBean(RedisDB.class);
+		
+		String responseJson = httpGet(SpringApplicationContextHolder.getBean("middlewarePath") + "/middleware-erp/token/"
+				+ MiddlewareInterfaceConstant.MIDDLE_PLATFORM_APP_ID, Boolean.TRUE);
+
+		if (StringUtils.isEmpty(responseJson)) {
+			return;
+		}
+		
+		logger.info("MiddlewareInterfaceUtil::getAccessToken:接口查询 token "+ responseJson);
+
+		Map resultMap = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+		if (MapUtils.isNotEmpty(resultMap)
+				&& MiddlewareInterfaceConstant.MIDDLEWARE_RESPONSE_CODE_OF_SUCCESS.equals(resultMap.get("code") + "")) {
+			if (resultMap.get("data") != null) {
+				redisClient.setAndExpire(MIDDLEWARE_ACCESS_TOKEN_KEY, resultMap.get("data") + "",1 * 60 * 60);
+			}
+
+		}
+	}
 
 	public static CloseableHttpClient getHttpClient(boolean isHttps) {
 
@@ -163,6 +185,18 @@ public class MiddlewareInterfaceUtil {
 				}
 			}
 		}
+		try{
+			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(resultSb.toString()), Map.class);
+			
+			if(map.get("code")!=null&&String.valueOf(map.get("code")).equals("2001")){
+				//try again
+				refreshAcceccToken();
+			}
+			
+		}catch(Exception e){
+			
+		}
+		
 		logger.info("httpPost end, result : {}", resultSb.toString());
 		return resultSb.toString();
 	}
@@ -216,6 +250,17 @@ public class MiddlewareInterfaceUtil {
 			}
 		}
 		logger.info("httpGet end, result : {}", resultSb.toString());
+		try{
+			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(resultSb.toString()), Map.class);
+			
+			if(map.get("code")!=null&&String.valueOf(map.get("code")).equals("2001")){
+				//try again
+				refreshAcceccToken();
+			}
+			
+		}catch(Exception e){
+			
+		}
 		return resultSb.toString();
 	}
 

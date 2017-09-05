@@ -230,17 +230,15 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 String maxLoopConf = SysProperties.getProperty(LOTTERY_MAX_LOOP_SIZE);
                 int maxLoopSize = StringUtils.isEmpty(maxLoopConf) ? accuList.size() : Integer.parseInt(maxLoopConf);
                 int loopSize = 0;
-                long partakeTimes = 0L;
 
                 if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
                         RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
                     throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                             "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
                 }
-                partakeTimes = promotionRedisDB
+                if (promotionRedisDB
                         .decrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
-                                RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES).longValue();
-                if (partakeTimes < 0) {
+                                RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES).longValue() < 0) {
                     promotionRedisDB
                             .incrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
                                     RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
@@ -284,7 +282,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     winningRecordDTO = JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);
                     break;
                 }
-                winningRecordDTO.setRemainLotteryChance(partakeTimes < 0L ? 0L : partakeTimes);
                 return winningRecordDTO;
             }
         }.start();
@@ -367,6 +364,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
                             buyerWinningRecordDTO = new BuyerWinningRecordDTO();
                             buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
+                            buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
                             while (pushCnt > 0) {
                                 stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
                                 pushCnt--;

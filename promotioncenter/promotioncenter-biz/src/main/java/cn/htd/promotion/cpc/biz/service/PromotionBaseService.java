@@ -58,7 +58,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
+    public PromotionExtendInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -139,9 +139,4 @@ public interface PromotionBaseService {
     public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap);
 
-//	public PromotionExtendInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
-//
-//	public PromotionExtendInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
-//
-//	public PromotionExtendInfoDTO viewPromotionInfo(String promotionInfoId);
 }

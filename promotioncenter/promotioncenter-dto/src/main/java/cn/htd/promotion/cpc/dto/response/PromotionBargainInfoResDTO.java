@@ -97,6 +97,8 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	
 	private String statusD;//活动状态
 	
+	private String isMyBargainOver;
+	
 	public String getPreviewFlag() {
 		return previewFlag;
 	}
@@ -376,4 +378,13 @@ public class PromotionBargainInfoResDTO extends PromotionAccumulatyDTO implement
 	public void setStatusD(String statusD) {
 		this.statusD = statusD;
 	}
+
+	public String getIsMyBargainOver() {
+		return isMyBargainOver;
+	}
+
+	public void setIsMyBargainOver(String isMyBargainOver) {
+		this.isMyBargainOver = isMyBargainOver;
+	}
+	
 }

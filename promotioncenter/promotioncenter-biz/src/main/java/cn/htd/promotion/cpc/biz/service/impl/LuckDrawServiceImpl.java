@@ -432,6 +432,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
                         "设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
             }
+            Date itime = promotionInfoEditReqDTO.getInvalidTime();
+            if (itime != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(itime);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
+            }
             promotionInfoEditReqDTO.setShowStatus(dictionary
                     .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                             DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));

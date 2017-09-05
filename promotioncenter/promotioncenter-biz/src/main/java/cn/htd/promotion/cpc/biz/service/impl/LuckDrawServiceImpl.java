@@ -617,6 +617,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				result.setResponseCode(ResultCodeEnum.LOTTERY_ALL_ORG_HAS_AUTHIORITY.getCode());
 				result.setResponseMsg(ResultCodeEnum.LOTTERY_ALL_ORG_HAS_AUTHIORITY.getMsg());
 			}
+		} catch (PromotionCenterBusinessException bcbe) {
+			result.setResponseCode(bcbe.getCode());
+			result.setResponseMsg(bcbe.getMessage());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());

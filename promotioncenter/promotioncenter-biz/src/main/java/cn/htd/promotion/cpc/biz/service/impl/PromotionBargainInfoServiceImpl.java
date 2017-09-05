@@ -224,6 +224,11 @@ public class PromotionBargainInfoServiceImpl implements
 					+ JSON.toJSONString(promotionBargainInfoResDTO));
 			promotionBargainInfoResDTO
 					.setBuyerBargainRecordList(buyerBargainRecordResList);
+			if (promotionBargainInfo1 != null) {// 曾经发起过砍价
+				if(1 == promotionBargainInfo1.getIsBargainOver()){//该用户发起的砍价已经砍完了
+					promotionBargainInfoResDTO.setIsMyBargainOver("true");
+				}
+			}
 		}
 		return promotionBargainInfoResDTO;
 	}
@@ -321,7 +326,6 @@ public class PromotionBargainInfoServiceImpl implements
 
 				PromotionExtendInfoDTO insertResult = baseService
 						.insertPromotionInfo(promotionExtendInfoDTO);
-
 				for (PromotionAccumulatyDTO accumulatyDTO : promotionExtendInfoDTO
 						.getPromotionAccumulatyList()) {
 					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
@@ -640,7 +644,6 @@ public class PromotionBargainInfoServiceImpl implements
 						.getShowStatus());
 				historyDTO.setPromotionStatusText("修改砍价活动信息");
 				promotionStatusHistoryDAO.update(historyDTO);
-				// 保存到redis
 				List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
 				for (PromotionAccumulatyDTO accumulatyDTO : updateResult
 						.getPromotionAccumulatyList()) {

@@ -318,7 +318,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
             if (StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())) {
                 promotionInfoEditReqDTO.setPromotionType("21");
             }
-
+            if (StringUtils.isEmpty(promotionInfoEditReqDTO.getStatus())) {
+				promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+			}
+			if (StringUtils.isEmpty(promotionInfoEditReqDTO.getShowStatus())) {
+				promotionInfoEditReqDTO
+						.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+								DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+			}
             // 判断时间段内可有活动上架
             Integer isUpPromotionFlag = promotionInfoDAO
                     .queryUpPromotionLotteryCount(null, promotionInfoEditReqDTO.getEffectiveTime(),
@@ -358,10 +366,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
             }
             PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
             historyDTO.setPromotionId(rtobj.getPromotionId());
-            historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-            historyDTO.setPromotionStatusText(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+            historyDTO.setPromotionStatus(
+					dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
+			historyDTO.setPromotionStatusText(
+					dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
+
             historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
             historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
             promotionStatusHistoryDAO.add(historyDTO);

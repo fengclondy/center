@@ -135,6 +135,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	public void updateTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
 
 		try {
+			
+			TimelimitedInfoResDTO timelimitedInfoRes_check = getSingleTimelimitedInfoByPromotionId(timelimitedInfoReqDTO.getPromotionId(), messageId);
+			if(null == timelimitedInfoRes_check){
+				throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "秒杀促销活动不存在！");
+			}
+			
 			Calendar calendar = Calendar.getInstance();
 			Date currentTime = calendar.getTime();
 

@@ -64,11 +64,6 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
 			if (null == timelimitedInfoReqDTO.getPromotionId() || "".equals(timelimitedInfoReqDTO.getPromotionId().trim())) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "秒杀促销活动编码不能为空！");
 			}
-			
-			TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleTimelimitedInfoByPromotionId(timelimitedInfoReqDTO.getPromotionId(), messageId);
-			if(null == timelimitedInfoResDTO){
-				throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "秒杀促销活动不存在！");
-			}
     		
             timelimitedInfoService.updateTimelimitedInfo(timelimitedInfoReqDTO, messageId);
         } catch (Exception e) {
@@ -76,6 +71,26 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
             logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.updateTimelimitedInfo出现异常{}", messageId, timelimitedInfoReqDTO.getPromotionId() + ":" + e.toString());
+        }
+        return result;
+	}
+
+	
+	@Override
+	public ExecuteResult<TimelimitedInfoResDTO> getSingleFullTimelimitedInfoByPromotionId(
+			String promotionId, String messageId) {
+        ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId, messageId);
+        	result.setResult(timelimitedInfoResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.getSingleFullTimelimitedInfoByPromotionId出现异常{}", messageId, promotionId + ":" + e.toString());
         }
         return result;
 	}

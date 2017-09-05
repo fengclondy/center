@@ -385,13 +385,14 @@
 		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
-   	and a.modify_time = #{entity.modifyTime}
+   	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
 	</if> 
 	ORDER BY a.modify_time DESC
 	<if test="pager.pageOffset != null and pager != null">
 	limit #{pager.pageOffset},#{pager.rows}
 	</if>
   </select>
+  
     <select id="getTotalPromotionGashaponByInfo" resultType="java.lang.Long">
   	SELECT 
   	count(1)
@@ -407,7 +408,7 @@
 		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
-   	and a.modify_time = #{entity.modifyTime}
+   	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
 	</if> 
   </select>
   <select id="queryPromotionInfoListBySellerCode" resultMap="BaseResultMap">

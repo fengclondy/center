@@ -27,7 +27,7 @@ public class SeckillRollbackImplHandle extends StockChangeImpl {
 		if (StringUtils.isNotBlank(reserveResult)
 				&& this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_REDUCE)) {
 			String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-			promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT, timelimitedResultKey,
+			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
 					count);
 			// 回滚该买家抢到秒杀资格标志
 			promotionRedisDB.setHash(reserveHashKey, buyerCode, Constants.SECKILL_RESERVE);

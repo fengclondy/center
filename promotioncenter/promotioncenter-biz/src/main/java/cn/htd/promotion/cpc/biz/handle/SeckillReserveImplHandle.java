@@ -44,7 +44,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 			promotionRedisDB.incrHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT);
 			promotionRedisDB.incrHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT);
-			promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, timelimitedResultKey,
+			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT,
 					count * -1);
 			String lockNo = noGenerator.generateSeckillLockNo(Constants.ORDER_PREHOLDING_NUMBER);
 			seckillInfoReqDTO.setSeckillLockNo(lockNo);

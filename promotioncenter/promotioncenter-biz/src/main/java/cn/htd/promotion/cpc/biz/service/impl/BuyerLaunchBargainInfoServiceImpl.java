@@ -268,6 +268,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	@Override
 	public ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> queryLaunchBargainInfoList(
 			BuyerBargainLaunchReqDTO buyerBargainLaunch, Pager<BuyerBargainLaunchReqDTO> page) {
+		LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.queryLaunchBargainInfoList（）方法开始,入参{}", JSON.toJSONString(buyerBargainLaunch));
 		DataGrid<BuyerLaunchBargainInfoResDTO> dataGrid = new DataGrid<BuyerLaunchBargainInfoResDTO>();
 		ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>> result = new ExecuteResult<DataGrid<BuyerLaunchBargainInfoResDTO>>();
 		try {

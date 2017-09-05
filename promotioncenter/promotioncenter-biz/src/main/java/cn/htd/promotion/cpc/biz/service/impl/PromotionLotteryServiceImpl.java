@@ -22,7 +22,6 @@ import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -188,6 +187,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setBuyerTelephone(requestDTO.getBuyerTelephone());
         winningRecordDTO.setSellerName(requestDTO.getSellerName());
         winningRecordDTO.setSellerAddress(requestDTO.getSellerAddress());
+        winningRecordDTO.setBelongSuperiorName(requestDTO.getBelongsSuperiorName());
         winningRecordDTO.setWinnerName(requestDTO.getWinnerName());
         winningRecordDTO.setWinningContact(requestDTO.getWinningContact());
         winningRecordDTO.setChargeTelephone(requestDTO.getChargeTelephone());

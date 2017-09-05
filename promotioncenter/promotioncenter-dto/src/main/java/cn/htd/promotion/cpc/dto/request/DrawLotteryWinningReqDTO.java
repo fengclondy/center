@@ -1,7 +1,5 @@
 package cn.htd.promotion.cpc.dto.request;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 
     /**
@@ -20,6 +18,10 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
      * 会员店地址
      */
     private String sellerAddress;
+    /**
+     * 归属平台公司名称
+     */
+    private String belongsSuperiorName;
     /**
      * 中奖人姓名
      */
@@ -63,6 +65,14 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 
     public void setSellerAddress(String sellerAddress) {
         this.sellerAddress = sellerAddress;
+    }
+
+    public String getBelongsSuperiorName() {
+        return belongsSuperiorName;
+    }
+
+    public void setBelongsSuperiorName(String belongsSuperiorName) {
+        this.belongsSuperiorName = belongsSuperiorName;
     }
 
     public String getWinnerName() {

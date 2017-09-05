@@ -79,7 +79,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
     private PromotionInfoDAO promotionInfoDAO;
     @Resource
     private PromotionBaseService baseService;
-
+	@Resource
+	public BuyerWinningRecordDAO buyerWinningRecordDAO;
     @Resource
     private PromotionLotteryCommonService promotionLotteryCommonService;
 
@@ -589,4 +590,24 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         }
         return result;
     }
+
+	@Override
+	public void updateLotteryResultState(Map<String, Object> map) {
+		BuyerWinningRecordDMO buyerWinningRecordDMO= new BuyerWinningRecordDMO();
+		LOGGER.info("话费充值返回："+JSON.toJSONString(map));
+		if(map.get("rechargestatus")!=null && map.get("rechargestatus").equals("1")){
+			String order = (String)map.get("orderid");
+			if(!StringUtils.isEmpty(order)){
+				String[] pid= order.split(":");
+				if(pid!=null && pid.length==2){
+					buyerWinningRecordDMO.setDealFlag(0);
+//					String promotionId = pid[0];
+//					buyerWinningRecordDMO.setPromotionId(promotionId);
+					buyerWinningRecordDMO.setId(new Long(pid[1]));
+					buyerWinningRecordDAO.updateDealFlag(buyerWinningRecordDMO);
+				}
+
+			}
+		}
+	}
 }

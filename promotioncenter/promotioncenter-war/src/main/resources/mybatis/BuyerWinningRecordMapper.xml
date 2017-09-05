@@ -316,7 +316,7 @@
   <update id="updateDealFlag" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO">
     UPDATE buyer_winning_record
     <set>
-     deal_flag = 0,
+     deal_flag = #{dealFlag},
       modify_time = now()
     </set>
     WHERE

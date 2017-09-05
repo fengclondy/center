@@ -48,6 +48,7 @@ import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.common.Pager;
+import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
@@ -151,10 +152,12 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 					if (!StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
 						if (promotionAwardDTO.getRewardType().equals("3")) {
 							if(excuteRecharge(promotionAwardDTO)){
+								promotionAwardDTO.setDealFlag(2);
 								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
 							}
 						} else if (promotionAwardDTO.getRewardType().equals("4")) {
 							if(addGold(promotionAwardDTO)){
+								promotionAwardDTO.setDealFlag(0);
 								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
 							}
 						}
@@ -196,10 +199,8 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		try {
 			excuteRecharge(s);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -221,7 +222,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		String userid = "";// "A1307228";
 		String userpws = "";// encoderByMd5("huilin123");
 		String cardid = "140101";
-		String ret_url = "";
+		String ret_url = SysProperties.getProperty("HTDHL_ADDRESS") + "/JuheRecharge/updateLotteryState.htm";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
 		String cardnum = promotionAwardDTO.getAwardValue();
@@ -273,12 +274,12 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 			// 5.读取内容
 			CloseableHttpResponse response = httpClient.execute(httppost);
 			HttpEntity entity = response.getEntity();
-			responseMsg = EntityUtils.toString(entity, "GBK").trim();
+			responseMsg = EntityUtils.toString(entity, "UTF-8").trim();
 			;
 			Map<String, Object> responseMsgMap = jdomParseXml(responseMsg);
 			// 6.处理返回的内容
 			logger.info("手机话费充值推送返回结果-->" + responseMsg);
-			if (responseMsgMap.get("game_state").equals("1")) {
+			if (!responseMsgMap.get("retcode").equals("")) {
 				return true;
 			}
 		} catch (ClientProtocolException e) {

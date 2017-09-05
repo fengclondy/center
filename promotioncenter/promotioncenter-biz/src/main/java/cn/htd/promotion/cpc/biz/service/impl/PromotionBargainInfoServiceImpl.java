@@ -321,7 +321,6 @@ public class PromotionBargainInfoServiceImpl implements
 
 				PromotionExtendInfoDTO insertResult = baseService
 						.insertPromotionInfo(promotionExtendInfoDTO);
-
 				for (PromotionAccumulatyDTO accumulatyDTO : promotionExtendInfoDTO
 						.getPromotionAccumulatyList()) {
 					PromotionBargainInfoResDTO bagainInfoDTO = (PromotionBargainInfoResDTO) accumulatyDTO;
@@ -640,7 +639,6 @@ public class PromotionBargainInfoServiceImpl implements
 						.getShowStatus());
 				historyDTO.setPromotionStatusText("修改砍价活动信息");
 				promotionStatusHistoryDAO.update(historyDTO);
-				// 保存到redis
 				List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
 				for (PromotionAccumulatyDTO accumulatyDTO : updateResult
 						.getPromotionAccumulatyList()) {

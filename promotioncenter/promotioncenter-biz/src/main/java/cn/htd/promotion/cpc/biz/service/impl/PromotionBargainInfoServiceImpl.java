@@ -224,7 +224,7 @@ public class PromotionBargainInfoServiceImpl implements
 					+ JSON.toJSONString(promotionBargainInfoResDTO));
 			promotionBargainInfoResDTO
 					.setBuyerBargainRecordList(buyerBargainRecordResList);
-			if (promotionBargainInfo1 != null) {// 曾经发起过砍价
+			if (!StringUtils.isEmpty(buyerBargainLaunch.getBuyerCode())) {// 曾经发起过砍价
 				if(1 == promotionBargainInfo1.getIsBargainOver()){//该用户发起的砍价已经砍完了
 					promotionBargainInfoResDTO.setIsMyBargainOver("true");
 				}

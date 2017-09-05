@@ -1,10 +1,13 @@
 package cn.htd.promotion.service;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -324,10 +327,10 @@ public class TimelimitedTestUnit {
     public void getSingleTimelimitedInfoTest(){
     	
         String messageId = "342453251349";
-        String promotionId = "23172019050138";
+        String promotionId = "23171718090174";
         try {
     		
-        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleTimelimitedInfoByPromotionId(promotionId, messageId);
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId, messageId);
         	System.out.println("===>timelimitedInfoResDTO:" + timelimitedInfoResDTO);
         } catch (Exception e) {
             e.printStackTrace();
@@ -340,12 +343,24 @@ public class TimelimitedTestUnit {
     	
         String messageId = "342453251349";
         
+        String effectiveTimeString = "2017-09-05 17:28:09";
+        String invalidTimeString = "2017-09-07 16:18:09";
+        		
         try {
+        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        	
     		Pager<TimelimitedInfoReqDTO> page = new Pager<TimelimitedInfoReqDTO>();
     		page.setPage(1);
     		page.setRows(20);
     		TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
     		timelimitedInfoReqDTO.setFirstCategoryCode("一级类目");
+//    		timelimitedInfoReqDTO.setSecondCategoryCode("");
+//    		timelimitedInfoReqDTO.setThirdCategoryCode("");
+    		timelimitedInfoReqDTO.setSkuName("测试商品");//商品名称
+    		timelimitedInfoReqDTO.setShowStatus("3");//审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
+    		timelimitedInfoReqDTO.setEffectiveTime(sdf.parse(effectiveTimeString));
+    		timelimitedInfoReqDTO.setInvalidTime(sdf.parse(invalidTimeString));
+    		
     		
         	DataGrid<TimelimitedInfoResDTO> data = timelimitedInfoService.getTimelimitedInfosForPage(page, timelimitedInfoReqDTO, messageId);
         	System.out.println("===>data:" + data);

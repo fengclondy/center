@@ -603,12 +603,20 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			dictMap = baseService.initPromotionDictMap();
 			promotionInfoDTO = promotionLotteryCommonService
 					.getRedisLotteryInfo(promotionId, dictMap);
-			if(null != promotionInfoDTO && null != promotionInfoDTO.getSellerRuleDTO()){				
+			if(null == promotionInfoDTO){
+				result.setResponseCode(ResultCodeEnum.LOTTERY_NOT_HAS_PROMOTION_INFO.getCode());
+				result.setResponseMsg(ResultCodeEnum.LOTTERY_NOT_HAS_PROMOTION_INFO.getMsg());
+				return result;
+			}
+			if(null != promotionInfoDTO.getSellerRuleDTO()){				
 				result.setSellerDetailList(promotionInfoDTO.getSellerRuleDTO()
 						.getSellerDetailList());
+				result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+				result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			}else{
+				result.setResponseCode(ResultCodeEnum.LOTTERY_ALL_ORG_HAS_AUTHIORITY.getCode());
+				result.setResponseMsg(ResultCodeEnum.LOTTERY_ALL_ORG_HAS_AUTHIORITY.getMsg());
 			}
-			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());

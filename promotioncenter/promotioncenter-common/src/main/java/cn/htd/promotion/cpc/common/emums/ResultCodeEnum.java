@@ -46,6 +46,8 @@ public enum ResultCodeEnum {
     LOTTERY_BUYER_REACH_WINNING_LIMMIT("26209", "粉丝已达中奖次数上限"),
     LOTTERY_SELLER_REACH_WINNING_LIMMIT("26210", "会员店已达中奖次数上限"),
     LOTTERY_BUYER_NO_WINNING_RECORD("26211", "粉丝没有中奖记录"),
+    LOTTERY_ALL_ORG_HAS_AUTHIORITY("26212","所有会员店都有参加抽奖的权限"),
+    LOTTERY_NOT_HAS_PROMOTION_INFO("26213","没有查到抽奖信息"),
             ;
 
     private ResultCodeEnum(String code, String msg) {

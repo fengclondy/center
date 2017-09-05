@@ -70,10 +70,15 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
 	
-	//活动开始时间
-    private String invalidTimeStr;
-    //活动结束时间
-    private String effectiveTimeStr;
+    /**
+     * 促销活动开始时间
+     */
+    private Date effectiveTime;
+    /**
+     * 促销活动结束时间
+     */
+    private Date invalidTime;
+    
     //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
     private String showStatus;
 
@@ -237,18 +242,6 @@ public class TimelimitedInfoReqDTO implements Serializable {
 			PromotionExtendInfoDTO promotionExtendInfoDTO) {
 		this.promotionExtendInfoDTO = promotionExtendInfoDTO;
 	}
-	public String getInvalidTimeStr() {
-		return invalidTimeStr;
-	}
-	public void setInvalidTimeStr(String invalidTimeStr) {
-		this.invalidTimeStr = invalidTimeStr;
-	}
-	public String getEffectiveTimeStr() {
-		return effectiveTimeStr;
-	}
-	public void setEffectiveTimeStr(String effectiveTimeStr) {
-		this.effectiveTimeStr = effectiveTimeStr;
-	}
 	public String getShowStatus() {
 		return showStatus;
 	}
@@ -267,6 +260,18 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	public void setTimelimitedSkuDescribeReqDTOList(
 			List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList) {
 		this.timelimitedSkuDescribeReqDTOList = timelimitedSkuDescribeReqDTOList;
+	}
+	public Date getEffectiveTime() {
+		return effectiveTime;
+	}
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+	public Date getInvalidTime() {
+		return invalidTime;
+	}
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
 	}
 
 	

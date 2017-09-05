@@ -5,18 +5,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -299,19 +294,18 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
 			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
 
-		logger.info(
-				"TimelimitedInfoServiceImpl--->getTimelimitedInfosForPage--->page:" + JSONObject.toJSONString(page));
-		logger.info("TimelimitedInfoServiceImpl--->getTimelimitedInfosForPage--->timelimitedInfoReqDTO:"
-				+ JSONObject.toJSONString(timelimitedInfoReqDTO));
-
 		DataGrid<TimelimitedInfoResDTO> dataGrid = null;
 		try {
+    		if (null == timelimitedInfoReqDTO) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
+    		}
+    		
 			dataGrid = new DataGrid<TimelimitedInfoResDTO>();
-			List<TimelimitedInfoResDTO> helpDocCategoryList = timelimitedInfoDAO.getTimelimitedInfosForPage(page,
+			List<TimelimitedInfoResDTO> timelimitedInfoResDTOList = timelimitedInfoDAO.getTimelimitedInfosForPage(page,
 					timelimitedInfoReqDTO);
 			int count = timelimitedInfoDAO.getTimelimitedInfosCount(timelimitedInfoReqDTO);
 			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
-			dataGrid.setRows(helpDocCategoryList);
+			dataGrid.setRows(timelimitedInfoResDTOList);
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【getTimelimitedInfosForPage】报错：{}", messageId, e.toString());
 			throw new RuntimeException(e);

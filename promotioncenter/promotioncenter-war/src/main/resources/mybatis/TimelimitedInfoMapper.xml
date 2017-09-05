@@ -36,6 +36,9 @@
 		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
 		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
 		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+		<result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+        <result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime"/>
+        <result column="show_status" jdbcType="VARCHAR" property="showStatus"/>
 	</resultMap>
 
 	<insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO">
@@ -488,62 +491,62 @@
 
 	<sql id="dynamic_fragment_timelimitedInfo">
 		<if test="dto.timelimitedId != null">
-			and timelimited_id = #{dto.timelimitedId,jdbcType=BIGINT} 
+			and ti.timelimited_id = #{dto.timelimitedId,jdbcType=BIGINT} 
 		</if>
 		<if test="dto.promotionId != null">
-			and promotion_id = #{dto.promotionId,jdbcType=VARCHAR}  
+			and ti.promotion_id = #{dto.promotionId,jdbcType=VARCHAR}  
 		</if>
-		   <if test="dto.skuName != null">
-			and	sku_name = #{dto.skuName,jdbcType=VARCHAR} 
-			</if>
-			<if test="dto.firstCategoryCode != null">
-			and	first_category_code = #{dto.firstCategoryCode,jdbcType=VARCHAR} 
-			</if>
-			<if test="dto.secondCategoryCode != null">
-			and	second_category_code = #{dto.secondCategoryCode,jdbcType=VARCHAR} 
-			</if>
-			<if test="dto.thirdCategoryCode != null">
-			and	third_category_code = #{dto.thirdCategoryCode,jdbcType=VARCHAR} 
-			</if>
-			
-			<!-- 
-	    <if test="dto.isPublish != null">
-			and is_publish = #{dto.isPublish,jdbcType=TINYINT}  
+		<if test="dto.skuName != null and dto.skuName != ''">
+			and	ti.sku_name like CONCAT('%',#{dto.skuName,jdbcType=VARCHAR},'%')
 		</if>
-		<if test="dto.startTime != null and dto.startTime != ''">
+		<if test="dto.firstCategoryCode != null and dto.firstCategoryCode != ''">
+			and	ti.first_category_code = #{dto.firstCategoryCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="dto.secondCategoryCode != null and dto.secondCategoryCode != ''">
+			and	ti.second_category_code = #{dto.secondCategoryCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="dto.thirdCategoryCode != null and dto.thirdCategoryCode != ''">
+			and	ti.third_category_code = #{dto.thirdCategoryCode,jdbcType=VARCHAR} 
+		</if>
+	    <if test="dto.showStatus != null and dto.showStatus != ''">
+			and pi.show_status = #{dto.showStatus,jdbcType=VARCHAR}  
+		</if>
+		<if test="dto.effectiveTime != null">
 		 <![CDATA[ 
-			and date_format(create_time,'%Y-%m-%d %H:%m:%s') >= #{dto.startTime,jdbcType=VARCHAR} 
+			and pi.effective_time >= #{dto.effectiveTime,jdbcType=TIMESTAMP}
 		  ]]> 
 		</if>
-		<if test="dto.endTime != null and dto.endTime != ''">
+		<if test="dto.invalidTime != null">
 		 <![CDATA[ 
-			and date_format(create_time,'%Y-%m-%d %H:%m:%s') <= #{dto.endTime,jdbcType=VARCHAR} 
+			and pi.invalid_time <= #{dto.invalidTime,jdbcType=TIMESTAMP}
 		 ]]>
 		</if>
-		 -->
 	</sql>
 
 	<select id="getTimelimitedInfosCount" resultType="java.lang.Integer">
-		select count(1)  from timelimited_info 
-		WHERE 1 = 1 
-		<include refid="dynamic_fragment_timelimitedInfo"/>
+		select count(1)  from timelimited_info ti
+        left join promotion_info pi on pi.promotion_id = ti.promotion_id
+		WHERE 1 = 1  
+        <include refid="dynamic_fragment_timelimitedInfo"/>
 	</select>
 
 	<select id="getTimelimitedInfosForPage" resultMap="BaseResultMap">
 		select
-			timelimited_id, promotion_id, level_code, seller_code,
-	        item_id,sku_code, sku_name,
-	        first_category_code, second_category_code,
-	        third_category_code, sku_category_name,
-	        sku_pic_url, sku_cost_price,
-	        sku_timelimited_price,
-	        timelimited_sku_count, timelimited_threshold,
-	        timelimited_valid_interval, create_id, create_name, create_time,
-	        modify_id, modify_name,modify_time
-		from timelimited_info
-		WHERE 1 = 1 
+			ti.timelimited_id, ti.promotion_id, ti.level_code, ti.seller_code,
+	        ti.item_id,sku_code, ti.sku_name,
+	        ti.first_category_code, ti.second_category_code,
+	        ti.third_category_code, ti.sku_category_name,
+	        ti.sku_pic_url, ti.sku_cost_price,
+	        ti.sku_timelimited_price,
+	        ti.timelimited_sku_count, ti.timelimited_threshold,
+	        ti.timelimited_valid_interval, ti.create_id, ti.create_name, ti.create_time,
+	        ti.modify_id, ti.modify_name,ti.modify_time,
+            pi.effective_time,pi.invalid_time,pi.show_status
+		from timelimited_info ti
+        left join promotion_info pi on pi.promotion_id = ti.promotion_id
+		WHERE 1 = 1  
         <include refid="dynamic_fragment_timelimitedInfo"/>
-		ORDER BY modify_time desc 
+		ORDER BY ti.modify_time desc 
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
 
@@ -558,10 +561,10 @@
 	        timelimited_sku_count, timelimited_threshold,
 	        timelimited_valid_interval, create_id, create_name, create_time,
 	        modify_id, modify_name,modify_time
-		from timelimited_info
+		from timelimited_info  ti
 		WHERE 1 = 1 
         <include refid="dynamic_fragment_timelimitedInfo"/>
-		ORDER BY modify_time desc 
+		ORDER BY ti.modify_time desc 
 	</select>
 
 

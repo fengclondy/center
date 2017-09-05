@@ -10,15 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
@@ -53,6 +44,13 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -79,8 +77,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
     private PromotionInfoDAO promotionInfoDAO;
     @Resource
     private PromotionBaseService baseService;
-	@Resource
-	public BuyerWinningRecordDAO buyerWinningRecordDAO;
+    @Resource
+    public BuyerWinningRecordDAO buyerWinningRecordDAO;
     @Resource
     private PromotionLotteryCommonService promotionLotteryCommonService;
 
@@ -108,6 +106,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 result.setPromotionId(promotionId);
                 return result;
             }
+        } catch (PromotionCenterBusinessException e) {
+            result.setResponseCode(e.getCode());
+            result.setResponseMsg(e.getMessage());
         } catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -323,23 +324,21 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 promotionInfoEditReqDTO.setPromotionType("21");
             }
             if (StringUtils.isEmpty(promotionInfoEditReqDTO.getStatus())) {
-				promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
-			}
-			if (StringUtils.isEmpty(promotionInfoEditReqDTO.getShowStatus())) {
-				promotionInfoEditReqDTO
-						.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-								DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-			}
-			Date itime = promotionInfoEditReqDTO.getInvalidTime();
-			if(itime!=null){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(itime);
-				cal.set(Calendar.HOUR_OF_DAY, 23);
-				cal.set(Calendar.MINUTE,59);
-				cal.set(Calendar.SECOND,59);
-				promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
-			}
+                promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                        DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+            }
+            promotionInfoEditReqDTO.setShowStatus(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+            Date itime = promotionInfoEditReqDTO.getInvalidTime();
+            if (itime != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(itime);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
+            }
             // 判断时间段内可有活动上架
             Integer isUpPromotionFlag = promotionInfoDAO
                     .queryUpPromotionLotteryCount(null, promotionInfoEditReqDTO.getEffectiveTime(),
@@ -380,9 +379,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
             PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
             historyDTO.setPromotionId(rtobj.getPromotionId());
             historyDTO.setPromotionStatus(
-					dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
-			historyDTO.setPromotionStatusText(
-					dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
+                    dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
+            historyDTO.setPromotionStatusText(
+                    dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
 
             historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
             historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
@@ -433,6 +432,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
                         "设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
             }
+            promotionInfoEditReqDTO.setShowStatus(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
             result = promotionBaseService.updatePromotionInfo(promotionInfoEditReqDTO);
             if (result.getPromotionAccumulatyList() != null) {
                 List<? extends PromotionAccumulatyDTO> promotionAccumulatyList =
@@ -485,11 +487,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     pai.setPromotionId(padDTO.getPromotionId());
                     pai.setLevelCode(padDTO.getLevelCode());
                     Long pvc = promotionRedisDB.getLlen(
-							RedisConst.REDIS_LOTTERY_AWARD_PREFIX + result.getPromotionId() + "_" + pai.getLevelCode());
-                    if(pvc!=null){
-                    	pai.setProvideCount(pvc.intValue());
+                            RedisConst.REDIS_LOTTERY_AWARD_PREFIX + result.getPromotionId() + "_" + pai.getLevelCode());
+                    if (pvc != null) {
+                        pai.setProvideCount(pvc.intValue());
                     }
-					
+
                     PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
                     pad.setPromotionAccumulaty(padDTO);
                     promotionAwardList.add(pad);
@@ -534,7 +536,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                             // 验证抽奖活动的有效状态
                             String promotionStatus =
                                     promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
-                            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionStatus)) {
+                            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionStatus)) {
                                 return promotionId;
                             }
                         }
@@ -597,23 +600,23 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         return result;
     }
 
-	@Override
-	public void updateLotteryResultState(Map<String, Object> map) {
-		BuyerWinningRecordDMO buyerWinningRecordDMO= new BuyerWinningRecordDMO();
-		LOGGER.info("话费充值返回："+JSON.toJSONString(map));
-		if(map.get("rechargestatus")!=null && map.get("rechargestatus").equals("1")){
-			String order = (String)map.get("orderid");
-			if(!StringUtils.isEmpty(order)){
-				String[] pid= order.split(":");
-				if(pid!=null && pid.length==2){
-					buyerWinningRecordDMO.setDealFlag(0);
+    @Override
+    public void updateLotteryResultState(Map<String, Object> map) {
+        BuyerWinningRecordDMO buyerWinningRecordDMO = new BuyerWinningRecordDMO();
+        LOGGER.info("话费充值返回：" + JSON.toJSONString(map));
+        if (map.get("rechargestatus") != null && map.get("rechargestatus").equals("1")) {
+            String order = (String) map.get("orderid");
+            if (!StringUtils.isEmpty(order)) {
+                String[] pid = order.split(":");
+                if (pid != null && pid.length == 2) {
+                    buyerWinningRecordDMO.setDealFlag(0);
 //					String promotionId = pid[0];
 //					buyerWinningRecordDMO.setPromotionId(promotionId);
-					buyerWinningRecordDMO.setId(new Long(pid[1]));
-					buyerWinningRecordDAO.updateDealFlag(buyerWinningRecordDMO);
-				}
+                    buyerWinningRecordDMO.setId(new Long(pid[1]));
+                    buyerWinningRecordDAO.updateDealFlag(buyerWinningRecordDMO);
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 }

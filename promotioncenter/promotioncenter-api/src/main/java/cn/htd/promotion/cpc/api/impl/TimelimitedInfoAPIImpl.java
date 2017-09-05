@@ -1,11 +1,11 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.TimelimitedInfoAPI;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
@@ -44,7 +44,7 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
-            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.addTimelimitedInfo出现异常{}", messageId, timelimitedInfoReqDTO.getPromotionId() + ":" + e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.addTimelimitedInfo出现异常{}", messageId,  e.toString());
         }
         return result;
 	}
@@ -90,11 +90,30 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
-            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.getSingleFullTimelimitedInfoByPromotionId出现异常{}", messageId, promotionId + ":" + e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.getSingleFullTimelimitedInfoByPromotionId出现异常{}", messageId, e.toString());
         }
         return result;
 	}
 
+	
+	public ExecuteResult<DataGrid<TimelimitedInfoResDTO>> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
+			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
+		
+		ExecuteResult<DataGrid<TimelimitedInfoResDTO>> result = new ExecuteResult<DataGrid<TimelimitedInfoResDTO>>(); 
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	DataGrid<TimelimitedInfoResDTO> timelimitedInfoResDTOData = timelimitedInfoService.getTimelimitedInfosForPage(page,timelimitedInfoReqDTO, messageId);
+        	result.setResult(timelimitedInfoResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.getSingleFullTimelimitedInfoByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
     
     
 

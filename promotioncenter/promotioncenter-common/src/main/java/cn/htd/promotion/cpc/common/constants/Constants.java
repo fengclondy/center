@@ -23,6 +23,9 @@ public class Constants {
 	// 秒杀库存回滚操作
 	public final static String SECKILL_ROLLBACK = "4";
 
+	// 秒杀预占订单号前缀
+	public final static String ORDER_PREHOLDING_NUMBER = "60";
+
 	// 商品已经售罄
 	public static final String PROMOTION_NO_STOCK = "10001";
 

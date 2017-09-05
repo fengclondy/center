@@ -21,6 +21,7 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
+import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.exception.PromotionCenterException;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
@@ -151,7 +152,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			timelimitedInfoResDTO.setTimelimitedSkuPictureList(timelimitedSkuPictureResDTOList);
 			timelimitedInfoResDTO.setTimelimitedSkuDescribeList(timelimitedSkuDescribeResDTOList);
 
-
 			// //修改促销活动信息
 			// PromotionInfoEditReqDTO PromotionInfoEditReqDTO =
 			// timelimitedInfoReqDTO.getPromotionInfoEditReqDTO();
@@ -224,7 +224,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		}
 	}
 
-	
 	/**
 	 * 批量添加添加商品详情图片
 	 * 
@@ -232,9 +231,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 	 * @param currentTime
 	 */
 	private void addTimelimitedSkuDescribeList(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
-		
-		List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList = timelimitedInfoReqDTO.getTimelimitedSkuDescribeReqDTOList();
-		if(null != timelimitedSkuDescribeReqDTOList && timelimitedSkuDescribeReqDTOList.size() >0){
+
+		List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList = timelimitedInfoReqDTO
+				.getTimelimitedSkuDescribeReqDTOList();
+		if (null != timelimitedSkuDescribeReqDTOList && timelimitedSkuDescribeReqDTOList.size() > 0) {
 			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = null;
 			for (int i = 0; i < timelimitedSkuDescribeReqDTOList.size(); i++) {
 				timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTOList.get(i);
@@ -242,7 +242,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 				timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
 				timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
 				timelimitedSkuDescribeReqDTO.setPictureUrl(timelimitedSkuDescribeReqDTO.getPictureUrl());
-				timelimitedSkuDescribeReqDTO.setSortNum(i+1);
+				timelimitedSkuDescribeReqDTO.setSortNum(i + 1);
 				timelimitedSkuDescribeReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
 				timelimitedSkuDescribeReqDTO.setCreateName(timelimitedInfoReqDTO.getModifyName());
 				timelimitedSkuDescribeReqDTO.setCreateTime(currentTime);
@@ -252,22 +252,14 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 				timelimitedSkuDescribeDAO.insert(timelimitedSkuDescribeReqDTO);
 			}
 		}
-		
-	}
 
-	
-	
+	}
 
 	@Override
 	public void setTimelimitedInfo2Redis(TimelimitedInfoResDTO timelimitedInfoResDTO) throws Exception {
 		if (timelimitedInfoResDTO != null) {
 			String promotionId = timelimitedInfoResDTO.getPromotionId();
 			String jsonObj = JSON.toJSONString(timelimitedInfoResDTO);
-			// 设置秒杀活动到redis 如果是update则删除原有活动插入新活动
-			String timelimitedStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-			if (StringUtils.isNotBlank(timelimitedStr)) {
-				promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-			}
 			promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId, jsonObj);
 			// 设置秒杀活动具体数量
 			this.addTimelimitedResult2Redis(timelimitedInfoResDTO);
@@ -321,6 +313,17 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		}
 		TimelimitedInfoResDTO timelimitedInfo = JSON.parseObject(timelimitedStr, TimelimitedInfoResDTO.class);
 		return timelimitedInfo;
+	}
+
+	@Override
+	public void saveOrUpdateTimelimitedOperlog(BuyerUseTimelimitedLogDMO buyerUseTimelimitedLogDMO) {
+		String promotionId = buyerUseTimelimitedLogDMO.getPromotionId();
+		String buyerCode = buyerUseTimelimitedLogDMO.getBuyerCode();
+		String key = buyerCode + "&" + promotionId;
+		promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, key,
+				JSON.toJSONString(buyerUseTimelimitedLogDMO));
+		promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
+				JSON.toJSONString(buyerUseTimelimitedLogDMO));
 	}
 
 }

@@ -395,16 +395,16 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionId = promotionInfo.getPromotionId();
         promotionType = promotionInfo.getPromotionType();
         promotionAccumulatyList = promotionInfo.getPromotionAccumulatyList();
-        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN)
-                .equals(promotionType)) {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-        } else {
-            if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
-                promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-            }
-        }
+//        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN)
+//                .equals(promotionType)) {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+//        } else {
+//            if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
+//                promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//            }
+//        }
         setPromotionStatusInfo(promotionInfo);
         accumulatyDTOList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionId, null);
         if (accumulatyDTOList != null && !accumulatyDTOList.isEmpty()) {

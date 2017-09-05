@@ -164,12 +164,12 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
      * 执行抽奖处理
      *
      * @param requestDTO
-     * @param defaultWinningRecordDTO
+     * @param errorWinningRecord
      * @param ticket
      */
     @Override
-    public void doDrawLotteryWithThread(DrawLotteryReqDTO requestDTO,
-            final BuyerWinningRecordDTO defaultWinningRecordDTO, final String ticket) {
+    public void doDrawLotteryWithThread(DrawLotteryReqDTO requestDTO, final BuyerWinningRecordDTO errorWinningRecord,
+            final String ticket) {
         final String promotionId = requestDTO.getPromotionId();
         final String buyerCode = requestDTO.getBuyerCode();
         final String sellerCode = requestDTO.getSellerCode();
@@ -198,19 +198,17 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                                 "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
                     }
+                    winningRecordDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+                    winningRecordDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
                     winningRecordDTO.setBuyerCode(buyerCode);
                     winningRecordDTO.setSellerCode(sellerCode);
-                    winningRecordDTO.setSellerName(defaultWinningRecordDTO.getSellerName());
-                    winningRecordDTO.setBelongSuperiorName(defaultWinningRecordDTO.getBelongSuperiorName());
                     winningRecordDTO.setWinningTime(new Date());
                 } catch (PromotionCenterBusinessException pcbe) {
                     if (winningRecordDTO == null) {
-                        winningRecordDTO = defaultWinningRecordDTO;
+                        winningRecordDTO = errorWinningRecord;
                     }
                     winningRecordDTO.setResponseCode(pcbe.getCode());
                     winningRecordDTO.setResponseMsg(pcbe.getMessage());
-                    winningRecordDTO.setRewardName(ResultCodeEnum.getName(winningRecordDTO.getResponseCode()));
-                    winningRecordDTO.setWinningTime(new Date());
                 }
                 promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
                         promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket,

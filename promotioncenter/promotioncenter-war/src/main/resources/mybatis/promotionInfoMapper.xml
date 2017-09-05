@@ -394,7 +394,7 @@
     <select id="getTotalPromotionGashaponByInfo" resultType="java.lang.Long">
   	SELECT 
   	count(1)
-	FROM promotion_info a WHERE a.promotion_type = '22'
+	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
 	and  a.promotion_name = #{entity.promotionName}
 	</if>

@@ -166,7 +166,7 @@ public class TimelimitedTestUnit {
     	promotionExtendInfoDTO.setPromotionType("23");//活动类型 1：优惠券，2：秒杀，21：扭蛋机，22：砍价，23：总部秒杀
     	promotionExtendInfoDTO.setEffectiveTime(nowDt);
     	promotionExtendInfoDTO.setInvalidTime(DateUtils.addDays(nowDt, 1));
-    	promotionExtendInfoDTO.setStatus("2");//状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
+//    	promotionExtendInfoDTO.setStatus("2");//状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除   （不需要设置，后台根据  开始时间和结束时间  自动生成）
     	promotionExtendInfoDTO.setShowStatus("3");//审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
     	promotionExtendInfoDTO.setDealFlag(1);
     	List<PromotionConfigureDTO> promotionConfigureList = new ArrayList<PromotionConfigureDTO>();

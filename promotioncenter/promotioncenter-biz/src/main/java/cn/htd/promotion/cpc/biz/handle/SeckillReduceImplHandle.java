@@ -27,7 +27,7 @@ public class SeckillReduceImplHandle extends StockChangeImpl {
 		if (StringUtils.isNotBlank(reserveResult)
 				&& this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_REDUCE)) {
 			String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-			promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT, timelimitedResultKey,
+			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
 					count * -1);
 			// 删除锁定记录
 			promotionRedisDB.delHash(reserveHashKey, buyerCode);

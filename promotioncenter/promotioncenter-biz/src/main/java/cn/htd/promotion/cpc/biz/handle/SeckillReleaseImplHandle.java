@@ -30,7 +30,11 @@ public class SeckillReleaseImplHandle extends StockChangeImpl {
 			// 向该秒杀队列插入新的请求
 			promotionRedisDB.rpush(timeLimitedQueueKey, promotionId);
 			String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-			promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, timelimitedResultKey,
+			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT,
+					-1);
+			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT,
+					-1);
+			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT,
 					count);
 			// 删除锁定记录
 			promotionRedisDB.delHash(reserveHashKey, buyerCode);

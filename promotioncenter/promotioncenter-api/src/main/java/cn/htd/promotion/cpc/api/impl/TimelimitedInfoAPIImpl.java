@@ -6,16 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-
-import cn.htd.common.DataGrid;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.TimelimitedInfoAPI;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 @Service("timelimitedInfoAPI")
 public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
@@ -37,6 +35,10 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
+			if (null == timelimitedInfoReqDTO) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
+			}
+			
             timelimitedInfoService.addTimelimitedInfo(timelimitedInfoReqDTO, messageId);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
@@ -55,6 +57,19 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
+    		if (null == timelimitedInfoReqDTO) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
+    		}
+    		
+			if (null == timelimitedInfoReqDTO.getPromotionId() || "".equals(timelimitedInfoReqDTO.getPromotionId().trim())) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "秒杀促销活动编码不能为空！");
+			}
+			
+			TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleTimelimitedInfoByPromotionId(timelimitedInfoReqDTO.getPromotionId(), messageId);
+			if(null == timelimitedInfoResDTO){
+				throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "秒杀促销活动不存在！");
+			}
+    		
             timelimitedInfoService.updateTimelimitedInfo(timelimitedInfoReqDTO, messageId);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());

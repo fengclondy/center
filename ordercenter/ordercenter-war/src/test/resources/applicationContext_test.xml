@@ -16,7 +16,7 @@ default-autowire="byName">
 	  <import resource="classpath*:beans-tc-datasource.xml"/>
   	  <import resource="classpath*:/spring/beans-tc-redis.xml" />
   	  <import resource="classpath*:/spring/beans-tc-rabbitmq.xml" />
-
+		<import resource="classpath*:/spring/beans-*" />
      <import resource="classpath*:/spring/beans-tc-tbschedule.xml" />
 
    <!-- add by zhangding  20161102 结束  -->

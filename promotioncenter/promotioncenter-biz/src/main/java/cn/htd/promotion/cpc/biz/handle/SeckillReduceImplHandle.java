@@ -11,7 +11,7 @@ import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
 
-@Service("seckillReduceImpl")
+@Service("seckillReduceImplHandle")
 public class SeckillReduceImplHandle extends StockChangeImpl {
 
 	@Resource

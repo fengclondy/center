@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.biz.handle;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
 
 import cn.htd.promotion.cpc.biz.service.impl.StockChangeImpl;
 import cn.htd.promotion.cpc.common.constants.Constants;
@@ -10,6 +11,7 @@ import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
 
+@Service("seckillRollbackImplHandle")
 public class SeckillRollbackImplHandle extends StockChangeImpl {
 
 	@Resource

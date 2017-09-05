@@ -199,7 +199,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
 		promotionInfoDMO.setPromotionId(timelimitedInfoResDTO.getPromotionExtendInfoDTO().getPromotionId());
 		try {
-			addTimelimitedResult2Redis(timelimitedInfoResDTO);
+			setTimelimitedInfo2Redis(timelimitedInfoResDTO);
 			setTimelimitedReserveQueue(timelimitedInfoResDTO);
 
 			promotionInfoDMO.setDealFlag(YesNoEnum.NO.getValue());
@@ -351,7 +351,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			// 设置秒杀活动具体数量
 			this.addTimelimitedResult2Redis(timelimitedInfoResDTO);
 		}
-
 	}
 
 	/**

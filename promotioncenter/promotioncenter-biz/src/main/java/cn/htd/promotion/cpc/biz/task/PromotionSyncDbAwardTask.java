@@ -151,14 +151,18 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 				for (BuyerWinningRecordDMO promotionAwardDTO : tasks) {
 					if (!StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
 						if (promotionAwardDTO.getRewardType().equals("3")) {
-							if(excuteRecharge(promotionAwardDTO)){
+							if(!StringUtils.isEmpty(promotionAwardDTO.getChargeTelephone())){
+								if(excuteRecharge(promotionAwardDTO)){
 								promotionAwardDTO.setDealFlag(2);
 								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+								}
 							}
 						} else if (promotionAwardDTO.getRewardType().equals("4")) {
-							if(addGold(promotionAwardDTO)){
-								promotionAwardDTO.setDealFlag(0);
-								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+							if(!StringUtils.isEmpty(promotionAwardDTO.getBuyerCode())){
+								if(addGold(promotionAwardDTO)){
+									promotionAwardDTO.setDealFlag(0);
+									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+								}
 							}
 						}
 					}

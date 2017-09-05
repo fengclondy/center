@@ -106,12 +106,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
 		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_TYPE);
 
-		PROMOTION_REWARD_TYPE
-				PROMOTION_CYCLE_TIME_TYPE
-		PROMOTION_PRICTURE_TYPE
-				PROMOTION_ADDUP_TYPE
-		PROMOTION_QUANTIFIER_TYPE
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_REWARD_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_CYCLE_TIME_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_PRICTURE_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_ADDUP_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_QUANTIFIER_TYPE);
 		return dictMap;
 	}
 

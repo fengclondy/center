@@ -484,6 +484,12 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     pai = new PromotionAwardInfoDTO();
                     pai.setPromotionId(padDTO.getPromotionId());
                     pai.setLevelCode(padDTO.getLevelCode());
+                    Long pvc = promotionRedisDB.getLlen(
+							RedisConst.REDIS_LOTTERY_AWARD_PREFIX + result.getPromotionId() + "_" + pai.getLevelCode());
+                    if(pvc!=null){
+                    	pai.setProvideCount(pvc.intValue());
+                    }
+					
                     PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
                     pad.setPromotionAccumulaty(padDTO);
                     promotionAwardList.add(pad);

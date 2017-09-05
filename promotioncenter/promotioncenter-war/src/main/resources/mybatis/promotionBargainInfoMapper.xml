@@ -36,6 +36,9 @@
 	    <if test="buyerCode != null and buyerCode != ''">
 			and plb.buyer_code = #{buyerCode}
 		</if>
+		<if test="bargainCode != null and bargainCode != ''">
+			and plb.bargain_code = #{bargainCode}
+		</if>
     </select>
     
     <insert id="add" useGeneratedKeys="true" keyProperty="id">

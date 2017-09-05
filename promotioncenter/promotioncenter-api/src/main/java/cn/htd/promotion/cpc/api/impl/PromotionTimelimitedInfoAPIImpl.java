@@ -150,19 +150,19 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	public ExecuteResult<PromotionTimelimitedShowDTO> getPromotionTimelimitedInfoDetail(String messageId,
 			String promotionId, String buyerCode) {
 		ExecuteResult<PromotionTimelimitedShowDTO> result = new ExecuteResult<PromotionTimelimitedShowDTO>();
-		TimelimitedInfoResDTO tmpTimelimitedDTO = null;
+		TimelimitedInfoResDTO tmpTimelimitedInfoDTO = null;
 		PromotionTimelimitedShowDTO timelimitedDTO = null;
 		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-		String returnCode = "";
+		String returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
 		try {
 			String remaincount = promotionRedisDB.getHash(timelimitedResultKey,
 					RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
-			tmpTimelimitedDTO = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(promotionId);
-			if (null != tmpTimelimitedDTO) {
+			tmpTimelimitedInfoDTO = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(promotionId);
+			if (null == tmpTimelimitedInfoDTO) {
 				return result;
 			}
 			timelimitedDTO = new PromotionTimelimitedShowDTO();
-			timelimitedDTO.setTimelimitedInfo(tmpTimelimitedDTO);
+			timelimitedDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
 			if (StringUtils.isNotBlank(remaincount)) {
 				timelimitedDTO.setRemainCount(Integer.valueOf(remaincount));
 			}
@@ -171,11 +171,11 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.CLEAR.getValue());
 				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SKU_NO_REMAIN;
 			}
-			if (timelimitedDTO.getPromotionExtendInfoDTO() != null) {
-				if ((new Date()).before(timelimitedDTO.getPromotionExtendInfoDTO().getEffectiveTime())) { // 未开始
+			if (tmpTimelimitedInfoDTO.getPromotionExtendInfoDTO() != null) {
+				if ((new Date()).before(tmpTimelimitedInfoDTO.getPromotionExtendInfoDTO().getEffectiveTime())) { // 未开始
 					timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.NO_START.getValue());
 					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NO_STAET_ERROR;
-				} else if ((new Date()).after(timelimitedDTO.getPromotionExtendInfoDTO().getInvalidTime())) { // 已结束
+				} else if ((new Date()).after(tmpTimelimitedInfoDTO.getPromotionExtendInfoDTO().getInvalidTime())) { // 已结束
 					timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.ENDED.getValue());
 					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_HAS_ENDED_ERROR;
 				} else {

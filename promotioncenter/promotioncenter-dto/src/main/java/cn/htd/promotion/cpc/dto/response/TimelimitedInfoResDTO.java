@@ -281,6 +281,10 @@ public class TimelimitedInfoResDTO implements Serializable  {
 		this.timelimitedSkuCount = timelimitedInfo.getTimelimitedSkuCount();
 		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
 		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
+		this.createTime = timelimitedInfo.getCreateTime();
+		this.promotionExtendInfoDTO = timelimitedInfo.getPromotionExtendInfoDTO();
+		this.timelimitedSkuDescribeList = timelimitedInfo.getTimelimitedSkuDescribeList();
+		this.timelimitedSkuPictureList = timelimitedInfo.getTimelimitedSkuPictureList();
 	}
 
 	

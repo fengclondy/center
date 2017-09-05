@@ -91,4 +91,6 @@ public class PromotionCenterConst {
 	public static final String TIMELIMITED_RESULT_PROMOTION_PARAM_ERROR = "15409";
 	// 会员没有秒杀权限
 	public static final String TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY = "15410";
+	// 秒杀商品已抢光
+	public static final String TIMELIMITED_RESULT_PROMOTION_SUCCESS = "00000";
 }

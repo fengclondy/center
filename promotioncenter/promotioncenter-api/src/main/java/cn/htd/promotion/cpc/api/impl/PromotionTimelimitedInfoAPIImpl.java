@@ -301,6 +301,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillReserveImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());
@@ -317,6 +318,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillReleaseImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());
@@ -333,6 +335,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillReduceImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());
@@ -349,6 +352,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillRollbackImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());

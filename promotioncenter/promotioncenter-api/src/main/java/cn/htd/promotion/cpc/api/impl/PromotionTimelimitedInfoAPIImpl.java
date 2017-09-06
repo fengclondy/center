@@ -197,7 +197,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			}
 			timelimitedDTO.setShowStatusStr(TimelimitedStatusEnum.getName(timelimitedDTO.getCompareStatus()));
 
-			if (StringUtils.isEmpty(returnCode) && !StringUtils.isEmpty(buyerCode)) {
+			if (!StringUtils.isEmpty(buyerCode)) {
 				if (!checkTimelimitedIsAvailableByBuyerCode(messageId, buyerCode, promotionId).getResult()) {
 					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY;
 				}
@@ -286,6 +286,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	private ExecuteResult<Boolean> checkBuyerCodeValid(PromotionExtendInfoDTO promotionExtendInfoDTO,
 			String buyerCode) {
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
+		restult.setResult(false);
 		PromotionSellerRuleDTO sellerRuleDTO = promotionExtendInfoDTO.getSellerRuleDTO();
 		List<PromotionSellerDetailDTO> sellerDetailList = null;
 		if (null != sellerRuleDTO && null != sellerRuleDTO.getSellerDetailList()) {// 限制粉丝只能购买归属会员的秒杀商品
@@ -294,7 +295,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限
 					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR);
-					restult.setResult(false);
 				} else {
 					// 校验秒杀活动状态
 					restult.setResult(checkParamValid(promotionExtendInfoDTO).getResult());

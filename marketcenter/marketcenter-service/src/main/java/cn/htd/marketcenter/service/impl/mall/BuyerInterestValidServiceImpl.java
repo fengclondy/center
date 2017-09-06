@@ -93,25 +93,18 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 	 */
 	private Map<String, String> initCouponCheckDictMap() {
 		Map<String, String> dictMap = new HashMap<String, String>();
-
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_STATUS);
-
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS);
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_RULE_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_BUYER_RULE);
 		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_SELLER_RULE);
 		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_SELLER_TYPE);
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_BUYER_RULE);
-
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE);
-
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PRODUCT_CHANNEL);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_ITEM_CATEGORY_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_ITEM_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_COUPON_STATUS);
 		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_TYPE);
-
-		PROMOTION_REWARD_TYPE
-				PROMOTION_CYCLE_TIME_TYPE
-		PROMOTION_PRICTURE_TYPE
-				PROMOTION_ADDUP_TYPE
-		PROMOTION_QUANTIFIER_TYPE
-		initDictionaryMap(dictMap, DictionaryConst.TYPE_);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_SKU_PRICE_TYPE);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_COUPON_KIND);
+		initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS);
 		return dictMap;
 	}
 

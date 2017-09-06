@@ -32,10 +32,10 @@ public interface PromotionLotteryCommonService {
      * 执行抽奖处理
      *
      * @param requestDTO
-     * @param defaultWinningRecordDTO
+     * @param errorWinningRecord
      * @param ticket
      */
-    public void doDrawLotteryWithThread(DrawLotteryReqDTO requestDTO, BuyerWinningRecordDTO defaultWinningRecordDTO,
+    public void doDrawLotteryWithThread(DrawLotteryReqDTO requestDTO, BuyerWinningRecordDTO errorWinningRecord,
             String ticket);
 
     /**

@@ -1,21 +1,19 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-
 import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.TimelimitedInfoAPI;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 @Service("timelimitedInfoAPI")
 public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
@@ -37,12 +35,16 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
+			if (null == timelimitedInfoReqDTO) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
+			}
+			
             timelimitedInfoService.addTimelimitedInfo(timelimitedInfoReqDTO, messageId);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
-            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.addTimelimitedInfo出现异常{}", messageId, timelimitedInfoReqDTO.getPromotionId() + ":" + e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.addTimelimitedInfo出现异常{}", messageId,  e.toString());
         }
         return result;
 	}
@@ -55,6 +57,14 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
+    		if (null == timelimitedInfoReqDTO) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动参数不能为空！");
+    		}
+    		
+			if (null == timelimitedInfoReqDTO.getPromotionId() || "".equals(timelimitedInfoReqDTO.getPromotionId().trim())) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "秒杀促销活动编码不能为空！");
+			}
+    		
             timelimitedInfoService.updateTimelimitedInfo(timelimitedInfoReqDTO, messageId);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
@@ -65,6 +75,45 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         return result;
 	}
 
+	
+	@Override
+	public ExecuteResult<TimelimitedInfoResDTO> getSingleFullTimelimitedInfoByPromotionId(
+			String promotionId, String messageId) {
+        ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId, messageId);
+        	result.setResult(timelimitedInfoResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.getSingleFullTimelimitedInfoByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+
+	
+	public ExecuteResult<DataGrid<TimelimitedInfoResDTO>> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
+			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
+		
+		ExecuteResult<DataGrid<TimelimitedInfoResDTO>> result = new ExecuteResult<DataGrid<TimelimitedInfoResDTO>>(); 
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	DataGrid<TimelimitedInfoResDTO> timelimitedInfoResDTOData = timelimitedInfoService.getTimelimitedInfosForPage(page,timelimitedInfoReqDTO, messageId);
+        	result.setResult(timelimitedInfoResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.getSingleFullTimelimitedInfoByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
     
     
 

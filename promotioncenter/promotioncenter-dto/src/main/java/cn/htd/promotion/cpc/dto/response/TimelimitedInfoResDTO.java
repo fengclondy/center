@@ -67,11 +67,26 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	private String modifyName;
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
+	// 商品描述
+	private String describeContent;
 	
+    /**
+     * 促销活动开始时间
+     */
+    private Date effectiveTime;
+    /**
+     * 促销活动结束时间
+     */
+    private Date invalidTime;
+    //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+    private String showStatus;
+    
+	//活动信息
+	private PromotionExtendInfoDTO promotionExtendInfoDTO;
 	//商品图片
 	private List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList;
 	//商品详情
-	private TimelimitedSkuDescribeResDTO timelimitedSkuDescribe;
+	private List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList;
 	
 	
 	public Long getTimelimitedId() {
@@ -219,15 +234,61 @@ public class TimelimitedInfoResDTO implements Serializable  {
 			List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureList) {
 		this.timelimitedSkuPictureList = timelimitedSkuPictureList;
 	}
-	public TimelimitedSkuDescribeResDTO getTimelimitedSkuDescribe() {
-		return timelimitedSkuDescribe;
+	public PromotionExtendInfoDTO getPromotionExtendInfoDTO() {
+		return promotionExtendInfoDTO;
 	}
-	public void setTimelimitedSkuDescribe(
-			TimelimitedSkuDescribeResDTO timelimitedSkuDescribe) {
-		this.timelimitedSkuDescribe = timelimitedSkuDescribe;
+	public void setPromotionExtendInfoDTO(PromotionExtendInfoDTO promotionExtendInfoDTO) {
+		this.promotionExtendInfoDTO = promotionExtendInfoDTO;
 	}
-	
-	
+	public String getDescribeContent() {
+		return describeContent;
+	}
+	public void setDescribeContent(String describeContent) {
+		this.describeContent = describeContent;
+	}
+	public List<TimelimitedSkuDescribeResDTO> getTimelimitedSkuDescribeList() {
+		return timelimitedSkuDescribeList;
+	}
+	public void setTimelimitedSkuDescribeList(
+			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList) {
+		this.timelimitedSkuDescribeList = timelimitedSkuDescribeList;
+	}
+	public Date getEffectiveTime() {
+		return effectiveTime;
+	}
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+	public Date getInvalidTime() {
+		return invalidTime;
+	}
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+	public String getShowStatus() {
+		return showStatus;
+	}
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
+	}
+	public void setTimelimitedInfo(TimelimitedInfoResDTO timelimitedInfo) {
+		this.timelimitedId = timelimitedInfo.getTimelimitedId();
+		this.sellerCode = timelimitedInfo.getSellerCode();
+		this.itemId = timelimitedInfo.getItemId();
+		this.skuCode = timelimitedInfo.getSkuCode();
+		this.skuName = timelimitedInfo.getSkuName();
+		this.skuPicUrl = timelimitedInfo.getSkuPicUrl();
+		this.skuCostPrice = timelimitedInfo.getSkuCostPrice();
+		this.skuTimelimitedPrice = timelimitedInfo.getSkuTimelimitedPrice();
+		this.timelimitedSkuCount = timelimitedInfo.getTimelimitedSkuCount();
+		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
+		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
+		this.createTime = timelimitedInfo.getCreateTime();
+		this.promotionExtendInfoDTO = timelimitedInfo.getPromotionExtendInfoDTO();
+		this.timelimitedSkuDescribeList = timelimitedInfo.getTimelimitedSkuDescribeList();
+		this.timelimitedSkuPictureList = timelimitedInfo.getTimelimitedSkuPictureList();
+	}
+
 	
 
 }

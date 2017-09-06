@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.StringRedisConnection;
@@ -127,8 +126,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         buyerCheckInfo.setIsFirstLogin(requestDTO.getIsBuyerFirstLogin());
         if (!baseService.checkPromotionBuyerRule(promotionInfoDTO, buyerCheckInfo, dictMap)) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY.getCode(),
-                    "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode() + " 抽奖粉丝编号:" + requestDTO
-                            .getBuyerCode() + " 是否首次登陆:" + requestDTO.getIsBuyerFirstLogin() + " 该活动粉丝没有秒杀权限");
+                    "该活动粉丝没有抽奖权限 入参:" + JSON.toJSONString(requestDTO));
         }
         if (Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT)) <= 0) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
@@ -136,31 +134,27 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         }
         if (!baseService.checkPromotionSellerRule(promotionInfoDTO, requestDTO.getSellerCode(), dictMap)) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getCode(),
-                    "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode() + " 抽奖粉丝编号:" + requestDTO
-                            .getBuyerCode() + " 是否首次登陆:" + requestDTO.getIsBuyerFirstLogin() + " 会员店没有参加本次抽奖活动");
+                    "会员店没有参加本次抽奖活动 入参:" + JSON.toJSONString(requestDTO));
         }
         buyerTimesInfoMap = promotionRedisDB
                 .getHashOperations(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode);
-        if (buyerTimesInfoMap != null) {
-            if (Integer.parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES)) <= 0) {
-                if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES) ||
-                        Integer.parseInt(
-                                lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES)) <= 0) {
-                    throw new PromotionCenterBusinessException(
-                            ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
-                            "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode() + " 抽奖粉丝编号:" + requestDTO
-                                    .getBuyerCode() + " 粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机");
-                } else if (!buyerTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES) ||
-                        Integer.parseInt(
-                                buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES)) <= 0
-                        || (buyerTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)
-                        && YesNoEnum.YES.getValue() == Integer
-                        .parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)))) {
-                    throw new PromotionCenterBusinessException(
-                            ResultCodeEnum.LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE.getCode(),
-                            "抽奖活动编号:" + promotionId + " 会员店:" + requestDTO.getSellerCode() + " 抽奖粉丝编号:" + requestDTO
-                                    .getBuyerCode() + " 粉丝已经用完了自有和分享额外获取的抽奖机");
-                }
+        if (buyerTimesInfoMap == null || buyerTimesInfoMap.isEmpty()) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY.getCode(),
+                    "该活动粉丝没有抽奖记录信息 入参:" + JSON.toJSONString(requestDTO));
+        }
+        if (Integer.parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES)) <= 0) {
+            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES)
+                    || Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES))
+                    <= 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
+                        "粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机 入参:" + JSON.toJSONString(requestDTO));
+            } else if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES) ||
+                    Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES))
+                            <= 0 || (buyerTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)
+                    && YesNoEnum.YES.getValue() == Integer
+                    .parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)))) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE.getCode(),
+                        "粉丝已经用完了自有和分享额外获取的抽奖机 入参:" + JSON.toJSONString(requestDTO));
             }
         }
         return true;
@@ -170,12 +164,12 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
      * 执行抽奖处理
      *
      * @param requestDTO
-     * @param defaultWinningRecordDTO
+     * @param errorWinningRecord
      * @param ticket
      */
     @Override
-    public void doDrawLotteryWithThread(DrawLotteryReqDTO requestDTO,
-            final BuyerWinningRecordDTO defaultWinningRecordDTO, final String ticket) {
+    public void doDrawLotteryWithThread(DrawLotteryReqDTO requestDTO, final BuyerWinningRecordDTO errorWinningRecord,
+            final String ticket) {
         final String promotionId = requestDTO.getPromotionId();
         final String buyerCode = requestDTO.getBuyerCode();
         final String sellerCode = requestDTO.getSellerCode();
@@ -204,14 +198,14 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                                 "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
                     }
+                    winningRecordDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+                    winningRecordDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
                     winningRecordDTO.setBuyerCode(buyerCode);
                     winningRecordDTO.setSellerCode(sellerCode);
-                    winningRecordDTO.setSellerName(defaultWinningRecordDTO.getSellerName());
-                    winningRecordDTO.setBelongSuperiorName(defaultWinningRecordDTO.getBelongSuperiorName());
                     winningRecordDTO.setWinningTime(new Date());
                 } catch (PromotionCenterBusinessException pcbe) {
                     if (winningRecordDTO == null) {
-                        winningRecordDTO = defaultWinningRecordDTO;
+                        winningRecordDTO = errorWinningRecord;
                     }
                     winningRecordDTO.setResponseCode(pcbe.getCode());
                     winningRecordDTO.setResponseMsg(pcbe.getMessage());
@@ -277,7 +271,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     lotteryKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + goalAccuDTO.getLevelCode();
                     awardJsonStr = promotionRedisDB.headPop(lotteryKey);
                     if (StringUtils.isEmpty(awardJsonStr)) {
-                        loopSize ++;
+                        loopSize++;
                         continue;
                     }
                     winningRecordDTO = JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);
@@ -336,13 +330,18 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     int seconds = (int) (diffTime / 1000);
                     try {
 
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES, String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_WINNING_TIMES, String.valueOf(promotionInfoDTO.getDailyBuyerWinningTimes()));
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES, String.valueOf(promotionInfoDTO.getDailyWinningTimes()));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES,
+                                String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_WINNING_TIMES,
+                                String.valueOf(promotionInfoDTO.getDailyBuyerWinningTimes()));
+                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES,
+                                String.valueOf(promotionInfoDTO.getDailyWinningTimes()));
                         if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsShareTimesLimit().intValue()) {
-                            timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES, String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));
+                            timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES,
+                                    String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));
                             if (promotionInfoDTO.getTopExtraPartakeTimes() != null) {
-                                timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES, String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
+                                timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES,
+                                        String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
                             }
                         }
 
@@ -355,28 +354,35 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             accuList.add(accuDTO);
                             levelCode = awardInfoDTO.getLevelCode();
                             redisKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + levelCode;
-                            pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey).longValue();
+                            pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey)
+                                    .longValue();
                             totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
                             buyerWinningRecordDTO = new BuyerWinningRecordDTO();
                             buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
+                            buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
                             while (pushCnt > 0) {
                                 stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
-                                pushCnt --;
+                                pushCnt--;
                             }
                             stringRedisConnection.expire(redisKey, seconds);
                         }
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
+                        timesInfoMap
+                                .put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
                         timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT, String.valueOf(totalAwardCnt));
                         stringRedisConnection
                                 .hMSet(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, timesInfoMap);
                         stringRedisConnection.expire(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, seconds);
-                        stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INFO, promotionId, JSON.toJSONString(promotionInfoDTO));
-                        stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_VALID, promotionId, promotionInfoDTO.getShowStatus());
+                        stringRedisConnection
+                                .hSet(RedisConst.REDIS_LOTTERY_INFO, promotionId, JSON.toJSONString(promotionInfoDTO));
+                        stringRedisConnection
+                                .hSet(RedisConst.REDIS_LOTTERY_VALID, promotionId, promotionInfoDTO.getShowStatus());
                         stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INDEX,
-                                RedisConst.REDIS_GASHAPON_PREFIX + promotionInfoDTO.getEffectiveTime().getTime() + "_" + promotionInfoDTO.getInvalidTime().getTime(), promotionId);
+                                RedisConst.REDIS_GASHAPON_PREFIX + promotionInfoDTO.getEffectiveTime().getTime() + "_"
+                                        + promotionInfoDTO.getInvalidTime().getTime(), promotionId);
                         stringRedisConnection.closePipeline();
                     } catch (Exception e) {
-                        logger.info("初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
+                        logger.info(
+                                "初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
                                 JSON.toJSONString(promotionInfoDTO), ExceptionUtils.getFullStackTrace(e));
                         throw e;
                     }

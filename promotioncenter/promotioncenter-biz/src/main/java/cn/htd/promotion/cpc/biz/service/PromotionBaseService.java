@@ -8,7 +8,6 @@ import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 
@@ -16,6 +15,7 @@ public interface PromotionBaseService {
 
     /**
      * 读取字典信息
+     *
      * @param dictMap
      * @param dictKey
      */
@@ -58,7 +58,7 @@ public interface PromotionBaseService {
      * @throws PromotionCenterBusinessException
      * @throws Exception
      */
-    public PromotionInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
+    public PromotionExtendInfoDTO queryPromotionInfo(String promotionId, String... levelCodeArr)
             throws PromotionCenterBusinessException, Exception;
 
 
@@ -95,9 +95,11 @@ public interface PromotionBaseService {
      * @param promotionId
      * @param levelCode
      * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
      */
     public PromotionAccumulatyDTO querySingleAccumulatyPromotionInfo(String promotionId, String... levelCode)
-            throws Exception;
+            throws PromotionCenterBusinessException, Exception;
 
     /**
      * 根据促销活动的有效期间设定促销活动状态
@@ -128,20 +130,4 @@ public interface PromotionBaseService {
      */
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap);
-
-    /**
-     * 取得满足促销活动卖家规则的卖家信息
-     * @param promotionInfoDTO
-     * @param sellerCode
-     * @param dictMap
-     * @return
-     */
-    public PromotionSellerDetailDTO getPromotionSellerInfo(PromotionInfoDTO promotionInfoDTO, String sellerCode,
-            Map<String, String> dictMap);
-
-//	public PromotionExtendInfoDTO addPromotionInfo(PromotionInfoEditReqDTO pid);
-//
-//	public PromotionExtendInfoDTO editPromotionInfo(PromotionInfoEditReqDTO pid);
-//
-//	public PromotionExtendInfoDTO viewPromotionInfo(String promotionInfoId);
 }

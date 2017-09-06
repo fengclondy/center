@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -386,9 +385,7 @@ public class PromotionRedisDB {
         String value = "";
 
         try {
-            if (exists(key)) {
-                value = stringRedisTemplate.opsForList().rightPop(key);
-            }
+            value = stringRedisTemplate.opsForList().rightPop(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-tailPop", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -409,9 +406,7 @@ public class PromotionRedisDB {
         String value = "";
 
         try {
-            if (exists(key)) {
-                value = stringRedisTemplate.opsForList().leftPop(key);
-            }
+            value = stringRedisTemplate.opsForList().leftPop(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-headPop", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -530,6 +525,7 @@ public class PromotionRedisDB {
         logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-incrHash", "key=" + key, "field=" + field);
         return incrHashBy(key, field, 1);
     }
+
     /**
      * 通过redis取得自减数据
      *
@@ -597,9 +593,7 @@ public class PromotionRedisDB {
         String returnValue = "";
 
         try {
-            if (exists(key)) {
-                returnValue = stringRedisTemplate.opsForSet().pop(key);
-            }
+            returnValue = stringRedisTemplate.opsForSet().pop(key);
         } catch (Exception e) {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-popSet", ExceptionUtils.getStackTraceAsString(e));
         } finally {
@@ -644,6 +638,44 @@ public class PromotionRedisDB {
             logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getSetLen", ExceptionUtils.getStackTraceAsString(e));
         } finally {
             logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-getSetLen", "returnValue=" + returnValue);
+        }
+        return returnValue;
+    }
+
+    /**
+     * 添加一个或多个值到列表
+     *
+     * @param key
+     * @param value
+     */
+    public Long rpush(String key, String value) {
+        logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-rpush", "key=" + key, "value=" + value);
+        Long returnValue = 0L;
+        try {
+            returnValue = stringRedisTemplate.opsForList().rightPush(key, value);
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-rpush", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-rpush", "returnValue=" + returnValue);
+        }
+        return returnValue;
+    }
+
+    /**
+     * 获取并取出列表中的第一个元素
+     *
+     * @param key
+     * @return
+     */
+    public String lpop(String key) {
+        logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-lpop", "key=" + key);
+        String returnValue = "";
+        try {
+            returnValue = stringRedisTemplate.opsForList().leftPop(key);
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-lpop", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-lpop", "returnValue=" + returnValue);
         }
         return returnValue;
     }

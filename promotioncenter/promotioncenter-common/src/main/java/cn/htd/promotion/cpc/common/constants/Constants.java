@@ -23,6 +23,12 @@ public class Constants {
 	// 秒杀库存回滚操作
 	public final static String SECKILL_ROLLBACK = "4";
 
+	// 已经释放库存标志
+	public final static int HAS_RELEASE_FLAG = 1;
+
+	// 秒杀预占订单号前缀
+	public final static String ORDER_PREHOLDING_NUMBER = "60";
+
 	// 商品已经售罄
 	public static final String PROMOTION_NO_STOCK = "10001";
 
@@ -58,4 +64,7 @@ public class Constants {
 
 	// 砍价记录常量
 	public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
+
+	// 秒杀库存锁
+	public static final String REDIS_KEY_PREFIX_STOCK = "B2B_MIDDLE_SECKILL_STOCK";
 }

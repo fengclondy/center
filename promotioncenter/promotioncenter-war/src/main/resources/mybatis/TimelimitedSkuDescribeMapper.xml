@@ -6,6 +6,8 @@
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
     <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="picture_url" property="pictureUrl" jdbcType="VARCHAR" />
+    <result column="sort_num" property="sortNum" jdbcType="TINYINT" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -13,22 +15,21 @@
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO" extends="BaseResultMap" >
-    <result column="describe_content" property="describeContent" jdbcType="LONGVARCHAR" />
-  </resultMap>
 
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO" >
 	insert into timelimited_sku_describe (desc_id, promotion_id,
 	level_code,
-	delete_flag, create_id, create_name,
+	delete_flag, picture_url,sort_num,
+	create_id, create_name,
 	create_time, modify_id, modify_name,
-	modify_time, describe_content)
+	modify_time)
 	values (#{descId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR},
 	#{levelCode,jdbcType=VARCHAR},
-	#{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
+	#{deleteFlag,jdbcType=TINYINT}, #{pictureUrl,jdbcType=VARCHAR}, #{sortNum,jdbcType=TINYINT},
+	#{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
 	#{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT},
 	#{modifyName,jdbcType=VARCHAR},
-	#{modifyTime,jdbcType=TIMESTAMP}, #{describeContent,jdbcType=LONGVARCHAR})
+	#{modifyTime,jdbcType=TIMESTAMP})
   </insert>
   
   <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO" >
@@ -45,6 +46,12 @@
       </if>
       <if test="deleteFlag != null" >
         delete_flag,
+      </if>
+      <if test="pictureUrl != null" >
+        picture_url,
+      </if>
+      <if test="sortNum != null" >
+        sort_num,
       </if>
       <if test="createId != null" >
         create_id,
@@ -64,9 +71,6 @@
       <if test="modifyTime != null" >
         modify_time,
       </if>
-      <if test="describeContent != null" >
-        describe_content,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="descId != null" >
@@ -80,6 +84,12 @@
       </if>
       <if test="deleteFlag != null" >
         #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="pictureUrl != null" >
+        #{pictureUrl,jdbcType=VARCHAR}, 
+      </if>
+      <if test="sortNum != null" >
+        #{sortNum,jdbcType=TINYINT},
       </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
@@ -99,9 +109,6 @@
       <if test="modifyTime != null" >
         #{modifyTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="describeContent != null" >
-        #{describeContent,jdbcType=LONGVARCHAR},
-      </if>
     </trim>
   </insert>
   
@@ -116,6 +123,12 @@
       </if>
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="pictureUrl != null" >
+        picture_url = #{pictureUrl,jdbcType=VARCHAR}, 
+      </if>
+      <if test="sortNum != null" >
+        sort_num = #{sortNum,jdbcType=TINYINT},
       </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
@@ -135,25 +148,7 @@
       <if test="modifyTime != null" >
         modify_time = #{modifyTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="describeContent != null" >
-        describe_content = #{describeContent,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    where desc_id = #{descId,jdbcType=BIGINT}
-  </update>
-  
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO" >
-    update timelimited_sku_describe
-    set promotion_id = #{promotionId,jdbcType=VARCHAR},
-      level_code = #{levelCode,jdbcType=VARCHAR},
-      delete_flag = #{deleteFlag,jdbcType=TINYINT},
-      create_id = #{createId,jdbcType=BIGINT},
-      create_name = #{createName,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      modify_id = #{modifyId,jdbcType=BIGINT},
-      modify_name = #{modifyName,jdbcType=VARCHAR},
-      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      describe_content = #{describeContent,jdbcType=LONGVARCHAR}
     where desc_id = #{descId,jdbcType=BIGINT}
   </update>
   
@@ -162,6 +157,8 @@
     set promotion_id = #{promotionId,jdbcType=VARCHAR},
       level_code = #{levelCode,jdbcType=VARCHAR},
       delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      picture_url = #{pictureUrl,jdbcType=VARCHAR},
+      sort_num = #{sortNum,jdbcType=TINYINT},
       create_id = #{createId,jdbcType=BIGINT},
       create_name = #{createName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -171,35 +168,48 @@
     where desc_id = #{descId,jdbcType=BIGINT}
   </update>
   
+  
+    <update id="pseudoDelete" parameterType="cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO" >
+    update timelimited_sku_describe
+    <set >
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from timelimited_sku_describe
     where desc_id = #{descId,jdbcType=BIGINT}
   </delete>
   
-    <sql id="Base_Column_List" >
-    desc_id, promotion_id, level_code, delete_flag, create_id, create_name, create_time, 
+  <sql id="Base_Column_List" >
+    desc_id, promotion_id, level_code, delete_flag,picture_url,sort_num, create_id, create_name, create_time, 
     modify_id, modify_name, modify_time
   </sql>
-  <sql id="Blob_Column_List" >
-    describe_content
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
+    <include refid="Base_Column_List" /> 
     from timelimited_sku_describe
     where desc_id = #{descId,jdbcType=BIGINT}
   </select>
   
   
-   <select id="selectByPromotionId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+   <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from timelimited_sku_describe
-    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    where promotion_id = #{promotionId,jdbcType=VARCHAR} and delete_flag = 0
   </select>
   
   

@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.List;
+
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
 
@@ -11,15 +13,15 @@ public interface TimelimitedSkuDescribeDAO {
 
     int updateByPrimaryKeySelective(TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO);
 
-    int updateByPrimaryKeyWithBLOBs(TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO);
-
     int updateByPrimaryKey(TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO);
+    
+    int pseudoDelete(TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO_delete);
     
     int deleteByPrimaryKey(Long descId);
     
     TimelimitedSkuDescribeResDTO selectByPrimaryKey(Long descId);
     
-    TimelimitedSkuDescribeResDTO selectByPromotionId(String promotionId);
+    List<TimelimitedSkuDescribeResDTO> selectByPromotionId(String promotionId);
     
     
 }

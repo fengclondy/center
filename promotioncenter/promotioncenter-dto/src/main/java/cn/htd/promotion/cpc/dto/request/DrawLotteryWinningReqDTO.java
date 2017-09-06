@@ -1,29 +1,27 @@
 package cn.htd.promotion.cpc.dto.request;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 
     /**
      * 抽奖人名称
      */
-    @NotEmpty(message = "抽奖人名称不能为空")
     private String buyerName;
     /**
      * 抽奖人电话号码
      */
-    @NotEmpty(message = "抽奖人电话号码不能为空")
     private String buyerTelephone;
     /**
      * 会员店名称
      */
-    @NotEmpty(message = "会员店名称不能为空")
     private String sellerName;
     /**
      * 会员店地址
      */
-    @NotEmpty(message = "会员店地址不能为空")
     private String sellerAddress;
+    /**
+     * 归属平台公司名称
+     */
+    private String belongsSuperiorName;
     /**
      * 中奖人姓名
      */
@@ -67,6 +65,14 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 
     public void setSellerAddress(String sellerAddress) {
         this.sellerAddress = sellerAddress;
+    }
+
+    public String getBelongsSuperiorName() {
+        return belongsSuperiorName;
+    }
+
+    public void setBelongsSuperiorName(String belongsSuperiorName) {
+        this.belongsSuperiorName = belongsSuperiorName;
     }
 
     public String getWinnerName() {

@@ -22,10 +22,10 @@ public class PromotionTimelimitedInfoServiceImpl implements PromotionTimelimited
 	private PromotionTimelimitedInfoDAO promotionTimelimitedInfoDAO;
 
 	@Override
-	public List<TimelimitedInfoResDTO> getSkuPromotionTimelimitedInfo(String messageId, String skuCode)
+	public List<TimelimitedInfoResDTO> getPromotionTimelimitedInfoByBuyerCode(String messageId, String buyerCode)
 			throws PromotionCenterBusinessException {
 		List<TimelimitedInfoResDTO> timelimitedInfoDTOList = null;
-		timelimitedInfoDTOList = promotionTimelimitedInfoDAO.selectTimelimitedInfo(skuCode);
+		timelimitedInfoDTOList = promotionTimelimitedInfoDAO.selectTimelimitedInfo(buyerCode);
 	
 		return timelimitedInfoDTOList;
 	}

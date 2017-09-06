@@ -11,7 +11,7 @@
     <result column="BUYER_NAME" property="buyerName" jdbcType="VARCHAR"/>
     <result column="BUYER_TELEPHONE" property="buyerTelephone" jdbcType="VARCHAR"/>
     <result column="SELLER_CODE" property="sellerCode" jdbcType="VARCHAR"/>
-    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="SELLER_NAME" property="sellerName" jdbcType="VARCHAR" />
     <result column="SELLER_ADDRESS" property="sellerAddress" jdbcType="VARCHAR"/>
     <result column="BELONG_SUPERIOR_NAME" property="belongSuperiorName" jdbcType="VARCHAR"/>
     <result column="REWARD_TYPE" property="rewardType" jdbcType="VARCHAR"/>
@@ -98,6 +98,9 @@
     </if>
     <if test="params.winningContact!=null and params.winningContact!=''">
       and WINNING_CONTACT = #{params.winningContact}
+    </if>
+    <if test="params.buyerTelephone!=null and params.buyerTelephone!=''">
+      and BUYER_TELEPHONE = #{params.buyerTelephone}
     </if>
   </sql>
   <!-- mysql 分页 -->

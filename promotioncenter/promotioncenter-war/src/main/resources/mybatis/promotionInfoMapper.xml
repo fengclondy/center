@@ -75,11 +75,13 @@
       <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
         #{statusCode}
       </foreach>
+      <!-- 不判断是否启用
       and show_status in
       <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
                close=")">
         #{verifyStatusCode}
       </foreach>
+      -->
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}
@@ -375,7 +377,7 @@
 	a.modify_time
 	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
+	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
 	<if test="entity.status != null and entity.status != ''">
 	and  a.`status` = #{entity.status}
@@ -398,7 +400,7 @@
   	count(1)
 	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
+	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
 	<if test="entity.status != null and entity.status != ''">
 	and  a.`status` = #{entity.status}

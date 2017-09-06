@@ -375,7 +375,7 @@
 	a.modify_time
 	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
+	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
 	<if test="entity.status != null and entity.status != ''">
 	and  a.`status` = #{entity.status}
@@ -398,7 +398,7 @@
   	count(1)
 	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
+	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
 	<if test="entity.status != null and entity.status != ''">
 	and  a.`status` = #{entity.status}

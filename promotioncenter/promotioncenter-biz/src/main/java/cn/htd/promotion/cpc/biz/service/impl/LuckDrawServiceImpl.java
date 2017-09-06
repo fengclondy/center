@@ -133,9 +133,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
             if (StringUtils.isEmpty(promotionStatus) || !dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionStatus)) {
-            	result.setResponseCode(ResultCodeEnum.LOTTERY_NOT_START_UP.getCode());
-                result.setResponseMsg(ResultCodeEnum.LOTTERY_NOT_START_UP.getMsg()+"活动编号:"+promotionId);
-            	return result;
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_VALID.getCode(),
+                         "抽奖活动ID:" + promotionId + " 该活动未上架");
             }
             // 抽奖活动信息
             String lotteryJson = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_INFO, promotionId);
@@ -199,7 +198,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     promotionRedisDB.set(sellerWinedTimesKey, promotionExtendInfoDTO.getDailyWinningTimes().toString());
                 }
             }
-        } catch (Exception e) {
+        } catch (PromotionCenterBusinessException e) {
+            result.setResponseCode(e.getCode());
+            result.setResponseMsg(e.getMessage());
+        }catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
             StringWriter w = new StringWriter();

@@ -225,9 +225,12 @@ public class PromotionBargainInfoServiceImpl implements
 			promotionBargainInfoResDTO
 					.setBuyerBargainRecordList(buyerBargainRecordResList);
 			if (!StringUtils.isEmpty(buyerBargainLaunch.getBuyerCode())) {// 曾经发起过砍价
-				if(1 == promotionBargainInfo1.getIsBargainOver()){//该用户发起的砍价已经砍完了
-					promotionBargainInfoResDTO.setIsMyBargainOver("true");
+				if(promotionBargainInfo1 != null){
+					if(1 == promotionBargainInfo1.getIsBargainOver()){//该用户发起的砍价已经砍完了
+						promotionBargainInfoResDTO.setIsMyBargainOver("true");
+					}
 				}
+				
 			}
 		}
 		return promotionBargainInfoResDTO;

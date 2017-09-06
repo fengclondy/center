@@ -16,7 +16,7 @@
   <bean id="jedisConnectionFactory"
         class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
     <property name="usePool" value="true"></property>
-    <property name="hostName" value="172.16.1.178"/>
+    <property name="hostName" value="172.16.1.218"/>
     <property name="port" value="6379"/>
     <property name="timeout" value="100000"/>
     <property name="database" value="0"></property>

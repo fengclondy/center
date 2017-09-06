@@ -10,6 +10,15 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
@@ -44,13 +53,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -126,6 +128,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
         try {
             String promotionId = request.getPromotionId();
+            // 验证抽奖活动的有效状态
+            String promotionStatus =
+                    promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
+            if (StringUtils.isEmpty(promotionStatus) || !dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionStatus)) {
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_VALID.getCode(),
+                         "抽奖活动ID:" + promotionId + " 该活动未上架");
+            }
             // 抽奖活动信息
             String lotteryJson = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_INFO, promotionId);
             PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(lotteryJson, PromotionExtendInfoDTO.class);
@@ -188,7 +198,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     promotionRedisDB.set(sellerWinedTimesKey, promotionExtendInfoDTO.getDailyWinningTimes().toString());
                 }
             }
-        } catch (Exception e) {
+        } catch (PromotionCenterBusinessException e) {
+            result.setResponseCode(e.getCode());
+            result.setResponseMsg(e.getMessage());
+        }catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
             StringWriter w = new StringWriter();
@@ -495,14 +508,13 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     pai = new PromotionAwardInfoDTO();
                     pai.setPromotionId(padDTO.getPromotionId());
                     pai.setLevelCode(padDTO.getLevelCode());
+                    PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
+                    pad.setPromotionAccumulaty(padDTO);
                     Long pvc = promotionRedisDB.getLlen(
                             RedisConst.REDIS_LOTTERY_AWARD_PREFIX + result.getPromotionId() + "_" + pai.getLevelCode());
                     if (pvc != null) {
-                        pai.setProvideCount(pvc.intValue());
+                    	pad.setProvideCount(pvc.intValue());
                     }
-
-                    PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
-                    pad.setPromotionAccumulaty(padDTO);
                     promotionAwardList.add(pad);
                 }
                 result.setPromotionAccumulatyList(promotionAwardList);

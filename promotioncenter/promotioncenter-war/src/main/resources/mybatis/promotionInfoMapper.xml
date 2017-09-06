@@ -383,8 +383,8 @@
 	and  a.`status` = #{entity.status}
 	</if>
     <if test="entity.effectiveTimestr != null and entity.effectiveTimestr != '' and  entity.invalidTimestr != null and entity.invalidTimestr != '' ">
-		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
-		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
+		<if test="entity.effectiveTimestr == entity.invalidTimestr">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
+		<if test="entity.effectiveTimestr != entity.invalidTimestr">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
    	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
@@ -406,8 +406,8 @@
 	and  a.`status` = #{entity.status}
 	</if>
     <if test="entity.effectiveTimestr != null and entity.effectiveTimestr != '' and  entity.invalidTimestr != null and entity.invalidTimestr != '' ">
-		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
-		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
+		<if test="entity.effectiveTimestr == entity.invalidTimestr">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
+		<if test="entity.effectiveTimestr != entity.invalidTimestr">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
    	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}

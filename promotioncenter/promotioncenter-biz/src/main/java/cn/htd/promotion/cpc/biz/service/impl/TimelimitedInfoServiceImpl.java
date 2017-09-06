@@ -8,6 +8,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -23,6 +29,7 @@ import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -32,16 +39,14 @@ import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuDescribeResDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedSkuPictureResDTO;
+
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("timelimitedInfoService")
 public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
@@ -71,6 +76,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
     @Resource
     private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+    
 
     @Override
     public void addTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
@@ -313,6 +319,90 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             throw new RuntimeException(e);
         }
         return dataGrid;
+    }
+    
+    @Override
+    public String updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId){
+    	// 0.成功,1.参数为空,2.活动编码为空,3.上下架为空,4.上下架状态不正确,5.秒杀活动不存在,6.秒杀活动已经上架,
+    	// 7.下架状态的秒杀商品库存小于1,8.秒杀开始时间小于或等于当前时间,9.秒杀结束时间小于或等于当前时间,10.秒杀开始时间大于或等于结束时间
+    	//-1 系统异常
+    	String status = "0";
+    	
+    	try {
+    		
+  		if (null == timelimitedInfoReqDTO) {
+  			return "1";
+		}
+		
+  		String promotionId = timelimitedInfoReqDTO.getPromotionId();
+    	String showStatus = timelimitedInfoReqDTO.getShowStatus();
+    	
+		if (null == promotionId || "".equals(promotionId.trim())) {
+			return "2";
+		}
+		
+		if (null == showStatus || "".equals(showStatus.trim())) {
+			return "3";
+		}
+		
+		boolean isShowStatus= showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key()) || showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.INVALID.key());
+		if(!isShowStatus){
+			return "4";
+		}
+    	
+    	PromotionInfoDTO promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
+    	if(null == promotionInfoDTO){
+    		return "5";
+    	}
+    	
+    	if(showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key())){//上架
+    		if(promotionInfoDTO.getShowStatus().equals(showStatus)){//活动已经处于上架状态
+    			return "6";
+    		}
+    		
+    		 // 查询活动信息 （应该从redis里取，如果没有从数据库里取）
+    		TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
+    		if(null == timelimitedInfoResDTO.getTimelimitedSkuCount() || timelimitedInfoResDTO.getTimelimitedSkuCount() < 1){
+    			return "7";
+    		}
+    		
+    		//秒杀开始时间和结束时间均大于当前时间，且开始时间早于结束时间；
+    		//秒杀开始时间
+    		Date effectiveTime = promotionInfoDTO.getEffectiveTime();
+    		//秒杀结束时间
+    		Date invalidTime = promotionInfoDTO.getEffectiveTime();
+    		
+    		Calendar calender = Calendar.getInstance();
+    		Date currentTime = calender.getTime();//当前时间
+    		if(effectiveTime.getTime() <= currentTime.getTime()){//秒杀开始时间 <= 当前时间
+    			return "8";
+    		}
+    		if(invalidTime.getTime() <= currentTime.getTime()){//秒杀结束时间 <= 当前时间
+    			return "9";
+    		}
+    		if(effectiveTime.getTime() >= invalidTime.getTime()){//秒杀开始时间 >= 结束时间
+    			return "10";
+    		}
+    	}else{//下架
+    		if(promotionInfoDTO.getShowStatus().equals(showStatus)){//活动已经处于下架状态
+    			return "11";
+    		}
+    	}
+    	
+    	PromotionValidDTO promotionValidDTO = new PromotionValidDTO();
+		promotionValidDTO.setPromotionId(promotionId);
+		promotionValidDTO.setShowStatus(showStatus);
+		promotionValidDTO.setOperatorId(timelimitedInfoReqDTO.getModifyId());
+		promotionValidDTO.setOperatorName(timelimitedInfoReqDTO.getModifyName());
+		promotionInfoDAO.upDownShelvesTimelimitedInfo(promotionValidDTO);
+		
+         } catch (Exception e) {
+        	 status = "-1";
+             logger.error("messageId{}:执行方法【updateShowStatusByPromotionId】报错：{}", messageId, e.toString());
+             throw new RuntimeException(e);
+         }
+    	
+    	return status;
     }
 
     /**

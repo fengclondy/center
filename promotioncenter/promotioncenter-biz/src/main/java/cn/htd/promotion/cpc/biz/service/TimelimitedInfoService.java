@@ -48,6 +48,15 @@ public interface TimelimitedInfoService {
 	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
 			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 	
+	/**
+	 * 活动上下架
+	 * @param promotionId
+	 * @param showStatus
+	 * @param messageId
+	 * @return
+	 */
+	public String updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
+	
 	
     /**
      * 异步初始化秒杀活动的Redis数据

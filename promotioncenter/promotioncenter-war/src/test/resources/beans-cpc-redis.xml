@@ -17,6 +17,6 @@
 
 	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
 		<constructor-arg index="0" ref="jedisPoolConfig" />
-		<constructor-arg index="1" value="172.16.1.178" />
+		<constructor-arg index="1" value="172.16.1.218" />
 	</bean>
 </beans>

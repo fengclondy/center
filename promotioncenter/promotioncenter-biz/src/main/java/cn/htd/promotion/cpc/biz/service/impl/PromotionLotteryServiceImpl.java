@@ -74,6 +74,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
             errorWinningRecord.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
             errorWinningRecord.setBuyerCode(buyerCode);
             errorWinningRecord.setSellerCode(sellerCode);
+            errorWinningRecord.setRewardType(dictMap.get(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE + "&"
+                    + DictionaryConst.OPT_PROMOTION_REWARD_TYPE_THANKS));
             ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
             responseDTO.setTicket(ticket);
             promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
@@ -153,12 +155,12 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
         responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         if (!promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
-                promotionId + "_" + sellerCode + "_" + buyerCode+ "_" + ticket)) {
+                promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket)) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_WINNING_RECORD.getCode(),
                     "粉丝没有中奖记录 入参:" + JSON.toJSONString(requestDTO));
         }
         recordJsonStr = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
-                promotionId + "_" + sellerCode + "_" + buyerCode+ "_" + ticket);
+                promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
         winningRecordDTO = JSON.parseObject(recordJsonStr, BuyerWinningRecordDTO.class);
         if (winningRecordDTO == null) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(),
@@ -201,7 +203,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         promotionRedisDB
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
         promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
-                promotionId + "_" + sellerCode + "_" + buyerCode+ "_" + ticket);
+                promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
         responseDTO.setMessageId(requestDTO.getMessageId());
         return responseDTO;
     }

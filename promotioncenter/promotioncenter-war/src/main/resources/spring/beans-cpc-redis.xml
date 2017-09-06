@@ -20,5 +20,6 @@
   <bean id="redissonClientUtil" class="cn.htd.promotion.cpc.common.util.RedissonClientUtil" init-method="init">
 	 	<property name="redisAddress" value="${promotion.redis.host}:${promotion.redis.port}"/>
 		<property name="connectionPoolSize" value="${promotion.redis.maxTotal}"/>  
-	</bean>
+  </bean>
+  
 </beans>

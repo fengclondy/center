@@ -335,7 +335,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	            		promotionBargainInfo.setEffectiveTime(p.getEffectiveTime());
 	            		promotionBargainInfo.setInvalidTime(p.getInvalidTime());
 	            		promotionBargainInfo.setShowStatusD(p.getShowStatus());
-	            		promotionBargainInfo.setShowStatusD(promotionInfo.getStatus());
+	            		promotionBargainInfo.setStatusD(promotionInfo.getStatus());
 	            		break;
 	            	}
 	            }
@@ -343,15 +343,15 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法结束,出参{}",messageId,
 				  JSON.toJSONString(promotionBargainInfo));
 			  if(promotionBargainInfo != null){
-				  //查看该种商品是否已经售罄
-				    BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo = new BuyerLaunchBargainInfoResDTO();
-					buyerLaunchBargainInfo.setPromotionId(promotionId);
-					buyerLaunchBargainInfo.setLevelCode(levelCode);
-					buyerLaunchBargainInfo.setIsBargainOver(1);
+//				  //查看该种商品是否已经售罄
+//				    BuyerLaunchBargainInfoResDTO buyerLaunchBargainInfo = new BuyerLaunchBargainInfoResDTO();
+//					buyerLaunchBargainInfo.setPromotionId(promotionId);
+//					buyerLaunchBargainInfo.setLevelCode(levelCode);
+//					buyerLaunchBargainInfo.setIsBargainOver(1);
 				  //判断当前砍价人数是否超过规定的限制
 				  Integer partakeTimes = promotionBargainInfo.getPartakeTimes();//可以参与砍价的人数
-				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法开始,入参{}",messageId,
-							JSON.toJSONString(buyerLaunchBargainInfo));
+//				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法开始,入参{}",messageId,
+//							JSON.toJSONString(buyerLaunchBargainInfo));
 				  List<BuyerBargainRecordDMO> buyerBargainRecordList= buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode(bargainCode);
 				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法结束,出参{}",messageId,
 							JSON.toJSONString(buyerBargainRecordList));
@@ -387,21 +387,21 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 					  return result;
 				  }
 				  //查看该商品是否已经被砍完
-				  LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法开始,入参{}",messageId,
-							JSON.toJSONString(buyerLaunchBargainInfo));
-				  BuyerLaunchBargainInfoDMO buyer = buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode(bargainCode);
-				  LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法结束,出参{}",messageId,
-							JSON.toJSONString(buyer));
-				  if(promotionRedisDB.exists(key)){//红包队列不存在说明已经砍完
-					  if(buyer != null){
-						  if(buyer.getIsBargainOver() == 1){//已经砍完
-							  result.setCode(Constants.PROMOTION_IS_BARGAIN_OVER);
-							  result.setErrorMessage("该商品已经砍完");
-							  result.setResult(openedId);
-							  return result;
-						  }
-					  }
-				  }else{
+//				  LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法开始,入参{}",messageId,
+//							JSON.toJSONString(buyerLaunchBargainInfo));
+//				  BuyerLaunchBargainInfoDMO buyer = buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode(bargainCode);
+//				  LOGGER.info("MessageId{}:调用buyerLaunchBargainInfoDAO.getBuyerBargainLaunchInfoByBargainCode（）方法结束,出参{}",messageId,
+//							JSON.toJSONString(buyer));
+				  if(!promotionRedisDB.exists(key)){//红包队列不存在说明已经砍完
+//					  if(buyer != null){
+////						  if(buyer.getIsBargainOver() == 1){//已经砍完
+//							  result.setCode(Constants.PROMOTION_IS_BARGAIN_OVER);
+//							  result.setErrorMessage("该商品已经砍完");
+//							  result.setResult(openedId);
+//							  return result;
+//						  }
+//					  }
+//				  }else{
 					  result.setCode(Constants.PROMOTION_IS_BARGAIN_OVER);
 					  result.setErrorMessage("该商品已经砍完");
 					  result.setResult(openedId);

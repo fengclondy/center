@@ -96,13 +96,15 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			rows = page.getRows();
 		}
 		try {
-			 if(StringUtils.isEmpty(buyerCode)) {
-	                throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
-	         }
-			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+			if (StringUtils.isEmpty(buyerCode)) {
+				throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
+			}
+			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService
+					.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
 			if (null != timelitedInfoList) {
 				for (TimelimitedInfoResDTO timelitedinfo : timelitedInfoList) {
-					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
+					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle
+							.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
 					if (null != timelited) {
 						timelimitedMallDTO = new PromotionTimelimitedShowDTO();
 						timelimitedMallDTO.setTimelimitedInfo(timelited);
@@ -243,6 +245,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 */
 	private ExecuteResult<Boolean> checkParamValid(PromotionExtendInfoDTO promotionExtendInfoDTO) {
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
+		restult.setResult(false);
 		if (dictionary
 				.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
@@ -283,14 +286,17 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限
 					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR);
+					restult.setResult(false);
 				} else {
 					// 校验秒杀活动状态
 					restult.setResult(checkParamValid(promotionExtendInfoDTO).getResult());
+					restult.setCode(checkParamValid(promotionExtendInfoDTO).getCode());
 				}
 			}
 
 		} else {// 平台粉丝都可购买该秒杀商品
 			restult.setResult(checkParamValid(promotionExtendInfoDTO).getResult());
+			restult.setCode(checkParamValid(promotionExtendInfoDTO).getCode());
 		}
 
 		return restult;

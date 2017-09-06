@@ -126,6 +126,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
         try {
             String promotionId = request.getPromotionId();
+            // 验证抽奖活动的有效状态
+            String promotionStatus =
+                    promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
+            if (StringUtils.isEmpty(promotionStatus) || !dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionStatus)) {
+            	result.setResponseCode(ResultCodeEnum.LOTTERY_NOT_START_UP.getCode());
+                result.setResponseMsg(ResultCodeEnum.LOTTERY_NOT_START_UP.getMsg()+"活动编号:"+promotionId);
+            	return result;
+            }
             // 抽奖活动信息
             String lotteryJson = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_INFO, promotionId);
             PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(lotteryJson, PromotionExtendInfoDTO.class);

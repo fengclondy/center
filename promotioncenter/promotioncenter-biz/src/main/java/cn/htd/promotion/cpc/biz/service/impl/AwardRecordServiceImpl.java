@@ -71,6 +71,7 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         param.put("rewardName", dto.getRewardName());
         param.put("winnerName", dto.getWinnerName());
         param.put("winningContact", dto.getWinningContact());
+        param.put("buyerTelephone", dto.getBuyerTelephone());
 
 
         DataGrid<PromotionAwardDTO> dataGrid = new DataGrid<PromotionAwardDTO>();

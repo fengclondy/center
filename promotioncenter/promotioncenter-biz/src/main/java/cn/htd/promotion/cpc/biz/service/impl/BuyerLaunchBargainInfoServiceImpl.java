@@ -295,6 +295,8 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		try {
 		  String key = RedisConst.REDIS_BARGAIN_PRICE_SPLIT + "_" + promotionId + "_" + levelCode + "_" + bargainCode;
+		  String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + promotionId + "_" + levelCode;
+
 		  //根据条件查询当前的砍价商品
 		  BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
 		  buyerBargainLaunch.setBuyerCode(buyerCode);
@@ -438,14 +440,15 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 				  if(!promotionRedisDB.exists(key)){
 					  buyerBargainLaunchReqDTO.setBargainOverTime(new Date());
 					  buyerBargainLaunchReqDTO.setIsBargainOver(1);
-				  }
-				  String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + promotionId + "_" + levelCode;
-				  String str = promotionRedisDB.headPop(stockKey);//砍的价格
-				  if(StringUtils.isEmpty(str)){
-					  result.setCode(Constants.PROMOTION_NO_STOCK);
-					  result.setErrorMessage("该商品已经售罄");
-					  result.setResult(openedId);
-					  return result;
+					  
+					  //抢库存
+					  String str = promotionRedisDB.headPop(stockKey);
+					  if(StringUtils.isEmpty(str)){
+						  result.setCode(Constants.PROMOTION_NO_STOCK);
+						  result.setErrorMessage("该商品已经售罄");
+						  result.setResult(openedId);
+						  return result;
+					  }
 				  }
 				  //更新发起砍价表
 				  buyerLaunchBargainInfoDAO.updateBuyerLaunchBargainInfo(buyerBargainLaunchReqDTO);

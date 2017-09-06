@@ -110,13 +110,14 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                         "新建秒杀促销活动层级失败！");
             }
 
+            // 添加商品图片,返回商品主图
+            String firstPictureUrl = addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+            
             // 添加秒杀商品
+            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
             timelimitedInfoReqDTO.setCreateTime(currentTime);
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.insert(timelimitedInfoReqDTO);
-
-            // 添加商品图片
-            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
 
             // 添加商品详情
             addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
@@ -168,10 +169,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                         "查询秒杀促销活动层级失败！");
             }
 
-            // 修改秒杀商品
-            timelimitedInfoReqDTO.setModifyTime(currentTime);
-            timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
-
             // 伪删除商品活动的所有图片
             TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO_delete = new TimelimitedSkuPictureReqDTO();
             timelimitedSkuPictureReqDTO_delete.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
@@ -180,8 +177,13 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             timelimitedSkuPictureReqDTO_delete.setModifyName(timelimitedInfoReqDTO.getModifyName());
             timelimitedSkuPictureReqDTO_delete.setModifyTime(currentTime);
             timelimitedSkuPictureDAO.pseudoDelete(timelimitedSkuPictureReqDTO_delete);
-            // 添加商品活动图片
-            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+            // 添加商品图片,返回商品主图
+            String firstPictureUrl = addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+            
+            // 修改秒杀商品
+            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
+            timelimitedInfoReqDTO.setModifyTime(currentTime);
+            timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
             // 伪删除商品详情的所有图片
             TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO_delete = new TimelimitedSkuDescribeReqDTO();
@@ -324,46 +326,46 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     @Override
     public String updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId){
     	// 0.成功,1.参数为空,2.活动编码为空,3.上下架为空,4.上下架状态不正确,5.秒杀活动不存在,6.秒杀活动已经上架,
-    	// 7.下架状态的秒杀商品库存小于1,8.秒杀开始时间小于或等于当前时间,9.秒杀结束时间小于或等于当前时间,10.秒杀开始时间大于或等于结束时间
+    	// 7.下架状态的秒杀商品库存小于1,8.秒杀开始时间小于或等于当前时间,9.秒杀结束时间小于或等于当前时间,10.秒杀开始时间大于或等于结束时间,11.活动已经处于下架状态
     	//-1 系统异常
-    	String status = "0";
+    	String status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_SUCCESS;//0.成功
     	
     	try {
     		
   		if (null == timelimitedInfoReqDTO) {
-  			return "1";
+  			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_1;//1.参数为空
 		}
 		
   		String promotionId = timelimitedInfoReqDTO.getPromotionId();
     	String showStatus = timelimitedInfoReqDTO.getShowStatus();
     	
 		if (null == promotionId || "".equals(promotionId.trim())) {
-			return "2";
+			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_2;//2.活动编码为空
 		}
 		
 		if (null == showStatus || "".equals(showStatus.trim())) {
-			return "3";
+			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_3;//3.上下架为空
 		}
 		
 		boolean isShowStatus= showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key()) || showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.INVALID.key());
 		if(!isShowStatus){
-			return "4";
+			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_4; //4.上下架状态不正确
 		}
     	
     	PromotionInfoDTO promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
     	if(null == promotionInfoDTO){
-    		return "5";
+    		return TimelimitedConstants.UPDOWN_SHELVES_STATUS_5; //5.秒杀活动不存在
     	}
     	
     	if(showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key())){//上架
     		if(promotionInfoDTO.getShowStatus().equals(showStatus)){//活动已经处于上架状态
-    			return "6";
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_6; // 6.秒杀活动已经上架
     		}
     		
     		 // 查询活动信息 （应该从redis里取，如果没有从数据库里取）
     		TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
     		if(null == timelimitedInfoResDTO.getTimelimitedSkuCount() || timelimitedInfoResDTO.getTimelimitedSkuCount() < 1){
-    			return "7";
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_7; // 7.下架状态的秒杀商品库存小于1
     		}
     		
     		//秒杀开始时间和结束时间均大于当前时间，且开始时间早于结束时间；
@@ -375,17 +377,17 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     		Calendar calender = Calendar.getInstance();
     		Date currentTime = calender.getTime();//当前时间
     		if(effectiveTime.getTime() <= currentTime.getTime()){//秒杀开始时间 <= 当前时间
-    			return "8";
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_8; //8.秒杀开始时间小于或等于当前时间
     		}
     		if(invalidTime.getTime() <= currentTime.getTime()){//秒杀结束时间 <= 当前时间
-    			return "9";
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_9; //9.秒杀结束时间小于或等于当前时间
     		}
     		if(effectiveTime.getTime() >= invalidTime.getTime()){//秒杀开始时间 >= 结束时间
-    			return "10";
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_10; //10.秒杀开始时间大于或等于结束时间
     		}
     	}else{//下架
     		if(promotionInfoDTO.getShowStatus().equals(showStatus)){//活动已经处于下架状态
-    			return "11";
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_11; //11.活动已经处于下架状态
     		}
     	}
     	
@@ -397,7 +399,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		promotionInfoDAO.upDownShelvesTimelimitedInfo(promotionValidDTO);
 		
          } catch (Exception e) {
-        	 status = "-1";
+        	 status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_ERROR;//-1 系统异常
              logger.error("messageId{}:执行方法【updateShowStatusByPromotionId】报错：{}", messageId, e.toString());
              throw new RuntimeException(e);
          }
@@ -410,11 +412,11 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
      *
      * @param timelimitedSkuDescribeList
      */
-    private void addTimelimitedSkuPictureList(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
+    private String addTimelimitedSkuPictureList(TimelimitedInfoReqDTO timelimitedInfoReqDTO, Date currentTime) {
 
+    	String firstPictureUrl = null;
         // 添加商品活动图片
-        List<TimelimitedSkuPictureReqDTO> timelimitedSkuDescribeList =
-                timelimitedInfoReqDTO.getTimelimitedSkuPictureReqDTOList();
+        List<TimelimitedSkuPictureReqDTO> timelimitedSkuDescribeList = timelimitedInfoReqDTO.getTimelimitedSkuPictureReqDTOList();
         if (null != timelimitedSkuDescribeList && timelimitedSkuDescribeList.size() > 0) {
             TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO = null;
             for (int i = 0; i < timelimitedSkuDescribeList.size(); i++) {
@@ -423,6 +425,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuPictureReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
                 if (i == 0) {// 第一张图设置为主图
                     timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
+                    firstPictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
                 } else {
                     timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
                 }
@@ -437,6 +440,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuPictureDAO.insert(timelimitedSkuPictureReqDTO);
             }
         }
+        
+        return firstPictureUrl;//返回商品主图
     }
 
     /**

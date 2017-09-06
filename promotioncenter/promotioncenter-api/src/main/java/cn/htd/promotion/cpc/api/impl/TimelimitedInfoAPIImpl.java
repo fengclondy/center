@@ -1,9 +1,11 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
@@ -114,7 +116,27 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         }
         return result;
 	}
+
+	@Override
+	public ExecuteResult<String> updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
+		
+        ExecuteResult<String> result = new ExecuteResult<String>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	String status = timelimitedInfoService.updateShowStatusByPromotionId(timelimitedInfoReqDTO, messageId);
+        	result.setResult(status);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法TimelimitedInfoAPIImpl.updateShowStatusByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
     
+	
     
 
 }

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
@@ -370,6 +371,37 @@ public class TimelimitedTestUnit {
 
     }
     
+    
+	@Test
+	@Rollback(false) 
+    public void updateShowStatusByPromotionIdTest(){
+    	
+        String messageId = "342453251349";
+        String promotionId = "23171718090174";
+		Long userId = 10001L;
+		String userName = "admin";
+        
+        try {
+        	
+        	TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
+        	timelimitedInfoReqDTO.setPromotionId(promotionId);
+        	timelimitedInfoReqDTO.setShowStatus(TimelimitedConstants.PromotionShowStatusEnum.VALID.key());//上架
+//        	timelimitedInfoReqDTO.setShowStatus(TimelimitedConstants.PromotionShowStatusEnum.INVALID.key());//下架
+        	timelimitedInfoReqDTO.setModifyId(userId);
+        	timelimitedInfoReqDTO.setModifyName(userName);
+        	
+        	// 0.成功,1.参数为空,2.活动编码为空,3.上下架为空,4.上下架状态不正确,5.秒杀活动不存在,6.秒杀活动已经上架,
+        	// 7.下架状态的秒杀商品库存小于1,8.秒杀开始时间小于或等于当前时间,9.秒杀结束时间小于或等于当前时间,10.秒杀开始时间大于或等于结束时间,11.活动已经处于下架状态
+        	//-1 系统异常
+        	String status = timelimitedInfoService.updateShowStatusByPromotionId(timelimitedInfoReqDTO, messageId);
+        	System.out.println("===>status:" + status);
+        	
+        	
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     
 
 }

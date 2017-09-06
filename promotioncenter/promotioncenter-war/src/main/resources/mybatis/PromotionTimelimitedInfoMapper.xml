@@ -38,7 +38,10 @@
     select 
      p.promotion_id as promotionId
      from promotion_info as p left join promotion_seller_detail as s
-     on p.promotion_id= s.promotion_id and s.delete_flag !=1 and s.seller_code=#{buyerCode}
+     on p.promotion_id= s.promotion_id and s.delete_flag !=1 
+     <if test="buyerCode != null and buyerCode !='' ">
+        and s.seller_code=#{buyerCode}
+     </if>
      where p.show_status=3 and p.promotion_type=23
   </select>
 

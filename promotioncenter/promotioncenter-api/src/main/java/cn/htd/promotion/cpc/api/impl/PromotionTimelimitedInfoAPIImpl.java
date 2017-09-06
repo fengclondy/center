@@ -96,6 +96,9 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			rows = page.getRows();
 		}
 		try {
+			 if (StringUtils.isEmpty(buyerCode)) {
+	                throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
+	            }
 			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService
 					.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
 			if (null != timelitedInfoList) {

@@ -152,9 +152,21 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 					if (!StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
 						if (promotionAwardDTO.getRewardType().equals("3")) {
 							if(!StringUtils.isEmpty(promotionAwardDTO.getChargeTelephone())){
-								if(excuteRecharge(promotionAwardDTO)){
-								promotionAwardDTO.setDealFlag(2);
-								buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+								String rt = excuteRecharge(promotionAwardDTO);
+								if(StringUtils.isEmpty(rt)){
+									//出错
+								}else if(rt.equals("1")){
+									//充好了
+									promotionAwardDTO.setDealFlag(0);
+									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+								}else if(rt.equals("0")){
+									//正在充
+									promotionAwardDTO.setDealFlag(2);
+									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+								}else{
+									//其他
+									promotionAwardDTO.setDealFlag(2);
+									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
 								}
 							}
 						} else if (promotionAwardDTO.getRewardType().equals("4")) {
@@ -197,7 +209,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 	public static void main(String[] args) {
 		BuyerWinningRecordDMO s = new BuyerWinningRecordDMO();
 		s.setId(1l);
-		s.setPromotionId("11");
+		s.setPromotionId("1");
 		s.setAwardValue("1");
 		s.setChargeTelephone("1");
 		try {
@@ -209,7 +221,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		}
 	}
 
-	private static boolean excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
+	private static String excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		String responseMsg = "";
@@ -223,8 +235,8 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		HttpPost httppost = new HttpPost(url);
 
 		// 3.把参数值放入到PostMethod对象中
-		String userid = "";// "A1307228";
-		String userpws = "";// encoderByMd5("huilin123");
+		String userid = "A1307228";
+		String userpws = encoderByMd5("huilin123");
 		String cardid = "140101";
 		String ret_url = SysProperties.getProperty("HTDHL_ADDRESS") + "/JuheRecharge/updateLotteryState.htm";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -237,7 +249,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 
 		String game_userid = promotionAwardDTO.getChargeTelephone();
 
-		String orderid = promotionAwardDTO.getPromotionId() + "_" + promotionAwardDTO.getId();
+		String orderid = promotionAwardDTO.getPromotionId() + ":" + promotionAwardDTO.getId();
 		// 包体=userid+userpws+cardid+cardnum+sporder_id+sporder_time+ game_userid
 		// String md5_str = StringHelper.encoderByMd5(userid + userpws + cardid
 		// + cardnum + orderid + sporder_time+
@@ -283,18 +295,19 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 			Map<String, Object> responseMsgMap = jdomParseXml(responseMsg);
 			// 6.处理返回的内容
 			logger.info("手机话费充值推送返回结果-->" + responseMsg);
-			if (!responseMsgMap.get("retcode").equals("")) {
-				return true;
+			//System.out.println(responseMsg);
+			if (responseMsgMap.get("retcode")!=null) {
+				return (String)responseMsgMap.get("retcode");
 			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-			return false;
+			return "";
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
-			return false;
+			return "";
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
+			return "";
 		} finally {
 			// 关闭连接,释放资源
 			try {
@@ -303,7 +316,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 				e.printStackTrace();
 			}
 		}
-		return false;
+		return "";
 	}
 
 	public static String encoderByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {

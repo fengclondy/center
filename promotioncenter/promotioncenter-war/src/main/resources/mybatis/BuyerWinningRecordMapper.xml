@@ -129,6 +129,7 @@
     from buyer_winning_record
     where 1 = 1
     and buyer_code = #{buyerCode}
+    and reward_type != 5
     order by create_time desc
     limit #{startNo}, #{endNo}
   </select>
@@ -186,6 +187,9 @@
       </if>
       <if test="rewardType != null and rewardType != ''">
         reward_type,
+      </if>
+      <if test="rewardName != null and rewardName != ''">
+        reward_name,
       </if>
       <if test="awardValue != null and awardValue != ''">
         award_value,
@@ -250,6 +254,9 @@
       <if test="rewardType != null and rewardType != ''">
         #{rewardType,jdbcType=VARCHAR},
       </if>
+      <if test="rewardName != null and rewardName != ''">
+        #{rewardName,jdbcType=VARCHAR},
+      </if>
       <if test="awardValue != null and awardValue != ''">
         #{awardValue,jdbcType=VARCHAR},
       </if>
@@ -288,12 +295,13 @@
     select
     <include refid="Base_Column_List"/>
     from buyer_winning_record
+          where deal_flag = 1
     <if test="entity != null">
      <if test="entity.promotionType != null and entity.promotionType != ''">
       and promotion_type = #{entity.promotionType}
       </if>
       and (reward_type = '3' or reward_type = '4')
-      and deal_flag = 1
+
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}
@@ -308,7 +316,7 @@
   <update id="updateDealFlag" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO">
     UPDATE buyer_winning_record
     <set>
-     deal_flag = 0,
+     deal_flag = #{dealFlag},
       modify_time = now()
     </set>
     WHERE

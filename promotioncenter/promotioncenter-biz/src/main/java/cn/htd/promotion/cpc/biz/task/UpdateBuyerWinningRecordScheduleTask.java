@@ -14,6 +14,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,13 +89,24 @@ public class UpdateBuyerWinningRecordScheduleTask implements IScheduleTaskDealMu
         String useLogStr = "";
         try {
             while (promotionRedisDB.getLlen(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST) > 0) {
-                useLogStr = promotionRedisDB.headPop(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST);
-                dealTargetInfo = JSON.parseObject(useLogStr, BuyerWinningRecordDMO.class);
-                if (dealTargetInfo == null) {
-                    continue;
+                try {
+                    useLogStr = promotionRedisDB.headPop(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST);
+                    dealTargetInfo = JSON.parseObject(useLogStr, BuyerWinningRecordDMO.class);
+                    if (dealTargetInfo == null) {
+                        continue;
+                    }
+                    dealTargetInfo.setCreateId(StringUtils.isNumeric(dealTargetInfo.getBuyerCode()) ? Long
+                            .valueOf(dealTargetInfo.getBuyerCode()) : 0L);
+                    dealTargetInfo.setCreateName(
+                            StringUtils.isEmpty(dealTargetInfo.getBuyerName()) ? "sys" : dealTargetInfo.getBuyerName());
+                    buyerWinningRecordDAO.addBuyerWinningRecord(dealTargetInfo);
+                    addCount++;
+                } catch (Exception e) {
+                    logger.error("\n 方法:[{}],数据,[{}],插入异常:[{}]", "UpdateBuyerWinningRecordScheduleTask-execute", useLogStr,
+                            ExceptionUtils.getFullStackTrace(e));
+                    promotionRedisDB.tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, useLogStr);
+                    throw e;
                 }
-                buyerWinningRecordDAO.addBuyerWinningRecord(dealTargetInfo);
-                addCount++;
             }
         } finally {
             logger.info("\n 方法:[{}],插入件数:[{}]", "UpdateBuyerWinningRecordScheduleTask-execute", addCount);

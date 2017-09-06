@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+
 /**
  * 秒杀活动信息DTO
  * @author zf.zhang
@@ -52,6 +54,8 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	private Integer timelimitedThreshold;
 	// 单位：分钟
 	private Integer timelimitedValidInterval;
+	// 商品描述
+	private String describeContent;
 
 	// 创建人ID
 	private Long createId;
@@ -66,12 +70,25 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	// 更新时间（促销活动更新时必须传入做乐观排他用）
 	private Date modifyTime;
 	
+    /**
+     * 促销活动开始时间
+     */
+    private Date effectiveTime;
+    /**
+     * 促销活动结束时间
+     */
+    private Date invalidTime;
+    
+    //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+    private String showStatus;
+
+	
 	//活动信息
-	private PromotionInfoEditReqDTO promotionInfoEditReqDTO;
+	private PromotionExtendInfoDTO promotionExtendInfoDTO;
 	//商品图片
 	private List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList;
 	//商品详情
-	private TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO;
+	private List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList;
 	
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -211,13 +228,6 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
-	public PromotionInfoEditReqDTO getPromotionInfoEditReqDTO() {
-		return promotionInfoEditReqDTO;
-	}
-	public void setPromotionInfoEditReqDTO(
-			PromotionInfoEditReqDTO promotionInfoEditReqDTO) {
-		this.promotionInfoEditReqDTO = promotionInfoEditReqDTO;
-	}
 	public List<TimelimitedSkuPictureReqDTO> getTimelimitedSkuPictureReqDTOList() {
 		return timelimitedSkuPictureReqDTOList;
 	}
@@ -225,13 +235,47 @@ public class TimelimitedInfoReqDTO implements Serializable {
 			List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList) {
 		this.timelimitedSkuPictureReqDTOList = timelimitedSkuPictureReqDTOList;
 	}
-	public TimelimitedSkuDescribeReqDTO getTimelimitedSkuDescribeReqDTO() {
-		return timelimitedSkuDescribeReqDTO;
+	public PromotionExtendInfoDTO getPromotionExtendInfoDTO() {
+		return promotionExtendInfoDTO;
 	}
-	public void setTimelimitedSkuDescribeReqDTO(
-			TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO) {
-		this.timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTO;
+	public void setPromotionExtendInfoDTO(
+			PromotionExtendInfoDTO promotionExtendInfoDTO) {
+		this.promotionExtendInfoDTO = promotionExtendInfoDTO;
 	}
+	public String getShowStatus() {
+		return showStatus;
+	}
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
+	}
+	public String getDescribeContent() {
+		return describeContent;
+	}
+	public void setDescribeContent(String describeContent) {
+		this.describeContent = describeContent;
+	}
+	public List<TimelimitedSkuDescribeReqDTO> getTimelimitedSkuDescribeReqDTOList() {
+		return timelimitedSkuDescribeReqDTOList;
+	}
+	public void setTimelimitedSkuDescribeReqDTOList(
+			List<TimelimitedSkuDescribeReqDTO> timelimitedSkuDescribeReqDTOList) {
+		this.timelimitedSkuDescribeReqDTOList = timelimitedSkuDescribeReqDTOList;
+	}
+	public Date getEffectiveTime() {
+		return effectiveTime;
+	}
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+	public Date getInvalidTime() {
+		return invalidTime;
+	}
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+
+	
+	
 	
 	
 	

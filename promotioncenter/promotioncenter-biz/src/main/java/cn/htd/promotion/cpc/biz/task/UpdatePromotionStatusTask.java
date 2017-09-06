@@ -99,12 +99,6 @@ public class UpdatePromotionStatusTask implements IScheduleTaskDealMulti<Promoti
 						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));//未开始
 				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_START));//进行中
-				// 不判断启用状态
-//				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));//启用
-//				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));//审核通过
-//				condition.setVerifyStatusList(verifyStatusList);
 				condition.setStatusList(statusList);
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);

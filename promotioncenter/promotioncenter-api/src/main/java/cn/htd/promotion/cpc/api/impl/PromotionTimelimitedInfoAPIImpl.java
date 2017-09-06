@@ -87,6 +87,8 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		// 所有有效秒杀活动集合,用于排序
 		List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
 		PromotionTimelimitedShowDTO timelimitedMallDTO = null;
+		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_";
+		String remaincount="";
 		int count = 0;
 		long total = 0;
 		int offset = 0;
@@ -96,17 +98,23 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			rows = page.getRows();
 		}
 		try {
-			if (StringUtils.isEmpty(buyerCode)) {
-				throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
-			}
-			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService
-					.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+			 if(StringUtils.isEmpty(buyerCode)) {
+	                throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
+	         }
+			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
 			if (null != timelitedInfoList) {
 				for (TimelimitedInfoResDTO timelitedinfo : timelitedInfoList) {
-					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle
-							.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
+					timelimitedMallDTO = new PromotionTimelimitedShowDTO();
+					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
 					if (null != timelited) {
-						timelimitedMallDTO = new PromotionTimelimitedShowDTO();
+						timelimitedResultKey = timelimitedResultKey + timelitedinfo.getPromotionId();
+					    remaincount = promotionRedisDB.getHash(timelimitedResultKey,RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
+					    if (StringUtils.isNotBlank(remaincount) ) {
+					    	timelimitedMallDTO.setRemainCount(Integer.valueOf(remaincount));
+						}
+					    if (null == remaincount || Integer.valueOf(remaincount) <= 0) { //剩余商品为0
+					    	timelimitedMallDTO.setRemainCount(0);
+					    }
 						timelimitedMallDTO.setTimelimitedInfo(timelited);
 						timelimitedAllDTOList.add(timelimitedMallDTO);
 					}

@@ -41,4 +41,12 @@ public interface TimelimitedInfoAPI {
 	public ExecuteResult<DataGrid<TimelimitedInfoResDTO>> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
 			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 	
+	/**
+	 * 根据活动编码进行上下架操作
+	 * @param timelimitedInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<String> updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
+	
 }

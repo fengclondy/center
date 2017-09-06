@@ -410,7 +410,7 @@ public class VenusItemExportServiceTest extends CommonTest {
 		pager.setRows(10);
 		pager.setPage(1);
 		ExecuteResult<String> s=venusItemExportService.applyItemSpu2HtdProduct(spuIdList, 
-				"1003", "0", "1", "zhangxiaolong");
+				"1002", "0", "1", "zhangxiaolong");
 				
 		
 		Assert.assertTrue(s.isSuccess());

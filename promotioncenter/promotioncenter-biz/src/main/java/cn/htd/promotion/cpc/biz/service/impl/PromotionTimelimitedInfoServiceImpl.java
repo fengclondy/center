@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import cn.htd.promotion.cpc.biz.dao.PromotionTimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.service.PromotionTimelimitedInfoService;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 @Service("promotionTimelimitedInfoService")
@@ -27,6 +28,14 @@ public class PromotionTimelimitedInfoServiceImpl implements PromotionTimelimited
 		List<TimelimitedInfoResDTO> timelimitedInfoDTOList = null;
 		timelimitedInfoDTOList = promotionTimelimitedInfoDAO.selectTimelimitedInfo(buyerCode);
 	
+		return timelimitedInfoDTOList;
+	}
+
+	@Override
+	public List<PromotionSellerDetailDTO> getPromotionSellerDetailDTOByBuyerCode(String promotionId,String buyerCode)
+			throws PromotionCenterBusinessException {
+		List<PromotionSellerDetailDTO> timelimitedInfoDTOList = null;
+		timelimitedInfoDTOList = promotionTimelimitedInfoDAO.selectPromotionSellerDetailInfo(promotionId,buyerCode);
 		return timelimitedInfoDTOList;
 	}
 

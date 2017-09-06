@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.htd.promotion.cpc.biz.dao.PromotionTimelimitedInfoDAO" >
-  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+    <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="belong_superior_name" property="belongSuperiorName" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+    <resultMap id="ResultMap" type="cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO" >
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="level_code" property="levelCode" jdbcType="VARCHAR" />
     <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
@@ -25,24 +41,31 @@
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    promotion_id, level_code, seller_code, item_id, sku_code, sku_name, 
-    first_category_code, second_category_code, third_category_code, sku_category_name, 
-    sku_pic_url, sku_cost_price, sku_timelimited_price, timelimited_sku_count, timelimited_threshold, 
-    timelimited_valid_interval, create_id, create_name, create_time, modify_id, modify_name, 
-    modify_time
-    </sql>
+  
+   <sql id="Base_Column_List" >
+    id, promotion_id, rule_id, seller_code, seller_name, belong_superior_name, delete_flag, 
+    create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
    
    <!-- 根据buyercode取秒杀信息，如果结果的buyercode 为空，说明秒杀活动对所有粉丝有效，否则只对归属于改会员的粉丝有效-->
-   <select id="selectTimelimitedInfo" resultMap="BaseResultMap"> 
+   <select id="selectTimelimitedInfo" resultMap="ResultMap"> 
     select 
      p.promotion_id as promotionId
-     from promotion_info as p left join promotion_seller_detail as s
-     on p.promotion_id= s.promotion_id and s.delete_flag !=1 
+     from promotion_info as p , promotion_seller_detail as s
+     where p.promotion_id= s.promotion_id and s.delete_flag !=1 
      <if test="buyerCode != null and buyerCode !='' ">
         and s.seller_code=#{buyerCode}
      </if>
-     where p.show_status=3 and p.promotion_type=23
+     and p.show_status=3 and p.promotion_type=23
+  </select>
+
+
+  <select id="selectPromotionSellerDetailInfo" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_seller_detail
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+          and seller_code = #{buyerCode,jdbcType=VARCHAR}
   </select>
 
 </mapper>

@@ -6,32 +6,34 @@ public class RedisConst {
 	// Redis粉丝中奖信息List异步落表用
 	public static final String REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST = "B2C_MIDDLE_BUYER_WINNING_RECORD_NEED_SAVE_LIST";
 
-	// Redis砍价促销活动有效信息
-	public static final String REDIS_BARGAIN_VALID = "B2C_MIDDLE_BARGAIN_VALID";
-	// Redis砍价活动数据
-	public static final String REDIS_BARGAIN = "B2C_MIDDLE_BARGAIN";
-	// Redis砍价活动结果数据
-	public static final String REDIS_BARGAIN_RESULT = "B2C_MIDDLE_BARGAIN_RESULT";
-	// Redis砍价活动数据
-	public static final String REDIS_BARGAIN_INDEX = "B2C_MIDDLE_BARGAIN_INDEX";
-	// Redis砍价商品总数量
-	public static final String REDIS_BARGAIN_TOTAL_COUNT = "TOTAL_COUNT";
-	// Redis展示参与砍价人数
-	public static final String REDIS_BARGAIN_SHOW_ACTOR_COUNT = "SHOW_ACTOR_COUNT";
-	// Redis真实砍价商品数量
-	public static final String REDIS_BARGAIN_REAL_REMAIN_COUNT = "REAL_REMAIN_COUNT";
-	// Redis真实参与砍价人数
-	public static final String REDIS_BARGAIN_REAL_ACTOR_COUNT = "REAL_ACTOR_COUNT";
-	// Redis砍价活动开始时间
-	public static final String REDIS_BARGAIN_START_TIME = "BARGAIN_START_TIME";
-	// Redis砍价活动结束时间
-	public static final String REDIS_BARGAIN_END_TIME = "BARGAIN_END_TIME";
-	// Redis用户参加砍价活动信息
-	public static final String REDIS_BUYER_BARGAIN_USELOG = "BUYER_BARGAIN_USELOG";
-	// Redis砍价活动金额拆分
-	public static final String REDIS_BARGAIN_PRICE_SPLIT = "BARGAIN_PRICE_SPLIT";
-
-	public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
+    // Redis砍价促销活动有效信息
+    public static final String REDIS_BARGAIN_VALID = "B2C_MIDDLE_BARGAIN_VALID";
+    // Redis砍价活动数据
+    public static final String REDIS_BARGAIN = "B2C_MIDDLE_BARGAIN";
+    // Redis砍价活动结果数据
+    public static final String REDIS_BARGAIN_RESULT = "B2C_MIDDLE_BARGAIN_RESULT";
+    // Redis砍价活动数据
+    public static final String REDIS_BARGAIN_INDEX = "B2C_MIDDLE_BARGAIN_INDEX";
+    // Redis砍价商品总数量
+    public static final String REDIS_BARGAIN_TOTAL_COUNT = "TOTAL_COUNT";
+    // Redis展示参与砍价人数
+    public static final String REDIS_BARGAIN_SHOW_ACTOR_COUNT = "SHOW_ACTOR_COUNT";
+    // Redis真实砍价商品数量
+    public static final String REDIS_BARGAIN_REAL_REMAIN_COUNT = "REAL_REMAIN_COUNT";
+    // Redis真实参与砍价人数
+    public static final String REDIS_BARGAIN_REAL_ACTOR_COUNT = "REAL_ACTOR_COUNT";
+    // Redis砍价活动开始时间
+    public static final String REDIS_BARGAIN_START_TIME = "BARGAIN_START_TIME";
+    // Redis砍价活动结束时间
+    public static final String REDIS_BARGAIN_END_TIME = "BARGAIN_END_TIME";
+    // Redis用户参加砍价活动信息
+    public static final String REDIS_BUYER_BARGAIN_USELOG = "BUYER_BARGAIN_USELOG";
+    // Redis砍价活动金额拆分
+    public static final String REDIS_BARGAIN_PRICE_SPLIT = "BARGAIN_PRICE_SPLIT";
+    //Redis砍价商品库存
+    public static final String REDIS_BARGAIN_ITEM_STOCK = "BARGAIN_ITEM_STOCK";
+    
+    public static final String BUYER_BARGAIN_RECORD = "BUYER_BARGAIN_RECORD";
 
 	// Redis抽奖活动有效信息
 	public static final String REDIS_LOTTERY_VALID = "B2C_MIDDLE_LOTTERY_VALID";

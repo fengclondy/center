@@ -1,46 +1,50 @@
 package cn.htd.promotion.cpc.biz.task;
 
-import cn.htd.common.Pager;
-import cn.htd.common.constant.DictionaryConst;
-import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
-import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
-import cn.htd.promotion.cpc.biz.handle.PromotionBargainRedisHandle;
-import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
-import com.taobao.pamirs.schedule.TaskItemDefine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
+import com.taobao.pamirs.schedule.TaskItemDefine;
+
+import cn.htd.common.Pager;
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
+import cn.htd.promotion.cpc.common.constants.Constants;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+
 /**
  * 根据系统时间、促销活动开始时间、结束时间和促销活动状态修改促销活动状态
  */
-public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
+public class UpdatePromotionStatusTask implements IScheduleTaskDealMulti<PromotionInfoDTO> {
 
-	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionBargainStstusScheduleTask.class);
+	protected static transient Logger logger = LoggerFactory.getLogger(UpdatePromotionStatusTask.class);
 
 	@Resource
 	private DictionaryUtils dictionary;
-
-	@Resource
-	private PromotionBargainRedisHandle promotionBargainRedisHandle;
 
 	@Resource
 	private PromotionInfoDAO promotionInfoDAO;
 
 	@Resource
 	private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+	
+	@Resource
+	private PromotionRedisDB promotionRedisDB;
 
 	@Override
 	public Comparator<PromotionInfoDTO> getComparator() {
@@ -79,7 +83,7 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 		Pager<PromotionInfoDTO> pager = null;
 		List<String> taskIdList = new ArrayList<String>();
 		List<String> statusList = new ArrayList<String>();
-		List<String> verifyStatusList = new ArrayList<String>();
+//		List<String> verifyStatusList = new ArrayList<String>();
 		List<PromotionInfoDTO> promotionInfoDTOList = null;
 		if (eachFetchDataNum > 0) {
 			pager = new Pager<PromotionInfoDTO>();
@@ -95,11 +99,12 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));//未开始
 				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_START));//进行中
-				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));//启用
-				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));//审核通过
-				condition.setVerifyStatusList(verifyStatusList);
+				// 不判断启用状态
+//				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));//启用
+//				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));//审核通过
+//				condition.setVerifyStatusList(verifyStatusList);
 				condition.setStatusList(statusList);
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
@@ -147,13 +152,12 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 					status = promotionInfo.getStatus();
 					if (nowDt.before(promotionInfo.getEffectiveTime())) {
 						timeStatus = noStartStatus;
-					} else if (!nowDt.before(promotionInfo.getEffectiveTime())
-							&& !nowDt.after(promotionInfo.getInvalidTime())) {
+					} else if (nowDt.before(promotionInfo.getInvalidTime())) {
 						timeStatus = startStatus;
 					} else {
 						timeStatus = endStatus;
 					}
-					if (timeStatus.equals(status)) {
+					if (timeStatus.equals(status) || StringUtils.isEmpty(timeStatus)) {
 						continue;
 					}
 					promotionInfo.setStatus(timeStatus);
@@ -195,6 +199,15 @@ public class UpdatePromotionBargainStstusScheduleTask implements IScheduleTaskDe
 
 		promotionInfoDAO.updatePromotionStatusById(promotionInfo);
 		promotionStatusHistoryDAO.add(historyDTO);
-	}
 
+		// 砍价促销
+		if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+				DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN).equals(promotionInfo.getPromotionType())) {
+			if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+					DictionaryConst.OPT_PROMOTION_STATUS_END).equals(promotionInfo.getStatus())) {
+				// 已结束的时候，删除redis中砍价买家记录
+				promotionRedisDB.del(Constants.IS_BUYER_BARGAIN + promotionInfo.getPromotionId());
+			}
+		}
+	}
 }

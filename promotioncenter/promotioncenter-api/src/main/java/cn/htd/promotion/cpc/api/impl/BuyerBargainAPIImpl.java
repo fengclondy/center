@@ -196,8 +196,7 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI {
 			String bargainCode, String helperPicture, String helperName, String openedId, String messageId) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		if(!StringUtils.isEmpty(buyerCode) && !StringUtils.isEmpty(promotionId) && !StringUtils.isEmpty(messageId)
-				&& !StringUtils.isEmpty(levelCode) && !StringUtils.isEmpty(bargainCode) && !StringUtils.isEmpty(helperPicture)
-				&& !StringUtils.isEmpty(helperName) && !StringUtils.isEmpty(openedId)){
+				&& !StringUtils.isEmpty(levelCode) && !StringUtils.isEmpty(bargainCode) && !StringUtils.isEmpty(openedId)){
 			result = buyerLaunchBargainInfoService.
 					  optationbargain(buyerCode, promotionId, levelCode, bargainCode, helperPicture, helperName, openedId,messageId);
 		}else{

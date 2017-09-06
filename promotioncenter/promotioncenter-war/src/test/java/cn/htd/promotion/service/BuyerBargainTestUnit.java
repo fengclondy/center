@@ -65,11 +65,11 @@ public class BuyerBargainTestUnit {
     public void testGetPromotionBargainInfoDetail() {
     	try {
     		BuyerBargainLaunchReqDTO buyerBargainLaunch = new BuyerBargainLaunchReqDTO();
-    		buyerBargainLaunch.setBuyerCode("249334061");
-			buyerBargainLaunch.setPromotionId("22172342371125");
-			buyerBargainLaunch.setLevelCode("2217234237112569");
+//   		buyerBargainLaunch.setBuyerCode("24933952");
+			buyerBargainLaunch.setPromotionId("22170038221365");
+			buyerBargainLaunch.setLevelCode("2217003822136517");
 			buyerBargainLaunch.setMessageId("123456");
-			buyerBargainLaunch.setBargainCode("3171928120048");
+			buyerBargainLaunch.setBargainCode("3170131130062");
 			PromotionBargainInfoResDTO promotionBargainInfo = promotionBargainInfoService.getPromotionBargainInfoDetail(buyerBargainLaunch);
 			System.out.println(JSON.toJSONString(promotionBargainInfo));
     	} catch (Exception e) {
@@ -231,10 +231,10 @@ public class BuyerBargainTestUnit {
 	  @Rollback(false) 
 	  public void Testoptationbargain(){
 	    ExecuteResult<String> result = new ExecuteResult<String>();
-	    String buyerCode = "24933406000";
-	    String promotionId = "22172343460075";
-	    String levelCode = "2217234346007530";
-	    String bargainCode = "3172355370001";
+	    String buyerCode = "24933414";
+	    String promotionId = "22171029530119";
+	    String levelCode = "2217102953011912";
+	    String bargainCode = "3171133340037";
 	    String helperPicture = "5365.png";
 	    String helperName = "单元测试帮忙";
 	    String openedId = "123123123";

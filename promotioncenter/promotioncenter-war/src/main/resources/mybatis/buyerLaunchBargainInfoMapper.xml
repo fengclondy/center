@@ -34,6 +34,7 @@
 		left join promotion_extend_info pei on (pei.promotion_id = blbi.promotion_id)
 		left join promotion_info pi on pi.promotion_id = blbi.promotion_id
     	where buyer_code = #{buyerCode} and pi.show_status = 3
+    	order by blbi.create_time desc
 	</select>
 	
 	<select id="getBuyerBargainLaunchInfoByBargainCode" resultMap="BaseResultMap"  parameterType="java.lang.String">
@@ -131,7 +132,7 @@
 				modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 			</if>
 		</set>
-		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR}
+		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR} and bargain_code = #{bargainCode,jdbcType=VARCHAR}
 	</update>
 	
 	<select id="queryLaunchBargainInfoList" resultMap="BaseResultMap">
@@ -147,7 +148,7 @@
         <if test="bargainDTO.goodsName != null and bargainDTO.goodsName != ''">
         	AND blbi.goods_name like concat('%', #{bargainDTO.goodsName} ,'%')
         </if>
-        <if test="bargainDTO.isBargainOver != null and bargainDTO.isBargainOver != ''">
+        <if test="bargainDTO.isBargainOver != null">
         	AND blbi.is_bargain_over = #{bargainDTO.isBargainOver}
         </if>
         <if test="bargainDTO.promotionId != null and bargainDTO.promotionId != ''">
@@ -181,6 +182,11 @@
         <if test="bargainDTO.levelCode != null and bargainDTO.levelCode != ''">
         	AND blbi.level_code = #{bargainDTO.levelCode}
         </if>
+	</select>
+	
+	<select id="queryBuyerLaunchBargainInfoCount" resultType="java.lang.Integer">
+		select count(distinct level_code) from buyer_launch_bargain_info 
+		where promotion_id = #{promotionId}
 	</select>
 	
 </mapper>

@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -406,5 +407,11 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(rt);
+	}
+
+	@Override
+	public void updateLotteryResultState(Map<String, Object> map) {
+		luckDrawService.updateLotteryResultState(map);
+		
 	}
 }

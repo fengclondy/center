@@ -8,12 +8,43 @@ import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 public interface TimelimitedInfoService {
 
+	/**
+	 * 添加秒杀活动
+	 * @param timelimitedInfoReqDTO
+	 * @param messageId
+	 */
 	public void addTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 
+	/**
+	 * 修改秒杀活动
+	 * @param timelimitedInfoReqDTO
+	 * @param messageId
+	 */
 	public void updateTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 
+	/**
+	 * 根据promotionId获取完整的秒杀活动信息
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
+	
+	/**
+	 * 根据promotionId获取简单的秒杀活动信息
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
 	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
 
+	/**
+	 * 分页查询秒杀活动信息
+	 * @param page
+	 * @param timelimitedInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
 	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
 			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 	

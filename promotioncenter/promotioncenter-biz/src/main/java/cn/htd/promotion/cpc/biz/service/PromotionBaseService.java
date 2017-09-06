@@ -8,7 +8,6 @@ import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 
 
@@ -16,6 +15,7 @@ public interface PromotionBaseService {
 
     /**
      * 读取字典信息
+     *
      * @param dictMap
      * @param dictKey
      */
@@ -95,9 +95,11 @@ public interface PromotionBaseService {
      * @param promotionId
      * @param levelCode
      * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
      */
     public PromotionAccumulatyDTO querySingleAccumulatyPromotionInfo(String promotionId, String... levelCode)
-            throws Exception;
+            throws PromotionCenterBusinessException, Exception;
 
     /**
      * 根据促销活动的有效期间设定促销活动状态

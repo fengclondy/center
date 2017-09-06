@@ -70,10 +70,14 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	// 商品描述
 	private String describeContent;
 	
-	//活动开始时间
-    private Date invalidTimeStr;
-    //活动结束时间
-    private Date effectiveTimeStr;
+    /**
+     * 促销活动开始时间
+     */
+    private Date effectiveTime;
+    /**
+     * 促销活动结束时间
+     */
+    private Date invalidTime;
     //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
     private String showStatus;
     
@@ -249,19 +253,17 @@ public class TimelimitedInfoResDTO implements Serializable  {
 			List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeList) {
 		this.timelimitedSkuDescribeList = timelimitedSkuDescribeList;
 	}
-	
-	
-	public Date getInvalidTimeStr() {
-		return invalidTimeStr;
+	public Date getEffectiveTime() {
+		return effectiveTime;
 	}
-	public void setInvalidTimeStr(Date invalidTimeStr) {
-		this.invalidTimeStr = invalidTimeStr;
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
 	}
-	public Date getEffectiveTimeStr() {
-		return effectiveTimeStr;
+	public Date getInvalidTime() {
+		return invalidTime;
 	}
-	public void setEffectiveTimeStr(Date effectiveTimeStr) {
-		this.effectiveTimeStr = effectiveTimeStr;
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
 	}
 	public String getShowStatus() {
 		return showStatus;
@@ -285,6 +287,9 @@ public class TimelimitedInfoResDTO implements Serializable  {
 		this.promotionExtendInfoDTO = timelimitedInfo.getPromotionExtendInfoDTO();
 		this.timelimitedSkuDescribeList = timelimitedInfo.getTimelimitedSkuDescribeList();
 		this.timelimitedSkuPictureList = timelimitedInfo.getTimelimitedSkuPictureList();
+		this.showStatus = timelimitedInfo.getShowStatus();
+		this.effectiveTime = timelimitedInfo.getEffectiveTime();
+		this.invalidTime = timelimitedInfo.getInvalidTime();
 	}
 
 	

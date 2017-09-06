@@ -35,4 +35,6 @@ public interface BuyerLaunchBargainInfoDAO {
 	public Long queryLaunchBargainInfoCount(
 			@Param("bargainDTO") BuyerBargainLaunchReqDTO buyerBargainLaunch);
 
+	public int queryBuyerLaunchBargainInfoCount(@Param("promotionId") String promotionId);
+
 }

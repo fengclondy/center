@@ -75,11 +75,13 @@
       <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
         #{statusCode}
       </foreach>
+      <!-- 不判断是否启用
       and show_status in
       <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
                close=")">
         #{verifyStatusCode}
       </foreach>
+      -->
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}
@@ -375,38 +377,40 @@
 	a.modify_time
 	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
+	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
 	<if test="entity.status != null and entity.status != ''">
 	and  a.`status` = #{entity.status}
 	</if>
-    <if test="entity.effectiveTime != null and entity.effectiveTime != '' and  entity.invalidTime != null and entity.invalidTime != '' ">
+    <if test="entity.effectiveTimestr != null and entity.effectiveTimestr != '' and  entity.invalidTimestr != null and entity.invalidTimestr != '' ">
 		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
 		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
-   	and a.modify_time = #{entity.modifyTime}
+   	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
 	</if> 
+	ORDER BY a.modify_time DESC
 	<if test="pager.pageOffset != null and pager != null">
 	limit #{pager.pageOffset},#{pager.rows}
 	</if>
   </select>
+  
     <select id="getTotalPromotionGashaponByInfo" resultType="java.lang.Long">
   	SELECT 
   	count(1)
-	FROM promotion_info a WHERE a.promotion_type = '22'
+	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
-	and  a.promotion_name = #{entity.promotionName}
+	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
 	<if test="entity.status != null and entity.status != ''">
 	and  a.`status` = #{entity.status}
 	</if>
-    <if test="entity.effectiveTime != null and entity.effectiveTime != '' and  entity.invalidTime != null and entity.invalidTime != '' ">
+    <if test="entity.effectiveTimestr != null and entity.effectiveTimestr != '' and  entity.invalidTimestr != null and entity.invalidTimestr != '' ">
 		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
 		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
-   	and a.modify_time = #{entity.modifyTime}
+   	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
 	</if> 
   </select>
   <select id="queryPromotionInfoListBySellerCode" resultMap="BaseResultMap">

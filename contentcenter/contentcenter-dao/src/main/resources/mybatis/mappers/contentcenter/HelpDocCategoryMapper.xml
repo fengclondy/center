@@ -121,12 +121,12 @@
 		</if>
 		<if test="dto.startTime != null and dto.startTime != ''">
 		 <![CDATA[ 
-			and date_format(create_time,'%Y-%m-%d %H:%m:%s') >= #{dto.startTime,jdbcType=VARCHAR} 
+			and date_format(create_time,'%Y-%m-%d %H:%i:%s') >= #{dto.startTime,jdbcType=VARCHAR} 
 		  ]]> 
 		</if>
 		<if test="dto.endTime != null and dto.endTime != ''">
 		 <![CDATA[ 
-			and date_format(create_time,'%Y-%m-%d %H:%m:%s') <= #{dto.endTime,jdbcType=VARCHAR} 
+			and date_format(create_time,'%Y-%m-%d %H:%i:%s') <= #{dto.endTime,jdbcType=VARCHAR} 
 		 ]]>
 		</if>
 	</sql>

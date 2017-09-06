@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import java.util.Map;
+
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
@@ -73,4 +75,6 @@ public interface LuckDrawService {
 	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId);
 
 	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId);
+
+	public void updateLotteryResultState(Map<String, Object> map);
 }

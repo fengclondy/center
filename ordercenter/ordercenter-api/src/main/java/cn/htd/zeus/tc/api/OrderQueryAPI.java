@@ -4,16 +4,8 @@ import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
 import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsOutDTO;
-import cn.htd.zeus.tc.dto.response.OrderQueryDetailResDTO;
-import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
-import cn.htd.zeus.tc.dto.response.OrderQueryResDTO;
-import cn.htd.zeus.tc.dto.response.OrdersQueryParamListResDTO;
-import cn.htd.zeus.tc.dto.response.OrdersQueryVIPListResDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQueryReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprBossReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprMangerReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrdersQueryVIPListReqDTO;
+import cn.htd.zeus.tc.dto.response.*;
+import cn.htd.zeus.tc.dto.resquest.*;
 
 public interface OrderQueryAPI {
 
@@ -122,4 +114,12 @@ public interface OrderQueryAPI {
 	 * orderQueryParamReqDTO @return OrderQueryPageSizeResDTO @throws
 	 */
 	public OrderQueryPageSizeResDTO queryPresalePendingPayOrderNums(OrderQueryParamReqDTO orderQueryParamReqDTO);
+
+	/**
+	 * 给超级老板提供查询订单金额的接口
+	 *
+	 * @param orderAmountQueryReqDTO
+	 * @return
+	 */
+	public OrderAmountResDTO queryOrderAmountForSuperboss(OrderAmountQueryReqDTO orderAmountQueryReqDTO);
 }

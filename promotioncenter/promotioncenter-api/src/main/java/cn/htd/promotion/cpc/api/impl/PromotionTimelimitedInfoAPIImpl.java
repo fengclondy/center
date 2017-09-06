@@ -96,19 +96,19 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			rows = page.getRows();
 		}
 		try {
-			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService
-					.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+			 if(StringUtils.isEmpty(buyerCode)) {
+	                throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
+	         }
+			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
 			if (null != timelitedInfoList) {
 				for (TimelimitedInfoResDTO timelitedinfo : timelitedInfoList) {
-					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle
-							.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
+					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
 					if (null != timelited) {
 						timelimitedMallDTO = new PromotionTimelimitedShowDTO();
 						timelimitedMallDTO.setTimelimitedInfo(timelited);
 						timelimitedAllDTOList.add(timelimitedMallDTO);
 					}
 				}
-
 			}
 			if (!timelimitedAllDTOList.isEmpty()) {
 				total = timelimitedAllDTOList.size();
@@ -125,6 +125,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				}
 				datagrid.setTotal(total);
 				datagrid.setRows(timelimitedDTOList);
+				logger.info("秒杀活动列表数据timelimitedDTOLis:" + JSON.toJSONString(timelimitedDTOList));
 			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException bcbe) {

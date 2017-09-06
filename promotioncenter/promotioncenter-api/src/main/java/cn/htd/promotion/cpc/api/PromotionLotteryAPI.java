@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.api;
 
+import java.util.Map;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -106,5 +108,7 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String viewDrawLotteryInfo(String promotionInfoId, String messageId);
+
+	public void updateLotteryResultState(Map<String, Object> map);
 
 }

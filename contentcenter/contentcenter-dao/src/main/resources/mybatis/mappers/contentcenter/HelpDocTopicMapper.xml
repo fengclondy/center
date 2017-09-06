@@ -222,22 +222,22 @@
 	
 	<if test="dto.createStartTime != null and dto.createStartTime != ''">
 	 <![CDATA[ 
-		and date_format(create_time,'%Y-%m-%d %H:%m:%s') >= #{dto.createStartTime,jdbcType=VARCHAR} 
+		and date_format(create_time,'%Y-%m-%d %H:%i:%s') >= #{dto.createStartTime,jdbcType=VARCHAR} 
 	  ]]> 
 	</if>
 	<if test="dto.createEndTime != null and dto.createEndTime != ''">
 	 <![CDATA[ 
-		and date_format(create_time,'%Y-%m-%d %H:%m:%s') <= #{dto.createEndTime,jdbcType=VARCHAR} 
+		and date_format(create_time,'%Y-%m-%d %H:%i:%s') <= #{dto.createEndTime,jdbcType=VARCHAR} 
 	 ]]>
 	</if>
 	<if test="dto.modifyStartTime != null and dto.modifyStartTime != ''">
 	 <![CDATA[ 
-		and date_format(modify_time,'%Y-%m-%d %H:%m:%s') >= #{dto.modifyStartTime,jdbcType=VARCHAR} 
+		and date_format(modify_time,'%Y-%m-%d %H:%i:%s') >= #{dto.modifyStartTime,jdbcType=VARCHAR} 
 	  ]]> 
 	</if>
 	<if test="dto.modifyEndTime != null and dto.modifyEndTime != ''">
 	 <![CDATA[ 
-		and date_format(modify_time,'%Y-%m-%d %H:%m:%s') <= #{dto.modifyEndTime,jdbcType=VARCHAR} 
+		and date_format(modify_time,'%Y-%m-%d %H:%i:%s') <= #{dto.modifyEndTime,jdbcType=VARCHAR} 
 	 ]]>
 	</if>
 	order by sort_num  

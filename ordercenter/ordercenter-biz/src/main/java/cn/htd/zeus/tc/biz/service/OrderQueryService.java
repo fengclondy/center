@@ -10,8 +10,10 @@ import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordInDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
 import cn.htd.zeus.tc.dto.response.ChargeConditionInfoDTO;
+import cn.htd.zeus.tc.dto.response.OrderAmountResDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
 import cn.htd.zeus.tc.dto.response.OrdersQueryParamListResDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprMangerReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrdersQueryVIPListReqDTO;
@@ -129,4 +131,12 @@ public interface OrderQueryService {
 	 */
 	public List<OrderRecentQueryPurchaseRecordOutDTO> queryPurchaseRecordsByBuyerCodeAndSellerCode(
 			OrderRecentQueryPurchaseRecordsInDTO orderRecentQueryPurchaseRecordsInDTO);
+
+	/**
+	 * 给超级老板提供查询订单金额的接口
+	 *
+	 * @param orderAmountQueryReqDTO
+	 * @return
+	 */
+	public OrderAmountResDTO queryOrderAmountForSuperboss(OrderAmountQueryReqDTO orderAmountQueryReqDTO);
 }

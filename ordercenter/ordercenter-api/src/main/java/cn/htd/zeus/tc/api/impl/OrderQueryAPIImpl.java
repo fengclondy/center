@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.zeus.tc.dto.response.*;
+import cn.htd.zeus.tc.dto.resquest.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,17 +33,6 @@ import cn.htd.zeus.tc.dto.OrderQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordOutDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsInDTO;
 import cn.htd.zeus.tc.dto.OrderRecentQueryPurchaseRecordsOutDTO;
-import cn.htd.zeus.tc.dto.response.ChargeConditionInfoDTO;
-import cn.htd.zeus.tc.dto.response.OrderQueryDetailResDTO;
-import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
-import cn.htd.zeus.tc.dto.response.OrderQueryResDTO;
-import cn.htd.zeus.tc.dto.response.OrdersQueryParamListResDTO;
-import cn.htd.zeus.tc.dto.response.OrdersQueryVIPListResDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQueryReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprBossReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprMangerReqDTO;
-import cn.htd.zeus.tc.dto.resquest.OrdersQueryVIPListReqDTO;
 
 @Service("orderQueryAPI")
 public class OrderQueryAPIImpl implements OrderQueryAPI {
@@ -885,5 +876,38 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 		}
 
 		return orderQueryPageSizeResDTO;
+	}
+
+	@Override
+	public OrderAmountResDTO queryOrderAmountForSuperboss(OrderAmountQueryReqDTO orderAmountQueryReqDTO) {
+		OrderAmountResDTO orderAmountResDTO=new OrderAmountResDTO();
+		if(orderAmountQueryReqDTO==null){
+			orderAmountResDTO.setStatus(0);
+			orderAmountResDTO.setErrorMsg("参数对象为空");
+			return orderAmountResDTO;
+		}
+		if(StringUtils.isEmpty(orderAmountQueryReqDTO.getMemberCode())){
+			orderAmountResDTO.setStatus(0);
+			orderAmountResDTO.setErrorMsg("参数对象memberCode为空");
+			return orderAmountResDTO;
+		}
+		if(StringUtils.isEmpty(orderAmountQueryReqDTO.getStartDate())){
+			orderAmountResDTO.setStatus(0);
+			orderAmountResDTO.setErrorMsg("参数对象startdate为空");
+			return orderAmountResDTO;
+		}
+		if(StringUtils.isEmpty(orderAmountQueryReqDTO.getEndDate())){
+			orderAmountResDTO.setStatus(0);
+			orderAmountResDTO.setErrorMsg("参数对象enddate为空");
+			return orderAmountResDTO;
+		}
+		//查询总订单金额
+		String totalOrderAmount=traderdersDAO.queryTotalOrderAmountByMemberCode(orderAmountQueryReqDTO);
+		orderAmountResDTO.setTotalAmount(totalOrderAmount);
+
+		List<OrderDayAmountResDTO> orderDayAmountResDTOList=traderdersDAO.queryOrderDayAmountResDTO(orderAmountQueryReqDTO);
+		orderAmountResDTO.setOrderDayAmountResDTOList(orderDayAmountResDTOList);
+		orderAmountResDTO.setStatus(1);
+		return orderAmountResDTO;
 	}
 }

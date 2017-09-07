@@ -27,6 +27,11 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 	@NotEmpty(message = "promotionId不能为空")
 	private String promotionId;
 	
+	/**
+     * 买家首次登陆标记
+     */
+    private int isBuyerFirstLogin;
+	
 	public String getOrgId() {
 		return orgId;
 	}
@@ -50,4 +55,13 @@ public class LotteryActivityPageReqDTO extends GenricReqDTO{
 	public void setPromotionId(String promotionId) {
 		this.promotionId = promotionId;
 	}
+
+	public int getIsBuyerFirstLogin() {
+		return isBuyerFirstLogin;
+	}
+
+	public void setIsBuyerFirstLogin(int isBuyerFirstLogin) {
+		this.isBuyerFirstLogin = isBuyerFirstLogin;
+	}
+	
 }

@@ -38,6 +38,7 @@ import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
@@ -162,41 +163,20 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
             String buyerNo = request.getMemberNo();
             if (StringUtils.isNotEmpty(buyerNo)) {
-                // 粉丝活动粉丝当日次数信息
-                String b2bMiddleLotteryBuyerTimesInfo =
-                        RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerNo;
-
-                List<String> buyerTimeInfoList = promotionRedisDB.getHashFields(b2bMiddleLotteryBuyerTimesInfo);
-                if (CollectionUtils.isEmpty(buyerTimeInfoList)) {
-                    // 粉丝活动粉丝当日剩余参与次数
-                    promotionRedisDB
-                            .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
-                                    remainingTimes.toString());
-                    // 粉丝当日中奖次数
-                    promotionRedisDB
-                            .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES,
-                                    promotionExtendInfoDTO.getDailyBuyerWinningTimes().toString());
-                    // 粉丝分享次数
-                    promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES,
-                            String.valueOf(YesNoEnum.NO.getValue()));
-                    // 粉丝已经达到分享获得抽奖次数上限
-                    promotionRedisDB
-                            .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES,
-                                    String.valueOf(YesNoEnum.NO.getValue()));
-                } else {
-                    String memberDayLotteryTimes = promotionRedisDB
-                            .getHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
-                    if (StringUtils.isNotEmpty(memberDayLotteryTimes)) {
-                        remainingTimes = Integer.valueOf(memberDayLotteryTimes);
-                    }
-                }
-                result.setRemainingTimes(remainingTimes);
-                String sellerWinedTimesKey =
-                        RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_" + request.getOrgId();
-                boolean sellerWinedTimes = promotionRedisDB.exists(sellerWinedTimesKey);
-                if (!sellerWinedTimes) {
-                    promotionRedisDB.set(sellerWinedTimesKey, promotionExtendInfoDTO.getDailyWinningTimes().toString());
-                }
+            	String orgId = request.getOrgId();
+            	setMemberOrgIdRedis(promotionId,buyerNo,orgId,remainingTimes,promotionExtendInfoDTO,result,promotionRedisDB);
+            	
+            	//校验
+            	Map<String, String> dictMap = null;
+            	dictMap = baseService.initPromotionDictMap();
+            	PromotionExtendInfoDTO promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(promotionId, dictMap);
+            	DrawLotteryReqDTO requestDTO = new DrawLotteryReqDTO();
+            	requestDTO.setBuyerCode(buyerNo);
+            	requestDTO.setIsBuyerFirstLogin(request.getIsBuyerFirstLogin());
+            	requestDTO.setMessageId(messageId);
+            	requestDTO.setPromotionId(promotionId);
+            	requestDTO.setSellerCode(orgId);
+            	promotionLotteryCommonService.checkPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap);
             }
         } catch (PromotionCenterBusinessException e) {
             result.setResponseCode(e.getCode());
@@ -211,7 +191,48 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         }
         return result;
     }
+    /**
+     * 设置粉丝会员店等相关redis值
+     */
+    private void setMemberOrgIdRedis(String promotionId,String buyerNo,String orgId,Integer remainingTimes,
+    		PromotionExtendInfoDTO  promotionExtendInfoDTO,LotteryActivityPageResDTO result,PromotionRedisDB promotionRedisDB){
+    	 // 粉丝活动粉丝当日次数信息
+        String b2bMiddleLotteryBuyerTimesInfo =
+                RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerNo;
 
+        List<String> buyerTimeInfoList = promotionRedisDB.getHashFields(b2bMiddleLotteryBuyerTimesInfo);
+        if (CollectionUtils.isEmpty(buyerTimeInfoList)) {
+            // 粉丝活动粉丝当日剩余参与次数
+            promotionRedisDB
+                    .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
+                            remainingTimes.toString());
+            // 粉丝当日中奖次数
+            promotionRedisDB
+                    .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES,
+                            promotionExtendInfoDTO.getDailyBuyerWinningTimes().toString());
+            // 粉丝分享次数
+            promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES,
+                    String.valueOf(YesNoEnum.NO.getValue()));
+            // 粉丝已经达到分享获得抽奖次数上限
+            promotionRedisDB
+                    .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES,
+                            String.valueOf(YesNoEnum.NO.getValue()));
+        } else {
+            String memberDayLotteryTimes = promotionRedisDB
+                    .getHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
+            if (StringUtils.isNotEmpty(memberDayLotteryTimes)) {
+                remainingTimes = Integer.valueOf(memberDayLotteryTimes);
+            }
+        }
+        result.setRemainingTimes(remainingTimes);
+        String sellerWinedTimesKey =
+                RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_" + orgId;
+        boolean sellerWinedTimes = promotionRedisDB.exists(sellerWinedTimesKey);
+        if (!sellerWinedTimes) {
+            promotionRedisDB.set(sellerWinedTimesKey, promotionExtendInfoDTO.getDailyWinningTimes().toString());
+        }
+    }
+    
     @Override
     public LotteryActivityRulePageResDTO lotteryActivityRulePage(LotteryActivityRulePageReqDTO request) {
         String messageId = request.getMessageId();

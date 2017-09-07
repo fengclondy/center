@@ -148,11 +148,17 @@ public abstract class StockChangeImpl implements StockChangeService {
 		String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 				useLogRedisKey);
 		BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
-		if (Constants.SECKILL_RESERVE.equals(useType) && (StringUtils.isBlank(useLogJsonStr)
-				|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG)) {
+		String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_" + promotionId;
+		String reserveResult = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+		// 秒杀履历为空或者秒杀履历为已释放或者已抢到秒杀资格并且没有支付订单
+		if (Constants.SECKILL_RESERVE.equals(useType)
+				&& (StringUtils.isBlank(useLogJsonStr)
+						|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG)
+				|| (StringUtils.isNotBlank(reserveResult)
+						&& !timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE))) {
 			flag = true;
+			// 存在秒杀履历并且前置操作为锁定库存
 		} else if (Constants.SECKILL_RELEASE.equals(useType) && StringUtils.isNotBlank(useLogJsonStr)) {
-
 			if (Constants.SECKILL_RESERVE.equals(timelimitedLog.getUseType())) {
 				flag = true;
 			}

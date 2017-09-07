@@ -11,6 +11,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.TimelimitedInfoAPI;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -86,7 +87,7 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId, messageId);
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId,TimelimitedConstants.TYPE_REDIS_TIMELIMITED_REAL_REMAIN_COUNT, messageId);
         	result.setResult(timelimitedInfoResDTO);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());

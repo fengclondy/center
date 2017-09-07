@@ -247,12 +247,28 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
             // 查询活动信息
             timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
+            
+   		   // Redis真实秒杀商品数量
+   		    String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+   		    String remainCountStr = promotionRedisDB.getHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT);
+   		    if(null == remainCountStr || "".equals(remainCountStr.trim())){
+   			  throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀商品实际库存读取异常！");
+   		    }
+   		    if(!StringUtils.isNumeric(remainCountStr)){
+   			  throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀商品实际库存不能为非数字！");
+   		    }
+   		    Integer timelimitedSkuCount = Integer.valueOf(remainCountStr);
+   		    if(timelimitedSkuCount < 0){
+   			   throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀商品实际库存不能为负整数！");
+   		    }
+   		    //设置真实库存
+   		    timelimitedInfoResDTO.setTimelimitedSkuCount(timelimitedSkuCount);
+   		     
+   		 
             // 查询图片信息
-            List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureResDTOList =
-                    timelimitedSkuPictureDAO.selectByPromotionId(promotionId);
+            List<TimelimitedSkuPictureResDTO> timelimitedSkuPictureResDTOList = timelimitedSkuPictureDAO.selectByPromotionId(promotionId);
             // 查询详情信息
-            List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeResDTOList =
-                    timelimitedSkuDescribeDAO.selectByPromotionId(promotionId);
+            List<TimelimitedSkuDescribeResDTO> timelimitedSkuDescribeResDTOList = timelimitedSkuDescribeDAO.selectByPromotionId(promotionId);
 
             timelimitedInfoResDTO.setTimelimitedSkuPictureList(timelimitedSkuPictureResDTOList);
             timelimitedInfoResDTO.setTimelimitedSkuDescribeList(timelimitedSkuDescribeResDTOList);
@@ -358,12 +374,16 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_6; // 6.秒杀活动已经上架
     		}
     		
-    		 // 查询活动信息 （应该从redis里取，如果没有从数据库里取）
-    		TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
-    		if(null == timelimitedInfoResDTO.getTimelimitedSkuCount() || timelimitedInfoResDTO.getTimelimitedSkuCount() < 1){
-    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_7; // 7.下架状态的秒杀商品库存小于1
-    		}
-    		
+    		 // Redis真实秒杀商品数量
+    		 String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+    		 String remainCountStr = promotionRedisDB.getHash(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT);
+    		 if(!StringUtils.isNumeric(remainCountStr)){
+    			 return TimelimitedConstants.UPDOWN_SHELVES_STATUS_7; // 7.下架状态的秒杀商品库存小于1
+    		 }
+    		 if(Integer.valueOf(remainCountStr) < 1){
+    			 return TimelimitedConstants.UPDOWN_SHELVES_STATUS_7; // 7.下架状态的秒杀商品库存小于1
+    		 }
+    		 
     		//秒杀开始时间和结束时间均大于当前时间，且开始时间早于结束时间；
     		//秒杀开始时间
     		Date effectiveTime = promotionInfoDTO.getEffectiveTime();

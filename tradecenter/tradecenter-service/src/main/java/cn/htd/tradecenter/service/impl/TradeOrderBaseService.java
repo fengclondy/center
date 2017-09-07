@@ -590,7 +590,7 @@ public class TradeOrderBaseService {
         businessRelationCondition.setBuyerId(buyerId.toString());
         businessRelationCondition.setSellerId(sellerId.toString());
         businessRelationResult = memberBusinessRelationService
-                .queryMemberBusinessRelationListInfo(businessRelationCondition, new Pager<MemberBusinessRelationDTO>());
+                .queryMemberBusinessRelationListInfo(businessRelationCondition, null);
         if (!businessRelationResult.isSuccess()) {
             throw new TradeCenterBusinessException(ReturnCodeConst.BUYER_BUSINESS_RELATION_NOT_EXIST,
                     StringUtils.join(businessRelationResult.getErrorMessages(), "\n"));

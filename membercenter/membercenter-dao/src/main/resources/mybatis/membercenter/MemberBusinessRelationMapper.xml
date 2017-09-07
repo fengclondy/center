@@ -35,7 +35,7 @@
 			and (a.category_id !=0 and a.brand_id !=0)
 
 		order by a.modify_time desc
-		<if test="pager.pageOffset != null and pager != null">
+		<if test="pager != null">
 			limit #{pager.pageOffset},#{pager.rows}
 		</if>
 	</select>

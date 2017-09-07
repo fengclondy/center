@@ -562,7 +562,6 @@
       <if test="entity.promotionType != null and entity.promotionType != ''">
       and promotion_type = #{entity.promotionType}
       </if>
-      and <![CDATA[ invalid_time < now() ]]>
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}

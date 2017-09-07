@@ -642,7 +642,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             return false;
         } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&"
                 + DictionaryConst.OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN).equals(ruleDTO.getRuleTargetType())) {
-            if (buyerInfo.getIsFirstLogin() == 1) {
+            if (YesNoEnum.YES.getValue() == buyerInfo.getIsFirstLogin()) {
                 return true;
             }
             return false;
@@ -678,6 +678,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     return true;
                 }
             }
+            return false;
         }
         return true;
     }

@@ -34,6 +34,10 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	 */
 	private int deleteFlag;
 	/**
+	 * 操作类型 (0 新增 1删除 2 修改）
+	 */
+	private String operateType;
+	/**
 	 * 创建人ID
 	 */
 	private Long createId;
@@ -161,4 +165,14 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
+
+	public String getOperateType() {
+		return operateType;
+	}
+
+	public void setOperateType(String operateType) {
+		this.operateType = operateType;
+	}
+	
+	
 }

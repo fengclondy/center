@@ -6,10 +6,14 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
@@ -42,6 +46,9 @@ public class UpdateTimelimitedStatus4invalidScheduleTask implements IScheduleTas
 
 	@Resource
 	private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+	
+    @Resource
+    private PromotionRedisDB promotionRedisDB;
 
 	@Override
 	public Comparator<PromotionInfoDTO> getComparator() {
@@ -132,8 +139,10 @@ public class UpdateTimelimitedStatus4invalidScheduleTask implements IScheduleTas
 		String timeStatus = "";
 		String endStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 				DictionaryConst.OPT_PROMOTION_STATUS_END);
-		String showStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
+		 String showStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
 		 Date expireDt = DateUtil.getSpecifiedDay(new Date(), -1 );//活动结束一天
+		 TimelimitedInfoResDTO timelimitedInfoDTO = null;
+		 String timelimitedJsonStr = "";
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfo : tasks) {
@@ -142,7 +151,10 @@ public class UpdateTimelimitedStatus4invalidScheduleTask implements IScheduleTas
     					promotionInfo.setShowStatus(showStatus);
     					promotionInfoList.add(promotionInfo);	
                     }
-						promotionTimelimitedRedisHandle.saveTimelimitedValidStatus2Redis(promotionInfo);
+            		timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionInfo.getPromotionId());
+        			timelimitedInfoDTO = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
+        			timelimitedInfoDTO.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+					promotionTimelimitedRedisHandle.saveTimelimitedValidStatus2Redis(timelimitedInfoDTO);
 				}
 				for (PromotionInfoDTO tmpPromotionInfo : promotionInfoList) {
 					updatePromotionStatus(tmpPromotionInfo);

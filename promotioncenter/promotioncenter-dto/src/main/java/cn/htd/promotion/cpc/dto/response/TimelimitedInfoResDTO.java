@@ -70,6 +70,12 @@ public class TimelimitedInfoResDTO implements Serializable  {
 	// 商品描述
 	private String describeContent;
 	
+	
+    /**
+     * 层级卖家规则
+     */
+    private PromotionSellerRuleDTO sellerRuleDTO;
+	
     /**
      * 促销活动开始时间
      */
@@ -292,6 +298,12 @@ public class TimelimitedInfoResDTO implements Serializable  {
 		this.invalidTime = timelimitedInfo.getInvalidTime();
 		this.promotionId = timelimitedInfo.getPromotionId();
 		this.modifyTime = timelimitedInfo.modifyTime;
+	}
+	public PromotionSellerRuleDTO getSellerRuleDTO() {
+		return sellerRuleDTO;
+	}
+	public void setSellerRuleDTO(PromotionSellerRuleDTO sellerRuleDTO) {
+		this.sellerRuleDTO = sellerRuleDTO;
 	}
 
 	

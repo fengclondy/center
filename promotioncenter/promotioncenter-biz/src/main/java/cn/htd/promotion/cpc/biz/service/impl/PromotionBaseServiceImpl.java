@@ -493,6 +493,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     psd.setCreateId(promotionInfo.getCreateId());
                     psd.setCreateName(promotionInfo.getCreateName());
                     psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                    psd.setCreateId(promotionInfo.getModifyId());
+                    psd.setCreateName(promotionInfo.getModifyName());
                     psd.setModifyId(promotionInfo.getModifyId());
                     psd.setModifyName(promotionInfo.getModifyName());
                     promotionSellerDetailDAO.add(psd);

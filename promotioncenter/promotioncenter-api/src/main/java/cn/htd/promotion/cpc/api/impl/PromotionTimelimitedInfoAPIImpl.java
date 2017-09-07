@@ -204,6 +204,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			}
 			result.setCode(returnCode);
 			result.setResult(timelimitedDTO);
+			logger.info("returnCode=" +returnCode +"timelimitedDTO"+ JSON.toJSONString(timelimitedDTO));
 		} catch (PromotionCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.setErrorMessage(bcbe.getMessage());
@@ -299,10 +300,10 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 					restult= checkParamValid(promotionExtendInfoDTO);
 				}
 			}
-
-		} else {// 平台粉丝都可购买该秒杀商品
-			restult= checkParamValid(promotionExtendInfoDTO);
 		}
+//		} else {// 平台粉丝都可购买该秒杀商品
+//			restult= checkParamValid(promotionExtendInfoDTO);
+//		}
 
 		return restult;
 	}

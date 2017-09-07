@@ -240,7 +240,12 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = promotionInfo.getBuyerRuleDTO();
         if (null != promotionBuyerRuleReqDTO) {
             promotionBuyerRuleReqDTO.setPromotionId(promotionId);
+            if(StringUtils.isEmpty(promotionBuyerRuleReqDTO.getRuleTargetType())
+            		|| promotionBuyerRuleReqDTO.getRuleTargetType().equals("0")){
+                promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.YES.getValue());
+            }else{
             promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
+            }
             promotionBuyerRuleReqDTO.setCreateId(promotionInfo.getCreateId());
             promotionBuyerRuleReqDTO.setCreateName(promotionInfo.getCreateName());
             promotionBuyerRuleReqDTO.setModifyId(promotionInfo.getCreateId());
@@ -460,8 +465,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             pbr.setModifyId(promotionInfo.getModifyId());
             pbr.setModifyName(promotionInfo.getModifyName());
             PromotionBuyerRuleDTO pbrold = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
-            if(pbrold==null){
+            if(StringUtils.isEmpty(pbr.getRuleTargetType())
+            		|| pbr.getRuleTargetType().equals("0")){
+            	pbr.setDeleteFlag(YesNoEnum.YES.getValue());
+            }else{
             	pbr.setDeleteFlag(YesNoEnum.NO.getValue());
+            }
+            if(pbrold==null){
             	pbr.setCreateId(promotionInfo.getModifyId());
             	pbr.setCreateName(promotionInfo.getModifyName());
             	promotionBuyerRuleDAO.add(pbr);

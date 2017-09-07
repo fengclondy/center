@@ -289,8 +289,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		restult.setResult(false);
 		PromotionSellerRuleDTO sellerRuleDTO = promotionExtendInfoDTO.getSellerRuleDTO();
 		List<PromotionSellerDetailDTO> sellerDetailList = promotionTimelimitedInfoService.getPromotionSellerDetailDTOByBuyerCode(promotionExtendInfoDTO.getPromotionId(),buyerCode);
-		if (null != sellerRuleDTO && null != sellerRuleDTO.getSellerDetailList()) {// 限制粉丝只能购买归属会员的秒杀商品
-			sellerDetailList = sellerRuleDTO.getSellerDetailList();
+		if (null != sellerRuleDTO && null != sellerDetailList) {// 限制粉丝只能购买归属会员的秒杀商品
 			for (PromotionSellerDetailDTO sellerDetail : sellerDetailList) {
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限

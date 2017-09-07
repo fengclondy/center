@@ -291,6 +291,7 @@ public class TimelimitedInfoResDTO implements Serializable  {
 		this.effectiveTime = timelimitedInfo.getEffectiveTime();
 		this.invalidTime = timelimitedInfo.getInvalidTime();
 		this.promotionId = timelimitedInfo.getPromotionId();
+		this.modifyTime = timelimitedInfo.modifyTime;
 	}
 
 	

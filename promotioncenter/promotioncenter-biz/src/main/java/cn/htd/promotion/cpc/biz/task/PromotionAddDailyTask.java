@@ -159,10 +159,12 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 
 				sset = promotionRedisDB.getStringRedisTemplate()
 						.keys(RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_*");
-				for (String string : sset) {
+				for (String skey : sset) {
 					swt = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
 							RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES);
-					promotionRedisDB.set(string, swt);
+					if(!StringUtils.isEmpty(skey)&&!StringUtils.isEmpty(swt) ){
+						promotionRedisDB.set(skey, swt);
+					}
 				}
 			}
 		}

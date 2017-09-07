@@ -52,6 +52,7 @@ import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 
 /**
  * 话费支付 汇金币充值
@@ -159,14 +160,35 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 									//充好了
 									promotionAwardDTO.setDealFlag(0);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("01");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}else if(rt.equals("0")){
 									//正在充
 									promotionAwardDTO.setDealFlag(2);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("00");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}else{
 									//其他
 									promotionAwardDTO.setDealFlag(2);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("00");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}
 							}
 						} else if (promotionAwardDTO.getRewardType().equals("4")) {
@@ -174,6 +196,21 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 								if(addGold(promotionAwardDTO)){
 									promotionAwardDTO.setDealFlag(0);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("01");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
+								}else{
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("00");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}
 							}
 						}

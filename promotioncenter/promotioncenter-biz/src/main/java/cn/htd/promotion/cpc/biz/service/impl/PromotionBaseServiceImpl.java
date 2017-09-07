@@ -493,6 +493,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     psd.setCreateId(promotionInfo.getCreateId());
                     psd.setCreateName(promotionInfo.getCreateName());
                     psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                    psd.setCreateId(promotionInfo.getModifyId());
+                    psd.setCreateName(promotionInfo.getModifyName());
                     psd.setModifyId(promotionInfo.getModifyId());
                     psd.setModifyName(promotionInfo.getModifyName());
                     promotionSellerDetailDAO.add(psd);
@@ -640,7 +642,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             return false;
         } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&"
                 + DictionaryConst.OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN).equals(ruleDTO.getRuleTargetType())) {
-            if (buyerInfo.getIsFirstLogin() == 1) {
+            if (YesNoEnum.YES.getValue() == buyerInfo.getIsFirstLogin()) {
                 return true;
             }
             return false;
@@ -676,6 +678,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     return true;
                 }
             }
+            return false;
         }
         return true;
     }

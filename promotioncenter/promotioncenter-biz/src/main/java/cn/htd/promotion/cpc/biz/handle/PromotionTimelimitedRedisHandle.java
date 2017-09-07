@@ -57,9 +57,9 @@ public class PromotionTimelimitedRedisHandle {
      * @param skuCodeList 商品编码集合
      * @return
      */
-    public void saveTimelimitedValidStatus2Redis(PromotionInfoDTO promotionInfo) {
-    	promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED_VALID, promotionInfo.getPromotionId(),
-                promotionInfo.getShowStatus());
+    public void saveTimelimitedValidStatus2Redis(TimelimitedInfoResDTO timelimitedInfoResDTO) {
+    	  String jsonObj = JSON.toJSONString(timelimitedInfoResDTO);
+    	  promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, timelimitedInfoResDTO.getPromotionId(), jsonObj);
     }
 
     /**

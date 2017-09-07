@@ -254,7 +254,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 */
 	private ExecuteResult<Boolean> checkParamValid(PromotionExtendInfoDTO promotionExtendInfoDTO) {
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
-		restult.setResult(false);
+		restult.setResult(true);
 		if (dictionary
 				.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
@@ -268,11 +268,11 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			} else {
 				// 秒杀送活动进行中
 				restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_PROCESSING_ERROR);
-				restult.setResult(true);
 			}
 		} else {
 			// 秒杀送活动未启用
 			restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_DISABLE_ERROR);
+			restult.setResult(true);
 		}
 
 		return restult;
@@ -290,7 +290,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		restult.setResult(false);
 		PromotionSellerRuleDTO sellerRuleDTO = promotionExtendInfoDTO.getSellerRuleDTO();
 		List<PromotionSellerDetailDTO> sellerDetailList = promotionTimelimitedInfoService.getPromotionSellerDetailDTOByBuyerCode(promotionExtendInfoDTO.getPromotionId(),buyerCode);
-		if (null != sellerRuleDTO && null != sellerDetailList) {// 限制粉丝只能购买归属会员的秒杀商品
+		if (null != sellerRuleDTO && (null != sellerDetailList && sellerDetailList.size() > 0)) {// 限制粉丝只能购买归属会员的秒杀商品
 			for (PromotionSellerDetailDTO sellerDetail : sellerDetailList) {
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限

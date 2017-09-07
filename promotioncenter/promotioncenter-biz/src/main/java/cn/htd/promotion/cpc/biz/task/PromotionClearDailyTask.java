@@ -18,17 +18,20 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
-import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
-import com.taobao.pamirs.schedule.TaskItemDefine;
-
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
+import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
+
+import com.alibaba.fastjson.JSONObject;
+import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
+import com.taobao.pamirs.schedule.TaskItemDefine;
 
 /**
  * 初始化redis
@@ -47,6 +50,8 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
 	private PromotionInfoDAO promotionInfoDAO;
 	@Resource
 	private PromotionLotteryCommonService promotionLotteryCommonService;
+    @Resource
+    private TimelimitedInfoService timelimitedInfoService;
 
 	@Override
 	public Comparator<PromotionInfoDTO> getComparator() {
@@ -97,7 +102,7 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
 				}
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
-				condition.setPromotionType("21");
+//				condition.setPromotionType("21");
 				promotionInfoDTOList = promotionInfoDAO.queryInitRedisPromotion4Task(condition, pager);
 			}
 		} catch (Exception e) {
@@ -128,8 +133,14 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfoDTO : tasks) {
-					PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo(promotionInfoDTO.getPromotionId());
-					promotionLotteryCommonService.initPromotionLotteryRedisInfo(dbo);
+					if(TimelimitedConstants.PromotionTypeEnum.DRAW_LOTTERY.key().equals(promotionInfoDTO.getPromotionType())){//扭蛋机
+						PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo(promotionInfoDTO.getPromotionId());
+						promotionLotteryCommonService.initPromotionLotteryRedisInfo(dbo);
+					}else if(TimelimitedConstants.PromotionTypeEnum.TIMELIMITED.key().equals(promotionInfoDTO.getPromotionType())){//总部秒杀
+			        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionInfoDTO.getPromotionId(),TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT, null);
+			        	timelimitedInfoService.initTimelimitedInfoRedisInfo(timelimitedInfoResDTO);
+					}
+					
 				}
 			}
 		} catch (Exception e) {

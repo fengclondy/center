@@ -330,8 +330,8 @@ public class TimelimitedTestUnit {
         String messageId = "342453251349";
         String promotionId = "23171718090174";
         try {
-    		
-        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId, messageId);
+    		String type = TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT;
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId,type, messageId);
         	System.out.println("===>timelimitedInfoResDTO:" + timelimitedInfoResDTO);
         } catch (Exception e) {
             e.printStackTrace();

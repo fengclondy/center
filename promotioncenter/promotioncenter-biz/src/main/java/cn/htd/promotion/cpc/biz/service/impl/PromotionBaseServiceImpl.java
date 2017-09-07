@@ -8,6 +8,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
@@ -40,11 +47,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
-import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
@@ -454,18 +456,34 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
         PromotionBuyerRuleDTO pbr = promotionInfo.getBuyerRuleDTO();
         if (pbr != null) {
-            pbr.setPromotionId(promotionInfo.getPromotionId());
+            pbr.setPromotionId(promotionId);
             pbr.setModifyId(promotionInfo.getModifyId());
             pbr.setModifyName(promotionInfo.getModifyName());
-            promotionBuyerRuleDAO.update(pbr);
+            PromotionBuyerRuleDTO pbrold = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
+            if(pbrold==null){
+            	pbr.setDeleteFlag(YesNoEnum.NO.getValue());
+            	pbr.setCreateId(promotionInfo.getModifyId());
+            	pbr.setCreateName(promotionInfo.getModifyName());
+            	promotionBuyerRuleDAO.add(pbr);
+            }else{
+            	promotionBuyerRuleDAO.update(pbr);
+            }
         }
-
+        
         PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
         if (psr != null) {
-            psr.setPromotionId(promotionInfo.getPromotionId());
+            psr.setPromotionId(promotionId);
             psr.setModifyId(promotionInfo.getModifyId());
             psr.setModifyName(promotionInfo.getModifyName());
-            promotionSellerRuleDAO.update(psr);
+            PromotionSellerRuleDTO psrold = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
+            if(psrold==null){
+                psr.setDeleteFlag(YesNoEnum.NO.getValue());
+                psr.setCreateId(promotionInfo.getCreateId());
+                psr.setCreateName(promotionInfo.getCreateName());
+                promotionSellerRuleDAO.add(psr);
+            }else{
+                promotionSellerRuleDAO.update(psr);
+            }
 
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
             promotionSellerDetailDAO.deleteByPromotionId(promotionId);

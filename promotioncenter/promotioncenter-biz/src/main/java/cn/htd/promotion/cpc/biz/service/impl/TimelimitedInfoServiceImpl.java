@@ -210,11 +210,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
     @Override
     public void initTimelimitedInfoRedisInfoWithThread(final TimelimitedInfoResDTO timelimitedInfoResDTO) {
-        new Thread() {
-            public void run() {
-                initTimelimitedInfoRedisInfo(timelimitedInfoResDTO);
-            }
-        }.start();
+        initTimelimitedInfoRedisInfo(timelimitedInfoResDTO);
     }
 
     @Override

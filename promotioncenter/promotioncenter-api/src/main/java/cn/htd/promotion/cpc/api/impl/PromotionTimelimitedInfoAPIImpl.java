@@ -87,7 +87,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		// 所有有效秒杀活动集合,用于排序
 		List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
 		PromotionTimelimitedShowDTO timelimitedMallDTO = null;
-		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_";
+		String timelimitedResultKey = "";
 		String remaincount="";
 		int count = 0;
 		long total = 0;
@@ -107,7 +107,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 					timelimitedMallDTO = new PromotionTimelimitedShowDTO();
 					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
 					if (null != timelited) {
-						timelimitedResultKey = timelimitedResultKey + timelitedinfo.getPromotionId();
+						timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + timelitedinfo.getPromotionId();
 					    remaincount = promotionRedisDB.getHash(timelimitedResultKey,RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
 					    if (StringUtils.isNotBlank(remaincount) ) {
 					    	timelimitedMallDTO.setRemainCount(Integer.valueOf(remaincount));

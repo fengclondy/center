@@ -294,17 +294,13 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			for (PromotionSellerDetailDTO sellerDetail : sellerDetailList) {
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限
-					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR);
+					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY);
 				} else {
 					// 校验秒杀活动状态
 					restult= checkParamValid(promotionExtendInfoDTO);
 				}
 			}
 		}
-//		} else {// 平台粉丝都可购买该秒杀商品
-//			restult= checkParamValid(promotionExtendInfoDTO);
-//		}
-
 		return restult;
 	}
 

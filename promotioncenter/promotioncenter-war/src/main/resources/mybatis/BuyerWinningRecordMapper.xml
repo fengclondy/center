@@ -88,13 +88,13 @@
       and SELLER_CODE = #{params.sellerCode}
     </if>
     <if test="params.promotionName!=null and params.promotionName!=''">
-      and PROMOTION_NAME = #{params.promotionName}
+      and PROMOTION_NAME like concat('%', #{params.promotionName} ,'%')
     </if>
     <if test="params.rewardName!=null and params.rewardName!=''">
-      and REWARD_NAME = #{params.rewardName}
+      and REWARD_NAME like concat('%', #{params.rewardName} ,'%')
     </if>
     <if test="params.winnerName!=null and params.winnerName!=''">
-      and WINNER_NAME = #{params.winnerName}
+      and WINNER_NAME like concat('%', #{params.winnerName} ,'%')
     </if>
     <if test="params.winningContact!=null and params.winningContact!=''">
       and WINNING_CONTACT = #{params.winningContact}
@@ -114,6 +114,7 @@
     from buyer_winning_record
     where 1 = 1
     <include refid="awardRecord_mid"/>
+    order by winning_time desc
     <if test="page!=null">
       <include refid="pagination_tail"/>
     </if>

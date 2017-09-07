@@ -114,6 +114,12 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
 	 * @param dto
 	 */
 	public void upDownShelvesBargainInfo(@Param("dto") PromotionValidDTO dto);
+	
+	/**
+	 * 秒杀活动上下架
+	 * @param dto
+	 */
+	public void upDownShelvesTimelimitedInfo(@Param("dto") PromotionValidDTO dto);
 
 	/**
 	 * 查询时间段内是否有活动进行

@@ -383,8 +383,8 @@
 	and  a.`status` = #{entity.status}
 	</if>
     <if test="entity.effectiveTimestr != null and entity.effectiveTimestr != '' and  entity.invalidTimestr != null and entity.invalidTimestr != '' ">
-		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
-		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
+		<if test="entity.effectiveTimestr == entity.invalidTimestr">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
+		<if test="entity.effectiveTimestr != entity.invalidTimestr">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
    	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
@@ -406,8 +406,8 @@
 	and  a.`status` = #{entity.status}
 	</if>
     <if test="entity.effectiveTimestr != null and entity.effectiveTimestr != '' and  entity.invalidTimestr != null and entity.invalidTimestr != '' ">
-		<if test="entity.effectiveTime == entity.invalidTime">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
-		<if test="entity.effectiveTime != entity.invalidTime">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
+		<if test="entity.effectiveTimestr == entity.invalidTimestr">and #{entity.effectiveTimestr} BETWEEN a.effective_time and a.invalid_time</if>
+		<if test="entity.effectiveTimestr != entity.invalidTimestr">and a.effective_time &lt;= #{entity.effectiveTimestr} and a.invalid_time &gt;= #{entity.invalidTimestr}</if>
 	</if>  
 	<if test="entity.modifyTime != null and entity.modifyTime != ''">
    	and DATE_FORMAT(a.modify_time, '%Y-%m-%d') = #{entity.modifyTime}
@@ -473,6 +473,18 @@
 		status = #{dto.status,jdbcType=VARCHAR},
 	</if>
 	has_up_flag = 1,
+  	modify_id = #{dto.operatorId,jdbcType=BIGINT},
+    modify_name = #{dto.operatorName,jdbcType=VARCHAR},
+    modify_time = now()
+  	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
+  </update>
+  
+   <update id="upDownShelvesTimelimitedInfo">
+  	UPDATE promotion_info
+  	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+	<if test="dto.status != null and dto.status != ''">
+		status = #{dto.status,jdbcType=VARCHAR},
+	</if>
   	modify_id = #{dto.operatorId,jdbcType=BIGINT},
     modify_name = #{dto.operatorName,jdbcType=VARCHAR},
     modify_time = now()

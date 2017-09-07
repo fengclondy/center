@@ -13,7 +13,26 @@ public final class TimelimitedConstants {
 		//empty
 	}
 
-
+	
+	/**
+	 * 说明：上下架操作返回状态码 UPDOWN_SHELVES_STATUS_*
+	 * 0.成功, 1.参数为空, 2.活动编码为空, 3.上下架为空, 4.上下架状态不正确, 5.秒杀活动不存在, 6.秒杀活动已经上架,
+	 * 7.下架状态的秒杀商品库存小于1, 8.秒杀开始时间小于或等于当前时间, 9.秒杀结束时间小于或等于当前时间, 10.秒杀开始时间大于或等于结束时间, 11.活动已经处于下架状态
+	 * -1 系统异常
+	 */
+	public static final String UPDOWN_SHELVES_STATUS_SUCCESS = "0";
+	public static final String UPDOWN_SHELVES_STATUS_ERROR = "-1";
+	public static final String UPDOWN_SHELVES_STATUS_1 = "1";
+	public static final String UPDOWN_SHELVES_STATUS_2 = "2";
+	public static final String UPDOWN_SHELVES_STATUS_3 = "3";
+	public static final String UPDOWN_SHELVES_STATUS_4 = "4";
+	public static final String UPDOWN_SHELVES_STATUS_5 = "5";
+	public static final String UPDOWN_SHELVES_STATUS_6 = "6";
+	public static final String UPDOWN_SHELVES_STATUS_7 = "7";
+	public static final String UPDOWN_SHELVES_STATUS_8 = "8";
+	public static final String UPDOWN_SHELVES_STATUS_9 = "9";
+	public static final String UPDOWN_SHELVES_STATUS_10 = "10";
+	public static final String UPDOWN_SHELVES_STATUS_11 = "11";
 	
 	
 	

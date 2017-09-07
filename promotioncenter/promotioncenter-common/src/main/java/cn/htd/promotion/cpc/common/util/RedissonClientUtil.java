@@ -4,12 +4,10 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
-import org.springframework.stereotype.Service;
 
 /**
  * Redisson客户端获取工具
  */
-@Service
 public class RedissonClientUtil {
 	/**
 	 * RedissonClient

@@ -190,7 +190,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		return result;
 	}
 
-	private boolean addGold(BuyerWinningRecordDMO promotionAwardDTO) {
+	private synchronized boolean addGold(BuyerWinningRecordDMO promotionAwardDTO) {
 		GoldRecordEntity goldRecordEntity = new GoldRecordEntity();
 		goldRecordEntity.setMemberno(promotionAwardDTO.getBuyerCode());
 		if(!StringUtils.isEmpty(promotionAwardDTO.getAwardValue())){
@@ -213,15 +213,13 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		s.setAwardValue("1");
 		s.setChargeTelephone("1");
 		try {
-			excuteRecharge(s);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
+			//excuteRecharge(s);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static String excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
+	private synchronized String excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		String responseMsg = "";

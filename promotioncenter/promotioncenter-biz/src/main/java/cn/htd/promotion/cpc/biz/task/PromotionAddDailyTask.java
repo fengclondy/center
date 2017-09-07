@@ -162,7 +162,9 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 				for (String string : sset) {
 					swt = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
 							RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES);
-					promotionRedisDB.set(string, swt);
+					if(!StringUtils.isEmpty(swt)){
+						promotionRedisDB.set(string, swt);
+					}
 				}
 			}
 		}

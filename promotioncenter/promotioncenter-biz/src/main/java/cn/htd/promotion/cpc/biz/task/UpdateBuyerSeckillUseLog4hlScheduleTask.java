@@ -17,7 +17,6 @@ import cn.htd.promotion.cpc.biz.dao.BuyerUseTimelimitedLogDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
-import redis.clients.jedis.Jedis;
 
 /**
  * 定时任务 更新优惠券状态进DB处理
@@ -92,12 +91,12 @@ public class UpdateBuyerSeckillUseLog4hlScheduleTask implements IScheduleTaskDea
 		logger.info("\n 方法:[{}],入参:[{}][{}]", "UpdateBuyerSeckillUseLogScheduleTask-execute", JSON.toJSONString(tasks),
 				"ownSign:" + ownSign);
 		BuyerUseTimelimitedLogDMO dealTargetInfo = null;
-		Jedis jedis = null;
 		int addCount = 0;
 		String useLogStr = "";
+		String key = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG;
 		try {
-			while (jedis.llen(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG) > 0) {
-				useLogStr = jedis.lpop(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG);
+			while (promotionRedisDB.getLlen(key) > 0) {
+				useLogStr = promotionRedisDB.lpop(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG);
 				dealTargetInfo = JSON.parseObject(useLogStr, BuyerUseTimelimitedLogDMO.class);
 				if (dealTargetInfo == null) {
 					continue;

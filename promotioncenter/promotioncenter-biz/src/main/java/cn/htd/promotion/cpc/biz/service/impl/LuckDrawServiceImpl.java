@@ -192,7 +192,6 @@ public class LuckDrawServiceImpl implements LuckDrawService {
             if (result.getRemainingTimes() < 0) {
                 result.setRemainingTimes(0);
             }
-
         }
     }
 

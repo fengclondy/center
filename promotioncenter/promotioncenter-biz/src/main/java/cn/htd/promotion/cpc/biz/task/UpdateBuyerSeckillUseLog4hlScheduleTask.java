@@ -22,9 +22,9 @@ import redis.clients.jedis.Jedis;
 /**
  * 定时任务 更新优惠券状态进DB处理
  */
-public class UpdateBuyerSeckillUseLogScheduleTask implements IScheduleTaskDealMulti<BuyerUseTimelimitedLogDMO> {
+public class UpdateBuyerSeckillUseLog4hlScheduleTask implements IScheduleTaskDealMulti<BuyerUseTimelimitedLogDMO> {
 
-	protected static transient Logger logger = LoggerFactory.getLogger(UpdateBuyerSeckillUseLogScheduleTask.class);
+	protected static transient Logger logger = LoggerFactory.getLogger(UpdateBuyerSeckillUseLog4hlScheduleTask.class);
 
 	@Resource
 	private PromotionRedisDB promotionRedisDB;

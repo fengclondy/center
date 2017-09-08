@@ -34,11 +34,11 @@ import cn.htd.promotion.cpc.common.util.RedissonClientUtil;
 /**
  * 释放秒杀活动预锁1小时以上，但是没提交订单而导致被锁定的库存
  */
-public class ReleaseTimelimitedLockedNoOrderStockScheduleTask
+public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 		implements IScheduleTaskDealMulti<BuyerUseTimelimitedLogDMO> {
 
 	protected static transient Logger logger = LoggerFactory
-			.getLogger(ReleaseTimelimitedLockedNoOrderStockScheduleTask.class);
+			.getLogger(ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask.class);
 
 	/*
 	 * RedisMessageId数据

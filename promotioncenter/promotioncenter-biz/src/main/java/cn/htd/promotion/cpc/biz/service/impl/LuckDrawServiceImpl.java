@@ -109,10 +109,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         } catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
-            LOGGER.error("MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}异常信息：{}",
-                    messageId, requestDTO.getOrgId(), w.toString());
+            LOGGER.error("MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 异常信息：{}",
+                    messageId, ExceptionUtils.getStackTraceAsString(e));
         }
         return result;
     }

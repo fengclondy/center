@@ -19,6 +19,8 @@ import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionSellerDetailDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionSellerRuleDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
@@ -40,6 +42,8 @@ import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
@@ -76,6 +80,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
     @Resource
     private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+    
+    @Resource
+    private PromotionSellerDetailDAO promotionSellerDetailDAO;
+
+    @Resource
+    private PromotionSellerRuleDAO promotionSellerRuleDAO;
     
 
     @Override
@@ -121,6 +131,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
             // 添加商品详情
             addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
+            
+            // 处理促销活动供应商规则详情
+            handlePromotionSellerDetail(timelimitedInfoReqDTO);
 
             // 异步初始化秒杀活动的Redis数据
             TimelimitedInfoResDTO timelimitedInfoResDTO =
@@ -195,6 +208,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             timelimitedSkuDescribeDAO.pseudoDelete(timelimitedSkuDescribeReqDTO_delete);
             // 添加商品详情
             addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
+            
+            // 处理促销活动供应商规则详情
+            handlePromotionSellerDetail(timelimitedInfoReqDTO);
 
             // 异步初始化秒杀活动的Redis数据
             TimelimitedInfoResDTO timelimitedInfoResDTO =
@@ -500,6 +516,51 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuDescribeReqDTO.setModifyName(timelimitedInfoReqDTO.getModifyName());
                 timelimitedSkuDescribeReqDTO.setModifyTime(currentTime);
                 timelimitedSkuDescribeDAO.insert(timelimitedSkuDescribeReqDTO);
+            }
+        }
+
+    }
+    
+    /**
+     * 处理促销活动供应商规则详情
+     * @param timelimitedInfoReqDTO
+     * @param currentTime
+     */
+    private void handlePromotionSellerDetail(TimelimitedInfoReqDTO timelimitedInfoReqDTO) {
+    	
+    	String promotionId = timelimitedInfoReqDTO.getPromotionId();
+
+        PromotionSellerRuleDTO psr = timelimitedInfoReqDTO.getSellerRuleDTO();
+        if (psr != null) {
+            psr.setPromotionId(promotionId);
+            psr.setDeleteFlag(YesNoEnum.NO.getValue());
+            psr.setCreateId(timelimitedInfoReqDTO.getCreateId());
+            psr.setCreateName(timelimitedInfoReqDTO.getCreateName());
+            psr.setModifyId(timelimitedInfoReqDTO.getCreateId());
+            psr.setModifyName(timelimitedInfoReqDTO.getCreateName());
+            promotionSellerRuleDAO.add(psr);
+            List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
+            if (null != sellerlist && sellerlist.size() > 0) {
+                for (PromotionSellerDetailDTO psd : sellerlist) {
+                	 psd.setPromotionId(promotionId);
+                	//操作类型 (0 新增 1删除 2 修改）
+                	String type = psd.getOperateType();
+                	if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD.equals(type)){//新增
+                        psd.setCreateId(timelimitedInfoReqDTO.getCreateId());
+                        psd.setCreateName(timelimitedInfoReqDTO.getCreateName());
+                        psd.setModifyId(timelimitedInfoReqDTO.getCreateId());
+                        psd.setModifyName(timelimitedInfoReqDTO.getCreateName());
+                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                        promotionSellerDetailDAO.add(psd);
+                	}else if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_DELETE.equals(type)){//删除
+                        promotionSellerDetailDAO.deleteTimelimitedSellerDetail(psd);
+                	}else if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE.equals(type)){//修改
+                        psd.setModifyId(timelimitedInfoReqDTO.getCreateId());
+                        psd.setModifyName(timelimitedInfoReqDTO.getCreateName());
+                        promotionSellerDetailDAO.updateTimelimitedSellerDetail(psd);
+                	}
+ 
+                }
             }
         }
 

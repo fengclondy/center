@@ -133,7 +133,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
             
             // 处理促销活动供应商规则详情
-            handlePromotionSellerDetail(timelimitedInfoReqDTO);
+            handlePromotionSellerDetail(timelimitedInfoReqDTO,TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD);
 
             // 异步初始化秒杀活动的Redis数据
             TimelimitedInfoResDTO timelimitedInfoResDTO =
@@ -210,7 +210,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
             
             // 处理促销活动供应商规则详情
-            handlePromotionSellerDetail(timelimitedInfoReqDTO);
+            handlePromotionSellerDetail(timelimitedInfoReqDTO,TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE);
 
             // 异步初始化秒杀活动的Redis数据
             TimelimitedInfoResDTO timelimitedInfoResDTO =
@@ -526,19 +526,23 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
      * @param timelimitedInfoReqDTO
      * @param currentTime
      */
-    private void handlePromotionSellerDetail(TimelimitedInfoReqDTO timelimitedInfoReqDTO) {
+    private void handlePromotionSellerDetail(TimelimitedInfoReqDTO timelimitedInfoReqDTO,String methodType) {
     	
     	String promotionId = timelimitedInfoReqDTO.getPromotionId();
 
         PromotionSellerRuleDTO psr = timelimitedInfoReqDTO.getSellerRuleDTO();
         if (psr != null) {
-            psr.setPromotionId(promotionId);
-            psr.setDeleteFlag(YesNoEnum.NO.getValue());
-            psr.setCreateId(timelimitedInfoReqDTO.getCreateId());
-            psr.setCreateName(timelimitedInfoReqDTO.getCreateName());
-            psr.setModifyId(timelimitedInfoReqDTO.getCreateId());
-            psr.setModifyName(timelimitedInfoReqDTO.getCreateName());
-            promotionSellerRuleDAO.add(psr);
+        	
+        	if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD.equals(methodType)){
+                psr.setPromotionId(promotionId);
+                psr.setDeleteFlag(YesNoEnum.NO.getValue());
+                psr.setCreateId(timelimitedInfoReqDTO.getCreateId());
+                psr.setCreateName(timelimitedInfoReqDTO.getCreateName());
+                psr.setModifyId(timelimitedInfoReqDTO.getCreateId());
+                psr.setModifyName(timelimitedInfoReqDTO.getCreateName());
+                promotionSellerRuleDAO.add(psr);
+        	}
+        	
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
             if (null != sellerlist && sellerlist.size() > 0) {
                 for (PromotionSellerDetailDTO psd : sellerlist) {
@@ -582,8 +586,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, promotionExtendInfo.getStatus()));
         historyDTO.setPromotionStatusText(
                 dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, promotionExtendInfo.getStatus()));
-        historyDTO.setCreateId(timelimitedInfoReqDTO.getCreateId());
-        historyDTO.setCreateName(timelimitedInfoReqDTO.getCreateName());
+        historyDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
+        historyDTO.setCreateName(timelimitedInfoReqDTO.getModifyName());
         promotionStatusHistoryDAO.add(historyDTO);
 
         // 促销活动展示状态履历   状态   1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
@@ -593,8 +597,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, promotionExtendInfo.getShowStatus()));
         historyDTO.setPromotionStatusText(dictionary
                 .getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, promotionExtendInfo.getShowStatus()));
-        historyDTO.setCreateId(timelimitedInfoReqDTO.getCreateId());
-        historyDTO.setCreateName(timelimitedInfoReqDTO.getCreateName());
+        historyDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
+        historyDTO.setCreateName(timelimitedInfoReqDTO.getModifyName());
         promotionStatusHistoryDAO.add(historyDTO);
     }
 

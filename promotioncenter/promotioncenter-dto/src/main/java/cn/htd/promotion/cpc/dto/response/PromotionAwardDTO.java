@@ -56,6 +56,10 @@ public class PromotionAwardDTO implements Serializable{
 
     private String logisticsNo;//物流编号
 
+    private Date effectiveTime;//活动开始时间
+
+    private Date invalidTime;//活动结束时间
+
     private Long createId;//创建人ID
 
     private String createName;//创建人名称
@@ -290,5 +294,21 @@ public class PromotionAwardDTO implements Serializable{
 
     public void setLogisticsNo(String logisticsNo) {
         this.logisticsNo = logisticsNo;
+    }
+
+    public Date getEffectiveTime() {
+        return effectiveTime;
+    }
+
+    public void setEffectiveTime(Date effectiveTime) {
+        this.effectiveTime = effectiveTime;
+    }
+
+    public Date getInvalidTime() {
+        return invalidTime;
+    }
+
+    public void setInvalidTime(Date invalidTime) {
+        this.invalidTime = invalidTime;
     }
 }

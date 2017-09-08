@@ -174,6 +174,7 @@ public class OrderQueryAPITestUnit {
 		orderAmountQueryReqDTO.setMemberCode("htd000662");
 		orderAmountQueryReqDTO.setStartDate("2017-04-24");
 		orderAmountQueryReqDTO.setEndDate("2017-07-18");
+		orderAmountQueryReqDTO.setCurrentMonth("2017-07");
 		OrderAmountResDTO orderAmountResDTO =orderQueryService.queryOrderAmountForSuperboss(orderAmountQueryReqDTO);
 		System.out.println("dd"+orderAmountResDTO.getStatus());
 	}

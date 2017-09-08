@@ -2,10 +2,14 @@ package cn.htd.zeus.tc.api.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.dto.response.*;
 import cn.htd.zeus.tc.dto.resquest.*;
 import org.apache.commons.lang.StringUtils;
@@ -907,7 +911,54 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 
 		List<OrderDayAmountResDTO> orderDayAmountResDTOList=traderdersDAO.queryOrderDayAmountResDTO(orderAmountQueryReqDTO);
 		orderAmountResDTO.setOrderDayAmountResDTOList(orderDayAmountResDTOList);
+		//查询当月支出的总金额
+		String startDay=getCurrentMonthStartDay(orderAmountQueryReqDTO.getCurrentMonth());
+		String endDay=getCurrentMonthEndDay(orderAmountQueryReqDTO.getCurrentMonth());
+		if(StringUtils.isNotEmpty(startDay)&&StringUtils.isNotEmpty(endDay)){
+			String monthAmount=traderdersDAO.queryMonthOrderAmountByMemberCode(startDay,endDay,orderAmountQueryReqDTO.getMemberCode());
+			orderAmountResDTO.setMonthAmount(monthAmount);
+		}
+
 		orderAmountResDTO.setStatus(1);
 		return orderAmountResDTO;
+	}
+
+	private String getCurrentMonthStartDay(String currentMonth){
+		String startDay="";
+		try{
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+
+			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+			Date dd=format.parse(currentMonth);
+			// 获取前月的第一天
+			Calendar cale = Calendar.getInstance();
+			cale.setTime(dd);
+
+			cale.add(Calendar.MONTH, 0);
+			cale.set(Calendar.DAY_OF_MONTH, 1);
+			startDay = format2.format(cale.getTime());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return startDay;
+	}
+
+	private String getCurrentMonthEndDay(String currentMonth){
+		String endDay="";
+		try{
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+
+			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+			Date dd=format.parse(currentMonth);
+			// 获取前月的第一天
+			Calendar cale = Calendar.getInstance();
+			cale.setTime(dd);
+			cale.add(Calendar.MONTH, 1);
+			cale.set(Calendar.DAY_OF_MONTH, 0);
+			endDay = format2.format(cale.getTime());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return endDay;
 	}
 }

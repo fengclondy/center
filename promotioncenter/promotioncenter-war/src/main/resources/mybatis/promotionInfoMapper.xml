@@ -372,8 +372,8 @@
 	a.effective_time,
 	a.invalid_time,
 	a.`status`,
-	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <> 5) as winningNum,
-	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <> 5 and to_days(bw.winning_time) = to_days(now())) as winningTodayNum,
+	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5) as winningNum,
+	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5 and to_days(bw.winning_time) = to_days(now())) as winningTodayNum,
 	a.modify_time
 	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">

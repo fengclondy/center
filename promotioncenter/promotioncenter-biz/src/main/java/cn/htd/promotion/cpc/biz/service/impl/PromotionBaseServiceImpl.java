@@ -358,6 +358,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setBuyerRuleDTO(promotionBuyerRuleDTO);
 
         PromotionSellerRuleDTO psr = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
+        if(psr!=null){
+        	List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
+        	psr.setSellerDetailList(sdlist);
+        }
         promotionInfo.setSellerRuleDTO(psr);
 
         PromotionSloganDTO psd = promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
@@ -492,6 +496,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 psr.setCreateName(promotionInfo.getCreateName());
                 promotionSellerRuleDAO.add(psr);
             }else{
+            	psr.setDeleteFlag(YesNoEnum.NO.getValue());
                 promotionSellerRuleDAO.update(psr);
             }
 

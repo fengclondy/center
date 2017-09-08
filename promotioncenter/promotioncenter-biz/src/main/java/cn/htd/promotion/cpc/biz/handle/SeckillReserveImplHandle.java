@@ -5,6 +5,9 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+
+import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.service.impl.StockChangeImpl;
 import cn.htd.promotion.cpc.common.constants.Constants;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
@@ -29,7 +32,9 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 		String buyerCode = seckillInfoReqDTO.getBuyerCode();
 		int count = seckillInfoReqDTO.getCount();
 		String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_" + promotionId;
-		if (this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_RESERVE)) {
+		String reserveResult = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+		if (StringUtils.isBlank(reserveResult)
+				&& this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_RESERVE)) {
 			String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_" + promotionId;
 			// 获取该秒杀活动库存锁定队列的值
 			String result = promotionRedisDB.lpop(timeLimitedQueueKey);
@@ -48,6 +53,16 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			seckillInfoReqDTO.setSeckillLockNo(lockNo);
 			// 保存秒杀操作日志
 			this.setTimelimitedLog(seckillInfoReqDTO, Constants.SECKILL_RESERVE);
+		} else if (StringUtils.isBlank(reserveResult)) {
+			String useLogRedisKey = buyerCode + "&" + promotionId;
+			String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
+					useLogRedisKey);
+			BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
+			if ((StringUtils.isNotBlank(reserveResult)
+					&& timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE))) {
+				throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
+						"买家已参加该秒杀活动不能再次秒杀");
+			}
 		} else {
 			throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
 					"买家已参加该秒杀活动不能再次秒杀");

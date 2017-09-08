@@ -126,8 +126,10 @@
   </select>
 
   <select id="getTotalAwardRecord" resultType="java.lang.Long">
-    select count(1) from buyer_winning_record bwr
-    where 1 = 1
+    select
+    count(1)
+    from buyer_winning_record bwr,promotion_info pi
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id
     <include refid="awardRecord_mid"/>
   </select>
 

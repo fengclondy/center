@@ -29,9 +29,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 		String buyerCode = seckillInfoReqDTO.getBuyerCode();
 		int count = seckillInfoReqDTO.getCount();
 		String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_" + promotionId;
-		String reserveResult = promotionRedisDB.getHash(reserveHashKey, buyerCode);
-		if (StringUtils.isBlank(reserveResult)
-				&& this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_RESERVE)) {
+		if (this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_RESERVE)) {
 			String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_" + promotionId;
 			// 获取该秒杀活动库存锁定队列的值
 			String result = promotionRedisDB.lpop(timeLimitedQueueKey);

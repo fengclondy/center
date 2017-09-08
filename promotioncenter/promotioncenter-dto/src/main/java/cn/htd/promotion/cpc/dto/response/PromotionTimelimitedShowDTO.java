@@ -64,7 +64,10 @@ public class PromotionTimelimitedShowDTO extends TimelimitedInfoResDTO
 	@Override
 	public int compareTo(PromotionTimelimitedShowDTO o) {
 		int diffStatus = this.compareStatus - o.compareStatus;
-		int diffModifyTime = o.getCreateTime().compareTo(this.getCreateTime());
+		int diffModifyTime =0;
+		if(null !=o.getPromotionExtendInfoDTO()){
+			 diffModifyTime = o.getPromotionExtendInfoDTO().getCreateTime().compareTo(this.getPromotionExtendInfoDTO().getCreateTime());
+		}
 		if (diffStatus != 0) {
 			return diffStatus;
 		}

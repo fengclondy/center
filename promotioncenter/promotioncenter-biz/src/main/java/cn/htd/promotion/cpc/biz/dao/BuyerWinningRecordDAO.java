@@ -23,7 +23,7 @@ public interface BuyerWinningRecordDAO {
      * @param page
      * @return
      */
-    public List<BuyerWinningRecordDMO> getAwardRecordByPromotionId(@Param("params") Map<String, Object> params,
+    public List<BuyerWinningRecordDMO> getAwardRecordByPromotionId(@Param("params") PromotionAwardReqDTO params,
             @Param("page") Pager<PromotionAwardReqDTO> page);
 
     /**
@@ -32,7 +32,7 @@ public interface BuyerWinningRecordDAO {
      * @param params
      * @return
      */
-    public long getTotalAwardRecord(@Param("params") Map<String, Object> params);
+    public long getTotalAwardRecord(@Param("params") PromotionAwardReqDTO params);
 
     /**
      * 更新中奖记录物流信息

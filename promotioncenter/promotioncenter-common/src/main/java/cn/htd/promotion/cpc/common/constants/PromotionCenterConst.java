@@ -82,15 +82,13 @@ public class PromotionCenterConst {
 	// 秒杀活动未启用
 	public static final String TIMELIMITED_RESULT_PROMOTION_IS_DISABLE_ERROR = "15405";
 	// 会员没有秒杀权限
-	public static final String TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR = "15406";
+	public static final String TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY = "15406";
 	// 会员有权限参加秒杀活动
 	public static final String TIMELIMITED_RESULT_PROMOTION_PERMISSION = "15407";
 	// 秒杀商品已抢光
 	public static final String TIMELIMITED_RESULT_PROMOTION_SKU_NO_REMAIN = "15408";
 	// 秒杀活动参数不正确
 	public static final String TIMELIMITED_RESULT_PROMOTION_PARAM_ERROR = "15409";
-	// 会员没有秒杀权限
-	public static final String TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY = "15410";
 	// 秒杀结果返回成功
 	public static final String TIMELIMITED_RESULT_PROMOTION_SUCCESS = "00000";
 }

@@ -87,7 +87,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		// 所有有效秒杀活动集合,用于排序
 		List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
 		PromotionTimelimitedShowDTO timelimitedMallDTO = null;
-		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_";
+		String timelimitedResultKey = "";
 		String remaincount="";
 		int count = 0;
 		long total = 0;
@@ -107,7 +107,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 					timelimitedMallDTO = new PromotionTimelimitedShowDTO();
 					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
 					if (null != timelited) {
-						timelimitedResultKey = timelimitedResultKey + timelitedinfo.getPromotionId();
+						timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + timelitedinfo.getPromotionId();
 					    remaincount = promotionRedisDB.getHash(timelimitedResultKey,RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
 					    if (StringUtils.isNotBlank(remaincount) ) {
 					    	timelimitedMallDTO.setRemainCount(Integer.valueOf(remaincount));
@@ -204,6 +204,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			}
 			result.setCode(returnCode);
 			result.setResult(timelimitedDTO);
+			logger.info("returnCode=" +returnCode +"timelimitedDTO"+ JSON.toJSONString(timelimitedDTO));
 		} catch (PromotionCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.setErrorMessage(bcbe.getMessage());
@@ -253,7 +254,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 */
 	private ExecuteResult<Boolean> checkParamValid(PromotionExtendInfoDTO promotionExtendInfoDTO) {
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
-		restult.setResult(false);
+		restult.setResult(true);
 		if (dictionary
 				.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
@@ -267,11 +268,11 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			} else {
 				// 秒杀送活动进行中
 				restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_PROCESSING_ERROR);
-				restult.setResult(true);
 			}
 		} else {
 			// 秒杀送活动未启用
 			restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_DISABLE_ERROR);
+			restult.setResult(true);
 		}
 
 		return restult;
@@ -289,22 +290,17 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		restult.setResult(false);
 		PromotionSellerRuleDTO sellerRuleDTO = promotionExtendInfoDTO.getSellerRuleDTO();
 		List<PromotionSellerDetailDTO> sellerDetailList = promotionTimelimitedInfoService.getPromotionSellerDetailDTOByBuyerCode(promotionExtendInfoDTO.getPromotionId(),buyerCode);
-		if (null != sellerRuleDTO && null != sellerRuleDTO.getSellerDetailList()) {// 限制粉丝只能购买归属会员的秒杀商品
-			sellerDetailList = sellerRuleDTO.getSellerDetailList();
+		if (null != sellerRuleDTO && (null != sellerDetailList && sellerDetailList.size() > 0)) {// 限制粉丝只能购买归属会员的秒杀商品
 			for (PromotionSellerDetailDTO sellerDetail : sellerDetailList) {
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限
-					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR);
+					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY);
 				} else {
 					// 校验秒杀活动状态
 					restult= checkParamValid(promotionExtendInfoDTO);
 				}
 			}
-
-		} else {// 平台粉丝都可购买该秒杀商品
-			restult= checkParamValid(promotionExtendInfoDTO);
 		}
-
 		return restult;
 	}
 

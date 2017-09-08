@@ -1734,5 +1734,12 @@ and b.customer_manager_code = #{customerManagerID}
 		from trade_orders where order_status in ('31','32','40','50','61','62')
 		and buyer_code=#{memberCode}
 	</select>
+
+	<select id="queryMonthOrderAmountByMemberCode" resultType="String">
+		select sum(order_total_amount)
+		from trade_orders where order_status in ('31','32','40','50','61','62')
+		and buyer_code=#{memberCode}
+		and create_time between DATE_FORMAT(#{startDate},'%Y-%m-%d 00:00:00') and DATE_FORMAT(#{endDate},'%Y-%m-%d 23:59:59')
+	</select>
 	<!-- add by zhangxiaolong for superboss end -->
 </mapper>

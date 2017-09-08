@@ -34,6 +34,11 @@ public final class TimelimitedConstants {
 	public static final String UPDOWN_SHELVES_STATUS_10 = "10";
 	public static final String UPDOWN_SHELVES_STATUS_11 = "11";
 	
+	// 数据库商品库存
+	public static final String TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT = "1";
+	// redis商品真实库存 
+	public static final String TYPE_REDIS_TIMELIMITED_REAL_REMAIN_COUNT = "2";
+	
 	
 	
 	/**

@@ -24,6 +24,8 @@
     <result column="CHARGE_TELEPHONE" property="chargeTelephone" jdbcType="VARCHAR"/>
     <result column="LOGISTICS_STATUS" property="logisticsStatus" jdbcType="VARCHAR"/>
     <result column="LOGISTICS_COMPANY" property="logisticsCompany" jdbcType="VARCHAR"/>
+    <result column="EFFECTIVE_TIME" property="effectiveTime" jdbcType="VARCHAR"/>
+    <result column="INVALID_TIME" property="invalidTime" jdbcType="VARCHAR"/>
     <result column="LOGISTICS_NO" property="logisticsNo" jdbcType="VARCHAR"/>
     <result column="DEAL_FLAG" property="dealFlag" jdbcType="TINYINT"/>
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT"/>
@@ -67,40 +69,43 @@
   <!-- 查询条件-->
   <sql id="awardRecord_mid">
     <if test="params.promotionId!=null and params.promotionId!=''">
-      and PROMOTION_ID = #{params.promotionId}
+      and bwr.promotion_id = #{params.promotionId}
     </if>
     <if test="params.buyerCode!=null and params.buyerCode!=''">
-      and BUYER_CODE = #{params.buyerCode}
+      and bwr.buyer_code = #{params.buyerCode}
     </if>
     <if test="params.buyerName!=null and params.buyerName!=''">
-      and BUYER_NAME like concat('%', #{params.buyerName} ,'%')
+      and bwr.buyer_name like concat('%', #{params.buyerName} ,'%')
     </if>
     <if test="params.rewardType!=null and params.rewardType!=''">
-      and REWARD_TYPE = #{params.rewardType}
+      and bwr.reward_type = #{params.rewardType}
     </if>
     <if test="params.winningStartTime!=null and params.winningStartTime!=''">
-      and date_format(WINNING_TIME , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+      and date_format(bwr.winning_time , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
     </if>
     <if test="params.winningEndTime!=null and params.winningEndTime!=''">
-      and date_format(WINNING_TIME , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
+      and date_format(bwr.winning_time , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
     </if>
     <if test="params.sellerCode!=null and params.sellerCode!=''">
-      and SELLER_CODE = #{params.sellerCode}
+      and bwr.seller_code = #{params.sellerCode}
     </if>
     <if test="params.promotionName!=null and params.promotionName!=''">
-      and PROMOTION_NAME like concat('%', #{params.promotionName} ,'%')
+      and bwr.promotion_name like concat('%', #{params.promotionName} ,'%')
     </if>
     <if test="params.rewardName!=null and params.rewardName!=''">
-      and REWARD_NAME like concat('%', #{params.rewardName} ,'%')
+      and bwr.reward_name like concat('%', #{params.rewardName} ,'%')
     </if>
     <if test="params.winnerName!=null and params.winnerName!=''">
-      and WINNER_NAME like concat('%', #{params.winnerName} ,'%')
+      and bwr.winner_name like concat('%', #{params.winnerName} ,'%')
     </if>
     <if test="params.winningContact!=null and params.winningContact!=''">
-      and WINNING_CONTACT = #{params.winningContact}
+      and bwr.winning_contact = #{params.winningContact}
     </if>
     <if test="params.buyerTelephone!=null and params.buyerTelephone!=''">
-      and BUYER_TELEPHONE = #{params.buyerTelephone}
+      and bwr.buyer_telephone = #{params.buyerTelephone}
+    </if>
+    <if test="params.promotionType!=null and params.promotionType!=''">
+      and bwr.promotion_type = #{params.promotionType}
     </if>
   </sql>
   <!-- mysql 分页 -->
@@ -110,11 +115,11 @@
 
   <select id="getAwardRecordByPromotionId" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
-    from buyer_winning_record
-    where 1 = 1
+      bwr.*,pi.effective_time,pi.invalid_time
+    from buyer_winning_record bwr,promotion_info pi
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id
     <include refid="awardRecord_mid"/>
-    order by winning_time desc
+    order by bwr.winning_time desc
     <if test="page!=null">
       <include refid="pagination_tail"/>
     </if>

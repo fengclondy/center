@@ -70,7 +70,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         dictMap = baseService.initPromotionDictMap();
         promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(promotionId, dictMap);
-        if (promotionLotteryCommonService.checkPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
+        if (promotionLotteryCommonService.checkBuyerPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
             errorWinningRecord.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
             errorWinningRecord.setBuyerCode(buyerCode);
             errorWinningRecord.setSellerCode(sellerCode);

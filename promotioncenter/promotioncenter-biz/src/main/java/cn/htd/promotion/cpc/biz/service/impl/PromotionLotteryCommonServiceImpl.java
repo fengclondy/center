@@ -85,7 +85,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
     }
 
     /**
-     * 取得扭蛋促销活动信息
+     * 校验粉丝扭蛋活动合法性
      *
      * @param promotionInfoDTO
      * @param requestDTO
@@ -93,7 +93,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
      * @return
      * @throws PromotionCenterBusinessException
      */
-    public boolean checkPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO, DrawLotteryReqDTO requestDTO,
+    public boolean checkBuyerPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO, DrawLotteryReqDTO requestDTO,
             Map<String, String> dictMap) throws PromotionCenterBusinessException {
         String promotionId = requestDTO.getPromotionId();
         String buyerCode = requestDTO.getBuyerCode();
@@ -116,18 +116,14 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     "抽奖活动编号:" + promotionId + " 时间段:" + DateUtil.format(promotionInfoDTO.getEachStartTime()) + "~"
                             + DateUtil.format(promotionInfoDTO.getEachEndTime()) + " 该活动当前不在抽奖时间段");
         }
-        lotteryTimesInfoMap =
-                promotionRedisDB.getHashOperations(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId);
-        if (Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT)) < 0) {
-            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
-                    "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
-        }
-        buyerCheckInfo.setBuyerCode(requestDTO.getBuyerCode());
+        buyerCheckInfo.setBuyerCode(buyerCode);
         buyerCheckInfo.setIsFirstLogin(requestDTO.getIsBuyerFirstLogin());
         if (!baseService.checkPromotionBuyerRule(promotionInfoDTO, buyerCheckInfo, dictMap)) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY.getCode(),
                     "该活动粉丝没有抽奖权限 入参:" + JSON.toJSONString(requestDTO));
         }
+        lotteryTimesInfoMap =
+                promotionRedisDB.getHashOperations(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId);
         if (Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT)) <= 0) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                     "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
@@ -155,6 +151,45 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     .parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)))) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE.getCode(),
                         "粉丝已经用完了自有和分享额外获取的抽奖机 入参:" + JSON.toJSONString(requestDTO));
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 校验扭蛋活动合法性
+     *
+     * @param promotionInfoDTO
+     * @param requestDTO
+     * @param dictMap
+     * @return
+     * @throws PromotionCenterBusinessException
+     */
+    public boolean checkPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO, DrawLotteryReqDTO requestDTO,
+            Map<String, String> dictMap) throws PromotionCenterBusinessException {
+        String promotionId = requestDTO.getPromotionId();
+        String buyerCode = requestDTO.getBuyerCode();
+        Date nowDt = new Date();
+        BuyerCheckInfo buyerCheckInfo = new BuyerCheckInfo();
+
+        if (nowDt.before(promotionInfoDTO.getEffectiveTime())) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_START.getCode(),
+                    "抽奖活动编号:" + promotionId + " 该活动未开始");
+        }
+        if (nowDt.after(promotionInfoDTO.getInvalidTime())) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_EXPIRED.getCode(),
+                    "抽奖活动编号:" + promotionId + " 该活动已结束");
+        }
+        if (!baseService.checkPromotionSellerRule(promotionInfoDTO, requestDTO.getSellerCode(), dictMap)) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getCode(),
+                    "会员店没有参加本次抽奖活动 入参:" + JSON.toJSONString(requestDTO));
+        }
+        if (!StringUtils.isEmpty(buyerCode)) {
+            buyerCheckInfo.setBuyerCode(buyerCode);
+            buyerCheckInfo.setIsFirstLogin(requestDTO.getIsBuyerFirstLogin());
+            if (!baseService.checkPromotionBuyerRule(promotionInfoDTO, buyerCheckInfo, dictMap)) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_AUTHIORITY.getCode(),
+                        "该活动粉丝没有抽奖权限 入参:" + JSON.toJSONString(requestDTO));
             }
         }
         return true;

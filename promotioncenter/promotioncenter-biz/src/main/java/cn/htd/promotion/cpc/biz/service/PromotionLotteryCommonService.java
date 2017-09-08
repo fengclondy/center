@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.biz.service;
 
 import java.util.Map;
 
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
@@ -16,6 +17,18 @@ public interface PromotionLotteryCommonService {
      * @return
      */
     public PromotionExtendInfoDTO getRedisLotteryInfo(String promotionId, Map<String, String> dictMap);
+
+    /**
+     * 校验粉丝扭蛋活动合法性
+     *
+     * @param promotionInfoDTO
+     * @param requestDTO
+     * @param dictMap
+     * @return
+     * @throws PromotionCenterBusinessException
+     */
+    public boolean checkBuyerPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO,
+            DrawLotteryReqDTO requestDTO, Map<String, String> dictMap) throws PromotionCenterBusinessException;
 
     /**
      * 检验抽奖活动是否有效

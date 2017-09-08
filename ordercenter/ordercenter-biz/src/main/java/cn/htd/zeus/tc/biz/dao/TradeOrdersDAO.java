@@ -217,4 +217,14 @@ public interface TradeOrdersDAO {
 	 */
 	public String queryTotalOrderAmountByMemberCode(OrderAmountQueryReqDTO orderAmountQueryReqDTO);
 
+	/**
+	 * 查询当月销售总金额
+	 *
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public String queryMonthOrderAmountByMemberCode(@Param("startDate") String startDate,@Param("endDate") String endDate
+			,@Param("memberCode") String memberCode);
+
 }

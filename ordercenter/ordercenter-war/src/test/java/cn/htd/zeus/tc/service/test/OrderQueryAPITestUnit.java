@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.zeus.tc.api.OrderQueryAPI;
 import cn.htd.zeus.tc.dto.response.OrderAmountResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
 import org.junit.Before;
@@ -35,6 +36,9 @@ public class OrderQueryAPITestUnit {
 
 	@Resource
 	private OrderQueryService orderQueryService;
+
+	@Resource
+	private OrderQueryAPI orderQueryAPI;
 
 	@Resource
 	private OrderStatusChangeCommonService orderStatusChangeCommonService;
@@ -174,7 +178,8 @@ public class OrderQueryAPITestUnit {
 		orderAmountQueryReqDTO.setMemberCode("htd000662");
 		orderAmountQueryReqDTO.setStartDate("2017-04-24");
 		orderAmountQueryReqDTO.setEndDate("2017-07-18");
-		OrderAmountResDTO orderAmountResDTO =orderQueryService.queryOrderAmountForSuperboss(orderAmountQueryReqDTO);
+		orderAmountQueryReqDTO.setCurrentMonth("2017-04");
+		OrderAmountResDTO orderAmountResDTO =orderQueryAPI.queryOrderAmountForSuperboss(orderAmountQueryReqDTO);
 		System.out.println("dd"+orderAmountResDTO.getStatus());
 	}
 }

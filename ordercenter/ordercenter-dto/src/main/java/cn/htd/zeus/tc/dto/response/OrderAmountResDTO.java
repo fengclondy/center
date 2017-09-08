@@ -16,6 +16,9 @@ public class OrderAmountResDTO extends GenricReqDTO implements Serializable{
     //总支出
     private String totalAmount;
 
+    //目标月份总支出
+    private String monthAmount;
+
     //查询状态：0失败 1成功
     private Integer status;
 
@@ -59,5 +62,13 @@ public class OrderAmountResDTO extends GenricReqDTO implements Serializable{
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public String getMonthAmount() {
+        return monthAmount;
+    }
+
+    public void setMonthAmount(String monthAmount) {
+        this.monthAmount = monthAmount;
     }
 }

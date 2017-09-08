@@ -40,6 +40,14 @@ public final class TimelimitedConstants {
 	public static final String TYPE_REDIS_TIMELIMITED_REAL_REMAIN_COUNT = "2";
 	
 	
+	/**
+	 * 层级卖家规则详情操作类型：0.新增,1.删除,2.修改
+	 */
+	public static final String SELLERDETAIL_OPERATETYPE_ADD = "0";
+	public static final String SELLERDETAIL_OPERATETYPE_DELETE = "1";
+	public static final String SELLERDETAIL_OPERATETYPE_UPDATE = "2";
+	
+	
 	
 	/**
 	 * 促销活动发起方类型  1:平台，2:店铺

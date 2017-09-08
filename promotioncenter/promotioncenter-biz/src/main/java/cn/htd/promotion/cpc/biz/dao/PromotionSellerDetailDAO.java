@@ -19,4 +19,9 @@ public interface PromotionSellerDetailDAO  extends BaseDAO<PromotionSellerDetail
     int updateByPrimaryKey(PromotionSellerDetailDTO record);
 
 	void deleteByPromotionId(String promotionId);
+	
+	void deleteTimelimitedSellerDetail(PromotionSellerDetailDTO record);
+	
+	int updateTimelimitedSellerDetail(PromotionSellerDetailDTO record);
+	
 }

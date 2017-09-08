@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 
 /**
  * 秒杀活动信息DTO
@@ -82,6 +83,10 @@ public class TimelimitedInfoReqDTO implements Serializable {
     //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
     private String showStatus;
 
+    /**
+     * 层级卖家规则
+     */
+    private PromotionSellerRuleDTO sellerRuleDTO;
 	
 	//活动信息
 	private PromotionExtendInfoDTO promotionExtendInfoDTO;
@@ -272,6 +277,12 @@ public class TimelimitedInfoReqDTO implements Serializable {
 	}
 	public void setInvalidTime(Date invalidTime) {
 		this.invalidTime = invalidTime;
+	}
+	public PromotionSellerRuleDTO getSellerRuleDTO() {
+		return sellerRuleDTO;
+	}
+	public void setSellerRuleDTO(PromotionSellerRuleDTO sellerRuleDTO) {
+		this.sellerRuleDTO = sellerRuleDTO;
 	}
 
 	

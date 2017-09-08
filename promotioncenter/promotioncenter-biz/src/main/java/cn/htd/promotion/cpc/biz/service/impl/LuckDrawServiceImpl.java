@@ -189,6 +189,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
             remainTimes = promotionRedisDB
                     .getHash(b2bMiddleLotteryBuyerTimesInfoKey, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
             result.setRemainingTimes(StringUtils.isEmpty(remainTimes) ? 0 : Integer.valueOf(remainTimes));
+            if (result.getRemainingTimes() < 0) {
+                result.setRemainingTimes(0);
+            }
         }
     }
 

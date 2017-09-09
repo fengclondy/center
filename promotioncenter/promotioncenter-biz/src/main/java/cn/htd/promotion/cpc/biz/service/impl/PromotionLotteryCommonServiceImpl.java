@@ -380,10 +380,23 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         StringRedisTemplate stringRedisTemplate = null;
         PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
         promotionInfoDMO.setPromotionId(promotionInfoDTO.getPromotionId());
+        Map<Object, Object> indexMap = null;
+        String indexKey = "";
         try {
             promotionInfoDTO.setPromotionStatusHistoryList(null);
             promotionInfoDTO.setPromotionDetailDescribeDTO(null);
             stringRedisTemplate = promotionRedisDB.getStringRedisTemplate();
+            if (stringRedisTemplate.hasKey(RedisConst.REDIS_LOTTERY_INDEX)) {
+                indexMap = stringRedisTemplate.opsForHash().entries(RedisConst.REDIS_LOTTERY_INDEX);
+                if (indexMap != null && !indexMap.isEmpty()) {
+                    for (Map.Entry<Object, Object> indexEntry : indexMap.entrySet()) {
+                        if (promotionInfoDTO.getPromotionId().equals((String)indexEntry.getValue())) {
+                            indexKey = (String)indexEntry.getKey();
+                        }
+                    }
+                }
+            }
+            final String finalIndexKey = indexKey;
             stringRedisTemplate.executePipelined(new RedisCallback<List<Object>>() {
                 @Override
                 public List<Object> doInRedis(RedisConnection connection) throws DataAccessException {
@@ -454,6 +467,9 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                 .hSet(RedisConst.REDIS_LOTTERY_INFO, promotionId, JSON.toJSONString(promotionInfoDTO));
                         stringRedisConnection
                                 .hSet(RedisConst.REDIS_LOTTERY_VALID, promotionId, promotionInfoDTO.getShowStatus());
+                        if (!StringUtils.isEmpty(finalIndexKey)) {
+                            stringRedisConnection.hDel(RedisConst.REDIS_LOTTERY_INDEX, finalIndexKey);
+                        }
                         stringRedisConnection.hSet(RedisConst.REDIS_LOTTERY_INDEX,
                                 RedisConst.REDIS_GASHAPON_PREFIX + promotionInfoDTO.getEffectiveTime().getTime() + "_"
                                         + promotionInfoDTO.getInvalidTime().getTime(), promotionId);

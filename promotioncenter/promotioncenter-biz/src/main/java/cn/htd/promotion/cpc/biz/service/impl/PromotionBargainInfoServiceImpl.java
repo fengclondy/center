@@ -616,6 +616,7 @@ public class PromotionBargainInfoServiceImpl implements
 						addIndexList.add(i);
 					}
 				}
+				promotionExtendInfoDTO.setShowStatus(promotionInfoDTO.getShowStatus());
 				PromotionExtendInfoDTO updateResult = baseService
 						.updatePromotionInfo(promotionExtendInfoDTO);
 				for (int i = 0; i < promotionExtendInfoDTO

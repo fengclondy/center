@@ -425,12 +425,19 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey)
                                     .longValue();
                             totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
-                            buyerWinningRecordDTO = new BuyerWinningRecordDTO();
-                            buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
-                            buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
-                            while (pushCnt > 0) {
-                                stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
-                                pushCnt--;
+                            if (pushCnt > 0) {
+                                buyerWinningRecordDTO = new BuyerWinningRecordDTO();
+                                buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
+                                buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
+                                while (pushCnt > 0) {
+                                    stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
+                                    pushCnt--;
+                                }
+                            } else if (pushCnt < 0) {
+                                while (pushCnt < 0) {
+                                    stringRedisConnection.lPop(redisKey);
+                                    pushCnt++;
+                                }
                             }
                             stringRedisConnection.expire(redisKey, seconds);
                         }

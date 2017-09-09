@@ -119,7 +119,7 @@
     select
       bwr.*,pi.effective_time,pi.invalid_time
     from buyer_winning_record bwr,promotion_info pi
-    where 1 = 1 and bwr.promotion_id = pi.promotion_id and bwr.promotion_type='21'
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id 
     <include refid="awardRecord_mid"/>
     order by bwr.winning_time desc
     <if test="page!=null">

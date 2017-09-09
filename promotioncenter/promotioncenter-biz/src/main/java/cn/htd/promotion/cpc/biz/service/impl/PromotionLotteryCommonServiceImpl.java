@@ -305,6 +305,9 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 while (loopSize < maxLoopSize) {
                     targetAccuList = new ArrayList<PromotionAccumulatyDTO>();
                     for (PromotionAccumulatyDTO checkAccuDTO : accuList) {
+                        if ("0".equals(checkAccuDTO.getLevelAmount())) {
+                            continue;
+                        }
                         lotteryKey =
                                 RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + checkAccuDTO.getLevelCode();
                         if (promotionRedisDB.getLlen(lotteryKey) <= 0) {

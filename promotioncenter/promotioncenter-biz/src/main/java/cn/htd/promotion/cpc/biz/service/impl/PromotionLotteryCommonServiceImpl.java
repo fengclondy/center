@@ -93,8 +93,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
      * @return
      * @throws PromotionCenterBusinessException
      */
-    public boolean checkBuyerPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO, DrawLotteryReqDTO requestDTO,
-            Map<String, String> dictMap) throws PromotionCenterBusinessException {
+    public boolean checkBuyerPromotionLotteryValid(PromotionExtendInfoDTO promotionInfoDTO,
+            DrawLotteryReqDTO requestDTO, Map<String, String> dictMap) throws PromotionCenterBusinessException {
         String promotionId = requestDTO.getPromotionId();
         String buyerCode = requestDTO.getBuyerCode();
         Date nowDt = new Date();
@@ -110,11 +110,15 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_HAS_EXPIRED.getCode(),
                     "抽奖活动编号:" + promotionId + " 该活动已结束");
         }
-        if (nowDt.before(DateUtil.getNowDateSpecifiedTime(promotionInfoDTO.getEachStartTime())) || nowDt
-                .after(DateUtil.getNowDateSpecifiedTime(promotionInfoDTO.getEachEndTime()))) {
-            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NOT_IN_TIME_INTERVAL.getCode(),
+        if (nowDt.before(DateUtil.getNowDateSpecifiedTime(promotionInfoDTO.getEachStartTime()))) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NOT_IN_START_TIME.getCode(),
                     "抽奖活动编号:" + promotionId + " 时间段:" + DateUtil.format(promotionInfoDTO.getEachStartTime()) + "~"
-                            + DateUtil.format(promotionInfoDTO.getEachEndTime()) + " 该活动当前不在抽奖时间段");
+                            + DateUtil.format(promotionInfoDTO.getEachEndTime()) + " 当前时间未到该活动抽奖开始时间");
+        }
+        if (nowDt.after(DateUtil.getNowDateSpecifiedTime(promotionInfoDTO.getEachEndTime()))) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_HAS_PASSED_END_TIME.getCode(),
+                    "抽奖活动编号:" + promotionId + " 时间段:" + DateUtil.format(promotionInfoDTO.getEachStartTime()) + "~"
+                            + DateUtil.format(promotionInfoDTO.getEachEndTime()) + " 当前时间已过该活动抽奖结束时间");
         }
         buyerCheckInfo.setBuyerCode(buyerCode);
         buyerCheckInfo.setIsFirstLogin(requestDTO.getIsBuyerFirstLogin());
@@ -233,6 +237,13 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                                 "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
                     }
+                    if (winningRecordDTO.getRewardType().equals(errorWinningRecord.getRewardType())) {
+                        promotionRedisDB.incrHash(
+                                RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
+                                RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES);
+                        promotionRedisDB.incr(RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_"
+                                + sellerCode);
+                    }
                     winningRecordDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
                     winningRecordDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
                     winningRecordDTO.setBuyerCode(buyerCode);
@@ -269,9 +280,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 if (promotionRedisDB
                         .decrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
                                 RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES).longValue() < 0) {
-                    promotionRedisDB
-                            .incrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
-                                    RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
                     throw new PromotionCenterBusinessException(
                             ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
                             "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 粉丝已经用完了所有抽奖机会");

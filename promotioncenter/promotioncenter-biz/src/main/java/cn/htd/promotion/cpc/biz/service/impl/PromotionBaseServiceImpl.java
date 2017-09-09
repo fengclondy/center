@@ -437,7 +437,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             extendDTO = promotionInfo;
             promotionInfoExtendDAO.update(extendDTO);
         }
-        promotionInfo.setHasUpFlag(YesNoEnum.YES.getValue());
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.update(promotionInfo);
 

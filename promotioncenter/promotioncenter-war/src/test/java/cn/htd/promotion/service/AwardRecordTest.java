@@ -1,8 +1,10 @@
 package cn.htd.promotion.service;
 
 import cn.htd.common.DataGrid;
+import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.biz.service.AwardRecordService;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
+import cn.htd.promotion.cpc.dto.request.SeckillOrderReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +72,46 @@ public class AwardRecordTest {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void checkOrderTest(){
+        Boolean exist = awardRecordService.checkOrder("4563623");
+        System.out.println(exist);
+    }
+
+    @Test
+    @Rollback(false)
+    public void insertOrderTest() {
+        PromotionAwardReqDTO awardReqDTO = new PromotionAwardReqDTO();
+        awardReqDTO.setOrderNo("897861623");
+        awardReqDTO.setRewardName("测试商品哈哈哈");
+        awardReqDTO.setAwardValue("1000.13");
+        awardReqDTO.setWinningContact("1020");
+        awardReqDTO.setBelongSuperiorName("哈哈哈");
+        awardReqDTO.setBuyerName("汇通达");
+        awardReqDTO.setSellerAddress("南京钟灵街");
+        awardReqDTO.setOrderStatus("待发货");
+        awardReqDTO.setWinningTime(new Date());
+        Integer result = awardRecordService.insertOrder(awardReqDTO);
+        System.out.println(result);
+    }
+
+    @Test
+    @Rollback(false)
+    public void updateOrderTest() {
+        PromotionAwardReqDTO awardReqDTO = new PromotionAwardReqDTO();
+        awardReqDTO.setOrderNo("897861623");
+        awardReqDTO.setRewardName("测试商品哈哈哈1");
+        awardReqDTO.setAwardValue("10010.13");
+        awardReqDTO.setWinningContact("10201");
+        awardReqDTO.setBelongSuperiorName("哈哈哈1");
+        awardReqDTO.setBuyerName("汇通达1");
+        awardReqDTO.setSellerAddress("南京钟灵街1");
+        awardReqDTO.setOrderStatus("待发货1");
+        awardReqDTO.setWinningTime(new Date());
+        Integer result = awardRecordService.updateOrder(awardReqDTO);
+        System.out.println(result);
     }
 
 }

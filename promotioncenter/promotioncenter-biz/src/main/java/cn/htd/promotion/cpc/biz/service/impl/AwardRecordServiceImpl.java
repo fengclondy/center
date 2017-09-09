@@ -1,8 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -82,5 +80,26 @@ public class AwardRecordServiceImpl implements AwardRecordService {
                 JSON.toJSONString(dto));
 
         return awardRecordDAO.updateLogisticsInfo(dto);
+    }
+
+    @Override
+    public Boolean checkOrder(String orderNo) {
+        BuyerWinningRecordDMO dmo = awardRecordDAO.checkOrder(orderNo);
+        if(dmo != null){
+            return true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public Integer updateOrder(PromotionAwardReqDTO awardReqDTO) {
+        return awardRecordDAO.updateOrder(awardReqDTO);
+    }
+
+    @Override
+    public Integer insertOrder(PromotionAwardReqDTO awardReqDTO) {
+
+        return awardRecordDAO.insertOrder(awardReqDTO);
     }
 }

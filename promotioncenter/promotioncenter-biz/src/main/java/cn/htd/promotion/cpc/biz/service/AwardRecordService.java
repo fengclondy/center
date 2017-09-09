@@ -12,4 +12,10 @@ public interface AwardRecordService {
     DataGrid<PromotionAwardDTO> getAwardRecordByPromotionId(PromotionAwardReqDTO dto , String messageId);
 
     int updateLogisticsInfo(PromotionAwardReqDTO dto, String messageId);
+
+    Boolean checkOrder(String orderNo);
+
+    Integer updateOrder(PromotionAwardReqDTO awardReqDTO);
+
+    Integer insertOrder(PromotionAwardReqDTO awardReqDTO);
 }

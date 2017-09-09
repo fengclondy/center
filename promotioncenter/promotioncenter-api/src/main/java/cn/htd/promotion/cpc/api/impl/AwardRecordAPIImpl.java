@@ -8,6 +8,7 @@ import cn.htd.promotion.cpc.biz.service.AwardRecordService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
+import cn.htd.promotion.cpc.dto.request.SeckillOrderReqDTO;
 import cn.htd.promotion.cpc.dto.response.ImportResultDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import com.alibaba.dubbo.common.utils.StringUtils;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -100,5 +102,43 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
             result.setResult(null);
         }
         return result;
+    }
+
+    @Override
+    public ExecuteResult insertUpdateSeckillOrder(SeckillOrderReqDTO dto ,String messageId)  {
+        logger.info("messageId{} : AwardRecordAPIImpl--->importWinningRecord--->parmas:" +messageId +" : "+ JSONObject.toJSONString(dto));
+        ExecuteResult result = new ExecuteResult();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        Integer i;
+        Boolean exist = awardRecordService.checkOrder(dto.getOrderNo());
+        PromotionAwardReqDTO awardReqDTO = getPromotionAwardReqDTO(dto);
+        if(exist){
+            i = awardRecordService.updateOrder(awardReqDTO);
+        }else{
+            i = awardRecordService.insertOrder(awardReqDTO);
+        }
+
+        if(i < 0){
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage("insert or update failed!");
+        }
+
+        return result;
+    }
+
+    private PromotionAwardReqDTO getPromotionAwardReqDTO(SeckillOrderReqDTO dto) {
+        PromotionAwardReqDTO awardReqDTO = new PromotionAwardReqDTO();
+        awardReqDTO.setOrderNo(dto.getOrderNo());
+        awardReqDTO.setRewardName(dto.getProductName());
+        awardReqDTO.setAwardValue(dto.getTotalMoeny());
+        awardReqDTO.setWinningContact(dto.getFanCode());
+        awardReqDTO.setBelongSuperiorName(dto.getMemberBossName());
+        awardReqDTO.setBuyerName(dto.getMemberName());
+        awardReqDTO.setSellerAddress(dto.getMemberAddress());
+        awardReqDTO.setOrderStatus(dto.getOrderStatus());
+        awardReqDTO.setWinningTime(dto.getOrderTime());
+        return awardReqDTO;
     }
 }

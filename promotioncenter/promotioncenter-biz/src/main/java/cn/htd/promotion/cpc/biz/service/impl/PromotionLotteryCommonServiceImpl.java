@@ -274,6 +274,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
 
                 if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
                         RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
+                    promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
+                            RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT);
                     throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                             "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
                 }

@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import cn.htd.common.constant.DictionaryConst;
-import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
@@ -43,8 +42,6 @@ import org.springframework.stereotype.Service;
 public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommonService {
 
     private static final Logger logger = LoggerFactory.getLogger(PromotionLotteryCommonServiceImpl.class);
-
-    private String LOTTERY_MAX_LOOP_SIZE = "promotion.lottery.max.loop.size";
 
     @Resource
     private PromotionRedisDB promotionRedisDB;
@@ -264,10 +261,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 PromotionAccumulatyDTO goalAccuDTO = null;
                 String lotteryKey = "";
                 String awardJsonStr = "";
-                BuyerWinningRecordDTO winningRecordDTO = null;
-                String maxLoopConf = SysProperties.getProperty(LOTTERY_MAX_LOOP_SIZE);
-                int maxLoopSize = StringUtils.isEmpty(maxLoopConf) ? accuList.size() : Integer.parseInt(maxLoopConf);
-                int loopSize = 0;
                 List<PromotionAccumulatyDTO> targetAccuList = null;
                 int currentPercent = 0;
                 int totalPercent = 0;
@@ -302,56 +295,46 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             ResultCodeEnum.LOTTERY_SELLER_REACH_WINNING_LIMMIT.getCode(),
                             "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 会员店已达中奖次数上限");
                 }
-                while (loopSize < maxLoopSize) {
-                    targetAccuList = new ArrayList<PromotionAccumulatyDTO>();
-                    for (PromotionAccumulatyDTO checkAccuDTO : accuList) {
-                        if ("0".equals(checkAccuDTO.getLevelAmount())) {
-                            continue;
-                        }
-                        lotteryKey =
-                                RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + checkAccuDTO.getLevelCode();
-                        if (promotionRedisDB.getLlen(lotteryKey) <= 0) {
-                            continue;
-                        }
-                        targetAccuList.add(checkAccuDTO);
-                        totalPercent += Integer.parseInt(checkAccuDTO.getLevelAmount());
-                    }
-                    if (targetAccuList.size() == 1) {
-                        goalAccuDTO = targetAccuList.get(0);
-                    } else {
-                        for (int i = 0; i < targetAccuList.size(); i ++) {
-                            tmpAccuDTO = targetAccuList.get(i);
-                            if (i == targetAccuList.size() - 1) {
-                                tmpAccuDTO.setLevelAmount("100");
-                                break;
-                            }
-                            if (lastAccuDTO == null) {
-                                currentPercent = 0;
-                            } else {
-                                currentPercent = Integer.parseInt(lastAccuDTO.getLevelAmount());
-                            }
-                            currentPercent += Integer.parseInt(tmpAccuDTO.getLevelAmount()) / totalPercent;
-                            tmpAccuDTO.setLevelAmount(String.valueOf(currentPercent));
-                        }
-                        luckNo = noGenerator.getRandomNum();
-                        logger.info("------------------luckNo:" + luckNo);
-                        for (PromotionAccumulatyDTO accuDTO : targetAccuList) {
-                            if (luckNo <= Integer.parseInt(accuDTO.getLevelAmount())) {
-                                goalAccuDTO = accuDTO;
-                                break;
-                            }
-                        }
-                    }
-                    lotteryKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + goalAccuDTO.getLevelCode();
-                    awardJsonStr = promotionRedisDB.headPop(lotteryKey);
-                    if (StringUtils.isEmpty(awardJsonStr)) {
-                        loopSize++;
+                targetAccuList = new ArrayList<PromotionAccumulatyDTO>();
+                for (PromotionAccumulatyDTO checkAccuDTO : accuList) {
+                    lotteryKey =
+                            RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + checkAccuDTO.getLevelCode();
+                    if ("0".equals(checkAccuDTO.getLevelAmount()) || promotionRedisDB.getLlen(lotteryKey) <= 0) {
                         continue;
                     }
-                    winningRecordDTO = JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);
-                    break;
+                    targetAccuList.add(checkAccuDTO);
+                    totalPercent += Integer.parseInt(checkAccuDTO.getLevelAmount());
                 }
-                return winningRecordDTO;
+                if (targetAccuList.isEmpty()) {
+                    return null;
+                } else if (targetAccuList.size() == 1) {
+                    goalAccuDTO = targetAccuList.get(0);
+                } else {
+                    for (int i = 0; i < targetAccuList.size(); i++) {
+                        tmpAccuDTO = targetAccuList.get(i);
+                        if (i == targetAccuList.size() - 1) {
+                            tmpAccuDTO.setLevelAmount("100");
+                            break;
+                        }
+                        if (lastAccuDTO == null) {
+                            currentPercent = 0;
+                        } else {
+                            currentPercent = Integer.parseInt(lastAccuDTO.getLevelAmount());
+                        }
+                        currentPercent += Integer.parseInt(tmpAccuDTO.getLevelAmount()) / totalPercent;
+                        tmpAccuDTO.setLevelAmount(String.valueOf(currentPercent));
+                    }
+                    luckNo = noGenerator.getRandomNum();
+                    for (PromotionAccumulatyDTO accuDTO : targetAccuList) {
+                        if (luckNo <= Integer.parseInt(accuDTO.getLevelAmount())) {
+                            goalAccuDTO = accuDTO;
+                            break;
+                        }
+                    }
+                }
+                lotteryKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + goalAccuDTO.getLevelCode();
+                awardJsonStr = promotionRedisDB.headPop(lotteryKey);
+                return JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);
             }
         }.start();
     }
@@ -390,8 +373,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 indexMap = stringRedisTemplate.opsForHash().entries(RedisConst.REDIS_LOTTERY_INDEX);
                 if (indexMap != null && !indexMap.isEmpty()) {
                     for (Map.Entry<Object, Object> indexEntry : indexMap.entrySet()) {
-                        if (promotionInfoDTO.getPromotionId().equals((String)indexEntry.getValue())) {
-                            indexKey = (String)indexEntry.getKey();
+                        if (promotionInfoDTO.getPromotionId().equals((String) indexEntry.getValue())) {
+                            indexKey = (String) indexEntry.getKey();
                         }
                     }
                 }

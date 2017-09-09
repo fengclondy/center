@@ -271,6 +271,11 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 String maxLoopConf = SysProperties.getProperty(LOTTERY_MAX_LOOP_SIZE);
                 int maxLoopSize = StringUtils.isEmpty(maxLoopConf) ? accuList.size() : Integer.parseInt(maxLoopConf);
                 int loopSize = 0;
+                List<PromotionAccumulatyDTO> targetAccuList = null;
+                int currentPercent = 0;
+                int totalPercent = 0;
+                PromotionAccumulatyDTO tmpAccuDTO = null;
+                PromotionAccumulatyDTO lastAccuDTO = null;
 
                 if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
                         RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
@@ -292,7 +297,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     throw new PromotionCenterBusinessException(
                             ResultCodeEnum.LOTTERY_BUYER_REACH_WINNING_LIMMIT.getCode(),
                             "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 粉丝已达中奖次数上限");
-
                 }
                 if (promotionRedisDB
                         .decr(RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_" + sellerCode)
@@ -302,11 +306,36 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 会员店已达中奖次数上限");
                 }
                 while (loopSize < maxLoopSize) {
-                    if (accuList.size() == 1) {
-                        goalAccuDTO = accuList.get(0);
+                    targetAccuList = new ArrayList<PromotionAccumulatyDTO>();
+                    for (PromotionAccumulatyDTO checkAccuDTO : accuList) {
+                        lotteryKey =
+                                RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + checkAccuDTO.getLevelCode();
+                        if (promotionRedisDB.getLlen(lotteryKey) <= 0) {
+                            continue;
+                        }
+                        targetAccuList.add(checkAccuDTO);
+                        totalPercent += Integer.parseInt(checkAccuDTO.getLevelAmount());
+                    }
+                    if (targetAccuList.size() == 1) {
+                        goalAccuDTO = targetAccuList.get(0);
                     } else {
+                        for (int i = 0; i < targetAccuList.size(); i ++) {
+                            tmpAccuDTO = targetAccuList.get(i);
+                            if (i == targetAccuList.size() - 1) {
+                                tmpAccuDTO.setLevelAmount("100");
+                                break;
+                            }
+                            if (lastAccuDTO == null) {
+                                currentPercent = 0;
+                            } else {
+                                currentPercent = Integer.parseInt(lastAccuDTO.getLevelAmount());
+                            }
+                            currentPercent += Integer.parseInt(tmpAccuDTO.getLevelAmount()) / totalPercent;
+                            tmpAccuDTO.setLevelAmount(String.valueOf(currentPercent));
+                        }
                         luckNo = noGenerator.getRandomNum();
-                        for (PromotionAccumulatyDTO accuDTO : accuList) {
+                        logger.info("------------------luckNo:" + luckNo);
+                        for (PromotionAccumulatyDTO accuDTO : targetAccuList) {
                             if (luckNo <= Integer.parseInt(accuDTO.getLevelAmount())) {
                                 goalAccuDTO = accuDTO;
                                 break;
@@ -367,7 +396,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     List<PromotionAccumulatyDTO> accuList = new ArrayList<PromotionAccumulatyDTO>();
                     Map<String, String> timesInfoMap = new HashMap<String, String>();
                     long totalAwardCnt = 0L;
-                    int currentPercent = 0;
                     String levelCode = "";
                     String redisKey = "";
                     long pushCnt = 0L;
@@ -393,9 +421,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         stringRedisConnection.openPipeline();
                         for (PromotionAwardInfoDTO awardInfoDTO : promotionAwardInfoDTOList) {
                             accuDTO = new PromotionAccumulatyDTO();
-                            currentPercent += Integer.valueOf(awardInfoDTO.getLevelAmount());
                             accuDTO.setPromotionAccumulaty(awardInfoDTO);
-                            accuDTO.setLevelAmount(String.valueOf(currentPercent));
                             accuList.add(accuDTO);
                             levelCode = awardInfoDTO.getLevelCode();
                             redisKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + levelCode;

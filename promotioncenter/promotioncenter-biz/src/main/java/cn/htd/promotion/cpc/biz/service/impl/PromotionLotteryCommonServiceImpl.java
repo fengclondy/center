@@ -228,9 +228,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     if (accuList == null || accuList.isEmpty()) {
                         throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
                                 "抽奖活动编号:" + promotionId + " 奖项设置异常没有设置奖项");
-                    } else if (!"100".equals(accuList.get(accuList.size() - 1).getLevelAmount())) {
-                        throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-                                "抽奖活动编号:" + promotionId + " 奖项设置异常没有合适奖项 " + JSON.toJSONString(accuList));
                     }
                     winningRecordDTO = drawLotteryAward(accuList);
                     if (winningRecordDTO == null) {
@@ -308,6 +305,9 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 while (loopSize < maxLoopSize) {
                     targetAccuList = new ArrayList<PromotionAccumulatyDTO>();
                     for (PromotionAccumulatyDTO checkAccuDTO : accuList) {
+                        if ("0".equals(checkAccuDTO.getLevelAmount())) {
+                            continue;
+                        }
                         lotteryKey =
                                 RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + checkAccuDTO.getLevelCode();
                         if (promotionRedisDB.getLlen(lotteryKey) <= 0) {
@@ -428,12 +428,19 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey)
                                     .longValue();
                             totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
-                            buyerWinningRecordDTO = new BuyerWinningRecordDTO();
-                            buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
-                            buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
-                            while (pushCnt > 0) {
-                                stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
-                                pushCnt--;
+                            if (pushCnt > 0) {
+                                buyerWinningRecordDTO = new BuyerWinningRecordDTO();
+                                buyerWinningRecordDTO.setBuyerWinningRecordByAwardInfo(awardInfoDTO);
+                                buyerWinningRecordDTO.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
+                                while (pushCnt > 0) {
+                                    stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
+                                    pushCnt--;
+                                }
+                            } else if (pushCnt < 0) {
+                                while (pushCnt < 0) {
+                                    stringRedisConnection.lPop(redisKey);
+                                    pushCnt++;
+                                }
                             }
                             stringRedisConnection.expire(redisKey, seconds);
                         }

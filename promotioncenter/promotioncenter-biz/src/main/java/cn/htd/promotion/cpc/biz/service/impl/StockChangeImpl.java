@@ -111,8 +111,8 @@ public abstract class StockChangeImpl implements StockChangeService {
 		String key = buyerCode + "&" + promotionId;
 		String str = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, key);
 		if (StringUtils.isNotBlank(str)) {
-			timelimitedLog = JSON.parseObject(promotionRedisDB
-					.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, seckillInfoReqDTO.getPromotionId()),
+			timelimitedLog = JSON.parseObject(
+					promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, key),
 					BuyerUseTimelimitedLogDMO.class);
 			log.setSeckillLockNo(timelimitedLog.getSeckillLockNo());
 			log.setUseType(useType);

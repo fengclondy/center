@@ -431,6 +431,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         timesInfoMap
                                 .put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
                         timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT, String.valueOf(totalAwardCnt));
+                        stringRedisConnection.del(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId);
                         stringRedisConnection
                                 .hMSet(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, timesInfoMap);
                         stringRedisConnection.expire(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId, seconds);

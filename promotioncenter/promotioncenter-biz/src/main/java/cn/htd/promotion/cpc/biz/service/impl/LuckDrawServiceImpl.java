@@ -245,7 +245,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 String buyerTopExtraPartakeTime = promotionRedisDB
                         .getHash(lotteryTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES);
                 Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
-                if (StringUtils.isEmpty(buyerTopExtraPartakeTime) || Integer.valueOf(buyerTopExtraPartakeTime)<=0) {
+                if (StringUtils.isEmpty(buyerTopExtraPartakeTime) || Integer.valueOf(buyerTopExtraPartakeTime)<0) {
                     // 粉丝活动粉丝当日参与次数--总共剩余参与次数
                     promotionRedisDB
                             .incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, partakeTime);
@@ -374,6 +374,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 for (int i = 0; i < promotionAccumulatyList.size(); i++) {
                     padrDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
                     padrDTO.setPromotionId(rtobj.getPromotionId());
+                    padrDTO.setCreateId(rtobj.getCreateId());
+                    padrDTO.setCreateName(rtobj.getCreateName());
+                    padrDTO.setModifyId(rtobj.getCreateId());
+                    padrDTO.setModifyName(rtobj.getCreateName());
                     promotionAwardInfoDAO.add(padrDTO);
                 }
                 promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(rtobj);
@@ -454,8 +458,20 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 PromotionAwardInfoDTO padDTO = null;
                 for (int i = 0; i < promotionAccumulatyList.size(); i++) {
                     padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
+                    PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(padDTO);
+                    if(pad==null){
+                    	padDTO.setPromotionId(result.getPromotionId());
+                    	padDTO.setCreateId(result.getModifyId());
+                    	padDTO.setCreateName(result.getModifyName());
+                    	padDTO.setModifyId(result.getModifyId());
+                    	padDTO.setModifyName(result.getModifyName());
+                    	promotionAwardInfoDAO.add(padDTO);
+                    }else{
+                    	padDTO.setModifyId(result.getModifyId());
+                    	padDTO.setModifyName(result.getModifyName());
                     promotionAwardInfoDAO.update(padDTO);
                 }
+              }
             }
             promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
             //result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());

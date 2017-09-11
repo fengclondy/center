@@ -318,10 +318,12 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         }
                         if (lastAccuDTO == null) {
                             currentPercent = 0;
+                            lastAccuDTO = tmpAccuDTO;
                         } else {
                             currentPercent = Integer.parseInt(lastAccuDTO.getLevelAmount());
                         }
-                        currentPercent += Integer.parseInt(tmpAccuDTO.getLevelAmount()) / totalPercent;
+                        currentPercent += Integer.parseInt(tmpAccuDTO.getLevelAmount()) * 100 / totalPercent;
+                        currentPercent = currentPercent > 100 ? 100 : currentPercent;
                         tmpAccuDTO.setLevelAmount(String.valueOf(currentPercent));
                     }
                     luckNo = noGenerator.getRandomNum();

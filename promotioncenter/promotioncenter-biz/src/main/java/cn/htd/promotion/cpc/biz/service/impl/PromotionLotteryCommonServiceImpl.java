@@ -284,6 +284,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                 if (promotionRedisDB
                         .decrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
                                 RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES).longValue() < 0) {
+                    promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
+                            RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
                     throw new PromotionCenterBusinessException(
                             ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
                             "抽奖活动编号:" + promotionId + " 会员店:" + sellerCode + " 抽奖粉丝编号:" + buyerCode + " 粉丝已经用完了所有抽奖机会");

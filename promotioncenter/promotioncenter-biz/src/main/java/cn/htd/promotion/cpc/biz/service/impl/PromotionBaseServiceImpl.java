@@ -8,6 +8,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
@@ -40,11 +47,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
-import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
@@ -517,7 +519,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             if (psr1 != null) {
                 List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
                 psr1.setSellerDetailList(sdlist);
-                if (psr1.getDeleteFlag() == 0) {
+                if (psr1.getDeleteFlag() == YesNoEnum.NO.getValue()) {
                     promotionInfo.setSellerRuleDTO(psr1);
                 }
             }

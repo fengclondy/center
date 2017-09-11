@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import cn.htd.common.dao.orm.BaseDAO;
@@ -19,4 +21,11 @@ public interface PromotionSellerDetailDAO  extends BaseDAO<PromotionSellerDetail
     int updateByPrimaryKey(PromotionSellerDetailDTO record);
 
 	void deleteByPromotionId(String promotionId);
+	
+	void deleteTimelimitedSellerDetail(PromotionSellerDetailDTO record);
+	
+	int updateTimelimitedSellerDetail(PromotionSellerDetailDTO record);
+
+	List<PromotionSellerDetailDTO> selectByPromotionId(String promotionId);
+	
 }

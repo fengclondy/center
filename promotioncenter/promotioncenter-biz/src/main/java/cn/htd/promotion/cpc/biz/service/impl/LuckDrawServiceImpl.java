@@ -5,13 +5,24 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionAwardInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionDetailDescribeDAO;
@@ -29,6 +40,7 @@ import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
@@ -44,19 +56,13 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LuckDrawServiceImpl.class);
-
+    // 抽奖活动最大奖品数量
+    private static final String PROMOTION_LOTTERY_MAX_AWARD_SIZE = "promotion.lottery.max.award.size";
     @Resource
     private BuyerWinningRecordDAO awardRecordDAO;
 
@@ -65,20 +71,28 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
     @Resource
     private PromotionRedisDB promotionRedisDB;
+
     @Resource
     private DictionaryUtils dictionary;
+
     @Resource
     private PromotionBaseService promotionBaseService;
+
     @Resource
     private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+
     @Resource
     private PromotionAwardInfoDAO promotionAwardInfoDAO;
+
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
+
     @Resource
     private PromotionBaseService baseService;
+
     @Resource
     public BuyerWinningRecordDAO buyerWinningRecordDAO;
+
     @Resource
     private PromotionLotteryCommonService promotionLotteryCommonService;
 
@@ -87,35 +101,20 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         String messageId = requestDTO.getMessageId();
         ValidateLuckDrawResDTO result = new ValidateLuckDrawResDTO();
         try {
-            result.setResponseCode(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getCode());
-            result.setResponseMsg(ResultCodeEnum.LOTTERY_SELLER_NO_AUTHIORITY.getMsg());
-
-            String orgId = requestDTO.getOrgId();
+            result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+            result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
             String promotionId = queryEffectivePromotion();
             if (StringUtils.isEmpty(promotionId)) {
+                result.setResponseCode(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode());
+                result.setResponseMsg(ResultCodeEnum.PROMOTION_NOT_EXIST.getMsg());
                 return result;
             }
-
-            Map<String, String> dictMap = null;
-            PromotionExtendInfoDTO promotionInfoDTO = null;
-            dictMap = baseService.initPromotionDictMap();
-            promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(promotionId, dictMap);
-            if (baseService.checkPromotionSellerRule(promotionInfoDTO, orgId, dictMap)) {
-                result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-                result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-                result.setPromotionId(promotionId);
-                return result;
-            }
-        } catch (PromotionCenterBusinessException e) {
-            result.setResponseCode(e.getCode());
-            result.setResponseMsg(e.getMessage());
+            result.setPromotionId(promotionId);
         } catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
-            LOGGER.error("MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 OrgId：{}异常信息：{}",
-                    messageId, requestDTO.getOrgId(), w.toString());
+            LOGGER.error("MessageId:{} 调用方法LuckDrawServiceImpl.validateLuckDrawPermission出现异常 异常信息：{}", messageId,
+                    ExceptionUtils.getStackTraceAsString(e));
         }
         return result;
     }
@@ -123,80 +122,81 @@ public class LuckDrawServiceImpl implements LuckDrawService {
     @Override
     public LotteryActivityPageResDTO lotteryActivityPage(LotteryActivityPageReqDTO request) {
         String messageId = request.getMessageId();
+        String promotionId = request.getPromotionId();
+        PromotionExtendInfoDTO promotionInfoDTO = null;
         LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
+        List<PromotionPictureDTO> promotionPictureList = null;
+        List<String> pictureUrlList = new ArrayList<String>();
+        Map<String, String> dictMap = null;
+        DrawLotteryReqDTO checkInfoDTO = new DrawLotteryReqDTO();
         try {
-            String promotionId = request.getPromotionId();
-            // 抽奖活动信息
-            String lotteryJson = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_INFO, promotionId);
-            PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(lotteryJson, PromotionExtendInfoDTO.class);
-            List<PromotionPictureDTO> promotionPictureList = promotionExtendInfoDTO.getPromotionPictureList();
-            List<String> pictureUrlList = null;
+            result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+            result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+            dictMap = baseService.initPromotionDictMap();
+            promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(promotionId, dictMap);
+            promotionPictureList = promotionInfoDTO.getPromotionPictureList();
             if (CollectionUtils.isNotEmpty(promotionPictureList)) {
-                pictureUrlList = new ArrayList<String>();
                 for (PromotionPictureDTO promotionPicture : promotionPictureList) {
                     pictureUrlList.add(promotionPicture.getPromotionPictureUrl());
                 }
             }
-            // 粉丝每日抽奖次数限制
-            String buyerDailyDrawTimes = promotionRedisDB
-                    .getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
-                            RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES);
-
-            Integer remainingTimes = Integer.valueOf(buyerDailyDrawTimes);
+            result.setActivityStartTime(promotionInfoDTO.getEachStartTime());
+            result.setActivityEndTime(promotionInfoDTO.getEachEndTime());
+            result.setPromotionName(promotionInfoDTO.getPromotionName());
             result.setPictureUrl(pictureUrlList);
-            result.setActivityStartTime(promotionExtendInfoDTO.getEachStartTime());
-            result.setActivityEndTime(promotionExtendInfoDTO.getEachEndTime());
-            result.setPromotionName(promotionExtendInfoDTO.getPromotionName());
-            result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-            result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-
-            String buyerNo = request.getMemberNo();
-            if (StringUtils.isNotEmpty(buyerNo)) {
-                // 粉丝活动粉丝当日次数信息
-                String b2bMiddleLotteryBuyerTimesInfo =
-                        RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerNo;
-
-                List<String> buyerTimeInfoList = promotionRedisDB.getHashFields(b2bMiddleLotteryBuyerTimesInfo);
-                if (CollectionUtils.isEmpty(buyerTimeInfoList)) {
-                    // 粉丝活动粉丝当日剩余参与次数
-                    promotionRedisDB
-                            .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
-                                    remainingTimes.toString());
-                    // 粉丝当日中奖次数
-                    promotionRedisDB
-                            .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES,
-                                    promotionExtendInfoDTO.getDailyBuyerWinningTimes().toString());
-                    // 粉丝分享次数
-                    promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES,
-                            String.valueOf(YesNoEnum.NO.getValue()));
-                    // 粉丝已经达到分享获得抽奖次数上限
-                    promotionRedisDB
-                            .setHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES,
-                                    String.valueOf(YesNoEnum.NO.getValue()));
-                } else {
-                    String memberDayLotteryTimes = promotionRedisDB
-                            .getHash(b2bMiddleLotteryBuyerTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
-                    if (StringUtils.isNotEmpty(memberDayLotteryTimes)) {
-                        remainingTimes = Integer.valueOf(memberDayLotteryTimes);
-                    }
-                }
-                result.setRemainingTimes(remainingTimes);
-                String sellerWinedTimesKey =
-                        RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_" + request.getOrgId();
-                boolean sellerWinedTimes = promotionRedisDB.exists(sellerWinedTimesKey);
-                if (!sellerWinedTimes) {
-                    promotionRedisDB.set(sellerWinedTimesKey, promotionExtendInfoDTO.getDailyWinningTimes().toString());
-                }
-            }
+            result.setRemainingTimes(0);
+            checkInfoDTO.setPromotionId(promotionId);
+            checkInfoDTO.setBuyerCode(request.getMemberNo());
+            checkInfoDTO.setSellerCode(request.getOrgId());
+            checkInfoDTO.setIsBuyerFirstLogin(request.getIsBuyerFirstLogin());
+            promotionLotteryCommonService.checkPromotionLotteryValid(promotionInfoDTO, checkInfoDTO, dictMap);
+            setMemberOrgIdRedis(promotionId, request.getMemberNo(), request.getOrgId(), promotionInfoDTO, result);
+        } catch (PromotionCenterBusinessException pcbe) {
+            result.setResponseCode(pcbe.getCode());
+            result.setResponseMsg(pcbe.getMessage());
         } catch (Exception e) {
             result.setResponseCode(ResultCodeEnum.ERROR.getCode());
             result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
             LOGGER.error("MessageId:{} 调用方法LuckDrawServiceImpl.lotteryActivityPage出现异常 request：{}异常信息：{}", messageId,
-                    JSONObject.toJSONString(request), w.toString());
+                    JSONObject.toJSONString(request), ExceptionUtils.getStackTraceAsString(e));
         }
         return result;
+    }
+
+    /**
+     * 设置粉丝会员店等相关redis值
+     */
+    private void setMemberOrgIdRedis(String promotionId, String buyerNo, String orgId,
+            PromotionExtendInfoDTO promotionInfoDTO, LotteryActivityPageResDTO result) {
+        // 粉丝活动粉丝当日次数信息Key
+        String b2bMiddleLotteryBuyerTimesInfoKey =
+                RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerNo;
+        String sellerWinedTimesKey = RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_" + orgId;
+        String remainTimes = "";
+        Map<String, String> buyerTimeInfoMap = new HashMap<String, String>();
+        if (!promotionRedisDB.exists(sellerWinedTimesKey)) {
+            promotionRedisDB.setAndExpire(sellerWinedTimesKey, promotionInfoDTO.getDailyWinningTimes().toString(),
+                    promotionInfoDTO.getInvalidTime());
+        }
+        if (!StringUtils.isEmpty(buyerNo)) {
+            if (!promotionRedisDB.exists(b2bMiddleLotteryBuyerTimesInfoKey)) {
+                buyerTimeInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES,
+                        promotionInfoDTO.getDailyBuyerPartakeTimes().toString());
+                buyerTimeInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES,
+                        promotionInfoDTO.getDailyBuyerWinningTimes().toString());
+                buyerTimeInfoMap.put(RedisConst.REIDS_LOTTERY_BUYER_SHARE_TIMES, "0");
+                buyerTimeInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES,
+                        String.valueOf(YesNoEnum.NO.getValue()));
+                promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfoKey, buyerTimeInfoMap);
+                promotionRedisDB.setExpire(b2bMiddleLotteryBuyerTimesInfoKey, promotionInfoDTO.getInvalidTime());
+            }
+            remainTimes = promotionRedisDB
+                    .getHash(b2bMiddleLotteryBuyerTimesInfoKey, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES);
+            result.setRemainingTimes(StringUtils.isEmpty(remainTimes) ? 0 : Integer.valueOf(remainTimes));
+            if (result.getRemainingTimes() < 0) {
+                result.setRemainingTimes(0);
+            }
+        }
     }
 
     @Override
@@ -245,7 +245,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 String buyerTopExtraPartakeTime = promotionRedisDB
                         .getHash(lotteryTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES);
                 Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
-                if (StringUtils.isEmpty(buyerTopExtraPartakeTime)) {
+                if (StringUtils.isEmpty(buyerTopExtraPartakeTime) || Integer.valueOf(buyerTopExtraPartakeTime)<0) {
                     // 粉丝活动粉丝当日参与次数--总共剩余参与次数
                     promotionRedisDB
                             .incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, partakeTime);
@@ -321,7 +321,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
             }
             if (StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())) {
-                promotionInfoEditReqDTO.setPromotionType("21");
+                promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                        DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON));
             }
             if (StringUtils.isEmpty(promotionInfoEditReqDTO.getStatus())) {
                 promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
@@ -348,7 +349,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                         "该活动有效期和其他活动重叠，请重新设置");
             }
             List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
-            if (plist != null && plist.size() > 8) {
+            if (plist != null && plist.size() > Integer
+                    .parseInt(SysProperties.getProperty(PROMOTION_LOTTERY_MAX_AWARD_SIZE))) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
                         "奖项设置已经到达最大值！");
             }
@@ -372,6 +374,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 for (int i = 0; i < promotionAccumulatyList.size(); i++) {
                     padrDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
                     padrDTO.setPromotionId(rtobj.getPromotionId());
+                    padrDTO.setCreateId(rtobj.getCreateId());
+                    padrDTO.setCreateName(rtobj.getCreateName());
+                    padrDTO.setModifyId(rtobj.getCreateId());
+                    padrDTO.setModifyName(rtobj.getCreateName());
                     promotionAwardInfoDAO.add(padrDTO);
                 }
                 promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(rtobj);
@@ -416,7 +422,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                         "该活动有效期和其他活动重叠，请重新设置");
             }
             List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
-            if (plist != null && plist.size() > 8) {
+            if (plist != null && plist.size() > Integer
+                    .parseInt(SysProperties.getProperty(PROMOTION_LOTTERY_MAX_AWARD_SIZE))) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
                         "奖项设置已经到达最大值！");
             }
@@ -449,23 +456,26 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 List<? extends PromotionAccumulatyDTO> promotionAccumulatyList =
                         promotionInfoEditReqDTO.getPromotionAccumulatyList();
                 PromotionAwardInfoDTO padDTO = null;
-                for (int i = 0; i < promotionAccumulatyList.size(); i++) {
-                    padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
-                    promotionAwardInfoDAO.update(padDTO);
-                }
-                promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
-            }
-//			 PromotionStatusHistoryDTO historyDTO = new
-//			 PromotionStatusHistoryDTO();
-//			 historyDTO.setPromotionId(result.getPromotionId());
-//			 historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-//			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-//			 historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-//			 DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-//			 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-//			 historyDTO.setCreateId(promotionInfoEditReqDTO.getModifyId());
-//			 historyDTO.setCreateName(promotionInfoEditReqDTO.getModifyName());
-//			 promotionStatusHistoryDAO.add(historyDTO);
+				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
+					padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
+					padDTO.setPromotionId(result.getPromotionId());
+					PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(padDTO);
+					if (pad == null) {
+						padDTO.setPromotionId(result.getPromotionId());
+						padDTO.setCreateId(result.getModifyId());
+						padDTO.setCreateName(result.getModifyName());
+						padDTO.setModifyId(result.getModifyId());
+						padDTO.setModifyName(result.getModifyName());
+						promotionAwardInfoDAO.add(padDTO);
+					} else {
+						padDTO.setModifyId(result.getModifyId());
+						padDTO.setModifyName(result.getModifyName());
+						promotionAwardInfoDAO.update(padDTO);
+					}
+				}
+			}
+            promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
+            //result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
             result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
             result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         } catch (PromotionCenterBusinessException e) {
@@ -495,14 +505,13 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     pai = new PromotionAwardInfoDTO();
                     pai.setPromotionId(padDTO.getPromotionId());
                     pai.setLevelCode(padDTO.getLevelCode());
+                    PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
+                    pad.setPromotionAccumulaty(padDTO);
                     Long pvc = promotionRedisDB.getLlen(
                             RedisConst.REDIS_LOTTERY_AWARD_PREFIX + result.getPromotionId() + "_" + pai.getLevelCode());
                     if (pvc != null) {
-                        pai.setProvideCount(pvc.intValue());
+                        pad.setProvideCount(pvc.intValue());
                     }
-
-                    PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(pai);
-                    pad.setPromotionAccumulaty(padDTO);
                     promotionAwardList.add(pad);
                 }
                 result.setPromotionAccumulatyList(promotionAwardList);
@@ -527,34 +536,44 @@ public class LuckDrawServiceImpl implements LuckDrawService {
      */
     public String queryEffectivePromotion() {
         String promotionId = "";
-        String b2bMiddleLotteryIndex = RedisConst.REDIS_LOTTERY_INDEX;
-        Map<String, String> indexMap = promotionRedisDB.getHashOperations(b2bMiddleLotteryIndex);
+        String promotionStatus = "";
+        Date nowDate = new Date();
+        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
+        String gashaphonType = dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON);
+        Map<String, String> indexMap = promotionRedisDB.getHashOperations(RedisConst.REDIS_LOTTERY_INDEX);
         if (null != indexMap && !indexMap.isEmpty()) {
-            Date nowDate = new Date();
             for (Map.Entry<String, String> m : indexMap.entrySet()) {
-                String field = m.getKey();
-                String[] fieldArray = field.split("_");
-                if (null != fieldArray && fieldArray.length > 2) {
-                    Long startTime = new Long(fieldArray[1]);
-                    Long endTime = new Long(fieldArray[2]);
-                    Date stratDate = new Date(startTime);
-                    Date endDate = new Date(endTime);
-                    if (nowDate.after(stratDate) && nowDate.before(endDate)) {
-                        promotionId = m.getValue();
-                        if (StringUtils.isNotEmpty(promotionId)) {
-                            // 验证抽奖活动的有效状态
-                            String promotionStatus =
-                                    promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
-                            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionStatus)) {
-                                return promotionId;
-                            }
-                        }
-                    }
+                String key = m.getKey();
+                String value = m.getValue();
+                String[] keyArray = key.split("_");
+                if (keyArray == null || keyArray.length < 2) {
+                    continue;
+                }
+                String[] valueArray = value.split("_");
+                if (null == valueArray || valueArray.length < 2) {
+                    continue;
+                }
+                String promotionType = keyArray[0];
+                promotionId = keyArray[1];
+                promotionStatus = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
+                if (!validStatus.equals(promotionStatus)) {
+                    continue;
+                }
+                if (!gashaphonType.equals(promotionType)) {
+                    continue;
+                }
+                Long startTime = new Long(valueArray[0]);
+                Long endTime = new Long(valueArray[1]);
+                Date stratDate = new Date(startTime);
+                Date endDate = new Date(endTime);
+                if (nowDate.after(stratDate) && nowDate.before(endDate)) {
+                    return promotionId;
                 }
             }
         }
-        return promotionId;
+        return "";
     }
 
     public static void main(String[] args) {

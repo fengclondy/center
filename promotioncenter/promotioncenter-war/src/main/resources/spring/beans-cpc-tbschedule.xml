@@ -30,4 +30,8 @@
 	<bean id="promotionClearDailyTask" class="cn.htd.promotion.cpc.biz.task.PromotionClearDailyTask"/>
 <!-- 	处理话费，汇金币 -->
 	<bean id="promotionSyncDbTask" class="cn.htd.promotion.cpc.biz.task.PromotionSyncDbAwardTask"/>
+	
+	<bean id="updateBuyerSeckillUseLog4hlScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateBuyerSeckillUseLog4hlScheduleTask"/>
+	
+	<bean id="releaseTimelimitedLockedNoOrderStock4hlScheduleTask" class="cn.htd.promotion.cpc.biz.task.ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask"/>
 </beans>

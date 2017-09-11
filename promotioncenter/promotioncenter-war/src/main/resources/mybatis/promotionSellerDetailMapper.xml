@@ -26,6 +26,15 @@
     from promotion_seller_detail
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
+  
+  <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_seller_detail
+    where promotion_id = #{promotionId,jdbcType=VARCHAR} and delete_flag=0
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from promotion_seller_detail
     where id = #{id,jdbcType=BIGINT}
@@ -33,6 +42,11 @@
   <delete id="deleteByPromotionId" parameterType="java.lang.String" >
     update promotion_seller_detail set delete_flag = 1
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteTimelimitedSellerDetail" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
+    update promotion_seller_detail set delete_flag = 1
+    where promotion_id = #{promotionId,jdbcType=VARCHAR} and seller_code = #{sellerCode,jdbcType=VARCHAR}
   </delete>
   
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
@@ -149,6 +163,33 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+    <update id="updateTimelimitedSellerDetail" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
+    update promotion_seller_detail
+    <set >
+      <if test="ruleId != null" >
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerName != null" >
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorName != null" >
+        belong_superior_name = #{belongSuperiorName,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+        modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR} and seller_code = #{sellerCode,jdbcType=VARCHAR}
+  </update>
+  
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO" >
     update promotion_seller_detail
     set promotion_id = #{promotionId,jdbcType=VARCHAR},

@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
+import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
@@ -80,13 +82,13 @@ public class TimelimitedTestUnit {
         	//商品图片
         	List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList = new ArrayList<TimelimitedSkuPictureReqDTO>();
         	TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO = new TimelimitedSkuPictureReqDTO();;
-        	timelimitedSkuPictureReqDTO.setPictureUrl("/img/123.jpg");
+        	timelimitedSkuPictureReqDTO.setPictureUrl("/img1622/123.jpg");
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO);
         		
         	//商品详情
         	List<TimelimitedSkuDescribeReqDTO> TimelimitedSkuDescribeReqDTOList = new ArrayList<TimelimitedSkuDescribeReqDTO>();
         	TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO = new TimelimitedSkuDescribeReqDTO();
-        	timelimitedSkuDescribeReqDTO.setPictureUrl("/img/aaa.jpg");
+        	timelimitedSkuDescribeReqDTO.setPictureUrl("/img1622/aaa.jpg");
         	TimelimitedSkuDescribeReqDTOList.add(timelimitedSkuDescribeReqDTO);
         	
         	//秒杀商品信息
@@ -106,7 +108,7 @@ public class TimelimitedTestUnit {
     		timelimitedInfoReqDTO.setSecondCategoryCode("二级类目");
     		timelimitedInfoReqDTO.setThirdCategoryCode("三级类目");
     		timelimitedInfoReqDTO.setSkuCategoryName("类目全称");
-    		timelimitedInfoReqDTO.setSkuPicUrl("/img/123.jpg");
+    		
     		// 商品原价
     		BigDecimal skuCostPrice = new BigDecimal("100.88");
     		timelimitedInfoReqDTO.setSkuCostPrice(skuCostPrice);
@@ -123,7 +125,7 @@ public class TimelimitedTestUnit {
     		Integer timelimitedValidInterval = 15;
     		timelimitedInfoReqDTO.setTimelimitedValidInterval(timelimitedValidInterval);
     		
-    		timelimitedInfoReqDTO.setDescribeContent("测试商品详情^_^");
+    		timelimitedInfoReqDTO.setDescribeContent("测试商品详情1622^_^");
 
     		timelimitedInfoReqDTO.setCreateId(userId);
         	timelimitedInfoReqDTO.setCreateName(userName);
@@ -137,6 +139,22 @@ public class TimelimitedTestUnit {
         	setPromotionParam(promotionExtendInfoDTO);
         	timelimitedInfoReqDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
         	
+        	//设置卖家详情规则
+    		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
+    		sellerRuleDTO.setRuleTargetType("1");//卖家规则对象种类 1：指定供应商类型；2：部分供应商
+    		sellerRuleDTO.setTargetSellerType("0");//卖家规则对象种类为1时使用  0：全部通用 ；1（平台公司），2（商品+），3（外部供应商）
+    		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
+    		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
+    		rrrr.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD);//新增
+    		rrrr.setSellerCode("htd688123");
+    		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
+    		rrrr.setBelongSuperiorName("上级测试公司 张志峰");
+    		sellerDetailList.add(rrrr);
+    		sellerRuleDTO.setSellerDetailList(sellerDetailList );
+        	
+    		timelimitedInfoReqDTO.setSellerRuleDTO(sellerRuleDTO);
+    		
+    		
         	
             timelimitedInfoService.addTimelimitedInfo(timelimitedInfoReqDTO, messageId);
             
@@ -180,14 +198,21 @@ public class TimelimitedTestUnit {
     	 * 配送方式：   1：供应商配送  2：自提； Delivery mode
     	 * 支付方式：   1：余额帐支付，2：平台账户支付，3：在线支付 Payment method
     	 */
+    	//配送方式
     	PromotionConfigureDTO deliveryMode = new PromotionConfigureDTO();
     	deliveryMode.setConfType("3");
     	deliveryMode.setConfValue("2");
+    	//支付方式
     	PromotionConfigureDTO paymentMethod = new PromotionConfigureDTO();
     	paymentMethod.setConfType("2");
     	paymentMethod.setConfValue("3");
+    	//活动渠道
+    	PromotionConfigureDTO movable_channel = new PromotionConfigureDTO();
+    	movable_channel.setConfType(PromotionConfigureEnum.MOVABLE_CHANNEL.key());
+    	movable_channel.setConfValue(PromotionConfigureEnum.MovableChannelEnum.MOBILE_MALL.key());
 		promotionConfigureList.add(deliveryMode);
 		promotionConfigureList.add(paymentMethod);
+		promotionConfigureList.add(movable_channel);
 		promotionExtendInfoDTO.setPromotionConfigureList(promotionConfigureList );
 //		promotionExtendInfoDTO.setCycleTimeType("1");
 //		promotionExtendInfoDTO.setEachStartTime(startTime);
@@ -222,17 +247,18 @@ public class TimelimitedTestUnit {
 		buyerRuleDTO.setRuleTargetType("1");//会员规则对象 1-会员级别，2-指定会员，3-会员分组，4-首次登陆会员
 		promotionExtendInfoDTO.setBuyerRuleDTO(buyerRuleDTO );
 		
-		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
-		sellerRuleDTO.setRuleTargetType("1");//卖家规则对象种类 1：指定供应商类型；2：部分供应商
-		sellerRuleDTO.setTargetSellerType("0");//卖家规则对象种类为1时使用  0：全部通用 ；1（平台公司），2（商品+），3（外部供应商）
-		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
-		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
-		rrrr.setSellerCode("htd123456");
-		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
-		rrrr.setBelongSuperiorName("上级测试公司 张志峰");
-		sellerDetailList.add(rrrr );
-		sellerRuleDTO.setSellerDetailList(sellerDetailList );
-		promotionExtendInfoDTO.setSellerRuleDTO(sellerRuleDTO);
+		// 已经废弃
+//		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
+//		sellerRuleDTO.setRuleTargetType("1");//卖家规则对象种类 1：指定供应商类型；2：部分供应商
+//		sellerRuleDTO.setTargetSellerType("0");//卖家规则对象种类为1时使用  0：全部通用 ；1（平台公司），2（商品+），3（外部供应商）
+//		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
+//		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
+//		rrrr.setSellerCode("htd123456");
+//		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
+//		rrrr.setBelongSuperiorName("上级测试公司 张志峰");
+//		sellerDetailList.add(rrrr );
+//		sellerRuleDTO.setSellerDetailList(sellerDetailList );
+//		promotionExtendInfoDTO.setSellerRuleDTO(sellerRuleDTO);
 	}
 
     @Test
@@ -248,7 +274,7 @@ public class TimelimitedTestUnit {
     		 * @param platCode 促销活动类型 1:优惠券，2:秒杀，3:扭蛋，4:砍价，5:总部秒杀
     		 * @return
     		 */
-    		String promotionId = "23172108180146";
+    		String promotionId = "23171740231479";
             
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
@@ -284,7 +310,7 @@ public class TimelimitedTestUnit {
 //    		timelimitedInfoReqDTO.setSecondCategoryCode("二级类目修改");
 //    		timelimitedInfoReqDTO.setThirdCategoryCode("三级类目修改");
 //    		timelimitedInfoReqDTO.setSkuCategoryName("类目全称");
-    		timelimitedInfoReqDTO.setSkuPicUrl("/img/123456.jpg");
+    		
     		// 商品原价
     		BigDecimal skuCostPrice = new BigDecimal("101.88");
     		timelimitedInfoReqDTO.setSkuCostPrice(skuCostPrice);
@@ -314,6 +340,21 @@ public class TimelimitedTestUnit {
         	setPromotionParam(promotionExtendInfoDTO);
         	
         	timelimitedInfoReqDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
+        	
+        	//设置卖家详情规则
+    		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
+    		sellerRuleDTO.setRuleTargetType("1");//卖家规则对象种类 1：指定供应商类型；2：部分供应商
+    		sellerRuleDTO.setTargetSellerType("0");//卖家规则对象种类为1时使用  0：全部通用 ；1（平台公司），2（商品+），3（外部供应商）
+    		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
+    		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
+    		rrrr.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE);//新增
+    		rrrr.setSellerCode("htd688123");
+    		rrrr.setSellerName("无锡市崇安区阳光家电有限公司修改");
+    		rrrr.setBelongSuperiorName("上级测试公司 张志峰");
+    		sellerDetailList.add(rrrr);
+    		sellerRuleDTO.setSellerDetailList(sellerDetailList );
+    		
+    		timelimitedInfoReqDTO.setSellerRuleDTO(sellerRuleDTO);
             
             timelimitedInfoService.updateTimelimitedInfo(timelimitedInfoReqDTO, messageId);
             
@@ -327,10 +368,10 @@ public class TimelimitedTestUnit {
     public void getSingleTimelimitedInfoTest(){
     	
         String messageId = "342453251349";
-        String promotionId = "23171718090174";
+        String promotionId = "23171740231479";
         try {
-    		
-        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId, messageId);
+    		String type = TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT;
+        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionId,type, messageId);
         	System.out.println("===>timelimitedInfoResDTO:" + timelimitedInfoResDTO);
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,6 +411,37 @@ public class TimelimitedTestUnit {
 
     }
     
+    
+	@Test
+	@Rollback(false) 
+    public void updateShowStatusByPromotionIdTest(){
+    	
+        String messageId = "342453251349";
+        String promotionId = "23171740231479";
+		Long userId = 10001L;
+		String userName = "admin";
+        
+        try {
+        	
+        	TimelimitedInfoReqDTO timelimitedInfoReqDTO = new TimelimitedInfoReqDTO();
+        	timelimitedInfoReqDTO.setPromotionId(promotionId);
+        	timelimitedInfoReqDTO.setShowStatus(TimelimitedConstants.PromotionShowStatusEnum.VALID.key());//上架
+//        	timelimitedInfoReqDTO.setShowStatus(TimelimitedConstants.PromotionShowStatusEnum.INVALID.key());//下架
+        	timelimitedInfoReqDTO.setModifyId(userId);
+        	timelimitedInfoReqDTO.setModifyName(userName);
+        	
+        	// 0.成功,1.参数为空,2.活动编码为空,3.上下架为空,4.上下架状态不正确,5.秒杀活动不存在,6.秒杀活动已经上架,
+        	// 7.下架状态的秒杀商品库存小于1,8.秒杀开始时间小于或等于当前时间,9.秒杀结束时间小于或等于当前时间,10.秒杀开始时间大于或等于结束时间,11.活动已经处于下架状态
+        	//-1 系统异常
+        	String status = timelimitedInfoService.updateShowStatusByPromotionId(timelimitedInfoReqDTO, messageId);
+        	System.out.println("===>status:" + status);
+        	
+        	
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     
 
 }

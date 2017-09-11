@@ -4,8 +4,10 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -20,6 +22,7 @@ import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
 import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.common.util.RedissonClientUtil;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
 
@@ -32,8 +35,8 @@ public abstract class StockChangeImpl implements StockChangeService {
 	@Resource
 	private TimelimitedInfoService timelimitedInfoService;
 
-	// @Autowired
-	// private RedissonClientUtil redissonClientUtil;
+	@Autowired
+	private RedissonClientUtil redissonClientUtil;
 
 	/**
 	 * 日志
@@ -51,18 +54,17 @@ public abstract class StockChangeImpl implements StockChangeService {
 		logger.info("MessageId:{} 调用方法StockChangeImpl.checkAndChangeStock入参{}", JSON.toJSONString(seckillInfoReqDTO));
 		RLock rLock = null;
 		try {
-			// RedissonClient redissonClient = redissonClientUtil.getInstance();
-			// String lockKey = Constants.REDIS_KEY_PREFIX_STOCK +
-			// String.valueOf(seckillInfoReqDTO.getPromotionId()); // 竞争资源标志
-			// rLock = redissonClient.getLock(lockKey);
-			// /** 上锁 **/
-			// rLock.lock();
-			this.changeStock(messageId, seckillInfoReqDTO);
+			RedissonClient redissonClient = redissonClientUtil.getInstance();
+			String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(seckillInfoReqDTO.getPromotionId()); // 竞争资源标志
+			rLock = redissonClient.getLock(lockKey);
+			/** 上锁 **/
+			rLock.lock();
+			changeStock(messageId, seckillInfoReqDTO);
 		} finally {
 			/** 释放锁资源 **/
-			// if (rLock != null) {
-			// rLock.unlock();
-			// }
+			if (rLock != null) {
+				rLock.unlock();
+			}
 		}
 	}
 
@@ -146,11 +148,15 @@ public abstract class StockChangeImpl implements StockChangeService {
 		String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 				useLogRedisKey);
 		BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
+		logger.info("booean1:{},boolean2:{}", Constants.SECKILL_RESERVE.equals(useType),
+				(StringUtils.isBlank(useLogJsonStr)
+						|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG));
+		// 秒杀履历为空或者秒杀履历为已释放或者已抢到秒杀资格并且没有支付订单
 		if (Constants.SECKILL_RESERVE.equals(useType) && (StringUtils.isBlank(useLogJsonStr)
 				|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG)) {
 			flag = true;
+			// 存在秒杀履历并且前置操作为锁定库存
 		} else if (Constants.SECKILL_RELEASE.equals(useType) && StringUtils.isNotBlank(useLogJsonStr)) {
-
 			if (Constants.SECKILL_RESERVE.equals(timelimitedLog.getUseType())) {
 				flag = true;
 			}

@@ -38,11 +38,6 @@
       <artifactId>promotioncenter-dto</artifactId>
       <version>${promotioncenter.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.htd</groupId>
-      <artifactId>hl-api</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
     <!-- tbschedule -->
     <dependency>
       <groupId>com.taobao.pamirs.schedule</groupId>

@@ -225,12 +225,12 @@ public class PromotionBargainInfoServiceImpl implements
 			promotionBargainInfoResDTO
 					.setBuyerBargainRecordList(buyerBargainRecordResList);
 			if (!StringUtils.isEmpty(buyerBargainLaunch.getBuyerCode())) {// 曾经发起过砍价
-				if(promotionBargainInfo1 != null){
-					if(1 == promotionBargainInfo1.getIsBargainOver()){//该用户发起的砍价已经砍完了
+				if (promotionBargainInfo1 != null) {
+					if (1 == promotionBargainInfo1.getIsBargainOver()) {// 该用户发起的砍价已经砍完了
 						promotionBargainInfoResDTO.setIsMyBargainOver("true");
 					}
 				}
-				
+
 			}
 		}
 		return promotionBargainInfoResDTO;
@@ -425,27 +425,13 @@ public class PromotionBargainInfoServiceImpl implements
 						ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
 						"该促销活动已被删除");
 			}
-			if (dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(
-					promotionInfo.getShowStatus())) {
-				if (!dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_END).equals(
-						promotionInfo.getStatus())) {
-					List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
-							.getBuyerLaunchBargainInfoByPromotionId(
-									validDTO.getPromotionId(), null);
-					if ((promotionInfo.getInvalidTime() != null && !(new Date())
-							.after(promotionInfo.getInvalidTime()))
-							&& (null != buyerLaunchList && !buyerLaunchList
-									.isEmpty())) {
-						throw new PromotionCenterBusinessException(
-								ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED
-										.getCode(),
-								"存在砍价记录不能删除");
-					}
-				}
+			List<BuyerLaunchBargainInfoDMO> buyerLaunchList = buyerLaunchBargainInfoDAO
+					.getBuyerLaunchBargainInfoByPromotionId(
+							validDTO.getPromotionId(), null);
+			if (null != buyerLaunchList && !buyerLaunchList.isEmpty()) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PROMOTION_SOMEONE_INVOLVED.getCode(),
+						"存在砍价记录不能删除");
 			}
 			promotionInfo.setStatus(dictionary.getValueByCode(
 					DictionaryConst.TYPE_PROMOTION_STATUS,
@@ -616,6 +602,8 @@ public class PromotionBargainInfoServiceImpl implements
 						addIndexList.add(i);
 					}
 				}
+				promotionExtendInfoDTO.setShowStatus(promotionInfoDTO
+						.getShowStatus());
 				PromotionExtendInfoDTO updateResult = baseService
 						.updatePromotionInfo(promotionExtendInfoDTO);
 				for (int i = 0; i < promotionExtendInfoDTO

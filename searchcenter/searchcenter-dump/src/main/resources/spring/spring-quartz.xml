@@ -171,7 +171,7 @@
 				<ref bean="externalItemDumpJobCronTriggerBean" />
 				<!-- <ref bean="seckillItemDumpJobCronTriggerBean" /> -->
 				<ref bean="shopDumpJobCronTriggerBean" />
-				<ref bean="itemAllDumpJobCronTriggerBean" />
+				<!-- <ref bean="itemAllDumpJobCronTriggerBean" /> -->
 				<ref bean="itemAttrDumpJobCronTriggerBean" />
 			</list>
 		</property>

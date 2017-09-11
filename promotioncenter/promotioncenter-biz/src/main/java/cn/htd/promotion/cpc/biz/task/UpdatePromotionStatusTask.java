@@ -143,6 +143,14 @@ public class UpdatePromotionStatusTask implements IScheduleTaskDealMulti<Promoti
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfo : tasks) {
+					// 砍价活动的时候
+					if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+							DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN).equals(promotionInfo.getPromotionType())) {
+						// 待发布的活动不更新状态
+						if (promotionInfo.getHasUpFlag() != null && promotionInfo.getHasUpFlag() == 0) {
+							continue;
+						}
+					}
 					status = promotionInfo.getStatus();
 					if (nowDt.before(promotionInfo.getEffectiveTime())) {
 						timeStatus = noStartStatus;

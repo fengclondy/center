@@ -13,6 +13,9 @@ public class OrderAmountQueryReqDTO extends GenricReqDTO implements Serializable
     //结束时间
     private String endDate;
 
+    //格式 2017-07
+    private String currentMonth;
+
     public String getMemberCode() {
         return memberCode;
     }
@@ -35,5 +38,13 @@ public class OrderAmountQueryReqDTO extends GenricReqDTO implements Serializable
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getCurrentMonth() {
+        return currentMonth;
+    }
+
+    public void setCurrentMonth(String currentMonth) {
+        this.currentMonth = currentMonth;
     }
 }

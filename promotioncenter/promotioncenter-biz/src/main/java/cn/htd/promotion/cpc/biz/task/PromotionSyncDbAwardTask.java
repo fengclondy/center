@@ -34,8 +34,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.hl.dao.GoldService;
-import org.hl.entity.GoldRecordEntity;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
@@ -52,6 +50,7 @@ import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 
 /**
  * 话费支付 汇金币充值
@@ -65,9 +64,6 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 
 	@Resource
 	public BuyerWinningRecordDAO buyerWinningRecordDAO;
-	
-	@Resource
-	public GoldService goldService;
 	
 	@Override
 	public Comparator<BuyerWinningRecordDMO> getComparator() {
@@ -149,7 +145,9 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (BuyerWinningRecordDMO promotionAwardDTO : tasks) {
-					if (!StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
+					if (promotionAwardDTO !=null && !StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
+						
+						
 						if (promotionAwardDTO.getRewardType().equals("3")) {
 							if(!StringUtils.isEmpty(promotionAwardDTO.getChargeTelephone())){
 								String rt = excuteRecharge(promotionAwardDTO);
@@ -159,21 +157,58 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 									//充好了
 									promotionAwardDTO.setDealFlag(0);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("01");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}else if(rt.equals("0")){
 									//正在充
 									promotionAwardDTO.setDealFlag(2);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("00");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}else{
 									//其他
 									promotionAwardDTO.setDealFlag(2);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("00");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}
 							}
 						} else if (promotionAwardDTO.getRewardType().equals("4")) {
 							if(!StringUtils.isEmpty(promotionAwardDTO.getBuyerCode())){
-								if(addGold(promotionAwardDTO)){
+								String rt = addGold(promotionAwardDTO);
+								if(!StringUtils.isEmpty(rt) && rt.equals("ok")){
 									promotionAwardDTO.setDealFlag(0);
 									buyerWinningRecordDAO.updateDealFlag(promotionAwardDTO);
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("01");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
+								}else{
+									PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
+									dto.setId(promotionAwardDTO.getId());
+									dto.setModifyId(0l);
+									dto.setModifyName("sys");
+									dto.setModifyTime(new Date());
+									dto.setLogisticsStatus("00");
+									buyerWinningRecordDAO.updateLogisticsInfo(dto);
 								}
 							}
 						}
@@ -190,20 +225,70 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		return result;
 	}
 
-	private boolean addGold(BuyerWinningRecordDMO promotionAwardDTO) {
-		GoldRecordEntity goldRecordEntity = new GoldRecordEntity();
-		goldRecordEntity.setMemberno(promotionAwardDTO.getBuyerCode());
-		if(!StringUtils.isEmpty(promotionAwardDTO.getAwardValue())){
-			goldRecordEntity.setGold(new Integer(promotionAwardDTO.getAwardValue()));
-		}else{
-			goldRecordEntity.setGold(0);
+	private synchronized String addGold(BuyerWinningRecordDMO promotionAwardDTO) {
+//		GoldRecordEntity goldRecordEntity = new GoldRecordEntity();
+//		goldRecordEntity.setMemberno(promotionAwardDTO.getBuyerCode());
+//		if(!StringUtils.isEmpty(promotionAwardDTO.getAwardValue())){
+//			goldRecordEntity.setGold(new Integer(promotionAwardDTO.getAwardValue()));
+//		}else{
+//			goldRecordEntity.setGold(0);
+//		}
+//		goldRecordEntity.setBptype("1");
+//		goldRecordEntity.setDescribe("扭蛋机活动加金币");
+//		goldRecordEntity.setRemark(promotionAwardDTO.getPromotionId()+":"+promotionAwardDTO.getId());
+//		goldRecordEntity.setOperatorid("sys");
+//		boolean rt = goldService.addGoldByPromotion(goldRecordEntity );
+		String responseMsg = "";
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		// 1.构造HttpClient的实例
+		CloseableHttpClient httpClient = httpClientBuilder.build();
+
+		String url = SysProperties.getProperty("HTDHL_ADDRESS") + "/JuheRecharge/updateGoldState.htm";
+
+		// 2.构造PostMethod的实例
+		HttpPost httppost = new HttpPost(url);
+
+		// 3.把参数值放入到PostMethod对象中
+		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+		formparams.add(new BasicNameValuePair("memberno", promotionAwardDTO.getBuyerCode()));
+		formparams.add(new BasicNameValuePair("gold", promotionAwardDTO.getAwardValue()));
+		formparams.add(new BasicNameValuePair("promotionId", promotionAwardDTO.getPromotionId()));
+		formparams.add(new BasicNameValuePair("id", promotionAwardDTO.getId()+""));
+
+		UrlEncodedFormEntity uefEntity;
+		try {
+			uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+			// 4.执行postMethod,调用http接口
+			httppost.setEntity(uefEntity);
+
+			// 5.读取内容
+			CloseableHttpResponse response = httpClient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			responseMsg = EntityUtils.toString(entity, "UTF-8").trim();
+			// 6.处理返回的内容
+			logger.info("gold结果-->" + responseMsg);
+			//System.out.println(responseMsg);
+			if (!StringUtils.isEmpty(responseMsg) && responseMsg.indexOf("status=ok")>0) {
+				return "ok";
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+			return "";
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			return "";
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		} finally {
+			// 关闭连接,释放资源
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		goldRecordEntity.setBptype("1");
-		goldRecordEntity.setDescribe("扭蛋机活动加金币");
-		goldRecordEntity.setRemark(promotionAwardDTO.getPromotionId()+":"+promotionAwardDTO.getId());
-		goldRecordEntity.setOperatorid("sys");
-		boolean rt = goldService.addGoldByPromotion(goldRecordEntity );
-		return rt;
+		return "";
 	}
 
 	public static void main(String[] args) {
@@ -213,15 +298,18 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		s.setAwardValue("1");
 		s.setChargeTelephone("1");
 		try {
-			excuteRecharge(s);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
+			BuyerWinningRecordDMO promotionAwardDTO = new BuyerWinningRecordDMO();
+			promotionAwardDTO.setBuyerCode("1");
+			promotionAwardDTO.setAwardValue("0");
+			
+			//excuteRecharge(s);
+			//addGold(promotionAwardDTO );
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static String excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
+	private synchronized String excuteRecharge(BuyerWinningRecordDMO promotionAwardDTO)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		String responseMsg = "";
@@ -291,7 +379,6 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 			CloseableHttpResponse response = httpClient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 			responseMsg = EntityUtils.toString(entity, "UTF-8").trim();
-			;
 			Map<String, Object> responseMsgMap = jdomParseXml(responseMsg);
 			// 6.处理返回的内容
 			logger.info("手机话费充值推送返回结果-->" + responseMsg);

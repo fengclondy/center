@@ -59,24 +59,12 @@ public class AwardRecordServiceImpl implements AwardRecordService {
             dto.setWinningEndTime(endTime + " 23:59:59");
         }
 
-        Map<String, Object> param = new HashMap<String, Object>();
-        param.put("buyerCode", dto.getBuyerCode());
-        param.put("buyerName", dto.getBuyerName());
-        param.put("winningStartTime", dto.getWinningStartTime());
-        param.put("winningEndTime", dto.getWinningEndTime());
-        param.put("rewardType", dto.getRewardType());
-        param.put("promotionId", dto.getPromotionId());
-        param.put("sellerCode", dto.getSellerCode());
-        param.put("promotionName", dto.getPromotionName());
-        param.put("rewardName", dto.getRewardName());
-        param.put("winnerName", dto.getWinnerName());
-        param.put("winningContact", dto.getWinningContact());
 
 
         DataGrid<PromotionAwardDTO> dataGrid = new DataGrid<PromotionAwardDTO>();
         try {
-            List<BuyerWinningRecordDMO> list = awardRecordDAO.getAwardRecordByPromotionId(param, page);
-            long count = awardRecordDAO.getTotalAwardRecord(param);
+            List<BuyerWinningRecordDMO> list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
+            long count = awardRecordDAO.getTotalAwardRecord(dto);
             BuyerWinningRecordConvert convert = new BuyerWinningRecordConvert();
             List<PromotionAwardDTO> awardDTOList = convert.toTarget(list);
             dataGrid.setTotal(count);

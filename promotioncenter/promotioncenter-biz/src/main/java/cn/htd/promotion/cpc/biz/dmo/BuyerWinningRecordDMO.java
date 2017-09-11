@@ -65,6 +65,10 @@ public class BuyerWinningRecordDMO {
 
     private Date modifyTime;
 
+    private Date effectiveTime;//活动开始时间
+
+    private Date invalidTime;//活动结束时间
+
     /**
      * 开始位置
      */
@@ -84,6 +88,22 @@ public class BuyerWinningRecordDMO {
      * 当前调度服务器，分配到的可处理队列
      */
     private List<String> taskIdList;
+
+    public Date getEffectiveTime() {
+        return effectiveTime;
+    }
+
+    public void setEffectiveTime(Date effectiveTime) {
+        this.effectiveTime = effectiveTime;
+    }
+
+    public Date getInvalidTime() {
+        return invalidTime;
+    }
+
+    public void setInvalidTime(Date invalidTime) {
+        this.invalidTime = invalidTime;
+    }
     
     
     public int getTaskQueueNum() {

@@ -25,10 +25,11 @@ public interface TimelimitedInfoService {
 	/**
 	 * 根据promotionId获取完整的秒杀活动信息
 	 * @param promotionId
+	 * @param type 1.数据库商品库存,2.redis商品真实库存 
 	 * @param messageId
 	 * @return
 	 */
-	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
+	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId,String type,String messageId) ;
 	
 	/**
 	 * 根据promotionId获取简单的秒杀活动信息
@@ -47,6 +48,15 @@ public interface TimelimitedInfoService {
 	 */
 	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
 			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
+	
+	/**
+	 * 活动上下架
+	 * @param promotionId
+	 * @param showStatus
+	 * @param messageId
+	 * @return
+	 */
+	public String updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 	
 	
     /**

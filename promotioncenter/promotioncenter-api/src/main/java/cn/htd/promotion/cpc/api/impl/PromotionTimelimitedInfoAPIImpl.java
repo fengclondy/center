@@ -87,6 +87,8 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		// 所有有效秒杀活动集合,用于排序
 		List<PromotionTimelimitedShowDTO> timelimitedAllDTOList = new ArrayList<PromotionTimelimitedShowDTO>();
 		PromotionTimelimitedShowDTO timelimitedMallDTO = null;
+		String timelimitedResultKey = "";
+		String remaincount="";
 		int count = 0;
 		long total = 0;
 		int offset = 0;
@@ -96,19 +98,27 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			rows = page.getRows();
 		}
 		try {
-			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService
-					.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+			 if(StringUtils.isEmpty(buyerCode)) {
+	                throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
+	         }
+			List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
 			if (null != timelitedInfoList) {
 				for (TimelimitedInfoResDTO timelitedinfo : timelitedInfoList) {
-					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle
-							.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
+					timelimitedMallDTO = new PromotionTimelimitedShowDTO();
+					TimelimitedInfoResDTO timelited = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(timelitedinfo.getPromotionId());
 					if (null != timelited) {
-						timelimitedMallDTO = new PromotionTimelimitedShowDTO();
+						timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + timelitedinfo.getPromotionId();
+					    remaincount = promotionRedisDB.getHash(timelimitedResultKey,RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
+					    if (StringUtils.isNotBlank(remaincount) ) {
+					    	timelimitedMallDTO.setRemainCount(Integer.valueOf(remaincount));
+						}
+					    if (null == remaincount || Integer.valueOf(remaincount) <= 0) { //剩余商品为0
+					    	timelimitedMallDTO.setRemainCount(0);
+					    }
 						timelimitedMallDTO.setTimelimitedInfo(timelited);
 						timelimitedAllDTOList.add(timelimitedMallDTO);
 					}
 				}
-
 			}
 			if (!timelimitedAllDTOList.isEmpty()) {
 				total = timelimitedAllDTOList.size();
@@ -125,6 +135,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				}
 				datagrid.setTotal(total);
 				datagrid.setRows(timelimitedDTOList);
+				logger.info("秒杀活动列表数据timelimitedDTOLis:" + JSON.toJSONString(timelimitedDTOList));
 			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException bcbe) {
@@ -155,6 +166,9 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 		String returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
 		try {
+			 if(StringUtils.isEmpty(buyerCode)) {
+	                throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR, "会员编码不能为空");
+	         }
 			String remaincount = promotionRedisDB.getHash(timelimitedResultKey,
 					RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT);
 			tmpTimelimitedInfoDTO = promotionTimelimitedRedisHandle.getTimelitedInfoByPromotionId(promotionId);
@@ -166,7 +180,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			if (StringUtils.isNotBlank(remaincount)) {
 				timelimitedDTO.setRemainCount(Integer.valueOf(remaincount));
 			}
-			if (Integer.valueOf(remaincount) <= 0) { // 剩余商品为0 被抢光
+			if (null == remaincount || Integer.valueOf(remaincount) <= 0) { // 剩余商品为0 被抢光
 				timelimitedDTO.setRemainCount(0);
 				timelimitedDTO.setCompareStatus(TimelimitedStatusEnum.CLEAR.getValue());
 				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SKU_NO_REMAIN;
@@ -185,14 +199,12 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_PARAM_ERROR;
 			}
 			timelimitedDTO.setShowStatusStr(TimelimitedStatusEnum.getName(timelimitedDTO.getCompareStatus()));
-
-			if (StringUtils.isEmpty(returnCode) && !StringUtils.isEmpty(buyerCode)) {
-				if (!checkTimelimitedIsAvailableByBuyerCode(messageId, buyerCode, promotionId).getResult()) {
-					returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY;
-				}
+			if (!checkTimelimitedIsAvailableByBuyerCode(messageId, buyerCode, promotionId).getResult()) {
+				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY;
 			}
 			result.setCode(returnCode);
 			result.setResult(timelimitedDTO);
+			logger.info("returnCode=" +returnCode +"timelimitedDTO"+ JSON.toJSONString(timelimitedDTO));
 		} catch (PromotionCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.setErrorMessage(bcbe.getMessage());
@@ -242,6 +254,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	 */
 	private ExecuteResult<Boolean> checkParamValid(PromotionExtendInfoDTO promotionExtendInfoDTO) {
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
+		restult.setResult(true);
 		if (dictionary
 				.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
@@ -255,11 +268,11 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			} else {
 				// 秒杀送活动进行中
 				restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_PROCESSING_ERROR);
-				restult.setResult(true);
 			}
 		} else {
 			// 秒杀送活动未启用
 			restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_DISABLE_ERROR);
+			restult.setResult(true);
 		}
 
 		return restult;
@@ -274,24 +287,20 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	private ExecuteResult<Boolean> checkBuyerCodeValid(PromotionExtendInfoDTO promotionExtendInfoDTO,
 			String buyerCode) {
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
+		restult.setResult(false);
 		PromotionSellerRuleDTO sellerRuleDTO = promotionExtendInfoDTO.getSellerRuleDTO();
-		List<PromotionSellerDetailDTO> sellerDetailList = null;
-		if (null != sellerRuleDTO && null != sellerRuleDTO.getSellerDetailList()) {// 限制粉丝只能购买归属会员的秒杀商品
-			sellerDetailList = sellerRuleDTO.getSellerDetailList();
+		List<PromotionSellerDetailDTO> sellerDetailList = promotionTimelimitedInfoService.getPromotionSellerDetailDTOByBuyerCode(promotionExtendInfoDTO.getPromotionId(),buyerCode);
+		if (null != sellerRuleDTO && (null != sellerDetailList && sellerDetailList.size() > 0)) {// 限制粉丝只能购买归属会员的秒杀商品
 			for (PromotionSellerDetailDTO sellerDetail : sellerDetailList) {
 				if (!sellerDetail.getSellerCode().equals(buyerCode)) {
 					// 粉丝没有秒杀权限
-					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NOT_PERMISSION_ERROR);
+					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY);
 				} else {
 					// 校验秒杀活动状态
-					restult.setResult(checkParamValid(promotionExtendInfoDTO).getResult());
+					restult= checkParamValid(promotionExtendInfoDTO);
 				}
 			}
-
-		} else {// 平台粉丝都可购买该秒杀商品
-			restult.setResult(checkParamValid(promotionExtendInfoDTO).getResult());
 		}
-
 		return restult;
 	}
 
@@ -301,6 +310,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillReserveImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());
@@ -317,6 +327,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillReleaseImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());
@@ -333,6 +344,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillReduceImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());
@@ -349,6 +361,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		try {
 			seckillRollbackImplHandle.checkAndChangeStock(messageId, seckillInfoReqDTO);
 			result.setResult("success");
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setCode(pcbe.getCode());
 			result.setErrorMessage(pcbe.getMessage());

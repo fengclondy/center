@@ -27,6 +27,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 
@@ -41,7 +43,8 @@ import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 
 	protected static transient Logger logger = LoggerFactory.getLogger(PromotionAddDailyTask.class);
-
+    @Resource
+    private DictionaryUtils dictionary;
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
 
@@ -94,7 +97,8 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 		String BUYER_TOP_EXTRA_PARTAKE_TIMES = "";
 		Integer BUYER_TOP_EXTRA_PARTAKE_TIMESint = 0;
 		for (Entry<String, String> entry : mset) {
-			if (entry.getValue().equals("3")) {
+			if (entry.getValue().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID))) {
 				promotionId = entry.getKey();
 				// 粉丝每日抽奖次数限制
 				buyerDailyDrawTimes = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
@@ -140,12 +144,17 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 						} else {
 							BUYER_SHARE_TIMESint = Integer.valueOf(BUYER_SHARE_TIMES);
 						}
-						if (BUYER_TOP_EXTRA_PARTAKE_TIMESint
+						if (BUYER_TOP_EXTRA_PARTAKE_TIMESint >0 && BUYER_TOP_EXTRA_PARTAKE_TIMESint
 								.compareTo(BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint) > 0) {
 							buyerDailyDrawTimesint = buyerDailyDrawTimesint
 									+ (BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint);
 						} else {
 							buyerDailyDrawTimesint = buyerDailyDrawTimesint + BUYER_TOP_EXTRA_PARTAKE_TIMESint;
+						}
+						//无上限
+						if(BUYER_TOP_EXTRA_PARTAKE_TIMESint == -1 || BUYER_SHARE_TIMESint==0){
+							buyerDailyDrawTimesint = buyerDailyDrawTimesint
+									+ (BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint);
 						}
 					}
 
@@ -159,10 +168,12 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 
 				sset = promotionRedisDB.getStringRedisTemplate()
 						.keys(RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_*");
-				for (String string : sset) {
+				for (String skey : sset) {
 					swt = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
 							RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES);
-					promotionRedisDB.set(string, swt);
+					if(!StringUtils.isEmpty(skey)&&!StringUtils.isEmpty(swt) ){
+						promotionRedisDB.set(skey, swt);
+					}
 				}
 			}
 		}

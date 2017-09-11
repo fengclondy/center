@@ -8,6 +8,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
@@ -40,11 +47,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
-import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
@@ -148,13 +150,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     .equals(promotionInfo.getStatus())) {
                 return;
             }
-            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionInfo.getShowStatus())) {
-                if (!dictionary
-                        .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_END)
-                        .equals(promotionInfo.getStatus())) {
-                }
-            }
             promotionInfo.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                     DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
             promotionInfo.setModifyId(validDTO.getOperatorId());
@@ -238,47 +233,47 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = promotionInfo.getBuyerRuleDTO();
         if (null != promotionBuyerRuleReqDTO) {
             promotionBuyerRuleReqDTO.setPromotionId(promotionId);
-            promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
-            promotionBuyerRuleReqDTO.setCreateId(promotionInfo.getCreateId());
-            promotionBuyerRuleReqDTO.setCreateName(promotionInfo.getCreateName());
-            promotionBuyerRuleReqDTO.setModifyId(promotionInfo.getCreateId());
-            promotionBuyerRuleReqDTO.setModifyName(promotionInfo.getCreateName());
-            promotionBuyerRuleDAO.add(promotionBuyerRuleReqDTO);
+            if (StringUtils.isEmpty(promotionBuyerRuleReqDTO.getRuleTargetType()) || promotionBuyerRuleReqDTO
+                    .getRuleTargetType().equals("0")) {
+                promotionInfo.setBuyerRuleDTO(null);
+            } else {
+                promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
+                promotionBuyerRuleReqDTO.setCreateId(promotionInfo.getCreateId());
+                promotionBuyerRuleReqDTO.setCreateName(promotionInfo.getCreateName());
+                promotionBuyerRuleReqDTO.setModifyId(promotionInfo.getCreateId());
+                promotionBuyerRuleReqDTO.setModifyName(promotionInfo.getCreateName());
+                promotionBuyerRuleDAO.add(promotionBuyerRuleReqDTO);
+            }
         }
 
         PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
         if (psr != null) {
-            psr.setPromotionId(promotionId);
-            psr.setDeleteFlag(YesNoEnum.NO.getValue());
-            psr.setCreateId(promotionInfo.getCreateId());
-            psr.setCreateName(promotionInfo.getCreateName());
-            psr.setModifyId(promotionInfo.getCreateId());
-            psr.setModifyName(promotionInfo.getCreateName());
-            promotionSellerRuleDAO.add(psr);
-
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
-            if (null != sellerlist && !sellerlist.isEmpty()) {
-                for (PromotionSellerDetailDTO psd : sellerlist) {
-                    psd.setPromotionId(promotionId);
-                    psd.setCreateId(promotionInfo.getCreateId());
-                    psd.setCreateName(promotionInfo.getCreateName());
-                    psd.setModifyId(promotionInfo.getCreateId());
-                    psd.setModifyName(promotionInfo.getCreateName());
-                    psd.setDeleteFlag(YesNoEnum.NO.getValue());
-                    promotionSellerDetailDAO.add(psd);
+            if (psr.getRuleTargetType().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
+                    DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)) && (null == sellerlist || sellerlist.isEmpty())) {
+                // 不合规
+                promotionInfo.setSellerRuleDTO(null);
+            } else {
+                psr.setPromotionId(promotionId);
+                psr.setDeleteFlag(YesNoEnum.NO.getValue());
+                psr.setCreateId(promotionInfo.getCreateId());
+                psr.setCreateName(promotionInfo.getCreateName());
+                psr.setModifyId(promotionInfo.getCreateId());
+                psr.setModifyName(promotionInfo.getCreateName());
+                promotionSellerRuleDAO.add(psr);
+                if (null != sellerlist && !sellerlist.isEmpty()) {
+                    for (PromotionSellerDetailDTO psd : sellerlist) {
+                        psd.setPromotionId(promotionId);
+                        psd.setCreateId(promotionInfo.getCreateId());
+                        psd.setCreateName(promotionInfo.getCreateName());
+                        psd.setModifyId(promotionInfo.getCreateId());
+                        psd.setModifyName(promotionInfo.getCreateName());
+                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                        promotionSellerDetailDAO.add(psd);
+                    }
                 }
             }
         }
-
-        // PromotionSloganDTO psrd = accumulatyDTO.getPromotionSloganDTO();
-        // if(psrd!=null){
-        // PromotionSloganDTO slogan = new PromotionSloganDTO();
-        // slogan.setCreateId(promotionInfo.getCreateId());
-        // slogan.setCreateName(promotionInfo.getCreateName());
-        // slogan.setModifyId(promotionInfo.getCreateId());
-        // slogan.setModifyName(promotionInfo.getCreateName());
-        // promotionSloganDAO.add(slogan);
-        // }
         List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
         if (pclist != null && pclist.size() > 0) {
             for (PromotionConfigureDTO pcd : pclist) {
@@ -348,18 +343,22 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setPromotionPictureList(piclist);
 
         PromotionBuyerRuleDTO promotionBuyerRuleDTO = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
-        promotionInfo.setBuyerRuleDTO(promotionBuyerRuleDTO);
+        if (promotionBuyerRuleDTO != null && promotionBuyerRuleDTO.getDeleteFlag() == 0) {
+            promotionInfo.setBuyerRuleDTO(promotionBuyerRuleDTO);
+        }
 
         PromotionSellerRuleDTO psr = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
-        promotionInfo.setSellerRuleDTO(psr);
+        if (psr != null && psr.getDeleteFlag() == 0) {
+            List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
+            psr.setSellerDetailList(sdlist);
+            promotionInfo.setSellerRuleDTO(psr);
+        }
 
         PromotionSloganDTO psd = promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         promotionInfo.setPromotionSloganDTO(psd);
 
         List<PromotionConfigureDTO> pclist = promotionConfigureDAO.selectByPromotionId(promotionId);
-        if (pclist != null && pclist.size() > 0) {
-            promotionInfo.setPromotionConfigureList(pclist);
-        }
+        promotionInfo.setPromotionConfigureList(pclist);
         return promotionInfo;
     }
 
@@ -400,8 +399,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         }
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);
+            accumulatyDTO.setPromotionId(promotionId);
             if (StringUtils.isEmpty(accumulatyDTO.getLevelCode()) || "0".equals(accumulatyDTO.getLevelCode())) {
-                accumulatyDTO.setPromotionId(promotionId);
                 accumulatyDTO.setLevelNumber(maxLevelNum + i + 1);
                 accumulatyDTO.setLevelCode(noGenerator.generatePromotionLevelCode(promotionId));
                 accumulatyDTO.setDeleteFlag(YesNoEnum.NO.getValue());
@@ -426,74 +425,148 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             extendDTO = promotionInfo;
             promotionInfoExtendDAO.update(extendDTO);
         }
-        promotionInfo.setHasUpFlag(YesNoEnum.YES.getValue());
         promotionInfo.setIsVip(vipFlg);
         promotionInfoDAO.update(promotionInfo);
 
         PromotionDetailDescribeDMO promotionDetailDescribeDTO = new PromotionDetailDescribeDMO();
         PromotionDetailDescribeDTO piddd = promotionInfo.getPromotionDetailDescribeDTO();
+        promotionDetailDescribeDTO.setPromotionId(promotionId);
+		PromotionDetailDescribeDMO promotionDetailDescribeInfo = promotionDetailDescribeDAO.selectByPromotionId(promotionDetailDescribeDTO);
         if (piddd != null) {
             promotionDetailDescribeDTO.setDescribeContent(piddd.getDescribeContent());
-            promotionDetailDescribeDTO.setId(piddd.getId());
-            promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
-            promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
-            promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());
-            promotionDetailDescribeDTO.setDeleteFlag(piddd.getDeleteFlag());
-            promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
+            promotionDetailDescribeDTO.setPromotionId(promotionId);
+            if(promotionDetailDescribeInfo!=null){
+                promotionDetailDescribeDTO.setId(promotionDetailDescribeInfo.getId());
+                promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
+                promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
+                promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());
+                promotionDetailDescribeDTO.setDeleteFlag(piddd.getDeleteFlag());
+                promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
+            }else{
+                promotionDetailDescribeDTO.setCreateId(promotionInfo.getModifyId());
+                promotionDetailDescribeDTO.setCreateName(promotionInfo.getModifyName());
+                promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
+                promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
+                promotionDetailDescribeDTO.setDeleteFlag(YesNoEnum.NO.getValue());
+                promotionDetailDescribeDAO.add(promotionDetailDescribeDTO);
+            }
+
         }
 
         List<PromotionPictureDTO> piclist = promotionInfo.getPromotionPictureList();
+        List<PromotionPictureDTO> oldpiclist = promotionPictureDAO.selectByPromotionInfoId(promotionId);
+        promotionInfo.setPromotionPictureList(piclist);
         if (null != piclist && !piclist.isEmpty()) {
             for (PromotionPictureDTO ppic : piclist) {
-                ppic.setModifyId(promotionInfo.getModifyId());
-                ppic.setModifyName(promotionInfo.getModifyName());
-                ppic.setPromotionId(promotionInfo.getPromotionId());
-                promotionPictureDAO.update(ppic);
+            	if (oldpiclist != null && oldpiclist.size() > 0) {
+                	for (PromotionPictureDTO promotionPictureDTO : oldpiclist) {
+                		if(promotionPictureDTO.getPromotionPictureType().equals(ppic.getPromotionPictureType())){
+                			ppic.setId(promotionPictureDTO.getId());
+                            ppic.setModifyId(promotionInfo.getModifyId());
+                            ppic.setModifyName(promotionInfo.getModifyName());
+                            ppic.setPromotionId(promotionInfo.getPromotionId());
+                            promotionPictureDAO.update(ppic);
+                            break;
+                		}
+                	}
+            	}
             }
         }
 
         PromotionBuyerRuleDTO pbr = promotionInfo.getBuyerRuleDTO();
         if (pbr != null) {
-            pbr.setPromotionId(promotionInfo.getPromotionId());
+            pbr.setPromotionId(promotionId);
             pbr.setModifyId(promotionInfo.getModifyId());
             pbr.setModifyName(promotionInfo.getModifyName());
-            promotionBuyerRuleDAO.update(pbr);
-        }
-
-        PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
-        if (psr != null) {
-            psr.setPromotionId(promotionInfo.getPromotionId());
-            psr.setModifyId(promotionInfo.getModifyId());
-            psr.setModifyName(promotionInfo.getModifyName());
-            promotionSellerRuleDAO.update(psr);
-
-            List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
-            promotionSellerDetailDAO.deleteByPromotionId(promotionId);
-            if (sellerlist != null && !sellerlist.isEmpty()) {
-                for (PromotionSellerDetailDTO psd : sellerlist) {
-                    psd.setPromotionId(promotionId);
-                    psd.setCreateId(promotionInfo.getCreateId());
-                    psd.setCreateName(promotionInfo.getCreateName());
-                    psd.setDeleteFlag(YesNoEnum.NO.getValue());
-                    psd.setModifyId(promotionInfo.getModifyId());
-                    psd.setModifyName(promotionInfo.getModifyName());
-                    promotionSellerDetailDAO.add(psd);
+            PromotionBuyerRuleDTO pbrold = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
+            if (StringUtils.isEmpty(pbr.getRuleTargetType()) || pbr.getRuleTargetType().equals("0")) {
+                if (pbrold != null) {
+                	pbr.setId(pbrold.getId());
+                    pbr.setDeleteFlag(YesNoEnum.YES.getValue());
+                    promotionBuyerRuleDAO.update(pbr);
+                }
+                promotionInfo.setBuyerRuleDTO(null);
+            } else {
+                pbr.setDeleteFlag(YesNoEnum.NO.getValue());
+                if (pbrold == null) {
+                    pbr.setCreateId(promotionInfo.getModifyId());
+                    pbr.setCreateName(promotionInfo.getModifyName());
+                    promotionBuyerRuleDAO.add(pbr);
+                } else {
+                	pbr.setId(pbrold.getId());
+                    promotionBuyerRuleDAO.update(pbr);
                 }
             }
         }
 
-        // PromotionSloganDTO psrd = accumulatyDTO.getPromotionSloganDTO();
-        // if(psrd!=null){
-        // psrd.setModifyId(promotionInfo.getModifyId());
-        // psrd.setModifyName(promotionInfo.getModifyName());
-        // promotionSloganDAO.update(slogan);
-        // }
+        PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
+        if (psr != null) {
+            psr.setPromotionId(promotionId);
+            psr.setModifyId(promotionInfo.getModifyId());
+            psr.setModifyName(promotionInfo.getModifyName());
+            PromotionSellerRuleDTO psrold = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
+            List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
+            if (psr.getRuleTargetType().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
+                    DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)) && (sellerlist == null || sellerlist.isEmpty())) {
+                promotionSellerDetailDAO.deleteByPromotionId(promotionId);
+                if (psrold != null) {
+                	psr.setId(psrold.getId());
+                    psr.setDeleteFlag(YesNoEnum.YES.getValue());
+                    promotionSellerRuleDAO.update(psr);
+                }
+                promotionInfo.setSellerRuleDTO(null);
+            } else {
+                psr.setDeleteFlag(YesNoEnum.NO.getValue());
+                if (psrold == null) {
+                    psr.setCreateId(promotionInfo.getCreateId());
+                    psr.setCreateName(promotionInfo.getCreateName());
+                    promotionSellerRuleDAO.add(psr);
+                } else {
+                	psr.setId(psrold.getId());
+                    promotionSellerRuleDAO.update(psr);
+                }
+                promotionSellerDetailDAO.deleteByPromotionId(promotionId);
+                if (sellerlist != null && !sellerlist.isEmpty()) {
+                    for (PromotionSellerDetailDTO psd : sellerlist) {
+                        psd.setPromotionId(promotionId);
+                        psd.setCreateId(promotionInfo.getCreateId());
+                        psd.setCreateName(promotionInfo.getCreateName());
+                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                        psd.setCreateId(promotionInfo.getModifyId());
+                        psd.setCreateName(promotionInfo.getModifyName());
+                        psd.setModifyId(promotionInfo.getModifyId());
+                        psd.setModifyName(promotionInfo.getModifyName());
+                        promotionSellerDetailDAO.add(psd);
+                    }
+                }
+            }
+        } else {
+            PromotionSellerRuleDTO psr1 = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
+            if (psr1 != null) {
+                List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
+                psr1.setSellerDetailList(sdlist);
+                if (psr1.getDeleteFlag() == YesNoEnum.NO.getValue()) {
+                    promotionInfo.setSellerRuleDTO(psr1);
+                }
+            }
+        }
+        List<PromotionConfigureDTO> oldpclist = promotionConfigureDAO.selectByPromotionId(promotionId);
+
         List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
         if (pclist != null && pclist.size() > 0) {
             for (PromotionConfigureDTO pcd : pclist) {
-                promotionConfigureDAO.update(pcd);
+                if (oldpclist != null && oldpclist.size() > 0) {
+                	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
+						if(promotionConfigureDTO.getConfType().equals(pcd.getConfType())){
+							pcd.setId(promotionConfigureDTO.getId());
+			                promotionConfigureDAO.update(pcd);
+			                break;
+						}
+					}
+                }
             }
         }
+        promotionInfo.setPromotionConfigureList(pclist);
         return promotionInfo;
     }
 
@@ -622,7 +695,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             return false;
         } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&"
                 + DictionaryConst.OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN).equals(ruleDTO.getRuleTargetType())) {
-            if (buyerInfo.getIsFirstLogin() == 1) {
+            if (YesNoEnum.YES.getValue() == buyerInfo.getIsFirstLogin()) {
                 return true;
             }
             return false;
@@ -658,6 +731,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     return true;
                 }
             }
+            return false;
         }
         return true;
     }

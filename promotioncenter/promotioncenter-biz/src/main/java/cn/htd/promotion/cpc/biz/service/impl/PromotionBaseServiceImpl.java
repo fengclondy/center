@@ -8,13 +8,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
@@ -47,6 +40,11 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
@@ -249,13 +247,11 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
         if (psr != null) {
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
-			if (psr.getRuleTargetType()
-					.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
-							DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART))
-					&& (null == sellerlist || sellerlist.isEmpty())) {
-				// 不合规
-				promotionInfo.setSellerRuleDTO(null);
-			} else {
+            if (psr.getRuleTargetType().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
+                    DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)) && (null == sellerlist || sellerlist.isEmpty())) {
+                // 不合规
+                promotionInfo.setSellerRuleDTO(null);
+            } else {
                 psr.setPromotionId(promotionId);
                 psr.setDeleteFlag(YesNoEnum.NO.getValue());
                 psr.setCreateId(promotionInfo.getCreateId());
@@ -485,22 +481,20 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             psr.setModifyName(promotionInfo.getModifyName());
             PromotionSellerRuleDTO psrold = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
-			if (psr.getRuleTargetType()
-					.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
-							DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART))
-					&& (sellerlist == null || sellerlist.isEmpty())) {
-			    if (psrold != null) {
+            if (psr.getRuleTargetType().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
+                    DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)) && (sellerlist == null || sellerlist.isEmpty())) {
+                if (psrold != null) {
                     psr.setDeleteFlag(YesNoEnum.YES.getValue());
                     promotionSellerRuleDAO.update(psr);
                 }
                 promotionInfo.setSellerRuleDTO(null);
-			} else {
-				psr.setDeleteFlag(YesNoEnum.NO.getValue());
-                if(psrold==null){
+            } else {
+                psr.setDeleteFlag(YesNoEnum.NO.getValue());
+                if (psrold == null) {
                     psr.setCreateId(promotionInfo.getCreateId());
                     psr.setCreateName(promotionInfo.getCreateName());
                     promotionSellerRuleDAO.add(psr);
-                }else{
+                } else {
                     promotionSellerRuleDAO.update(psr);
                 }
                 promotionSellerDetailDAO.deleteByPromotionId(promotionId);
@@ -517,13 +511,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                         promotionSellerDetailDAO.add(psd);
                     }
                 }
-			}
+            }
         } else {
             PromotionSellerRuleDTO psr1 = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
             if (psr1 != null) {
                 List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
                 psr1.setSellerDetailList(sdlist);
-                if(psr1.getDeleteFlag()==0){
+                if (psr1.getDeleteFlag() == 0) {
                     promotionInfo.setSellerRuleDTO(psr1);
                 }
             }

@@ -355,14 +355,16 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setPromotionPictureList(piclist);
 
         PromotionBuyerRuleDTO promotionBuyerRuleDTO = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
-        promotionInfo.setBuyerRuleDTO(promotionBuyerRuleDTO);
+        if(promotionBuyerRuleDTO!=null && promotionBuyerRuleDTO.getDeleteFlag()==0){
+            promotionInfo.setBuyerRuleDTO(promotionBuyerRuleDTO);
+        }
 
         PromotionSellerRuleDTO psr = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
-        if(psr!=null){
+        if(psr!=null && psr.getDeleteFlag()==0){
         	List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
         	psr.setSellerDetailList(sdlist);
+            promotionInfo.setSellerRuleDTO(psr);
         }
-        promotionInfo.setSellerRuleDTO(psr);
 
         PromotionSloganDTO psd = promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         promotionInfo.setPromotionSloganDTO(psd);

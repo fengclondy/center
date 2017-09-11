@@ -100,4 +100,10 @@
 				where blbi.promotion_id = #{promotionId})
 	</select>
 	
+	<select id="queryPromotionBargainFilterJoinQTY" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM (
+		SELECT distinct(buyer_code) FROM buyer_launch_bargain_info 
+				where promotion_id = #{promotionId} ) t
+	</select>
+	
 </mapper>

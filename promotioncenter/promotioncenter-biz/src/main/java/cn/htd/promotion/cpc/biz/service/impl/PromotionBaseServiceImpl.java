@@ -399,8 +399,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         }
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);
+            accumulatyDTO.setPromotionId(promotionId);
             if (StringUtils.isEmpty(accumulatyDTO.getLevelCode()) || "0".equals(accumulatyDTO.getLevelCode())) {
-                accumulatyDTO.setPromotionId(promotionId);
                 accumulatyDTO.setLevelNumber(maxLevelNum + i + 1);
                 accumulatyDTO.setLevelCode(noGenerator.generatePromotionLevelCode(promotionId));
                 accumulatyDTO.setDeleteFlag(YesNoEnum.NO.getValue());

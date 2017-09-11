@@ -461,17 +461,20 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             pbr.setModifyName(promotionInfo.getModifyName());
             PromotionBuyerRuleDTO pbrold = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
             if (StringUtils.isEmpty(pbr.getRuleTargetType()) || pbr.getRuleTargetType().equals("0")) {
-            	promotionInfo.setBuyerRuleDTO(null);
-                pbr.setDeleteFlag(YesNoEnum.YES.getValue());
+                if (pbrold != null) {
+                    pbr.setDeleteFlag(YesNoEnum.YES.getValue());
+                    promotionBuyerRuleDAO.update(pbr);
+                }
+                promotionInfo.setBuyerRuleDTO(null);
             } else {
                 pbr.setDeleteFlag(YesNoEnum.NO.getValue());
-            }
-            if (pbrold == null) {
-                pbr.setCreateId(promotionInfo.getModifyId());
-                pbr.setCreateName(promotionInfo.getModifyName());
-                promotionBuyerRuleDAO.add(pbr);
-            } else {
-                promotionBuyerRuleDAO.update(pbr);
+                if (pbrold == null) {
+                    pbr.setCreateId(promotionInfo.getModifyId());
+                    pbr.setCreateName(promotionInfo.getModifyName());
+                    promotionBuyerRuleDAO.add(pbr);
+                } else {
+                    promotionBuyerRuleDAO.update(pbr);
+                }
             }
         }
 
@@ -486,33 +489,35 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 					.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
 							DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART))
 					&& (sellerlist == null || sellerlist.isEmpty())) {
-				promotionInfo.setSellerRuleDTO(null);
-				psr.setDeleteFlag(YesNoEnum.YES.getValue());
+			    if (psrold != null) {
+                    psr.setDeleteFlag(YesNoEnum.YES.getValue());
+                    promotionSellerRuleDAO.update(psr);
+                }
+                promotionInfo.setSellerRuleDTO(null);
 			} else {
 				psr.setDeleteFlag(YesNoEnum.NO.getValue());
-			}
-            
-            if(psrold==null){
-                psr.setCreateId(promotionInfo.getCreateId());
-                psr.setCreateName(promotionInfo.getCreateName());
-                promotionSellerRuleDAO.add(psr);
-            }else{
-                promotionSellerRuleDAO.update(psr);
-            }
-            promotionSellerDetailDAO.deleteByPromotionId(promotionId);
-            if (sellerlist != null && !sellerlist.isEmpty()) {
-                for (PromotionSellerDetailDTO psd : sellerlist) {
-                    psd.setPromotionId(promotionId);
-                    psd.setCreateId(promotionInfo.getCreateId());
-                    psd.setCreateName(promotionInfo.getCreateName());
-                    psd.setDeleteFlag(YesNoEnum.NO.getValue());
-                    psd.setCreateId(promotionInfo.getModifyId());
-                    psd.setCreateName(promotionInfo.getModifyName());
-                    psd.setModifyId(promotionInfo.getModifyId());
-                    psd.setModifyName(promotionInfo.getModifyName());
-                    promotionSellerDetailDAO.add(psd);
+                if(psrold==null){
+                    psr.setCreateId(promotionInfo.getCreateId());
+                    psr.setCreateName(promotionInfo.getCreateName());
+                    promotionSellerRuleDAO.add(psr);
+                }else{
+                    promotionSellerRuleDAO.update(psr);
                 }
-            }
+                promotionSellerDetailDAO.deleteByPromotionId(promotionId);
+                if (sellerlist != null && !sellerlist.isEmpty()) {
+                    for (PromotionSellerDetailDTO psd : sellerlist) {
+                        psd.setPromotionId(promotionId);
+                        psd.setCreateId(promotionInfo.getCreateId());
+                        psd.setCreateName(promotionInfo.getCreateName());
+                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                        psd.setCreateId(promotionInfo.getModifyId());
+                        psd.setCreateName(promotionInfo.getModifyName());
+                        psd.setModifyId(promotionInfo.getModifyId());
+                        psd.setModifyName(promotionInfo.getModifyName());
+                        promotionSellerDetailDAO.add(psd);
+                    }
+                }
+			}
         } else {
             PromotionSellerRuleDTO psr1 = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
             if (psr1 != null) {

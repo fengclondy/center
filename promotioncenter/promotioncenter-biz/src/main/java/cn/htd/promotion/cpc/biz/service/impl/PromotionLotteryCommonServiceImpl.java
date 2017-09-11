@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
@@ -42,6 +43,9 @@ import org.springframework.stereotype.Service;
 public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommonService {
 
     private static final Logger logger = LoggerFactory.getLogger(PromotionLotteryCommonServiceImpl.class);
+
+    @Resource
+    private DictionaryUtils dictionary;
 
     @Resource
     private PromotionRedisDB promotionRedisDB;
@@ -209,6 +213,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         final String promotionId = requestDTO.getPromotionId();
         final String buyerCode = requestDTO.getBuyerCode();
         final String sellerCode = requestDTO.getSellerCode();
+        final String thanksType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE,
+                DictionaryConst.OPT_PROMOTION_REWARD_TYPE_THANKS);
         new Thread() {
             public void run() {
                 BuyerWinningRecordDTO winningRecordDTO = null;
@@ -231,7 +237,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
                                 "抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
                     }
-                    if (winningRecordDTO.getRewardType().equals(errorWinningRecord.getRewardType())) {
+                    if (winningRecordDTO.getRewardType().equals(errorWinningRecord.getRewardType()) || thanksType
+                            .equals(winningRecordDTO.getRewardType())) {
                         promotionRedisDB.incrHash(
                                 RedisConst.REDIS_LOTTERY_BUYER_TIMES_INFO + "_" + promotionId + "_" + buyerCode,
                                 RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES);
@@ -396,8 +403,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsShareTimesLimit().intValue()) {
                             timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES,
                                     String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));
-                            if (promotionInfoDTO.getTopExtraPartakeTimes() != null && promotionInfoDTO
-                                    .getTopExtraPartakeTimes().intValue() >= 0) {
+                            if (promotionInfoDTO.getTopExtraPartakeTimes() != null
+                                    && promotionInfoDTO.getTopExtraPartakeTimes().intValue() >= 0) {
                                 timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES,
                                         String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
                             }

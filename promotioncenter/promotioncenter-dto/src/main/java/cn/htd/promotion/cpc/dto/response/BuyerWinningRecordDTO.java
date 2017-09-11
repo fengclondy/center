@@ -73,6 +73,10 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
      */
     private String awardValue;
     /**
+     * 奖励规则描述
+     */
+    private String awardRuleDescribe;
+    /**
      * 中奖时间
      */
     private Date winningTime;
@@ -261,6 +265,14 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
         this.awardValue = awardValue;
     }
 
+    public String getAwardRuleDescribe() {
+        return awardRuleDescribe;
+    }
+
+    public void setAwardRuleDescribe(String awardRuleDescribe) {
+        this.awardRuleDescribe = awardRuleDescribe;
+    }
+
     public Date getWinningTime() {
         return winningTime;
     }
@@ -376,5 +388,6 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
         this.rewardType = awardInfoDTO.getAwardType();
         this.rewardName = awardInfoDTO.getAwardName();
         this.awardValue = awardInfoDTO.getAwardValue();
+        this.awardRuleDescribe = awardInfoDTO.getAwardRuleDescribe();
     }
 }

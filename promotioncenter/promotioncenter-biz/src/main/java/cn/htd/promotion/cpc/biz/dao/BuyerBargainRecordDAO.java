@@ -19,5 +19,7 @@ public interface BuyerBargainRecordDAO {
 	public BuyerBargainRecordDMO getThisPersonIsBargain(Map<String,String> map);
 
 	public Integer queryPromotionBargainJoinQTY(@Param("promotionId") String promotionId);
+
+	public Integer queryPromotionBargainFilterJoinQTY(@Param("promotionId") String promotionId);
 	
 }

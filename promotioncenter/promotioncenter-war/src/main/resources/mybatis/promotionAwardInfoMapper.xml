@@ -131,12 +131,6 @@
   <update id="update" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
     update promotion_award_info
     <set >
-      <if test="promotionId != null" >
-        promotion_id = #{promotionId,jdbcType=VARCHAR},
-      </if>
-      <if test="levelCode != null" >
-        level_code = #{levelCode,jdbcType=VARCHAR},
-      </if>
       <if test="awardType != null" >
         award_type = #{awardType,jdbcType=VARCHAR},
       </if>
@@ -160,7 +154,7 @@
       </if>
         modify_time = now()
     </set>
-    where award_id = #{awardId,jdbcType=BIGINT}
+    where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO" >
     update promotion_award_info

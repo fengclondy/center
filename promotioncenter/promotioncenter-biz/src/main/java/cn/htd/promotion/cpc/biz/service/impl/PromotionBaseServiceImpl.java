@@ -233,41 +233,45 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionBuyerRuleDTO promotionBuyerRuleReqDTO = promotionInfo.getBuyerRuleDTO();
         if (null != promotionBuyerRuleReqDTO) {
             promotionBuyerRuleReqDTO.setPromotionId(promotionId);
-            if(StringUtils.isEmpty(promotionBuyerRuleReqDTO.getRuleTargetType())
-            		|| promotionBuyerRuleReqDTO.getRuleTargetType().equals("0")){
-                promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.YES.getValue());
-            }else{
-            promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
-            }
-            promotionBuyerRuleReqDTO.setCreateId(promotionInfo.getCreateId());
-            promotionBuyerRuleReqDTO.setCreateName(promotionInfo.getCreateName());
-            promotionBuyerRuleReqDTO.setModifyId(promotionInfo.getCreateId());
-            promotionBuyerRuleReqDTO.setModifyName(promotionInfo.getCreateName());
-            promotionBuyerRuleDAO.add(promotionBuyerRuleReqDTO);
+            if (StringUtils.isEmpty(promotionBuyerRuleReqDTO.getRuleTargetType())
+					|| promotionBuyerRuleReqDTO.getRuleTargetType().equals("0")) {
+            	promotionInfo.setBuyerRuleDTO(null);
+			} else {
+				promotionBuyerRuleReqDTO.setDeleteFlag(YesNoEnum.NO.getValue());
+	            promotionBuyerRuleReqDTO.setCreateId(promotionInfo.getCreateId());
+	            promotionBuyerRuleReqDTO.setCreateName(promotionInfo.getCreateName());
+	            promotionBuyerRuleReqDTO.setModifyId(promotionInfo.getCreateId());
+	            promotionBuyerRuleReqDTO.setModifyName(promotionInfo.getCreateName());
+	            promotionBuyerRuleDAO.add(promotionBuyerRuleReqDTO);
+			}
         }
 
         PromotionSellerRuleDTO psr = promotionInfo.getSellerRuleDTO();
         if (psr != null) {
-            psr.setPromotionId(promotionId);
-            psr.setDeleteFlag(YesNoEnum.NO.getValue());
-            psr.setCreateId(promotionInfo.getCreateId());
-            psr.setCreateName(promotionInfo.getCreateName());
-            psr.setModifyId(promotionInfo.getCreateId());
-            psr.setModifyName(promotionInfo.getCreateName());
-            promotionSellerRuleDAO.add(psr);
-
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
-            if (null != sellerlist && !sellerlist.isEmpty()) {
-                for (PromotionSellerDetailDTO psd : sellerlist) {
-                    psd.setPromotionId(promotionId);
-                    psd.setCreateId(promotionInfo.getCreateId());
-                    psd.setCreateName(promotionInfo.getCreateName());
-                    psd.setModifyId(promotionInfo.getCreateId());
-                    psd.setModifyName(promotionInfo.getCreateName());
-                    psd.setDeleteFlag(YesNoEnum.NO.getValue());
-                    promotionSellerDetailDAO.add(psd);
+        	if(psr.getRuleTargetType().equals("2") && (null == sellerlist || sellerlist.isEmpty())){
+        		//不合规
+        		promotionInfo.setSellerRuleDTO(null);
+        	}else{
+                psr.setPromotionId(promotionId);
+                psr.setDeleteFlag(YesNoEnum.NO.getValue());
+                psr.setCreateId(promotionInfo.getCreateId());
+                psr.setCreateName(promotionInfo.getCreateName());
+                psr.setModifyId(promotionInfo.getCreateId());
+                psr.setModifyName(promotionInfo.getCreateName());
+                promotionSellerRuleDAO.add(psr);
+                if (null != sellerlist && !sellerlist.isEmpty()) {
+                    for (PromotionSellerDetailDTO psd : sellerlist) {
+                        psd.setPromotionId(promotionId);
+                        psd.setCreateId(promotionInfo.getCreateId());
+                        psd.setCreateName(promotionInfo.getCreateName());
+                        psd.setModifyId(promotionInfo.getCreateId());
+                        psd.setModifyName(promotionInfo.getCreateName());
+                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                        promotionSellerDetailDAO.add(psd);
+                    }
                 }
-            }
+        	}
         }
 
         // PromotionSloganDTO psrd = accumulatyDTO.getPromotionSloganDTO();

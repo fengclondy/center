@@ -430,9 +430,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
         PromotionDetailDescribeDMO promotionDetailDescribeDTO = new PromotionDetailDescribeDMO();
         PromotionDetailDescribeDTO piddd = promotionInfo.getPromotionDetailDescribeDTO();
+        promotionDetailDescribeDTO.setPromotionId(promotionId);
+		PromotionDetailDescribeDMO promotionDetailDescribeInfo = promotionDetailDescribeDAO.selectByPromotionId(promotionDetailDescribeDTO);
         if (piddd != null) {
             promotionDetailDescribeDTO.setDescribeContent(piddd.getDescribeContent());
-            promotionDetailDescribeDTO.setId(piddd.getId());
+            if(promotionDetailDescribeInfo!=null){
+                promotionDetailDescribeDTO.setId(promotionDetailDescribeInfo.getId());
+            }
             promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
             promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
             promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());

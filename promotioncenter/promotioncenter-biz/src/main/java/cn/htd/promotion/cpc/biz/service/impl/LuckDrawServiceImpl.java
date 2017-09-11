@@ -455,8 +455,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     promotionAwardInfoDAO.update(padDTO);
                 }
             }
-            result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
             promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
+            result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
             result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
             result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         } catch (PromotionCenterBusinessException e) {

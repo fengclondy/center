@@ -29,8 +29,6 @@ public class SeckillReduceImplHandle extends StockChangeImpl {
 			String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 			promotionRedisDB.incrHashBy(timelimitedResultKey, RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
 					count * -1);
-			// 删除锁定记录
-			promotionRedisDB.delHash(reserveHashKey, buyerCode);
 			// 保存秒杀操作日志
 			this.setTimelimitedLog(seckillInfoReqDTO, Constants.SECKILL_REDUCE);
 		}

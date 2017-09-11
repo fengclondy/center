@@ -54,12 +54,17 @@ public abstract class StockChangeImpl implements StockChangeService {
 		logger.info("MessageId:{} 调用方法StockChangeImpl.checkAndChangeStock入参{}", JSON.toJSONString(seckillInfoReqDTO));
 		RLock rLock = null;
 		try {
-			RedissonClient redissonClient = redissonClientUtil.getInstance();
-			String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(seckillInfoReqDTO.getPromotionId()); // 竞争资源标志
-			rLock = redissonClient.getLock(lockKey);
-			/** 上锁 **/
-			rLock.lock();
-			changeStock(messageId, seckillInfoReqDTO);
+			// 锁定库存操作不需要添加分布式锁
+			if (Constants.SECKILL_RESERVE.equals(seckillInfoReqDTO.getUseType())) {
+				changeStock(messageId, seckillInfoReqDTO);
+			} else {
+				RedissonClient redissonClient = redissonClientUtil.getInstance();
+				String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(seckillInfoReqDTO.getPromotionId()); // 竞争资源标志
+				rLock = redissonClient.getLock(lockKey);
+				/** 上锁 **/
+				rLock.lock();
+				changeStock(messageId, seckillInfoReqDTO);
+			}
 		} finally {
 			/** 释放锁资源 **/
 			if (rLock != null) {

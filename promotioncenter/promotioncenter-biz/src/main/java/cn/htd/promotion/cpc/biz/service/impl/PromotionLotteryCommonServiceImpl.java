@@ -409,8 +409,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             accuList.add(accuDTO);
                             levelCode = awardInfoDTO.getLevelCode();
                             redisKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_" + levelCode;
-                            pushCnt = awardInfoDTO.getProvideCount().longValue() - promotionRedisDB.getLlen(redisKey)
-                                    .longValue();
+                            stringRedisConnection.del(redisKey);
+                            pushCnt = awardInfoDTO.getProvideCount().longValue();
                             totalAwardCnt += awardInfoDTO.getProvideCount().longValue();
                             if (pushCnt > 0) {
                                 buyerWinningRecordDTO = new BuyerWinningRecordDTO();
@@ -419,11 +419,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                 while (pushCnt > 0) {
                                     stringRedisConnection.rPush(redisKey, JSON.toJSONString(buyerWinningRecordDTO));
                                     pushCnt--;
-                                }
-                            } else if (pushCnt < 0) {
-                                while (pushCnt < 0) {
-                                    stringRedisConnection.lPop(redisKey);
-                                    pushCnt++;
                                 }
                             }
                             stringRedisConnection.expire(redisKey, seconds);

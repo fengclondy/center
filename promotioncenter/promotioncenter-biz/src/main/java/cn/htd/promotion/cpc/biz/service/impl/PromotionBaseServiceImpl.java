@@ -485,6 +485,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             List<PromotionSellerDetailDTO> sellerlist = psr.getSellerDetailList();
             if (psr.getRuleTargetType().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
                     DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)) && (sellerlist == null || sellerlist.isEmpty())) {
+                promotionSellerDetailDAO.deleteByPromotionId(promotionId);
                 if (psrold != null) {
                     psr.setDeleteFlag(YesNoEnum.YES.getValue());
                     promotionSellerRuleDAO.update(psr);

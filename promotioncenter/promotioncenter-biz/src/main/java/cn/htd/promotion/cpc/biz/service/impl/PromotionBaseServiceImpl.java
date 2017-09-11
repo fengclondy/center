@@ -460,6 +460,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             PromotionBuyerRuleDTO pbrold = promotionBuyerRuleDAO.selectByPromotionInfoId(promotionId);
             if (StringUtils.isEmpty(pbr.getRuleTargetType()) || pbr.getRuleTargetType().equals("0")) {
                 if (pbrold != null) {
+                	pbr.setId(pbrold.getId());
                     pbr.setDeleteFlag(YesNoEnum.YES.getValue());
                     promotionBuyerRuleDAO.update(pbr);
                 }
@@ -471,6 +472,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     pbr.setCreateName(promotionInfo.getModifyName());
                     promotionBuyerRuleDAO.add(pbr);
                 } else {
+                	pbr.setId(pbrold.getId());
                     promotionBuyerRuleDAO.update(pbr);
                 }
             }
@@ -487,6 +489,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)) && (sellerlist == null || sellerlist.isEmpty())) {
                 promotionSellerDetailDAO.deleteByPromotionId(promotionId);
                 if (psrold != null) {
+                	psr.setId(psrold.getId());
                     psr.setDeleteFlag(YesNoEnum.YES.getValue());
                     promotionSellerRuleDAO.update(psr);
                 }
@@ -498,6 +501,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     psr.setCreateName(promotionInfo.getCreateName());
                     promotionSellerRuleDAO.add(psr);
                 } else {
+                	psr.setId(psrold.getId());
                     promotionSellerRuleDAO.update(psr);
                 }
                 promotionSellerDetailDAO.deleteByPromotionId(promotionId);

@@ -74,8 +74,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
             errorWinningRecord.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);
             errorWinningRecord.setBuyerCode(buyerCode);
             errorWinningRecord.setSellerCode(sellerCode);
-            errorWinningRecord.setRewardType(dictMap.get(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE + "&"
-                    + DictionaryConst.OPT_PROMOTION_REWARD_TYPE_THANKS));
+            errorWinningRecord.setRewardType("0");
             ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
             responseDTO.setTicket(ticket);
             promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);

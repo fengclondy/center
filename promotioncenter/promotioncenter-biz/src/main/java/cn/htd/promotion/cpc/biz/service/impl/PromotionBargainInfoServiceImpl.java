@@ -813,7 +813,7 @@ public class PromotionBargainInfoServiceImpl implements
 					resDTO.setNoBargainItemQTY(noBargainCount);
 					// 发起砍价人数
 					Integer launchQTY = buyerBargainRecordDAO
-							.queryPromotionBargainJoinQTY(resDTO
+							.queryPromotionBargainFilterJoinQTY(resDTO
 									.getPromotionId());
 					resDTO.setLaunchBargainQTY(launchQTY == null ? 0
 							: launchQTY.intValue());

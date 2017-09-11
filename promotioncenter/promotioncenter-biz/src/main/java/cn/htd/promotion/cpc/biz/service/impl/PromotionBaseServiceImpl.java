@@ -150,13 +150,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     .equals(promotionInfo.getStatus())) {
                 return;
             }
-            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionInfo.getShowStatus())) {
-                if (!dictionary
-                        .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_END)
-                        .equals(promotionInfo.getStatus())) {
-                }
-            }
             promotionInfo.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                     DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
             promotionInfo.setModifyId(validDTO.getOperatorId());

@@ -245,7 +245,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 String buyerTopExtraPartakeTime = promotionRedisDB
                         .getHash(lotteryTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES);
                 Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
-                if (StringUtils.isEmpty(buyerTopExtraPartakeTime) || Integer.valueOf(buyerTopExtraPartakeTime)<=0) {
+                if (StringUtils.isEmpty(buyerTopExtraPartakeTime) || Integer.valueOf(buyerTopExtraPartakeTime)<0) {
                     // 粉丝活动粉丝当日参与次数--总共剩余参与次数
                     promotionRedisDB
                             .incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, partakeTime);

@@ -514,6 +514,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                     promotionSellerDetailDAO.add(psd);
                 }
             }
+        }else{
+        	PromotionSellerRuleDTO psr1 = promotionSellerRuleDAO.selectByPromotionInfoId(promotionId);
+            if(psr1!=null){
+            	List<PromotionSellerDetailDTO> sdlist = promotionSellerDetailDAO.selectByPromotionId(promotionId);
+            	psr1.setSellerDetailList(sdlist);
+            }
+            promotionInfo.setSellerRuleDTO(psr1);
         }
 
         // PromotionSloganDTO psrd = accumulatyDTO.getPromotionSloganDTO();

@@ -11,6 +11,15 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
@@ -47,13 +56,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -243,7 +245,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 String buyerTopExtraPartakeTime = promotionRedisDB
                         .getHash(lotteryTimesInfo, RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES);
                 Long partakeTime = Long.valueOf(buyerShareExtraPartakeTimes);
-                if (StringUtils.isEmpty(buyerTopExtraPartakeTime)) {
+                if (StringUtils.isEmpty(buyerTopExtraPartakeTime) || Integer.valueOf(buyerTopExtraPartakeTime)<=0) {
                     // 粉丝活动粉丝当日参与次数--总共剩余参与次数
                     promotionRedisDB
                             .incrHashBy(lotteryBuyerTimes, RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, partakeTime);
@@ -455,8 +457,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                     promotionAwardInfoDAO.update(padDTO);
                 }
             }
-            result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
             promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
+            //result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
             result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
             result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         } catch (PromotionCenterBusinessException e) {

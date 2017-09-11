@@ -140,12 +140,17 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 						} else {
 							BUYER_SHARE_TIMESint = Integer.valueOf(BUYER_SHARE_TIMES);
 						}
-						if (BUYER_TOP_EXTRA_PARTAKE_TIMESint
+						if (BUYER_TOP_EXTRA_PARTAKE_TIMESint >0 && BUYER_TOP_EXTRA_PARTAKE_TIMESint
 								.compareTo(BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint) > 0) {
 							buyerDailyDrawTimesint = buyerDailyDrawTimesint
 									+ (BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint);
 						} else {
 							buyerDailyDrawTimesint = buyerDailyDrawTimesint + BUYER_TOP_EXTRA_PARTAKE_TIMESint;
+						}
+						//无上限
+						if(BUYER_TOP_EXTRA_PARTAKE_TIMESint == -1 || BUYER_SHARE_TIMESint==0){
+							buyerDailyDrawTimesint = buyerDailyDrawTimesint
+									+ (BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint);
 						}
 					}
 

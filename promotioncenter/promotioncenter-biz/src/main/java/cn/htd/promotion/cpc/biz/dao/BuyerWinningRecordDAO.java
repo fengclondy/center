@@ -68,4 +68,8 @@ public interface BuyerWinningRecordDAO {
     Integer updateOrder(PromotionAwardReqDTO awardReqDTO);
 
     Integer insertOrder(PromotionAwardReqDTO awardReqDTO);
+
+    List<BuyerWinningRecordDMO> getSeckillOrder(@Param("params") PromotionAwardReqDTO dto,@Param("page") Pager<PromotionAwardReqDTO> page);
+
+    long getTotalSeckillOrder(@Param("params") PromotionAwardReqDTO dto);
 }

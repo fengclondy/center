@@ -38,12 +38,12 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         page.setPage(dto.getPage());
         page.setRows(dto.getPageSize());
 
-        if (dto.getPage() < 1) {
-            page.setPage(1);
-        }
-        if (dto.getPageSize() < 1) {
-            page.setRows(10);
-        }
+//        if (dto.getPage() < 1) {
+//            page.setPage(1);
+//        }
+//        if (dto.getPageSize() < 1) {
+//            page.setRows(10);
+//        }
 
         // 开始时间
         String startTime = dto.getWinningStartTime();
@@ -61,8 +61,15 @@ public class AwardRecordServiceImpl implements AwardRecordService {
 
         DataGrid<PromotionAwardDTO> dataGrid = new DataGrid<PromotionAwardDTO>();
         try {
-            List<BuyerWinningRecordDMO> list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
-            long count = awardRecordDAO.getTotalAwardRecord(dto);
+            List<BuyerWinningRecordDMO> list = null;
+            long count =0;
+            if("21".equals(dto.getPromotionType())){
+                list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
+                count = awardRecordDAO.getTotalAwardRecord(dto);
+            }else {
+                list = awardRecordDAO.getSeckillOrder(dto, page);
+                count = awardRecordDAO.getTotalSeckillOrder(dto);
+            }
             BuyerWinningRecordConvert convert = new BuyerWinningRecordConvert();
             List<PromotionAwardDTO> awardDTOList = convert.toTarget(list);
             dataGrid.setTotal(count);

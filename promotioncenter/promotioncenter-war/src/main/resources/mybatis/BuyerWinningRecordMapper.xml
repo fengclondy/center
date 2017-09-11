@@ -133,11 +133,31 @@
     </if>
   </select>
 
+  <select id="getSeckillOrder" resultMap="BaseResultMap">
+    select
+    bwr.*
+    from buyer_winning_record bwr
+    where 1 = 1
+    <include refid="awardRecord_mid"/>
+    order by bwr.winning_time desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+
   <select id="getTotalAwardRecord" resultType="java.lang.Long">
     select
     count(1)
     from buyer_winning_record bwr,promotion_info pi
     where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    <include refid="awardRecord_mid"/>
+  </select>
+
+  <select id="getTotalSeckillOrder" resultType="java.lang.Long">
+    select
+    count(1)
+    from buyer_winning_record bwr
+    where 1 = 1
     <include refid="awardRecord_mid"/>
   </select>
 

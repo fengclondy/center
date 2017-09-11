@@ -434,14 +434,23 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 		PromotionDetailDescribeDMO promotionDetailDescribeInfo = promotionDetailDescribeDAO.selectByPromotionId(promotionDetailDescribeDTO);
         if (piddd != null) {
             promotionDetailDescribeDTO.setDescribeContent(piddd.getDescribeContent());
+            promotionDetailDescribeDTO.setPromotionId(promotionId);
             if(promotionDetailDescribeInfo!=null){
                 promotionDetailDescribeDTO.setId(promotionDetailDescribeInfo.getId());
+                promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
+                promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
+                promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());
+                promotionDetailDescribeDTO.setDeleteFlag(piddd.getDeleteFlag());
+                promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
+            }else{
+                promotionDetailDescribeDTO.setCreateId(promotionInfo.getModifyId());
+                promotionDetailDescribeDTO.setCreateName(promotionInfo.getModifyName());
+                promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
+                promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
+                promotionDetailDescribeDTO.setDeleteFlag(YesNoEnum.NO.getValue());
+                promotionDetailDescribeDAO.add(promotionDetailDescribeDTO);
             }
-            promotionDetailDescribeDTO.setModifyId(promotionInfo.getModifyId());
-            promotionDetailDescribeDTO.setModifyName(promotionInfo.getModifyName());
-            promotionDetailDescribeDTO.setPromotionId(promotionInfo.getPromotionId());
-            promotionDetailDescribeDTO.setDeleteFlag(piddd.getDeleteFlag());
-            promotionDetailDescribeDAO.update(promotionDetailDescribeDTO);
+
         }
 
         List<PromotionPictureDTO> piclist = promotionInfo.getPromotionPictureList();

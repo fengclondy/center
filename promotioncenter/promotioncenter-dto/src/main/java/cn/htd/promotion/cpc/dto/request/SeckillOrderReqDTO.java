@@ -26,7 +26,7 @@ public class SeckillOrderReqDTO implements Serializable{
 
      private String memberAddress;//会员店地址
 
-     private String orderStatus;//订单状态
+     private String orderStatus;//订单状态 1:待支付；2：待发货；3：待确认 4：已完成；5已关闭
 
      private Date orderTime;//下单时间
 

@@ -135,6 +135,7 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
         awardReqDTO.setAwardValue(dto.getTotalMoeny());
         awardReqDTO.setWinningContact(dto.getFanCode());
         awardReqDTO.setBelongSuperiorName(dto.getMemberBossName());
+        awardReqDTO.setBuyerTelephone(dto.getBossTelphone());
         awardReqDTO.setBuyerName(dto.getMemberName());
         awardReqDTO.setSellerAddress(dto.getMemberAddress());
         awardReqDTO.setOrderStatus(dto.getOrderStatus());

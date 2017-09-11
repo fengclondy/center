@@ -109,6 +109,12 @@
     <if test="params.promotionType!=null and params.promotionType!=''">
       and bwr.promotion_type = #{params.promotionType}
     </if>
+    <if test="params.orderStatus!=null and params.orderStatus!=''">
+      and bwr.order_status = #{params.orderStatus}
+    </if>
+    <if test="params.orderNo!=null and params.orderNo!=''">
+      and bwr.order_no = #{params.orderNo}
+    </if>
   </sql>
   <!-- mysql 分页 -->
   <sql id="pagination_tail">
@@ -358,6 +364,9 @@
       <if test="belongSuperiorName != null and belongSuperiorName != ''">
         belong_superior_name,
       </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        buyer_telephone,
+      </if>
       <if test="buyerName != null and buyerName != ''">
         buyer_name,
       </if>
@@ -390,6 +399,9 @@
       </if>
       <if test="belongSuperiorName != null and belongSuperiorName != ''">
         #{belongSuperiorName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        #{buyerTelephone,jdbcType=VARCHAR},
       </if>
       <if test="buyerName != null and buyerName != ''">
         #{buyerName,jdbcType=VARCHAR},
@@ -426,6 +438,9 @@
       </if>
       <if test="belongSuperiorName != null and belongSuperiorName != ''">
         belong_superior_name = #{belongSuperiorName},
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        buyer_telephone = #{buyerTelephone},
       </if>
       <if test="buyerName != null and buyerName != ''">
         buyer_name = #{buyerName},

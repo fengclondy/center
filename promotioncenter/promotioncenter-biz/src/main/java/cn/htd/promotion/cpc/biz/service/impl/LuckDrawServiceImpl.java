@@ -456,23 +456,23 @@ public class LuckDrawServiceImpl implements LuckDrawService {
                 List<? extends PromotionAccumulatyDTO> promotionAccumulatyList =
                         promotionInfoEditReqDTO.getPromotionAccumulatyList();
                 PromotionAwardInfoDTO padDTO = null;
-                for (int i = 0; i < promotionAccumulatyList.size(); i++) {
-                    padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
-                    PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(padDTO);
-                    if(pad==null){
-                    	padDTO.setPromotionId(result.getPromotionId());
-                    	padDTO.setCreateId(result.getModifyId());
-                    	padDTO.setCreateName(result.getModifyName());
-                    	padDTO.setModifyId(result.getModifyId());
-                    	padDTO.setModifyName(result.getModifyName());
-                    	promotionAwardInfoDAO.add(padDTO);
-                    }else{
-                    	padDTO.setModifyId(result.getModifyId());
-                    	padDTO.setModifyName(result.getModifyName());
-                    promotionAwardInfoDAO.update(padDTO);
-                }
-              }
-            }
+				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
+					padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
+					PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(padDTO);
+					if (pad == null) {
+						padDTO.setPromotionId(result.getPromotionId());
+						padDTO.setCreateId(result.getModifyId());
+						padDTO.setCreateName(result.getModifyName());
+						padDTO.setModifyId(result.getModifyId());
+						padDTO.setModifyName(result.getModifyName());
+						promotionAwardInfoDAO.add(padDTO);
+					} else {
+						padDTO.setModifyId(result.getModifyId());
+						padDTO.setModifyName(result.getModifyName());
+						promotionAwardInfoDAO.update(padDTO);
+					}
+				}
+			}
             promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
             //result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
             result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());

@@ -526,25 +526,31 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         Date nowDate = new Date();
         String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
-        String b2bMiddleLotteryIndex = RedisConst.REDIS_LOTTERY_INDEX;
-        Map<String, String> indexMap = promotionRedisDB.getHashOperations(b2bMiddleLotteryIndex);
+        String gashaphonType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON);
+        Map<String, String> indexMap = promotionRedisDB.getHashOperations(RedisConst.REDIS_LOTTERY_INDEX);
         if (null != indexMap && !indexMap.isEmpty()) {
             for (Map.Entry<String, String> m : indexMap.entrySet()) {
-                String field = m.getKey();
-                String[] fieldArray = field.split("_");
-                if (null == fieldArray || fieldArray.length <= 2) {
+                String key = m.getKey();
+                String value = m.getValue();
+                String[] keyArray = key.split("_");
+                if (keyArray == null || keyArray.length < 2) {
                     continue;
                 }
-                if (StringUtils.isEmpty(m.getValue())) {
+                String[] valueArray = value.split("_");
+                if (null == valueArray || valueArray.length < 2) {
                     continue;
                 }
-                promotionId = m.getValue();
+                String promotionType = keyArray[0];
+                promotionId = keyArray[1];
                 promotionStatus = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_VALID, promotionId);
                 if (!validStatus.equals(promotionStatus)) {
                     continue;
                 }
-                Long startTime = new Long(fieldArray[1]);
-                Long endTime = new Long(fieldArray[2]);
+                if (!gashaphonType.equals(promotionType)) {
+                    continue;
+                }
+                Long startTime = new Long(valueArray[0]);
+                Long endTime = new Long(valueArray[1]);
                 Date stratDate = new Date(startTime);
                 Date endDate = new Date(endTime);
                 if (nowDate.after(stratDate) && nowDate.before(endDate)) {

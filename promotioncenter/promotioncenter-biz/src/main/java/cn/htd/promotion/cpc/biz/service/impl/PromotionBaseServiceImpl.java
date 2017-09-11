@@ -358,9 +358,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setPromotionSloganDTO(psd);
 
         List<PromotionConfigureDTO> pclist = promotionConfigureDAO.selectByPromotionId(promotionId);
-        if (pclist != null && pclist.size() > 0) {
-            promotionInfo.setPromotionConfigureList(pclist);
-        }
+        promotionInfo.setPromotionConfigureList(pclist);
         return promotionInfo;
     }
 
@@ -443,12 +441,22 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         }
 
         List<PromotionPictureDTO> piclist = promotionInfo.getPromotionPictureList();
+        List<PromotionPictureDTO> oldpiclist = promotionPictureDAO.selectByPromotionInfoId(promotionId);
+        promotionInfo.setPromotionPictureList(piclist);
         if (null != piclist && !piclist.isEmpty()) {
             for (PromotionPictureDTO ppic : piclist) {
-                ppic.setModifyId(promotionInfo.getModifyId());
-                ppic.setModifyName(promotionInfo.getModifyName());
-                ppic.setPromotionId(promotionInfo.getPromotionId());
-                promotionPictureDAO.update(ppic);
+            	if (oldpiclist != null && oldpiclist.size() > 0) {
+                	for (PromotionPictureDTO promotionPictureDTO : oldpiclist) {
+                		if(promotionPictureDTO.getPromotionPictureType().equals(ppic.getPromotionPictureType())){
+                			ppic.setId(promotionPictureDTO.getId());
+                            ppic.setModifyId(promotionInfo.getModifyId());
+                            ppic.setModifyName(promotionInfo.getModifyName());
+                            ppic.setPromotionId(promotionInfo.getPromotionId());
+                            promotionPictureDAO.update(ppic);
+                            break;
+                		}
+                	}
+            	}
             }
         }
 
@@ -529,12 +537,23 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 }
             }
         }
+        List<PromotionConfigureDTO> oldpclist = promotionConfigureDAO.selectByPromotionId(promotionId);
+
         List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
         if (pclist != null && pclist.size() > 0) {
             for (PromotionConfigureDTO pcd : pclist) {
-                promotionConfigureDAO.update(pcd);
+                if (oldpclist != null && oldpclist.size() > 0) {
+                	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
+						if(promotionConfigureDTO.getConfType().equals(pcd.getConfType())){
+							pcd.setId(promotionConfigureDTO.getId());
+			                promotionConfigureDAO.update(pcd);
+			                break;
+						}
+					}
+                }
             }
         }
+        promotionInfo.setPromotionConfigureList(pclist);
         return promotionInfo;
     }
 

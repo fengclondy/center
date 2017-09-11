@@ -394,7 +394,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsShareTimesLimit().intValue()) {
                             timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES,
                                     String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));
-                            if (promotionInfoDTO.getTopExtraPartakeTimes() != null) {
+                            if (promotionInfoDTO.getTopExtraPartakeTimes() != null && promotionInfoDTO
+                                    .getTopExtraPartakeTimes().intValue() >= 0) {
                                 timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES,
                                         String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
                             }

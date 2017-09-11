@@ -10,7 +10,7 @@ public class CommonUtil {
 		      char c = s.charAt(i);  
 		      if (c == '\\' || c == '+' || c == '!' || c == ':'  
 		        || c == '^' || c == '[' || c == ']' || c == '\"' || c == '{' || c == '}' || c == '~'  
-		        || c == '*' || c == '?' || c == '|' || c == '&'  || c == ';' || c == '/'  
+		        || c == '*' || c == '?' || c == '|' || c == '&'  || c == ';' || c == '/' || c == '-'
 		        || Character.isWhitespace(c)) {  
 		        sb.append('\\');
 		      }  

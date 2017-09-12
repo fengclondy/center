@@ -53,7 +53,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			seckillInfoReqDTO.setSeckillLockNo(lockNo);
 			// 保存秒杀操作日志
 			this.setTimelimitedLog(seckillInfoReqDTO, Constants.SECKILL_RESERVE);
-		} else if (StringUtils.isBlank(reserveResult)) {
+		} else if (StringUtils.isNotBlank(reserveResult)) {
 			String useLogRedisKey = buyerCode + "&" + promotionId;
 			String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 					useLogRedisKey);

@@ -69,6 +69,11 @@ public class BuyerWinningRecordDMO {
 
     private Date invalidTime;//活动结束时间
 
+    //用于秒杀订单
+    private String orderStatus;//订单状态
+
+    private String orderNo;//订单编号
+
     /**
      * 开始位置
      */
@@ -385,4 +390,19 @@ public class BuyerWinningRecordDMO {
 		this.sellerName = sellerName;
 	}
 
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 }

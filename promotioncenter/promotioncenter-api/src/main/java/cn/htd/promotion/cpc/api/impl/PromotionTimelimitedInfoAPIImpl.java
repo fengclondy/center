@@ -199,7 +199,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_PARAM_ERROR;
 			}
 			timelimitedDTO.setShowStatusStr(TimelimitedStatusEnum.getName(timelimitedDTO.getCompareStatus()));
-			if (!checkTimelimitedIsAvailableByBuyerCode(messageId, buyerCode, promotionId).getResult()) {
+			if (!checkTimelimitedByBuyerCode(messageId, buyerCode, promotionId).getResult()) {
 				returnCode = PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_BUYER_NO_AUTHIORITY;
 			}
 			result.setCode(returnCode);
@@ -226,6 +226,47 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	@Override
 	public ExecuteResult<Boolean> checkTimelimitedIsAvailableByBuyerCode(String messageId, String buyerCode,
 			String promotionId) {
+		String timelimitedJsonStr = "";
+		TimelimitedInfoResDTO timelimitedInfo = null;
+		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();
+		restult.setResult(false);
+		timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
+		timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
+		String  showStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
+		PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfo.getPromotionExtendInfoDTO();
+		if (timelimitedInfo.getPromotionId().equals(promotionId)) {
+			if (showStatus.equals(promotionExtendInfoDTO.getShowStatus())) {// 秒杀活动启用
+				if ((new Date()).before(promotionExtendInfoDTO.getEffectiveTime())) {
+					// 秒杀活动未开始
+					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_NO_STAET_ERROR);
+				} else if ((new Date()).after(promotionExtendInfoDTO.getInvalidTime())) {
+					// 秒杀送活动已经结束
+					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_HAS_ENDED_ERROR);
+				} else {
+					// 秒杀送活动进行中
+					restult.setResult(true);
+					restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_PROCESSING_ERROR);
+				}
+			} else {
+				// 秒杀送活动未启用
+				restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_IS_DISABLE_ERROR);
+			}
+		} else {
+			restult.setCode(PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_ID_ERROR);// 秒杀活动编码不正确
+		}
+		return restult;
+	}
+	
+	
+	/**
+	 * 汇掌柜APP - 根据会员编码查询是否有总部秒杀是否有效
+	 * 
+	 * @param messageId
+	 * @param buyerCode
+	 * @param promotionId
+	 * @return
+	 */
+	public ExecuteResult<Boolean> checkTimelimitedByBuyerCode(String messageId, String buyerCode,String promotionId) {
 		String timelimitedJsonStr = "";
 		TimelimitedInfoResDTO timelimitedInfo = null;
 		ExecuteResult<Boolean> restult = new ExecuteResult<Boolean>();

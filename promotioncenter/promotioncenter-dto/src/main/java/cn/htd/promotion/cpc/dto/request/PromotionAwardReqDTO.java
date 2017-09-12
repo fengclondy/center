@@ -68,6 +68,11 @@ public class PromotionAwardReqDTO implements Serializable{
 
     private Date modifyTime;//更新时间
 
+    //用于秒杀订单
+    private String orderStatus;//订单状态
+
+    private String orderNo;//订单编号
+
 
     //用于分页
     private Integer page;
@@ -334,5 +339,21 @@ public class PromotionAwardReqDTO implements Serializable{
 
     public void setWinningEndTime(String winningEndTime) {
         this.winningEndTime = winningEndTime;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

@@ -91,10 +91,10 @@ public class TimeLimitedOrderTestUnit {
 	// try {
 	// String messageId = "123456";
 	// TimelimitedInfoResDTO timelimitedInfoResDTO =
-	// timelimitedInfoService.getTimelimitedInfo("5171405160167");
+	// timelimitedInfoService.getTimelimitedInfo("23171047420198");
 	// SeckillInfoReqDTO seckillInfoReqDTO = new SeckillInfoReqDTO();
 	// seckillInfoReqDTO.setPromotionId(timelimitedInfoResDTO.getPromotionId());
-	// seckillInfoReqDTO.setBuyerCode("test123");
+	// seckillInfoReqDTO.setBuyerCode("534382");
 	// seckillInfoReqDTO.setCount(1);
 	// seckillInfoReqDTO.setUseType(Constants.SECKILL_RESERVE);
 	// seckillInfoReqDTO.setOperaterId(timelimitedInfoResDTO.getCreateId());
@@ -106,26 +106,25 @@ public class TimeLimitedOrderTestUnit {
 	// }
 	// }
 
-	// @Test
-	// @Rollback(false)
-	// public void releaseStockTest() {
-	// try {
-	// String messageId = "123456";
-	// TimelimitedInfoResDTO timelimitedInfoResDTO =
-	// timelimitedInfoService.getTimelimitedInfo("5171405160167");
-	// SeckillInfoReqDTO seckillInfoReqDTO = new SeckillInfoReqDTO();
-	// seckillInfoReqDTO.setPromotionId(timelimitedInfoResDTO.getPromotionId());
-	// seckillInfoReqDTO.setBuyerCode("test123");
-	// seckillInfoReqDTO.setCount(1);
-	// seckillInfoReqDTO.setUseType(Constants.SECKILL_RESERVE);
-	// seckillInfoReqDTO.setOperaterId(timelimitedInfoResDTO.getCreateId());
-	// seckillInfoReqDTO.setOperaterName(timelimitedInfoResDTO.getCreateName());
-	// promotionTimelimitedInfoAPI.releaseStock(messageId, seckillInfoReqDTO);
-	// } catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
+	@Test
+	@Rollback(false)
+	public void releaseStockTest() {
+		try {
+			String messageId = "123456";
+			TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getTimelimitedInfo("23171047420198");
+			SeckillInfoReqDTO seckillInfoReqDTO = new SeckillInfoReqDTO();
+			seckillInfoReqDTO.setPromotionId(timelimitedInfoResDTO.getPromotionId());
+			seckillInfoReqDTO.setBuyerCode("1158238");
+			seckillInfoReqDTO.setCount(1);
+			seckillInfoReqDTO.setUseType(Constants.SECKILL_RESERVE);
+			seckillInfoReqDTO.setOperaterId(timelimitedInfoResDTO.getCreateId());
+			seckillInfoReqDTO.setOperaterName(timelimitedInfoResDTO.getCreateName());
+			promotionTimelimitedInfoAPI.releaseStock(messageId, seckillInfoReqDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	@Rollback(false)

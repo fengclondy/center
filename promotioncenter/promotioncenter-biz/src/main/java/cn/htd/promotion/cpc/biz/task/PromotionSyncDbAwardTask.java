@@ -146,7 +146,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 			if (tasks != null && tasks.length > 0) {
 				for (BuyerWinningRecordDMO promotionAwardDTO : tasks) {
 					if (promotionAwardDTO !=null && !StringUtils.isEmpty(promotionAwardDTO.getRewardType())) {
-						
+						logger.info("\n 方法[{}]，入参：[{}]", "PromotionSyncDbAwardTask-execute", JSONObject.toJSONString(promotionAwardDTO));
 						
 						if (promotionAwardDTO.getRewardType().equals("3")) {
 							if(!StringUtils.isEmpty(promotionAwardDTO.getChargeTelephone())){
@@ -298,9 +298,9 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		s.setAwardValue("1");
 		s.setChargeTelephone("1");
 		try {
-			BuyerWinningRecordDMO promotionAwardDTO = new BuyerWinningRecordDMO();
-			promotionAwardDTO.setBuyerCode("1");
-			promotionAwardDTO.setAwardValue("0");
+//			BuyerWinningRecordDMO promotionAwardDTO = new BuyerWinningRecordDMO();
+//			promotionAwardDTO.setBuyerCode("1");
+//			promotionAwardDTO.setAwardValue("0");
 			
 			//excuteRecharge(s);
 			//addGold(promotionAwardDTO );
@@ -317,14 +317,14 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		// 1.构造HttpClient的实例
 		CloseableHttpClient httpClient = httpClientBuilder.build();
 
-		String url = "http://A1307228.api2.ofpay.com/onlineorder.do";
+		String url = "http://api2.ofpay.com/onlineorder.do";
 
 		// 2.构造PostMethod的实例
 		HttpPost httppost = new HttpPost(url);
 
 		// 3.把参数值放入到PostMethod对象中
-		String userid = "A1307228";
-		String userpws = encoderByMd5("huilin123");
+		String userid = SysProperties.getProperty("HTDHL_OFPAY_USERID");//"A1307228";
+		String userpws = encoderByMd5(SysProperties.getProperty("HTDHL_OFPAY_PWD"));//"huilin123");
 		String cardid = "140101";
 		String ret_url = SysProperties.getProperty("HTDHL_ADDRESS") + "/JuheRecharge/updateLotteryState.htm";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");

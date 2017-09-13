@@ -83,6 +83,7 @@ public class TimelimitedTestUnit {
         	List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList = new ArrayList<TimelimitedSkuPictureReqDTO>();
         	TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO = new TimelimitedSkuPictureReqDTO();;
         	timelimitedSkuPictureReqDTO.setPictureUrl("/img1622/123.jpg");
+        	timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO);
         		
         	//商品详情
@@ -108,6 +109,9 @@ public class TimelimitedTestUnit {
     		timelimitedInfoReqDTO.setSecondCategoryCode("二级类目");
     		timelimitedInfoReqDTO.setThirdCategoryCode("三级类目");
     		timelimitedInfoReqDTO.setSkuCategoryName("类目全称");
+    		
+    		//设置主图（默认为第一张图）
+    		timelimitedInfoReqDTO.setSkuPicUrl("/img1622/123.jpg");
     		
     		// 商品原价
     		BigDecimal skuCostPrice = new BigDecimal("100.88");
@@ -283,8 +287,10 @@ public class TimelimitedTestUnit {
         	List<TimelimitedSkuPictureReqDTO> timelimitedSkuPictureReqDTOList = new ArrayList<TimelimitedSkuPictureReqDTO>();
         	TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO = new TimelimitedSkuPictureReqDTO();
         	timelimitedSkuPictureReqDTO.setPictureUrl("/img/123456.jpg");
+        	timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
         	TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO_2 = new TimelimitedSkuPictureReqDTO();
         	timelimitedSkuPictureReqDTO_2.setPictureUrl("/img/456789.jpg");
+        	timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO);
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO_2);
         		
@@ -310,6 +316,9 @@ public class TimelimitedTestUnit {
 //    		timelimitedInfoReqDTO.setSecondCategoryCode("二级类目修改");
 //    		timelimitedInfoReqDTO.setThirdCategoryCode("三级类目修改");
 //    		timelimitedInfoReqDTO.setSkuCategoryName("类目全称");
+    		
+    		//设置主图（默认为第一张图）
+    		timelimitedInfoReqDTO.setSkuPicUrl("/img/123456.jpg");
     		
     		// 商品原价
     		BigDecimal skuCostPrice = new BigDecimal("101.88");

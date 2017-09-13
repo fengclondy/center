@@ -81,6 +81,10 @@
       <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
         #{statusCode}
       </foreach>
+      and show_status in
+      <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator="," close=")">
+        #{verifyStatusCode}
+      </foreach>
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}

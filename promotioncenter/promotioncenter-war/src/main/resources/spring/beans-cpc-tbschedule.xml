@@ -34,4 +34,7 @@
 	<bean id="updateBuyerSeckillUseLog4hlScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateBuyerSeckillUseLog4hlScheduleTask"/>
 	
 	<bean id="releaseTimelimitedLockedNoOrderStock4hlScheduleTask" class="cn.htd.promotion.cpc.biz.task.ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask"/>
+	
+	  <!-- 秒杀活动结束超过24小时自动下架 -->
+  <bean id="updateTimelimitedStatus4invalidScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateTimelimitedStatus4invalidScheduleTask"/>
 </beans>

@@ -68,5 +68,43 @@
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
           and seller_code = #{buyerCode,jdbcType=VARCHAR}
   </select>
+  
+  
+  
+   <select id="queryPromotionList" resultMap="ResultMap">
+    select
+      p.promotion_id as promotionId
+    from promotion_info
+    where 1 = 1 and p.promotion_type=23
+    <if test="entity != null">
+      and status in
+      <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
+        #{statusCode}
+      </foreach>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  
+    <update id="updatePromotionShowStatusById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      show_status = #{showStatus},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId, jdbcType=VARCHAR}
+  </update>
+  
+    <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
 
 </mapper>

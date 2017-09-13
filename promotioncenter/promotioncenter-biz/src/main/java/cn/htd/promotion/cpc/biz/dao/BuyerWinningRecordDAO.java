@@ -72,4 +72,6 @@ public interface BuyerWinningRecordDAO {
     List<BuyerWinningRecordDMO> getSeckillOrder(@Param("params") PromotionAwardReqDTO dto,@Param("page") Pager<PromotionAwardReqDTO> page);
 
     long getTotalSeckillOrder(@Param("params") PromotionAwardReqDTO dto);
+
+    int updateOrderLogisticsInfo(PromotionAwardReqDTO dto);
 }

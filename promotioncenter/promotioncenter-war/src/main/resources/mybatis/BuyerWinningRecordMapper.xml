@@ -402,6 +402,7 @@
       <if test="orderNo != null and orderNo != ''">
         order_no,
       </if>
+      REWARD_TYPE,
       promotion_type,
       create_time,
       modify_time,
@@ -438,6 +439,7 @@
       <if test="orderNo != null and orderNo != ''">
         #{orderNo,jdbcType=VARCHAR},
       </if>
+      '2',
       '23',
       now(),
       now(),

@@ -121,10 +121,11 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
 
             // 添加商品图片,返回商品主图
-            String firstPictureUrl = addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+//            String firstPictureUrl = 
+            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 添加秒杀商品
-            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
+//            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
             timelimitedInfoReqDTO.setCreateTime(currentTime);
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.insert(timelimitedInfoReqDTO);
@@ -191,10 +192,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             timelimitedSkuPictureReqDTO_delete.setModifyTime(currentTime);
             timelimitedSkuPictureDAO.pseudoDelete(timelimitedSkuPictureReqDTO_delete);
             // 添加商品图片,返回商品主图
-            String firstPictureUrl = addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 修改秒杀商品
-            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
@@ -469,12 +469,13 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuPictureReqDTO = timelimitedSkuDescribeList.get(i);
                 timelimitedSkuPictureReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
                 timelimitedSkuPictureReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
-                if (i == 0) {// 第一张图设置为主图
-                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
-                    firstPictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
-                } else {
-                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
-                }
+                // 由客户端设置（改）
+//                if (i == 0) {// 第一张图设置为主图
+//                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
+//                    firstPictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
+//                } else {
+//                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
+//                }
                 timelimitedSkuPictureReqDTO.setSortNum(i + 1);
                 timelimitedSkuPictureReqDTO.setDeleteFlag(Boolean.FALSE);
                 timelimitedSkuPictureReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());

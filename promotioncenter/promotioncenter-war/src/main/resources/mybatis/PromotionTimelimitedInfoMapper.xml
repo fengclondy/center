@@ -42,6 +42,68 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
+    <resultMap id="PromotionResultMap" type="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+   <result column="id" jdbcType="BIGINT" property="promotionId"/>
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="promotion_name" jdbcType="VARCHAR" property="promotionName"/>
+    <result column="promotion_describe" jdbcType="VARCHAR" property="promotionDescribe"/>
+    <result column="promotion_provider_type" jdbcType="VARCHAR" property="promotionProviderType"/>
+    <result column="promotion_provider_seller_code" jdbcType="VARCHAR" property="promotionProviderSellerCode"/>
+    <result column="promotion_provider_shop_id" jdbcType="BIGINT" property="promotionProviderShopId"/>
+    <result column="cost_allocation_type" jdbcType="VARCHAR" property="costAllocationType"/>
+    <result column="promotion_type" jdbcType="VARCHAR" property="promotionType"/>
+    <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+    <result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime"/>
+    <result column="is_vip" jdbcType="TINYINT" property="isVip"/>
+    <result column="status" jdbcType="VARCHAR" property="status"/>
+    <result column="show_status" jdbcType="VARCHAR" property="showStatus"/>
+    <result column="verifier_id" jdbcType="BIGINT" property="verifierId"/>
+    <result column="verifier_name" jdbcType="VARCHAR" property="verifierName"/>
+    <result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime"/>
+    <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
+    <result column="modify_promotion_id" jdbcType="VARCHAR" property="modifyPromotionId"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    <result column="deal_flag" jdbcType="TINYINT" property="dealFlag" />
+    <result column="has_redis_clean" jdbcType="TINYINT" property="hasRedisClean" />
+    <result column="has_up_flag" jdbcType="TINYINT" property="hasUpFlag"/>
+  </resultMap>
+  
+    <sql id="Promotion_Base_Column_List">
+		id,
+		promotion_id,
+		promotion_name,
+		promotion_describe,
+		promotion_provider_type,
+		promotion_provider_seller_code,
+		promotion_provider_shop_id,
+		cost_allocation_type,
+		promotion_type,
+		effective_time,
+		invalid_time,
+		is_vip,
+		status,
+		show_status,
+		verifier_id,
+		verifier_name,
+		verify_time,
+		verify_remark,
+		modify_promotion_id,
+		has_up_flag,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		deal_flag,
+		has_redis_clean,
+		modify_name,
+		modify_time
+	</sql>
+  
    <sql id="Base_Column_List" >
     id, promotion_id, rule_id, seller_code, seller_name, belong_superior_name, delete_flag, 
     create_id, create_name, create_time, modify_id, modify_name, modify_time
@@ -57,8 +119,8 @@
         and s.seller_code=#{buyerCode}
      </if>
      and p.show_status=3 and p.promotion_type=23
+     order by p.modify_time desc
   </select>
-
 
   <select id="selectPromotionSellerDetailInfo" resultMap="BaseResultMap" >
     select 
@@ -67,5 +129,45 @@
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
           and seller_code = #{buyerCode,jdbcType=VARCHAR}
   </select>
+  
+   <select id="queryPromotionList" resultMap="PromotionResultMap">
+    select
+      <include refid="Promotion_Base_Column_List"/>
+    from promotion_info p
+    where 1 = 1 and p.promotion_type=23
+    <if test="entity != null">
+      and status in
+      <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
+        #{statusCode}
+      </foreach>
+      and show_status in
+      <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator="," close=")">
+        #{verifyStatusCode}
+      </foreach>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  
+    <update id="updatePromotionShowStatusById" parameterType="cn.htd.promotion.cpc.dto.response.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      show_status = #{showStatus},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId, jdbcType=VARCHAR}
+  </update>
+  
+    <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
 
 </mapper>

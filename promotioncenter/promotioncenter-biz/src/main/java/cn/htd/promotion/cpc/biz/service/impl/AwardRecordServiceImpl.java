@@ -109,4 +109,9 @@ public class AwardRecordServiceImpl implements AwardRecordService {
 
         return awardRecordDAO.insertOrder(awardReqDTO);
     }
+
+    @Override
+    public int updateOrderLogisticsInfo(PromotionAwardReqDTO dto, String messageId) {
+       return  awardRecordDAO.updateOrderLogisticsInfo(dto);
+    }
 }

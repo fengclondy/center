@@ -194,6 +194,28 @@
     id = #{id}
   </update>
 
+  <!-- 更新订单物流信息 -->
+  <update id="updateOrderLogisticsInfo" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
+    UPDATE buyer_winning_record
+    <set>
+      <if test="logisticsCompany != null and logisticsCompany != ''">
+        logistics_company = #{logisticsCompany},
+      </if>
+      <if test="logisticsStatus != null and logisticsStatus != ''">
+        logistics_status = #{logisticsStatus},
+      </if>
+      <if test="logisticsNo != null and logisticsNo != ''">
+        logistics_no = #{logisticsNo},
+      </if>
+      order_status = '3',
+      modify_id = #{modifyId},
+      modify_name = #{modifyName},
+      modify_time = #{modifyTime}
+    </set>
+    WHERE
+    order_no = #{orderNo}
+  </update>
+
   <insert id="addBuyerWinningRecord" useGeneratedKeys="true" keyProperty="id">
     insert into buyer_winning_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -402,6 +424,7 @@
       <if test="orderNo != null and orderNo != ''">
         order_no,
       </if>
+      REWARD_TYPE,
       promotion_type,
       create_time,
       modify_time,
@@ -438,6 +461,7 @@
       <if test="orderNo != null and orderNo != ''">
         #{orderNo,jdbcType=VARCHAR},
       </if>
+      '2',
       '23',
       now(),
       now(),

@@ -18,4 +18,6 @@ public interface AwardRecordService {
     Integer updateOrder(PromotionAwardReqDTO awardReqDTO);
 
     Integer insertOrder(PromotionAwardReqDTO awardReqDTO);
+
+    int updateOrderLogisticsInfo(PromotionAwardReqDTO dto, String messageId);
 }

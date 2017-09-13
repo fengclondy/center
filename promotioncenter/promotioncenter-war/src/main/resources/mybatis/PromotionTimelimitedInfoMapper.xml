@@ -57,6 +57,7 @@
         and s.seller_code=#{buyerCode}
      </if>
      and p.show_status=3 and p.promotion_type=23
+     order by p.modify_time desc
   </select>
 
 

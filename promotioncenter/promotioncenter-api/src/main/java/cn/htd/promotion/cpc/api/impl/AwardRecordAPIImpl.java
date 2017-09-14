@@ -5,12 +5,14 @@ import javax.annotation.Resource;
 import cn.htd.common.DataGrid;
 import cn.htd.promotion.cpc.api.AwardRecordAPI;
 import cn.htd.promotion.cpc.biz.service.AwardRecordService;
+import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 import cn.htd.promotion.cpc.dto.request.SeckillOrderReqDTO;
 import cn.htd.promotion.cpc.dto.response.ImportResultDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
+import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -32,6 +34,9 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
 
     @Resource
     AwardRecordService awardRecordService;
+
+    @Resource
+    TimelimitedInfoService timelimitedInfoService;
 
     @Override
     public ExecuteResult<DataGrid<PromotionAwardDTO>> getAwardRecordByPromotionId(PromotionAwardReqDTO dto,
@@ -155,6 +160,9 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
         awardReqDTO.setOrderStatus(StringUtils.isNotEmpty(dto.getOrderStatus()) ? dto.getOrderStatus():"");
         awardReqDTO.setWinningTime(dto.getOrderTime() != null ? dto.getOrderTime(): new Date());
         awardReqDTO.setPromotionId(StringUtils.isNotEmpty(dto.getPromotionId()) ? dto.getPromotionId():"");
+        awardReqDTO.setSellerCode(StringUtils.isNotEmpty(dto.getOrgid())? dto.getOrgid():"");
+        awardReqDTO.setWinnerName(StringUtils.isNotEmpty(dto.getFanName())?dto.getFanName():"");
+        awardReqDTO.setPromotionName(StringUtils.isNotEmpty(dto.getProductName()) ? dto.getProductName():"");
         return awardReqDTO;
     }
 }

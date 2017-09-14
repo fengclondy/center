@@ -32,6 +32,26 @@ public class SeckillOrderReqDTO implements Serializable{
 
     private String promotionId;//活动编号
 
+    private String orgid;//小b编码
+
+    private String fanName;//粉丝姓名
+
+    public String getOrgid() {
+        return orgid;
+    }
+
+    public void setOrgid(String orgid) {
+        this.orgid = orgid;
+    }
+
+    public String getFanName() {
+        return fanName;
+    }
+
+    public void setFanName(String fanName) {
+        this.fanName = fanName;
+    }
+
     public String getPromotionId() {
         return promotionId;
     }

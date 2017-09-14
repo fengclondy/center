@@ -165,7 +165,7 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
         awardReqDTO.setPromotionId(StringUtils.isNotEmpty(dto.getPromotionId()) ? dto.getPromotionId():"");
         awardReqDTO.setSellerCode(StringUtils.isNotEmpty(dto.getOrgid())? dto.getOrgid():"");
         awardReqDTO.setWinnerName(StringUtils.isNotEmpty(dto.getFanName())?dto.getFanName():"");
-        awardReqDTO.setPromotionName(StringUtils.isNotEmpty(dto.getProductName()) ? dto.getProductName():"");
+        awardReqDTO.setPromotionName("总部秒杀");
         return awardReqDTO;
     }
 }

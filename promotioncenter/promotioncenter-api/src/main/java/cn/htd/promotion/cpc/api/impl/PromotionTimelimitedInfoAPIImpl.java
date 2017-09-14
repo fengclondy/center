@@ -29,6 +29,7 @@ import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.TimelimitedStatusEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
@@ -358,11 +359,19 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 	      ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
 	      TimelimitedInfoResDTO timelimitedInfo = null;
 	      String returnCode = "";
+	 	 Date expireDt = new Date();//活动结束一天
 	      try {
 			 List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
 	         if(null !=timelitedInfoList){
-	        	 timelimitedInfo = timelitedInfoList.get(0);
-	        	 returnCode= PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
+	        	 for(TimelimitedInfoResDTO timelimited : timelitedInfoList){
+	        		 if(expireDt.compareTo(timelimited.getInvalidTime()) < 0){
+	        			 timelimitedInfo = timelimited;
+	        			 break;
+	        		 }
+	        	 }
+	        	 if(null != timelimitedInfo){
+		        	 returnCode= PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
+	        	 }
 	         }            	          
 	         result.setCode(returnCode);
 	         result.setResult(timelimitedInfo);

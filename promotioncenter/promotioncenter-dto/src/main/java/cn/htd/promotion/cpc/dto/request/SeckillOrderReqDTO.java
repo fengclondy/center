@@ -30,6 +30,16 @@ public class SeckillOrderReqDTO implements Serializable{
 
      private Date orderTime;//下单时间
 
+    private String promotionId;//活动编号
+
+    public String getPromotionId() {
+        return promotionId;
+    }
+
+    public void setPromotionId(String promotionId) {
+        this.promotionId = promotionId;
+    }
+
     public String getOrderNo() {
         return orderNo;
     }

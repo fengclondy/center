@@ -424,6 +424,9 @@
       <if test="orderNo != null and orderNo != ''">
         order_no,
       </if>
+      <if test="promotionId != null and promotionId != ''">
+        promotion_id,
+      </if>
       REWARD_TYPE,
       promotion_type,
       create_time,
@@ -460,6 +463,9 @@
       </if>
       <if test="orderNo != null and orderNo != ''">
         #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionId != null and promotionId != ''">
+        #{promotionId,jdbcType=VARCHAR},
       </if>
       '2',
       '23',

@@ -145,15 +145,16 @@ public class AwardRecordAPIImpl implements AwardRecordAPI {
     private PromotionAwardReqDTO getPromotionAwardReqDTO(SeckillOrderReqDTO dto) {
         PromotionAwardReqDTO awardReqDTO = new PromotionAwardReqDTO();
         awardReqDTO.setOrderNo(dto.getOrderNo());
-        awardReqDTO.setRewardName(dto.getProductName());
-        awardReqDTO.setAwardValue(dto.getTotalMoeny());
-        awardReqDTO.setWinningContact(dto.getFanCode());
-        awardReqDTO.setBelongSuperiorName(dto.getMemberBossName());
-        awardReqDTO.setBuyerTelephone(dto.getBossTelphone());
-        awardReqDTO.setBuyerName(dto.getMemberName());
-        awardReqDTO.setSellerAddress(dto.getMemberAddress());
-        awardReqDTO.setOrderStatus(dto.getOrderStatus());
-        awardReqDTO.setWinningTime(dto.getOrderTime());
+        awardReqDTO.setRewardName(StringUtils.isNotEmpty(dto.getProductName()) ? dto.getProductName():"");
+        awardReqDTO.setAwardValue(StringUtils.isNotEmpty(dto.getTotalMoeny()) ? dto.getTotalMoeny():"");
+        awardReqDTO.setWinningContact(StringUtils.isNotEmpty(dto.getFanCode()) ? dto.getFanCode():"");
+        awardReqDTO.setBelongSuperiorName(StringUtils.isNotEmpty(dto.getMemberBossName()) ? dto.getMemberBossName():"");
+        awardReqDTO.setBuyerTelephone(StringUtils.isNotEmpty(dto.getBossTelphone()) ? dto.getBossTelphone():"");
+        awardReqDTO.setBuyerName(StringUtils.isNotEmpty(dto.getMemberName()) ? dto.getMemberName():"");
+        awardReqDTO.setSellerAddress(StringUtils.isNotEmpty(dto.getMemberAddress()) ? dto.getMemberAddress():"");
+        awardReqDTO.setOrderStatus(StringUtils.isNotEmpty(dto.getOrderStatus()) ? dto.getOrderStatus():"");
+        awardReqDTO.setWinningTime(dto.getOrderTime() != null ? dto.getOrderTime(): new Date());
+        awardReqDTO.setPromotionId(StringUtils.isNotEmpty(dto.getPromotionId()) ? dto.getPromotionId():"");
         return awardReqDTO;
     }
 }

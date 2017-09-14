@@ -427,6 +427,15 @@
       <if test="promotionId != null and promotionId != ''">
         promotion_id,
       </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code,
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name,
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        promotion_name,
+      </if>
       REWARD_TYPE,
       promotion_type,
       create_time,
@@ -467,6 +476,15 @@
       <if test="promotionId != null and promotionId != ''">
         #{promotionId,jdbcType=VARCHAR},
       </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        #{winnerName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        #{promotionName,jdbcType=VARCHAR},
+      </if>
       '2',
       '23',
       now(),
@@ -503,6 +521,18 @@
       </if>
       <if test="orderStatus != null and orderStatus != ''">
         order_status = #{orderStatus},
+      </if>
+      <if test="promotionId != null and promotionId != ''">
+        promotion_id = #{promotionId},
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code = #{sellerCode},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name = #{winnerName},
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        promotion_name = #{promotionName},
       </if>
       modify_time = now()
     </set>

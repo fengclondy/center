@@ -344,6 +344,38 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return restult;
 	}
+	
+	
+	/**
+	 * 汇掌柜APP -  根据会员编码查询是否有总部秒杀信息 
+	 * 
+	 * @param messageId
+	 * @param buyerCode 会员编码
+	 * @return
+	 */
+	@Override
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId,String buyerCode) {
+	      ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
+	      TimelimitedInfoResDTO timelimitedInfo = null;
+	      String returnCode = "";
+	      try {
+			 List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+	         if(null !=timelitedInfoList){
+	        	 timelimitedInfo = timelitedInfoList.get(0);
+	        	 returnCode= PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
+	         }            	          
+	         result.setCode(returnCode);
+	         result.setResult(timelimitedInfo);
+	        } catch (PromotionCenterBusinessException bcbe) {
+	            result.setCode(bcbe.getCode());
+	            result.setErrorMessage(bcbe.getMessage());
+	        } catch (Exception e) {
+	            result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+	            result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+	        }
+	        return result;
+	}
+
 
 	@Override
 	public ExecuteResult<String> reserveStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
@@ -418,5 +450,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

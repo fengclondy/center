@@ -418,7 +418,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     		//秒杀开始时间
     		Date effectiveTime = promotionInfoDTO.getEffectiveTime();
     		//秒杀结束时间
-    		Date invalidTime = promotionInfoDTO.getEffectiveTime();
+    		Date invalidTime = promotionInfoDTO.getInvalidTime();
     		
     		Calendar calender = Calendar.getInstance();
     		Date currentTime = calender.getTime();//当前时间

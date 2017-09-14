@@ -63,13 +63,9 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         try {
             List<BuyerWinningRecordDMO> list = null;
             long count =0;
-            if("21".equals(dto.getPromotionType())){
-                list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
-                count = awardRecordDAO.getTotalAwardRecord(dto);
-            }else {
-                list = awardRecordDAO.getSeckillOrder(dto, page);
-                count = awardRecordDAO.getTotalSeckillOrder(dto);
-            }
+            list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
+            count = awardRecordDAO.getTotalAwardRecord(dto);
+
             BuyerWinningRecordConvert convert = new BuyerWinningRecordConvert();
             List<PromotionAwardDTO> awardDTOList = convert.toTarget(list);
             dataGrid.setTotal(count);

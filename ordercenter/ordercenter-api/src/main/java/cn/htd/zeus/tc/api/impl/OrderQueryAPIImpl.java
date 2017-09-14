@@ -914,6 +914,7 @@ public class OrderQueryAPIImpl implements OrderQueryAPI {
 		//查询当月支出的总金额
 		String startDay=getCurrentMonthStartDay(orderAmountQueryReqDTO.getCurrentMonth());
 		String endDay=getCurrentMonthEndDay(orderAmountQueryReqDTO.getCurrentMonth());
+		orderAmountResDTO.setMonthAmount("0");
 		if(StringUtils.isNotEmpty(startDay)&&StringUtils.isNotEmpty(endDay)){
 			String monthAmount=traderdersDAO.queryMonthOrderAmountByMemberCode(startDay,endDay,orderAmountQueryReqDTO.getMemberCode());
 			orderAmountResDTO.setMonthAmount(monthAmount);

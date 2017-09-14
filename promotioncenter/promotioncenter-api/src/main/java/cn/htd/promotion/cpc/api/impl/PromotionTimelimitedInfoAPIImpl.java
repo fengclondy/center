@@ -29,6 +29,7 @@ import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.TimelimitedStatusEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
@@ -344,6 +345,46 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		}
 		return restult;
 	}
+	
+	
+	/**
+	 * 汇掌柜APP -  根据会员编码查询是否有总部秒杀信息 
+	 * 
+	 * @param messageId
+	 * @param buyerCode 会员编码
+	 * @return
+	 */
+	@Override
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId,String buyerCode) {
+	      ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
+	      TimelimitedInfoResDTO timelimitedInfo = null;
+	      String returnCode = "";
+	 	 Date expireDt = new Date();//活动结束一天
+	      try {
+			 List<TimelimitedInfoResDTO> timelitedInfoList = promotionTimelimitedInfoService.getPromotionTimelimitedInfoByBuyerCode(messageId, buyerCode);
+	         if(null !=timelitedInfoList){
+	        	 for(TimelimitedInfoResDTO timelimited : timelitedInfoList){
+	        		 if(expireDt.compareTo(timelimited.getInvalidTime()) < 0){
+	        			 timelimitedInfo = timelimited;
+	        			 break;
+	        		 }
+	        	 }
+	        	 if(null != timelimitedInfo){
+		        	 returnCode= PromotionCenterConst.TIMELIMITED_RESULT_PROMOTION_SUCCESS;
+	        	 }
+	         }            	          
+	         result.setCode(returnCode);
+	         result.setResult(timelimitedInfo);
+	        } catch (PromotionCenterBusinessException bcbe) {
+	            result.setCode(bcbe.getCode());
+	            result.setErrorMessage(bcbe.getMessage());
+	        } catch (Exception e) {
+	            result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+	            result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+	        }
+	        return result;
+	}
+
 
 	@Override
 	public ExecuteResult<String> reserveStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) {
@@ -418,5 +459,6 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

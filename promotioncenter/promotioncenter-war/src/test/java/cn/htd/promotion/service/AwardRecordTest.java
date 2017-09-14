@@ -84,15 +84,19 @@ public class AwardRecordTest {
     @Rollback(false)
     public void insertOrderTest() {
         PromotionAwardReqDTO awardReqDTO = new PromotionAwardReqDTO();
-        awardReqDTO.setOrderNo("897861623");
+        awardReqDTO.setOrderNo("111111111");
         awardReqDTO.setRewardName("测试商品哈哈哈");
         awardReqDTO.setAwardValue("1000.13");
         awardReqDTO.setWinningContact("1020");
         awardReqDTO.setBelongSuperiorName("哈哈哈");
         awardReqDTO.setBuyerName("汇通达");
         awardReqDTO.setSellerAddress("南京钟灵街");
-        awardReqDTO.setOrderStatus("待发货");
+        awardReqDTO.setOrderStatus("00");
         awardReqDTO.setWinningTime(new Date());
+        awardReqDTO.setPromotionName("商品名称");
+        awardReqDTO.setPromotionId("21171612120221");
+        awardReqDTO.setSellerCode("1020");
+        awardReqDTO.setWinnerName("领奖人姓名");
         Integer result = awardRecordService.insertOrder(awardReqDTO);
         System.out.println(result);
     }
@@ -101,15 +105,19 @@ public class AwardRecordTest {
     @Rollback(false)
     public void updateOrderTest() {
         PromotionAwardReqDTO awardReqDTO = new PromotionAwardReqDTO();
-        awardReqDTO.setOrderNo("897861623");
-        awardReqDTO.setRewardName("测试商品哈哈哈1");
+        awardReqDTO.setOrderNo("111111111");
+        awardReqDTO.setRewardName("测试商1");
         awardReqDTO.setAwardValue("10010.13");
         awardReqDTO.setWinningContact("10201");
         awardReqDTO.setBelongSuperiorName("哈哈哈1");
         awardReqDTO.setBuyerName("汇通达1");
-        awardReqDTO.setSellerAddress("南京钟灵街1");
+        awardReqDTO.setSellerAddress("南京钟灵1");
         awardReqDTO.setOrderStatus("待发货1");
         awardReqDTO.setWinningTime(new Date());
+        awardReqDTO.setPromotionName("商品名称");
+        awardReqDTO.setPromotionId("21171612120221");
+        awardReqDTO.setSellerCode("1020");
+        awardReqDTO.setWinnerName("领奖人姓名");
         Integer result = awardRecordService.updateOrder(awardReqDTO);
         System.out.println(result);
     }

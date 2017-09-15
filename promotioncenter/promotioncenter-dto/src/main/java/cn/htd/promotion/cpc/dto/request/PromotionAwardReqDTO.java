@@ -84,6 +84,9 @@ public class PromotionAwardReqDTO implements Serializable{
 
     private String winningEndTime;//中奖结束时间
 
+    //用于区分来源
+    private String source;
+
 
     public Long getId() {
         return id;
@@ -355,5 +358,13 @@ public class PromotionAwardReqDTO implements Serializable{
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

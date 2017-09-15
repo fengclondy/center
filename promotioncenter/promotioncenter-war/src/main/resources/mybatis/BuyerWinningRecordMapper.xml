@@ -116,6 +116,57 @@
       and bwr.order_no = #{params.orderNo}
     </if>
   </sql>
+
+  <sql id="awardRecordBoss_mid">
+    <if test="params.promotionId!=null and params.promotionId!=''">
+      and bwr.promotion_id = #{params.promotionId}
+    </if>
+    <if test="params.buyerCode!=null and params.buyerCode!=''">
+      and bwr.buyer_code = #{params.buyerCode}
+    </if>
+    <if test="params.buyerName!=null and params.buyerName!=''">
+      and bwr.buyer_name like concat('%', #{params.buyerName} ,'%')
+    </if>
+    <if test="params.rewardType!=null and params.rewardType!=''">
+      and bwr.reward_type = #{params.rewardType}
+    </if>
+    <if test="params.winningStartTime!=null and params.winningStartTime!=''">
+      and date_format(bwr.winning_time , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.winningEndTime!=null and params.winningEndTime!=''">
+      and date_format(bwr.winning_time , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.sellerCode!=null and params.sellerCode!=''">
+      and bwr.seller_code = #{params.sellerCode}
+    </if>
+    <if test="params.promotionName!=null and params.promotionName!=''">
+      and bwr.promotion_name like concat('%', #{params.promotionName} ,'%')
+    </if>
+    <if test="params.rewardName!=null and params.rewardName!=''">
+      and bwr.reward_name like concat('%', #{params.rewardName} ,'%')
+    </if>
+    <if test="params.winnerName!=null and params.winnerName!=''">
+      and bwr.winner_name like concat('%', #{params.winnerName} ,'%')
+    </if>
+    <if test="params.winningContact!=null and params.winningContact!=''">
+      and bwr.winning_contact = #{params.winningContact}
+    </if>
+    <if test="params.buyerTelephone!=null and params.buyerTelephone!=''">
+      and bwr.buyer_telephone = #{params.buyerTelephone}
+    </if>
+    <if test="params.orderNo!=null and params.orderNo!=''">
+      and bwr.order_no = #{params.orderNo}
+    </if>
+    <if test="params.promotionType == '23'">
+      and bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')
+    </if>
+    <if test="params.promotionType == '21'">
+      and bwr.promotion_type = '21'
+    </if>
+    <if test="params.promotionType == '' or params.promotionType == null">
+      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')))
+    </if>
+  </sql>
   <!-- mysql 分页 -->
   <sql id="pagination_tail">
     limit #{page.pageOffset} , #{page.rows}
@@ -127,6 +178,18 @@
     from buyer_winning_record bwr,promotion_info pi
     where 1 = 1 and bwr.promotion_id = pi.promotion_id 
     <include refid="awardRecord_mid"/>
+    order by bwr.winning_time desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+
+  <select id="getAwardRecordForBoss" resultMap="BaseResultMap">
+    select
+    bwr.*,pi.effective_time,pi.invalid_time
+    from buyer_winning_record bwr,promotion_info pi
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    <include refid="awardRecordBoss_mid"/>
     order by bwr.winning_time desc
     <if test="page!=null">
       <include refid="pagination_tail"/>
@@ -151,6 +214,14 @@
     from buyer_winning_record bwr,promotion_info pi
     where 1 = 1 and bwr.promotion_id = pi.promotion_id
     <include refid="awardRecord_mid"/>
+  </select>
+
+  <select id="getTotalAwardRecordForBoss" resultType="java.lang.Long">
+    select
+    count(1)
+    from buyer_winning_record bwr,promotion_info pi
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    <include refid="awardRecordBoss_mid"/>
   </select>
 
   <select id="getTotalSeckillOrder" resultType="java.lang.Long">
@@ -427,6 +498,15 @@
       <if test="promotionId != null and promotionId != ''">
         promotion_id,
       </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code,
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name,
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        promotion_name,
+      </if>
       REWARD_TYPE,
       promotion_type,
       create_time,
@@ -467,6 +547,15 @@
       <if test="promotionId != null and promotionId != ''">
         #{promotionId,jdbcType=VARCHAR},
       </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        #{winnerName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        #{promotionName,jdbcType=VARCHAR},
+      </if>
       '2',
       '23',
       now(),
@@ -503,6 +592,18 @@
       </if>
       <if test="orderStatus != null and orderStatus != ''">
         order_status = #{orderStatus},
+      </if>
+      <if test="promotionId != null and promotionId != ''">
+        promotion_id = #{promotionId},
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code = #{sellerCode},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name = #{winnerName},
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        promotion_name = #{promotionName},
       </if>
       modify_time = now()
     </set>

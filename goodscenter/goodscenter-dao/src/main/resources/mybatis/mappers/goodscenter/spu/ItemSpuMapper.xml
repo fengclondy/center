@@ -557,6 +557,7 @@
 				 join item_category cat on spu.category_id=cat.cid
 				 join item_brand brand on spu.brand_id=brand.brand_id
 	             where 1=1
+	             and spu.delete_flag=0
 	              and spu.erp_first_category_code is not null
                  and spu.erp_five_category_code is not null
                  and spu.erp_first_category_code !=''
@@ -601,6 +602,7 @@
 				 join item_category cat on spu.category_id=cat.cid
 				 join item_brand brand on spu.brand_id=brand.brand_id
 	             where 1=1
+	              and spu.delete_flag=0
 	             and spu.erp_first_category_code is not null
                  and spu.erp_five_category_code is not null
                  and spu.erp_first_category_code !=''

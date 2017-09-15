@@ -265,6 +265,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
             // 查询活动信息
             timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
+            if(null != timelimitedInfoResDTO){
             
             if(null == type || "".equals(type.trim())){
             	throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动获取库存类型不能为空！");
@@ -309,6 +310,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "查询秒杀促销活动失败！");
             }
             timelimitedInfoResDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
+            
+            }
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getSingleTimelimitedInfo】报错：{}", messageId, e.toString());

@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class TimelimitedInfoReqListDTO implements Serializable {
     private TimelimitedInfoReqDTO timeLimitedInfo;
     private Integer orgId;
+    private Integer operation;
 
     public TimelimitedInfoReqDTO getTimeLimitedInfo() {
         return timeLimitedInfo;
@@ -26,5 +27,13 @@ public class TimelimitedInfoReqListDTO implements Serializable {
 
     public void setOrgId(Integer orgId) {
         this.orgId = orgId;
+    }
+
+    public Integer getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Integer operation) {
+        this.operation = operation;
     }
 }

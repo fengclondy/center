@@ -112,7 +112,7 @@
    <!-- 根据buyercode取秒杀信息，如果结果的buyercode 为空，说明秒杀活动对所有粉丝有效，否则只对归属于改会员的粉丝有效-->
    <select id="selectTimelimitedInfo" resultMap="ResultMap"> 
     select 
-     p.promotion_id as promotionId
+     p.promotion_id as promotionId,p.invalid_time as invalidTime
      from promotion_info as p , promotion_seller_detail as s
      where p.promotion_id= s.promotion_id and s.delete_flag !=1 
      <if test="buyerCode != null and buyerCode !='' ">

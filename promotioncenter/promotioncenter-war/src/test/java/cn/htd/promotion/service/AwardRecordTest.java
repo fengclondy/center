@@ -38,8 +38,8 @@ public class AwardRecordTest {
     	try {
             String messageId = "342453251345";
             PromotionAwardReqDTO dto = new PromotionAwardReqDTO();
-            dto.setPromotionId("21171439460190");
-            dto.setPromotionType("21");
+          //  dto.setPromotionId("21171439460190");
+          //  dto.setPromotionType("21");
             dto.setPage(1);
             dto.setPageSize(10);
            // dto.setBuyerName("买");

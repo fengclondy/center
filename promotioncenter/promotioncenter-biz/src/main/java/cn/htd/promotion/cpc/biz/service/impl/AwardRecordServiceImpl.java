@@ -63,8 +63,13 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         try {
             List<BuyerWinningRecordDMO> list = null;
             long count =0;
-            list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
-            count = awardRecordDAO.getTotalAwardRecord(dto);
+            if("hl".equals(dto.getSource())){
+                list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
+                count = awardRecordDAO.getTotalAwardRecord(dto);
+            }else {
+                list = awardRecordDAO.getAwardRecordForBoss(dto, page);
+                count = awardRecordDAO.getTotalAwardRecordForBoss(dto);
+            }
 
             BuyerWinningRecordConvert convert = new BuyerWinningRecordConvert();
             List<PromotionAwardDTO> awardDTOList = convert.toTarget(list);

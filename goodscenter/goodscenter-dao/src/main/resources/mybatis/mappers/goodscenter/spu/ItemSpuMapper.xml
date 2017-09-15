@@ -509,6 +509,7 @@
     <include refid="Base_Column_List" />
     from item_spu
     where spu_name = #{spuName}
+    and delete_flag=0
   </select>
    <select id="querySpuCodeSeq" resultType="String">
 	 select  seq_nextval('spu_code_seq')
@@ -521,19 +522,20 @@
     LEFT JOIN item_spu spu
     ON item.item_spu_id = spu.spu_id
     where item.item_id = #{itemId,jdbcType=BIGINT}
+    and spu.delete_flag=0
   </select>
   
    <select id="queryItemSpuBySpuCode" parameterType="String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from item_spu
-    where spu_code = #{spuCode}
+    where spu_code = #{spuCode} and delete_flag=0
   </select>
   
   <select id="queryItemSpuList"  resultMap="BaseResultMap">
     select
      *
-    from item_spu spu where 1=0 
+    from item_spu spu where 1=0 and delete_flag=0
     <if test="list != null and list.size() > 0">
      or spu.spu_id in
      <foreach collection="list" item="item" separator="," open="(" close=")">
@@ -547,7 +549,7 @@
   	select 
   	 <include refid="Base_Column_List" />
   	 from item_spu
-    where erp_code = #{erpCode}
+    where erp_code = #{erpCode} and delete_flag=0
   </select>
   <!-- item spu main data start  -->
   <select id="queryItemSpuDataCount" parameterType="cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO" resultType="Long">
@@ -643,6 +645,7 @@
     AND pic.delete_flag = 0
     where
     1 = 1
+    and spu.delete_flag=0
     AND spu.spu_name is not NULL
     AND spu.spu_name != ''
     <if test="param != null and param != ''  ">
@@ -687,6 +690,7 @@
     AND pic.delete_flag = 0
     where
     1 = 1
+    AND spu.delete_flag=0
     AND spu.spu_name is not NULL
     AND spu.spu_name != ''
     <if test="param != null and param != ''  ">
@@ -749,6 +753,8 @@
     ON spu_describe.spu_id = spu.spu_id
     AND spu_describe.delete_flag = 0
     where
+     spu.delete_flag=0
+     AND
      spu.spu_code = #{spuCode}
   </select>
 

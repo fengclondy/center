@@ -554,18 +554,25 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 	//操作类型 (0 新增 1删除 2 修改）
                 	String type = psd.getOperateType();
                 	if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD.equals(type)){//新增
-                        psd.setCreateId(timelimitedInfoReqDTO.getCreateId());
-                        psd.setCreateName(timelimitedInfoReqDTO.getCreateName());
-                        psd.setModifyId(timelimitedInfoReqDTO.getCreateId());
-                        psd.setModifyName(timelimitedInfoReqDTO.getCreateName());
-                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
-                        promotionSellerDetailDAO.add(psd);
+                		
+                		PromotionSellerDetailDTO promotionSellerDetailDTO = promotionSellerDetailDAO.selectTimelimitedSellerDetail(psd);
+                		if(null == promotionSellerDetailDTO){ //没有，做新增
+                            psd.setCreateId(timelimitedInfoReqDTO.getModifyId());
+                            psd.setCreateName(timelimitedInfoReqDTO.getModifyName());
+                            psd.setModifyId(timelimitedInfoReqDTO.getModifyId());
+                            psd.setModifyName(timelimitedInfoReqDTO.getModifyName());
+                            psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                            promotionSellerDetailDAO.add(psd);
+                		}else{//有，做修改
+                		    psd.setModifyId(timelimitedInfoReqDTO.getModifyId());
+                            psd.setModifyName(timelimitedInfoReqDTO.getModifyName());
+                            promotionSellerDetailDAO.updateTimelimitedSellerDetail(psd);
+                		}
+
                 	}else if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_DELETE.equals(type)){//删除
+                		psd.setModifyId(timelimitedInfoReqDTO.getModifyId());
+                        psd.setModifyName(timelimitedInfoReqDTO.getModifyName());
                         promotionSellerDetailDAO.deleteTimelimitedSellerDetail(psd);
-                	}else if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE.equals(type)){//修改
-                        psd.setModifyId(timelimitedInfoReqDTO.getCreateId());
-                        psd.setModifyName(timelimitedInfoReqDTO.getCreateName());
-                        promotionSellerDetailDAO.updateTimelimitedSellerDetail(psd);
                 	}
  
                 }

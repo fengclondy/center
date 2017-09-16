@@ -150,11 +150,18 @@ public class TimelimitedTestUnit {
     		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
     		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
     		rrrr.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD);//新增
-    		rrrr.setSellerCode("htd688123");
+    		rrrr.setSellerCode("htd698123");
     		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
     		rrrr.setBelongSuperiorName("上级测试公司 张志峰");
+    		PromotionSellerDetailDTO rrrr2 = new PromotionSellerDetailDTO();
+    		rrrr2.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD);//新增
+    		rrrr2.setSellerCode("htd698124");
+    		rrrr2.setSellerName("无锡市崇安区阳光家电有限公司2");
+    		rrrr2.setBelongSuperiorName("上级测试公司 张志峰2");
+    		
     		sellerDetailList.add(rrrr);
-    		sellerRuleDTO.setSellerDetailList(sellerDetailList );
+    		sellerDetailList.add(rrrr2);
+    		sellerRuleDTO.setSellerDetailList(sellerDetailList);
         	
     		timelimitedInfoReqDTO.setSellerRuleDTO(sellerRuleDTO);
     		
@@ -278,7 +285,7 @@ public class TimelimitedTestUnit {
     		 * @param platCode 促销活动类型 1:优惠券，2:秒杀，3:扭蛋，4:砍价，5:总部秒杀
     		 * @return
     		 */
-    		String promotionId = "23171740231479";
+    		String promotionId = "23171045251804";
             
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
@@ -290,7 +297,7 @@ public class TimelimitedTestUnit {
         	timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
         	TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO_2 = new TimelimitedSkuPictureReqDTO();
         	timelimitedSkuPictureReqDTO_2.setPictureUrl("/img/456789.jpg");
-        	timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
+        	timelimitedSkuPictureReqDTO_2.setIsFirst(Boolean.FALSE);
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO);
         	timelimitedSkuPictureReqDTOList.add(timelimitedSkuPictureReqDTO_2);
         		
@@ -355,12 +362,20 @@ public class TimelimitedTestUnit {
     		sellerRuleDTO.setRuleTargetType("1");//卖家规则对象种类 1：指定供应商类型；2：部分供应商
     		sellerRuleDTO.setTargetSellerType("0");//卖家规则对象种类为1时使用  0：全部通用 ；1（平台公司），2（商品+），3（外部供应商）
     		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
-    		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
-    		rrrr.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE);//新增
-    		rrrr.setSellerCode("htd688123");
-    		rrrr.setSellerName("无锡市崇安区阳光家电有限公司修改");
+    		
+       		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
+    		rrrr.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD);//删除
+    		rrrr.setSellerCode("htd698123");
+    		rrrr.setSellerName("无锡市崇安区阳光家电有限公司 新增");
     		rrrr.setBelongSuperiorName("上级测试公司 张志峰");
+    		PromotionSellerDetailDTO rrrr2 = new PromotionSellerDetailDTO();
+    		rrrr2.setOperateType(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD);//新增
+    		rrrr2.setSellerCode("htd698124");
+    		rrrr2.setSellerName("无锡市崇安区阳光家电有限公司3312");
+    		rrrr2.setBelongSuperiorName("上级测试公司 张志峰2");
+    		
     		sellerDetailList.add(rrrr);
+    		sellerDetailList.add(rrrr2);
     		sellerRuleDTO.setSellerDetailList(sellerDetailList );
     		
     		timelimitedInfoReqDTO.setSellerRuleDTO(sellerRuleDTO);

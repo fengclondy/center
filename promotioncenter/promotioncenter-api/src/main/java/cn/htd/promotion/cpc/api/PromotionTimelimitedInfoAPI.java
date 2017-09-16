@@ -104,4 +104,13 @@ public interface PromotionTimelimitedInfoAPI {
 	 * @return
 	 */
 	public ExecuteResult<String> updateSeckillPromotionLog(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
+
+	/**
+	 * 生成订单删除秒杀锁定资格
+	 * 
+	 * @param messageId
+	 * @param seckillInfoReqDTO
+	 * @return
+	 */
+	public ExecuteResult<String> delTimelimitedHashInfo(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
 }

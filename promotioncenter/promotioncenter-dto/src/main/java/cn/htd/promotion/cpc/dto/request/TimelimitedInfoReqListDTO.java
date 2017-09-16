@@ -12,7 +12,7 @@ public class TimelimitedInfoReqListDTO implements Serializable {
     private TimelimitedInfoReqDTO timeLimitedInfo;
     private Integer orgId;
     private Integer operation;
-    private Integer errorData;
+    private String errorData;
 
     public TimelimitedInfoReqDTO getTimeLimitedInfo() {
         return timeLimitedInfo;
@@ -38,11 +38,11 @@ public class TimelimitedInfoReqListDTO implements Serializable {
         this.operation = operation;
     }
 
-    public Integer getErrorData() {
+    public String getErrorData() {
         return errorData;
     }
 
-    public void setErrorData(Integer errorData) {
+    public void setErrorData(String errorData) {
         this.errorData = errorData;
     }
 }

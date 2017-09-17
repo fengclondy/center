@@ -1,5 +1,8 @@
 package cn.htd.promotion.cpc.api.impl;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 @Service("timelimitedInfoAPI")
@@ -137,7 +141,25 @@ public class TimelimitedInfoAPIImpl implements TimelimitedInfoAPI {
         return result;
 	}
     
-	
-    
+	@Override
+	public ExecuteResult<List<PromotionSellerDetailDTO>> getPromotionSellerDetailList(String promotionId,
+			String messageId) {
+		ExecuteResult<List<PromotionSellerDetailDTO>> result = new ExecuteResult<List<PromotionSellerDetailDTO>>();
+		result.setCode(ResultCodeEnum.SUCCESS.getCode());
+		result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
+		try {
+			List<PromotionSellerDetailDTO> list = timelimitedInfoService.getPromotionSellerDetailList(promotionId);
+			result.setResult(list);
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+			result.setErrorMessage(e.toString());
+			logger.error(
+					MessageFormat.format("MessageId:{0} 调用方法TimelimitedInfoAPIImpl.getPromotionSellerDetailList出现异常{1}",
+							messageId, e.toString()),
+					e);
+		}
+		return result;
+	}
 }

@@ -1,9 +1,12 @@
 package cn.htd.promotion.cpc.api;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 public interface TimelimitedInfoAPI {
 	
@@ -49,4 +52,13 @@ public interface TimelimitedInfoAPI {
 	 */
 	public ExecuteResult<String> updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 	
+	/**
+	 * 总部秒杀参与会员店列表取得
+	 * 
+	 * @param promotionId 活动ID
+	 * @param messageId 消息ID
+	 * @return 总部秒杀参与会员店列表
+	 */
+	public ExecuteResult<List<PromotionSellerDetailDTO>> getPromotionSellerDetailList(String promotionId, String messageId);
+
 }

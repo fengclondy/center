@@ -683,4 +683,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 JSON.toJSONString(buyerUseTimelimitedLogDMO));
     }
 
+    @Override
+	public List<PromotionSellerDetailDTO> getPromotionSellerDetailList(String promotionId) {
+    	return promotionSellerDetailDAO.selectByPromotionId(promotionId);
+    }
+
 }

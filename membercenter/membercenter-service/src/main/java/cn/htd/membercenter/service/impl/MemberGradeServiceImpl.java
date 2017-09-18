@@ -799,6 +799,30 @@ public class MemberGradeServiceImpl implements MemberGradeService {
 		} else {
 			// vip套餐每日更新
 			buyerGradeInfoDTO.setBuyerGrade("6");
+			//vip套餐到期
+			MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+			memberBaseDTO.setMemberId(buyerGradeInfoDTO.getBuyerId().toString());
+			MemberGradeDTO member =  memberGradeDAO.queryMemberGradeInfo(memberBaseDTO );
+			if(member!=null && member.getPackageActiveEndTime()!=null
+					&& StringUtils.isNotEmpty(member.getMemberPackageType())) {
+				Date end = member.getPackageActiveEndTime();
+				if(end.compareTo(new Date()) <= 0 ) {
+					buyerGradeInfoDTO.setBuyerGrade(pointUserGrade.toString());
+					buyerGradeInfoDTO.setIsVip(new Byte("0"));
+					buyerGradeInfoDTO.setIsUpgrade("0");
+					buyerGradeInfoDTO.setIsSbUpgrade("0");
+					
+					BuyerGradeChangeHistory userGradeChgHisModel = new BuyerGradeChangeHistory();
+					userGradeChgHisModel.setBuyerId(buyerGradeInfoDTO.getBuyerId().toString());
+					userGradeChgHisModel.setChangeTime(new Date());
+					userGradeChgHisModel.setIsUpgrade("0");
+					userGradeChgHisModel.setChangeGrade(pointUserGrade.toString());
+					userGradeChgHisModel.setOperateId("0");
+					userGradeChgHisModel.setOperateName("SYS");
+					userGradeChgHisModel.setAfterGrade("");
+					memberGradeDAO.insertMemberGradeHistoryInfo(userGradeChgHisModel);
+				}
+			}
 		}
 
 		return buyerGradeInfoDTO;

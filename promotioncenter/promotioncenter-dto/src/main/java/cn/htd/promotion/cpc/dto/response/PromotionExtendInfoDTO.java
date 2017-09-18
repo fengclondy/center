@@ -26,6 +26,8 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 	
 	private Integer isDailyTimesLimit;//是否有每日次数限制
 	
+	private Integer isDailyWinningLimit;//是否有每日中奖次数限制
+	
 	private Long dailyWinningTimes;//每日中奖总次数
 	
 	private Long dailyBuyerPartakeTimes;//每会员每日参与次数
@@ -222,6 +224,14 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 		this.orderAmountThreshold = orderAmountThreshold;
 	}
 
+	public Integer getIsDailyWinningLimit() {
+		return isDailyWinningLimit;
+	}
+
+	public void setIsDailyWinningLimit(Integer isDailyWinningLimit) {
+		this.isDailyWinningLimit = isDailyWinningLimit;
+	}
+
 	public void setPromoionExtendInfo(PromotionExtendInfoDTO extendDTO){
 		super.setPromoionInfo(extendDTO);
 		this.offlineStartTime = extendDTO.getOfflineStartTime();
@@ -245,5 +255,6 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 		this.templateFlag = extendDTO.getTemplateFlag();
 		this.isOrderAmountLimit = extendDTO.getIsOrderAmountLimit();
 		this.orderAmountThreshold = extendDTO.getOrderAmountThreshold();
+		this.isDailyWinningLimit = extendDTO.getIsDailyWinningLimit();
 	}
 }

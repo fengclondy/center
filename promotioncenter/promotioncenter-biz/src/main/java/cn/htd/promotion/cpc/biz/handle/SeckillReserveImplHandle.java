@@ -61,11 +61,11 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			if ((StringUtils.isNotBlank(reserveResult)
 					&& timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE))) {
 				throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
-						"买家已参加该秒杀活动不能再次秒杀");
+						"您已参加该秒杀活动不能再次秒杀");
 			}
 		} else {
 			throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
-					"买家已参加该秒杀活动不能再次秒杀");
+					"您已存在未支付秒杀订单，不能继续参与秒杀，请支付待支付订单");
 		}
 	}
 

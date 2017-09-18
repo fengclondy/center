@@ -52,6 +52,15 @@ public interface PromotionLotteryCommonService {
             String ticket);
 
     /**
+     * 进行抽奖
+     *
+     * @param requestDTO
+     * @param errorWinningRecord
+     * @param ticket
+     */
+    public void doDrawLottery(DrawLotteryReqDTO requestDTO, BuyerWinningRecordDTO errorWinningRecord, String ticket);
+
+    /**
      * 异步初始化抽奖活动的Redis数据
      *
      * @param promotionInfoDTO

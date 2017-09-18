@@ -7,6 +7,7 @@ import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
+import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
@@ -14,6 +15,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
+import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
 
 public interface LuckDrawService {
 
@@ -77,4 +79,11 @@ public interface LuckDrawService {
 	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId);
 
 	public void updateLotteryResultState(Map<String, Object> map);
+	
+	/**
+	 * 校验刮刮乐图标是否显示
+	 * @param requestDTO
+	 * @return
+	 */
+	public ValidateScratchCardResDTO validateScratchCard(ValidateScratchCardReqDTO requestDTO);
 }

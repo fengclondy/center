@@ -70,4 +70,16 @@ public class Constants {
 
 	// 秒杀库存锁
 	public static final String REDIS_KEY_PREFIX_STOCK = "B2B_MIDDLE_SECKILL_STOCK";
+	
+	//有每日次数限制
+	public static final String IS_DAILY_TIMES_LIMIT_YES = "1";
+	
+	//没有每日次数限制
+	public static final String IS_DAILY_TIMES_LIMIT_NO = "0";
+	
+	//有每日中奖次数限制
+	public static final String IS_DAILY_WINNING_LIMIT_YES = "1";
+	
+	//没有每日中奖次数限制
+	public static final String IS_DAILY_WINNING_LIMIT_NO = "0";
 }

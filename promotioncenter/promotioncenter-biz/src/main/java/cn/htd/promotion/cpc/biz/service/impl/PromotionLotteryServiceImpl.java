@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
@@ -22,7 +23,9 @@ import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+
 import com.alibaba.fastjson.JSON;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +47,9 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 
     @Resource
     private PromotionLotteryCommonService promotionLotteryCommonService;
+    
+    @Resource
+    private DictionaryUtils dictionary;
 
     /**
      * 开始抽奖处理
@@ -201,8 +207,19 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setCreateName(requestDTO.getBuyerName());
         promotionRedisDB
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
-        promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
-                promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
+        //如果是扭蛋就删除抽奖结果key，如果是刮刮乐就不删除，等刮刮乐活动结束用定时任务删除
+        String promotionType = winningRecordDTO.getPromotionType();
+        String gashaphonType = dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON);
+		String scratchCardType = dictionary.getValueByCode(
+				DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD);
+        if(gashaphonType.equals(promotionType)){
+        	promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
+        }else if(scratchCardType.equals(promotionType)){
+        	promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket, JSON.toJSONString(winningRecordDTO));
+        }
         responseDTO.setMessageId(requestDTO.getMessageId());
         return responseDTO;
     }

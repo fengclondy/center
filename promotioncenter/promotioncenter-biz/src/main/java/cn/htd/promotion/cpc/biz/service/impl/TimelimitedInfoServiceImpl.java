@@ -125,7 +125,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 添加秒杀商品
-//            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
+            timelimitedInfoReqDTO.setSkuPicUrl("hl/" + timelimitedInfoReqDTO.getSkuPicUrl());
             timelimitedInfoReqDTO.setCreateTime(currentTime);
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.insert(timelimitedInfoReqDTO);
@@ -195,6 +195,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 修改秒杀商品
+            timelimitedInfoReqDTO.setSkuPicUrl("hl/" + timelimitedInfoReqDTO.getSkuPicUrl());
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
@@ -479,6 +480,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 //                } else {
 //                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
 //                }
+                //取图片重新设置
+                timelimitedSkuPictureReqDTO.setPictureUrl("hl/" + timelimitedSkuPictureReqDTO.getPictureUrl());
                 timelimitedSkuPictureReqDTO.setSortNum(i + 1);
                 timelimitedSkuPictureReqDTO.setDeleteFlag(Boolean.FALSE);
                 timelimitedSkuPictureReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
@@ -510,6 +513,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTOList.get(i);
                 timelimitedSkuDescribeReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
                 timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
+                //取图片重新设置
+                timelimitedSkuDescribeReqDTO.setPictureUrl("hl/" + timelimitedSkuDescribeReqDTO.getPictureUrl());
+                
                 timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
                 timelimitedSkuDescribeReqDTO.setPictureUrl(timelimitedSkuDescribeReqDTO.getPictureUrl());
                 timelimitedSkuDescribeReqDTO.setSortNum(i + 1);

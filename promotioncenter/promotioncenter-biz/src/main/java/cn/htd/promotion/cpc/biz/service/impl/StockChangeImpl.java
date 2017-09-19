@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.service.StockChangeService;
@@ -141,10 +142,9 @@ public abstract class StockChangeImpl implements StockChangeService {
 		// 秒杀默认一个层级
 		log.setLevelCode("1");
 		log.setPromotionId(seckillInfoReqDTO.getPromotionId());
+		logger.info("秒杀日志打印seckillInfoReqDTO：{},useType{}", JSONObject.toJSONString(seckillInfoReqDTO), useType);
 		// 判断库存是否被释放标志 0：未释放 1：已释放
-		if (Constants.SECKILL_RESERVE.equals(useType)) {
-			log.setHasReleasedStock(0);
-		} else {
+		if (Constants.SECKILL_RELEASE.equals(useType)) {
 			log.setHasReleasedStock(1);
 		}
 		log.setCreateId(seckillInfoReqDTO.getOperaterId());
@@ -164,10 +164,10 @@ public abstract class StockChangeImpl implements StockChangeService {
 		BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
 		logger.info("booean1:{},boolean2:{}", Constants.SECKILL_RESERVE.equals(useType),
 				(StringUtils.isBlank(useLogJsonStr)
-						|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG));
+						|| Constants.HAS_RELEASE_FLAG.equals(String.valueOf(timelimitedLog.getHasReleasedStock()))));
 		// 秒杀履历为空或者秒杀履历为已释放或者已抢到秒杀资格并且没有支付订单
 		if (Constants.SECKILL_RESERVE.equals(useType) && (StringUtils.isBlank(useLogJsonStr)
-				|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG)) {
+				|| Constants.HAS_RELEASE_FLAG.equals(String.valueOf(timelimitedLog.getHasReleasedStock())))) {
 			flag = true;
 			// 存在秒杀履历并且前置操作为锁定库存
 		} else if (Constants.SECKILL_RELEASE.equals(useType) && StringUtils.isNotBlank(useLogJsonStr)) {

@@ -81,7 +81,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
     * @throws PromotionCenterBusinessException
     * @throws Exception
     */
-	private DrawLotteryResDTO beginDrawLotteryExecute(
+    @Override
+    public DrawLotteryResDTO beginDrawLotteryExecute(
 			DrawLotteryReqDTO requestDTO, String ticket, boolean useThread)
 			throws PromotionCenterBusinessException, Exception {
 		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();

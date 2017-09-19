@@ -14,7 +14,6 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
-import cn.htd.promotion.cpc.dto.response.ScratchCardActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
@@ -95,5 +94,5 @@ public interface LuckDrawService {
 	 * @param request
 	 * @return
 	 */
-	public ScratchCardActivityPageResDTO scratchCardActivityPage(ScratchCardActivityPageReqDTO requestDTO);
+	public LotteryActivityPageResDTO scratchCardActivityPage(ScratchCardActivityPageReqDTO requestDTO);
 }

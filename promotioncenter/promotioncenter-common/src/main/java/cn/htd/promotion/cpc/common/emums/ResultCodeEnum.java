@@ -50,6 +50,7 @@ public enum ResultCodeEnum {
     LOTTERY_NOT_HAS_PROMOTION_INFO("26213", "没有查到抽奖信息"),
     LOTTERY_HAS_PASSED_END_TIME("26214", "当前时间已过抽奖活动结束时间"),
     LOTTERY_BUYER_CURRENT_DAY_NO_MORE_DRAW_CHANCE("26215", "粉丝当日抽奖次数已用完"),
+    LOTTERY_BUYER_NOT_HAVE_QUALIFICATIONS("26216","还没有刮奖资格哦，赶紧下单来刮奖吧！"),
     ;
 
     private ResultCodeEnum(String code, String msg) {

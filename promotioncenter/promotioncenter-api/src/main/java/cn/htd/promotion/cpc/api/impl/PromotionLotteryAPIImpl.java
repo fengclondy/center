@@ -44,7 +44,6 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
-import cn.htd.promotion.cpc.dto.response.ScratchCardActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
@@ -490,7 +489,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	@Override
 	public String scratchCardActivityPage(
 			String scratchCardActivityPageReqDTOJson) {
-		ScratchCardActivityPageResDTO result = new ScratchCardActivityPageResDTO();
+		LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
 		ScratchCardActivityPageReqDTO requestDTO = new ScratchCardActivityPageReqDTO();
 		String messageId = "";
 		try {

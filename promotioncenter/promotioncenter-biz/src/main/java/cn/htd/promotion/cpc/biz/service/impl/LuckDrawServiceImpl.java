@@ -17,9 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
@@ -34,7 +31,7 @@ import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
-import cn.htd.promotion.cpc.common.constants.Constants;
+import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
@@ -57,10 +54,12 @@ import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
-import cn.htd.promotion.cpc.dto.response.ScratchCardActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
@@ -101,6 +100,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 	@Resource
 	private PromotionLotteryCommonService promotionLotteryCommonService;
+	
+	@Resource
+	private PromotionLotteryService promotionLotteryService;
 
 	@Override
 	public ValidateLuckDrawResDTO validateLuckDrawPermission(
@@ -158,6 +160,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			}
 			result.setActivityStartTime(promotionInfoDTO.getEachStartTime());
 			result.setActivityEndTime(promotionInfoDTO.getEachEndTime());
+			result.setEffectiveTime(promotionInfoDTO.getEffectiveTime());
+			result.setInvalidTime(promotionInfoDTO.getInvalidTime());
 			result.setPromotionName(promotionInfoDTO.getPromotionName());
 			result.setPictureUrl(pictureUrlList);
 			result.setRemainingTimes(0);
@@ -831,9 +835,54 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public ScratchCardActivityPageResDTO scratchCardActivityPage(
+	public LotteryActivityPageResDTO scratchCardActivityPage(
 			ScratchCardActivityPageReqDTO requestDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		String messageId = requestDTO.getMessageId();
+		LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
+		try {
+			//规则页
+			String memberNo = requestDTO.getMemberNo();
+			String orgId = requestDTO.getOrgId();
+			String promotionId = requestDTO.getPromotionId();
+			LotteryActivityPageReqDTO request = new LotteryActivityPageReqDTO();
+			request.setMemberNo(memberNo);
+			request.setOrgId(orgId);
+			request.setPromotionId(promotionId);
+			request.setMessageId(messageId);
+			result = this.lotteryActivityPage(request);
+			
+			//判断是不是同一个人
+			String oldMemberNo = requestDTO.getOldMemberNo();
+			if (!oldMemberNo.equals(memberNo)) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.LOTTERY_BUYER_NOT_HAVE_QUALIFICATIONS.getCode(),
+						"还没有刮奖资格哦，赶紧下单来刮奖吧！ 入参:" + JSON.toJSONString(requestDTO));
+			}else{
+				String orderNo = requestDTO.getOrderNo();
+				String buyerAwardInfo =  promotionId + "_" + orgId + "_" + memberNo + "_" + orderNo;
+				if(!promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo)){
+					boolean useThread = false;
+					DrawLotteryReqDTO drawLotteryReqDTO = new DrawLotteryReqDTO();
+					drawLotteryReqDTO.setMessageId(messageId);
+					drawLotteryReqDTO.setBuyerCode(memberNo);
+					drawLotteryReqDTO.setPromotionId(promotionId);
+					drawLotteryReqDTO.setSellerCode(orgId);
+					promotionLotteryService.beginDrawLotteryExecute(drawLotteryReqDTO, orderNo, useThread);
+				}else{
+					//判断orderNo是不是存在-如果存在就 “抱歉，这笔订单您已经刮过奖啦~请重新下单刮奖~”
+					//orderNo 不存在 让其刮奖
+				}
+			}
+		}catch (PromotionCenterBusinessException pcbe) {
+			result.setResponseCode(pcbe.getCode());
+			result.setResponseMsg(pcbe.getMessage());
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			LOGGER.error(
+					"MessageId:{} 调用方法LuckDrawServiceImpl.scratchCardActivityPage出现异常 异常信息：{}",
+					messageId, ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
 	}
 }

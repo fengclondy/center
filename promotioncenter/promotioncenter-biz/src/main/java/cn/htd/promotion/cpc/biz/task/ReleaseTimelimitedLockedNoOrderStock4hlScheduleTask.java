@@ -166,7 +166,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 					seckillLockNo = useTimelimitedLog.getSeckillLockNo();
 					promotionId = useTimelimitedLog.getPromotionId();
 					buyerCode = useTimelimitedLog.getBuyerCode();
-					String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(promotionId); // 竞争资源标志
+					String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + promotionId + buyerCode; // 竞争资源标志
 					rLock = redissonClient.getLock(lockKey);
 					/** 上锁 **/
 					rLock.lock();

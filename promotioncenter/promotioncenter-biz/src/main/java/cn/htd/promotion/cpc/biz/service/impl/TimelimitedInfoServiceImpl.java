@@ -129,9 +129,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 添加秒杀商品
-            if(null != timelimitedInfoReqDTO.getSkuPicUrl() && !"".equals(timelimitedInfoReqDTO.getSkuPicUrl().trim())){
-            	timelimitedInfoReqDTO.setSkuPicUrl("hl/" + timelimitedInfoReqDTO.getSkuPicUrl());
-            }
+//            if(null != timelimitedInfoReqDTO.getSkuPicUrl() && !"".equals(timelimitedInfoReqDTO.getSkuPicUrl().trim())){
+//            	timelimitedInfoReqDTO.setSkuPicUrl("hl/" + timelimitedInfoReqDTO.getSkuPicUrl());
+//            }
             timelimitedInfoReqDTO.setCreateTime(currentTime);
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.insert(timelimitedInfoReqDTO);
@@ -201,13 +201,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 修改秒杀商品
-            String skuPicUrl = timelimitedInfoReqDTO.getSkuPicUrl();
-            if(null != skuPicUrl && !"".equals(skuPicUrl.trim())){
-            	if(skuPicUrl.indexOf("hl/") == -1){
-            		timelimitedInfoReqDTO.setSkuPicUrl("hl/" + skuPicUrl);
-            	}
-            }
-            
+//            String skuPicUrl = timelimitedInfoReqDTO.getSkuPicUrl();
+//            if(null != skuPicUrl && !"".equals(skuPicUrl.trim())){
+//            	if(skuPicUrl.indexOf("hl/") == -1){
+//            		timelimitedInfoReqDTO.setSkuPicUrl("hl/" + skuPicUrl);
+//            	}
+//            }
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
@@ -497,12 +496,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 //                }
                 
                 //取图片重新设置
-                String pictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
-                if(null != pictureUrl && !"".equals(pictureUrl.trim())){
-                	if(pictureUrl.indexOf("hl/") == -1){
-                		timelimitedSkuPictureReqDTO.setPictureUrl("hl/" + pictureUrl);
-                	}
-                }
+//                String pictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
+//                if(null != pictureUrl && !"".equals(pictureUrl.trim())){
+//                	if(pictureUrl.indexOf("hl/") == -1){
+//                		timelimitedSkuPictureReqDTO.setPictureUrl("hl/" + pictureUrl);
+//                	}
+//                }
                 
                 timelimitedSkuPictureReqDTO.setSortNum(i + 1);
                 timelimitedSkuPictureReqDTO.setDeleteFlag(Boolean.FALSE);
@@ -536,12 +535,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuDescribeReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
                 timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
                 //取图片重新设置
-                String pictureUrl = timelimitedSkuDescribeReqDTO.getPictureUrl();
-                if(null != pictureUrl && !"".equals(pictureUrl.trim())){
-                	if(pictureUrl.indexOf("hl/") == -1){
-                		timelimitedSkuDescribeReqDTO.setPictureUrl("hl/" + pictureUrl);
-                	}
-                }
+//                String pictureUrl = timelimitedSkuDescribeReqDTO.getPictureUrl();
+//                if(null != pictureUrl && !"".equals(pictureUrl.trim())){
+//                	if(pictureUrl.indexOf("hl/") == -1){
+//                		timelimitedSkuDescribeReqDTO.setPictureUrl("hl/" + pictureUrl);
+//                	}
+//                }
                 
                 timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
                 timelimitedSkuDescribeReqDTO.setSortNum(i + 1);

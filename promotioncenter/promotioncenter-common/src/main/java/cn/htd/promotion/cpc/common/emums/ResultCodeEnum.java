@@ -21,6 +21,7 @@ public enum ResultCodeEnum {
     PROMOTION_NOT_VALID("26003", "促销活动未上架"),
     PROMOTION_NO_START("26004", "促销活动未开始"),
     PROMOTION_HAS_EXPIRED("26005", "促销活动已结束"),
+    PROMOTION_NO_TYPE("26006", "促销活动类型不能为空"),
 
 
     BARGAIN_NOT_VALID("26004", "砍价活动未启用"),

@@ -177,9 +177,10 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 						buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
 						continue;
 					}
-					if (StringUtils.isEmpty(redisUseLog.getOrderNo())
-							&& seckillLockNo.equals(redisUseLog.getSeckillLockNo())
-							&& reverseStatus.equals(redisUseLog.getUseType())) {
+					String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
+							+ promotionId;
+					String reserveFlag = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+					if (StringUtils.isNotBlank(reserveFlag)) {
 						skuCount = redisUseLog.getUsedCount();
 						String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 						promotionRedisDB.incrHashBy(timelimitedResultKey,
@@ -207,8 +208,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 						redisUseLog.setModifyTime(new Date());
 						promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 								buyerCode + "&" + promotionId);
-						String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
-								+ promotionId;
+
 						promotionRedisDB.delHash(reserveHashKey, buyerCode);
 						promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
 								JSON.toJSONString(redisUseLog));

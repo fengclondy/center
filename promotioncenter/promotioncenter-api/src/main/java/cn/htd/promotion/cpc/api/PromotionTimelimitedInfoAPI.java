@@ -48,17 +48,15 @@ public interface PromotionTimelimitedInfoAPI {
 	 */
 	public ExecuteResult<Boolean> checkTimelimitedIsAvailableByBuyerCode(String messageId, String buyerCode,
 			String promotionId);
-	
-	
+
 	/**
-	 * 汇掌柜APP -  根据会员编码和总部秒杀信息
+	 * 汇掌柜APP - 根据会员编码和总部秒杀信息
 	 * 
 	 * @param messageId
 	 * @param buyerCode
 	 * @return
 	 */
 	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedByBuyerCode(String messageId, String buyerCode);
-
 
 	/**
 	 * 锁定秒杀库存
@@ -113,4 +111,13 @@ public interface PromotionTimelimitedInfoAPI {
 	 * @return
 	 */
 	public ExecuteResult<String> delTimelimitedHashInfo(String messageId, SeckillInfoReqDTO seckillInfoReqDTO);
+
+	/**
+	 * 校验当前用户是否有该活动的秒杀资格
+	 * 
+	 * @param promotionId
+	 * @param buterCode
+	 * @return
+	 */
+	public boolean isHasAuthority(String promotionId, String buterCode);
 }

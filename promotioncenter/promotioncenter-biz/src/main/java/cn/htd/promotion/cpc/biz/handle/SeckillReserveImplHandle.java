@@ -65,7 +65,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			}
 		} else {
 			throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
-					"您已存在未支付秒杀订单，不能继续参与秒杀，请支付待支付订单");
+					"您已存在秒杀订单，不能继续参与秒杀活动");
 		}
 	}
 

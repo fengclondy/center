@@ -5,6 +5,7 @@ import java.util.Map;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ScratchCardActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
@@ -86,4 +87,12 @@ public interface LuckDrawService {
 	 * @return
 	 */
 	public ValidateScratchCardResDTO validateScratchCard(ValidateScratchCardReqDTO requestDTO);
+	
+	/**
+	 * 刮刮乐活动页
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public LotteryActivityPageResDTO scratchCardActivityPage(ScratchCardActivityPageReqDTO requestDTO);
 }

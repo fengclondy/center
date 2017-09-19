@@ -4,6 +4,7 @@ import java.util.Map;
 
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
+import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 
@@ -73,4 +74,14 @@ public interface PromotionLotteryCommonService {
      * @param promotionInfoDTO
      */
     public void initPromotionLotteryRedisInfo(PromotionExtendInfoDTO promotionInfoDTO);
+    
+    /**
+     * 挂挂乐校验
+     * @param promotionInfoDTO
+     * @param requestDTO
+     * @param dictMap
+     * @return
+     */
+    public boolean checkScratchCardValid(PromotionExtendInfoDTO promotionInfoDTO, ValidateScratchCardReqDTO requestDTO,
+            Map<String, String> dictMap);
 }

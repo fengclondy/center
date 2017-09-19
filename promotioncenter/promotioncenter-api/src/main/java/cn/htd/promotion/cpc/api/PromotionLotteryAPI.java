@@ -117,4 +117,12 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String validateScratchCard(String validateScratchCardReqDTOJson);
+	
+	/**
+	 * 刮刮乐活动页
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public String scratchCardActivityPage(String scratchCardActivityPageReqDTOJson);
 }

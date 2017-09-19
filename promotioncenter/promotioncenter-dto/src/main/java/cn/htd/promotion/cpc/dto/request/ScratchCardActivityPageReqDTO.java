@@ -6,12 +6,12 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class ValidateScratchCardReqDTO extends GenricReqDTO{
+public class ScratchCardActivityPageReqDTO extends GenricReqDTO{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -484821575862146032L;
+	private static final long serialVersionUID = -4219678011407115811L;
 
 	/**
 	 * 订单号
@@ -26,6 +26,18 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 	private String memberNo;
 	
 	/**
+     * 抽奖活动卖家编码
+     */
+    @NotEmpty(message = "卖家编码不能为空")
+    private String orgId;
+    
+    /**
+     * 活动编码
+     */
+    @NotEmpty(message = "promotionId不能为空")
+    private String promotionId;
+    
+    /**
 	 * 订单金额
 	 */
 	@NotNull(message = "orderAmount不能为空")
@@ -38,10 +50,10 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 	private String payType;
 	
 	/**
-     * 抽奖活动卖家编码
-     */
-    @NotEmpty(message = "卖家编码不能为空")
-    private String orgId;
+	 * 老的粉丝id
+	 */
+	@NotEmpty(message = "oldMemberNo不能为空")
+	private String oldMemberNo;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -57,6 +69,22 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 
 	public void setMemberNo(String memberNo) {
 		this.memberNo = memberNo;
+	}
+
+	public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+
+	public String getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
 	}
 
 	public BigDecimal getOrderAmount() {
@@ -75,11 +103,11 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 		this.payType = payType;
 	}
 
-	public String getOrgId() {
-		return orgId;
+	public String getOldMemberNo() {
+		return oldMemberNo;
 	}
 
-	public void setOrgId(String orgId) {
-		this.orgId = orgId;
+	public void setOldMemberNo(String oldMemberNo) {
+		this.oldMemberNo = oldMemberNo;
 	}
 }

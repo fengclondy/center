@@ -512,8 +512,11 @@
   <select id="queryUpPromotionLotteryCount" resultType="java.lang.Integer">
   		SELECT COUNT(1)
         FROM promotion_info
-        WHERE promotion_type = '21'
+        WHERE 1=1
         AND (status = '1' or status = '2')
+        <if test="promotionType != null">
+        <![CDATA[AND promotion_type = #{promotionType}   	]]>
+        </if>
         <if test="effectiveTime != null">
   		<![CDATA[AND  invalid_time >= #{effectiveTime}   	]]>
   		</if>

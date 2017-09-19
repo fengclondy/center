@@ -140,6 +140,15 @@
       <if test="templateFlag != null and templateFlag != ''">
       	template_flag,
       </if>
+      <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
+      	is_order_amount_limit,
+      </if>
+      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
+      	order_amount_threshold,
+      </if>
+      <if test="isDailyWinningLimit != null">
+      	is_daily_winning_limit,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -205,6 +214,15 @@
       </if>
       <if test="templateFlag != null and templateFlag != ''">
       	#{templateFlag,jdbcType=TINYINT},
+      </if>
+       <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
+      	#{isOrderAmountLimit,jdbcType=TINYINT},
+      </if>
+      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
+      	#{orderAmountThreshold,jdbcType=TINYINT},
+      </if>
+      <if test="isDailyWinningLimit != null">
+      	#{isDailyWinningLimit,jdbcType=DECIMAL},
       </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
@@ -273,6 +291,15 @@
       </if>
       <if test="templateFlag != null and templateFlag != ''">
       	template_flag = #{templateFlag,jdbcType=TINYINT},
+      </if>
+      <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
+      	#{isOrderAmountLimit,jdbcType=TINYINT},
+      </if>
+      <if test="orderAmountThreshold != null and orderAmountThresholdg != ''">
+      	#{orderAmountThreshold,jdbcType=TINYINT},
+      </if>
+      <if test="isDailyWinningLimit != null">
+      	#{isDailyWinningLimit,jdbcType=DECIMAL},
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

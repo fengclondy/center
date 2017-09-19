@@ -16,9 +16,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.promotion.cpc.api.PromotionLotteryAPI;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
@@ -50,118 +58,182 @@ public class PromotionLotteryAPIImplTestUnit {
     @Test
     @Rollback(false) 
     public void promotion(){
-    	Date nowDt = new Date();
-		Calendar cal = Calendar.getInstance();
-		int year = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH);
-		int day = cal.get(Calendar.DATE);
-		int hour = 10;
-		int minute = 0;
-		int second = 0;
-		cal.set(year, month, day, hour,minute,second);
-		Date startTime = cal.getTime();
-		hour = 22;
-		cal.set(year, month, day, hour,minute,second);
-		Date endTime = cal.getTime();
-
-
-    	PromotionExtendInfoDTO promotionExtendInfoDTO = new PromotionExtendInfoDTO();
-    	promotionExtendInfoDTO.setPromotionName("扭蛋机--蒋坤测试");
-    	promotionExtendInfoDTO.setCreateId(0L);
-    	promotionExtendInfoDTO.setCreateName("sys");
-    	promotionExtendInfoDTO.setPromotionProviderType("1");
-    	promotionExtendInfoDTO.setPromotionType("21");
-    	promotionExtendInfoDTO.setEffectiveTime(nowDt);
-    	promotionExtendInfoDTO.setInvalidTime(DateUtils.addDays(nowDt, 1));
-    	promotionExtendInfoDTO.setStatus("2");
-    	promotionExtendInfoDTO.setShowStatus("3");
-    	promotionExtendInfoDTO.setDealFlag(1);
-//    	List<PromotionConfigureDTO> promotionConfigureList = new ArrayList<PromotionConfigureDTO>();
-//    	PromotionConfigureDTO e = new PromotionConfigureDTO();
-//    	e.setConfType("1");
-//    	e.setConfValue("2");
-//		promotionConfigureList.add(e );
-//		promotionExtendInfoDTO.setPromotionConfigureList(promotionConfigureList );
-		promotionExtendInfoDTO.setCycleTimeType("1");
-		promotionExtendInfoDTO.setEachStartTime(startTime);
-		promotionExtendInfoDTO.setEachEndTime(endTime);
-		promotionExtendInfoDTO.setIsTotalTimesLimit(0);
-		promotionExtendInfoDTO.setIsDailyTimesLimit(1);
-		promotionExtendInfoDTO.setDailyBuyerPartakeTimes(10L);
-		promotionExtendInfoDTO.setDailyBuyerWinningTimes(2L);
-		promotionExtendInfoDTO.setDailyWinningTimes(30L);
-		promotionExtendInfoDTO.setIsShareTimesLimit(0);
-		promotionExtendInfoDTO.setShareExtraPartakeTimes(1L);
-		promotionExtendInfoDTO.setTopExtraPartakeTimes(5L);
-		promotionExtendInfoDTO.setContactName("test");
-		PromotionDetailDescribeDTO promotionDetailDescribeDTO = new PromotionDetailDescribeDTO();
-		promotionDetailDescribeDTO.setDescribeContent("jiangkun test test test");
-		promotionExtendInfoDTO.setPromotionDetailDescribeDTO(promotionDetailDescribeDTO );
-		List<PromotionAwardInfoDTO> promotionAccumulatyList = new ArrayList<PromotionAwardInfoDTO>();
-		for (int i=1; i <=5; i++) {
-			PromotionAwardInfoDTO ee = new PromotionAwardInfoDTO();
-			if (i == 1) {
-				ee.setAwardType("2");
-				ee.setAwardValue("");
-				ee.setAwardName("iphone X 手机");
-				ee.setAwardName("iphone X 手机 蒋坤 测试");
-			} else if (i==2) {
-				ee.setAwardType("3");
-				ee.setAwardValue("1");
-				ee.setAwardName("话费1元");
-				ee.setAwardName("话费1元 蒋坤 测试");
-
-			} else if (i==3) {
-				ee.setAwardType("4");
-				ee.setAwardValue("10");
-				ee.setAwardName("汇金币10个");
-				ee.setAwardName("汇金币10个 蒋坤 测试");
-
-			} else if (i==4) {
-				ee.setAwardType("2");
-				ee.setAwardValue("");
-				ee.setAwardName("华为 mate 10 手机");
-				ee.setAwardName("华为 mate 10 手机 手机 蒋坤 测试");
-
-			} else if (i==5) {
-				ee.setAwardType("5");
-				ee.setAwardValue("");
-				ee.setAwardName("谢谢惠顾");
-				ee.setAwardName("谢谢惠顾 蒋坤 测试");
+//-----------xuwei-----------add----------
+//      String promotionInfoEditReqDTO ="{\"buyerRuleDTO\":{\"deleteFlag\":0,\"ruleTargetType\":\"0\"},\"createId\":1,\"createName\":\"xuwei\",\"cycleTimeType\":\"1\",\"cycleTimeValue\":\"1\",\"dailyBuyerPartakeTimes\":10,\"dailyBuyerWinningTimes\":10,\"dailyWinningTimes\":10,\"eachEndTime\":25369000,\"eachStartTime\":7260000,\"effectiveTime\":1509664000000,\"invalidTime\":1605923200000,\"isShareTimesLimit\":0,\"isVip\":0,\"orderAmountThreshold\":88.88,\"is_daily_winning_limit\":1,\"messageId\":\"15057866741150231692421\",\"promotionAccumulatyList\":[{\"addupType\":\"0\",\"awardName\":\"1元话费\",\"awardRuleDescribe\":\"AAAA\",\"awardType\":\"3\",\"awardValue\":\"1\",\"deleteFlag\":0,\"isVip\":0,\"levelAmount\":\"50\",\"levelCode\":\"\",\"levelNumber\":0,\"provideCount\":100,\"quantifierType\":\"4\",\"taskQueueNum\":0},{\"addupType\":\"0\",\"awardName\":\"10个汇金币\",\"awardRuleDescribe\":\"BBBB\",\"awardType\":\"4\",\"awardValue\":\"10\",\"deleteFlag\":0,\"isVip\":0,\"levelAmount\":\"50\",\"levelCode\":\"\",\"levelNumber\":0,\"provideCount\":100,\"quantifierType\":\"4\",\"taskQueueNum\":0}],\"promotionDetailDescribeDTO\":{\"deleteFlag\":0,\"describeContent\":\"活动规则\"},\"promotionId\":\"\",\"promotionName\":\"活动名称\",\"promotionPictureList\":[{\"deleteFlag\":0,\"promotionPictureType\":\"1\",\"promotionPictureUrl\":\"https://b2cimg.htd.cn/hl/15057865928905j2FZ8pG.png\"}],\"promotionProviderType\":\"1\",\"promotionType\":\"24\",\"taskQueueNum\":0}";
+//    	PromotionExtendInfoDTO  rt = new PromotionExtendInfoDTO();
+//    	try {
+//    		PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
+//    		ArrayList templist = (ArrayList) promotionExtendInfoDTO.getPromotionAccumulatyList();
+//    		List<PromotionAwardInfoDTO> templist1 = new ArrayList<PromotionAwardInfoDTO>();
+//    		for (int j = 0; j < templist.size(); j++) {
+//    			
+//    			PromotionAwardInfoDTO promotionAwardInfoDTO  = JSONObject.toJavaObject(((JSONObject)templist.get(j)),  PromotionAwardInfoDTO.class);
+//    			templist1.add(promotionAwardInfoDTO);
+//    		}
+//    		promotionExtendInfoDTO.setPromotionAccumulatyList(templist1);
+//    		
+//    		// 输入DTO的验证
+//    		ValidateResult validateResult = ValidationUtils.validateEntity(promotionExtendInfoDTO);
+//    		// 有错误信息时返回错误信息
+//    		if (validateResult.isHasErrors()) {
+//    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+//    					validateResult.getErrorMsg());
+//    		}
+//    		rt = luckDrawService.addDrawLotteryInfo(promotionExtendInfoDTO);
+//    		rt.setMessageId(promotionExtendInfoDTO.getMessageId());
+//    	} catch (PromotionCenterBusinessException bcbe) {
+//    		rt.setResponseCode(bcbe.getCode());
+//    		rt.setResponseMsg(bcbe.getMessage());
+//    	} catch (Exception e) {
+//    		rt.setResponseCode(ResultCodeEnum.ERROR.getCode());
+//    		rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+//    	}
+//--------xuwei--------------add----------------------
+    	
+//--------xuwei--------------edit----------------------
+		PromotionExtendInfoDTO rt = null;
+		 String promotionInfoEditReqDTO ="{\"buyerRuleDTO\":{\"deleteFlag\":0,\"ruleTargetType\":\"0\"},\"createId\":1,\"createName\":\"xuwei\",\"cycleTimeType\":\"1\",\"cycleTimeValue\":\"1\",\"dailyBuyerPartakeTimes\":10,\"dailyBuyerWinningTimes\":10,\"dailyWinningTimes\":10,\"eachEndTime\":25369000,\"eachStartTime\":7260000,\"effectiveTime\":1509664000000,\"invalidTime\":1605923200000,\"isShareTimesLimit\":0,\"isVip\":0,\"orderAmountThreshold\":88.88,\"is_daily_winning_limit\":1,\"messageId\":\"15057866741150231692421\",\"promotionAccumulatyList\":[{\"addupType\":\"0\",\"awardName\":\"1元话费\",\"awardRuleDescribe\":\"AAAA\",\"awardType\":\"3\",\"awardValue\":\"1\",\"deleteFlag\":0,\"isVip\":0,\"levelAmount\":\"50\",\"levelCode\":\"\",\"levelNumber\":0,\"provideCount\":100,\"quantifierType\":\"4\",\"taskQueueNum\":0},{\"addupType\":\"0\",\"awardName\":\"10个汇金币\",\"awardRuleDescribe\":\"BBBB\",\"awardType\":\"4\",\"awardValue\":\"10\",\"deleteFlag\":0,\"isVip\":0,\"levelAmount\":\"50\",\"levelCode\":\"\",\"levelNumber\":0,\"provideCount\":100,\"quantifierType\":\"4\",\"taskQueueNum\":0}],\"promotionDetailDescribeDTO\":{\"deleteFlag\":0,\"describeContent\":\"活动规则\"},\"promotionId\":\"\",\"promotionName\":\"活动名称xu\",\"promotionId\":\"24171536461913\",\"promotionPictureList\":[{\"deleteFlag\":0,\"promotionPictureType\":\"1\",\"promotionPictureUrl\":\"https://b2cimg.htd.cn/hl/15057865928905j2FZ8pG.png\"}],\"promotionProviderType\":\"1\",\"promotionType\":\"24\",\"taskQueueNum\":0}";
+		try {
+			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
+			ArrayList templist = (ArrayList) promotionExtendInfoDTO.getPromotionAccumulatyList();
+			List<PromotionAwardInfoDTO> templist1 = new ArrayList<PromotionAwardInfoDTO>();
+			for (int j = 0; j < templist.size(); j++) {
+				
+				PromotionAwardInfoDTO promotionAwardInfoDTO  = JSONObject.toJavaObject(((JSONObject)templist.get(j)),  PromotionAwardInfoDTO.class);
+				templist1.add(promotionAwardInfoDTO);
 			}
-			ee.setAwardRuleDescribe("xxxxxxxxxxxxxxxxxxxxxxxxxxx");
-			ee.setProvideCount(100);
-			ee.setLevelAmount(String.valueOf(i*5 + 5));
-			ee.setQuantifierType("4");
-			ee.setAddupType("0");
-			promotionAccumulatyList.add(ee);
-		}
-		
-		promotionExtendInfoDTO.setPromotionAccumulatyList(promotionAccumulatyList);
-//		List<PromotionPictureDTO> promotionPictureList = new ArrayList<PromotionPictureDTO>();
-//		PromotionPictureDTO eee = new PromotionPictureDTO();
-//		eee.setPromotionPictureType("1");
-//		eee.setPromotionPictureUrl("http://ssssssssss");
-//		promotionPictureList.add(eee );
-//		promotionExtendInfoDTO.setPromotionPictureList(promotionPictureList );
-//		PromotionBuyerRuleDTO buyerRuleDTO = new PromotionBuyerRuleDTO();
-//		buyerRuleDTO.setRuleTargetType("1");
-//		promotionExtendInfoDTO.setBuyerRuleDTO(buyerRuleDTO );
-		
-		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
-		sellerRuleDTO.setTargetSellerType("2");
-		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
-		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
-		rrrr.setSellerCode("801781");
-		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
-		rrrr.setBelongSuperiorName("上级测试公司 蒋坤");
-		sellerDetailList.add(rrrr );
-		sellerRuleDTO.setSellerDetailList(sellerDetailList );
-		promotionExtendInfoDTO.setSellerRuleDTO(sellerRuleDTO);
-		luckDrawService.addDrawLotteryInfo(promotionExtendInfoDTO );
-//    	
-    	PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo("21171606370093");
-    	luckDrawService.editDrawLotteryInfo(dbo);
+			promotionExtendInfoDTO.setPromotionAccumulatyList(templist1);
+			// 输入DTO的验证
+            ValidateResult validateResult = ValidationUtils.validateEntity(promotionExtendInfoDTO);
+            // 有错误信息时返回错误信息
+            if (validateResult.isHasErrors()) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+                        validateResult.getErrorMsg());
+            }
+			rt = luckDrawService.editDrawLotteryInfo(promotionExtendInfoDTO);
+			rt.setMessageId(promotionExtendInfoDTO.getMessageId());
+        } catch (PromotionCenterBusinessException bcbe) {
+            rt.setResponseCode(bcbe.getCode());
+            rt.setResponseMsg(bcbe.getMessage());
+        } catch (Exception e) {
+            rt.setResponseCode(ResultCodeEnum.ERROR.getCode());
+            rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+        }
+//--------xuwei--------------edit----------------------
+    	
+    	
+    	
+//    	Date nowDt = new Date();
+//		Calendar cal = Calendar.getInstance();
+//		int year = cal.get(Calendar.YEAR);
+//		int month = cal.get(Calendar.MONTH);
+//		int day = cal.get(Calendar.DATE);
+//		int hour = 10;
+//		int minute = 0;
+//		int second = 0;
+//		cal.set(year, month, day, hour,minute,second);
+//		Date startTime = cal.getTime();
+//		hour = 22;
+//		cal.set(year, month, day, hour,minute,second);
+//		Date endTime = cal.getTime();
+//
+//
+//    	PromotionExtendInfoDTO promotionExtendInfoDTO = new PromotionExtendInfoDTO();
+//    	promotionExtendInfoDTO.setPromotionName("扭蛋机--蒋坤测试");
+//    	promotionExtendInfoDTO.setCreateId(0L);
+//    	promotionExtendInfoDTO.setCreateName("sys");
+//    	promotionExtendInfoDTO.setPromotionProviderType("1");
+//    	promotionExtendInfoDTO.setPromotionType("21");
+//    	promotionExtendInfoDTO.setEffectiveTime(nowDt);
+//    	promotionExtendInfoDTO.setInvalidTime(DateUtils.addDays(nowDt, 1));
+//    	promotionExtendInfoDTO.setStatus("2");
+//    	promotionExtendInfoDTO.setShowStatus("3");
+//    	promotionExtendInfoDTO.setDealFlag(1);
+////    	List<PromotionConfigureDTO> promotionConfigureList = new ArrayList<PromotionConfigureDTO>();
+////    	PromotionConfigureDTO e = new PromotionConfigureDTO();
+////    	e.setConfType("1");
+////    	e.setConfValue("2");
+////		promotionConfigureList.add(e );
+////		promotionExtendInfoDTO.setPromotionConfigureList(promotionConfigureList );
+//		promotionExtendInfoDTO.setCycleTimeType("1");
+//		promotionExtendInfoDTO.setEachStartTime(startTime);
+//		promotionExtendInfoDTO.setEachEndTime(endTime);
+//		promotionExtendInfoDTO.setIsTotalTimesLimit(0);
+//		promotionExtendInfoDTO.setIsDailyTimesLimit(1);
+//		promotionExtendInfoDTO.setDailyBuyerPartakeTimes(10L);
+//		promotionExtendInfoDTO.setDailyBuyerWinningTimes(2L);
+//		promotionExtendInfoDTO.setDailyWinningTimes(30L);
+//		promotionExtendInfoDTO.setIsShareTimesLimit(0);
+//		promotionExtendInfoDTO.setShareExtraPartakeTimes(1L);
+//		promotionExtendInfoDTO.setTopExtraPartakeTimes(5L);
+//		promotionExtendInfoDTO.setContactName("test");
+//		PromotionDetailDescribeDTO promotionDetailDescribeDTO = new PromotionDetailDescribeDTO();
+//		promotionDetailDescribeDTO.setDescribeContent("jiangkun test test test");
+//		promotionExtendInfoDTO.setPromotionDetailDescribeDTO(promotionDetailDescribeDTO );
+//		List<PromotionAwardInfoDTO> promotionAccumulatyList = new ArrayList<PromotionAwardInfoDTO>();
+//		for (int i=1; i <=5; i++) {
+//			PromotionAwardInfoDTO ee = new PromotionAwardInfoDTO();
+//			if (i == 1) {
+//				ee.setAwardType("2");
+//				ee.setAwardValue("");
+//				ee.setAwardName("iphone X 手机");
+//				ee.setAwardName("iphone X 手机 蒋坤 测试");
+//			} else if (i==2) {
+//				ee.setAwardType("3");
+//				ee.setAwardValue("1");
+//				ee.setAwardName("话费1元");
+//				ee.setAwardName("话费1元 蒋坤 测试");
+//
+//			} else if (i==3) {
+//				ee.setAwardType("4");
+//				ee.setAwardValue("10");
+//				ee.setAwardName("汇金币10个");
+//				ee.setAwardName("汇金币10个 蒋坤 测试");
+//
+//			} else if (i==4) {
+//				ee.setAwardType("2");
+//				ee.setAwardValue("");
+//				ee.setAwardName("华为 mate 10 手机");
+//				ee.setAwardName("华为 mate 10 手机 手机 蒋坤 测试");
+//
+//			} else if (i==5) {
+//				ee.setAwardType("5");
+//				ee.setAwardValue("");
+//				ee.setAwardName("谢谢惠顾");
+//				ee.setAwardName("谢谢惠顾 蒋坤 测试");
+//			}
+//			ee.setAwardRuleDescribe("xxxxxxxxxxxxxxxxxxxxxxxxxxx");
+//			ee.setProvideCount(100);
+//			ee.setLevelAmount(String.valueOf(i*5 + 5));
+//			ee.setQuantifierType("4");
+//			ee.setAddupType("0");
+//			promotionAccumulatyList.add(ee);
+//		}
+//		
+//		promotionExtendInfoDTO.setPromotionAccumulatyList(promotionAccumulatyList);
+////		List<PromotionPictureDTO> promotionPictureList = new ArrayList<PromotionPictureDTO>();
+////		PromotionPictureDTO eee = new PromotionPictureDTO();
+////		eee.setPromotionPictureType("1");
+////		eee.setPromotionPictureUrl("http://ssssssssss");
+////		promotionPictureList.add(eee );
+////		promotionExtendInfoDTO.setPromotionPictureList(promotionPictureList );
+////		PromotionBuyerRuleDTO buyerRuleDTO = new PromotionBuyerRuleDTO();
+////		buyerRuleDTO.setRuleTargetType("1");
+////		promotionExtendInfoDTO.setBuyerRuleDTO(buyerRuleDTO );
+//		
+//		PromotionSellerRuleDTO sellerRuleDTO=new PromotionSellerRuleDTO();
+//		sellerRuleDTO.setTargetSellerType("2");
+//		List<PromotionSellerDetailDTO> sellerDetailList = new ArrayList<>();
+//		PromotionSellerDetailDTO rrrr = new PromotionSellerDetailDTO();
+//		rrrr.setSellerCode("801781");
+//		rrrr.setSellerName("无锡市崇安区阳光家电有限公司");
+//		rrrr.setBelongSuperiorName("上级测试公司 蒋坤");
+//		sellerDetailList.add(rrrr );
+//		sellerRuleDTO.setSellerDetailList(sellerDetailList );
+//		promotionExtendInfoDTO.setSellerRuleDTO(sellerRuleDTO);
+//		luckDrawService.addDrawLotteryInfo(promotionExtendInfoDTO );
+//    	//PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo("21171606370093");
+//    	//luckDrawService.editDrawLotteryInfo(dbo);
     }
 //    @Test
 //  @Rollback(false) 
@@ -327,5 +399,8 @@ public class PromotionLotteryAPIImplTestUnit {
 //    public void participateActivitySellerInfo(){
 //    	String res = promotionLotteryAPI.participateActivitySellerInfo("122121222");
 //    	System.out.println("participateActivitySellerInfo:"+res);
+//    }
+    
+
 //    }
 }

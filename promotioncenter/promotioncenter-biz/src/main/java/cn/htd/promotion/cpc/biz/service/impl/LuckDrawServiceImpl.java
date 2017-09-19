@@ -403,179 +403,187 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		return result;
 	}
 
-	@Override
-	public PromotionExtendInfoDTO addDrawLotteryInfo(
-			PromotionExtendInfoDTO promotionInfoEditReqDTO) {
-		PromotionExtendInfoDTO rtobj = new PromotionExtendInfoDTO();
-		try {
-			if (promotionInfoEditReqDTO == null) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+    @Override
+    public PromotionExtendInfoDTO addDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
+        PromotionExtendInfoDTO rtobj = new PromotionExtendInfoDTO();
+        try {
+            if (promotionInfoEditReqDTO == null) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+            }
+            if (StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())) {
+            	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_TYPE.getCode(), "促销活动类型不能为空");
+            }else{
+	        	//---xuwei---
+	        	if(promotionInfoEditReqDTO.getPromotionType().equals("21")){
+	        		//扭蛋机
+//	        		promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+//	        				DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON));
+	        		promotionInfoEditReqDTO.setIsDailyWinningLimit(1);
+	        		promotionInfoEditReqDTO.setIsDailyTimesLimit(1);
+	        		
+	        	}else if(promotionInfoEditReqDTO.getPromotionType().equals("24")){
+	        		//刮刮乐
+//	        		promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+//	        				DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD));
+	        	}
+            }
+        	//---xuwei---
+            if (StringUtils.isEmpty(promotionInfoEditReqDTO.getStatus())) {
+                promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                        DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+            }
+            promotionInfoEditReqDTO.setShowStatus(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+            Date itime = promotionInfoEditReqDTO.getInvalidTime();
+            if (itime != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(itime);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
+            }
+            // 判断时间段内可有活动上架
+        	//---xuwei---
+            Integer isUpPromotionFlag = promotionInfoDAO
+                    .queryUpPromotionLotteryCount(null, promotionInfoEditReqDTO.getEffectiveTime(),
+                            promotionInfoEditReqDTO.getInvalidTime(),promotionInfoEditReqDTO.getPromotionType());
+            if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+                        "该活动有效期和其他活动重叠，请重新设置");
+            }
+        	//---xuwei---
+            List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+            if (plist != null && plist.size() > Integer
+                    .parseInt(SysProperties.getProperty(PROMOTION_LOTTERY_MAX_AWARD_SIZE))) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+                        "奖项设置已经到达最大值！");
+            }
+            int allq = 0;
+            String qt = "";
+            for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
+                qt = promotionAccumulatyDTO.getLevelAmount();
+                if (!StringUtils.isEmpty(qt)) {
+                    allq = allq + Integer.parseInt(qt);
+                }
+            }
+            if (allq != 100) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+                        "设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
+            }
+            rtobj = promotionBaseService.insertPromotionInfo(promotionInfoEditReqDTO);
+            if (rtobj.getPromotionAccumulatyList() != null) {
+                List<? extends PromotionAccumulatyDTO> promotionAccumulatyList =
+                        promotionInfoEditReqDTO.getPromotionAccumulatyList();
+                PromotionAwardInfoDTO padrDTO = null;
+                for (int i = 0; i < promotionAccumulatyList.size(); i++) {
+                    padrDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
+                    padrDTO.setPromotionId(rtobj.getPromotionId());
+                    padrDTO.setCreateId(rtobj.getCreateId());
+                    padrDTO.setCreateName(rtobj.getCreateName());
+                    padrDTO.setModifyId(rtobj.getCreateId());
+                    padrDTO.setModifyName(rtobj.getCreateName());
+                    promotionAwardInfoDAO.add(padrDTO);
+                }
+                promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(rtobj);
+            }
+            PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+            historyDTO.setPromotionId(rtobj.getPromotionId());
+            historyDTO.setPromotionStatus(
+                    dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
+            historyDTO.setPromotionStatusText(
+                    dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
 
-			}
-			if (StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())) {
-				promotionInfoEditReqDTO.setPromotionType(dictionary
-						.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-								DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON));
-			}
-			if (StringUtils.isEmpty(promotionInfoEditReqDTO.getStatus())) {
-				promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(
-						DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
-			}
-			promotionInfoEditReqDTO.setShowStatus(dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-			Date itime = promotionInfoEditReqDTO.getInvalidTime();
-			if (itime != null) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(itime);
-				cal.set(Calendar.HOUR_OF_DAY, 23);
-				cal.set(Calendar.MINUTE, 59);
-				cal.set(Calendar.SECOND, 59);
-				promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
-			}
-			// 判断时间段内可有活动上架
-			Integer isUpPromotionFlag = promotionInfoDAO
-					.queryUpPromotionLotteryCount(null,
-							promotionInfoEditReqDTO.getEffectiveTime(),
-							promotionInfoEditReqDTO.getInvalidTime());
-			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
-						"该活动有效期和其他活动重叠，请重新设置");
-			}
-			List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO
-					.getPromotionAccumulatyList();
-			if (plist != null
-					&& plist.size() > Integer.parseInt(SysProperties
-							.getProperty(PROMOTION_LOTTERY_MAX_AWARD_SIZE))) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-						"奖项设置已经到达最大值！");
-			}
-			int allq = 0;
-			String qt = "";
-			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
-				qt = promotionAccumulatyDTO.getLevelAmount();
-				if (!StringUtils.isEmpty(qt)) {
-					allq = allq + Integer.parseInt(qt);
-				}
-			}
-			if (allq != 100) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-						"设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
-			}
-			rtobj = promotionBaseService
-					.insertPromotionInfo(promotionInfoEditReqDTO);
-			if (rtobj.getPromotionAccumulatyList() != null) {
-				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO
-						.getPromotionAccumulatyList();
-				PromotionAwardInfoDTO padrDTO = null;
+            historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
+            historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
+            promotionStatusHistoryDAO.add(historyDTO);
+
+            rtobj.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+            rtobj.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+        } catch (PromotionCenterBusinessException e) {
+            rtobj.setResponseCode(e.getCode());
+            rtobj.setResponseMsg(e.getMessage());
+        } catch (Exception e) {
+            rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
+            rtobj.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+        }
+
+        return rtobj;
+    }
+
+    @Override
+    public PromotionExtendInfoDTO editDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
+        PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
+        try {
+            if (promotionInfoEditReqDTO == null) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
+            }
+            if (StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())) {
+            	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_TYPE.getCode(), "促销活动类型不能为空");
+            }else{
+	        	//---xuwei---
+	        	if(promotionInfoEditReqDTO.getPromotionType().equals("21")){
+	        		//扭蛋机
+//	        		promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+//	        				DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON));
+	        		promotionInfoEditReqDTO.setIsDailyWinningLimit(1);
+	        		promotionInfoEditReqDTO.setIsDailyTimesLimit(1);
+	        		
+	        	}else if(promotionInfoEditReqDTO.getPromotionType().equals("24")){
+	        		//刮刮乐
+//	        		promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+//	        				DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD));
+	        	}
+            }
+        	//---xuwei---
+            // 判断时间段内可有活动上架
+            Integer isUpPromotionFlag = promotionInfoDAO
+                    .queryUpPromotionLotteryCount(promotionInfoEditReqDTO.getPromotionId(),
+                            promotionInfoEditReqDTO.getEffectiveTime(), promotionInfoEditReqDTO.getInvalidTime(),promotionInfoEditReqDTO.getPromotionType());
+            if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+                        "该活动有效期和其他活动重叠，请重新设置");
+            }
+            List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO.getPromotionAccumulatyList();
+            if (plist != null && plist.size() > Integer
+                    .parseInt(SysProperties.getProperty(PROMOTION_LOTTERY_MAX_AWARD_SIZE))) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+                        "奖项设置已经到达最大值！");
+            }
+            int allq = 0;
+            String qt = "";
+            for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
+                qt = promotionAccumulatyDTO.getLevelAmount();
+                if (!StringUtils.isEmpty(qt)) {
+                    allq = allq + Integer.parseInt(qt);
+                }
+            }
+            if (allq != 100) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
+                        "设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
+            }
+            Date itime = promotionInfoEditReqDTO.getInvalidTime();
+            if (itime != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(itime);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
+            }
+            promotionInfoEditReqDTO.setShowStatus(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+            result = promotionBaseService.updatePromotionInfo(promotionInfoEditReqDTO);
+            if (result.getPromotionAccumulatyList() != null) {
+                List<? extends PromotionAccumulatyDTO> promotionAccumulatyList =
+                        promotionInfoEditReqDTO.getPromotionAccumulatyList();
+                PromotionAwardInfoDTO padDTO = null;
 				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
-					padrDTO = (PromotionAwardInfoDTO) promotionAccumulatyList
-							.get(i);
-					padrDTO.setPromotionId(rtobj.getPromotionId());
-					padrDTO.setCreateId(rtobj.getCreateId());
-					padrDTO.setCreateName(rtobj.getCreateName());
-					padrDTO.setModifyId(rtobj.getCreateId());
-					padrDTO.setModifyName(rtobj.getCreateName());
-					promotionAwardInfoDAO.add(padrDTO);
-				}
-				promotionLotteryCommonService
-						.initPromotionLotteryRedisInfoWithThread(rtobj);
-			}
-			PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
-			historyDTO.setPromotionId(rtobj.getPromotionId());
-			historyDTO.setPromotionStatus(dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
-			historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-					DictionaryConst.TYPE_PROMOTION_STATUS, rtobj.getStatus()));
-
-			historyDTO.setCreateId(promotionInfoEditReqDTO.getCreateId());
-			historyDTO.setCreateName(promotionInfoEditReqDTO.getCreateName());
-			promotionStatusHistoryDAO.add(historyDTO);
-
-			rtobj.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			rtobj.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-		} catch (PromotionCenterBusinessException e) {
-			rtobj.setResponseCode(e.getCode());
-			rtobj.setResponseMsg(e.getMessage());
-		} catch (Exception e) {
-			rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			rtobj.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
-		}
-
-		return rtobj;
-	}
-
-	@Override
-	public PromotionExtendInfoDTO editDrawLotteryInfo(
-			PromotionExtendInfoDTO promotionInfoEditReqDTO) {
-		PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
-		try {
-			if (promotionInfoEditReqDTO == null) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
-			}
-			// 判断时间段内可有活动上架
-			Integer isUpPromotionFlag = promotionInfoDAO
-					.queryUpPromotionLotteryCount(
-							promotionInfoEditReqDTO.getPromotionId(),
-							promotionInfoEditReqDTO.getEffectiveTime(),
-							promotionInfoEditReqDTO.getInvalidTime());
-			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
-						"该活动有效期和其他活动重叠，请重新设置");
-			}
-			List<? extends PromotionAccumulatyDTO> plist = promotionInfoEditReqDTO
-					.getPromotionAccumulatyList();
-			if (plist != null
-					&& plist.size() > Integer.parseInt(SysProperties
-							.getProperty(PROMOTION_LOTTERY_MAX_AWARD_SIZE))) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-						"奖项设置已经到达最大值！");
-			}
-			int allq = 0;
-			String qt = "";
-			for (PromotionAccumulatyDTO promotionAccumulatyDTO : plist) {
-				qt = promotionAccumulatyDTO.getLevelAmount();
-				if (!StringUtils.isEmpty(qt)) {
-					allq = allq + Integer.parseInt(qt);
-				}
-			}
-			if (allq != 100) {
-				throw new PromotionCenterBusinessException(
-						ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode(),
-						"设置的中奖概率之和不等于100%，活动无法提交，请重新设置！");
-			}
-			Date itime = promotionInfoEditReqDTO.getInvalidTime();
-			if (itime != null) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(itime);
-				cal.set(Calendar.HOUR_OF_DAY, 23);
-				cal.set(Calendar.MINUTE, 59);
-				cal.set(Calendar.SECOND, 59);
-				promotionInfoEditReqDTO.setInvalidTime(cal.getTime());
-			}
-			promotionInfoEditReqDTO.setShowStatus(dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-			result = promotionBaseService
-					.updatePromotionInfo(promotionInfoEditReqDTO);
-			if (result.getPromotionAccumulatyList() != null) {
-				List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = promotionInfoEditReqDTO
-						.getPromotionAccumulatyList();
-				PromotionAwardInfoDTO padDTO = null;
-				for (int i = 0; i < promotionAccumulatyList.size(); i++) {
-					padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList
-							.get(i);
+					padDTO = (PromotionAwardInfoDTO) promotionAccumulatyList.get(i);
 					padDTO.setPromotionId(result.getPromotionId());
-					PromotionAwardInfoDTO pad = promotionAwardInfoDAO
-							.queryByPIdAndLevel(padDTO);
+					PromotionAwardInfoDTO pad = promotionAwardInfoDAO.queryByPIdAndLevel(padDTO);
 					if (pad == null) {
 						padDTO.setPromotionId(result.getPromotionId());
 						padDTO.setCreateId(result.getModifyId());
@@ -590,22 +598,20 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					}
 				}
 			}
-			promotionLotteryCommonService
-					.initPromotionLotteryRedisInfoWithThread(result);
-			// result =
-			// viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
-			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-		} catch (PromotionCenterBusinessException e) {
-			result.setResponseCode(e.getCode());
-			result.setResponseMsg(e.getMessage());
-		} catch (Exception e) {
-			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
-		}
+            promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
+            //result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
+            result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+            result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+        } catch (PromotionCenterBusinessException e) {
+            result.setResponseCode(e.getCode());
+            result.setResponseMsg(e.getMessage());
+        } catch (Exception e) {
+            result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+            result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 	@Override
 	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId) {

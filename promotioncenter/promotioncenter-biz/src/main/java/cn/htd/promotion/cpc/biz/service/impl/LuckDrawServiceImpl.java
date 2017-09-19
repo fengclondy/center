@@ -195,17 +195,27 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		String remainTimes = "";
 		Map<String, String> buyerTimeInfoMap = new HashMap<String, String>();
 		if (!promotionRedisDB.exists(sellerWinedTimesKey)) {
-			promotionRedisDB.setAndExpire(sellerWinedTimesKey, promotionInfoDTO
-					.getDailyWinningTimes().toString(), promotionInfoDTO
-					.getInvalidTime());
+			String dailyWinningTimes = "";
+			if (null != promotionInfoDTO.getIsDailyWinningLimit()
+					&& YesNoEnum.YES.getValue() == promotionInfoDTO
+							.getIsDailyWinningLimit().intValue()) {
+				dailyWinningTimes = promotionInfoDTO.getDailyWinningTimes()
+						.toString();
+			} else {
+				dailyWinningTimes = Integer.MAX_VALUE + "";
+			}
+			promotionRedisDB.setAndExpire(sellerWinedTimesKey,
+					dailyWinningTimes, promotionInfoDTO.getInvalidTime());
 		}
 		if (!StringUtils.isEmpty(buyerNo)) {
 			if (!promotionRedisDB.exists(b2bMiddleLotteryBuyerTimesInfoKey)) {
 				// 粉丝活动粉丝当日剩余参与次数
 				String dailyBuyerPartakeTimes = "";
-				if (Constants.IS_DAILY_TIMES_LIMIT_YES.equals(promotionInfoDTO
-						.getIsDailyTimesLimit())) {
-					dailyBuyerPartakeTimes = promotionInfoDTO.getDailyBuyerPartakeTimes().toString();
+				if (null != promotionInfoDTO.getIsDailyTimesLimit()
+						&& YesNoEnum.YES.getValue() == promotionInfoDTO
+								.getIsDailyTimesLimit()) {
+					dailyBuyerPartakeTimes = promotionInfoDTO
+							.getDailyBuyerPartakeTimes().toString();
 				} else {
 					// 没有抽奖次数限制，设置为最大值
 					dailyBuyerPartakeTimes = Integer.MAX_VALUE + "";
@@ -216,9 +226,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 
 				// 粉丝当日中奖次数
 				String dailyBuyerWinningTimes = "";
-				if (Constants.IS_DAILY_WINNING_LIMIT_YES
-						.equals(promotionInfoDTO.getIsDailyWinningLimit())) {
-					dailyBuyerWinningTimes = promotionInfoDTO.getDailyBuyerWinningTimes().toString();
+				if (null != promotionInfoDTO.getIsDailyWinningLimit()
+						&& YesNoEnum.YES.getValue() == promotionInfoDTO
+								.getIsDailyWinningLimit()) {
+					dailyBuyerWinningTimes = promotionInfoDTO
+							.getDailyBuyerWinningTimes().toString();
 				} else {
 					// 没有中奖次数限制，设置为最大值
 					dailyBuyerWinningTimes = Integer.MAX_VALUE + "";

@@ -154,11 +154,6 @@
         #{taskId}
       </foreach>
     </if>
-    and not exists (
-      select 1 from buyer_use_timelimited_log b
-      where a.seckill_lock_no = b.seckill_lock_no
-      and <![CDATA[ (b.order_no <> '' or (b.order_no = '' and a.use_type <> b.use_type))]]>
-    )
     order by a.id desc
     <if test="page!=null">
       <include refid="pagination_tail"/>

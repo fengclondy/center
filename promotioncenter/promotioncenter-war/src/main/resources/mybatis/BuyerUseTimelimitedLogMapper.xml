@@ -126,6 +126,7 @@
     and order_no = #{orderNo,jdbcType=VARCHAR}
   </update>
   <select id="queryNeedReleaseTimelimitedStock4Task" resultMap="BaseResultMap">
+   <![CDATA[
     select
       a.id id,
       a.buyer_code buyerCode,
@@ -146,18 +147,9 @@
     and a.has_released_stock = 0
     and a.order_no = ''
     and a.use_type = '1'
-    <if test="entity != null">
-      and a.use_type = #{entity.useType}
-      <![CDATA[ and a.create_time <= date_sub(now(), interval #{entity.releaseStockInterval} minute) ]]>
-      and mod(a.id, #{entity.taskQueueNum}) in
-      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
-        #{taskId}
-      </foreach>
-    </if>
+    and a.create_time <= date_sub(now(), interval 1 minute) 
     order by a.id desc
-    <if test="page!=null">
-      <include refid="pagination_tail"/>
-    </if>
+     ]]>
   </select>
   <update id="updateTimelimitedReleaseStockStatus" parameterType="cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO">
     update buyer_use_timelimited_log

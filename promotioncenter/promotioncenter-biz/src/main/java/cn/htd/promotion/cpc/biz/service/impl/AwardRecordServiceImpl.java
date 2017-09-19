@@ -1,8 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -40,12 +38,12 @@ public class AwardRecordServiceImpl implements AwardRecordService {
         page.setPage(dto.getPage());
         page.setRows(dto.getPageSize());
 
-        if (dto.getPage() < 1) {
-            page.setPage(1);
-        }
-        if (dto.getPageSize() < 1) {
-            page.setRows(10);
-        }
+//        if (dto.getPage() < 1) {
+//            page.setPage(1);
+//        }
+//        if (dto.getPageSize() < 1) {
+//            page.setRows(10);
+//        }
 
         // 开始时间
         String startTime = dto.getWinningStartTime();
@@ -63,8 +61,16 @@ public class AwardRecordServiceImpl implements AwardRecordService {
 
         DataGrid<PromotionAwardDTO> dataGrid = new DataGrid<PromotionAwardDTO>();
         try {
-            List<BuyerWinningRecordDMO> list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
-            long count = awardRecordDAO.getTotalAwardRecord(dto);
+            List<BuyerWinningRecordDMO> list = null;
+            long count =0;
+            if("hl".equals(dto.getSource())){
+                list = awardRecordDAO.getAwardRecordByPromotionId(dto, page);
+                count = awardRecordDAO.getTotalAwardRecord(dto);
+            }else {
+                list = awardRecordDAO.getAwardRecordForBoss(dto, page);
+                count = awardRecordDAO.getTotalAwardRecordForBoss(dto);
+            }
+
             BuyerWinningRecordConvert convert = new BuyerWinningRecordConvert();
             List<PromotionAwardDTO> awardDTOList = convert.toTarget(list);
             dataGrid.setTotal(count);
@@ -82,5 +88,31 @@ public class AwardRecordServiceImpl implements AwardRecordService {
                 JSON.toJSONString(dto));
 
         return awardRecordDAO.updateLogisticsInfo(dto);
+    }
+
+    @Override
+    public Boolean checkOrder(String orderNo) {
+        BuyerWinningRecordDMO dmo = awardRecordDAO.checkOrder(orderNo);
+        if(dmo != null){
+            return true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public Integer updateOrder(PromotionAwardReqDTO awardReqDTO) {
+        return awardRecordDAO.updateOrder(awardReqDTO);
+    }
+
+    @Override
+    public Integer insertOrder(PromotionAwardReqDTO awardReqDTO) {
+
+        return awardRecordDAO.insertOrder(awardReqDTO);
+    }
+
+    @Override
+    public int updateOrderLogisticsInfo(PromotionAwardReqDTO dto, String messageId) {
+       return  awardRecordDAO.updateOrderLogisticsInfo(dto);
     }
 }

@@ -61,6 +61,26 @@ public class PromotionTimelimitedRedisHandle {
     	  String jsonObj = JSON.toJSONString(timelimitedInfoResDTO);
     	  promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, timelimitedInfoResDTO.getPromotionId(), jsonObj);
     }
+    
+    
+    /**
+     * 秒杀 - 根据促销活动id修改秒杀活动的启用状态
+     * 
+     * @param skuCodeList 商品编码集合
+     * @return
+     */
+    public void updateTimelimitedValidStatus2Redis(String promotionId,String showStatus) {
+    	 TimelimitedInfoResDTO timelimitedInfoDTO = null;
+	     String timelimitedJsonStr = "";
+	     if(StringUtils.isNotBlank(promotionId) && StringUtils.isNotBlank(showStatus)){
+			 timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
+			 timelimitedInfoDTO = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
+			 timelimitedInfoDTO.getPromotionExtendInfoDTO().setShowStatus(showStatus);
+	    	 String jsonObj = JSON.toJSONString(timelimitedInfoDTO);
+	    	 promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, timelimitedInfoDTO.getPromotionId(), jsonObj);
+	     }
+    }
+
 
     /**
      * 秒杀 - 查询Redis秒杀活动展示结果信息

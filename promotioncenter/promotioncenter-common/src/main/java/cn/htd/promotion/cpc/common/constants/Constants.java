@@ -23,8 +23,11 @@ public class Constants {
 	// 秒杀库存回滚操作
 	public final static String SECKILL_ROLLBACK = "4";
 
+	// 秒杀商城订单删除锁定资格
+	public final static String SECKILL_DELHASH = "5";
+
 	// 已经释放库存标志
-	public final static int HAS_RELEASE_FLAG = 1;
+	public final static String HAS_RELEASE_FLAG = "1";
 
 	// 秒杀预占订单号前缀
 	public final static String ORDER_PREHOLDING_NUMBER = "60";

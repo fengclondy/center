@@ -27,6 +27,7 @@ import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
@@ -87,6 +88,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     @Resource
     private PromotionSellerRuleDAO promotionSellerRuleDAO;
     
+    @Resource
+	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
+    
 
     @Override
     public void addTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId) {
@@ -121,10 +125,13 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
 
             // 添加商品图片,返回商品主图
-            String firstPictureUrl = addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+//            String firstPictureUrl = 
+            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 添加秒杀商品
-            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
+//            if(null != timelimitedInfoReqDTO.getSkuPicUrl() && !"".equals(timelimitedInfoReqDTO.getSkuPicUrl().trim())){
+//            	timelimitedInfoReqDTO.setSkuPicUrl("hl/" + timelimitedInfoReqDTO.getSkuPicUrl());
+//            }
             timelimitedInfoReqDTO.setCreateTime(currentTime);
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.insert(timelimitedInfoReqDTO);
@@ -191,10 +198,15 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             timelimitedSkuPictureReqDTO_delete.setModifyTime(currentTime);
             timelimitedSkuPictureDAO.pseudoDelete(timelimitedSkuPictureReqDTO_delete);
             // 添加商品图片,返回商品主图
-            String firstPictureUrl = addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
+            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
             
             // 修改秒杀商品
-            timelimitedInfoReqDTO.setSkuPicUrl(firstPictureUrl);
+//            String skuPicUrl = timelimitedInfoReqDTO.getSkuPicUrl();
+//            if(null != skuPicUrl && !"".equals(skuPicUrl.trim())){
+//            	if(skuPicUrl.indexOf("hl/") == -1){
+//            		timelimitedInfoReqDTO.setSkuPicUrl("hl/" + skuPicUrl);
+//            	}
+//            }
             timelimitedInfoReqDTO.setModifyTime(currentTime);
             timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
 
@@ -265,6 +277,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
             // 查询活动信息
             timelimitedInfoResDTO = timelimitedInfoDAO.selectByPromotionId(promotionId);
+            if(null != timelimitedInfoResDTO){
             
             if(null == type || "".equals(type.trim())){
             	throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "秒杀促销活动获取库存类型不能为空！");
@@ -309,6 +322,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "查询秒杀促销活动失败！");
             }
             timelimitedInfoResDTO.setPromotionExtendInfoDTO(promotionExtendInfoDTO);
+            
+            }
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getSingleTimelimitedInfo】报错：{}", messageId, e.toString());
@@ -418,7 +433,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     		//秒杀开始时间
     		Date effectiveTime = promotionInfoDTO.getEffectiveTime();
     		//秒杀结束时间
-    		Date invalidTime = promotionInfoDTO.getEffectiveTime();
+    		Date invalidTime = promotionInfoDTO.getInvalidTime();
     		
     		Calendar calender = Calendar.getInstance();
     		Date currentTime = calender.getTime();//当前时间
@@ -443,6 +458,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		promotionValidDTO.setOperatorId(timelimitedInfoReqDTO.getModifyId());
 		promotionValidDTO.setOperatorName(timelimitedInfoReqDTO.getModifyName());
 		promotionInfoDAO.upDownShelvesTimelimitedInfo(promotionValidDTO);
+		
+		// 更新redis里的上下架状态
+		promotionTimelimitedRedisHandle.updateTimelimitedValidStatus2Redis(promotionId, showStatus);
 		
          } catch (Exception e) {
         	 status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_ERROR;//-1 系统异常
@@ -469,12 +487,22 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuPictureReqDTO = timelimitedSkuDescribeList.get(i);
                 timelimitedSkuPictureReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
                 timelimitedSkuPictureReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
-                if (i == 0) {// 第一张图设置为主图
-                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
-                    firstPictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
-                } else {
-                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
-                }
+                // 由客户端设置（改）
+//                if (i == 0) {// 第一张图设置为主图
+//                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.TRUE);
+//                    firstPictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
+//                } else {
+//                    timelimitedSkuPictureReqDTO.setIsFirst(Boolean.FALSE);
+//                }
+                
+                //取图片重新设置
+//                String pictureUrl = timelimitedSkuPictureReqDTO.getPictureUrl();
+//                if(null != pictureUrl && !"".equals(pictureUrl.trim())){
+//                	if(pictureUrl.indexOf("hl/") == -1){
+//                		timelimitedSkuPictureReqDTO.setPictureUrl("hl/" + pictureUrl);
+//                	}
+//                }
+                
                 timelimitedSkuPictureReqDTO.setSortNum(i + 1);
                 timelimitedSkuPictureReqDTO.setDeleteFlag(Boolean.FALSE);
                 timelimitedSkuPictureReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
@@ -506,8 +534,15 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 timelimitedSkuDescribeReqDTO = timelimitedSkuDescribeReqDTOList.get(i);
                 timelimitedSkuDescribeReqDTO.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
                 timelimitedSkuDescribeReqDTO.setLevelCode(timelimitedInfoReqDTO.getLevelCode());
+                //取图片重新设置
+//                String pictureUrl = timelimitedSkuDescribeReqDTO.getPictureUrl();
+//                if(null != pictureUrl && !"".equals(pictureUrl.trim())){
+//                	if(pictureUrl.indexOf("hl/") == -1){
+//                		timelimitedSkuDescribeReqDTO.setPictureUrl("hl/" + pictureUrl);
+//                	}
+//                }
+                
                 timelimitedSkuDescribeReqDTO.setDeleteFlag(Boolean.FALSE);
-                timelimitedSkuDescribeReqDTO.setPictureUrl(timelimitedSkuDescribeReqDTO.getPictureUrl());
                 timelimitedSkuDescribeReqDTO.setSortNum(i + 1);
                 timelimitedSkuDescribeReqDTO.setCreateId(timelimitedInfoReqDTO.getModifyId());
                 timelimitedSkuDescribeReqDTO.setCreateName(timelimitedInfoReqDTO.getModifyName());
@@ -550,18 +585,25 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 	//操作类型 (0 新增 1删除 2 修改）
                 	String type = psd.getOperateType();
                 	if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_ADD.equals(type)){//新增
-                        psd.setCreateId(timelimitedInfoReqDTO.getCreateId());
-                        psd.setCreateName(timelimitedInfoReqDTO.getCreateName());
-                        psd.setModifyId(timelimitedInfoReqDTO.getCreateId());
-                        psd.setModifyName(timelimitedInfoReqDTO.getCreateName());
-                        psd.setDeleteFlag(YesNoEnum.NO.getValue());
-                        promotionSellerDetailDAO.add(psd);
+                		
+                		PromotionSellerDetailDTO promotionSellerDetailDTO = promotionSellerDetailDAO.selectTimelimitedSellerDetail(psd);
+                		if(null == promotionSellerDetailDTO){ //没有，做新增
+                            psd.setCreateId(timelimitedInfoReqDTO.getModifyId());
+                            psd.setCreateName(timelimitedInfoReqDTO.getModifyName());
+                            psd.setModifyId(timelimitedInfoReqDTO.getModifyId());
+                            psd.setModifyName(timelimitedInfoReqDTO.getModifyName());
+                            psd.setDeleteFlag(YesNoEnum.NO.getValue());
+                            promotionSellerDetailDAO.add(psd);
+                		}else{//有，做修改
+                		    psd.setModifyId(timelimitedInfoReqDTO.getModifyId());
+                            psd.setModifyName(timelimitedInfoReqDTO.getModifyName());
+                            promotionSellerDetailDAO.updateTimelimitedSellerDetail(psd);
+                		}
+
                 	}else if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_DELETE.equals(type)){//删除
+                		psd.setModifyId(timelimitedInfoReqDTO.getModifyId());
+                        psd.setModifyName(timelimitedInfoReqDTO.getModifyName());
                         promotionSellerDetailDAO.deleteTimelimitedSellerDetail(psd);
-                	}else if(TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE.equals(type)){//修改
-                        psd.setModifyId(timelimitedInfoReqDTO.getCreateId());
-                        psd.setModifyName(timelimitedInfoReqDTO.getCreateName());
-                        promotionSellerDetailDAO.updateTimelimitedSellerDetail(psd);
                 	}
  
                 }
@@ -670,6 +712,11 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 JSON.toJSONString(buyerUseTimelimitedLogDMO));
         promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
                 JSON.toJSONString(buyerUseTimelimitedLogDMO));
+    }
+
+    @Override
+	public List<PromotionSellerDetailDTO> getPromotionSellerDetailList(String promotionId) {
+    	return promotionSellerDetailDAO.selectByPromotionId(promotionId);
     }
 
 }

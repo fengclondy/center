@@ -18,6 +18,8 @@ public class ImportResultDTO implements Serializable {
 
     private List<PromotionAwardReqDTO> promotionAwardList;
 
+    private List<PromotionAwardReqDTO> successAwardList;
+
     public Integer getSuccessCount() {
         return successCount;
     }
@@ -40,5 +42,13 @@ public class ImportResultDTO implements Serializable {
 
     public void setPromotionAwardList(List<PromotionAwardReqDTO> promotionAwardList) {
         this.promotionAwardList = promotionAwardList;
+    }
+
+    public List<PromotionAwardReqDTO> getSuccessAwardList() {
+        return successAwardList;
+    }
+
+    public void setSuccessAwardList(List<PromotionAwardReqDTO> successAwardList) {
+        this.successAwardList = successAwardList;
     }
 }

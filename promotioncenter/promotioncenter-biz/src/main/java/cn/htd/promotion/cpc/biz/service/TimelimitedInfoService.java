@@ -1,9 +1,12 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.dto.request.TimelimitedInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 public interface TimelimitedInfoService {
@@ -104,4 +107,12 @@ public interface TimelimitedInfoService {
 	 * @param seckillInfoReqDTO
 	 */
 	public void saveOrUpdateTimelimitedOperlog(BuyerUseTimelimitedLogDMO buyerUseTimelimitedLogDMO);
+	
+	/**
+	 * 总部秒杀参与会员店列表取得
+	 * 
+	 * @param promotionId 活动ID
+	 * @return 总部秒杀参与会员店列表
+	 */
+	public List<PromotionSellerDetailDTO> getPromotionSellerDetailList(String promotionId);
 }

@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.biz.dao;
 import java.util.List;
 import java.util.Map;
 
+import cn.htd.promotion.cpc.dto.response.PromotionAwardDTO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -61,4 +62,20 @@ public interface BuyerWinningRecordDAO {
             @Param("page") Pager<BuyerWinningRecordDMO> pager);
 
 	public void updateDealFlag(BuyerWinningRecordDMO buyerWinningRecordDMO);
+
+    BuyerWinningRecordDMO checkOrder(String orderNo);
+
+    Integer updateOrder(PromotionAwardReqDTO awardReqDTO);
+
+    Integer insertOrder(PromotionAwardReqDTO awardReqDTO);
+
+    List<BuyerWinningRecordDMO> getSeckillOrder(@Param("params") PromotionAwardReqDTO dto,@Param("page") Pager<PromotionAwardReqDTO> page);
+
+    long getTotalSeckillOrder(@Param("params") PromotionAwardReqDTO dto);
+
+    int updateOrderLogisticsInfo(PromotionAwardReqDTO dto);
+
+    List<BuyerWinningRecordDMO> getAwardRecordForBoss(@Param("params") PromotionAwardReqDTO dto,@Param("page") Pager<PromotionAwardReqDTO> page);
+
+    long getTotalAwardRecordForBoss(@Param("params") PromotionAwardReqDTO dto);
 }

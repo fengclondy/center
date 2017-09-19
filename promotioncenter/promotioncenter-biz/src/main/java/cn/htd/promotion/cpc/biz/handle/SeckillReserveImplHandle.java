@@ -53,7 +53,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			seckillInfoReqDTO.setSeckillLockNo(lockNo);
 			// 保存秒杀操作日志
 			this.setTimelimitedLog(seckillInfoReqDTO, Constants.SECKILL_RESERVE);
-		} else if (StringUtils.isBlank(reserveResult)) {
+		} else if (StringUtils.isNotBlank(reserveResult)) {
 			String useLogRedisKey = buyerCode + "&" + promotionId;
 			String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 					useLogRedisKey);
@@ -61,11 +61,11 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			if ((StringUtils.isNotBlank(reserveResult)
 					&& timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE))) {
 				throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
-						"买家已参加该秒杀活动不能再次秒杀");
+						"您已参加该秒杀活动不能再次秒杀");
 			}
 		} else {
 			throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
-					"买家已参加该秒杀活动不能再次秒杀");
+					"您已存在秒杀订单，不能继续参与秒杀活动");
 		}
 	}
 

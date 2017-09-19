@@ -78,7 +78,7 @@ public class TimelimitedInfoResDTO implements Serializable  {
      * 促销活动结束时间
      */
     private Date invalidTime;
-    //促销活动展示状态 1：待审核，2：审核通过，3：审核被驳回，4：启用，5：不启用
+    //审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
     private String showStatus;
     
 	//活动信息
@@ -292,6 +292,7 @@ public class TimelimitedInfoResDTO implements Serializable  {
 		this.invalidTime = timelimitedInfo.getInvalidTime();
 		this.promotionId = timelimitedInfo.getPromotionId();
 		this.modifyTime = timelimitedInfo.modifyTime;
+		this.describeContent = timelimitedInfo.getDescribeContent();
 	}
 
 	

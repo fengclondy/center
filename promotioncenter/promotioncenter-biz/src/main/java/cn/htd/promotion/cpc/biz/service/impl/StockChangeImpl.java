@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.service.StockChangeService;
@@ -46,20 +47,31 @@ public abstract class StockChangeImpl implements StockChangeService {
 	@Override
 	public void checkAndChangeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) throws Exception {
 		/* 验空2017-02-13 */
-		ValidateResult validateResult = DTOValidateUtil.validate(seckillInfoReqDTO);
-		if (!validateResult.isPass()) {
-			throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
-					validateResult.getErrorMsg());
+		if (!Constants.SECKILL_DELHASH.equals(seckillInfoReqDTO.getUseType())) {
+			ValidateResult validateResult = DTOValidateUtil.validate(seckillInfoReqDTO);
+			if (!validateResult.isPass()) {
+				throw new PromotionCenterBusinessException(PromotionCenterConst.PARAMETER_ERROR,
+						validateResult.getErrorMsg());
+			}
 		}
 		logger.info("MessageId:{} 调用方法StockChangeImpl.checkAndChangeStock入参{}", JSON.toJSONString(seckillInfoReqDTO));
 		RLock rLock = null;
 		try {
 			RedissonClient redissonClient = redissonClientUtil.getInstance();
-			String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(seckillInfoReqDTO.getPromotionId()); // 竞争资源标志
+			String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + seckillInfoReqDTO.getPromotionId() + seckillInfoReqDTO.getBuyerCode(); // 竞争资源标志
 			rLock = redissonClient.getLock(lockKey);
 			/** 上锁 **/
 			rLock.lock();
-			changeStock(messageId, seckillInfoReqDTO);
+			// 锁定库存操作不需要添加分布式锁
+			 if (Constants.SECKILL_DELHASH.equals(seckillInfoReqDTO.getUseType())) {
+				String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
+						+ seckillInfoReqDTO.getPromotionId();
+				// 删除锁定记录
+				promotionRedisDB.delHash(reserveHashKey, seckillInfoReqDTO.getBuyerCode());
+				// 如果是其他操作需要加锁处理
+			} else {
+				changeStock(messageId, seckillInfoReqDTO);
+			}
 		} finally {
 			/** 释放锁资源 **/
 			if (rLock != null) {
@@ -111,8 +123,8 @@ public abstract class StockChangeImpl implements StockChangeService {
 		String key = buyerCode + "&" + promotionId;
 		String str = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, key);
 		if (StringUtils.isNotBlank(str)) {
-			timelimitedLog = JSON.parseObject(promotionRedisDB
-					.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, seckillInfoReqDTO.getPromotionId()),
+			timelimitedLog = JSON.parseObject(
+					promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG, key),
 					BuyerUseTimelimitedLogDMO.class);
 			log.setSeckillLockNo(timelimitedLog.getSeckillLockNo());
 			log.setUseType(useType);
@@ -127,10 +139,9 @@ public abstract class StockChangeImpl implements StockChangeService {
 		// 秒杀默认一个层级
 		log.setLevelCode("1");
 		log.setPromotionId(seckillInfoReqDTO.getPromotionId());
+		logger.info("秒杀日志打印seckillInfoReqDTO：{},useType{}", JSONObject.toJSONString(seckillInfoReqDTO), useType);
 		// 判断库存是否被释放标志 0：未释放 1：已释放
-		if (Constants.SECKILL_RESERVE.equals(useType)) {
-			log.setHasReleasedStock(0);
-		} else {
+		if (Constants.SECKILL_RELEASE.equals(useType)) {
 			log.setHasReleasedStock(1);
 		}
 		log.setCreateId(seckillInfoReqDTO.getOperaterId());
@@ -150,10 +161,10 @@ public abstract class StockChangeImpl implements StockChangeService {
 		BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
 		logger.info("booean1:{},boolean2:{}", Constants.SECKILL_RESERVE.equals(useType),
 				(StringUtils.isBlank(useLogJsonStr)
-						|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG));
+						|| Constants.HAS_RELEASE_FLAG.equals(String.valueOf(timelimitedLog.getHasReleasedStock()))));
 		// 秒杀履历为空或者秒杀履历为已释放或者已抢到秒杀资格并且没有支付订单
 		if (Constants.SECKILL_RESERVE.equals(useType) && (StringUtils.isBlank(useLogJsonStr)
-				|| timelimitedLog.getHasReleasedStock() == Constants.HAS_RELEASE_FLAG)) {
+				|| Constants.HAS_RELEASE_FLAG.equals(String.valueOf(timelimitedLog.getHasReleasedStock())))) {
 			flag = true;
 			// 存在秒杀履历并且前置操作为锁定库存
 		} else if (Constants.SECKILL_RELEASE.equals(useType) && StringUtils.isNotBlank(useLogJsonStr)) {

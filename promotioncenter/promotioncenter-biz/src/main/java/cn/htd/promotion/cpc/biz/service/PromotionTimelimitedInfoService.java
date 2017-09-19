@@ -9,14 +9,6 @@ import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 public interface PromotionTimelimitedInfoService {
 
-	/**
-	 * 查询活动宣传语
-	 * 
-	 * @param providerSellerCode
-	 *            提供方商家编码
-	 * @return
-	 * @throws Exception
-	 */
 	public List<TimelimitedInfoResDTO> getPromotionTimelimitedInfoByBuyerCode(String messageId,String buyerCode) throws PromotionCenterBusinessException;
 	
 	public List<PromotionSellerDetailDTO> getPromotionSellerDetailDTOByBuyerCode(String promotionId,String buyerCode) throws PromotionCenterBusinessException;

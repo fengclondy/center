@@ -846,5 +846,16 @@ public class DictionaryConst {
     public static final String OPT_PROMOTION_QUANTIFIER_TYPE_PIECE = "PROMOTION_QUANTIFIER_TYPE_PIECE";
     //字典信息-促销活动数值单位类型-概率
     public static final String OPT_PROMOTION_QUANTIFIER_TYPE_PERCENT = "PROMOTION_QUANTIFIER_TYPE_PERCENT";
-    //******************* add by jiangkun on 20170817 for B2C End *******************
+    //******************* add by jiangkun on 20170817 for B2C End *********************
+
+    //******************* add by jiangkun on 20170917 for PromotionCenter Start *******************
+    //字典信息-促销活动类型-限时购
+    public static final String OPT_PROMOTION_TYPE_LIMITED_DISCOUNT = "PROMOTION_TYPE_LIMITED_DISCOUNT";
+    //字典信息-促销活动类型-刮刮卡
+    public static final String OPT_PROMOTION_TYPE_SCRATCH_CARD = "PROMOTION_TYPE_SCRATCH_CARD";
+    //字典信息-支付类型-货到付款
+    public static final String OPT_PAY_TYPE_CASH_ON_DELIVERY = "PAY_TYPE_CASH_ON_DELIVERY";
+    //字典信息-促销活动图片类型-活动底图
+    public static final String OPT_PROMOTION_PRICTURE_TYPE_BACKGROUD = "PROMOTION_PRICTURE_TYPE_BACKGROUD";
+    //******************* add by jiangkun on 20170917 for PromotionCenter End *********************
 }

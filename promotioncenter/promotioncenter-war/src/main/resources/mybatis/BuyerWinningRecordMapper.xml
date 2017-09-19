@@ -24,10 +24,12 @@
     <result column="CHARGE_TELEPHONE" property="chargeTelephone" jdbcType="VARCHAR"/>
     <result column="LOGISTICS_STATUS" property="logisticsStatus" jdbcType="VARCHAR"/>
     <result column="LOGISTICS_COMPANY" property="logisticsCompany" jdbcType="VARCHAR"/>
-    <result column="EFFECTIVE_TIME" property="effectiveTime" jdbcType="VARCHAR"/>
-    <result column="INVALID_TIME" property="invalidTime" jdbcType="VARCHAR"/>
+    <result column="EFFECTIVE_TIME" property="effectiveTime" jdbcType="TIMESTAMP"/>
+    <result column="INVALID_TIME" property="invalidTime" jdbcType="TIMESTAMP"/>
     <result column="LOGISTICS_NO" property="logisticsNo" jdbcType="VARCHAR"/>
     <result column="DEAL_FLAG" property="dealFlag" jdbcType="TINYINT"/>
+    <result column="ORDER_NO" property="orderNo" jdbcType="VARCHAR"/>
+    <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
     <result column="CREATE_ID" property="createId" jdbcType="BIGINT"/>
     <result column="CREATE_NAME" property="createName" jdbcType="VARCHAR"/>
     <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
@@ -107,6 +109,63 @@
     <if test="params.promotionType!=null and params.promotionType!=''">
       and bwr.promotion_type = #{params.promotionType}
     </if>
+    <if test="params.orderStatus!=null and params.orderStatus!=''">
+      and bwr.order_status = #{params.orderStatus}
+    </if>
+    <if test="params.orderNo!=null and params.orderNo!=''">
+      and bwr.order_no = #{params.orderNo}
+    </if>
+  </sql>
+
+  <sql id="awardRecordBoss_mid">
+    <if test="params.promotionId!=null and params.promotionId!=''">
+      and bwr.promotion_id = #{params.promotionId}
+    </if>
+    <if test="params.buyerCode!=null and params.buyerCode!=''">
+      and bwr.buyer_code = #{params.buyerCode}
+    </if>
+    <if test="params.buyerName!=null and params.buyerName!=''">
+      and bwr.buyer_name like concat('%', #{params.buyerName} ,'%')
+    </if>
+    <if test="params.rewardType!=null and params.rewardType!=''">
+      and bwr.reward_type = #{params.rewardType}
+    </if>
+    <if test="params.winningStartTime!=null and params.winningStartTime!=''">
+      and date_format(bwr.winning_time , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.winningEndTime!=null and params.winningEndTime!=''">
+      and date_format(bwr.winning_time , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
+    </if>
+    <if test="params.sellerCode!=null and params.sellerCode!=''">
+      and bwr.seller_code = #{params.sellerCode}
+    </if>
+    <if test="params.promotionName!=null and params.promotionName!=''">
+      and bwr.promotion_name like concat('%', #{params.promotionName} ,'%')
+    </if>
+    <if test="params.rewardName!=null and params.rewardName!=''">
+      and bwr.reward_name like concat('%', #{params.rewardName} ,'%')
+    </if>
+    <if test="params.winnerName!=null and params.winnerName!=''">
+      and bwr.winner_name like concat('%', #{params.winnerName} ,'%')
+    </if>
+    <if test="params.winningContact!=null and params.winningContact!=''">
+      and bwr.winning_contact = #{params.winningContact}
+    </if>
+    <if test="params.buyerTelephone!=null and params.buyerTelephone!=''">
+      and bwr.buyer_telephone = #{params.buyerTelephone}
+    </if>
+    <if test="params.orderNo!=null and params.orderNo!=''">
+      and bwr.order_no = #{params.orderNo}
+    </if>
+    <if test="params.promotionType == '23'">
+      and bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')
+    </if>
+    <if test="params.promotionType == '21'">
+      and bwr.promotion_type = '21'
+    </if>
+    <if test="params.promotionType == '' or params.promotionType == null">
+      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')))
+    </if>
   </sql>
   <!-- mysql 分页 -->
   <sql id="pagination_tail">
@@ -117,7 +176,31 @@
     select
       bwr.*,pi.effective_time,pi.invalid_time
     from buyer_winning_record bwr,promotion_info pi
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id 
+    <include refid="awardRecord_mid"/>
+    order by bwr.winning_time desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+
+  <select id="getAwardRecordForBoss" resultMap="BaseResultMap">
+    select
+    bwr.*,pi.effective_time,pi.invalid_time
+    from buyer_winning_record bwr,promotion_info pi
     where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    <include refid="awardRecordBoss_mid"/>
+    order by bwr.winning_time desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+
+  <select id="getSeckillOrder" resultMap="BaseResultMap">
+    select
+    bwr.*
+    from buyer_winning_record bwr
+    where 1 = 1
     <include refid="awardRecord_mid"/>
     order by bwr.winning_time desc
     <if test="page!=null">
@@ -130,6 +213,22 @@
     count(1)
     from buyer_winning_record bwr,promotion_info pi
     where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    <include refid="awardRecord_mid"/>
+  </select>
+
+  <select id="getTotalAwardRecordForBoss" resultType="java.lang.Long">
+    select
+    count(1)
+    from buyer_winning_record bwr,promotion_info pi
+    where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    <include refid="awardRecordBoss_mid"/>
+  </select>
+
+  <select id="getTotalSeckillOrder" resultType="java.lang.Long">
+    select
+    count(1)
+    from buyer_winning_record bwr
+    where 1 = 1
     <include refid="awardRecord_mid"/>
   </select>
 
@@ -164,6 +263,28 @@
     </set>
     WHERE
     id = #{id}
+  </update>
+
+  <!-- 更新订单物流信息 -->
+  <update id="updateOrderLogisticsInfo" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
+    UPDATE buyer_winning_record
+    <set>
+      <if test="logisticsCompany != null and logisticsCompany != ''">
+        logistics_company = #{logisticsCompany},
+      </if>
+      <if test="logisticsStatus != null and logisticsStatus != ''">
+        logistics_status = #{logisticsStatus},
+      </if>
+      <if test="logisticsNo != null and logisticsNo != ''">
+        logistics_no = #{logisticsNo},
+      </if>
+      order_status = '3',
+      modify_id = #{modifyId},
+      modify_name = #{modifyName},
+      modify_time = #{modifyTime}
+    </set>
+    WHERE
+    order_no = #{orderNo}
   </update>
 
   <insert id="addBuyerWinningRecord" useGeneratedKeys="true" keyProperty="id">
@@ -333,4 +454,162 @@
     WHERE
     id = #{id}
   </update>
+
+  <select id="checkOrder" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_winning_record
+    where order_no = #{orderNo}
+  </select>
+
+  <insert id="insertOrder" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
+    insert into buyer_winning_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rewardName != null and rewardName != ''">
+        reward_name,
+      </if>
+      <if test="awardValue != null and awardValue != ''">
+        award_value,
+      </if>
+      <if test="winningContact != null and winningContact != ''">
+        winning_contact,
+      </if>
+      <if test="belongSuperiorName != null and belongSuperiorName != ''">
+        belong_superior_name,
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        buyer_telephone,
+      </if>
+      <if test="buyerName != null and buyerName != ''">
+        buyer_name,
+      </if>
+      <if test="sellerAddress != null and sellerAddress != ''">
+        seller_address,
+      </if>
+      <if test="winningTime != null">
+        winning_time,
+      </if>
+      <if test="orderStatus != null and orderStatus != ''">
+        order_status,
+      </if>
+      <if test="orderNo != null and orderNo != ''">
+        order_no,
+      </if>
+      <if test="promotionId != null and promotionId != ''">
+        promotion_id,
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code,
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name,
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        promotion_name,
+      </if>
+      REWARD_TYPE,
+      promotion_type,
+      create_time,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+      <if test="rewardName != null and rewardName != ''">
+        #{rewardName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardValue != null and awardValue != ''">
+        #{awardValue,jdbcType=VARCHAR},
+      </if>
+      <if test="winningContact != null and winningContact != ''">
+        #{winningContact,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorName != null and belongSuperiorName != ''">
+        #{belongSuperiorName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        #{buyerTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerName != null and buyerName != ''">
+        #{buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerAddress != null and sellerAddress != ''">
+        #{sellerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="winningTime != null">
+        #{winningTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderStatus != null and orderStatus != ''">
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null and orderNo != ''">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionId != null and promotionId != ''">
+        #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        #{winnerName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        #{promotionName,jdbcType=VARCHAR},
+      </if>
+      '2',
+      '23',
+      now(),
+      now(),
+    </trim>
+  </insert>
+
+  <update id="updateOrder" parameterType="cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO">
+    UPDATE buyer_winning_record
+    <set>
+      <if test="rewardName != null and rewardName != ''">
+        reward_name = #{rewardName},
+      </if>
+      <if test="awardValue != null and awardValue != ''">
+        award_value = #{awardValue},
+      </if>
+      <if test="winningContact != null and winningContact != ''">
+        winning_contact = #{winningContact},
+      </if>
+      <if test="belongSuperiorName != null and belongSuperiorName != ''">
+        belong_superior_name = #{belongSuperiorName},
+      </if>
+      <if test="buyerTelephone != null and buyerTelephone != ''">
+        buyer_telephone = #{buyerTelephone},
+      </if>
+      <if test="buyerName != null and buyerName != ''">
+        buyer_name = #{buyerName},
+      </if>
+      <if test="sellerAddress != null and sellerAddress != ''">
+        seller_address = #{sellerAddress},
+      </if>
+      <if test="winningTime != null">
+        winning_time = #{winningTime},
+      </if>
+      <if test="orderStatus != null and orderStatus != ''">
+        order_status = #{orderStatus},
+      </if>
+      <if test="promotionId != null and promotionId != ''">
+        promotion_id = #{promotionId},
+      </if>
+      <if test="sellerCode != null and sellerCode != ''">
+        seller_code = #{sellerCode},
+      </if>
+      <if test="winnerName != null and winnerName != ''">
+        winner_name = #{winnerName},
+      </if>
+      <if test="promotionName != null and promotionName != ''">
+        promotion_name = #{promotionName},
+      </if>
+      modify_time = now()
+    </set>
+    WHERE
+    order_no = #{orderNo}
+  </update>
+
+
 </mapper>

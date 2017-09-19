@@ -28,4 +28,6 @@ public interface PromotionSellerDetailDAO  extends BaseDAO<PromotionSellerDetail
 
 	List<PromotionSellerDetailDTO> selectByPromotionId(String promotionId);
 	
+	PromotionSellerDetailDTO selectTimelimitedSellerDetail(PromotionSellerDetailDTO record);
+	
 }

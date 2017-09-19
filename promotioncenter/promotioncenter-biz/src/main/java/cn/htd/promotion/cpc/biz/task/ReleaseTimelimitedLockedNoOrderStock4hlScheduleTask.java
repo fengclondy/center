@@ -180,6 +180,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 					String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
 							+ promotionId;
 					String reserveFlag = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+					logger.info("秒杀锁定reserveFlag:{},promotionId{}", reserveFlag, promotionId);
 					if (StringUtils.isNotBlank(reserveFlag)) {
 						skuCount = redisUseLog.getUsedCount();
 						String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
@@ -212,8 +213,9 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 						promotionRedisDB.delHash(reserveHashKey, buyerCode);
 						promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
 								JSON.toJSONString(redisUseLog));
+						logger.info("秒杀锁定useTimelimitedLog:{}", JSONObject.toJSONString(useTimelimitedLog));
+						buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
 					}
-					buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
 				}
 			}
 		} catch (Exception e) {

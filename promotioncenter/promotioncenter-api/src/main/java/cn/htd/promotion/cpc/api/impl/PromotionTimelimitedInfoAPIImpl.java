@@ -1,7 +1,6 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -127,7 +126,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			if (!timelimitedAllDTOList.isEmpty()) {
 				total = timelimitedAllDTOList.size();
 				logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
-				//Collections.sort(timelimitedAllDTOList);
+				// Collections.sort(timelimitedAllDTOList);
 				while (total > count) {
 					if (count >= offset && timelimitedDTOList.size() < rows) {
 						timelimitedDTOList.add(timelimitedAllDTOList.get(count));
@@ -480,6 +479,17 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			result.setErrorMessage(e.getMessage());
 		}
 		return result;
+	}
+
+	@Override
+	public boolean isHasAuthority(String promotionId, String buyerCode) {
+		boolean flag = false;
+		String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_" + promotionId;
+		String reserveResult = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+		if (StringUtils.isNotBlank(reserveResult)) {
+			flag = true;
+		}
+		return flag;
 	}
 
 }

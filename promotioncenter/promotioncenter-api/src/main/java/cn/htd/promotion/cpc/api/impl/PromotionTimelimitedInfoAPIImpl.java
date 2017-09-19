@@ -127,7 +127,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 			if (!timelimitedAllDTOList.isEmpty()) {
 				total = timelimitedAllDTOList.size();
 				logger.info("************ 有效秒杀活动列表总数为: " + total + "************");
-				Collections.sort(timelimitedAllDTOList);
+				//Collections.sort(timelimitedAllDTOList);
 				while (total > count) {
 					if (count >= offset && timelimitedDTOList.size() < rows) {
 						timelimitedDTOList.add(timelimitedAllDTOList.get(count));

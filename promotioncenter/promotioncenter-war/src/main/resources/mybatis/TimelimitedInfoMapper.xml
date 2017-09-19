@@ -546,7 +546,7 @@
         left join promotion_info pi on pi.promotion_id = ti.promotion_id
 		WHERE 1 = 1  
         <include refid="dynamic_fragment_timelimitedInfo"/>
-		ORDER BY ti.modify_time desc 
+		ORDER BY pi.modify_time desc 
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
 

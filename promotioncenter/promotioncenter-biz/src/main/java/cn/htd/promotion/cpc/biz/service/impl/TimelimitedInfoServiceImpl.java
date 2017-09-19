@@ -27,6 +27,7 @@ import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuDescribeDAO;
 import cn.htd.promotion.cpc.biz.dao.TimelimitedSkuPictureDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
@@ -86,6 +87,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
     @Resource
     private PromotionSellerRuleDAO promotionSellerRuleDAO;
+    
+    @Resource
+	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
     
 
     @Override
@@ -455,6 +459,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 		promotionValidDTO.setOperatorId(timelimitedInfoReqDTO.getModifyId());
 		promotionValidDTO.setOperatorName(timelimitedInfoReqDTO.getModifyName());
 		promotionInfoDAO.upDownShelvesTimelimitedInfo(promotionValidDTO);
+		
+		// 更新redis里的上下架状态
+		promotionTimelimitedRedisHandle.updateTimelimitedValidStatus2Redis(promotionId, showStatus);
 		
          } catch (Exception e) {
         	 status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_ERROR;//-1 系统异常

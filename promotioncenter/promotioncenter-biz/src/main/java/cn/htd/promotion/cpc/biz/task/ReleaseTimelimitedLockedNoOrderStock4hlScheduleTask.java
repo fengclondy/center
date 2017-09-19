@@ -46,7 +46,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 	private static final String REDIS_MESSAGE_ID_KEY = "B2B_MIDDLE_MESSAGEID_MSB_SEQ";
 
 	// 默认15分钟未提交的订单释放库存
-	public static final String RELEASE_LOCK_STOCK_TIME = "15";
+	public static final String RELEASE_LOCK_STOCK_TIME = "1";
 
 	/**
 	 * 清除Reids中预锁但是没有提交订单的库存信息的时间间隔(单位：分钟)
@@ -181,10 +181,13 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 							&& seckillLockNo.equals(redisUseLog.getSeckillLockNo())
 							&& reverseStatus.equals(redisUseLog.getUseType())) {
 						skuCount = redisUseLog.getUsedCount();
-						promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId,
-								RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT, skuCount);
-						promotionRedisDB.incrHashBy(RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId,
+						String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+						promotionRedisDB.incrHashBy(timelimitedResultKey,
 								RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, skuCount);
+						promotionRedisDB.incrHashBy(timelimitedResultKey,
+								RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT, -1);
+						promotionRedisDB.incrHashBy(timelimitedResultKey,
+								RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT, -1);
 						// buyerTimelimitedCount = promotionRedisDB.incrHashBy(
 						// RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
 						// buyerCode + "&" + promotionId,

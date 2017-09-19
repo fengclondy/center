@@ -145,6 +145,7 @@
     where 1 = 1
     and a.has_released_stock = 0
     and a.order_no = ''
+    and a.use_type = '1'
     <if test="entity != null">
       and a.use_type = #{entity.useType}
       <![CDATA[ and a.create_time <= date_sub(now(), interval #{entity.releaseStockInterval} minute) ]]>

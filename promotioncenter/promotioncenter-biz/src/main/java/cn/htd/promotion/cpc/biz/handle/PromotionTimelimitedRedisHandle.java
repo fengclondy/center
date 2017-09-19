@@ -75,7 +75,7 @@ public class PromotionTimelimitedRedisHandle {
 	     if(StringUtils.isNotBlank(promotionId) && StringUtils.isNotBlank(showStatus)){
 			 timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
 			 timelimitedInfoDTO = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
-			 timelimitedInfoDTO.setShowStatus(showStatus);
+			 timelimitedInfoDTO.getPromotionExtendInfoDTO().setShowStatus(showStatus);
 	    	 String jsonObj = JSON.toJSONString(timelimitedInfoDTO);
 	    	 promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, timelimitedInfoDTO.getPromotionId(), jsonObj);
 	     }

@@ -147,7 +147,7 @@ public class UpdateTimelimitedStatus4invalidScheduleTask implements IScheduleTas
                     if(status.equals(endStatus) && expireDt.compareTo(promotionInfo.getInvalidTime()) > 0){//活动结束超过24小时需要自动下架
     					timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionInfo.getPromotionId());
     					timelimitedInfoDTO = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
-    					timelimitedInfoDTO.setShowStatus(showStatus);
+    					timelimitedInfoDTO.getPromotionExtendInfoDTO().setShowStatus(showStatus);
     					promotionTimelimitedRedisHandle.saveTimelimitedValidStatus2Redis(timelimitedInfoDTO);
        					promotionInfo.setShowStatus(showStatus);
     					promotionInfoList.add(promotionInfo);	

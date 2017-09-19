@@ -5,6 +5,7 @@ import java.util.Map;
 import cn.htd.promotion.cpc.biz.dmo.WinningRecordResDMO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ScratchCardActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
@@ -13,6 +14,7 @@ import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.ScratchCardActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
@@ -86,4 +88,12 @@ public interface LuckDrawService {
 	 * @return
 	 */
 	public ValidateScratchCardResDTO validateScratchCard(ValidateScratchCardReqDTO requestDTO);
+	
+	/**
+	 * 刮刮乐活动页
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public ScratchCardActivityPageResDTO scratchCardActivityPage(ScratchCardActivityPageReqDTO requestDTO);
 }

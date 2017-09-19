@@ -30,6 +30,7 @@ import cn.htd.promotion.cpc.dto.request.DrawLotteryWinningReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
+import cn.htd.promotion.cpc.dto.request.ScratchCardActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
@@ -43,6 +44,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
+import cn.htd.promotion.cpc.dto.response.ScratchCardActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
@@ -467,8 +469,8 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 		ValidateScratchCardReqDTO requestDTO = new ValidateScratchCardReqDTO();
 		String messageId = "";
 		try {
-			requestDTO = JSON
-					.parseObject(validateScratchCardReqDTOJson,ValidateScratchCardReqDTO.class);
+			requestDTO = JSON.parseObject(validateScratchCardReqDTOJson,
+					ValidateScratchCardReqDTO.class);
 			ValidateResult validateResult = DTOValidateUtil
 					.validate(requestDTO);
 			if (!validateResult.isPass()) {
@@ -478,6 +480,31 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			}
 			messageId = requestDTO.getMessageId();
 			result = luckDrawService.validateScratchCard(requestDTO);
+		} catch (Exception e) {
+			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(result);
+	}
+
+	@Override
+	public String scratchCardActivityPage(
+			String scratchCardActivityPageReqDTOJson) {
+		ScratchCardActivityPageResDTO result = new ScratchCardActivityPageResDTO();
+		ScratchCardActivityPageReqDTO requestDTO = new ScratchCardActivityPageReqDTO();
+		String messageId = "";
+		try {
+			requestDTO = JSON
+					.parseObject(scratchCardActivityPageReqDTOJson,ScratchCardActivityPageReqDTO.class);
+			ValidateResult validateResult = DTOValidateUtil
+					.validate(requestDTO);
+			if (!validateResult.isPass()) {
+				result.setResponseCode(ResultCodeEnum.PARAMETER_ERROR.getCode());
+				result.setResponseMsg(validateResult.getReponseMsg());
+				return JSON.toJSONString(result);
+			}
+			messageId = requestDTO.getMessageId();
+			result = luckDrawService.scratchCardActivityPage(requestDTO);
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));

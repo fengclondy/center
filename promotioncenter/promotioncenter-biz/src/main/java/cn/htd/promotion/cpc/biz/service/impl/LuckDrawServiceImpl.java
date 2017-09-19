@@ -44,6 +44,7 @@ import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ScratchCardActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
@@ -56,6 +57,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+import cn.htd.promotion.cpc.dto.response.ScratchCardActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
@@ -788,6 +790,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			ValidateScratchCardReqDTO requestDTO) {
 		String messageId = requestDTO.getMessageId();
 		ValidateScratchCardResDTO result = new ValidateScratchCardResDTO();
+		PromotionExtendInfoDTO promotionInfoDTO = null;
+		Map<String, String> dictMap = null;
 		try {
 			result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
@@ -802,7 +806,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 						.getMsg());
 				return result;
 			}
+			//校验
+			promotionLotteryCommonService.checkScratchCardValid(
+					promotionInfoDTO, requestDTO, dictMap);
+			
 			result.setPromotionId(promotionId);
+		} catch (PromotionCenterBusinessException pcbe) {
+			result.setResponseCode(pcbe.getCode());
+			result.setResponseMsg(pcbe.getMessage());
 		} catch (Exception e) {
 			result.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			result.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -811,5 +822,12 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					messageId, ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
+	}
+
+	@Override
+	public ScratchCardActivityPageResDTO scratchCardActivityPage(
+			ScratchCardActivityPageReqDTO requestDTO) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

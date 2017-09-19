@@ -204,6 +204,9 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 						redisUseLog.setModifyTime(new Date());
 						promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 								buyerCode + "&" + promotionId);
+						String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
+								+ promotionId;
+						promotionRedisDB.delHash(reserveHashKey, buyerCode);
 						promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
 								JSON.toJSONString(redisUseLog));
 					}

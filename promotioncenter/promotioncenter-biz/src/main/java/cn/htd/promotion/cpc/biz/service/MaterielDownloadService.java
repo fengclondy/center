@@ -40,4 +40,6 @@ public interface MaterielDownloadService {
 	 */
 	public List<ActivityPictureInfoResDTO> selectMaterielDownload(ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
 			Pager<ActivityPictureInfoResDTO> pager);
+
+	public ActivityPictureInfoResDTO delMaterielDownload(String activityPictureInfoReqID);
 }

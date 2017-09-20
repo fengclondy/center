@@ -72,4 +72,11 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		return JSON.toJSONString(activityPictureInfoResDTO);
 	}
 
+	@Override
+	public String delMaterielDownload(String activityPictureInfoReqID) {
+		ActivityPictureInfoResDTO activityPictureInfoResDTO = materielDownloadService
+				.delMaterielDownload(activityPictureInfoReqID);
+		return JSON.toJSONString(activityPictureInfoResDTO);
+	}
+
 }

@@ -21,7 +21,14 @@ public interface MaterielDownloadAPI {
 	 * @param activityPictureInfoReqDTO
 	 * @return
 	 */
-	public String viewMaterielDownload(String activityPictureInfoReqDTO);
+	public String viewMaterielDownload(String activityPictureInfoReqID);
+	
+	/**
+	 * 删除
+	 * @param activityPictureInfoReqDTO
+	 * @return
+	 */
+	public String delMaterielDownload(String activityPictureInfoReqID);
 
 	/**
 	 * 一览

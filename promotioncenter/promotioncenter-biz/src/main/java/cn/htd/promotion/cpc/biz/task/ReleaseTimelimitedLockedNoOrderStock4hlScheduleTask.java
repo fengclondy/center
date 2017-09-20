@@ -170,51 +170,58 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 					rLock = redissonClient.getLock(lockKey);
 					/** 上锁 **/
 					rLock.lock();
-					useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
-							buyerCode + "&" + promotionId);
-					redisUseLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
-					if (redisUseLog == null) {
-						buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
-						continue;
-					}
-					String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
-							+ promotionId;
-					String reserveFlag = promotionRedisDB.getHash(reserveHashKey, buyerCode);
-					logger.info("秒杀锁定reserveFlag:{},promotionId{}", reserveFlag, promotionId);
-					if (StringUtils.isNotBlank(reserveFlag)) {
-						skuCount = redisUseLog.getUsedCount();
-						String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-						promotionRedisDB.incrHashBy(timelimitedResultKey,
-								RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, skuCount);
-						promotionRedisDB.incrHashBy(timelimitedResultKey,
-								RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT, -1);
-						promotionRedisDB.incrHashBy(timelimitedResultKey,
-								RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT, -1);
-						// buyerTimelimitedCount = promotionRedisDB.incrHashBy(
-						// RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
-						// buyerCode + "&" + promotionId,
-						// skuCount * -1);
-						// if (buyerTimelimitedCount < 0) {
-						// promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
-						// buyerCode + "&" + promotionId, "0");
-						// }
-						// 该秒杀活动对应库存队列
-						String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_"
-								+ promotionId;
-						for (int i = 0; i < skuCount; i++) {
-							// 释放库存则往队列插入一个请求
-							promotionRedisDB.rpush(timeLimitedQueueKey, promotionId);
-						}
-						redisUseLog.setUseType(releaseStatus);
-						redisUseLog.setModifyTime(new Date());
-						promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
+					try {
+						useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 								buyerCode + "&" + promotionId);
-
-						promotionRedisDB.delHash(reserveHashKey, buyerCode);
-						promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
-								JSON.toJSONString(redisUseLog));
-						logger.info("秒杀锁定useTimelimitedLog:{}", JSONObject.toJSONString(useTimelimitedLog));
-						buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
+						redisUseLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
+						if (redisUseLog == null) {
+							buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
+							continue;
+						}
+						String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
+								+ promotionId;
+						String reserveFlag = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+						logger.info("秒杀锁定reserveFlag:{},promotionId{}", reserveFlag, promotionId);
+						if (StringUtils.isNotBlank(reserveFlag)) {
+							skuCount = redisUseLog.getUsedCount();
+							String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+							promotionRedisDB.incrHashBy(timelimitedResultKey,
+									RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT, skuCount);
+							promotionRedisDB.incrHashBy(timelimitedResultKey,
+									RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT, -1);
+							promotionRedisDB.incrHashBy(timelimitedResultKey,
+									RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT, -1);
+							// buyerTimelimitedCount = promotionRedisDB.incrHashBy(
+							// RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
+							// buyerCode + "&" + promotionId,
+							// skuCount * -1);
+							// if (buyerTimelimitedCount < 0) {
+							// promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_COUNT,
+							// buyerCode + "&" + promotionId, "0");
+							// }
+							// 该秒杀活动对应库存队列
+							String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_"
+									+ promotionId;
+							for (int i = 0; i < skuCount; i++) {
+								// 释放库存则往队列插入一个请求
+								promotionRedisDB.rpush(timeLimitedQueueKey, promotionId);
+							}
+							redisUseLog.setUseType(releaseStatus);
+							redisUseLog.setModifyTime(new Date());
+							promotionRedisDB.delHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
+									buyerCode + "&" + promotionId);
+	
+							promotionRedisDB.delHash(reserveHashKey, buyerCode);
+							promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
+									JSON.toJSONString(redisUseLog));
+							logger.info("秒杀锁定useTimelimitedLog:{}", JSONObject.toJSONString(useTimelimitedLog));
+							buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
+						}
+					} finally {
+						/** 释放锁资源 **/
+						if (rLock != null) {
+							rLock.unlock();
+						}
 					}
 				}
 			}
@@ -222,14 +229,9 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 			result = false;
 			logger.error("\n 方法:[{}],异常:[{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
 					ExceptionUtils.getStackTraceAsString(e));
-		} finally {
-			logger.info("\n 方法:[{}],出参:[{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
-					JSONObject.toJSONString(result));
-			/** 释放锁资源 **/
-			if (rLock != null) {
-				rLock.unlock();
-			}
 		}
+		logger.info("\n 方法:[{}],出参:[{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
+				JSONObject.toJSONString(result));
 		return result;
 	}
 

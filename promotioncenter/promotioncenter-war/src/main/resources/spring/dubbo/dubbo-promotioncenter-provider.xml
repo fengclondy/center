@@ -28,4 +28,7 @@
   <!--秒杀接口PC-->
   <dubbo:service interface="cn.htd.promotion.cpc.api.TimelimitedInfoAPI" ref="timelimitedInfoAPI"
                  version="${dubbo.version}" timeout="${dubbo.timeout}"/>              
+   <!--物料下载接口-->
+   <dubbo:service interface="cn.htd.promotion.cpc.api.MaterielDownloadAPI" ref="materielDownloadAPI"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 </beans>

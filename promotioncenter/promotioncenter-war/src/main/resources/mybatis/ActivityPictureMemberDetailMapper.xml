@@ -24,6 +24,13 @@
     from activity_picture_member_detail
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
+  <select id="selectByPictureId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from activity_picture_member_detail
+    where picture_id = #{pictureId,jdbcType=VARCHAR} and delete_flag=0
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from activity_picture_member_detail
     where id = #{id,jdbcType=BIGINT}
@@ -38,12 +45,9 @@
       #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
       #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO" >
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO" >
     insert into activity_picture_member_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="pictureId != null" >
         picture_id,
       </if>
@@ -76,9 +80,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="pictureId != null" >
         #{pictureId,jdbcType=VARCHAR},
       </if>
@@ -161,4 +162,12 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <update id="deleteByPictureId" parameterType="java.lang.String" >
+    update activity_picture_member_detail
+    set delete_flag = 1
+    where picture_id = #{pictureId,jdbcType=VARCHAR}
+  </update>
+  
+  
 </mapper>

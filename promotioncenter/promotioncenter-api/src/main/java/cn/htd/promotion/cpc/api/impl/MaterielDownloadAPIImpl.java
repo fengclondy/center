@@ -1,16 +1,16 @@
 package cn.htd.promotion.cpc.api.impl;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.MaterielDownloadAPI;
 import cn.htd.promotion.cpc.biz.service.MaterielDownloadService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
@@ -67,7 +67,7 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 				ActivityPictureInfoReqDTO.class);
 		Pager<ActivityPictureInfoResDTO> page = JSON.parseObject(pager, Pager.class);
 
-		List<ActivityPictureInfoResDTO> activityPictureInfoResDTO = materielDownloadService
+		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
 				.selectMaterielDownload(activityPictureInfoReq, page);
 		return JSON.toJSONString(activityPictureInfoResDTO);
 	}

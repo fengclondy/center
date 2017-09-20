@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import cn.htd.common.dao.orm.BaseDAO;
@@ -19,4 +21,8 @@ public interface ActivityPictureMemberDetailDAO extends BaseDAO<ActivityPictureM
     int updateByPrimaryKeySelective(ActivityPictureMemberDetailReqDTO record);
 
     int updateByPrimaryKey(ActivityPictureMemberDetailReqDTO record);
+
+	void deleteByPictureId(String pictureId);
+
+	List<ActivityPictureMemberDetailResDTO> selectByPictureId(String pictureId);
 }

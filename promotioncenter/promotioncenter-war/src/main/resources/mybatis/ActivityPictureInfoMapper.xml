@@ -30,10 +30,58 @@
     from activity_picture_info
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByPictureId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from activity_picture_info
+    where picture_id = #{pictureId}
+  </select>
+  
+  <select id=selectMaterielDownloadListCount resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select count(*)
+    from activity_picture_info
+    where delete_flag = 0
+  	<if test="dto.pictureName != null" >
+        and picture_name = #{dto.pictureName,jdbcType=VARCHAR}
+      </if>
+      <if test="dto.pictureType != null" >
+        and picture_type = #{dto.pictureType,jdbcType=VARCHAR}
+      </if>
+      <if test="dto.isVip != null" >
+        is_vip = #{dto.isVip,jdbcType=TINYINT}
+      </if>
+  </select>
+  
+  <select id="selectMaterielDownloadList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from activity_picture_info
+    where delete_flag = 0
+  	<if test="dto.pictureName != null" >
+        and picture_name = #{dto.pictureName,jdbcType=VARCHAR}
+      </if>
+      <if test="dto.pictureType != null" >
+        and picture_type = #{dto.pictureType,jdbcType=VARCHAR}
+      </if>
+      <if test="dto.isVip != null" >
+        is_vip = #{dto.isVip,jdbcType=TINYINT}
+      </if>
+      order by id desc
+      <if test="pager!=null">
+	   limit #{pager.pageOffset} , #{pager.rows}
+	</if>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from activity_picture_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
+  <update id="deleteByPictureId" parameterType="java.lang.String" >
+    update activity_picture_info
+    set delete_flag = 1
+    where picture_id = #{pictureId,jdbcType=VARCHAR}
+  </update>
+  
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
     insert into activity_picture_info (id, picture_id, picture_name, 
       picture_type, effective_time, invalid_time, 
@@ -48,12 +96,9 @@
       #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
       #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
     insert into activity_picture_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="pictureId != null" >
         picture_id,
       </if>
@@ -101,9 +146,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="pictureId != null" >
         #{pictureId,jdbcType=VARCHAR},
       </if>
@@ -151,7 +193,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
+  <update id="update" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
     update activity_picture_info
     <set >
       <if test="pictureId != null" >

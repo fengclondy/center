@@ -1,8 +1,8 @@
 package cn.htd.promotion.cpc.biz.service;
 
-import java.util.List;
-
+import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 
@@ -38,7 +38,7 @@ public interface MaterielDownloadService {
 	 * @param pager
 	 * @return
 	 */
-	public List<ActivityPictureInfoResDTO> selectMaterielDownload(ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
+	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownload(ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
 			Pager<ActivityPictureInfoResDTO> pager);
 
 	public ActivityPictureInfoResDTO delMaterielDownload(String activityPictureInfoReqID);

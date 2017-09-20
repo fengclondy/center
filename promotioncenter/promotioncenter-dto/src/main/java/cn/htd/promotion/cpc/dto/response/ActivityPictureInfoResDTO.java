@@ -3,8 +3,6 @@ package cn.htd.promotion.cpc.dto.response;
 import java.util.Date;
 import java.util.List;
 
-import cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO;
-
 public class ActivityPictureInfoResDTO  extends GenricResDTO  {
     /**
 	 * 
@@ -43,14 +41,14 @@ public class ActivityPictureInfoResDTO  extends GenricResDTO  {
 
     private Date modifyTime;
     
-    private List<ActivityPictureMemberDetailReqDTO> activityPictureMemberDetailList;
+    private List<ActivityPictureMemberDetailResDTO> activityPictureMemberDetailList;
     
-    public List<ActivityPictureMemberDetailReqDTO> getActivityPictureMemberDetailList() {
+    public List<ActivityPictureMemberDetailResDTO> getActivityPictureMemberDetailList() {
 		return activityPictureMemberDetailList;
 	}
 
 	public void setActivityPictureMemberDetailList(
-			List<ActivityPictureMemberDetailReqDTO> activityPictureMemberDetailList) {
+			List<ActivityPictureMemberDetailResDTO> activityPictureMemberDetailList) {
 		this.activityPictureMemberDetailList = activityPictureMemberDetailList;
 	}
     public Long getId() {

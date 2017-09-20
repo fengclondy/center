@@ -36,18 +36,6 @@ public class ScratchCardActivityPageReqDTO extends GenricReqDTO{
      */
     @NotEmpty(message = "promotionId不能为空")
     private String promotionId;
-    
-    /**
-	 * 订单金额
-	 */
-	@NotNull(message = "orderAmount不能为空")
-	private BigDecimal orderAmount;
-	
-	/**
-	 * 支付方式
-	 */
-	@NotEmpty(message = "payType不能为空")
-	private String payType;
 	
 	/**
 	 * 老的粉丝id
@@ -85,22 +73,6 @@ public class ScratchCardActivityPageReqDTO extends GenricReqDTO{
 
 	public void setPromotionId(String promotionId) {
 		this.promotionId = promotionId;
-	}
-
-	public BigDecimal getOrderAmount() {
-		return orderAmount;
-	}
-
-	public void setOrderAmount(BigDecimal orderAmount) {
-		this.orderAmount = orderAmount;
-	}
-
-	public String getPayType() {
-		return payType;
-	}
-
-	public void setPayType(String payType) {
-		this.payType = payType;
 	}
 
 	public String getOldMemberNo() {

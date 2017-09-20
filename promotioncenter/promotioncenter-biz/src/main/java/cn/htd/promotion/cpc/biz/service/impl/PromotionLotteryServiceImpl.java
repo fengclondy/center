@@ -237,6 +237,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setChargeTelephone(requestDTO.getChargeTelephone());
         winningRecordDTO.setCreateId(0L);
         winningRecordDTO.setCreateName(requestDTO.getBuyerName());
+        winningRecordDTO.setOrderNo(ticket);
         promotionRedisDB
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
         //如果是扭蛋就删除抽奖结果key，如果是刮刮乐就不删除，等刮刮乐活动结束用定时任务删除

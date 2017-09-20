@@ -295,7 +295,7 @@
       <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
       	#{isOrderAmountLimit,jdbcType=TINYINT},
       </if>
-      <if test="orderAmountThreshold != null and orderAmountThresholdg != ''">
+      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
       	#{orderAmountThreshold,jdbcType=TINYINT},
       </if>
       <if test="isDailyWinningLimit != null">

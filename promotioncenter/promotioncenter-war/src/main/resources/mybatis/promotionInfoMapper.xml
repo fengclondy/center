@@ -375,7 +375,10 @@
 	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5) as winningNum,
 	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5 and to_days(bw.winning_time) = to_days(now())) as winningTodayNum,
 	a.modify_time
-	FROM promotion_info a WHERE a.promotion_type = '21'
+	FROM promotion_info a WHERE 1=1 
+	<if test="entity.promotionType != null and entity.	promotionType != ''">
+	and  a.promotion_type = #{entity.promotionType}
+	</if>
 	<if test="entity.promotionName != null and entity.promotionName != ''">
 	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>

@@ -54,6 +54,9 @@ public enum ResultCodeEnum {
     LOTTERY_ORDER_HAD_LUCK_DRAW("26217","抱歉，这笔订单您已经刮过奖啦~请重新下单刮奖~"),
     LOTTERY_BUYER_ORDER_DISSATISFACTION_PAY_TYPE("26218","该笔订单的支付方式不满足刮奖条件"),
     LOTTERY_BUYER_ORDER_DISSATISFACTION_AMOUNT("26219","该笔订单的支付金额不满足刮奖条件"),
+    
+    //此错误码写在此处目的是给promotiongateway用，防止返回码重复
+    NOT_FOUND_HUI_LIN_ORDER_INFO("26220","根据交易流水号没有找到汇林订单相关信息");
     ;
 
     private ResultCodeEnum(String code, String msg) {

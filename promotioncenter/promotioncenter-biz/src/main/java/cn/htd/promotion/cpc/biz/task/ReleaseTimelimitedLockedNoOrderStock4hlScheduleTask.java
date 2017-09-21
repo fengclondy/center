@@ -145,7 +145,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 	 */
 	@Override
 	public boolean execute(BuyerUseTimelimitedLogDMO[] tasks, String ownSign) throws Exception {
-		logger.info("\n 方法:[{}],入参:[{}][{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
+		logger.debug("\n 方法:[{}],入参:[{}][{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
 				JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
 		boolean result = true;
 		String reverseStatus = Constants.SECKILL_RESERVE;
@@ -181,7 +181,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 						String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
 								+ promotionId;
 						String reserveFlag = promotionRedisDB.getHash(reserveHashKey, buyerCode);
-						logger.info("秒杀锁定reserveFlag:{},promotionId{}", reserveFlag, promotionId);
+						logger.debug("秒杀锁定reserveFlag:{},promotionId{}", reserveFlag, promotionId);
 						if (StringUtils.isNotBlank(reserveFlag)) {
 							skuCount = redisUseLog.getUsedCount();
 							String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
@@ -214,7 +214,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 							promotionRedisDB.delHash(reserveHashKey, buyerCode);
 							promotionRedisDB.tailPush(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG,
 									JSON.toJSONString(redisUseLog));
-							logger.info("秒杀锁定useTimelimitedLog:{}", JSONObject.toJSONString(useTimelimitedLog));
+							logger.debug("秒杀锁定useTimelimitedLog:{}", JSONObject.toJSONString(useTimelimitedLog));
 							buyerUseTimelimitedLogDAO.updateTimelimitedReleaseStockStatus(useTimelimitedLog);
 						}
 					} finally {
@@ -230,7 +230,7 @@ public class ReleaseTimelimitedLockedNoOrderStock4hlScheduleTask
 			logger.error("\n 方法:[{}],异常:[{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
 					ExceptionUtils.getStackTraceAsString(e));
 		}
-		logger.info("\n 方法:[{}],出参:[{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
+		logger.debug("\n 方法:[{}],出参:[{}]", "ReleaseTimelimitedLockedNoOrderStockScheduleTask-execute",
 				JSONObject.toJSONString(result));
 		return result;
 	}

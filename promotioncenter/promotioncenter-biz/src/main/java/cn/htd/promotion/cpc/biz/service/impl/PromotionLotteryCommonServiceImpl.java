@@ -174,6 +174,7 @@ public class PromotionLotteryCommonServiceImpl implements
 						+ promotionId);
 		if (Integer.parseInt(lotteryTimesInfoMap
 				.get(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT)) <= 0) {
+			logger.info("调用方法PromotionLotteryCommonServiceImpl.checkBuyerPromotionLotteryValid结果为抽奖活动目前奖品数量不足");
 			throw new PromotionCenterBusinessException(
 					ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
 					"抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
@@ -444,6 +445,7 @@ public class PromotionLotteryCommonServiceImpl implements
 				RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
 			promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_"
 					+ promotionId, RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT);
+			logger.info("调用方法PromotionLotteryCommonServiceImpl.drawLotteryAward结果为抽奖活动目前奖品数量不足");
 			throw new PromotionCenterBusinessException(
 					ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
 					"抽奖活动编号:" + promotionId + " 抽奖活动目前奖品数量不足");
@@ -523,6 +525,7 @@ public class PromotionLotteryCommonServiceImpl implements
 		lotteryKey = RedisConst.REDIS_LOTTERY_AWARD_PREFIX + promotionId + "_"
 				+ goalAccuDTO.getLevelCode();
 		awardJsonStr = promotionRedisDB.headPop(lotteryKey);
+		logger.info("执行抽奖逻辑，从redis-key:{}对列中获得的value为:{}",lotteryKey,awardJsonStr);
 		return JSON.parseObject(awardJsonStr, BuyerWinningRecordDTO.class);
 	}
 

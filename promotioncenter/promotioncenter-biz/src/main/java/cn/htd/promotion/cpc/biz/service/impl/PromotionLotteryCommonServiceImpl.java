@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
+import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum.PaymentMethodEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -27,10 +30,12 @@ import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 
 import com.alibaba.fastjson.JSON;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -292,8 +297,35 @@ public class PromotionLotteryCommonServiceImpl implements
 							.getCode(), "粉丝当日抽奖次数已用完 入参:"
 							+ JSON.toJSONString(requestDTO));
 		}
-		//TODO 下单支付方式验证
-		//TODO 下单金额验证
+		//下单支付方式验证
+		String payType = requestDTO.getPayType();
+		List<PromotionConfigureDTO> promotionConfigureList = promotionInfoDTO.getPromotionConfigureList();
+		boolean flag = false;
+		if(!CollectionUtils.isEmpty(promotionConfigureList)){
+			for(PromotionConfigureDTO promotionConfigure : promotionConfigureList){
+				if(PromotionConfigureEnum.PAYMENT_METHOD.key().equals(promotionConfigure.getConfType())){
+					if(payType.equals(promotionConfigure.getConfValue())){
+						flag = true;
+						break;
+					}
+				}
+			}
+		}
+		if(!flag){
+			throw new PromotionCenterBusinessException(
+					ResultCodeEnum.LOTTERY_BUYER_ORDER_DISSATISFACTION_PAY_TYPE
+							.getCode(), "该笔订单的支付方式不满足刮奖条件 入参:"
+							+ JSON.toJSONString(requestDTO));
+		}
+		if(YesNoEnum.YES.getValue() == promotionInfoDTO.getIsOrderAmountLimit().intValue()){
+			BigDecimal orderAmount = requestDTO.getOrderAmount();
+			if(orderAmount.compareTo(promotionInfoDTO.getOrderAmountThreshold())<0){
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.LOTTERY_BUYER_ORDER_DISSATISFACTION_AMOUNT
+								.getCode(), "该该笔订单的支付金额不满足刮奖条件 入参:"
+								+ JSON.toJSONString(requestDTO));
+			}
+		}
 		return true;
 	}
 

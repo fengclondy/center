@@ -52,6 +52,8 @@ public enum ResultCodeEnum {
     LOTTERY_BUYER_CURRENT_DAY_NO_MORE_DRAW_CHANCE("26215", "粉丝当日抽奖次数已用完"),
     LOTTERY_BUYER_NOT_HAVE_QUALIFICATIONS("26216","还没有刮奖资格哦，赶紧下单来刮奖吧！"),
     LOTTERY_ORDER_HAD_LUCK_DRAW("26217","抱歉，这笔订单您已经刮过奖啦~请重新下单刮奖~"),
+    LOTTERY_BUYER_ORDER_DISSATISFACTION_PAY_TYPE("26218","该笔订单的支付方式不满足刮奖条件"),
+    LOTTERY_BUYER_ORDER_DISSATISFACTION_AMOUNT("26219","该笔订单的支付金额不满足刮奖条件"),
     ;
 
     private ResultCodeEnum(String code, String msg) {

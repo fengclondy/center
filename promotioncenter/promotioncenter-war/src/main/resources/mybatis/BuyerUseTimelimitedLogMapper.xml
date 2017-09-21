@@ -147,7 +147,7 @@
     and a.has_released_stock = 0
     and a.order_no = ''
     and a.use_type = '1'
-    and a.create_time <= date_sub(now(), interval 1 minute) 
+    and a.create_time <= date_sub(now(), interval 10 second) 
     order by a.id desc
      ]]>
   </select>

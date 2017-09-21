@@ -52,7 +52,7 @@ public interface MaterielDownloadService {
 	 * @param pager
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(MemberActivityPictureReqDTO memberActivityPictureReqDTO, Pager<MemberActivityPictureReqDTO> pager);
+	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(MemberActivityPictureReqDTO memberActivityPictureReqDTO);
 	
 	/**
 	 * 物料历史记录删除

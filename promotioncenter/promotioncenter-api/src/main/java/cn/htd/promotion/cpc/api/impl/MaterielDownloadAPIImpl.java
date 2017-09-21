@@ -82,10 +82,10 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 	}
 
 	@Override
-	public String selectMemberActivityPicture(
-			String memberActivityPictureReqDTO, String pager) {
+	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
+			String memberActivityPictureReqDTO, String messageID) {
 		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO, MemberActivityPictureReqDTO.class);
-		Pager<MemberActivityPictureReqDTO> page = JSON.parseObject(pager, Pager.class);
+		
 		// 输入DTO的验证
 		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
 		// 有错误信息时返回错误信息
@@ -93,9 +93,9 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 					validateResult.getErrorMsg());
 		}
-		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService.selectMemberActivityPicture(memberActivityPictureReq, page);
+		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService.selectMemberActivityPicture(memberActivityPictureReq);
 		
-		return JSON.toJSONString(memberActivityPictureResDTO);
+		return memberActivityPictureResDTO;
 	}
 
 	@Override

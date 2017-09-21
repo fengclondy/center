@@ -1,5 +1,9 @@
 package cn.htd.promotion.cpc.api;
 
+import cn.htd.common.DataGrid;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
+
 public interface MaterielDownloadAPI {
 
 	/**
@@ -44,7 +48,7 @@ public interface MaterielDownloadAPI {
 	 * @param pager
 	 * @return
 	 */
-	public String selectMemberActivityPicture(String memberActivityPictureReqDTO, String pager);
+	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(String memberActivityPictureReqDTO,String messageID);
 	
 	/**
 	 * 物料历史记录删除

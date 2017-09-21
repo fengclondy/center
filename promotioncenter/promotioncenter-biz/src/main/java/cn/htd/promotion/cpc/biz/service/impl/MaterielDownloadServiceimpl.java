@@ -27,6 +27,7 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
+import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
 import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
@@ -209,17 +210,12 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 
 	@Override
 	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
-			MemberActivityPictureReqDTO memberActivityPictureReqDTO,
-			Pager<MemberActivityPictureReqDTO> pager) {
-		if(pager==null) {
-			pager = new Pager<MemberActivityPictureReqDTO>();
-		}
-		if (pager.getPage() < 1) {
-			pager.setPage(1);
-		}
-		if (pager.getRows() < 1) {
-			pager.setRows(10);
-		}
+			MemberActivityPictureReqDTO memberActivityPictureReqDTO) {
+        //分页
+        Pager<MemberActivityPictureReqDTO> pager = new Pager<MemberActivityPictureReqDTO>();
+        pager.setPage(memberActivityPictureReqDTO.getPage());
+        pager.setRows(memberActivityPictureReqDTO.getPageSize());
+
 		DataGrid<MemberActivityPictureResDTO> dataGrid = new DataGrid<MemberActivityPictureResDTO>();
 		List<MemberActivityPictureResDTO> resList = new ArrayList<MemberActivityPictureResDTO>();
 		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> result = new ExecuteResult<DataGrid<MemberActivityPictureResDTO>>();
@@ -230,6 +226,9 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			dataGrid.setTotal(pCount);
 			result.setResult(dataGrid);
 		} catch (Exception e) {
+            StringWriter w = new StringWriter();
+            e.printStackTrace(new PrintWriter(w));
+			logger.error("MessageId:{} 调用方法MaterielDownloadServiceimpl.selectMemberActivityPicture出现异常 request：{}异常信息：{}",w.toString());
 			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}

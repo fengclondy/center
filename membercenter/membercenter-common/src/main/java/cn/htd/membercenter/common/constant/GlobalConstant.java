@@ -64,6 +64,7 @@ public class GlobalConstant {
 	public static final String VERIFY_STATUS_WAIT = "1";// 待审核状态
 	public static final String VERIFY_STATUS_REFUZE = "3";// 审核驳回
 	public static final String VERIFY_STATUS_ACCESS = "2";// 审核通过
+	public static final String VERIFY_STATUS_STOP = "4";// 审核通过
 	public static final String DEFAULT_MEMBER_COOPERATE = "0801";// 默认供应商
 
 	public static final String DEFAULT_ERP_AREA_CODE = "90010101";// 默认ERP地区代码

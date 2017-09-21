@@ -553,7 +553,9 @@ public class MemberModifyVerifyServiceImpl implements MemberModifyVerifyService 
 				String afterChangeDesc = "";
 				if (GlobalConstant.VERIFY_STATUS_ACCESS.equals(dto.getVerifyStatus())) {
 					afterChangeDesc = "审核通过";
-				} else {
+				} else if(GlobalConstant.VERIFY_STATUS_STOP.equals(dto.getVerifyStatus())){
+					 afterChangeDesc = "审核终止";
+				}else {
 					afterChangeDesc = "审核驳回";
 				}
 				verDto.setAfterChangeDesc(afterChangeDesc);
@@ -590,7 +592,16 @@ public class MemberModifyVerifyServiceImpl implements MemberModifyVerifyService 
 					saveBelongBoxRelation(dto);
 
 				}
-
+				//add by lijun for 非会员增加终止功能 start
+				else if(GlobalConstant.VERIFY_STATUS_STOP.equals(dto.getVerifyStatus())){
+						MemberBaseInfoDTO oldDto = memberBaseOperationDAO.getMemberBaseInfoById(dto.getId(),GlobalConstant.IS_BUYER);
+						dto.setCompanyName(oldDto.getCompanyName() + "终止");
+						dto.setArtificialPersonMobile(oldDto.getArtificialPersonMobile() + "终止");
+						dto.setBuyerSellerType(GlobalConstant.IS_BUYER);
+						memberBaseOperationDAO.updateMemberCompanyInfo(dto);
+				}
+				memberBaseOperationDAO.updateMemberIsvalid(dto);
+				//add by lijun for 非会员增加终止功能 end
 				rs.setResult(true);
 				rs.setResultMessage("success");
 			} else {

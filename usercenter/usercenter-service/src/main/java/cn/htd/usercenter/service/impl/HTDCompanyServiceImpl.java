@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,35 @@ public class HTDCompanyServiceImpl implements HTDCompanyService {
         }
         return rs;
     }
+
+	@Override
+	public ExecuteResult<List<String>> selectSubCompaniesByParentName(
+			String name) {
+		ExecuteResult<List<String>> result=new ExecuteResult<List<String>>();
+		if(StringUtils.isEmpty(name)){
+			result.setResultMessage("name为空");
+			result.setCode("0");
+			return result;
+		}
+		List<String>  subComCodeList=hTDCompanyDAO.querySubCompaniesByParentName(name);
+		result.setCode("1");
+		result.setResult(subComCodeList);
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<List<HTDCompanyDTO>> selectParentNameBySubCode(List<String> subComCodeList) {
+		 ExecuteResult<List<HTDCompanyDTO>> result= new  ExecuteResult<List<HTDCompanyDTO>>();
+		if(CollectionUtils.isEmpty(subComCodeList)){
+			result.setResultMessage("subComCodeList为空");
+			result.setCode("0");
+			return result;
+		}
+		List<HTDCompanyDTO>  resultList=hTDCompanyDAO.queryParentNameBySubCode(subComCodeList);
+		result.setCode("1");
+		result.setResult(resultList);
+		return result;
+	}
 
 
 }

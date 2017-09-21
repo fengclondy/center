@@ -904,7 +904,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					.getRedisLotteryInfo(promotionId, dictMap);
 			promotionLotteryCommonService.checkScratchCardValid(
 					promotionInfoDTO, requestDTO, dictMap);
-			
+			result.setOrgId(requestDTO.getOrgId());
 			result.setPromotionId(promotionId);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setResponseCode(pcbe.getCode());

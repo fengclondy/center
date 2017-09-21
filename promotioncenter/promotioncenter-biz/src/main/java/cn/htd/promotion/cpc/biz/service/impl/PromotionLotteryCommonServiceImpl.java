@@ -277,6 +277,13 @@ public class PromotionLotteryCommonServiceImpl implements
 			ValidateScratchCardReqDTO requestDTO, Map<String, String> dictMap) {
 		String buyerCode = requestDTO.getMemberNo();
 		String promotionId = promotionInfoDTO.getPromotionId();
+		//验证从汇林查出的粉丝号和前台传入的是否是一个值，防止有人篡改
+		if(!requestDTO.getMemberNo().equals(requestDTO.getOldMemberNo())){
+			throw new PromotionCenterBusinessException(
+					ResultCodeEnum.LOTTERY_MEMBER_NO_VALIDATE_FAIL.getCode(),
+					"前台传入的和从汇林查出的不是同一个粉丝号 入参:" + JSON.toJSONString(requestDTO));
+		}
+		
 		//验证会员店是否参与本次抽奖活动
 		if (!baseService.checkPromotionSellerRule(promotionInfoDTO,
 				requestDTO.getOrgId(), dictMap)) {

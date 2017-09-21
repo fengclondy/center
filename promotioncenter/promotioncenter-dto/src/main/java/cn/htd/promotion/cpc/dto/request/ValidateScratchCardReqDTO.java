@@ -42,6 +42,11 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
      */
     @NotEmpty(message = "卖家编码不能为空")
     private String orgId;
+    
+    /**
+	 * 订单号对应的粉丝id
+	 */
+	private String oldMemberNo;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -82,4 +87,13 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 	public void setOrgId(String orgId) {
 		this.orgId = orgId;
 	}
+
+	public String getOldMemberNo() {
+		return oldMemberNo;
+	}
+
+	public void setOldMemberNo(String oldMemberNo) {
+		this.oldMemberNo = oldMemberNo;
+	}
+	
 }

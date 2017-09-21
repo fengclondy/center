@@ -899,6 +899,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				return result;
 			}
 			//校验
+			dictMap = baseService.initPromotionDictMap();
+			promotionInfoDTO = promotionLotteryCommonService
+					.getRedisLotteryInfo(promotionId, dictMap);
 			promotionLotteryCommonService.checkScratchCardValid(
 					promotionInfoDTO, requestDTO, dictMap);
 			

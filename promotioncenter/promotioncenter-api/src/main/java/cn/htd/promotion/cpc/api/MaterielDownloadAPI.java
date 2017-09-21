@@ -38,4 +38,19 @@ public interface MaterielDownloadAPI {
 	 */
 	public String selectMaterielDownload(String activityPictureInfoReqDTO, String pager);
 
+	/**
+	 * 物料历史记录查询
+	 * @param memberActivityPictureReqDTO
+	 * @param pager
+	 * @return
+	 */
+	public String selectMemberActivityPicture(String memberActivityPictureReqDTO, String pager);
+	
+	/**
+	 * 物料历史记录删除
+	 * @param memberActivityPictureReqDTO
+	 * @param pager
+	 * @return
+	 */
+	public String delMemberActivityPictureById(String memberActivityPictureReqDTO);
 }

@@ -35,6 +35,10 @@ public class MemberActivityPictureReqDTO  extends GenricReqDTO {
     private String modifyName;
 
     private Date modifyTime;
+    
+    private String createStartTime;
+    
+    private String createEndTime;
 
     public Long getId() {
         return id;
@@ -147,4 +151,21 @@ public class MemberActivityPictureReqDTO  extends GenricReqDTO {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	public String getCreateStartTime() {
+		return createStartTime;
+	}
+
+	public void setCreateStartTime(String createStartTime) {
+		this.createStartTime = createStartTime;
+	}
+
+	public String getCreateEndTime() {
+		return createEndTime;
+	}
+
+	public void setCreateEndTime(String createEndTime) {
+		this.createEndTime = createEndTime;
+	}
+    
 }

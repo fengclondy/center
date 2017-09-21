@@ -14,7 +14,9 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
+import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
 
 public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 
@@ -77,6 +79,38 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		ActivityPictureInfoResDTO activityPictureInfoResDTO = materielDownloadService
 				.delMaterielDownload(activityPictureInfoReqID);
 		return JSON.toJSONString(activityPictureInfoResDTO);
+	}
+
+	@Override
+	public String selectMemberActivityPicture(
+			String memberActivityPictureReqDTO, String pager) {
+		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO, MemberActivityPictureReqDTO.class);
+		Pager<MemberActivityPictureReqDTO> page = JSON.parseObject(pager, Pager.class);
+		// 输入DTO的验证
+		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
+		// 有错误信息时返回错误信息
+		if (validateResult.isHasErrors()) {
+			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+					validateResult.getErrorMsg());
+		}
+		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService.selectMemberActivityPicture(memberActivityPictureReq, page);
+		
+		return JSON.toJSONString(memberActivityPictureResDTO);
+	}
+
+	@Override
+	public String delMemberActivityPictureById(String memberActivityPictureReqDTO) {
+		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO, MemberActivityPictureReqDTO.class);
+		// 输入DTO的验证
+		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
+		MemberActivityPictureResDTO memberActivityPictureResDTO = new MemberActivityPictureResDTO();
+		// 有错误信息时返回错误信息
+		if (validateResult.isHasErrors()) {
+			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+					validateResult.getErrorMsg());
+		}
+		memberActivityPictureResDTO = materielDownloadService.delMemberActivityPicture(memberActivityPictureReq.getId());
+		return JSON.toJSONString(memberActivityPictureResDTO);
 	}
 
 }

@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -31,5 +32,7 @@ public interface ActivityPictureInfoDAO extends BaseDAO<ActivityPictureInfoReqDT
 	List<ActivityPictureInfoResDTO> selectMaterielDownloadList(@Param("dto") ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
 			@Param("pager") Pager<ActivityPictureInfoResDTO> pager);
 
-	Long selectMaterielDownloadListCount(ActivityPictureInfoReqDTO activityPictureInfoReqDTO);
+	Long selectMaterielDownloadListCount(@Param("dto") ActivityPictureInfoReqDTO activityPictureInfoReqDTO);
+
+	List<ActivityPictureInfoResDTO> selectMaterielDownloadByMemberCode(Map<String, String> map);
 }

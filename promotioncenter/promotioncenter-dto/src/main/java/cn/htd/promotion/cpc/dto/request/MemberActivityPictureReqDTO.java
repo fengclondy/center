@@ -40,6 +40,11 @@ public class MemberActivityPictureReqDTO  extends GenricReqDTO {
     
     private String createEndTime;
 
+    //用于分页
+    private Integer page;
+
+    private Integer pageSize;
+    
     public Long getId() {
         return id;
     }
@@ -166,6 +171,22 @@ public class MemberActivityPictureReqDTO  extends GenricReqDTO {
 
 	public void setCreateEndTime(String createEndTime) {
 		this.createEndTime = createEndTime;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
 	}
     
 }

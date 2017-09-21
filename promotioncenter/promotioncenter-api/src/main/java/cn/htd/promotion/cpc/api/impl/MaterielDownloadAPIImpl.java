@@ -2,6 +2,8 @@ package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 
 import cn.htd.common.DataGrid;
@@ -18,6 +20,7 @@ import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
 
+@Service("materielDownloadAPI")
 public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 
 	@Resource
@@ -82,9 +85,9 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 	}
 
 	@Override
-	public String selectMemberActivityPicture(
-			String memberActivityPictureReqDTO, String pager) {
-		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO, MemberActivityPictureReqDTO.class);
+	public String selectMemberActivityPicture(String memberActivityPictureReqDTO, String pager) {
+		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO,
+				MemberActivityPictureReqDTO.class);
 		Pager<MemberActivityPictureReqDTO> page = JSON.parseObject(pager, Pager.class);
 		// 输入DTO的验证
 		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
@@ -93,14 +96,16 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 					validateResult.getErrorMsg());
 		}
-		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService.selectMemberActivityPicture(memberActivityPictureReq, page);
-		
+		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService
+				.selectMemberActivityPicture(memberActivityPictureReq, page);
+
 		return JSON.toJSONString(memberActivityPictureResDTO);
 	}
 
 	@Override
 	public String delMemberActivityPictureById(String memberActivityPictureReqDTO) {
-		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO, MemberActivityPictureReqDTO.class);
+		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO,
+				MemberActivityPictureReqDTO.class);
 		// 输入DTO的验证
 		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
 		MemberActivityPictureResDTO memberActivityPictureResDTO = new MemberActivityPictureResDTO();
@@ -109,8 +114,15 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
 					validateResult.getErrorMsg());
 		}
-		memberActivityPictureResDTO = materielDownloadService.delMemberActivityPicture(memberActivityPictureReq.getId());
+		memberActivityPictureResDTO = materielDownloadService
+				.delMemberActivityPicture(memberActivityPictureReq.getId());
 		return JSON.toJSONString(memberActivityPictureResDTO);
+	}
+
+	public String selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid) {
+		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
+				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid);
+		return JSON.toJSONString(activityPictureInfoResDTO);
 	}
 
 }

@@ -40,8 +40,8 @@ public interface MaterielDownloadService {
 	 * @param pager
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownload(ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
-			Pager<ActivityPictureInfoResDTO> pager);
+	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownload(
+			ActivityPictureInfoReqDTO activityPictureInfoReqDTO, Pager<ActivityPictureInfoResDTO> pager);
 
 	public ActivityPictureInfoResDTO delMaterielDownload(String activityPictureInfoReqID);
 	
@@ -61,4 +61,6 @@ public interface MaterielDownloadService {
 	 * @return
 	 */
 	public MemberActivityPictureResDTO delMemberActivityPicture(Long id);
+
+	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid);
 }

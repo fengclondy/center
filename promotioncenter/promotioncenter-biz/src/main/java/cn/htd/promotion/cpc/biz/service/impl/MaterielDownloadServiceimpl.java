@@ -3,7 +3,11 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -43,7 +47,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 
 	@Resource
 	private ActivityPictureMemberDetailDAO activityPictureMemberDetailDAO;
-	
+
 	@Resource
 	private MemberActivityPictureDAO memberActivityPictureDAO;
 
@@ -59,6 +63,15 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			String aid = noGenerator.generatePromotionId(ptype);
 			rt.setPictureId(aid);
 			activityPictureInfoReqDTO.setPictureId(aid);
+			Date itime = activityPictureInfoReqDTO.getInvalidTime();
+			if (itime != null) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(itime);
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				activityPictureInfoReqDTO.setInvalidTime(cal.getTime());
+			}
 			activityPictureInfoDAO.add(activityPictureInfoReqDTO);
 
 			if (activityPictureInfoReqDTO.getIsVip() == 0) {
@@ -97,6 +110,15 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			ActivityPictureInfoResDTO old = activityPictureInfoDAO.selectByPictureId(aid);
 			if (old != null) {
 				activityPictureInfoReqDTO.setId(old.getId());
+				Date itime = activityPictureInfoReqDTO.getInvalidTime();
+				if (itime != null) {
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(itime);
+					cal.set(Calendar.HOUR_OF_DAY, 23);
+					cal.set(Calendar.MINUTE, 59);
+					cal.set(Calendar.SECOND, 59);
+					activityPictureInfoReqDTO.setInvalidTime(cal.getTime());
+				}
 				activityPictureInfoDAO.update(activityPictureInfoReqDTO);
 
 				if (activityPictureInfoReqDTO.getIsVip() == 0) {
@@ -156,9 +178,9 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownload(ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
-			Pager<ActivityPictureInfoResDTO> pager) {
-		if(pager==null) {
+	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownload(
+			ActivityPictureInfoReqDTO activityPictureInfoReqDTO, Pager<ActivityPictureInfoResDTO> pager) {
+		if (pager == null) {
 			pager = new Pager<ActivityPictureInfoResDTO>();
 		}
 		if (pager.getPage() < 1) {
@@ -171,13 +193,12 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 		List<ActivityPictureInfoResDTO> resList = new ArrayList<ActivityPictureInfoResDTO>();
 		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> result = new ExecuteResult<DataGrid<ActivityPictureInfoResDTO>>();
 		try {
-			resList = activityPictureInfoDAO
-					.selectMaterielDownloadList(activityPictureInfoReqDTO, pager);
-			Long pCount = activityPictureInfoDAO
-					.selectMaterielDownloadListCount(activityPictureInfoReqDTO);
+			resList = activityPictureInfoDAO.selectMaterielDownloadList(activityPictureInfoReqDTO, pager);
+			Long pCount = activityPictureInfoDAO.selectMaterielDownloadListCount(activityPictureInfoReqDTO);
 			dataGrid.setRows(resList);
 			dataGrid.setTotal(pCount);
 			result.setResult(dataGrid);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
@@ -209,9 +230,8 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 
 	@Override
 	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
-			MemberActivityPictureReqDTO memberActivityPictureReqDTO,
-			Pager<MemberActivityPictureReqDTO> pager) {
-		if(pager==null) {
+			MemberActivityPictureReqDTO memberActivityPictureReqDTO, Pager<MemberActivityPictureReqDTO> pager) {
+		if (pager == null) {
 			pager = new Pager<MemberActivityPictureReqDTO>();
 		}
 		if (pager.getPage() < 1) {
@@ -229,6 +249,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			dataGrid.setRows(resList);
 			dataGrid.setTotal(pCount);
 			result.setResult(dataGrid);
+
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
@@ -241,25 +262,47 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 		MemberActivityPictureResDTO memberActivityPictureResDTO = new MemberActivityPictureResDTO();
 		try {
 			int delNum = memberActivityPictureDAO.deleteByPrimaryKey(id);
-			if(delNum == 1){
+			if (delNum == 1) {
 				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getMsg());
-			}else{
+			} else {
 				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
 				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.ERROR.getMsg());
-	            logger.error("MessageId:{} 调用方法MaterielDownloadServiceimpl.delMemberActivityPicture出现异常 request：{}异常信息：{}","id:", id,"没有删除或删除多条");
+				logger.error(
+						"MessageId:{} 调用方法MaterielDownloadServiceimpl.delMemberActivityPicture出现异常 request：{}异常信息：{}",
+						"id:", id, "没有删除或删除多条");
 			}
-			
+
 		} catch (Exception e) {
 			memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.ERROR.getMsg());
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
-            logger.error("MessageId:{} 调用方法MaterielDownloadServiceimpl.delMemberActivityPicture出现异常 request：{}异常信息：{}","id:", id, w.toString());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			logger.error("MessageId:{} 调用方法MaterielDownloadServiceimpl.delMemberActivityPicture出现异常 request：{}异常信息：{}",
+					"id:", id, w.toString());
 		}
 		return null;
 	}
 
-
+	@Override
+	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode,
+			String pictureType, String messageid) {
+		DataGrid<ActivityPictureInfoResDTO> dataGrid = new DataGrid<ActivityPictureInfoResDTO>();
+		List<ActivityPictureInfoResDTO> resList = new ArrayList<ActivityPictureInfoResDTO>();
+		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> result = new ExecuteResult<DataGrid<ActivityPictureInfoResDTO>>();
+		try {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("memberCode", memberCode);
+			map.put("pictureType", pictureType);
+			resList = activityPictureInfoDAO.selectMaterielDownloadByMemberCode(map);
+			dataGrid.setRows(resList);
+			result.setResult(dataGrid);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
 
 }

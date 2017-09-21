@@ -37,7 +37,7 @@
     where picture_id = #{pictureId}
   </select>
   
-  <select id=selectMaterielDownloadListCount resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectMaterielDownloadListCount" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
     select count(*)
     from activity_picture_info
     where delete_flag = 0
@@ -52,7 +52,7 @@
       </if>
   </select>
   
-  <select id="selectMaterielDownloadList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectMaterielDownloadList" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
     select 
     <include refid="Base_Column_List" />
     from activity_picture_info
@@ -263,4 +263,20 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <select id="selectMaterielDownloadByMemberCode" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from activity_picture_info a
+	left join
+	activity_picture_member_detail b
+	on a.picture_id=b.picture_id and b.delete_flag=0
+	where a.picture_type=#{pictureType,jdbcType=VARCHAR}
+	and a.delete_flag=0
+	and (now() BETWEEN a.effective_time and a.invalid_time)
+	and (a.is_vip=1 or
+	b.member_code=#{memberCode,jdbcType=VARCHAR}
+	)
+  </select>
+  
 </mapper>

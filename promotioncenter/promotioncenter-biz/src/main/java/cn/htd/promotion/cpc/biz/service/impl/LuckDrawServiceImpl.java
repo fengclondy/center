@@ -935,7 +935,9 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			request.setPromotionId(promotionId);
 			request.setMessageId(messageId);
 			result = this.lotteryActivityPage(request);
-			
+			if(!ResultCodeEnum.SUCCESS.getCode().equals(result.getResponseCode())){
+				return result;
+			}
 			//判断是不是同一个人
 			String oldMemberNo = requestDTO.getOldMemberNo();
 			if (!oldMemberNo.equals(memberNo)) {

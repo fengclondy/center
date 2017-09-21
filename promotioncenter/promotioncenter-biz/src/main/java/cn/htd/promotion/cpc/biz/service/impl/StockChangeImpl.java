@@ -54,16 +54,19 @@ public abstract class StockChangeImpl implements StockChangeService {
 						validateResult.getErrorMsg());
 			}
 		}
-		logger.info("MessageId:{} 调用方法StockChangeImpl.checkAndChangeStock入参{}", JSON.toJSONString(seckillInfoReqDTO));
+		logger.info("MessageId:{}加分布式锁并调用方法StockChangeImpl.checkAndChangeStock入参{}",
+				JSON.toJSONString(seckillInfoReqDTO));
 		RLock rLock = null;
 		try {
 			RedissonClient redissonClient = redissonClientUtil.getInstance();
-			String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + seckillInfoReqDTO.getPromotionId() + seckillInfoReqDTO.getBuyerCode(); // 竞争资源标志
+			String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + seckillInfoReqDTO.getPromotionId()
+					+ seckillInfoReqDTO.getBuyerCode(); // 竞争资源标志
+			logger.info("MessageId:{}执行分布式锁开始时间：{}", messageId, System.currentTimeMillis());
 			rLock = redissonClient.getLock(lockKey);
 			/** 上锁 **/
 			rLock.lock();
 			// 锁定库存操作不需要添加分布式锁
-			 if (Constants.SECKILL_DELHASH.equals(seckillInfoReqDTO.getUseType())) {
+			if (Constants.SECKILL_DELHASH.equals(seckillInfoReqDTO.getUseType())) {
 				String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_"
 						+ seckillInfoReqDTO.getPromotionId();
 				// 删除锁定记录
@@ -77,6 +80,7 @@ public abstract class StockChangeImpl implements StockChangeService {
 			if (rLock != null) {
 				rLock.unlock();
 			}
+			logger.info("MessageId:{}执行分布式锁释放时间：{}", messageId, System.currentTimeMillis());
 		}
 	}
 

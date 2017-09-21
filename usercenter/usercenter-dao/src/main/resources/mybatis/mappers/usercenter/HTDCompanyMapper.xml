@@ -130,4 +130,8 @@
 		)
     </select>
     
+    <select id="querySubCompaniesCodeByName" parameterType="string" resultType="string">
+    select company_id from  htd_company where name like concat(#{name}, '%') and type=2
+    </select>
+    
 </mapper>

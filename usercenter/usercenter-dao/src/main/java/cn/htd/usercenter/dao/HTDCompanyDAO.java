@@ -25,4 +25,6 @@ public interface HTDCompanyDAO extends BaseDAO<HTDCompanyDTO> {
     public List<String> querySubCompaniesByParentName(@Param("name")  String name);
     
     public List<HTDCompanyDTO> queryParentNameBySubCode(List<String> list);
+    
+    public List<String> querySubCompaniesCodeByName(@Param("name")  String name);
 }

@@ -77,5 +77,19 @@ public class HTDCompanyServiceImpl implements HTDCompanyService {
 		return result;
 	}
 
+	@Override
+	public ExecuteResult<List<String>> selectSubCompaniesCodeByName(String name) {
+		ExecuteResult<List<String>> result=new ExecuteResult<List<String>>();
+		if(StringUtils.isEmpty(name)){
+			result.setResultMessage("name为空");
+			result.setCode("0");
+			return result;
+		}
+		List<String>  subComCodeList=hTDCompanyDAO.querySubCompaniesCodeByName(name);
+		result.setCode("1");
+		result.setResult(subComCodeList);
+		return result;
+	}
+
 
 }

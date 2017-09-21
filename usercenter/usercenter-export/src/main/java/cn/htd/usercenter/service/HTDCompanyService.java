@@ -33,5 +33,13 @@ public interface HTDCompanyService {
 	   * @return
 	   */
 	  public ExecuteResult<List<HTDCompanyDTO>> selectParentNameBySubCode(List<String> subComCodeList);
+	  
+	  /**
+	   * 根据平台公司名称模糊查询编码
+	   * 
+	   * @param name
+	   * @return
+	   */
+	  public ExecuteResult<List<String>> selectSubCompaniesCodeByName(String name);
 
 }

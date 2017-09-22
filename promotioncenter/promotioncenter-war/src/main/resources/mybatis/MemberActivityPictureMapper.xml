@@ -196,7 +196,7 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-<select id="selectList" resultMap="BaseResultMap" parameterType="java.lang.String">
+<select id="selectMemberActivityPictureList" resultMap="BaseResultMap" parameterType="java.lang.String">
 select 
 <include refid="Base_Column_List" />
 FROM member_activity_picture
@@ -222,7 +222,7 @@ WHERE 1=1
 </select>
 
 
-<select id="queryCount" resultMap="BaseResultMap" parameterType="java.lang.String">
+<select id="selectMemberActivityPictureCount" resultMap="BaseResultMap" parameterType="java.lang.String">
 select count(1)
 FROM member_activity_picture
 WHERE 1=1 

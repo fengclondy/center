@@ -22,13 +22,14 @@ import org.im4java.core.Info;
 import org.im4java.core.InfoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import cn.htd.common.util.OssUploadUtils;
 import cn.htd.promotion.cpc.biz.service.BaseImageMagickService;
 import cn.htd.promotion.cpc.dto.request.BaseImageDTO;
 import cn.htd.promotion.cpc.dto.request.BaseImageSubDTO;
-
+@Service("baseImageMagickService")
 public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 
 	private static final Logger logger = LoggerFactory.getLogger(BaseImageMagickServiceImpl.class);

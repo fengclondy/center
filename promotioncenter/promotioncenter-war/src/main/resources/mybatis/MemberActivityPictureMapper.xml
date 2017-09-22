@@ -222,7 +222,7 @@ WHERE 1=1
 </select>
 
 
-<select id="selectMemberActivityPictureCount" resultMap="BaseResultMap" parameterType="java.lang.String">
+<select id="selectMemberActivityPictureCount" resultType="java.lang.Long" parameterType="java.lang.String">
 select count(1)
 FROM member_activity_picture
 WHERE 1=1 

@@ -28,5 +28,5 @@ public interface MemberActivityPictureDAO extends BaseDAO<MemberActivityPictureR
 	List<MemberActivityPictureResDTO> selectMemberActivityPictureList(@Param("entity") MemberActivityPictureReqDTO memberActivityPictureReqDTO,
 			@Param("pager") Pager<MemberActivityPictureReqDTO> pager);
 	
-	Long selectMemberActivityPictureCount(MemberActivityPictureReqDTO memberActivityPictureReqDTO);
+	Long selectMemberActivityPictureCount(@Param("entity") MemberActivityPictureReqDTO memberActivityPictureReqDTO);
 }

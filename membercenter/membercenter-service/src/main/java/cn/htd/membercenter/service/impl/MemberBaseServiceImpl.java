@@ -418,14 +418,14 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 	}
 
 	@Override
-	public ExecuteResult<List<String>> queryMmeberComCodeList(String name) {
-		ExecuteResult<List<String>> result=new ExecuteResult<List<String>>();
+	public ExecuteResult<List<MemberBaseInfoDTO>> queryMmeberComCodeList(String name) {
+		ExecuteResult<List<MemberBaseInfoDTO>> result=new ExecuteResult<List<String>>();
 		if(StringUtils.isEmpty(name)){
 			result.setCode("0");
 			result.setResultMessage("name为空");
 			return result;
 		}
-		List<String> resultList=memberBaseOperationDAO.queryMmeberComCodeList(name);
+		List<MemberBaseInfoDTO> resultList=memberBaseOperationDAO.queryMmeberComCodeList(name);
 		result.setCode("1");
 		result.setResult(resultList);
 		return result;

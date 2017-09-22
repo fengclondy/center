@@ -276,5 +276,5 @@ public interface MemberBaseOperationDAO {
 	
 	public SellerInfoDTO querySellerInfoBySellerId(@Param("sellerId") Long sellerId);
 	
-	public List<String> queryMmeberComCodeList(@Param("name") String name);
+	public List<MemberBaseInfoDTO> queryMmeberComCodeList(@Param("name") String name);
 }

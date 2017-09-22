@@ -1724,6 +1724,7 @@ and b.customer_manager_code = #{customerManagerID}
 		select truncate(ifnull(sum(order_total_amount),0),2) as amount, order_no as orderNo,DATE_FORMAT(create_time,'%Y-%m-%d') as day
 		from trade_orders where order_status in ('30','311','312','32','33','40','50','60','61','62','70')
 		and buyer_code=#{memberCode}
+		 and is_cancel_order=0
 		and create_time between DATE_FORMAT(#{startDate},'%Y-%m-%d 00:00:00') and DATE_FORMAT(#{endDate},'%Y-%m-%d 23:59:59')
 		group by DATE_FORMAT(create_time,'%Y-%m-%d')
 		order by create_time desc
@@ -1732,12 +1733,14 @@ and b.customer_manager_code = #{customerManagerID}
 	<select id="queryTotalOrderAmountByMemberCode" parameterType="cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO" resultType="String">
 		select truncate(ifnull(sum(order_total_amount),0),2)
 		from trade_orders where order_status in ('30','311','312','32','33','40','50','60','61','62','70')
+		 and is_cancel_order=0
 		and buyer_code=#{memberCode}
 	</select>
 
 	<select id="queryMonthOrderAmountByMemberCode" resultType="String">
 		select truncate(ifnull(sum(order_total_amount),0),2)
 		from trade_orders where order_status in ('30','311','312','32','33','40','50','60','61','62','70')
+		 and is_cancel_order=0
 		and buyer_code=#{memberCode}
 		and create_time between DATE_FORMAT(#{startDate},'%Y-%m-%d 00:00:00') and DATE_FORMAT(#{endDate},'%Y-%m-%d 23:59:59')
 	</select>

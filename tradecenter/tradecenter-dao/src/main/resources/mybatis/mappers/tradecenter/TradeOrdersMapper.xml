@@ -206,6 +206,10 @@
 	  <if test="entity.isErrorFlag != null and entity.isErrorFlag == 1 ">
 	    <![CDATA[ and order_error_status <> '' ]]>
 	  </if>
+	  <if test="entity.thirdCategoryId != null and entity.thirdCategoryId != ''">
+	  		and exists (select distinct(s.order_no) from trade_order_items s 
+			where order_no = s.order_no and s.third_category_id = #{entity.thirdCategoryId})
+	  </if>
     </if>
   </sql>
   <select id="queryTradeOrderByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >

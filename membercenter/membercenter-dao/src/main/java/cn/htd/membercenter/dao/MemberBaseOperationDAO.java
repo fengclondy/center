@@ -275,4 +275,6 @@ public interface MemberBaseOperationDAO {
 	public MemberBaseInfoRegisterDTO queryVerifyStatus(@Param("memberId") Long memberId);
 	
 	public SellerInfoDTO querySellerInfoBySellerId(@Param("sellerId") Long sellerId);
+	
+	public List<String> queryMmeberComCodeList(@Param("name") String name);
 }

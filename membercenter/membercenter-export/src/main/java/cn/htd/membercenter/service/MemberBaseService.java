@@ -1,11 +1,13 @@
 package cn.htd.membercenter.service;
 
-import cn.htd.membercenter.domain.MemberExtendInfo;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.membercenter.domain.MemberExtendInfo;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 
 public interface MemberBaseService {
@@ -116,4 +118,6 @@ public interface MemberBaseService {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> updateCompanyTime(String loginId);
+	
+	public ExecuteResult<List<String>> queryMmeberComCodeList(String name);
 }

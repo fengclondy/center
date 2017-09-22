@@ -1627,4 +1627,10 @@
 			on mb.id=mc.member_id and mc.buyer_seller_type=2
 			where mb.is_seller='1' and member_id=#{sellerId}
 	</select>
+	
+	<select id="queryMmeberComCodeList" resultType="String" parameterType="String">
+		select company_code from member_company_info where buyer_seller_type=1 
+		and company_name
+		like concat(#{name},'%')
+	</select>
 </mapper>

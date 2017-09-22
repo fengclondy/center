@@ -1632,6 +1632,7 @@
 		select
 			mc.company_name as companyName,
 			mc.id as companyId,
+			mc.company_code companyCode,
 			m.cur_belong_seller_id as curBelongSellerId,
 		    mc2.company_name as curBelongCompanyName
 		from member_base_info m

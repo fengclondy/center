@@ -48,7 +48,7 @@
         and picture_type = #{dto.pictureType,jdbcType=VARCHAR}
       </if>
       <if test="dto.isVip != null" >
-        is_vip = #{dto.isVip,jdbcType=TINYINT}
+        and is_vip = #{dto.isVip,jdbcType=TINYINT}
       </if>
   </select>
   
@@ -64,7 +64,7 @@
         and picture_type = #{dto.pictureType,jdbcType=VARCHAR}
       </if>
       <if test="dto.isVip != null" >
-        is_vip = #{dto.isVip,jdbcType=TINYINT}
+        and is_vip = #{dto.isVip,jdbcType=TINYINT}
       </if>
       order by id desc
       <if test="pager!=null">

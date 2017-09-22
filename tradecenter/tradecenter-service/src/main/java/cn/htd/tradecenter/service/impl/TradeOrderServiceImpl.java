@@ -1756,10 +1756,10 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                 throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_IS_VMS_ADDED,
                         "订单编号:" + orderNo + " 是VMS新增订单不能议价");
             }
-            if (YesNoEnum.YES.getValue() == orderDTO.getIsChangePrice()) {
-                throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_HAS_NEGOTIATION,
-                        "订单编号:" + orderNo + " 已议价过不能再次议价");
-            }
+//            if (YesNoEnum.YES.getValue() == orderDTO.getIsChangePrice()) {
+//                throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_HAS_NEGOTIATION,
+//                        "订单编号:" + orderNo + " 已议价过不能再次议价");
+//            }
             if (YesNoEnum.YES.getValue() == orderDTO.getIsTimelimitedOrder()) {
                 throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_IS_TIMELIMITED_ERROR,
                         "订单编号:" + orderNo + " 秒杀订单不可修改");

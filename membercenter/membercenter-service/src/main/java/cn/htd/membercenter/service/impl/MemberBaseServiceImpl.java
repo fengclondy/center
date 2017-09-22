@@ -419,7 +419,7 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 
 	@Override
 	public ExecuteResult<List<MemberBaseInfoDTO>> queryMmeberComCodeList(String name) {
-		ExecuteResult<List<MemberBaseInfoDTO>> result=new ExecuteResult<List<String>>();
+		ExecuteResult<List<MemberBaseInfoDTO>> result=new ExecuteResult<List<MemberBaseInfoDTO>>();
 		if(StringUtils.isEmpty(name)){
 			result.setCode("0");
 			result.setResultMessage("name为空");

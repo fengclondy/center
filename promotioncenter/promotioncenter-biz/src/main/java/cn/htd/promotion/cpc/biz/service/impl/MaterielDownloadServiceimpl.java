@@ -31,7 +31,6 @@ import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
-import cn.htd.promotion.cpc.dto.request.PromotionAwardReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
 import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
@@ -75,7 +74,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			}
 			activityPictureInfoDAO.add(activityPictureInfoReqDTO);
 
-			if (activityPictureInfoReqDTO.getIsVip() == 0) {
+			if (activityPictureInfoReqDTO.getIsVip() == 2) {
 				List<ActivityPictureMemberDetailReqDTO> pdlist = activityPictureInfoReqDTO
 						.getActivityPictureMemberDetailList();
 				for (ActivityPictureMemberDetailReqDTO activityPictureMemberDetailReqDTO : pdlist) {
@@ -122,7 +121,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 				}
 				activityPictureInfoDAO.update(activityPictureInfoReqDTO);
 
-				if (activityPictureInfoReqDTO.getIsVip() == 0) {
+				if (activityPictureInfoReqDTO.getIsVip() == 2) {
 					List<ActivityPictureMemberDetailReqDTO> pdlist = activityPictureInfoReqDTO
 							.getActivityPictureMemberDetailList();
 					activityPictureMemberDetailDAO.deleteByPictureId(aid);
@@ -157,7 +156,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			rt = activityPictureInfoDAO.selectByPictureId(activityPictureInfoId);
 			if (rt != null) {
 
-				if (rt.getIsVip() == 0) {
+				if (rt.getIsVip() == 2) {
 					List<ActivityPictureMemberDetailResDTO> pdlist = activityPictureMemberDetailDAO
 							.selectByPictureId(rt.getPictureId());
 					rt.setActivityPictureMemberDetailList(pdlist);

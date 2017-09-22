@@ -47,7 +47,7 @@
       <if test="dto.pictureType != null" >
         and picture_type = #{dto.pictureType,jdbcType=VARCHAR}
       </if>
-      <if test="dto.isVip != null" >
+      <if test="dto.isVip != null and dto.isVip !='' " >
         is_vip = #{dto.isVip,jdbcType=TINYINT}
       </if>
   </select>

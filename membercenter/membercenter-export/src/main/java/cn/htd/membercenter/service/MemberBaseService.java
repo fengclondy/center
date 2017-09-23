@@ -124,4 +124,6 @@ public interface MemberBaseService {
 	
 	public ExecuteResult<List<MemberBaseDTO>> queryMemberComCodeListByMemberId(List<String> memberIdList);
 	
+	public ExecuteResult<List<MemberBaseInfoDTO>>  queryMmeberInfoByLittleMemberComCode(List<String> comCodeList);
+	
 }

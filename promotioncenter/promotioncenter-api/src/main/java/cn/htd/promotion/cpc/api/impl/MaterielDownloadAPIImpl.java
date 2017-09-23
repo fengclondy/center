@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.api.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -116,7 +118,7 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 	}
 
 	public String selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid) {
-		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
+		ExecuteResult<List<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
 				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid);
 		return JSON.toJSONString(activityPictureInfoResDTO);
 	}

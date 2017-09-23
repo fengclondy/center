@@ -105,7 +105,7 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 	}
 
 	@Override
-	public String delMemberActivityPictureById(String memberActivityPictureReqDTO,String messageID) {
+	public String delMemberActivityPictureById(String memberActivityPictureReqDTO) {
 		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO,
 				MemberActivityPictureReqDTO.class);
 		// 输入DTO的验证

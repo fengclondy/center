@@ -72,5 +72,5 @@ public interface MaterielDownloadAPI {
 	 * @param pager
 	 * @return
 	 */
-	public String delMemberActivityPictureById(String memberActivityPictureReqDTO,String messageID);
+	public String delMemberActivityPictureById(String memberActivityPictureReqDTO);
 }

@@ -1647,4 +1647,17 @@
 		where 
 		    mc.buyer_seller_type=1 and mc.company_name like concat(#{name},'%')
 	</select>
+	
+	<select id="queryMemberComCodeListByMemberId" resultType="cn.htd.membercenter.dto.MemberBaseDTO">
+		select info.company_code as companyCode,
+		info.member_id as memberId
+		 from member_company_info info where 
+		 buyer_seller_type=2
+		 and
+		 info.member_id in (
+			 <foreach collection="list" item="item" separator=",">
+			 	#{item}
+			 </foreach>
+		 )
+	</select>
 </mapper>

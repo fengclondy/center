@@ -430,4 +430,21 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 		result.setResult(resultList);
 		return result;
 	}
+
+	@Override
+	public ExecuteResult<List<MemberBaseDTO>> queryMemberComCodeListByMemberId(
+			List<String> memberIdList) {
+		ExecuteResult<List<MemberBaseDTO>> result=new ExecuteResult<List<MemberBaseDTO>>();
+		if(CollectionUtils.isEmpty(memberIdList)){
+			result.setCode("0");
+			result.setResultMessage("memberIdList为空");
+			return result;
+		}
+		List<MemberBaseDTO> resultList=memberBaseOperationDAO.queryMemberComCodeListByMemberId(memberIdList);
+		result.setCode("1");
+		result.setResult(resultList);
+		return result;
+	}
+	
+	
 }

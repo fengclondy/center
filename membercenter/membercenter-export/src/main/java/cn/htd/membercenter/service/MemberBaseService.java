@@ -121,4 +121,7 @@ public interface MemberBaseService {
 	public ExecuteResult<Boolean> updateCompanyTime(String loginId);
 	
 	public ExecuteResult<List<MemberBaseInfoDTO>> queryMmeberComCodeList(String name);
+	
+	public ExecuteResult<List<MemberBaseDTO>> queryMemberComCodeListByMemberId(List<String> memberIdList);
+	
 }

@@ -248,7 +248,8 @@
   
   <select id="selectMaterielDownloadByMemberCode" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select 
-    <include refid="Base_Column_List" />
+     a.id, a.picture_id, a.picture_name, a.picture_type, a.effective_time, a.invalid_time, a.upload_picture_front, 
+    a.upload_picture_back, a.is_vip, a.delete_flag
     from activity_picture_info a
 	left join
 	activity_picture_member_detail b

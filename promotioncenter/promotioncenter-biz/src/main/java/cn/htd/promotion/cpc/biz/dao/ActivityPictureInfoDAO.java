@@ -35,4 +35,5 @@ public interface ActivityPictureInfoDAO extends BaseDAO<ActivityPictureInfoReqDT
 	Long selectMaterielDownloadListCount(@Param("dto") ActivityPictureInfoReqDTO activityPictureInfoReqDTO);
 
 	List<ActivityPictureInfoResDTO> selectMaterielDownloadByMemberCode(Map<String, String> map);
+
 }

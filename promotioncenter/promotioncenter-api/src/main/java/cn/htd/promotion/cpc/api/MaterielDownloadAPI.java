@@ -43,6 +43,14 @@ public interface MaterielDownloadAPI {
 	public String selectMaterielDownload(String activityPictureInfoReqDTO, String pager);
 	
 	/**
+	 * vip会员已选一览
+	 * @param pictureID
+	 * @param pager
+	 * @return
+	 */
+	public String selectMaterielDownloadMember(String pictureID, String pager,String messageid);
+	
+	/**
 	 * 根据会员编码获取物料一览
 	 * @param activityPictureInfoReqDTO
 	 * @param pager

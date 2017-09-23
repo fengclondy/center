@@ -18,6 +18,7 @@ import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
 import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
 
 @Service("materielDownloadAPI")
@@ -117,6 +118,15 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 	public String selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid) {
 		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
 				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid);
+		return JSON.toJSONString(activityPictureInfoResDTO);
+	}
+
+	@Override
+	public String selectMaterielDownloadMember(String pictureID, String pager, String messageid) {
+		Pager<ActivityPictureMemberDetailResDTO> page = JSON.parseObject(pager, Pager.class);
+
+		ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> activityPictureInfoResDTO = materielDownloadService
+				.selectMaterielDownloadMember(pictureID, page,messageid);
 		return JSON.toJSONString(activityPictureInfoResDTO);
 	}
 

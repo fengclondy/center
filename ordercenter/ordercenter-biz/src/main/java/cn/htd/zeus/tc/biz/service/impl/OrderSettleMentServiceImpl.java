@@ -20,6 +20,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
 import cn.htd.goodscenter.dto.mall.MallSkuAttributeDTO;
+import cn.htd.goodscenter.dto.mall.MallSkuInDTO;
+import cn.htd.goodscenter.dto.mall.MallSkuOutDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockInDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuWithStockOutDTO;
 import cn.htd.marketcenter.dto.OrderInfoDTO;
@@ -353,11 +355,11 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 		List<OrderSellerInfoDTO> sellerList = orderSettleMentReqDTO.getSellerInfoList();
 		String messageId = orderSettleMentReqDTO.getMessageId();
 		// 调用商品中心接口查询商品sku详细信息
-		OtherCenterResDTO<List<MallSkuWithStockOutDTO>> sku = (OtherCenterResDTO<List<MallSkuWithStockOutDTO>>) goodsCenterRAO
-				.getMallItemInfoList(transformSearchCondition4goods(sellerList,
+		OtherCenterResDTO<List<MallSkuOutDTO>> sku = (OtherCenterResDTO<List<MallSkuOutDTO>>) goodsCenterRAO
+				.getMallItemInfoList4SecKill(transformSearchCondition4goods4SecKill(sellerList,
 						orderSettleMentReqDTO.getCitySiteCode()), messageId);
 		if (ResultCodeEnum.SUCCESS.getCode().equals(sku.getOtherCenterResponseCode())) {
-			List<MallSkuWithStockOutDTO> resultList = sku.getOtherCenterResult();
+			List<MallSkuOutDTO> resultList = sku.getOtherCenterResult();
 			outterLoop: for (OrderSellerInfoDTO seller : sellerList) {
 				BatchGetStockReqDTO stockReqDTO = new BatchGetStockReqDTO();
 				// 查询当前商家地址信息
@@ -368,35 +370,35 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 				List<BatchGetStockSkuNumsReqDTO> stockSkuNumReqList = new ArrayList<BatchGetStockSkuNumsReqDTO>();
 				List<OrderSkuInfoDTO> skuList = seller.getSkuInfoList();
 				for (OrderSkuInfoDTO orderSku : skuList) {
-					for (MallSkuWithStockOutDTO mallSku : resultList) {
-						if (mallSku.getMallSkuOutDTO().getSkuCode().equals(orderSku.getSkuCode())) {
+					for (MallSkuOutDTO mallSku : resultList) {
+						if (mallSku.getSkuCode().equals(orderSku.getSkuCode())) {
 							// 根据运费模板ID计算运费信息
 							orderSku.setFreight(Constant.PRODUCT_INNER_FREIGHT);
 							// 计算外部供应商价格
 							orderSku.setPrice(
 									resDTO.getOrderSeckillInfoDTO().getSkuTimelimitedPrice());
-							orderSku.setProductName(mallSku.getMallSkuOutDTO().getItemName());
-							orderSku.setProductUrl(mallSku.getMallSkuOutDTO().getItemPictureUrl());
-							orderSku.setProductCode(mallSku.getMallSkuOutDTO().getItemCode());
-							orderSku.setBrandId(mallSku.getMallSkuOutDTO().getBrandId());
+							orderSku.setProductName(mallSku.getItemName());
+							orderSku.setProductUrl(mallSku.getItemPictureUrl());
+							orderSku.setProductCode(mallSku.getItemCode());
+							orderSku.setBrandId(mallSku.getBrandId());
 							orderSku.setThirdCategoryId(
-									mallSku.getMallSkuOutDTO().getThirdCategoryId());
-							orderSku.setLength(mallSku.getMallSkuOutDTO().getLength());
-							orderSku.setHeight(mallSku.getMallSkuOutDTO().getHeight());
-							orderSku.setWidth(mallSku.getMallSkuOutDTO().getWidth());
-							orderSku.setWeight(mallSku.getMallSkuOutDTO().getWeight());
-							orderSku.setWeightUnit(mallSku.getMallSkuOutDTO().getWeightUnit());
-							orderSku.setNetWeight(mallSku.getMallSkuOutDTO().getNetWeight());
+									mallSku.getThirdCategoryId());
+							orderSku.setLength(mallSku.getLength());
+							orderSku.setHeight(mallSku.getHeight());
+							orderSku.setWidth(mallSku.getWidth());
+							orderSku.setWeight(mallSku.getWeight());
+							orderSku.setWeightUnit(mallSku.getWeightUnit());
+							orderSku.setNetWeight(mallSku.getNetWeight());
 							orderSku.setShopFreightTemplateId(
-									mallSku.getMallSkuOutDTO().getShopFreightTemplateId());
+									mallSku.getShopFreightTemplateId());
 							orderSku.setItemAttributeList(transformItemAttributeDTO(
-									mallSku.getMallSkuOutDTO().getItemAttributeList()));
+									mallSku.getItemAttributeList()));
 							orderSku.setProductAttributeList(transformItemAttributeDTO(
-									mallSku.getMallSkuOutDTO().getSaleAttributeList()));
+									mallSku.getSaleAttributeList()));
 							if (Constant.PRODUCT_CHANNEL_CODE_OUTLINE
 									.equals(orderSku.getItemChannel())) {
 								BatchGetStockSkuNumsReqDTO stockSkuNumReq = new BatchGetStockSkuNumsReqDTO();
-								stockSkuNumReq.setSkuId(mallSku.getMallSkuOutDTO().getOuterSkuId());
+								stockSkuNumReq.setSkuId(mallSku.getOuterSkuId());
 								stockSkuNumReq.setNum(Long.valueOf(orderSku.getProductCount()));
 								stockSkuNumReqList.add(stockSkuNumReq);
 								stockReqDTO.setSkuNums(stockSkuNumReqList);
@@ -473,6 +475,30 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 		return mallSkuWithStockInDTOList;
 	}
 
+	/**
+	 * 转换传入参数为商品接口查询参数-专为秒杀使用
+	 * 
+	 * @param skuList
+	 * @return
+	 */
+	private List<MallSkuInDTO> transformSearchCondition4goods4SecKill(
+			List<OrderSellerInfoDTO> sellerList, String cityCode) {
+		List<MallSkuInDTO> mallSkuInDTOList = new ArrayList<MallSkuInDTO>();
+		for (OrderSellerInfoDTO seller : sellerList) {
+			List<OrderSkuInfoDTO> skuList = seller.getSkuInfoList();
+			for (OrderSkuInfoDTO sku : skuList) {
+				MallSkuInDTO inDTO = new MallSkuInDTO();
+				inDTO.setSkuCode(sku.getSkuCode());
+				// inDTO.setItemCode(sku.getProductCode());
+				/*inDTO.setIsBoxFlag(sku.getIsBoxFlag());
+				inDTO.setCityCode(cityCode);*/
+				mallSkuInDTOList.add(inDTO);
+			}
+		}
+
+		return mallSkuInDTOList;
+	}
+	
 	/**
 	 * 转换传入参数为商品价格接口查询参数
 	 * 

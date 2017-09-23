@@ -69,6 +69,14 @@ public interface GoodsCenterRAO {
 			List<MallSkuWithStockInDTO> mallSkuWithStockInDTOList, String messageId);
 
 	/*
+	 * 查询商品详细信息列表-专为秒杀使用
+	 * 秒杀不需要去商品中心查询库存
+	 */
+	public OtherCenterResDTO<List<MallSkuOutDTO>> getMallItemInfoList4SecKill(
+			List<MallSkuInDTO> mallSkuInDTOList, String messageId);
+
+	
+	/*
 	 * 查询商品详细信息列表
 	 */
 	public OtherCenterResDTO<Boolean> canProductPlusSaleBySeller(Long sellerId,

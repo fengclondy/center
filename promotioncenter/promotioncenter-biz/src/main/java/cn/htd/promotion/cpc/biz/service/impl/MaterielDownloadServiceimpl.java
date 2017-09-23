@@ -262,11 +262,11 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			int delNum = memberActivityPictureDAO.deleteByPrimaryKey(id);
 			if (delNum == 1) {
 				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getMsg());
+				memberActivityPictureResDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 				return memberActivityPictureResDTO;
 			} else {
 				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
-				memberActivityPictureResDTO.setResponseCode(ResultCodeEnum.ERROR.getMsg());
+				memberActivityPictureResDTO.setResponseMsg(ResultCodeEnum.ERROR.getMsg());
 				logger.error(
 						"MessageId:{} 调用方法MaterielDownloadServiceimpl.delMemberActivityPicture出现异常 request：{}异常信息：{}",
 						"id:", id, "没有删除或删除多条");

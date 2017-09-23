@@ -339,32 +339,46 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				for (int j = 0; j < orderItemList.size(); j++) {
 					OrderCreateItemListInfoReqDTO orderItemTemp = orderItemList.get(j);
 					String site = orderCreateInfoReqDTO.getSite();
-					OtherCenterResDTO<MallSkuWithStockOutDTO> mallSkuWithStockOutResDTO = goodsCenterRAO
-							.queryMallItemDetailWithStock(orderItemTemp, site,
-									orderCreateInfoReqDTO.getMessageId());
-					if (!ResultCodeEnum.SUCCESS.getCode()
-							.equals(mallSkuWithStockOutResDTO.getOtherCenterResponseCode())) {
-						orderCreateInfoDMO.setResultCode(
-								mallSkuWithStockOutResDTO.getOtherCenterResponseCode());
-						orderCreateInfoDMO.setResultMsg(
-								mallSkuWithStockOutResDTO.getOtherCenterResponseMsg());
-						return orderCreateInfoDMO;
-					}
-					MallSkuOutDTO mallSkuOutDTO = mallSkuWithStockOutResDTO.getOtherCenterResult()
-							.getMallSkuOutDTO();
-					MallSkuStockOutDTO mallSkuStockOutDTO = mallSkuWithStockOutResDTO
-							.getOtherCenterResult().getMallSkuStockOutDTO();
-
-					orderItemTemp.setSkuId(mallSkuOutDTO.getSkuId());
-					orderItemTemp.setChannelCode(mallSkuOutDTO.getProductChannelCode());
+					MallSkuOutDTO mallSkuOutDTO = new MallSkuOutDTO();
+					MallSkuStockOutDTO mallSkuStockOutDTO = new MallSkuStockOutDTO();
 
 					OrderItemSkuPriceDTO orderItemSkuPriceDTO = null;
 					Map<String, String> buyerGradeMap = new HashMap<String, String>();// 卖家等级
 					// 如果是秒杀就不查价格中心
 					if (promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())) {
+						OtherCenterResDTO<MallSkuOutDTO> mallSkuOutResDTO = goodsCenterRAO
+								.queryMallItemDetailWithStock4SecKill(orderItemTemp, site,
+										orderCreateInfoReqDTO.getMessageId());
+						if (!ResultCodeEnum.SUCCESS.getCode()
+								.equals(mallSkuOutResDTO.getOtherCenterResponseCode())) {
+							orderCreateInfoDMO.setResultCode(
+									mallSkuOutResDTO.getOtherCenterResponseCode());
+							orderCreateInfoDMO.setResultMsg(
+									mallSkuOutResDTO.getOtherCenterResponseMsg());
+							return orderCreateInfoDMO;
+						}
+						mallSkuOutDTO = mallSkuOutResDTO.getOtherCenterResult();
 						orderItemSkuPriceDTO = new OrderItemSkuPriceDTO();
+						orderItemTemp.setSkuId(mallSkuOutDTO.getSkuId());
+						orderItemTemp.setChannelCode(mallSkuOutDTO.getProductChannelCode());
 					} else {
-
+						
+						OtherCenterResDTO<MallSkuWithStockOutDTO> mallSkuWithStockOutResDTO = goodsCenterRAO
+								.queryMallItemDetailWithStock(orderItemTemp, site,
+										orderCreateInfoReqDTO.getMessageId());
+						if (!ResultCodeEnum.SUCCESS.getCode()
+								.equals(mallSkuWithStockOutResDTO.getOtherCenterResponseCode())) {
+							orderCreateInfoDMO.setResultCode(
+									mallSkuWithStockOutResDTO.getOtherCenterResponseCode());
+							orderCreateInfoDMO.setResultMsg(
+									mallSkuWithStockOutResDTO.getOtherCenterResponseMsg());
+							return orderCreateInfoDMO;
+						}
+						mallSkuOutDTO = mallSkuWithStockOutResDTO.getOtherCenterResult()
+								.getMallSkuOutDTO();
+						mallSkuStockOutDTO = mallSkuWithStockOutResDTO
+								.getOtherCenterResult().getMallSkuStockOutDTO();
+						
 						if (null != mallSkuStockOutDTO.getIsUpShelf()
 								&& mallSkuStockOutDTO.getIsUpShelf() == 0) {
 							orderCreateInfoDMO.setResultCode(
@@ -374,6 +388,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 							return orderCreateInfoDMO;
 						}
 
+						orderItemTemp.setSkuId(mallSkuOutDTO.getSkuId());
+						orderItemTemp.setChannelCode(mallSkuOutDTO.getProductChannelCode());
 						// 去价格中心查询商品价格
 						OtherCenterResDTO<OrderItemSkuPriceDTO> commonItemSkuPriceResDTO = queryItemSkuPrice(
 								mallSkuOutDTO, orderCreateInfoReqDTO, orderTemp, orderItemTemp,
@@ -896,24 +912,6 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				List<OrderCreateItemListInfoReqDTO> itemList = orderTemp.getOrderItemList();
 				if (null != itemList && itemList.size() > 0) {
 					OrderCreateItemListInfoReqDTO item = itemList.get(0);
-					/*
-					 * if(brandId.equals(MiddleWareEnum.JD_BRAND_ID_PAY.getCode(
-					 * )) ||
-					 * brandId.equals(MiddleWareEnum.JD_BRAND_ID_ERP.getCode())
-					 * || GoodCenterEnum.IS_VIP_GOODS.getCode().equals(item.
-					 * getIsVipItem().toString())){
-					 * chargeConditionInfoDMO.setItemOrderNo(orderTemp.
-					 * getOrderNo());
-					 * LOGGER.info("京东商品锁定用订单号"+chargeConditionInfoDMO.
-					 * getItemOrderNo()); }else
-					 * if(GoodCenterEnum.IS_VIP_GOODS.getCode().equals(item.
-					 * getIsVipItem().toString())){
-					 * chargeConditionInfoDMO.setItemOrderNo(orderTemp.
-					 * getOrderNo());
-					 * LOGGER.info("VIP商品锁定用订单号"+chargeConditionInfoDMO.
-					 * getItemOrderNo()); }else{
-					 * chargeConditionInfoDMO.setItemOrderNo(lockAmoutNo); }
-					 */
 					BigDecimal chargeAmount = m.getValue();
 					amount = amount.add(chargeAmount);
 

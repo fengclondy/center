@@ -42,7 +42,7 @@
     from activity_picture_info
     where delete_flag = 0
   	<if test="dto.pictureName != null" >
-        and picture_name = #{dto.pictureName,jdbcType=VARCHAR}
+        and picture_name like concat('%', #{dto.pictureName,jdbcType=VARCHAR} ,'%')
       </if>
       <if test="dto.pictureType != null" >
         and picture_type = #{dto.pictureType,jdbcType=VARCHAR}
@@ -58,7 +58,7 @@
     from activity_picture_info
     where delete_flag = 0
   	<if test="dto.pictureName != null" >
-        and picture_name = #{dto.pictureName,jdbcType=VARCHAR}
+        and picture_name like concat('%', #{dto.pictureName,jdbcType=VARCHAR} ,'%')
       </if>
       <if test="dto.pictureType != null" >
         and picture_type = #{dto.pictureType,jdbcType=VARCHAR}

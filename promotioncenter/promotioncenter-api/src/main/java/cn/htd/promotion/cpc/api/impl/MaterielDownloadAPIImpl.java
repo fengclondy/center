@@ -106,13 +106,9 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO,
 				MemberActivityPictureReqDTO.class);
 		// 输入DTO的验证
-		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
+		
 		MemberActivityPictureResDTO memberActivityPictureResDTO = new MemberActivityPictureResDTO();
-		// 有错误信息时返回错误信息
-		if (validateResult.isHasErrors()) {
-			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
-					validateResult.getErrorMsg());
-		}
+
 		memberActivityPictureResDTO = materielDownloadService
 				.delMemberActivityPicture(memberActivityPictureReq.getId());
 		return JSON.toJSONString(memberActivityPictureResDTO);

@@ -285,18 +285,16 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode,
+	public ExecuteResult<List<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode,
 			String pictureType, String messageid) {
-		DataGrid<ActivityPictureInfoResDTO> dataGrid = new DataGrid<ActivityPictureInfoResDTO>();
 		List<ActivityPictureInfoResDTO> resList = new ArrayList<ActivityPictureInfoResDTO>();
-		ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> result = new ExecuteResult<DataGrid<ActivityPictureInfoResDTO>>();
+		ExecuteResult<List<ActivityPictureInfoResDTO>> result = new ExecuteResult<List<ActivityPictureInfoResDTO>>();
 		try {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("memberCode", memberCode);
 			map.put("pictureType", pictureType);
 			resList = activityPictureInfoDAO.selectMaterielDownloadByMemberCode(map);
-			dataGrid.setRows(resList);
-			result.setResult(dataGrid);
+			result.setResult(resList);
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			result.setCode(ResultCodeEnum.ERROR.getCode());

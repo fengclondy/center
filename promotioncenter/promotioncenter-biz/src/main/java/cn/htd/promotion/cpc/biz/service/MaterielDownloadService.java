@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -63,7 +65,7 @@ public interface MaterielDownloadService {
 	 */
 	public MemberActivityPictureResDTO delMemberActivityPicture(Long id);
 
-	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid);
+	public ExecuteResult<List<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid);
 
 	public ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> selectMaterielDownloadMember(String pictureID,
 			Pager<ActivityPictureMemberDetailResDTO> page, String messageid);

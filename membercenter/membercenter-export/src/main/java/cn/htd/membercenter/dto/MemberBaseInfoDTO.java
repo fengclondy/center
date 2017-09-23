@@ -91,6 +91,8 @@ public class MemberBaseInfoDTO implements Serializable {
 	private String recommenderCode;// 推荐人编码
 	
 	private String managerStatus;//超级经理人展示状态
+	
+	private String parentComCode;
 
 	public List<Long> getIds() {
 		return ids;
@@ -1059,7 +1061,13 @@ public class MemberBaseInfoDTO implements Serializable {
 	public void setManagerStatus(String managerStatus) {
 		this.managerStatus = managerStatus;
 	}
-	
-	
+
+	public String getParentComCode() {
+		return parentComCode;
+	}
+
+	public void setParentComCode(String parentComCode) {
+		this.parentComCode = parentComCode;
+	}
 
 }

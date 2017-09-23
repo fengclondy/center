@@ -17,6 +17,7 @@ import cn.htd.membercenter.domain.VerifyDetailInfo;
 import cn.htd.membercenter.domain.VerifyInfo;
 import cn.htd.membercenter.dto.BuyerGroupInfo;
 import cn.htd.membercenter.dto.BuyerHisPointDTO;
+import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
 import cn.htd.membercenter.dto.MemberCompanyInfoDTO;
@@ -275,4 +276,8 @@ public interface MemberBaseOperationDAO {
 	public MemberBaseInfoRegisterDTO queryVerifyStatus(@Param("memberId") Long memberId);
 	
 	public SellerInfoDTO querySellerInfoBySellerId(@Param("sellerId") Long sellerId);
-}
+	
+	public List<MemberBaseInfoDTO> queryMmeberComCodeList(@Param("name") String name);
+	
+	public List<MemberBaseDTO> queryMemberComCodeListByMemberId(List<String> list);
+ }

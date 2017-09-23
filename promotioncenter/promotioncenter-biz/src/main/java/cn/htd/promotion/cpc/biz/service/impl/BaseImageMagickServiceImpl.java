@@ -52,7 +52,13 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		if (StringUtils.isEmpty(images.getMainImageUrl())) {
 			return "";
 		}
-		String downimg = downloadImg(images.getMainImageUrl());
+		String downimg = "";
+		if(images.getMainImageUrl().startsWith("http")) {
+			downimg = downloadImg(images.getMainImageUrl());
+		}else {
+			downimg = images.getMainImageUrl();
+		}
+				
 		logger.info("downimg:" + downimg);
 		Map<String, Integer> map = getImgInfo(downimg);
 		//宽比例
@@ -77,7 +83,12 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		for (BaseImageSubDTO baseImageSubDTO : slist) {
 			if (baseImageSubDTO.getType() == 1) {
 				if (!StringUtils.isEmpty(baseImageSubDTO.getImageUrl())) {
-					subimg = downloadImg(baseImageSubDTO.getImageUrl());
+					
+					if(baseImageSubDTO.getImageUrl().startsWith("http")) {
+						subimg = downloadImg(baseImageSubDTO.getImageUrl());
+					}else {
+						subimg = baseImageSubDTO.getImageUrl();
+					}
 					logger.info("subimg:" + subimg);
 					op.addImage(subimg);
 					op.geometry((int) (baseImageSubDTO.getWidth() * wb), (int) (baseImageSubDTO.getHeight() * hb),
@@ -136,6 +147,32 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		return map;
 	}
 
+	private static String margeImgHeight(String oldimg,int newHeight) {
+		//String newimg="";
+		try {
+			Info imageInfo = new Info(oldimg);
+			int imgheight = imageInfo.getImageHeight();
+			int imgwidth = imageInfo.getImageWidth();
+			if(imgheight>=newHeight) {
+				return "";
+			}else {
+				IMOperation op = new IMOperation();
+				op.addImage(oldimg);
+				op.background("white");
+				op.gravity("north");
+				op.extent(imgwidth,newHeight);
+				//newimg = UUID.randomUUID().toString().replaceAll("-", "");
+				op.addImage(oldimg);
+				ConvertCmd cc = new ConvertCmd(false);
+				cc.setSearchPath("c:\\Program Files\\ImageMagick-6.9.9-Q16");
+				cc.run(op);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return oldimg;
+	}
+	
 	static String margeImage1(BaseImageDTO images) {
 
 		IMOperation op = new IMOperation();
@@ -225,10 +262,13 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		return filename;
 	}
 
+	
+	
 	public static void main(String[] args) {
+		//margeImgHeight("d:\\u1159.jpg", 2000);
 		BaseImageDTO e = new BaseImageDTO();
 		e.setMainImageUrl("d:\\u1143.jpg");
-		getImgInfo("d:\\2.png");
+		//getImgInfo("d:\\2.png");
 		BaseImageSubDTO is = new BaseImageSubDTO();
 		is.setImageUrl("d:\\1.png");
 		is.setWidth(55);
@@ -257,7 +297,7 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		is.setFontSize(30);
 		subImageList.add(is);
 		is = new BaseImageSubDTO();
-		is.setText("123ert 中中中中中中中中中中中");
+		is.setText("123ert 中中中中中\r\n中中中中中中");
 		is.setWidth(550);
 		is.setHeight(550);
 		is.setTop(180);

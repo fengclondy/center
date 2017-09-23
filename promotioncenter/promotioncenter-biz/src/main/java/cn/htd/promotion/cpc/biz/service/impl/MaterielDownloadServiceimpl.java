@@ -156,11 +156,11 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			rt = activityPictureInfoDAO.selectByPictureId(activityPictureInfoId);
 			if (rt != null) {
 
-				if (rt.getIsVip() == 2) {
-					List<ActivityPictureMemberDetailResDTO> pdlist = activityPictureMemberDetailDAO
-							.selectByPictureId(rt.getPictureId());
-					rt.setActivityPictureMemberDetailList(pdlist);
-				}
+//				if (rt.getIsVip() == 2) {
+//					List<ActivityPictureMemberDetailResDTO> pdlist = activityPictureMemberDetailDAO
+//							.selectByPictureId(rt.getPictureId());
+//					rt.setActivityPictureMemberDetailList(pdlist);
+//				}
 			} else {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "物料下载查询为空");
 			}
@@ -294,6 +294,35 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			map.put("pictureType", pictureType);
 			resList = activityPictureInfoDAO.selectMaterielDownloadByMemberCode(map);
 			dataGrid.setRows(resList);
+			result.setResult(dataGrid);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> selectMaterielDownloadMember(String pictureID,
+			Pager<ActivityPictureMemberDetailResDTO> pager, String messageid) {
+		if (pager == null) {
+			pager = new Pager<ActivityPictureMemberDetailResDTO>();
+		}
+		if (pager.getPage() < 1) {
+			pager.setPage(1);
+		}
+		if (pager.getRows() < 1) {
+			pager.setRows(10);
+		}
+		DataGrid<ActivityPictureMemberDetailResDTO> dataGrid = new DataGrid<ActivityPictureMemberDetailResDTO>();
+		List<ActivityPictureMemberDetailResDTO> resList = new ArrayList<ActivityPictureMemberDetailResDTO>();
+		ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> result = new ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>>();
+		try {
+			resList = activityPictureMemberDetailDAO.selectMaterielDownloadMember(pictureID, pager);
+			Long pCount = activityPictureMemberDetailDAO.selectMaterielDownloadMemberCount(pictureID);
+			dataGrid.setRows(resList);
+			dataGrid.setTotal(pCount);
 			result.setResult(dataGrid);
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {

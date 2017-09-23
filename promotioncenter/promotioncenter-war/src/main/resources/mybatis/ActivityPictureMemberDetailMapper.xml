@@ -31,6 +31,24 @@
     from activity_picture_member_detail
     where picture_id = #{pictureId,jdbcType=VARCHAR} and delete_flag=0
   </select>
+  
+  <select id="selectMaterielDownloadMember" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from activity_picture_member_detail
+    where picture_id = #{pictureID,jdbcType=VARCHAR} and delete_flag=0
+    order by member_code
+      <if test="pager!=null">
+	   limit #{pager.pageOffset} , #{pager.rows}
+	</if>
+  </select>
+  
+  <select id="selectMaterielDownloadMemberCount" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select  count(*)
+    from activity_picture_member_detail
+    where picture_id = #{pictureID,jdbcType=VARCHAR} and delete_flag=0
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from activity_picture_member_detail
     where id = #{id,jdbcType=BIGINT}

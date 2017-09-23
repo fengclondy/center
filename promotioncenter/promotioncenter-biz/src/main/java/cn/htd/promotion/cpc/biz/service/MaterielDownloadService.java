@@ -6,6 +6,7 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
 import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
 
 public interface MaterielDownloadService {
@@ -63,4 +64,7 @@ public interface MaterielDownloadService {
 	public MemberActivityPictureResDTO delMemberActivityPicture(Long id);
 
 	public ExecuteResult<DataGrid<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid);
+
+	public ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> selectMaterielDownloadMember(String pictureID,
+			Pager<ActivityPictureMemberDetailResDTO> page, String messageid);
 }

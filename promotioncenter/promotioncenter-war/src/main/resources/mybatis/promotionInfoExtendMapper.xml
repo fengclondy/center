@@ -29,6 +29,9 @@
     <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
     <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    <result column="is_order_amount_limit" jdbcType="TINYINT" property="isOrderAmountLimit"/>
+    <result column="order_amount_threshold" jdbcType="DECIMAL" property="orderAmountThreshold"/>
+    <result column="is_daily_winning_limit" jdbcType="TINYINT" property="isDailyWinningLimit"/>
   </resultMap>
   <sql id="Base_Column_List">
 		id,
@@ -140,6 +143,15 @@
       <if test="templateFlag != null and templateFlag != ''">
       	template_flag,
       </if>
+      <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
+      	is_order_amount_limit,
+      </if>
+      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
+      	order_amount_threshold,
+      </if>
+      <if test="isDailyWinningLimit != null">
+      	is_daily_winning_limit,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -205,6 +217,15 @@
       </if>
       <if test="templateFlag != null and templateFlag != ''">
       	#{templateFlag,jdbcType=TINYINT},
+      </if>
+       <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
+      	#{isOrderAmountLimit,jdbcType=TINYINT},
+      </if>
+      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
+      	#{orderAmountThreshold,jdbcType=TINYINT},
+      </if>
+      <if test="isDailyWinningLimit != null">
+      	#{isDailyWinningLimit,jdbcType=DECIMAL},
       </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
@@ -273,6 +294,15 @@
       </if>
       <if test="templateFlag != null and templateFlag != ''">
       	template_flag = #{templateFlag,jdbcType=TINYINT},
+      </if>
+      <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
+      	#{isOrderAmountLimit,jdbcType=TINYINT},
+      </if>
+      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
+      	#{orderAmountThreshold,jdbcType=TINYINT},
+      </if>
+      <if test="isDailyWinningLimit != null">
+      	#{isDailyWinningLimit,jdbcType=DECIMAL},
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

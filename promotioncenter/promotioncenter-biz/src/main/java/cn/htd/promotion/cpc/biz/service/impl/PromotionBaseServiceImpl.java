@@ -353,6 +353,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             psr.setSellerDetailList(sdlist);
             promotionInfo.setSellerRuleDTO(psr);
         }
+        //-------xuwei---------
+        List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.selectByPromotionId(promotionId);
+        promotionInfo.setPromotionConfigureList(promotionConfigureDTOlist);
+        //-------xuwei---------
 
         PromotionSloganDTO psd = promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         promotionInfo.setPromotionSloganDTO(psd);

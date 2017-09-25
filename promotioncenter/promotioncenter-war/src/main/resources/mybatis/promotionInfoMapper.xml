@@ -402,7 +402,7 @@
   	SELECT 
   	count(1)
 	FROM promotion_info a WHERE 1=1
-    <if test="entity.promotionType != null and entity.	promotionType != ''">
+    <if test="entity.promotionType != null and entity.promotionType != ''">
 	and  a.promotion_type = #{entity.promotionType}
 	</if>
 	<if test="entity.promotionName != null and entity.promotionName != ''">

@@ -7,6 +7,7 @@
         ">
     <dubbo:application name="${server.name}" />
     <dubbo:protocol name="dubbo" port="${dubbo.port}" />
+	<dubbo:provider timeout="3000" threadpool="fixed" threads="500" accepts="1000" />
     <dubbo:registry id="marketcenterRegistry" protocol="zookeeper" address="${dubbo.registry.address}" client="zkclient" />
 
 </beans>

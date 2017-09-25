@@ -7,9 +7,8 @@
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd
         ">
     <dubbo:application name="${server.name}" />
-
     <dubbo:protocol name="dubbo" port="${dubbo.port}" />
-
+    <dubbo:provider timeout="3000" threadpool="fixed" threads="500" accepts="1000" />
     <!-- 多注册中心配置 -->
     <dubbo:registry id="storecenterRegistry" protocol="zookeeper" address="${dubbo.registry.address}" client="zkclient" />
 

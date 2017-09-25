@@ -347,7 +347,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					// 如果是秒杀就不查价格中心
 					if (promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())) {
 						OtherCenterResDTO<MallSkuOutDTO> mallSkuOutResDTO = goodsCenterRAO
-								.queryMallItemDetailWithStock4SecKill(orderItemTemp, site,
+								.queryMallItemDetail4SecKill(orderItemTemp, site,
 										orderCreateInfoReqDTO.getMessageId());
 						if (!ResultCodeEnum.SUCCESS.getCode()
 								.equals(mallSkuOutResDTO.getOtherCenterResponseCode())) {

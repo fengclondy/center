@@ -29,6 +29,9 @@
     <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
     <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    <result column=is_order_amount_limit jdbcType="TINYINT" property="modifyTime"/>
+    <result column="order_amount_threshold" jdbcType="DECIMAL" property="modifyTime"/>
+    <result column="is_daily_winning_limit" jdbcType="TINYINT" property="modifyTime"/>
   </resultMap>
   <sql id="Base_Column_List">
 		id,

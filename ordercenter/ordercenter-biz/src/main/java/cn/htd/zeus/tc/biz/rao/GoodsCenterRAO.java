@@ -26,6 +26,18 @@ public interface GoodsCenterRAO {
 			OrderCreateItemListInfoReqDTO orderItemTemp, String site, String messageId);
 
 	/*
+	 * 从商品中心查询商品基本信息-4秒杀
+	 * 
+	 * @param isHasDevRelation
+	 * 
+	 * @param orderItemTemp
+	 * 
+	 * @return ExecuteResult<List<SkuInfo4CartOutDTO>>
+	 */
+	public OtherCenterResDTO<MallSkuOutDTO> queryMallItemDetail4SecKill(
+			OrderCreateItemListInfoReqDTO orderItemTemp, String site, String messageId);
+	
+	/*
 	 * 调用商品中心判断是否超出配送范围
 	 */
 	public OtherCenterResDTO<String> isRecevieAddressInSaleRange(

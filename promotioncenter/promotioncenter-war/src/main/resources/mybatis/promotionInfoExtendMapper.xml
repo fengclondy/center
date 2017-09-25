@@ -296,13 +296,13 @@
       	template_flag = #{templateFlag,jdbcType=TINYINT},
       </if>
       <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
-      	#{isOrderAmountLimit,jdbcType=TINYINT},
+      	is_order_amount_limit = #{isOrderAmountLimit,jdbcType=TINYINT},
       </if>
       <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
-      	#{orderAmountThreshold,jdbcType=TINYINT},
+      	order_amount_threshold = #{orderAmountThreshold,jdbcType=TINYINT},
       </if>
       <if test="isDailyWinningLimit != null">
-      	#{isDailyWinningLimit,jdbcType=DECIMAL},
+      	is_daily_winning_limit = #{isDailyWinningLimit,jdbcType=DECIMAL},
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

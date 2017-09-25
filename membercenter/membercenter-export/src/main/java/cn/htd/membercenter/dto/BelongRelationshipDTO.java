@@ -39,6 +39,8 @@ public class BelongRelationshipDTO implements Serializable {
 	private String artificialPersonMobile;
 	private Long sellerId;// 包厢sellerID
 	private String memberType;// 会员类型1：非会员，3：担保会员 ，2：正式会员
+	
+	private String memberComCode;//公司编码
 
 	public Long getBoxId() {
 		return boxId;
@@ -286,6 +288,14 @@ public class BelongRelationshipDTO implements Serializable {
 	 */
 	public void setMemberType(String memberType) {
 		this.memberType = memberType;
+	}
+
+	public String getMemberComCode() {
+		return memberComCode;
+	}
+
+	public void setMemberComCode(String memberComCode) {
+		this.memberComCode = memberComCode;
 	}
 
 }

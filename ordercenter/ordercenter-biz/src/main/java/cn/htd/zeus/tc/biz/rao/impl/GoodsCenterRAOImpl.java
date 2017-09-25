@@ -109,6 +109,62 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 		}
 		return otherCenterResDTO;
 	}
+	
+	/*
+	 * 从商品中心查询商品基本信息
+	 * 
+	 * @param isHasDevRelation
+	 * 
+	 * @param orderItemTemp
+	 * 
+	 * @return ExecuteResult<List<SkuInfo4CartOutDTO>>
+	 */
+	@Override
+	public OtherCenterResDTO<MallSkuOutDTO> queryMallItemDetail4SecKill(
+			OrderCreateItemListInfoReqDTO orderItemTemp, String site, String messageId) {
+		OtherCenterResDTO<MallSkuOutDTO> otherCenterResDTO = new OtherCenterResDTO<MallSkuOutDTO>();
+		try {
+			MallSkuOutDTO mallSkuOutDTO = new MallSkuOutDTO();
+			MallSkuInDTO mallSkuInDTO = new MallSkuInDTO();
+			mallSkuInDTO.setSkuCode(orderItemTemp.getSkuCode());
+			/*mallSkuInDTO.setIsBoxFlag(orderItemTemp.getIsBoxFlag());
+			mallSkuInDTO.setCityCode(site);*/
+			// MallSkuInDTO mallSkuInDTO = new MallSkuInDTO();
+			// mallSkuInDTO.setSkuCode(skuCode);
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{}查询商品中心(queryMallItemDetailWithStock4SecKill查询商品基本信息)--组装查询参数开始:{}",
+					messageId, JSONObject.toJSONString(mallSkuInDTO));
+			ExecuteResult<MallSkuOutDTO> mallSkuOutResDTO = mallItemExportService
+					.queryMallItemDetail(mallSkuInDTO);
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{}查询商品中心(queryMallItemDetailWithStock4SecKill查询商品基本信息)--商品中心返回结果:{}",
+					messageId, JSONObject.toJSONString(mallSkuOutResDTO) + " 耗时:"
+							+ (endTime - startTime));
+			if (null != mallSkuOutResDTO.getResult()
+					&& mallSkuOutResDTO.isSuccess() == true) {
+				mallSkuOutDTO = mallSkuOutResDTO.getResult();
+				otherCenterResDTO.setOtherCenterResult(mallSkuOutDTO);
+				otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			} else {
+				// 没有查到数据
+				LOGGER.warn(
+						"MessageId:{}查询商品基本信息(queryMallItemDetailWithStock4SecKill查询商品基本信息)-没有查到数据 参数:{}",
+						messageId, JSONObject.toJSONString(mallSkuInDTO));
+				otherCenterResDTO.setOtherCenterResponseCode(
+						ResultCodeEnum.GOODSCENTER_QUERY_SKUINFO_NOT_RESULT.getCode());
+				otherCenterResDTO.setOtherCenterResponseMsg(
+						ResultCodeEnum.GOODSCENTER_QUERY_SKUINFO_NOT_RESULT.getMsg());
+			}
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法GoodsCenterRAOImpl.queryMallItemDetailWithStock4SecKill出现异常{}",
+					messageId, w.toString());
+			otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return otherCenterResDTO;
+	}
 
 	/*
 	 * 调用商品中心判断是否超出配送范围
@@ -401,6 +457,51 @@ public class GoodsCenterRAOImpl implements GoodsCenterRAO {
 		return other;
 	}
 
+	/**
+	 * 查询商品详细信息列表
+	 * 
+	 * @param mallSkuWithDTOList
+	 * @param messageId
+	 * @return
+	 */
+	public OtherCenterResDTO<List<MallSkuOutDTO>> getMallItemInfoList4SecKill(
+			List<MallSkuInDTO> mallSkuWithDTOList, String messageId) {
+		OtherCenterResDTO<List<MallSkuOutDTO>> other = new OtherCenterResDTO<List<MallSkuOutDTO>>();
+		List<MallSkuOutDTO> mallSkuList = new ArrayList<MallSkuOutDTO>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info("商品中心--查询商品sku详细信息-4秒杀--组装查询参数开始:" + "MessageId:" + messageId);
+			ExecuteResult<List<MallSkuOutDTO>> mallSku = mallItemExportService
+					.queryMallItemDetailList(mallSkuWithDTOList);
+			LOGGER.info("MessageId:{} 商品中心--查询商品sku详细信息-4秒杀-返回结果:{}", messageId,
+					JSONObject.toJSONString(mallSku));
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info("MessageId:{} 商品中心--查询商品sku详细信息4秒杀 耗时:{}", messageId, endTime - startTime);
+			mallSkuList = mallSku.getResult();
+			if (mallSkuList != null && mallSku.isSuccess() == true) {
+				other.setOtherCenterResult(mallSkuList);
+				other.setOtherCenterResponseCode(ResultCodeEnum.SUCCESS.getCode());
+				other.setOtherCenterResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			} else {
+				LOGGER.warn(
+						"MessageId:{} 商品中心--查询商品sku详细信息4秒杀(queryMallItemDetailList查询商品基本信息)-没有查到数据 参数:{}",
+						messageId, JSONObject.toJSONString(mallSku));
+				other.setOtherCenterResponseCode(
+						ResultCodeEnum.ORDERSETTLEMENT_PRODUCT_IS_NULL.getCode());
+				other.setOtherCenterResponseMsg(
+						ResultCodeEnum.ORDERSETTLEMENT_PRODUCT_IS_NULL.getMsg());
+			}
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法GoodsCenterRAOImpl.getMallItemInfoList4SecKill出现异常{}", messageId,
+					w.toString());
+			other.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			other.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return other;
+	}
+	
 	@Override
 	public OtherCenterResDTO<Boolean> canProductPlusSaleBySeller(Long sellerId,
 			String productChannel, Long categoryId, Long brandId, String messageId) {

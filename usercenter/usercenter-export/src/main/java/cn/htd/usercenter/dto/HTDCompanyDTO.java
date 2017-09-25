@@ -18,6 +18,8 @@ public class HTDCompanyDTO implements Serializable {
     private String addressDistrict; // 公司地址-区
     private String addressTown; // 公司地址-县
     private String area;//所属区域
+    
+    private String subComName;
 
     public String getArea() {
 		return area;
@@ -94,8 +96,18 @@ public class HTDCompanyDTO implements Serializable {
     public String toString() {
         return new ReflectionToStringBuilder(this).toString();
     }
+    
+    
 
-    public boolean equals(HTDCompanyDTO target) {
+    public String getSubComName() {
+		return subComName;
+	}
+
+	public void setSubComName(String subComName) {
+		this.subComName = subComName;
+	}
+
+	public boolean equals(HTDCompanyDTO target) {
         if (target == null) {
             return false;
         }

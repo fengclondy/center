@@ -18,6 +18,7 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.common.util.ValidationUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
+import cn.htd.promotion.cpc.dto.request.BaseImageDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
@@ -130,6 +131,12 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> activityPictureInfoResDTO = materielDownloadService
 				.selectMaterielDownloadMember(pictureID, page,messageid);
 		return JSON.toJSONString(activityPictureInfoResDTO);
+	}
+
+	@Override
+	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type) {
+		// TODO Auto-generated method stub
+		return materielDownloadService.saveMaterielDownloadImg(bid, messageid, type);
 	}
 
 }

@@ -22,6 +22,7 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.ActivityPictureInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.ActivityPictureMemberDetailDAO;
 import cn.htd.promotion.cpc.biz.dao.MemberActivityPictureDAO;
+import cn.htd.promotion.cpc.biz.service.BaseImageMagickService;
 import cn.htd.promotion.cpc.biz.service.MaterielDownloadService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -30,6 +31,7 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO;
+import cn.htd.promotion.cpc.dto.request.BaseImageDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
@@ -50,6 +52,9 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 
 	@Resource
 	private MemberActivityPictureDAO memberActivityPictureDAO;
+	
+	@Resource
+	private BaseImageMagickService baseImageMagickService;
 
 	private String ptype = "30";
 
@@ -330,6 +335,18 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
+	}
+
+	@Override
+	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type) {
+		
+		if(type==3) {
+			Map<String, Integer> info = baseImageMagickService.getImgInfo(bid.getMainImageUrl());
+			String newbg = baseImageMagickService.margeImgHeight(bid.getMainImageUrl(),(int)(info.get("height")*1.3));
+			bid.setMainImageUrl(newbg);
+			return baseImageMagickService.margeImage(bid);
+		}
+		return baseImageMagickService.margeImage(bid);
 	}
 
 }

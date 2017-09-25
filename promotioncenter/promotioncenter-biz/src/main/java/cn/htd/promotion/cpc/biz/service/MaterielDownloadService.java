@@ -6,6 +6,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
+import cn.htd.promotion.cpc.dto.request.BaseImageDTO;
 import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureMemberDetailResDTO;
@@ -69,4 +70,6 @@ public interface MaterielDownloadService {
 
 	public ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> selectMaterielDownloadMember(String pictureID,
 			Pager<ActivityPictureMemberDetailResDTO> page, String messageid);
+
+	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid, int type);
 }

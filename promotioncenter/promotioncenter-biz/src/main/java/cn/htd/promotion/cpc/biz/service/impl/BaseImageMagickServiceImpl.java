@@ -134,10 +134,17 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 
 	}
 
-	private static Map<String, Integer> getImgInfo(String downimg) {
+	@Override
+	public  Map<String, Integer> getImgInfo(String downimg) {
 		Info imageInfo = null;
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		try {
+			if (StringUtils.isEmpty(downimg)) {
+				return null;
+			}
+			if(downimg.startsWith("http")) {
+				downimg = downloadImg(downimg);
+			}
 			imageInfo = new Info(downimg);
 			map.put("width", imageInfo.getImageWidth());
 			map.put("height", imageInfo.getImageHeight());
@@ -146,15 +153,22 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		}
 		return map;
 	}
-
-	private static String margeImgHeight(String oldimg,int newHeight) {
+	@Override
+	public String margeImgHeight(String oldimg,int newHeight) {
 		//String newimg="";
+		logger.info("oldimg:" + oldimg);
+		if (StringUtils.isEmpty(oldimg)) {
+			return "";
+		}
+		if(oldimg.startsWith("http")) {
+			oldimg = downloadImg(oldimg);
+		}
 		try {
 			Info imageInfo = new Info(oldimg);
 			int imgheight = imageInfo.getImageHeight();
 			int imgwidth = imageInfo.getImageWidth();
 			if(imgheight>=newHeight) {
-				return "";
+				return oldimg;
 			}else {
 				IMOperation op = new IMOperation();
 				op.addImage(oldimg);
@@ -164,7 +178,7 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 				//newimg = UUID.randomUUID().toString().replaceAll("-", "");
 				op.addImage(oldimg);
 				ConvertCmd cc = new ConvertCmd(false);
-				cc.setSearchPath("c:\\Program Files\\ImageMagick-6.9.9-Q16");
+				//cc.setSearchPath("c:\\Program Files\\ImageMagick-6.9.9-Q16");
 				cc.run(op);
 			}
 		} catch (Exception e) {

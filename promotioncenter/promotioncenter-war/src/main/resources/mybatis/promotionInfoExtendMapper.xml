@@ -59,7 +59,10 @@
 		create_time,
 		modify_id,
 		modify_name,
-		modify_time
+		modify_time,
+		is_order_amount_limit,
+		order_amount_threshold,
+		is_daily_winning_limit
 	</sql>
   <!-- mysql 分页 -->
   <sql id="pagination_tail">

@@ -43,12 +43,9 @@
       #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
       #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
+  <insert id=add parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
     insert into member_activity_picture
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="pictureId != null" >
         picture_id,
       </if>
@@ -76,23 +73,16 @@
       <if test="createName != null" >
         create_name,
       </if>
-      <if test="createTime != null" >
         create_time,
-      </if>
       <if test="modifyId != null" >
         modify_id,
       </if>
       <if test="modifyName != null" >
         modify_name,
       </if>
-      <if test="modifyTime != null" >
-        modify_time,
-      </if>
+        modify_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="pictureId != null" >
         #{pictureId,jdbcType=VARCHAR},
       </if>
@@ -120,18 +110,14 @@
       <if test="createName != null" >
         #{createName,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
       <if test="modifyId != null" >
         #{modifyId,jdbcType=BIGINT},
       </if>
       <if test="modifyName != null" >
         #{modifyName,jdbcType=VARCHAR},
       </if>
-      <if test="modifyTime != null" >
-        #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
+      now()
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >

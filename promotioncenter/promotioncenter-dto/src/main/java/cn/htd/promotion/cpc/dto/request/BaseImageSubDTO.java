@@ -19,31 +19,46 @@ public class BaseImageSubDTO implements Serializable {
 	private int type;
 
 	private String imageUrl;
-	
+
 	private String text;
-	
+
 	private int top;
-	
+
 	private int left;
-	
+
 	private int bottom;
-	
+
 	private int right;
-	
+
 	private String color;
-	
+
 	private boolean transparent;
-	
+
 	/**
-	 * NorthWest, North, NorthEast, West, Center, East,  SouthWest, South, SouthEast
+	 * NorthWest, North, NorthEast, West, Center, East, SouthWest, South, SouthEast
 	 */
 	private String gravity;
-	
+
 	private String fontName;
-	
+
 	private String fontColor;
-	
+
 	private int fontSize;
+	
+	/**
+	 * 字框宽度
+	 */
+	private String style;
+	
+	
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
 
 	public int getHeight() {
 		return height;
@@ -165,5 +180,4 @@ public class BaseImageSubDTO implements Serializable {
 		this.fontSize = fontSize;
 	}
 
-	
 }

@@ -3,6 +3,8 @@ package cn.htd.promotion.cpc.dto.request;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 public class ActivityPictureInfoReqDTO  extends GenricReqDTO  {
@@ -21,10 +23,10 @@ public class ActivityPictureInfoReqDTO  extends GenricReqDTO  {
     @NotBlank(message = "物料类型不能为空")
     private String pictureType;
     
-    @NotBlank(message = "开始时间不能为空")
+    @NotNull(message = "开始时间不能为空")
     private Date effectiveTime;
     
-    @NotBlank(message = "结束时间不能为空")
+    @NotNull(message = "结束时间不能为空")
     private Date invalidTime;
 
     private String uploadPictureFront;

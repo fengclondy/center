@@ -3,6 +3,7 @@ package cn.htd.promotion.cpc.api;
 import cn.htd.common.DataGrid;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.BaseImageDTO;
+import cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO;
 import cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO;
 
 public interface MaterielDownloadAPI {
@@ -76,4 +77,6 @@ public interface MaterielDownloadAPI {
 	public String delMemberActivityPictureById(String memberActivityPictureReqDTO);
 
 	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type);
+
+	public void saveMaterielDownloadImgHis(MemberActivityPictureReqDTO memberActivityPictureReqDTO);
 }

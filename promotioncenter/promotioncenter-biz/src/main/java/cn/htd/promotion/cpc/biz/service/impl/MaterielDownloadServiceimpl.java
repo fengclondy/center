@@ -348,4 +348,9 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 		return baseImageMagickService.margeImage(bid);
 	}
 
+	@Override
+	public void saveMaterielDownloadImgHis(MemberActivityPictureReqDTO memberActivityPictureReqDTO) {
+		memberActivityPictureDAO.add(memberActivityPictureReqDTO);
+	}
+
 }

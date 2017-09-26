@@ -84,6 +84,11 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		List<BaseImageSubDTO> slist = images.getSubImageList();
 		String subimg = "";
 		for (BaseImageSubDTO baseImageSubDTO : slist) {
+			if(!StringUtils.isEmpty(baseImageSubDTO.getGravity())) {
+				op.gravity(baseImageSubDTO.getGravity());
+			}else {
+				op.gravity("northwest");
+			}
 			if (baseImageSubDTO.getType() == 1) {
 				if (!StringUtils.isEmpty(baseImageSubDTO.getImageUrl())) {
 
@@ -106,11 +111,11 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 				}
 				op.pointsize((int) (baseImageSubDTO.getFontSize() * wb));
 				op.fill(baseImageSubDTO.getFontColor());
-				if (!StringUtils.isEmpty(baseImageSubDTO.getStyle())) {
-					op.style(baseImageSubDTO.getStyle());
-				}
+
+				String text = baseImageSubDTO.getText();
+				text = text.replaceAll("\'", "\\\\'");
 				op.draw("text " + (int) (baseImageSubDTO.getLeft() * wb) + "," + (int) (baseImageSubDTO.getTop() * hb)
-						+ " \'" + baseImageSubDTO.getText() + "\'");
+						+ " \'" + text + "\'");
 			}
 		}
 		String imgext = images.getMainImageUrl();

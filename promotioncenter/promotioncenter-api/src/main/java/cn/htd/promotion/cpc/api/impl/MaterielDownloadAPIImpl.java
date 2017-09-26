@@ -135,8 +135,13 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 
 	@Override
 	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type) {
-		// TODO Auto-generated method stub
 		return materielDownloadService.saveMaterielDownloadImg(bid, messageid, type);
+	}
+
+	@Override
+	public void saveMaterielDownloadImgHis(MemberActivityPictureReqDTO memberActivityPictureReqDTO) {
+		materielDownloadService.saveMaterielDownloadImgHis(memberActivityPictureReqDTO);
+		
 	}
 
 }

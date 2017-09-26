@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import cn.htd.common.util.OssUploadUtils;
+import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.service.BaseImageMagickService;
 import cn.htd.promotion.cpc.dto.request.BaseImageDTO;
 import cn.htd.promotion.cpc.dto.request.BaseImageSubDTO;
@@ -35,13 +36,13 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 
 	private static final Logger logger = LoggerFactory.getLogger(BaseImageMagickServiceImpl.class);
 
-	private static String rootpath = "d:\\";// SysProperties.getProperty("IMAGEPATH");
-	private static String fontpath = "c:\\Windows\\Fonts\\";// SysProperties.getProperty("FONTPATH");
+	private static String rootpath = SysProperties.getProperty("IMAGEPATH");
+	private static String fontpath =  SysProperties.getProperty("FONTPATH");
 	/** oss配置 */
-	private static String ENDPOINT = "oss-cn-shanghai.aliyuncs.com";// SysProperties.getProperty("endpoint");
-	private static String ACCESS_KEYID = "LTAIgukNoWjZd26f";// SysProperties.getProperty("access_keyid");
-	private static String ACCESS_KEYSECRET = "bDeHX8RVMvgEvMZBp1lpSmJQvff9uy";// SysProperties.getProperty("access_keysecret");
-	private static String BUCJET_NAME = "zeustest";// SysProperties.getProperty("bucket_name");
+	private static String ENDPOINT =  SysProperties.getProperty("endpoint");
+	private static String ACCESS_KEYID =  SysProperties.getProperty("access_keyid");
+	private static String ACCESS_KEYSECRET =  SysProperties.getProperty("access_keysecret");
+	private static String BUCJET_NAME =  SysProperties.getProperty("bucket_name");
 
 	// wget -O /etc/yum.repos.d/Centos-6.repo
 	// http://mirrors.aliyun.com/repo/Centos-6.repo

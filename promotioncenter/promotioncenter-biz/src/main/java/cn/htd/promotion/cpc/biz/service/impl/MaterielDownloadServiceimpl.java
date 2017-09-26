@@ -160,12 +160,11 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			}
 			rt = activityPictureInfoDAO.selectByPictureId(activityPictureInfoId);
 			if (rt != null) {
-
-//				if (rt.getIsVip() == 2) {
-//					List<ActivityPictureMemberDetailResDTO> pdlist = activityPictureMemberDetailDAO
-//							.selectByPictureId(rt.getPictureId());
-//					rt.setActivityPictureMemberDetailList(pdlist);
-//				}
+				if (rt.getIsVip() == 2) {
+					List<ActivityPictureMemberDetailResDTO> pdlist = activityPictureMemberDetailDAO
+							.selectByPictureId(rt.getPictureId());
+					rt.setActivityPictureMemberDetailList(pdlist);
+				}
 			} else {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "物料下载查询为空");
 			}

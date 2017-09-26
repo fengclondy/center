@@ -116,6 +116,13 @@
                         and date_format(trade_orders_.create_order_time,'%Y-%m-%d')  <= date_format(#{entity.createEnd},'%Y-%m-%d')
                         ]]>
             </if>
+            <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
+                <![CDATA[ and trade_orders_.order_status IN ]]>
+                <foreach collection="entity.orderStatuss" item="item" index="index" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
 
         </if>
         order by trade_orders_.create_order_time desc

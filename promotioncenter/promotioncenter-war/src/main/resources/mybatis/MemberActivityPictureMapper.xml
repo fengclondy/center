@@ -43,7 +43,7 @@
       #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
       #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id=add parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
     insert into member_activity_picture
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="pictureId != null" >

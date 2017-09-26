@@ -341,7 +341,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 		
 		if(type==3) {
 			Map<String, Integer> info = baseImageMagickService.getImgInfo(bid.getMainImageUrl());
-			String newbg = baseImageMagickService.margeImgHeight(bid.getMainImageUrl(),(int)(info.get("height")*1.3));
+			String newbg = baseImageMagickService.margeImgHeight(bid.getMainImageUrl(),(int)(info.get("height")*1.5 ));
 			bid.setMainImageUrl(newbg);
 			return baseImageMagickService.margeImage(bid);
 		}

@@ -554,22 +554,39 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 }
             }
         }
+        //--------xuwei-----------
+//
+//        List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
+//        if (pclist != null && pclist.size() > 0) {
+//            for (PromotionConfigureDTO pcd : pclist) {
+//                if (oldpclist != null && oldpclist.size() > 0) {
+//                	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
+//						if(promotionConfigureDTO.getConfType().equals(pcd.getConfType())){
+//							pcd.setId(promotionConfigureDTO.getId());
+//			                promotionConfigureDAO.update(pcd);
+//			                break;
+//						}
+//					}
+//                }
+//            }
+//        }
         List<PromotionConfigureDTO> oldpclist = promotionConfigureDAO.selectByPromotionId(promotionId);
-
+        if(oldpclist != null && oldpclist.size() >0){
+        	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
+        		promotionConfigureDAO.deleteByPrimaryKey(promotionConfigureDTO.getId());	
+			}
+        }
         List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
         if (pclist != null && pclist.size() > 0) {
-            for (PromotionConfigureDTO pcd : pclist) {
-                if (oldpclist != null && oldpclist.size() > 0) {
-                	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
-						if(promotionConfigureDTO.getConfType().equals(pcd.getConfType())){
-							pcd.setId(promotionConfigureDTO.getId());
-			                promotionConfigureDAO.update(pcd);
-			                break;
-						}
-					}
-                }
-            }
+        	for (PromotionConfigureDTO pcd : pclist) {
+                pcd.setPromotionId(promotionId);
+                pcd.setCreateId(promotionInfo.getCreateId());
+                pcd.setCreateName(promotionInfo.getCreateName());
+                pcd.setDeleteFlag(YesNoEnum.NO.getValue());
+                promotionConfigureDAO.add(pcd);
+        	}
         }
+        //--------xuwei-----------
         promotionInfo.setPromotionConfigureList(pclist);
         return promotionInfo;
     }

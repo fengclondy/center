@@ -53,6 +53,8 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 	 */
 	private int isErrorFlag = -1;
 
+	private String thirdCategoryId;
+
 	public String getSellerCode() {
 		return sellerCode;
 	}
@@ -131,6 +133,21 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 
 	public void setIsErrorFlag(int isErrorFlag) {
 		this.isErrorFlag = isErrorFlag;
+	}
+
+	/**
+	 * @return the thirdCategoryId
+	 */
+	public String getThirdCategoryId() {
+		return thirdCategoryId;
+	}
+
+	/**
+	 * @param thirdCategoryId
+	 *            the thirdCategoryId to set
+	 */
+	public void setThirdCategoryId(String thirdCategoryId) {
+		this.thirdCategoryId = thirdCategoryId;
 	}
 
 }

@@ -26,6 +26,18 @@ public interface GoodsCenterRAO {
 			OrderCreateItemListInfoReqDTO orderItemTemp, String site, String messageId);
 
 	/*
+	 * 从商品中心查询商品基本信息-4秒杀
+	 * 
+	 * @param isHasDevRelation
+	 * 
+	 * @param orderItemTemp
+	 * 
+	 * @return ExecuteResult<List<SkuInfo4CartOutDTO>>
+	 */
+	public OtherCenterResDTO<MallSkuOutDTO> queryMallItemDetail4SecKill(
+			OrderCreateItemListInfoReqDTO orderItemTemp, String site, String messageId);
+	
+	/*
 	 * 调用商品中心判断是否超出配送范围
 	 */
 	public OtherCenterResDTO<String> isRecevieAddressInSaleRange(
@@ -68,6 +80,14 @@ public interface GoodsCenterRAO {
 	public OtherCenterResDTO<List<MallSkuWithStockOutDTO>> getMallItemInfoList(
 			List<MallSkuWithStockInDTO> mallSkuWithStockInDTOList, String messageId);
 
+	/*
+	 * 查询商品详细信息列表-专为秒杀使用
+	 * 秒杀不需要去商品中心查询库存
+	 */
+	public OtherCenterResDTO<List<MallSkuOutDTO>> getMallItemInfoList4SecKill(
+			List<MallSkuInDTO> mallSkuInDTOList, String messageId);
+
+	
 	/*
 	 * 查询商品详细信息列表
 	 */

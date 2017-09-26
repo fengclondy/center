@@ -112,4 +112,28 @@
             companyId asc
     </select>
     
+    <select id="querySubCompaniesByParentName" resultType="String">
+        select hcp.company_id from htd_company hcf
+		right join htd_company hcp on hcf.company_id=hcp.parent_company_id and hcp.type=2
+		where hcf.type=1
+		and hcf.name like concat(#{name}, '%')
+    </select>
+    
+    <select id="queryParentNameBySubCode" resultType="cn.htd.usercenter.dto.HTDCompanyDTO">
+	    select distinct hcf.name as name,hcp.company_id as companyId,
+	   	hcp.name as subComName
+	     from htd_company hcf
+		right join htd_company hcp on hcf.company_id=hcp.parent_company_id and hcp.type=2
+		where hcf.type=1
+		and hcp.company_id in (
+			<foreach collection="list" item="item" separator=",">
+			#{item}
+			</foreach>
+		)
+    </select>
+    
+    <select id="querySubCompaniesCodeByName" parameterType="string" resultType="string">
+    select company_id from  htd_company where name like concat(#{name}, '%') and type=2
+    </select>
+    
 </mapper>

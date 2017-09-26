@@ -1,5 +1,7 @@
 package cn.htd.usercenter.service;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.usercenter.dto.HTDCompanyDTO;
@@ -15,5 +17,29 @@ public interface HTDCompanyService {
      * @return
      */
 	  public ExecuteResult<DataGrid<HTDCompanyDTO>> selectEmployeeByTypeOrComplayId(HTDCompanyDTO htdCompanyDTO);
+	  
+	  /**
+	   * 根据分部名称模糊查询平台公司编码
+	   * 
+	   * @param name
+	   * @return
+	   */
+	  public ExecuteResult<List<String>> selectSubCompaniesByParentName(String name);
+	  
+	  /**
+	   *  根据平台公司编码查询分部名称
+	   * 
+	   * @param subComCodeList
+	   * @return
+	   */
+	  public ExecuteResult<List<HTDCompanyDTO>> selectParentNameBySubCode(List<String> subComCodeList);
+	  
+	  /**
+	   * 根据平台公司名称模糊查询编码
+	   * 
+	   * @param name
+	   * @return
+	   */
+	  public ExecuteResult<List<String>> selectSubCompaniesCodeByName(String name);
 
 }

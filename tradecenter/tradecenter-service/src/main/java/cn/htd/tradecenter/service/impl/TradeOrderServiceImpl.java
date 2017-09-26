@@ -24,15 +24,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSONObject;
-import com.yiji.openapi.tool.fastjson.JSON;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -96,7 +87,14 @@ import cn.htd.tradecenter.service.handle.TradeOrderDBHandle;
 import cn.htd.tradecenter.service.handle.TradeOrderStockHandle;
 import cn.htd.usercenter.dto.CustomerDTO;
 import cn.htd.usercenter.service.CustomerService;
+import com.alibaba.fastjson.JSONObject;
+import com.yiji.openapi.tool.fastjson.JSON;
 import jodd.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("tradeOrderService")
 public class TradeOrderServiceImpl implements TradeOrderService {
@@ -111,7 +109,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 
     @Resource
     private PromotionInfoService promotionInfoService;
-    
+
     @Resource
     private ItemExportService itemExportService;
 
@@ -147,7 +145,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 
     @Resource
     private TradeOrderItemsStatusHistoryDAO itemStatusHistoryDAO;
-    
+
     @Autowired
    	private MiddleWare middleware;
 
@@ -257,8 +255,8 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         }
         return result;
     }
-    
-    
+
+
     @SuppressWarnings("rawtypes")
 	private String  getPrivateAccount(VenusCreateTradeOrderDTO venusInDTO,
 			TradeOrdersDTO tradeOrdersDTO) {
@@ -1327,9 +1325,9 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         }
         return result;
     }
-    
-    
-    
+
+
+
     @Override
     public ExecuteResult<DataGrid<TradeOrderItemsShowDTO>> queryTradeOrderHmsListByItemCodeAndBoxFlag(TradeOrdersQueryInDTO inDTO,
                                                                                           Pager<TradeOrdersQueryInDTO> pager) {
@@ -1373,7 +1371,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         }
         return result;
     }
-    
+
     @Override
     public ExecuteResult<TradeOrderItemStockDTO> getItemStockAndLockStock(TradeOrdersQueryInDTO inDTO) {
         logger.info("**********运营系统根据商品编码获取商品的库存以及锁库存开始***********");
@@ -1398,17 +1396,17 @@ public class TradeOrderServiceImpl implements TradeOrderService {
          logger.info("***********运营系统根据商品编码获取商品的库存以及锁库存结束|调用耗时{}ms***********", (endTime - startTime));
     	 return result;
         }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public ExecuteResult<TradeOrdersShowDTO> queryVenusTradeOrderInfo(String orderNo) {
@@ -1756,10 +1754,10 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                 throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_IS_VMS_ADDED,
                         "订单编号:" + orderNo + " 是VMS新增订单不能议价");
             }
-            if (YesNoEnum.YES.getValue() == orderDTO.getIsChangePrice()) {
-                throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_HAS_NEGOTIATION,
-                        "订单编号:" + orderNo + " 已议价过不能再次议价");
-            }
+//            if (YesNoEnum.YES.getValue() == orderDTO.getIsChangePrice()) {
+//                throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_HAS_NEGOTIATION,
+//                        "订单编号:" + orderNo + " 已议价过不能再次议价");
+//            }
             if (YesNoEnum.YES.getValue() == orderDTO.getIsTimelimitedOrder()) {
                 throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_IS_TIMELIMITED_ERROR,
                         "订单编号:" + orderNo + " 秒杀订单不可修改");
@@ -1919,11 +1917,18 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                     continue;
                 }
                 // 议价数量和议价金额没有发生变化时
-                if (orderItemDTO.getGoodsCount().equals(negotiateItemDTO.getBargainingGoodsCount()) && CalculateUtils
-                        .multiply(orderItemDTO
-                                .getGoodsPrice(), new BigDecimal(100)).intValue() == CalculateUtils.multiply
-                        (negotiateItemDTO.getBargainingGoodsPrice(), new BigDecimal(100)).intValue()) {
-                    continue;
+                if (YesNoEnum.YES.getValue() == orderItemDTO.getIsChangePrice()) {
+                    if (orderItemDTO.getBargainingGoodsCount().equals(negotiateItemDTO.getBargainingGoodsCount())
+                            && CalculateUtils.multiply(orderItemDTO.getBargainingGoodsPrice(), new BigDecimal(100)).intValue() == CalculateUtils.multiply(negotiateItemDTO.getBargainingGoodsPrice(), new BigDecimal(100))
+                            .intValue()) {
+                        continue;
+                    }
+                } else {
+                    if (orderItemDTO.getGoodsCount().equals(negotiateItemDTO.getBargainingGoodsCount())
+                            && CalculateUtils.multiply(orderItemDTO.getGoodsPrice(), new BigDecimal(100)).intValue() == CalculateUtils.multiply(negotiateItemDTO.getBargainingGoodsPrice(), new BigDecimal(100))
+                            .intValue()) {
+                        continue;
+                    }
                 }
                 // 使用优惠券时
                 if (YesNoEnum.YES.getValue() == orderItemDTO.getHasUsedCoupon()) {

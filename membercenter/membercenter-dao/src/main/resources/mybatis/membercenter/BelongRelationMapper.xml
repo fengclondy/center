@@ -15,7 +15,8 @@
 			m.belong_manager_id belongManagerId,
 			m.cur_belong_seller_id curBelongSellerId,
 			m.cur_belong_manager_id curBelongManagerId,
-			c.location_addr as locationAddr
+			c.location_addr as locationAddr,
+			c.company_code as memberComCode
 		from belong_relationship b
 		LEFT JOIN member_base_info m on m.id = b.buyer_id  
 		LEFT JOIN member_company_info c on m.id = c.member_id and c.buyer_seller_type='1'

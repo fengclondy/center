@@ -1627,4 +1627,65 @@
 			on mb.id=mc.member_id and mc.buyer_seller_type=2
 			where mb.is_seller='1' and member_id=#{sellerId}
 	</select>
+	
+	<select id="queryMmeberComCodeList" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO" parameterType="String">
+		select
+			mc.company_name as companyName,
+			mc.id as companyId,
+			mc.company_code companyCode,
+			m.cur_belong_seller_id as curBelongSellerId,
+		    mc2.company_name as curBelongCompanyName
+		from member_base_info m
+		left join member_status_info ms on ms.member_id=m.id and ms.info_type=5
+		left join belong_relationship br on m.id=br.buyer_id and br.status!='9'
+		left join member_company_info mc on m.id=mc.member_id 
+		left join member_person_info mp on mp.member_id=m.id
+		left join member_company_info mc1 on m.belong_seller_id=mc1.member_id and mc1.buyer_seller_type='2'
+		left join buyer_grade_info bg on m.id=bg.buyer_id
+		left join member_company_info mc2 on m.cur_belong_seller_id=mc2.member_id and mc2.buyer_seller_type='2'
+		left join member_licence_info ml on ml.member_id=m.id 
+		where 
+		    mc.buyer_seller_type=1 and mc.company_name like concat(#{name},'%')
+	</select>
+	
+	<select id="queryMemberComCodeListByMemberId" resultType="cn.htd.membercenter.dto.MemberBaseDTO">
+		select info.company_code as companyCode,
+		info.member_id as memberId
+		 from member_company_info info where 
+		 buyer_seller_type=2
+		 and
+		 info.member_id in (
+			 <foreach collection="list" item="item" separator=",">
+			 	#{item}
+			 </foreach>
+		 )
+	</select>
+	
+	
+	<select id="queryMmeberInfoByLittleMemberComCode" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
+		select
+			mc.company_name as companyName,
+			mc.id as companyId,
+			mc.company_code companyCode,
+			m.cur_belong_seller_id as curBelongSellerId,
+		    mc2.company_name as curBelongCompanyName,
+		    mc2.company_code as parentComCode
+		from member_base_info m
+		left join member_status_info ms on ms.member_id=m.id and ms.info_type=5
+		left join belong_relationship br on m.id=br.buyer_id and br.status!='9'
+		left join member_company_info mc on m.id=mc.member_id 
+		left join member_person_info mp on mp.member_id=m.id
+		left join member_company_info mc1 on m.belong_seller_id=mc1.member_id and mc1.buyer_seller_type='2'
+		left join buyer_grade_info bg on m.id=bg.buyer_id
+		left join member_company_info mc2 on m.cur_belong_seller_id=mc2.member_id and mc2.buyer_seller_type='2'
+		left join member_licence_info ml on ml.member_id=m.id 
+		where 
+		    mc.buyer_seller_type=1 and 
+		    mc.company_code
+		    in (
+			 <foreach collection="list" item="item" separator=",">
+			 	#{item}
+			 </foreach>
+		 )
+	</select>
 </mapper>

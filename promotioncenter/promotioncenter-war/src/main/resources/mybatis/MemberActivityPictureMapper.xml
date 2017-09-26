@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.MemberActivityPictureDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.MemberActivityPictureResDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="picture_id" property="pictureId" jdbcType="VARCHAR" />
+    <result column="member_code" property="memberCode" jdbcType="VARCHAR" />
+    <result column="picture_name" property="pictureName" jdbcType="VARCHAR" />
+    <result column="picture_type" property="pictureType" jdbcType="VARCHAR" />
+    <result column="upload_picture_front" property="uploadPictureFront" jdbcType="VARCHAR" />
+    <result column="upload_picture_back" property="uploadPictureBack" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, picture_id, member_code, picture_name, picture_type, upload_picture_front, upload_picture_back, 
+    delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_activity_picture
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from member_activity_picture
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
+    insert into member_activity_picture (id, picture_id, member_code, 
+      picture_name, picture_type, upload_picture_front, 
+      upload_picture_back, delete_flag, create_id, 
+      create_name, create_time, modify_id, 
+      modify_name, modify_time)
+    values (#{id,jdbcType=BIGINT}, #{pictureId,jdbcType=VARCHAR}, #{memberCode,jdbcType=VARCHAR}, 
+      #{pictureName,jdbcType=VARCHAR}, #{pictureType,jdbcType=VARCHAR}, #{uploadPictureFront,jdbcType=VARCHAR}, 
+      #{uploadPictureBack,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
+      #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="add" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
+    insert into member_activity_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pictureId != null" >
+        picture_id,
+      </if>
+      <if test="memberCode != null" >
+        member_code,
+      </if>
+      <if test="pictureName != null" >
+        picture_name,
+      </if>
+      <if test="pictureType != null" >
+        picture_type,
+      </if>
+      <if test="uploadPictureFront != null" >
+        upload_picture_front,
+      </if>
+      <if test="uploadPictureBack != null" >
+        upload_picture_back,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+        create_time,
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+        modify_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pictureId != null" >
+        #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberCode != null" >
+        #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureName != null" >
+        #{pictureName,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureType != null" >
+        #{pictureType,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadPictureFront != null" >
+        #{uploadPictureFront,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadPictureBack != null" >
+        #{uploadPictureBack,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
+    update member_activity_picture
+    <set >
+      <if test="pictureId != null" >
+        picture_id = #{pictureId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberCode != null" >
+        member_code = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureName != null" >
+        picture_name = #{pictureName,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureType != null" >
+        picture_type = #{pictureType,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadPictureFront != null" >
+        upload_picture_front = #{uploadPictureFront,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadPictureBack != null" >
+        upload_picture_back = #{uploadPictureBack,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.MemberActivityPictureReqDTO" >
+    update member_activity_picture
+    set picture_id = #{pictureId,jdbcType=VARCHAR},
+      member_code = #{memberCode,jdbcType=VARCHAR},
+      picture_name = #{pictureName,jdbcType=VARCHAR},
+      picture_type = #{pictureType,jdbcType=VARCHAR},
+      upload_picture_front = #{uploadPictureFront,jdbcType=VARCHAR},
+      upload_picture_back = #{uploadPictureBack,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<select id="selectMemberActivityPictureList" resultMap="BaseResultMap" parameterType="java.lang.String">
+select 
+<include refid="Base_Column_List" />
+FROM member_activity_picture
+WHERE 1=1 
+<if test="entity != null">
+	<if test="entity.pictureName != null and entity.pictureName != ''">
+	and picture_name =#{entity.pictureName}
+	</if>
+	<if test="entity.pictureType != null and entity.pictureType != ''">
+	and picture_type =#{entity.pictureType}
+	</if>
+	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime != null and entity.createEndTime != '' ">
+	and date_format(create_time,'%Y-%m-%d') BETWEEN #{entity.entity.createStartTime} and  #{entity.createEndTime}
+	</if>
+	<if test="entity.memberCode != null and entity.memberCode != ''">
+	and member_code =#{entity.memberCode}
+	</if>
+	 order by id desc
+	<if test="pager!=null">
+	 limit #{pager.pageOffset} , #{pager.rows}
+	</if>
+</if>
+</select>
+
+
+<select id="selectMemberActivityPictureCount" resultType="java.lang.Long" parameterType="java.lang.String">
+select count(1)
+FROM member_activity_picture
+WHERE 1=1 
+<if test="entity != null">
+	<if test="entity.pictureName != null and entity.pictureName != ''">
+	and picture_name =#{entity.pictureName}
+	</if>
+	<if test="entity.pictureType != null and entity.pictureType != ''">
+	and picture_type =#{entity.pictureType}
+	</if>
+	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime != null and entity.createEndTime != '' ">
+	and date_format(create_time,'%Y-%m-%d') BETWEEN #{entity.entity.createStartTime} and  #{entity.createEndTime}
+	</if>
+	<if test="entity.memberCode != null and entity.memberCode != ''">
+	and member_code =#{entity.memberCode}
+	</if>
+</if>
+</select>
+</mapper>

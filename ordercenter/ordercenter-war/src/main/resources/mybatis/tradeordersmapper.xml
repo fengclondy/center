@@ -921,7 +921,7 @@ and b.customer_manager_code = #{customerManagerID}
 			and t.order_no = #{orderNo}
 		</if>
 		<if test="shopName != null">
-			and t.shop_name like CONCAT(CONCAT('%', #{shopName}), '%')
+			and (t.shop_name like CONCAT(CONCAT('%', #{shopName}), '%') or t.seller_name like CONCAT(CONCAT('%', #{shopName}), '%'))
 		</if>
 		<if test="createOrderTimeFrom != null">
 			and t.create_order_time >= #{createOrderTimeFrom}
@@ -1015,7 +1015,7 @@ and b.customer_manager_code = #{customerManagerID}
 				and order_no = #{orderNo}
 			</if>
 			<if test="shopName != null">
-				and shop_name like CONCAT(CONCAT('%', #{shopName}), '%')
+				and (shop_name like CONCAT(CONCAT('%', #{shopName}), '%') or seller_name like CONCAT(CONCAT('%', #{shopName}), '%'))
 			</if>
 			<if test="createOrderTimeFrom != null">
 				and create_order_time >= #{createOrderTimeFrom}

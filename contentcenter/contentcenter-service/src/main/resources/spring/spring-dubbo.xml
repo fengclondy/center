@@ -7,11 +7,8 @@
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd
         ">
     <dubbo:application name="${server.name}" />
-
-
     <dubbo:protocol name="dubbo" port="${esf.port}"/>
-
-
-	<dubbo:registry id="beijingRegistry" protocol="zookeeper" address="${esf.registry.addressd}" client="zkclient" />
+    <dubbo:provider timeout="3000" threadpool="fixed" threads="500" accepts="1000" />
+	<dubbo:registry id="contentcenteRegistry" protocol="zookeeper" address="${esf.registry.addressd}" client="zkclient" />
 
 </beans>

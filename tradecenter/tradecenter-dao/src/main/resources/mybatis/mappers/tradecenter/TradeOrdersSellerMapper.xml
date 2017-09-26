@@ -91,6 +91,13 @@
             <if test="entity.shopId != null">
                 <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
             </if>
+            <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
+                <![CDATA[ and trade_orders_.order_status IN ]]>
+                <foreach collection="entity.orderStatuss" item="item" index="index" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="entity.isCancelOrder != null">
                 <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
             </if>
@@ -115,13 +122,6 @@
                 <![CDATA[
                         and date_format(trade_orders_.create_order_time,'%Y-%m-%d')  <= date_format(#{entity.createEnd},'%Y-%m-%d')
                         ]]>
-            </if>
-            <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
-                <![CDATA[ and trade_orders_.order_status IN ]]>
-                <foreach collection="entity.orderStatuss" item="item" index="index" open="("
-                         separator="," close=")">
-                    #{item}
-                </foreach>
             </if>
 
         </if>

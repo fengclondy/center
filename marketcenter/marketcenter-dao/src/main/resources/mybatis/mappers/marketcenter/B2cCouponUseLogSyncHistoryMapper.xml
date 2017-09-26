@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.marketcenter.dao.B2cCouponUseLogSyncHistoryDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="b2c_activity_code" property="b2cActivityCode" jdbcType="VARCHAR" />
+    <result column="b2c_buyer_code" property="b2cBuyerCode" jdbcType="VARCHAR" />
+    <result column="b2c_seller_code" property="b2cSellerCode" jdbcType="VARCHAR" />
+    <result column="b2c_order_no" property="b2cOrderNo" jdbcType="VARCHAR" />
+    <result column="b2c_buyer_coupon_code" property="b2cBuyerCouponCode" jdbcType="VARCHAR" />
+    <result column="b2c_coupon_used_amount" property="b2cCouponUsedAmount" jdbcType="DECIMAL" />
+    <result column="use_type" property="useType" jdbcType="VARCHAR" />
+    <result column="deal_flag" property="dealFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, b2c_activity_code, b2c_buyer_code, b2c_seller_code, b2c_order_no, b2c_buyer_coupon_code, 
+    b2c_coupon_used_amount, use_type, deal_flag, create_id, create_name, create_time
+  </sql>
+  
+  <insert id="saveB2cCouponUseLogSyncHistory" parameterType="cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO" >
+    insert into b2c_coupon_use_log_sync_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="b2cActivityCode != null" >
+        b2c_activity_code,
+      </if>
+      <if test="b2cBuyerCode != null" >
+        b2c_buyer_code,
+      </if>
+      <if test="b2cSellerCode != null" >
+        b2c_seller_code,
+      </if>
+      <if test="b2cOrderNo != null" >
+        b2c_order_no,
+      </if>
+      <if test="b2cBuyerCouponCode != null" >
+        b2c_buyer_coupon_code,
+      </if>
+      <if test="b2cCouponUsedAmount != null" >
+        b2c_coupon_used_amount,
+      </if>
+      <if test="useType != null" >
+        use_type,
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="b2cActivityCode != null" >
+        #{b2cActivityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cBuyerCode != null" >
+        #{b2cBuyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cSellerCode != null" >
+        #{b2cSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cOrderNo != null" >
+        #{b2cOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cBuyerCouponCode != null" >
+        #{b2cBuyerCouponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cCouponUsedAmount != null" >
+        #{b2cCouponUsedAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="useType != null" >
+        #{useType,jdbcType=VARCHAR},
+      </if>
+      <if test="dealFlag != null" >
+        #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

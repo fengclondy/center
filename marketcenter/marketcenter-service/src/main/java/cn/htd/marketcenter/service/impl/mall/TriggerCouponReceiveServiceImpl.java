@@ -36,6 +36,7 @@ public class TriggerCouponReceiveServiceImpl implements TriggerCouponReceiveServ
     @Resource
     private CouponRedisHandle couponRedisHandle;
 
+    @Deprecated
     @Override
     public ExecuteResult<String> saveReceiveTriggerCoupon(String messageId, ReceiveTriggerCouponDTO triggerDTO) {
         ExecuteResult<String> result = new ExecuteResult<String>();

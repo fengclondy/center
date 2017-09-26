@@ -12,6 +12,7 @@ public interface TriggerCouponReceiveService {
 	 * @param triggerDTO
 	 * @return
 	 */
+	@Deprecated
 	public ExecuteResult<String> saveReceiveTriggerCoupon(String messageId, ReceiveTriggerCouponDTO triggerDTO);
 
 }

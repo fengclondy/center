@@ -203,7 +203,7 @@ FROM member_activity_picture
 WHERE 1=1 
 <if test="entity != null">
 	<if test="entity.pictureName != null and entity.pictureName != ''">
-	and picture_name =#{entity.pictureName}
+	and picture_name like concat('%', #{entity.pictureName,jdbcType=VARCHAR} ,'%')
 	</if>
 	<if test="entity.pictureType != null and entity.pictureType != ''">
 	and picture_type =#{entity.pictureType}
@@ -228,7 +228,7 @@ FROM member_activity_picture
 WHERE 1=1 
 <if test="entity != null">
 	<if test="entity.pictureName != null and entity.pictureName != ''">
-	and picture_name =#{entity.pictureName}
+	and picture_name like concat('%', #{entity.pictureName,jdbcType=VARCHAR} ,'%')
 	</if>
 	<if test="entity.pictureType != null and entity.pictureType != ''">
 	and picture_type =#{entity.pictureType}

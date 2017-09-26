@@ -2,10 +2,13 @@ package cn.htd.promotion.cpc.common.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
 
+@Service("bargainPriceSplit")
 public class BargainPriceSplit {
 	/**
 	 * 每个红包都要有钱，最低不能低于1分
@@ -14,7 +17,7 @@ public class BargainPriceSplit {
 	/**
 	 * 这里为了避免某一个红包占用大量资金，我们需要设定非最后一个红包的最大金额，我们把他设置为红包金额平均值的N倍；
 	 */
-	private static final double TIMES =2.1;
+	private static final double TIMES =1.5;
 	
 	/**金额为分的格式 */  
     public static final String CURRENCY_FEN_REGEX = "\\-?[0-9]+";
@@ -44,8 +47,11 @@ public class BargainPriceSplit {
 			list.add(oneStr);
 			money -=one;
 		}
+		// 重新打乱列表
+		Collections.shuffle(list);
 		return list;
 	}
+	
 	/**
 	 * 随机分配一个红包
 	 * @param money

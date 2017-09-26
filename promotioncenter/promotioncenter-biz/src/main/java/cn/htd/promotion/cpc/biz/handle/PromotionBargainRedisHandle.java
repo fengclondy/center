@@ -36,6 +36,9 @@ public class PromotionBargainRedisHandle {
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
 
+	@Resource(name="bargainPriceSplit")
+	private BargainPriceSplit priceSplit;
+	
 	/**
 	 * 保存砍价活动的启用状态
 	 *
@@ -235,7 +238,6 @@ public class PromotionBargainRedisHandle {
 			throws Exception {
 		BigDecimal popPrice = null;
 		int price = (dto.getGoodsCostPrice().subtract(dto.getGoodsFloorPrice()).multiply(new BigDecimal("100"))).intValue();
-		BargainPriceSplit priceSplit = new BargainPriceSplit();
 		String key = "";
 		List<String> priceList = priceSplit.splitRedPackets(price,
 				dto.getPartakeTimes());

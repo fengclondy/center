@@ -13,14 +13,18 @@
     <result column="discount_threshold" property="discountThreshold" jdbcType="DECIMAL"/>
     <result column="discount_percent" property="discountPercent" jdbcType="INTEGER"/>
     <result column="deal_flag" property="dealFlag" jdbcType="TINYINT"/>
+    <result column="deal_fail_reason" property="dealFailReason" jdbcType="VARCHAR"/>
     <result column="create_id" property="createId" jdbcType="BIGINT"/>
     <result column="create_name" property="createName" jdbcType="VARCHAR"/>
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT"/>
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR"/>
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, b2c_activity_code, coupon_name, coupon_describe, coupon_type, coupon_provide_type, 
-    coupon_start_time, coupon_end_time, discount_threshold, discount_percent, deal_flag, 
-    create_id, create_name, create_time
+    coupon_start_time, coupon_end_time, discount_threshold, discount_percent, deal_flag,
+    deal_fail_reason, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
   <select id="queryB2cCouponInfoSyncHistory" resultMap="BaseResultMap"
           parameterType="cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO">
@@ -29,10 +33,9 @@
     from b2c_coupon_info_sync_history
     where 1=1
     and b2c_activity_code = #{b2cActivityCode}
-    order by create_time desc
+    order by id desc
     limit 1
   </select>
-
   <insert id="saveB2cCouponInfoSyncHistory" parameterType="cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO"
           useGeneratedKeys="true" keyProperty="id">
     insert into b2c_coupon_info_sync_history
@@ -65,9 +68,15 @@
         discount_percent,
       </if>
       deal_flag,
+      <if test="dealFailReason != null and dealFailReason != ''">
+        deal_fail_reason,
+      </if>
       create_id,
       create_name,
       create_time,
+      modify_id,
+      modify_name,
+      modify_time,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="b2cActivityCode != null">
@@ -98,6 +107,12 @@
         #{discountPercent,jdbcType=INTEGER},
       </if>
       0,
+      <if test="dealFailReason != null and dealFailReason != ''">
+        #{dealFailReason,jdbcType=VARCHAR},
+      </if>
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -111,7 +126,7 @@
     from b2c_coupon_info_sync_history
     where b2c_activity_code = #{b2cActivityCode,jdbcType=VARCHAR}
     and deal_flag = #{dealFlag,jdbcType=TINYINT}
-    order by create_time desc
+    order by id desc
     limit 1
   </select>
 </mapper>

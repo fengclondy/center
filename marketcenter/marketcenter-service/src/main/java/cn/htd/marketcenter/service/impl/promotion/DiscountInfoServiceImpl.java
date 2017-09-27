@@ -519,9 +519,11 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                         "每人最大领取次数不能为空且必须大于0");
             }
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
         } else {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                     "不能新增触发返券类型优惠券");
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
         }
     }
 

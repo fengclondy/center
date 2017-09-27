@@ -72,4 +72,6 @@ public interface MaterielDownloadService {
 			Pager<ActivityPictureMemberDetailResDTO> page, String messageid);
 
 	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid, int type);
+
+	public void saveMaterielDownloadImgHis(MemberActivityPictureReqDTO memberActivityPictureReqDTO);
 }

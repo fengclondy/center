@@ -74,17 +74,21 @@ public class CouponRedisHandle {
         String couponRedisKey = "";
         marketRedisDB.setHash(RedisConst.REDIS_COUPON_VALID, couponInfo.getPromotionId(), dictionary.getValueByCode
                 (DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-        if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
-                DictionaryConst.OPT_COUPON_PROVIDE_TRIGGER_SEND).equals(couponProvideType)) {
-            marketRedisDB.setHash(RedisConst.REDIS_COUPON_TRIGGER, couponInfo.getPromotionId(), couponJsonStr);
-        } else {
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+//        if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
+//                DictionaryConst.OPT_COUPON_PROVIDE_TRIGGER_SEND).equals(couponProvideType)) {
+//            marketRedisDB.setHash(RedisConst.REDIS_COUPON_TRIGGER, couponInfo.getPromotionId(), couponJsonStr);
+//        } else {
+            //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
             if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
                     DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProvideType)) {
                 couponRedisKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + couponInfo.getPromotionId();
                 marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
             }
             marketRedisDB.tailPush(RedisConst.REDIS_COUPON_NEED_DEAL_LIST, couponJsonStr);
-        }
+            //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+//        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
     }
 
     /**

@@ -4,54 +4,53 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class B2cCouponInfoSyncDMO{
-	
+
+	/**
+	 * ID
+	 */
+	private Long id;
 	/**
 	 * B2C活动编号
 	 */
 	private String b2cActivityCode;
-	
 	/**
 	 * 优惠券名称
 	 */
 	private String couponName;
-
 	/**
 	 * 优惠券描述
 	 */
 	private String couponDescribe;
-
 	/**
 	 * 优惠券类型
 	 * 1：满减券 2：折扣券
 	 */
 	private String couponType;
-
 	/**
 	 * 券发放方式
 	 * 1-自动发放，2-会员领取，3-触发返券
 	 */
 	private String couponProvideType;
-
 	/**
 	 * 优惠券有效期开始时间
 	 */
 	private Date couponStartTime;
-
 	/**
 	 * 优惠券有效期结束时间
 	 */
 	private Date couponEndTime;
-
 	/**
 	 * 使用门槛阈值（满减时表示满多少元）v
 	 */
 	private BigDecimal discountThreshold;
-
 	/**
 	 * 折扣券单次使用百分比值
 	 */
 	private Integer discountPercent;
-	
+	/**
+	 * 处理标记 O:未处理，1:已处理
+	 */
+	private int dealFlag;
 	/**
      * 创建人ID
      */
@@ -60,22 +59,19 @@ public class B2cCouponInfoSyncDMO{
      * 创建人名称
      */
     private String createName;
-    
     /**
-     * 前端不需要传入
+     * 创建时间
      */
-    private Date createTime; 
-    
-    /**
-     * 前端不需要传入
-     */
-    private int dealFlag;
-    
-    /**
-     * 前端不需要传入
-     */
-    private Integer id;
-    
+    private Date createTime;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getB2cActivityCode() {
 		return b2cActivityCode;
 	}
@@ -148,6 +144,14 @@ public class B2cCouponInfoSyncDMO{
 		this.discountPercent = discountPercent;
 	}
 
+	public int getDealFlag() {
+		return dealFlag;
+	}
+
+	public void setDealFlag(int dealFlag) {
+		this.dealFlag = dealFlag;
+	}
+
 	public Long getCreateId() {
 		return createId;
 	}
@@ -170,21 +174,5 @@ public class B2cCouponInfoSyncDMO{
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-
-	public int getDealFlag() {
-		return dealFlag;
-	}
-
-	public void setDealFlag(int dealFlag) {
-		this.dealFlag = dealFlag;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 }

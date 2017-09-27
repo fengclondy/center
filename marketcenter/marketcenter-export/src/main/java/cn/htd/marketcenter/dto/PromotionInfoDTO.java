@@ -101,6 +101,12 @@ public class PromotionInfoDTO implements Serializable {
      * 修改促销活动编码
      */
     private String modifyPromotionId;
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+    /**
+     * 关联B2C活动编号
+     */
+    private String b2cActivityCode;
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
     /**
      * 创建人ID
      */
@@ -388,6 +394,14 @@ public class PromotionInfoDTO implements Serializable {
         this.modifyPromotionId = modifyPromotionId;
     }
 
+    public String getB2cActivityCode() {
+        return b2cActivityCode;
+    }
+
+    public void setB2cActivityCode(String b2cActivityCode) {
+        this.b2cActivityCode = b2cActivityCode;
+    }
+
     public Long getCreateId() {
         return createId;
     }
@@ -568,6 +582,7 @@ public class PromotionInfoDTO implements Serializable {
         this.verifyTime = promotionInfoDTO.getVerifyTime();
         this.verifyRemark = promotionInfoDTO.getVerifyRemark();
         this.modifyPromotionId = promotionInfoDTO.getModifyPromotionId();
+        this.b2cActivityCode = promotionInfoDTO.getB2cActivityCode();
         this.createId = promotionInfoDTO.getCreateId();
         this.createName = promotionInfoDTO.getCreateName();
         this.createTime = promotionInfoDTO.getCreateTime();

@@ -59,4 +59,11 @@ public class RedisConst {
     // Redis会员优惠券的使用log信息
     public static final String REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG =
             "B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
+
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+    // Redis同步B2C触发返券活动编号Set
+    public static final String REDIS_SYNC_B2C_COUPON_SET = "B2B_MIDDLE_SYNC_B2C_COUPON_SET";
+    // Redis处理中B2C触发返券活动Hash
+    public static final String REDIS_DEAL_B2C_COUPON_HASH = "B2B_MIDDLE_DEAL_B2C_COUPON_HASH";
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
 }

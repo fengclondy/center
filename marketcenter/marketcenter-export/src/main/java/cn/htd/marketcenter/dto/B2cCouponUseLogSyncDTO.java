@@ -27,11 +27,15 @@ public class B2cCouponUseLogSyncDTO extends GenricReqDTO implements Serializable
 	private String b2cBuyerCode;
 
 	/**
-	 * B2C会员店编码
+	 * 中台会员店Id
 	 */
-	@NotEmpty(message = "b2cSellerCode不能为空")
-	private String b2cSellerCode;
+	private String memberId;
 
+	/**
+	 * 中台会员店code
+	 */
+	private String memberCode;
+	
 	/**
 	 * B2C订单号
 	 */
@@ -84,14 +88,6 @@ public class B2cCouponUseLogSyncDTO extends GenricReqDTO implements Serializable
 		this.b2cBuyerCode = b2cBuyerCode;
 	}
 
-	public String getB2cSellerCode() {
-		return b2cSellerCode;
-	}
-
-	public void setB2cSellerCode(String b2cSellerCode) {
-		this.b2cSellerCode = b2cSellerCode;
-	}
-
 	public String getB2cOrderNo() {
 		return b2cOrderNo;
 	}
@@ -138,5 +134,21 @@ public class B2cCouponUseLogSyncDTO extends GenricReqDTO implements Serializable
 
 	public void setCreateName(String createName) {
 		this.createName = createName;
+	}
+
+	public String getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+
+	public String getMemberCode() {
+		return memberCode;
+	}
+
+	public void setMemberCode(String memberCode) {
+		this.memberCode = memberCode;
 	}
 }

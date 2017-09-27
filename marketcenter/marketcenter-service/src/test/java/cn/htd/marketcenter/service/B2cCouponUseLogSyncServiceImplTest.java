@@ -27,14 +27,15 @@ public class B2cCouponUseLogSyncServiceImplTest extends CommonTest{
 		B2cCouponUseLogSyncDTO b2cCouponUseLogSyncDTO = new B2cCouponUseLogSyncDTO();
 		b2cCouponUseLogSyncDTO.setB2cActivityCode("f23423");
 		b2cCouponUseLogSyncDTO.setB2cBuyerCode("23423");
-		b2cCouponUseLogSyncDTO.setB2cBuyerCouponCode("113234565");
+		b2cCouponUseLogSyncDTO.setB2cBuyerCouponCode("1132345657i559");
 		b2cCouponUseLogSyncDTO.setB2cCouponUsedAmount(new BigDecimal(12));
 		b2cCouponUseLogSyncDTO.setUseType("1");
 		b2cCouponUseLogSyncDTO.setCreateId(32544L);
 		b2cCouponUseLogSyncDTO.setCreateName("fafasd");
 		b2cCouponUseLogSyncDTO.setMessageId("1234454576544fa");
 		b2cCouponUseLogSyncDTO.setB2cOrderNo("1235545655676");
-		b2cCouponUseLogSyncDTO.setB2cSellerCode("2456");
+		//b2cCouponUseLogSyncDTO.setMemberCode("htd_345433");
+		b2cCouponUseLogSyncDTO.setMemberId("1");
 		ExecuteResult<String> res = b2cCouponUseLogSyncService.saveB2cCouponUseLogSync(b2cCouponUseLogSyncDTO);
 		System.out.print(JSONObject.toJSONString(res));
 	}

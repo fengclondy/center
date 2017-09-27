@@ -144,4 +144,17 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		
 	}
 
+	@Override
+	public String selectMaterielDownloadCountByMemberCode(String memberCode,
+			String pictureType, String messageid) {
+		ExecuteResult<List<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
+				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid);
+		if(null != activityPictureInfoResDTO){
+			if(null != activityPictureInfoResDTO.getResult()){
+				return JSON.toJSONString(activityPictureInfoResDTO.getResult().size());
+			}
+		}
+		return JSON.toJSONString(0);
+	}
+
 }

@@ -129,13 +129,14 @@ public class CleanPromotionBargainScheduleTask implements IScheduleTaskDealMulti
                 for (DictionaryInfo dictionaryInfo : promotionTypeList) {
                     promotionTypeMap.put(dictionaryInfo.getValue(), dictionaryInfo.getCode());
                 }
+                Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。
+                Calendar currCal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。
                 for (PromotionInfoDTO promotionInfoDTO : tasks) {
                     promotionId = promotionInfoDTO.getPromotionId();
                     promotionType = promotionInfoDTO.getPromotionType();
-                    Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。
                     cal.setTime(promotionInfoDTO.getInvalidTime());
-            		cal.add(Calendar.DAY_OF_MONTH, +7);//取当前日期的后七天.   
-                    if (Calendar.getInstance().getTime().compareTo(cal.getTime()) > 0) {
+            		cal.add(Calendar.DAY_OF_MONTH, +7);//取砍价结束日期后七天  
+                    if (currCal.compareTo(cal) > 0) {
                         if (promotionTypeMap.containsKey(promotionType) && DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN
                                 .equals(promotionTypeMap.get(promotionType))) {
                         	promotionRedisDB.delHash(RedisConst.REDIS_BARGAIN, promotionId);

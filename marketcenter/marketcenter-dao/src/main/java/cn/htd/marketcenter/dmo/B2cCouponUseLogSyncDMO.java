@@ -4,7 +4,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class B2cCouponUseLogSyncDMO {
-	
+
+	/**
+	 * ID
+	 */
+	private Long id;
 	/**
 	 * B2C活动编号
 	 */
@@ -40,30 +44,46 @@ public class B2cCouponUseLogSyncDMO {
 	 * 1：在线支付订单，2：货到付款订单确认，3：在线支付订单取消确认后
 	 */
 	private String useType;
-    
-    /**
-     * 创建人ID
-     */
-    private Long createId;
-    /**
-     * 创建人名称
-     */
-    private String createName;
+	/**
+	 * 处理标记 O:未处理，1:处理成功，2：处理失败
+	 */
+	private int dealFlag;
+	/**
+	 * 处理失败原因
+	 */
+	private String dealFailReason;
+	/**
+	 * 创建人ID
+	 */
+	private Long createId;
+	/**
+	 * 创建人名称
+	 */
+	private String createName;
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+	/**
+	 * 更新人ID
+	 */
+	private Long modifyId;
+	/**
+	 * 更新人名称
+	 */
+	private String modifyName;
+	/**
+	 * 更新时间
+	 */
+	private Date modifyTime;
 
-    /**
-     * 前端不需要传入
-     */
-    private int dealFlag;
-    
-    /**
-     * 前端不需要传入
-     */
-    private Date createTime; 
-    
-    /**
-     * 前端不需要传入
-     */
-    private Integer id;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getB2cActivityCode() {
 		return b2cActivityCode;
@@ -121,6 +141,22 @@ public class B2cCouponUseLogSyncDMO {
 		this.useType = useType;
 	}
 
+	public int getDealFlag() {
+		return dealFlag;
+	}
+
+	public void setDealFlag(int dealFlag) {
+		this.dealFlag = dealFlag;
+	}
+
+	public String getDealFailReason() {
+		return dealFailReason;
+	}
+
+	public void setDealFailReason(String dealFailReason) {
+		this.dealFailReason = dealFailReason;
+	}
+
 	public Long getCreateId() {
 		return createId;
 	}
@@ -137,14 +173,6 @@ public class B2cCouponUseLogSyncDMO {
 		this.createName = createName;
 	}
 
-	public int getDealFlag() {
-		return dealFlag;
-	}
-
-	public void setDealFlag(int dealFlag) {
-		this.dealFlag = dealFlag;
-	}
-
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -153,11 +181,27 @@ public class B2cCouponUseLogSyncDMO {
 		this.createTime = createTime;
 	}
 
-	public Integer getId() {
-		return id;
+	public Long getModifyId() {
+		return modifyId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setModifyId(Long modifyId) {
+		this.modifyId = modifyId;
+	}
+
+	public String getModifyName() {
+		return modifyName;
+	}
+
+	public void setModifyName(String modifyName) {
+		this.modifyName = modifyName;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
 	}
 }

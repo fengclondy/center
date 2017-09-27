@@ -36,24 +36,25 @@ public class TriggerCouponReceiveServiceImpl implements TriggerCouponReceiveServ
     @Resource
     private CouponRedisHandle couponRedisHandle;
 
+    //----- discard by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
     @Deprecated
     @Override
     public ExecuteResult<String> saveReceiveTriggerCoupon(String messageId, ReceiveTriggerCouponDTO triggerDTO) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         List<PromotionDiscountInfoDTO> triggerCouponList = null;
         try {
-            // 输入DTO的验证
-            ValidateResult validateResult = ValidationUtils.validateEntity(triggerDTO);
-            // 有错误信息时返回错误信息
-            if (validateResult.isHasErrors()) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                        validateResult.getErrorMsg());
-            }
-            if (BigDecimal.ZERO.compareTo(triggerDTO.getCouponAmount()) >= 0) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "返券金额不能小于等于0");
-            }
-            triggerCouponList = getTriggerCouponInfoList();
-            addSendTriggerCoupon2BuyerAccount(messageId, triggerDTO, triggerCouponList);
+//            // 输入DTO的验证
+//            ValidateResult validateResult = ValidationUtils.validateEntity(triggerDTO);
+//            // 有错误信息时返回错误信息
+//            if (validateResult.isHasErrors()) {
+//                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+//                        validateResult.getErrorMsg());
+//            }
+//            if (BigDecimal.ZERO.compareTo(triggerDTO.getCouponAmount()) >= 0) {
+//                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "返券金额不能小于等于0");
+//            }
+//            triggerCouponList = getTriggerCouponInfoList();
+//            addSendTriggerCoupon2BuyerAccount(messageId, triggerDTO, triggerCouponList);
         } catch (MarketCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());
             result.addErrorMessage(mcbe.getMessage());
@@ -63,6 +64,7 @@ public class TriggerCouponReceiveServiceImpl implements TriggerCouponReceiveServ
         }
         return result;
     }
+    //----- discard by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
 
     /**
      * 取得触发返券类型取得可以返券的优惠券信息

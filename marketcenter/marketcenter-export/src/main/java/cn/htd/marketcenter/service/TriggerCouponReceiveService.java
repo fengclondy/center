@@ -12,7 +12,8 @@ public interface TriggerCouponReceiveService {
 	 * @param triggerDTO
 	 * @return
 	 */
+	//----- discard by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
 	@Deprecated
 	public ExecuteResult<String> saveReceiveTriggerCoupon(String messageId, ReceiveTriggerCouponDTO triggerDTO);
-
+	//----- discard by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
 }

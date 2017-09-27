@@ -11,13 +11,18 @@
     <result column="b2c_coupon_used_amount" property="b2cCouponUsedAmount" jdbcType="DECIMAL" />
     <result column="use_type" property="useType" jdbcType="VARCHAR" />
     <result column="deal_flag" property="dealFlag" jdbcType="TINYINT" />
-    <result column="create_id" property="createId" jdbcType="BIGINT" />
-    <result column="create_name" property="createName" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="deal_fail_reason" property="dealFailReason" jdbcType="VARCHAR"/>
+    <result column="create_id" property="createId" jdbcType="BIGINT"/>
+    <result column="create_name" property="createName" jdbcType="VARCHAR"/>
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT"/>
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR"/>
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, b2c_activity_code, b2c_buyer_code, b2c_seller_code, b2c_order_no, b2c_buyer_coupon_code, 
-    b2c_coupon_used_amount, use_type, deal_flag, create_id, create_name, create_time
+    b2c_coupon_used_amount, use_type, deal_flag, deal_fail_reason, create_id, create_name, create_time,
+    modify_id, modify_name, modify_time
   </sql>
   
   <insert id="saveB2cCouponUseLogSyncHistory" parameterType="cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO" >
@@ -47,18 +52,16 @@
       <if test="useType != null" >
         use_type,
       </if>
-      <if test="dealFlag != null" >
-        deal_flag,
+      deal_flag,
+      <if test="dealFailReason != null and dealFailReason != ''">
+        deal_fail_reason,
       </if>
-      <if test="createId != null" >
-        create_id,
-      </if>
-      <if test="createName != null" >
-        create_name,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -85,21 +88,18 @@
       <if test="useType != null" >
         #{useType,jdbcType=VARCHAR},
       </if>
-      <if test="dealFlag != null" >
-        #{dealFlag,jdbcType=TINYINT},
+      0,
+      <if test="dealFailReason != null and dealFailReason != ''">
+        #{dealFailReason,jdbcType=VARCHAR},
       </if>
-      <if test="createId != null" >
-        #{createId,jdbcType=BIGINT},
-      </if>
-      <if test="createName != null" >
-        #{createName,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
     </trim>
   </insert>
-  
   <select id="queryB2cCouponUseLogSyncHistoryList" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
 		    b2c_activity_code,

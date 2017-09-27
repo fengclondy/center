@@ -118,7 +118,6 @@
       now(),
     </trim>
   </insert>
-
   <select id="queryLastestB2cCouponInfoByB2cActivityCode" resultMap="BaseResultMap"
           parameterType="cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO">
     select

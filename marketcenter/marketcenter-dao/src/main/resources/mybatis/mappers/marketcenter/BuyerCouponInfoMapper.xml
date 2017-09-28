@@ -351,4 +351,25 @@
             <include refid="pagination_tail"/>
         </if>
     </select>
+    <select id="queryBuyerCouponByBuyerCodeAndPomotionId" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO"
+            resultType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    	select buyer_coupon_code 
+    	from buyer_coupon_info
+    	where 1=1 
+    	and buyer_code = #{buyerCode}
+    	and promotion_id = #{promotionId}
+    	limit 1
+    </select>
+    <update id="updateBuyerCouponByBuyerCodeCouponCodeAndPomotionId" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+        update buyer_coupon_info
+        <set>
+            coupon_left_amount = coupon_left_amount + #{couponLeftAmount, jdbcType=DECIMAL},
+            modify_id = #{modifyId, jdbcType=BIGINT},
+            modify_name = #{modifyName, jdbcType=VARCHAR},
+            modify_time = now(),
+        </set>
+        where buyer_code = #{buyerCode, jdbcType=VARCHAR}
+        and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
+        and promotion_id = #{promotionId}
+    </update>
 </mapper>

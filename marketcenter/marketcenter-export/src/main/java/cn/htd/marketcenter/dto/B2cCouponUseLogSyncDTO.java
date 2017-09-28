@@ -37,6 +37,21 @@ public class B2cCouponUseLogSyncDTO extends GenricReqDTO implements Serializable
 	private String memberCode;
 	
 	/**
+	 * 归属平台公司编号
+	 */
+	private String belongSuperiorCode;
+	
+	/**
+	 * B2C会员店名称
+	 */
+	private String b2cSellerName;
+	
+	/**
+	 * 归属平台公司名称
+	 */
+	private String belongSuperiorName;
+	
+	/**
 	 * B2C订单号
 	 */
 	@NotEmpty(message = "b2cOrderNo不能为空")
@@ -150,5 +165,29 @@ public class B2cCouponUseLogSyncDTO extends GenricReqDTO implements Serializable
 
 	public void setMemberCode(String memberCode) {
 		this.memberCode = memberCode;
+	}
+
+	public String getBelongSuperiorCode() {
+		return belongSuperiorCode;
+	}
+
+	public void setBelongSuperiorCode(String belongSuperiorCode) {
+		this.belongSuperiorCode = belongSuperiorCode;
+	}
+
+	public String getB2cSellerName() {
+		return b2cSellerName;
+	}
+
+	public void setB2cSellerName(String b2cSellerName) {
+		this.b2cSellerName = b2cSellerName;
+	}
+
+	public String getBelongSuperiorName() {
+		return belongSuperiorName;
+	}
+
+	public void setBelongSuperiorName(String belongSuperiorName) {
+		this.belongSuperiorName = belongSuperiorName;
 	}
 }

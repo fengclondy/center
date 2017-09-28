@@ -6,6 +6,9 @@
     <result column="b2c_activity_code" property="b2cActivityCode" jdbcType="VARCHAR" />
     <result column="b2c_buyer_code" property="b2cBuyerCode" jdbcType="VARCHAR" />
     <result column="b2c_seller_code" property="b2cSellerCode" jdbcType="VARCHAR" />
+    <result column="b2c_seller_name" property="b2cSellerName" jdbcType="VARCHAR" />
+    <result column="belong_superior_code" property="belongSuperiorCode" jdbcType="VARCHAR" />
+    <result column="belong_superior_name" property="belongSuperiorName" jdbcType="VARCHAR" />
     <result column="b2c_order_no" property="b2cOrderNo" jdbcType="VARCHAR" />
     <result column="b2c_buyer_coupon_code" property="b2cBuyerCouponCode" jdbcType="VARCHAR" />
     <result column="b2c_coupon_used_amount" property="b2cCouponUsedAmount" jdbcType="DECIMAL" />
@@ -20,9 +23,9 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, b2c_activity_code, b2c_buyer_code, b2c_seller_code, b2c_order_no, b2c_buyer_coupon_code, 
+    id, b2c_activity_code, b2c_buyer_code, b2c_seller_code,b2c_seller_name, b2c_order_no, b2c_buyer_coupon_code, 
     b2c_coupon_used_amount, use_type, deal_flag, deal_fail_reason, create_id, create_name, create_time,
-    modify_id, modify_name, modify_time
+    modify_id, modify_name, modify_time,belong_superior_code,belong_superior_name
   </sql>
   
   <insert id="saveB2cCouponUseLogSyncHistory" parameterType="cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO" >
@@ -39,6 +42,15 @@
       </if>
       <if test="b2cSellerCode != null" >
         b2c_seller_code,
+      </if>
+      <if test="b2cSellerName != null" >
+        b2c_seller_name,
+      </if>
+      <if test="belongSuperiorCode != null" >
+        belong_superior_code,
+      </if>
+      <if test="belongSuperiorName != null" >
+        belong_superior_name,
       </if>
       <if test="b2cOrderNo != null" >
         b2c_order_no,
@@ -76,6 +88,15 @@
       <if test="b2cSellerCode != null" >
         #{b2cSellerCode,jdbcType=VARCHAR},
       </if>
+      <if test="b2cSellerName != null" >
+        #{b2cSellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorCode != null" >
+        #{belongSuperiorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorName != null" >
+        #{belongSuperiorName,jdbcType=VARCHAR},
+      </if>
       <if test="b2cOrderNo != null" >
         #{b2cOrderNo,jdbcType=VARCHAR},
       </if>
@@ -106,6 +127,9 @@
 		    b2c_buyer_coupon_code,
 		    b2c_activity_code,
 		    b2c_seller_code,
+		    b2c_seller_name,
+		    belong_superior_code,
+		    belong_superior_name,
 		    b2c_coupon_used_amount,
 		    use_type
 		FROM

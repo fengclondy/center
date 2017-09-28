@@ -243,6 +243,31 @@ public class MarketCenterRedisDB {
 	}
 
 	/**
+	 * 向Redis中设定hash对象
+	 *
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	public Long setHashNx(String key, String field, String value) {
+		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "marketRedisDB-setHash", "key=" + key, "field=" + field,
+				"value=" + value);
+		Jedis jedis = null;
+		Long ret = 0L;
+		try {
+			jedis = getResource();
+			ret = jedis.hsetnx(key, field, value);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-setHash", "无");
+		}
+		return ret;
+	}
+
+	/**
 	 * 从Redis中设定hash对象
 	 * 
 	 * @param key

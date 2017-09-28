@@ -1,5 +1,7 @@
 package cn.htd.marketcenter.dao;
 
+import java.util.List;
+
 import cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO;
 import cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO;
 
@@ -24,6 +26,13 @@ public interface B2cCouponInfoSyncHistoryDAO {
      * @param targetInfo
      * @return
      */
-    public B2cCouponInfoSyncDMO queryLastestB2cCouponInfoByB2cActivityCode(B2cCouponInfoSyncDMO targetInfo);
-    
+    public List<B2cCouponInfoSyncDMO> queryNeedDealB2cCouponInfoByB2cActivityCode(B2cCouponInfoSyncDMO targetInfo);
+
+    /**
+     * 更新会员
+     * @param targetInfo
+     * @return
+     */
+    public Integer updateB2cCouponInfoDealFailResult(B2cCouponInfoSyncDMO targetInfo);
+    public Integer updateB2cCouponInfoDealSuccessResult(B2cCouponInfoSyncDMO targetInfo);
 }

@@ -116,7 +116,6 @@ public interface BuyerCouponInfoDAO extends BaseDAO<BuyerCouponInfoDTO> {
      */
     public List<BuyerCouponInfoDTO> queryBuyerCouponListByDiscountInfo(@Param("entity") PromotionDiscountInfoDTO discountDTO,
                                                                        @Param("page") Pager<PromotionDiscountInfoDTO> pager);
-    
     /**
      * 根据促销活动id和会员店编码查询会员优惠券号
      * @param couponInfo
@@ -126,4 +125,10 @@ public interface BuyerCouponInfoDAO extends BaseDAO<BuyerCouponInfoDTO> {
     
     public int updateBuyerCouponByBuyerCodeCouponCodeAndPomotionId(BuyerCouponInfoDTO couponInfo);
 
+    /**
+     * 根据同步B2C活动信息更新会员优惠券的
+     * @param discountInfoDTO
+     * @return
+     */
+    public Long updateB2cActivityInfo2BuyerCoupon(PromotionDiscountInfoDTO discountInfoDTO);
 }

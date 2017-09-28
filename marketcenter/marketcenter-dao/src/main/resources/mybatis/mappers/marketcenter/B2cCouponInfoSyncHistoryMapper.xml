@@ -118,7 +118,7 @@
       now(),
     </trim>
   </insert>
-  <select id="queryLastestB2cCouponInfoByB2cActivityCode" resultMap="BaseResultMap"
+  <select id="queryNeedDealB2cCouponInfoByB2cActivityCode" resultMap="BaseResultMap"
           parameterType="cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO">
     select
     <include refid="Base_Column_List"/>
@@ -126,6 +126,27 @@
     where b2c_activity_code = #{b2cActivityCode,jdbcType=VARCHAR}
     and deal_flag = #{dealFlag,jdbcType=TINYINT}
     order by id desc
-    limit 1
   </select>
+  <update id="updateB2cCouponInfoDealFailResult" parameterType="cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO">
+    update b2c_coupon_info_sync_history
+    <set>
+      deal_flag = #{dealFlag,jdbcType=TINYINT},
+      deal_fail_reason = #{dealFailReason,jdbcType=VARCHAR},
+      modify_id = #{createId,jdbcType=BIGINT},
+      modify_name = #{createName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateB2cCouponInfoDealSuccessResult" parameterType="cn.htd.marketcenter.dmo.B2cCouponInfoSyncDMO">
+    update b2c_coupon_info_sync_history
+    <set>
+      deal_flag = #{dealFlag,jdbcType=TINYINT},
+      modify_id = #{createId,jdbcType=BIGINT},
+      modify_name = #{createName,jdbcType=VARCHAR},
+      modify_time = now()
+    </set>
+    where <![CDATA[ id <= #{id,jdbcType=BIGINT} ]]>
+    and b2c_activity_code = #{b2cActivityCode,jdbcType=VARCHAR}
+  </update>
 </mapper>

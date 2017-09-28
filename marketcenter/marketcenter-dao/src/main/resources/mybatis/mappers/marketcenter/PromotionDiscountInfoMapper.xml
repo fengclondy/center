@@ -2,51 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.htd.marketcenter.dao.PromotionDiscountInfoDAO">
   <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.PromotionDiscountInfoDTO">
-    <id column="discount_id" jdbcType="BIGINT" property="discountId" />
-    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId" />
-    <result column="promotion_name" jdbcType="VARCHAR" property="promotionName" />
-    <result column="promotion_describe" jdbcType="VARCHAR" property="promotionDescribe" />
-    <result column="promotion_provider_type" jdbcType="VARCHAR" property="promotionProviderType" />
-    <result column="promotion_provider_seller_code" jdbcType="VARCHAR" property="promotionProviderSellerCode" />
-    <result column="promotion_provider_shop_id" jdbcType="BIGINT" property="promotionProviderShopId" />
-    <result column="cost_allocation_type" jdbcType="VARCHAR" property="costAllocationType" />
-    <result column="promotion_type" jdbcType="VARCHAR" property="promotionType" />
-    <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime" />
-    <result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime" />
-    <result column="is_vip" jdbcType="TINYINT" property="isVip" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="show_status" jdbcType="VARCHAR" property="showStatus" />
-	<result column="verifier_id" jdbcType="BIGINT" property="verifierId" />
-	<result column="verifier_name" jdbcType="VARCHAR" property="verifierName" />
-	<result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime" />
-	<result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark" />
-    <result column="level_number" jdbcType="INTEGER" property="levelNumber" />
-    <result column="level_code" jdbcType="VARCHAR" property="levelCode" />
-    <result column="addup_type" jdbcType="VARCHAR" property="addupType" />
-    <result column="quantifier_type" jdbcType="VARCHAR" property="quantifierType" />
-    <result column="reward_type" jdbcType="VARCHAR" property="rewardType" />
-    <result column="coupon_kind" jdbcType="VARCHAR" property="couponKind" />
-    <result column="coupon_provide_type" jdbcType="VARCHAR" property="couponProvideType" />
-    <result column="coupon_receive_url" jdbcType="VARCHAR" property="couponReceiveUrl" />
-    <result column="provide_count" jdbcType="INTEGER" property="provideCount" />
-    <result column="receive_limit" jdbcType="INTEGER" property="receiveLimit" />
-    <result column="discount_threshold" jdbcType="DECIMAL" property="discountThreshold" />
-    <result column="discount_amount" jdbcType="DECIMAL" property="discountAmount" />
-    <result column="discount_percent" jdbcType="INTEGER" property="discountPercent" />
-    <result column="prep_start_time" jdbcType="TIMESTAMP" property="prepStartTime" />
-    <result column="prep_end_time" jdbcType="TIMESTAMP" property="prepEndTime" />
-    <result column="effective_start_time" jdbcType="TIMESTAMP" property="effectiveStartTime" />
-    <result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime" />
-    <result column="deal_flag" jdbcType="INTEGER" property="dealFlag" />
-    <result column="create_id" jdbcType="BIGINT" property="createId" />
-    <result column="create_name" jdbcType="VARCHAR" property="createName" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
-    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
-    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <id column="discount_id" jdbcType="BIGINT" property="discountId"/>
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="promotion_name" jdbcType="VARCHAR" property="promotionName"/>
+    <result column="promotion_describe" jdbcType="VARCHAR" property="promotionDescribe"/>
+    <result column="promotion_provider_type" jdbcType="VARCHAR" property="promotionProviderType"/>
+    <result column="promotion_provider_seller_code" jdbcType="VARCHAR" property="promotionProviderSellerCode"/>
+    <result column="promotion_provider_shop_id" jdbcType="BIGINT" property="promotionProviderShopId"/>
+    <result column="cost_allocation_type" jdbcType="VARCHAR" property="costAllocationType"/>
+    <result column="promotion_type" jdbcType="VARCHAR" property="promotionType"/>
+    <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+    <result column="invalid_time" jdbcType="TIMESTAMP" property="invalidTime"/>
+    <result column="is_vip" jdbcType="TINYINT" property="isVip"/>
+    <result column="status" jdbcType="VARCHAR" property="status"/>
+    <result column="show_status" jdbcType="VARCHAR" property="showStatus"/>
+    <result column="verifier_id" jdbcType="BIGINT" property="verifierId"/>
+    <result column="verifier_name" jdbcType="VARCHAR" property="verifierName"/>
+    <result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime"/>
+    <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
+    <result column="level_number" jdbcType="INTEGER" property="levelNumber"/>
+    <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
+    <result column="addup_type" jdbcType="VARCHAR" property="addupType"/>
+    <result column="quantifier_type" jdbcType="VARCHAR" property="quantifierType"/>
+    <result column="reward_type" jdbcType="VARCHAR" property="rewardType"/>
+    <result column="coupon_kind" jdbcType="VARCHAR" property="couponKind"/>
+    <result column="coupon_provide_type" jdbcType="VARCHAR" property="couponProvideType"/>
+    <result column="coupon_receive_url" jdbcType="VARCHAR" property="couponReceiveUrl"/>
+    <result column="provide_count" jdbcType="INTEGER" property="provideCount"/>
+    <result column="receive_limit" jdbcType="INTEGER" property="receiveLimit"/>
+    <result column="discount_threshold" jdbcType="DECIMAL" property="discountThreshold"/>
+    <result column="discount_amount" jdbcType="DECIMAL" property="discountAmount"/>
+    <result column="discount_percent" jdbcType="INTEGER" property="discountPercent"/>
+    <result column="prep_start_time" jdbcType="TIMESTAMP" property="prepStartTime"/>
+    <result column="prep_end_time" jdbcType="TIMESTAMP" property="prepEndTime"/>
+    <result column="effective_start_time" jdbcType="TIMESTAMP" property="effectiveStartTime"/>
+    <result column="effective_end_time" jdbcType="TIMESTAMP" property="effectiveEndTime"/>
+    <result column="deal_flag" jdbcType="INTEGER" property="dealFlag"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
   </resultMap>
   <sql id="Base_Column_List">
-    discount_id,
+  discount_id,
 	promotion_id,
 	level_code,
 	reward_type,
@@ -75,9 +75,9 @@
   </sql>
   <!-- 查询条件 -->
   <sql id="where_fragement">
-  	<if test="entity!=null">
+    <if test="entity!=null">
       <if test="entity.promotionType != null and entity.promotionType != ''">
-      	<![CDATA[ and promotion_info.promotion_type = #{entity.promotionType} ]]>
+        <![CDATA[ and promotion_info.promotion_type = #{entity.promotionType} ]]>
       </if>
       <if test="entity.promotionName != null and entity.promotionName != ''">
         <![CDATA[ and promotion_info.promotion_name like concat ('%', #{entity.promotionName}, '%') ]]>
@@ -94,172 +94,177 @@
       <if test="entity.deleteStatus != null and entity.deleteStatus != ''">
         <![CDATA[ and promotion_info.status <> #{entity.deleteStatus}]]>
       </if>
-	  <if test="entity.verifyStatusList != null and entity.verifyStatusList.size > 0">
-		<![CDATA[ and promotion_info.show_status in]]>
-		<foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
-				 close=")">
-			#{verifyStatusCode}
-		</foreach>
-	  </if>
+      <if test="entity.verifyStatusList != null and entity.verifyStatusList.size > 0">
+        <![CDATA[ and promotion_info.show_status in]]>
+        <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
+                 close=")">
+          #{verifyStatusCode}
+        </foreach>
+      </if>
     </if>
   </sql>
   <select id="queryCount" resultType="java.lang.Long">
     select count(1)
-  	from promotion_info inner join promotion_accumulaty on (promotion_info.promotion_id = promotion_accumulaty.promotion_id)
-  	     inner join promotion_discount_info on (promotion_accumulaty.promotion_id = promotion_discount_info.promotion_id and promotion_accumulaty.level_code = promotion_discount_info.level_code)
-  	where 1 = 1
-   		  <include refid="where_fragement"/>
-  	  and promotion_accumulaty.delete_flag = 0
+    from promotion_info inner join promotion_accumulaty on (promotion_info.promotion_id =
+    promotion_accumulaty.promotion_id)
+    inner join promotion_discount_info on (promotion_accumulaty.promotion_id = promotion_discount_info.promotion_id and
+    promotion_accumulaty.level_code = promotion_discount_info.level_code)
+    where 1 = 1
+    <include refid="where_fragement"/>
+    and promotion_accumulaty.delete_flag = 0
   </select>
   <select id="queryList" resultMap="BaseResultMap">
-    select  promotion_discount_info.discount_id discountId,
-    		promotion_info.promotion_id promotionId, 
-			promotion_info.promotion_name promotionName,
-			promotion_info.promotion_describe promotionDescribe,
-			promotion_info.promotion_provider_type promotionProviderType,
-			promotion_info.promotion_provider_seller_code promotionProviderSellerCode,
-			promotion_info.promotion_provider_shop_id promotionProviderShopId,
-			promotion_info.cost_allocation_type costAllocationType,
-			promotion_info.promotion_type promotionType,
-			promotion_info.effective_time effectiveTime,
-			promotion_info.invalid_time invalidTime,
-			promotion_info.is_vip isVip,
-			promotion_info.status status,
-			promotion_info.show_status showStatus,
-      		promotion_info.verifier_id verifierId,
-	  		promotion_info.verifier_name verifierName,
-	  		promotion_info.verify_time verifyTime,
-	  		promotion_info.verify_remark verifyRemark,
-            promotion_accumulaty.level_number levelNumber,       
-			promotion_accumulaty.level_code levelCode,        
-			promotion_accumulaty.addup_type addupType,
-			promotion_accumulaty.level_amount levelAmount,
-			promotion_accumulaty.quantifier_type quantifierType,
-			promotion_discount_info.reward_type rewardType,
-			promotion_discount_info.coupon_kind couponKind,
-			promotion_discount_info.coupon_provide_type couponProvideType,
-			promotion_discount_info.coupon_receive_url couponReceiveUrl,
-			promotion_discount_info.provide_count provideCount,
-			promotion_discount_info.receive_limit receiveLimit,
-			promotion_discount_info.discount_threshold discountThreshold,
-			promotion_discount_info.discount_amount discountAmount,
-			promotion_discount_info.discount_percent discountPercent,
-			promotion_discount_info.prep_start_time prepStartTime,
-			promotion_discount_info.prep_end_time prepEndTime,
-			promotion_discount_info.effective_start_time effectiveStartTime,
-			promotion_discount_info.effective_end_time effectiveEndTime,
-		    promotion_info.create_id createId, 
-		    promotion_info.create_name createName, 
-		    promotion_info.create_time createTime,
-		    promotion_info.modify_id modifyId,
-		    promotion_info.modify_name modifyName,
-		    promotion_info.modify_time modifyTime
-  	from promotion_info inner join promotion_accumulaty on (promotion_info.promotion_id = promotion_accumulaty.promotion_id)
-  	     inner join promotion_discount_info on (promotion_accumulaty.promotion_id = promotion_discount_info.promotion_id and promotion_accumulaty.level_code = promotion_discount_info.level_code)
-  	where 1 = 1
-   		  <include refid="where_fragement"/>
-  	  and promotion_accumulaty.delete_flag = 0
-  	order by promotion_info.modify_time desc
+    select promotion_discount_info.discount_id discountId,
+    promotion_info.promotion_id promotionId,
+    promotion_info.promotion_name promotionName,
+    promotion_info.promotion_describe promotionDescribe,
+    promotion_info.promotion_provider_type promotionProviderType,
+    promotion_info.promotion_provider_seller_code promotionProviderSellerCode,
+    promotion_info.promotion_provider_shop_id promotionProviderShopId,
+    promotion_info.cost_allocation_type costAllocationType,
+    promotion_info.promotion_type promotionType,
+    promotion_info.effective_time effectiveTime,
+    promotion_info.invalid_time invalidTime,
+    promotion_info.is_vip isVip,
+    promotion_info.status status,
+    promotion_info.show_status showStatus,
+    promotion_info.verifier_id verifierId,
+    promotion_info.verifier_name verifierName,
+    promotion_info.verify_time verifyTime,
+    promotion_info.verify_remark verifyRemark,
+    promotion_accumulaty.level_number levelNumber,
+    promotion_accumulaty.level_code levelCode,
+    promotion_accumulaty.addup_type addupType,
+    promotion_accumulaty.level_amount levelAmount,
+    promotion_accumulaty.quantifier_type quantifierType,
+    promotion_discount_info.reward_type rewardType,
+    promotion_discount_info.coupon_kind couponKind,
+    promotion_discount_info.coupon_provide_type couponProvideType,
+    promotion_discount_info.coupon_receive_url couponReceiveUrl,
+    promotion_discount_info.provide_count provideCount,
+    promotion_discount_info.receive_limit receiveLimit,
+    promotion_discount_info.discount_threshold discountThreshold,
+    promotion_discount_info.discount_amount discountAmount,
+    promotion_discount_info.discount_percent discountPercent,
+    promotion_discount_info.prep_start_time prepStartTime,
+    promotion_discount_info.prep_end_time prepEndTime,
+    promotion_discount_info.effective_start_time effectiveStartTime,
+    promotion_discount_info.effective_end_time effectiveEndTime,
+    promotion_info.create_id createId,
+    promotion_info.create_name createName,
+    promotion_info.create_time createTime,
+    promotion_info.modify_id modifyId,
+    promotion_info.modify_name modifyName,
+    promotion_info.modify_time modifyTime
+    from promotion_info inner join promotion_accumulaty on (promotion_info.promotion_id =
+    promotion_accumulaty.promotion_id)
+    inner join promotion_discount_info on (promotion_accumulaty.promotion_id = promotion_discount_info.promotion_id and
+    promotion_accumulaty.level_code = promotion_discount_info.level_code)
+    where 1 = 1
+    <include refid="where_fragement"/>
+    and promotion_accumulaty.delete_flag = 0
+    order by promotion_info.modify_time desc
     <if test="page!=null">
-      <include refid="pagination_tail" />
+      <include refid="pagination_tail"/>
     </if>
   </select>
-  <select id="queryDiscountInfoById" parameterType="cn.htd.marketcenter.dto.PromotionAccumulatyDTO" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
+  <select id="queryDiscountInfoById" parameterType="cn.htd.marketcenter.dto.PromotionAccumulatyDTO"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
     from promotion_discount_info
     where promotion_id = #{promotionId, jdbcType=VARCHAR}
-      and level_code = #{levelCode, jdbcType=VARCHAR}
+    and level_code = #{levelCode, jdbcType=VARCHAR}
   </select>
   <insert id="add" useGeneratedKeys="true" keyProperty="discountId">
-    insert into promotion_discount_info 
+    insert into promotion_discount_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
-		promotion_id,
-		level_code,
-		reward_type,
-		coupon_kind,
-		coupon_provide_type,
-    	<if test="couponReceiveUrl != null and couponReceiveUrl != ''">
-		coupon_receive_url,
-      	</if>
-    	<if test="provideCount != null">
-		provide_count,
-      	</if>
-    	<if test="receiveLimit != null">
-		receive_limit,
-      	</if>
-    	<if test="discountThreshold != null">
-		discount_threshold,
-      	</if>
-    	<if test="discountAmount != null">
-		discount_amount,
-      	</if>
-    	<if test="discountPercent != null">
-		discount_percent,
-      	</if>
-    	<if test="prepStartTime != null">
-		prep_start_time,
-      	</if>
-    	<if test="prepEndTime != null">
-		prep_end_time,
-      	</if>
-    	<if test="effectiveStartTime != null">
-		effective_start_time,
-      	</if>
-    	<if test="effectiveEndTime != null">
-		effective_end_time,
-      	</if>
-      	deal_flag,
-		create_id,
-		create_name,
-		create_time,
-		modify_id,
-		modify_name,
-		modify_time,
-	</trim>
+      promotion_id,
+      level_code,
+      reward_type,
+      coupon_kind,
+      coupon_provide_type,
+      <if test="couponReceiveUrl != null and couponReceiveUrl != ''">
+        coupon_receive_url,
+      </if>
+      <if test="provideCount != null">
+        provide_count,
+      </if>
+      <if test="receiveLimit != null">
+        receive_limit,
+      </if>
+      <if test="discountThreshold != null">
+        discount_threshold,
+      </if>
+      <if test="discountAmount != null">
+        discount_amount,
+      </if>
+      <if test="discountPercent != null">
+        discount_percent,
+      </if>
+      <if test="prepStartTime != null">
+        prep_start_time,
+      </if>
+      <if test="prepEndTime != null">
+        prep_end_time,
+      </if>
+      <if test="effectiveStartTime != null">
+        effective_start_time,
+      </if>
+      <if test="effectiveEndTime != null">
+        effective_end_time,
+      </if>
+      deal_flag,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-    	#{promotionId,jdbcType=VARCHAR}, 
-    	#{levelCode,jdbcType=VARCHAR},
-     	#{rewardType,jdbcType=VARCHAR},
-     	#{couponKind,jdbcType=VARCHAR},
-     	#{couponProvideType,jdbcType=VARCHAR},
-    	<if test="couponReceiveUrl != null and couponReceiveUrl != ''">
-      	#{couponReceiveUrl,jdbcType=VARCHAR},
-      	</if>
-    	<if test="provideCount != null">
-      	#{provideCount,jdbcType=INTEGER},
-      	</if>
-    	<if test="receiveLimit != null">
-		#{receiveLimit,jdbcType=INTEGER},
-      	</if>
-    	<if test="discountThreshold != null">
-      	#{discountThreshold,jdbcType=DECIMAL},
-      	</if>
-    	<if test="discountAmount != null">
-      	#{discountAmount,jdbcType=DECIMAL},
-      	</if>
-    	<if test="discountPercent != null">
-      	#{discountPercent,jdbcType=INTEGER},
-      	</if>
-    	<if test="prepStartTime != null">
-      	#{prepStartTime,jdbcType=TIMESTAMP},
-      	</if>
-    	<if test="prepEndTime != null">
-      	#{prepEndTime,jdbcType=TIMESTAMP},
-      	</if>
-    	<if test="effectiveStartTime != null">
-      	#{effectiveStartTime,jdbcType=TIMESTAMP},
-      	</if>
-    	<if test="effectiveEndTime != null">
-      	#{effectiveEndTime,jdbcType=TIMESTAMP},
-      	</if>
-      	0,
-        #{createId,jdbcType=BIGINT},
-        #{createName,jdbcType=VARCHAR},
-        now(),
-        #{createId,jdbcType=BIGINT},
-        #{createName,jdbcType=VARCHAR},
-        now(),
+      #{promotionId,jdbcType=VARCHAR},
+      #{levelCode,jdbcType=VARCHAR},
+      #{rewardType,jdbcType=VARCHAR},
+      #{couponKind,jdbcType=VARCHAR},
+      #{couponProvideType,jdbcType=VARCHAR},
+      <if test="couponReceiveUrl != null and couponReceiveUrl != ''">
+        #{couponReceiveUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="provideCount != null">
+        #{provideCount,jdbcType=INTEGER},
+      </if>
+      <if test="receiveLimit != null">
+        #{receiveLimit,jdbcType=INTEGER},
+      </if>
+      <if test="discountThreshold != null">
+        #{discountThreshold,jdbcType=DECIMAL},
+      </if>
+      <if test="discountAmount != null">
+        #{discountAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="discountPercent != null">
+        #{discountPercent,jdbcType=INTEGER},
+      </if>
+      <if test="prepStartTime != null">
+        #{prepStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="prepEndTime != null">
+        #{prepEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="effectiveStartTime != null">
+        #{effectiveStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="effectiveEndTime != null">
+        #{effectiveEndTime,jdbcType=TIMESTAMP},
+      </if>
+      0,
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
     </trim>
   </insert>
   <update id="updateCouponDealFlag" parameterType="cn.htd.marketcenter.dto.PromotionDiscountInfoDTO">
@@ -268,63 +273,63 @@
   	where discount_id = #{discountId,jdbcType=BIGINT}
   </update>
   <update id="update">
-	update promotion_discount_info
-	<set>
-		coupon_kind = #{couponKind,jdbcType=VARCHAR},
-        coupon_provide_type = #{couponProvideType,jdbcType=VARCHAR},
-		<if test="couponReceiveUrl != null">
-		coupon_receive_url = #{couponReceiveUrl,jdbcType=VARCHAR},
-		</if>
-		<if test="couponReceiveUrl == null">
-		coupon_receive_url = '',
-		</if>
-		<if test="provideCount != null">
-		provide_count = #{provideCount,jdbcType=INTEGER},
-		</if>
-		<if test="provideCount == null">
-		provide_count = 0,
-		</if>
-		receive_limit = #{receiveLimit,jdbcType=INTEGER},
-		discount_threshold = #{discountThreshold,jdbcType=DECIMAL},
-		discount_amount = #{discountAmount,jdbcType=DECIMAL},
-		<if test="discountPercent != null">
-		discount_percent = #{discountPercent,jdbcType=INTEGER},
-		</if>
-		<if test="discountPercent == null">
-		discount_percent = 0,
-		</if>
-		<if test="prepStartTime != null">
-		prep_start_time = #{prepStartTime,jdbcType=TIMESTAMP},
-		</if>
-		<if test="prepStartTime == null">
-		prep_start_time = '0000-00-00 00:00:00',
-		</if>
-		<if test="prepEndTime != null">
-		prep_end_time = #{prepEndTime,jdbcType=TIMESTAMP},
-		</if>
-		<if test="prepEndTime == null">
-		prep_end_time = '0000-00-00 00:00:00',
-		</if>
-		effective_start_time = #{effectiveStartTime,jdbcType=TIMESTAMP},
-		effective_end_time = #{effectiveEndTime,jdbcType=TIMESTAMP},
-		modify_id = #{modifyId,jdbcType=BIGINT},
-		modify_name = #{modifyName,jdbcType=VARCHAR},
-		modify_time = now(),
-	</set>
-	where promotion_id = #{promotionId,jdbcType=VARCHAR}
-	  and level_code = #{levelCode,jdbcType=VARCHAR}
+    update promotion_discount_info
+    <set>
+      coupon_kind = #{couponKind,jdbcType=VARCHAR},
+      coupon_provide_type = #{couponProvideType,jdbcType=VARCHAR},
+      <if test="couponReceiveUrl != null">
+        coupon_receive_url = #{couponReceiveUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="couponReceiveUrl == null">
+        coupon_receive_url = '',
+      </if>
+      <if test="provideCount != null">
+        provide_count = #{provideCount,jdbcType=INTEGER},
+      </if>
+      <if test="provideCount == null">
+        provide_count = 0,
+      </if>
+      receive_limit = #{receiveLimit,jdbcType=INTEGER},
+      discount_threshold = #{discountThreshold,jdbcType=DECIMAL},
+      discount_amount = #{discountAmount,jdbcType=DECIMAL},
+      <if test="discountPercent != null">
+        discount_percent = #{discountPercent,jdbcType=INTEGER},
+      </if>
+      <if test="discountPercent == null">
+        discount_percent = 0,
+      </if>
+      <if test="prepStartTime != null">
+        prep_start_time = #{prepStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="prepStartTime == null">
+        prep_start_time = '0000-00-00 00:00:00',
+      </if>
+      <if test="prepEndTime != null">
+        prep_end_time = #{prepEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="prepEndTime == null">
+        prep_end_time = '0000-00-00 00:00:00',
+      </if>
+      effective_start_time = #{effectiveStartTime,jdbcType=TIMESTAMP},
+      effective_end_time = #{effectiveEndTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and level_code = #{levelCode,jdbcType=VARCHAR}
   </update>
   <select id="queryNoEndedDiscountInfo" resultMap="BaseResultMap">
-	select
-	<include refid="Base_Column_List" />
-	from promotion_discount_info
-	where <![CDATA[ now() < effective_end_time]]>
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_discount_info
+    where <![CDATA[ now() < effective_end_time]]>
   </select>
   <select id="queryCollectableDiscountInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
-	select
-	<include refid="Base_Column_List" />
-	from promotion_discount_info
-	where <![CDATA[ now() < prep_end_time]]>
-      and coupon_provide_type = #{couponProvideType,jdbcType=VARCHAR}
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_discount_info
+    where <![CDATA[ now() < prep_end_time]]>
+    and coupon_provide_type = #{couponProvideType,jdbcType=VARCHAR}
   </select>
 </mapper>

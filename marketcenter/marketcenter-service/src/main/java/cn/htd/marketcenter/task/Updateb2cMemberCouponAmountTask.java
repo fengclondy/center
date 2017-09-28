@@ -18,7 +18,6 @@ import cn.htd.marketcenter.dao.B2cCouponUseLogSyncHistoryDAO;
 import cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
@@ -55,8 +54,8 @@ public class Updateb2cMemberCouponAmountTask implements
 		return new Comparator<B2cCouponUseLogSyncDMO>() {
 			public int compare(B2cCouponUseLogSyncDMO o1,
 					B2cCouponUseLogSyncDMO o2) {
-				Integer id1 = o1.getId();
-				Integer id2 = o2.getId();
+				Long id1 = o1.getId();
+				Long id2 = o2.getId();
 				return id1.compareTo(id2);
 			}
 		};

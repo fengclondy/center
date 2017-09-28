@@ -113,7 +113,10 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 				op.fill(baseImageSubDTO.getFontColor());
 
 				String text = baseImageSubDTO.getText();
-				text = text.replaceAll("\'", "\\\\'");
+				text = text.replace("\'", "\\\'");
+//				text = text.replace("(", "\\(");
+//				text = text.replace(")", "\\)");
+				logger.info("main text:" + text);
 				op.draw("text " + (int) (baseImageSubDTO.getLeft() * wb) + "," + (int) (baseImageSubDTO.getTop() * hb)
 						+ " \'" + text + "\'");
 			}
@@ -128,6 +131,7 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		try {
 			cc.setAsyncMode(true);
 			cc.run(op);
+			logger.info("op:" + op.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -207,6 +211,8 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 			Info imageInfo = new Info(oldimg);
 			int imgheight = imageInfo.getImageHeight();
 			int imgwidth = imageInfo.getImageWidth();
+			logger.info("oldimg imgheight:" + imgheight);
+			logger.info("oldimg imgwidth:" + imgwidth);
 			if (imgheight >= newHeight) {
 				return oldimg;
 			} else {
@@ -215,6 +221,7 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 				op.background("white");
 				op.gravity("north");
 				op.extent(imgwidth, newHeight);
+				logger.info("oldimg newHeight:" + newHeight);
 				// newimg = UUID.randomUUID().toString().replaceAll("-", "");
 				op.addImage(oldimg);
 				ConvertCmd cc = new ConvertCmd(false);
@@ -226,7 +233,58 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		}
 		return oldimg;
 	}
+	
+	public static String margeImgHeight1(String oldimg, int newHeight) {
+		// String newimg="";
+		logger.info("oldimg:" + oldimg);
+		if (StringUtils.isEmpty(oldimg)) {
+			return "";
+		}
+		if (oldimg.startsWith("http")) {
+			oldimg = downloadImg(oldimg);
+		}
+		try {
+			Info imageInfo = new Info(oldimg);
+			int imgheight = imageInfo.getImageHeight();
+			int imgwidth = imageInfo.getImageWidth();
+			if (imgheight >= newHeight) {
+				return oldimg;
+			} else {
+				IMOperation op = new IMOperation();
+				op.addImage(oldimg);
+				op.background("white");
+				op.gravity("north");
+				op.extent(imgwidth, newHeight);
+				// newimg = UUID.randomUUID().toString().replaceAll("-", "");
+				op.addImage(oldimg);
+				ConvertCmd cc = new ConvertCmd(false);
+				cc.setSearchPath("c:\\Program Files\\ImageMagick-6.9.9-Q16");
+				cc.run(op);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return oldimg;
+	}
 
+	public static Map<String, Integer> getImgInfo1(String downimg) {
+		Info imageInfo = null;
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		try {
+			if (StringUtils.isEmpty(downimg)) {
+				return null;
+			}
+			if (downimg.startsWith("http")) {
+				downimg = downloadImg(downimg);
+			}
+			imageInfo = new Info(downimg);
+			map.put("width", imageInfo.getImageWidth());
+			map.put("height", imageInfo.getImageHeight());
+		} catch (InfoException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
 	static String margeImage1(BaseImageDTO images) {
 
 		IMOperation op = new IMOperation();
@@ -376,185 +434,269 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 	}
 
 	public static void main(String[] args) {
+//		BaseImageDTO bid = new BaseImageDTO();
+//		String mainImageUrl = "d:\\bg.png";
+//		bid.setMainImageUrl(mainImageUrl);
+//		List<BaseImageSubDTO> subImageList =new ArrayList<BaseImageSubDTO>();
+//		BaseImageSubDTO bisd= new BaseImageSubDTO();
+//		bisd.setType(1);
+//		String imageUrl = "d:\\u1159.jpg";
+//		bisd.setImageUrl(imageUrl );
+//		bisd.setLeft(140);
+//		bisd.setTop(1015);
+//		bisd.setWidth(521);
+//		bisd.setHeight(350);
+//		subImageList.add(bisd);
+//		
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(1);
+//		imageUrl = "d:\\tc.jpg";
+//		bisd.setImageUrl(imageUrl );
+//		bisd.setLeft(700);
+//		bisd.setTop(1080);
+//		bisd.setWidth(240);
+//		bisd.setHeight(240);
+//		subImageList.add(bisd);
+//		
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(0);
+//		bisd.setTop(563);
+//		String text = "疯狂大减价等你来！";
+//		bisd.setGravity("north");
+//		bisd.setText(text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(40);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(405);
+//		bisd.setTop(655);
+//		text = "2017.9.1";
+//		bisd.setText(text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(31);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(650);
+//		bisd.setTop(655);
+//		text = "2017.9.30";
+//		bisd.setText(text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(31);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(0);
+//		bisd.setTop(735);
+//		bisd.setGravity("north");
+//		text = "XXX门店";
+//		bisd.setText(text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(50);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(170);
+//		bisd.setTop(1375);
+//		text = "商品名称";
+//		bisd.setText(text);
+//		bisd.setFontColor("#767373");
+//		bisd.setFontSize(40);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(220);
+//		bisd.setTop(1435);
+//		text = "抢购价";
+//		bisd.setText(text);
+//		bisd.setFontColor("#191a1a");
+//		bisd.setFontSize(36);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(485);
+//		bisd.setTop(1435);
+//		text = "元";
+//		bisd.setText(text);
+//		bisd.setFontColor("#191a1a");
+//		bisd.setFontSize(36);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(360);
+//		bisd.setTop(1425);
+//		text = "2999";
+//		bisd.setText(text);
+//		bisd.setFontColor("#e71f19");
+//		bisd.setFontSize(49);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//				
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(715);
+//		bisd.setTop(1360);
+//		text = "XXX";
+//		bisd.setText("联系人："+text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(26);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//				
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(745);
+//		bisd.setTop(1395);
+//		text = "1398888888";
+//		bisd.setText(text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(26);
+//		//bisd.setStrokewidth(790);
+//		bisd.setFontName("bold");
+//		
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setLeft(190);
+//		bisd.setTop(1535);
+//		text = "活动内容：活动期间，登录“汇掌柜”活动页''''面并点%击领取，即可获赠相应优惠券。( 最多56字 )";
+//		StringBuilder sb = new StringBuilder(text);
+//		for(int index = 0; index < sb.length();index++){
+//			if(index%20==0){
+//				sb.insert(index,"\n");
+//				}
+//		}
+//		bisd.setText(sb.toString());
+//		bisd.setFontColor("#5f3122");
+//		bisd.setFontSize(38);
+//		bisd.setFontName("yahei");
+//		//bisd.setFontName("bold");
+//		//	
+//		subImageList.add(bisd);
+//		bisd= new BaseImageSubDTO();
+//		bisd.setType(2);
+//		bisd.setGravity("north");
+//		bisd.setLeft(0);
+//		bisd.setTop(1820);
+//		text = "南京市玄武区xxxXXXX";
+//		bisd.setText("店铺地址："+text);
+//		bisd.setFontColor("#fff");
+//		bisd.setFontSize(32);
+//		//bisd.setStrokewidth(800);
+//		bisd.setFontName("bold");
+//		//	
+//		subImageList.add(bisd);
+//		
+//		bid.setSubImageList(subImageList);
+		
+		
 		BaseImageDTO bid = new BaseImageDTO();
-		String mainImageUrl = "d:\\bg.png";
+		String mainImageUrl = "d:\\u1159a.jpg";
 		bid.setMainImageUrl(mainImageUrl);
 		List<BaseImageSubDTO> subImageList =new ArrayList<BaseImageSubDTO>();
 		BaseImageSubDTO bisd= new BaseImageSubDTO();
 		bisd.setType(1);
-		String imageUrl = "d:\\u1159.jpg";
+		String imageUrl = "d:\\tc.jpg";
 		bisd.setImageUrl(imageUrl );
-		bisd.setLeft(140);
-		bisd.setTop(1015);
-		bisd.setWidth(521);
-		bisd.setHeight(350);
-		subImageList.add(bisd);
-		
-		bisd= new BaseImageSubDTO();
-		bisd.setType(1);
-		imageUrl = "d:\\tc.jpg";
-		bisd.setImageUrl(imageUrl );
-		bisd.setLeft(700);
-		bisd.setTop(1080);
-		bisd.setWidth(240);
-		bisd.setHeight(240);
+		bisd.setLeft(30);
+		bisd.setTop(810);
+		bisd.setWidth(196);
+		bisd.setHeight(196);
 		subImageList.add(bisd);
 		
 		bisd= new BaseImageSubDTO();
 		bisd.setType(2);
-		bisd.setLeft(0);
-		bisd.setTop(563);
-		String text = "疯狂大减价等你来！";
-		bisd.setGravity("north");
+		bisd.setLeft(70);
+		bisd.setTop(260);
+		String text = "测试测测测测测";
 		bisd.setText(text);
-		bisd.setFontColor("#fff");
-		bisd.setFontSize(40);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(405);
-		bisd.setTop(655);
-		text = "2017.9.1";
-		bisd.setText(text);
-		bisd.setFontColor("#fff");
-		bisd.setFontSize(31);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(650);
-		bisd.setTop(655);
-		text = "2017.9.30";
-		bisd.setText(text);
-		bisd.setFontColor("#fff");
-		bisd.setFontSize(31);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(0);
-		bisd.setTop(735);
-		bisd.setGravity("north");
-		text = "XXX门店";
-		bisd.setText(text);
-		bisd.setFontColor("#fff");
-		bisd.setFontSize(50);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(170);
-		bisd.setTop(1375);
-		text = "商品名称";
-		bisd.setText(text);
-		bisd.setFontColor("#767373");
-		bisd.setFontSize(40);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(220);
-		bisd.setTop(1435);
-		text = "抢购价";
-		bisd.setText(text);
-		bisd.setFontColor("#191a1a");
-		bisd.setFontSize(36);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(485);
-		bisd.setTop(1435);
-		text = "元";
-		bisd.setText(text);
-		bisd.setFontColor("#191a1a");
-		bisd.setFontSize(36);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(360);
-		bisd.setTop(1425);
-		text = "2999";
-		bisd.setText(text);
-		bisd.setFontColor("#e71f19");
-		bisd.setFontSize(49);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-				
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(715);
-		bisd.setTop(1360);
-		text = "XXX";
-		bisd.setText("联系人："+text);
-		bisd.setFontColor("#fff");
+		bisd.setGravity("east");
+		bisd.setFontColor("#1b1b1b");
 		bisd.setFontSize(26);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-				
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(745);
-		bisd.setTop(1395);
-		text = "1398888888";
-		bisd.setText(text);
-		bisd.setFontColor("#fff");
-		bisd.setFontSize(26);
-		//bisd.setStrokewidth(790);
-		bisd.setFontName("bold");
-		
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setLeft(190);
-		bisd.setTop(1535);
-		text = "活动内容：活动期间，登录“汇掌柜”活动页''''面并点%击领取，即可获赠相应优惠券。( 最多56字 )";
-		StringBuilder sb = new StringBuilder(text);
-		for(int index = 0; index < sb.length();index++){
-			if(index%20==0){
-				sb.insert(index,"\n");
-				}
-		}
-		bisd.setText(sb.toString());
-		bisd.setFontColor("#5f3122");
-		bisd.setFontSize(38);
+		//粗体
 		bisd.setFontName("yahei");
-		//bisd.setFontName("bold");
-		//	
-		subImageList.add(bisd);
-		bisd= new BaseImageSubDTO();
-		bisd.setType(2);
-		bisd.setGravity("north");
-		bisd.setLeft(0);
-		bisd.setTop(1820);
-		text = "南京市玄武区xxxXXXX";
-		bisd.setText("店铺地址："+text);
-		bisd.setFontColor("#fff");
-		bisd.setFontSize(32);
-		//bisd.setStrokewidth(800);
-		bisd.setFontName("bold");
-		//	
 		subImageList.add(bisd);
 		
+		bisd= new BaseImageSubDTO();
+		bisd.setType(2);
+		bisd.setLeft(70);
+		bisd.setTop(330);
+		text = "测试测测测测测";
+		bisd.setText(text);
+		bisd.setGravity("east");
+		bisd.setFontColor("#be1819");
+		bisd.setFontSize(38);
+		//粗体
+		bisd.setFontName("yahei");
+		subImageList.add(bisd);
+		
+		bisd= new BaseImageSubDTO();
+		bisd.setType(2);
+		bisd.setLeft(70);
+		bisd.setTop(450);
+		text = "9999";
+		bisd.setText(text);
+		bisd.setGravity("east");
+		bisd.setFontColor("#be1819");
+		bisd.setFontSize(60);
+		//粗体
+		bisd.setFontName("bold");
+		subImageList.add(bisd);
+		
+		bisd= new BaseImageSubDTO();
+		bisd.setType(2);
+		bisd.setLeft(450);
+		bisd.setTop(1000);
+		text = "￥";
+		bisd.setText(text);
+		bisd.setFontColor("#c0140c");
+		bisd.setFontSize(34);
+		//粗体
+		bisd.setFontName("bold");
+		subImageList.add(bisd);
+		
+		bisd= new BaseImageSubDTO();
+		bisd.setType(2);
+		bisd.setLeft(30);
+		bisd.setTop(1025);
+		text = "请长按识别二维码\n微信支付购买";
+		bisd.setText(text);
+		bisd.setFontColor("#67351d");
+		bisd.setFontSize(23);
+		//粗体
+		bisd.setFontName("yahei");
+		subImageList.add(bisd);
 		bid.setSubImageList(subImageList);
+		Map<String, Integer> info = getImgInfo1(bid.getMainImageUrl());
+		
+		String newbg = margeImgHeight1(bid.getMainImageUrl(),(int)(info.get("height")*1.5 ));
+		bid.setMainImageUrl(newbg);
+		
 		margeImage1(bid);
 	}
 }

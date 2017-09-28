@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.GroupbuyingPriceSettingDAO" >
+
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO" >
+    <id column="price_setting_id" property="priceSettingId" jdbcType="BIGINT" />
+    <result column="groupbuying_id" property="groupbuyingId" jdbcType="BIGINT" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="actor_count" property="actorCount" jdbcType="INTEGER" />
+    <result column="groupbuying_price" property="groupbuyingPrice" jdbcType="DECIMAL" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    price_setting_id, groupbuying_id, item_id, sku_code, actor_count, groupbuying_price, 
+    delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from groupbuying_price_setting
+    where price_setting_id = #{priceSettingId,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from groupbuying_price_setting
+    where price_setting_id = #{priceSettingId,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
+    insert into groupbuying_price_setting (price_setting_id, groupbuying_id, item_id, 
+      sku_code, actor_count, groupbuying_price, 
+      delete_flag, create_id, create_name, 
+      create_time, modify_id, modify_name, 
+      modify_time)
+    values (#{priceSettingId,jdbcType=BIGINT}, #{groupbuyingId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, 
+      #{skuCode,jdbcType=VARCHAR}, #{actorCount,jdbcType=INTEGER}, #{groupbuyingPrice,jdbcType=DECIMAL}, 
+      #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
+      #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
+    insert into groupbuying_price_setting
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="priceSettingId != null" >
+        price_setting_id,
+      </if>
+      <if test="groupbuyingId != null" >
+        groupbuying_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="skuCode != null" >
+        sku_code,
+      </if>
+      <if test="actorCount != null" >
+        actor_count,
+      </if>
+      <if test="groupbuyingPrice != null" >
+        groupbuying_price,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="priceSettingId != null" >
+        #{priceSettingId,jdbcType=BIGINT},
+      </if>
+      <if test="groupbuyingId != null" >
+        #{groupbuyingId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="actorCount != null" >
+        #{actorCount,jdbcType=INTEGER},
+      </if>
+      <if test="groupbuyingPrice != null" >
+        #{groupbuyingPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
+    update groupbuying_price_setting
+    <set >
+      <if test="groupbuyingId != null" >
+        groupbuying_id = #{groupbuyingId,jdbcType=BIGINT},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="actorCount != null" >
+        actor_count = #{actorCount,jdbcType=INTEGER},
+      </if>
+      <if test="groupbuyingPrice != null" >
+        groupbuying_price = #{groupbuyingPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where price_setting_id = #{priceSettingId,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
+    update groupbuying_price_setting
+    set groupbuying_id = #{groupbuyingId,jdbcType=BIGINT},
+      item_id = #{itemId,jdbcType=BIGINT},
+      sku_code = #{skuCode,jdbcType=VARCHAR},
+      actor_count = #{actorCount,jdbcType=INTEGER},
+      groupbuying_price = #{groupbuyingPrice,jdbcType=DECIMAL},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where price_setting_id = #{priceSettingId,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

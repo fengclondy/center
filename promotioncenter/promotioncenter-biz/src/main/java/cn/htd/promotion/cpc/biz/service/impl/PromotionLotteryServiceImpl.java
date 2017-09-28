@@ -68,7 +68,16 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         responseDTO.setMessageId(requestDTO.getMessageId());
         responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
         responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-        dictMap = baseService.initPromotionDictMap();
+//        dictMap = baseService.initPromotionDictMap();
+        
+        dictMap = new HashMap<String, String>();
+        dictMap.put(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS + "&" + DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID, "3");
+        dictMap.put(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&" + DictionaryConst.OPT_PROMOTION_BUYER_RULE_APPIONT, "2");
+        dictMap.put(DictionaryConst.TYPE_PROMOTION_BUYER_RULE + "&" + DictionaryConst.OPT_PROMOTION_BUYER_RULE_FIRST_LOGIN, "4");
+        dictMap.put(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&" + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART, "2");
+
+
+
         promotionInfoDTO = promotionLotteryCommonService.getRedisLotteryInfo(promotionId, dictMap);
         if (promotionLotteryCommonService.checkBuyerPromotionLotteryValid(promotionInfoDTO, requestDTO, dictMap)) {
             errorWinningRecord.setBuyerWinningRecordByPromoitonInfo(promotionInfoDTO);

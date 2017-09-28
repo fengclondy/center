@@ -47,4 +47,6 @@
   <!-- 定时任务 根据优惠券需求变更1.1，调整了数据结构更新Reids的数据 -->
   <bean id="updateRedisData4CouponRequireScheduleTask"
         class="cn.htd.marketcenter.task.UpdateRedisData4CouponRequireScheduleTask"/>
+  <!-- 定时任务 根据B2C同步的触发返券活动信息更新促销活动信息 -->
+  <bean id="updateSyncB2cCouponInfoScheduleTask" class="cn.htd.marketcenter.task.UpdateSyncB2cCouponInfoScheduleTask"/>
 </beans>

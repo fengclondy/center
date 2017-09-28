@@ -32,7 +32,7 @@ public class MethodAccessLogInterceptor implements MethodInterceptor, AfterRetur
 			for (int p = 0; p < invocation.getArguments().length; p++) {
 				if (invocation.getArguments()[p] != null) {
 					paramStr += "," + invocation.getArguments()[p].getClass().getName() + ":"
-							+ JSON.toJSONString(invocation.getArguments()[p]);
+							+ formatParamResult(JSON.toJSONString(invocation.getArguments()[p]));
 				} else {
 					paramStr += ",NULL";
 				}
@@ -54,7 +54,7 @@ public class MethodAccessLogInterceptor implements MethodInterceptor, AfterRetur
 			logger.info(
 					invocation.getMethod().getDeclaringClass().getName() + "." + invocation.getMethod().getName()
 							+ "-output：{}" + "|调用耗时" + (endTime - startTime) + "ms",
-					result != null ? (result.getClass().getName() + ":" + JSON.toJSONString(result)) : "NULL");
+					result != null ? (result.getClass().getName() + ":" + formatParamResult(JSON.toJSONString(result))) : "NULL");
 		}
 		return result;
 	}
@@ -66,5 +66,16 @@ public class MethodAccessLogInterceptor implements MethodInterceptor, AfterRetur
 		} catch (Exception e) {
 			logger.error("清空MDC时候发生异常:", e);
 		}
+	}
+	
+	private final static int MAX_LENGTH = 200;
+	/**
+	 * 格式化参数返回值（最多只出前200个字符）
+	 * @param result
+	 * @return
+	 */
+	private static String formatParamResult(String result) {
+		int len = result.length();
+		return len > MAX_LENGTH ? result.substring(0, MAX_LENGTH) + " ..." : result;
 	}
 }

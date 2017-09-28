@@ -139,17 +139,22 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		} catch (IM4JavaException e) {
 			e.printStackTrace();
 		}
-		OssUploadUtils ossUploadUtils = new OssUploadUtils(BUCJET_NAME, ENDPOINT, ACCESS_KEYID, ACCESS_KEYSECRET);
-		FileInputStream newfile = null;
-		try {
-			newfile = new FileInputStream(rootpath + newpicName);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 		File file = new File(rootpath + newpicName);
-		String ossimg = ossUploadUtils.upload("/materieldown", newfile, imgext, file.length());
-		logger.info("ossimg:" + ossimg);
-		return ossimg;
+		if(file.exists()) {
+			OssUploadUtils ossUploadUtils = new OssUploadUtils(BUCJET_NAME, ENDPOINT, ACCESS_KEYID, ACCESS_KEYSECRET);
+			FileInputStream newfile = null;
+			try {
+				newfile = new FileInputStream(rootpath + newpicName);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			String ossimg = ossUploadUtils.upload("/materieldown", newfile, imgext, file.length());
+			logger.info("ossimg:" + ossimg);
+			return ossimg;
+		}else {
+			return "";
+		}
+
 
 	}
 

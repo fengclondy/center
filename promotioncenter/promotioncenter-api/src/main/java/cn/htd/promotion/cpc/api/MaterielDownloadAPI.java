@@ -59,6 +59,14 @@ public interface MaterielDownloadAPI {
 	 * @return
 	 */
 	public String selectMaterielDownloadByMemberCode(String memberCode,String pictureType,String messageid);
+	
+	/**
+	 * 根据会员编码获取物料一览
+	 * @param activityPictureInfoReqDTO
+	 * @param pager
+	 * @return
+	 */
+	public String selectMaterielDownloadCountByMemberCode(String memberCode,String pictureType,String messageid);
 
 	/**
 	 * 物料历史记录查询

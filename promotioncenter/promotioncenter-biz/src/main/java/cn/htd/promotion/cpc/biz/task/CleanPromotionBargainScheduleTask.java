@@ -2,8 +2,8 @@
 package cn.htd.promotion.cpc.biz.task;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +21,8 @@ import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
-import cn.htd.promotion.cpc.common.util.DateUtil;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
@@ -39,7 +37,7 @@ public class CleanPromotionBargainScheduleTask implements IScheduleTaskDealMulti
     /**
      * 清除过期优惠券的过期天数
      */
-    private static final String EXPIRE_PROMOTION_INTERVAL = "remove.redis.promotion.interval";
+//    private static final String EXPIRE_PROMOTION_INTERVAL = "remove.redis.promotion.interval";
 
     @Resource
     private DictionaryUtils dictionary;
@@ -122,8 +120,8 @@ public class CleanPromotionBargainScheduleTask implements IScheduleTaskDealMulti
         boolean result = true;
         List<DictionaryInfo> promotionTypeList = dictionary.getDictionaryOptList(DictionaryConst.TYPE_PROMOTION_TYPE);
         Map<String, String> promotionTypeMap = new HashMap<String, String>();
-        int expirePromotionInterval = Integer.parseInt(SysProperties.getProperty(EXPIRE_PROMOTION_INTERVAL));
-        Date expireDt = DateUtil.getSpecifiedDay(new Date(), -1 * expirePromotionInterval);
+//        int expirePromotionInterval = Integer.parseInt(SysProperties.getProperty(EXPIRE_PROMOTION_INTERVAL));
+//        Date expireDt = DateUtil.getSpecifiedDay(new Date(), -1 * expirePromotionInterval);
         String promotionId = "";
         String promotionType = "";
         try {
@@ -131,10 +129,14 @@ public class CleanPromotionBargainScheduleTask implements IScheduleTaskDealMulti
                 for (DictionaryInfo dictionaryInfo : promotionTypeList) {
                     promotionTypeMap.put(dictionaryInfo.getValue(), dictionaryInfo.getCode());
                 }
+                Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。
+                Calendar currCal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。
                 for (PromotionInfoDTO promotionInfoDTO : tasks) {
                     promotionId = promotionInfoDTO.getPromotionId();
                     promotionType = promotionInfoDTO.getPromotionType();
-                    if (expireDt.compareTo(promotionInfoDTO.getInvalidTime()) > 0) {
+                    cal.setTime(promotionInfoDTO.getInvalidTime());
+            		cal.add(Calendar.DAY_OF_MONTH, +7);//取砍价结束日期后七天  
+                    if (currCal.compareTo(cal) > 0) {
                         if (promotionTypeMap.containsKey(promotionType) && DictionaryConst.OPT_PROMOTION_TYPE_BARGAIN
                                 .equals(promotionTypeMap.get(promotionType))) {
                         	promotionRedisDB.delHash(RedisConst.REDIS_BARGAIN, promotionId);

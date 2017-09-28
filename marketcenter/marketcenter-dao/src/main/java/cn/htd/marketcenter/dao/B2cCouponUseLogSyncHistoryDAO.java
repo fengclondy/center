@@ -21,4 +21,18 @@ public interface B2cCouponUseLogSyncHistoryDAO {
      * @return
      */
     List<B2cCouponUseLogSyncDMO> queryB2cCouponUseLogSyncHistoryList(Map paramMap);
+    
+    /**
+     * 查询优惠券用券数量
+     * @param record
+     * @return
+     */
+    Long queryB2cCouponUseLogSyncHistoryUseCouponCount(B2cCouponUseLogSyncDMO record);
+    
+    /**
+     * 更新b2c_coupon_use_log_sync_history表
+     * @param record
+     * @return
+     */
+    int updateB2cCouponUseLogSyncHistory(B2cCouponUseLogSyncDMO record);
 }

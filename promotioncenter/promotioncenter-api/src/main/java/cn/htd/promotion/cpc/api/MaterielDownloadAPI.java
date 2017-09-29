@@ -10,6 +10,7 @@ public interface MaterielDownloadAPI {
 
 	/**
 	 * 新增
+	 * 
 	 * @param activityPictureInfoReqDTO
 	 * @return
 	 */
@@ -17,6 +18,7 @@ public interface MaterielDownloadAPI {
 
 	/**
 	 * 编辑
+	 * 
 	 * @param activityPictureInfoReqDTO
 	 * @return
 	 */
@@ -24,13 +26,15 @@ public interface MaterielDownloadAPI {
 
 	/**
 	 * 查看
+	 * 
 	 * @param activityPictureInfoReqDTO
 	 * @return
 	 */
 	public String viewMaterielDownload(String activityPictureInfoReqID);
-	
+
 	/**
 	 * 删除
+	 * 
 	 * @param activityPictureInfoReqDTO
 	 * @return
 	 */
@@ -38,45 +42,61 @@ public interface MaterielDownloadAPI {
 
 	/**
 	 * 一览
+	 * 
 	 * @param activityPictureInfoReqDTO
 	 * @param pager
 	 * @return
 	 */
 	public String selectMaterielDownload(String activityPictureInfoReqDTO, String pager);
-	
+
 	/**
 	 * vip会员已选一览
+	 * 
 	 * @param pictureID
 	 * @param pager
 	 * @return
 	 */
-	public String selectMaterielDownloadMember(String pictureID, String pager,String messageid);
-	
+	public String selectMaterielDownloadMember(String pictureID, String pager, String messageid);
+
 	/**
 	 * 根据会员编码获取物料一览
+	 * 
 	 * @param activityPictureInfoReqDTO
 	 * @param pager
 	 * @return
 	 */
-	public String selectMaterielDownloadByMemberCode(String memberCode,String pictureType,String messageid);
+	public String selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid,
+			String pager);
+
+	/**
+	 * 根据会员编码获取物料一览
+	 * 
+	 * @param activityPictureInfoReqDTO
+	 * @param pager
+	 * @return
+	 */
+	public String selectMaterielDownloadCountByMemberCode(String memberCode, String pictureType, String messageid);
 
 	/**
 	 * 物料历史记录查询
+	 * 
 	 * @param memberActivityPictureReqDTO
 	 * @param pager
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(String memberActivityPictureReqDTO,String messageID);
-	
+	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
+			String memberActivityPictureReqDTO, String messageID);
+
 	/**
 	 * 物料历史记录删除
+	 * 
 	 * @param memberActivityPictureReqDTO
 	 * @param pager
 	 * @return
 	 */
 	public String delMemberActivityPictureById(String memberActivityPictureReqDTO);
 
-	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type);
+	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid, int type);
 
 	public void saveMaterielDownloadImgHis(MemberActivityPictureReqDTO memberActivityPictureReqDTO);
 }

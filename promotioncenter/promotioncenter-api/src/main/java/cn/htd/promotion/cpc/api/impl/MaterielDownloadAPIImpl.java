@@ -91,17 +91,21 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 	@Override
 	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
 			String memberActivityPictureReqDTO, String messageID) {
-		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO, MemberActivityPictureReqDTO.class);
-		
-//		// 输入DTO的验证
-//		ValidateResult validateResult = ValidationUtils.validateEntity(memberActivityPictureReq);
-//		// 有错误信息时返回错误信息
-//		if (validateResult.isHasErrors()) {
-//			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
-//					validateResult.getErrorMsg());
-//		}
-		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService.selectMemberActivityPicture(memberActivityPictureReq);
-		
+		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO,
+				MemberActivityPictureReqDTO.class);
+
+		// // 输入DTO的验证
+		// ValidateResult validateResult =
+		// ValidationUtils.validateEntity(memberActivityPictureReq);
+		// // 有错误信息时返回错误信息
+		// if (validateResult.isHasErrors()) {
+		// throw new
+		// PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),
+		// validateResult.getErrorMsg());
+		// }
+		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> memberActivityPictureResDTO = materielDownloadService
+				.selectMemberActivityPicture(memberActivityPictureReq);
+
 		return memberActivityPictureResDTO;
 	}
 
@@ -110,7 +114,7 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		MemberActivityPictureReqDTO memberActivityPictureReq = JSON.parseObject(memberActivityPictureReqDTO,
 				MemberActivityPictureReqDTO.class);
 		// 输入DTO的验证
-		
+
 		MemberActivityPictureResDTO memberActivityPictureResDTO = new MemberActivityPictureResDTO();
 
 		memberActivityPictureResDTO = materielDownloadService
@@ -118,9 +122,11 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		return JSON.toJSONString(memberActivityPictureResDTO);
 	}
 
-	public String selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid) {
+	public String selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid,
+			String pager) {
+		Pager<ActivityPictureInfoResDTO> page = JSON.parseObject(pager, Pager.class);
 		ExecuteResult<List<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
-				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid);
+				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid, page);
 		return JSON.toJSONString(activityPictureInfoResDTO);
 	}
 
@@ -129,28 +135,27 @@ public class MaterielDownloadAPIImpl implements MaterielDownloadAPI {
 		Pager<ActivityPictureMemberDetailResDTO> page = JSON.parseObject(pager, Pager.class);
 
 		ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> activityPictureInfoResDTO = materielDownloadService
-				.selectMaterielDownloadMember(pictureID, page,messageid);
+				.selectMaterielDownloadMember(pictureID, page, messageid);
 		return JSON.toJSONString(activityPictureInfoResDTO);
 	}
 
 	@Override
-	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type) {
+	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid, int type) {
 		return materielDownloadService.saveMaterielDownloadImg(bid, messageid, type);
 	}
 
 	@Override
 	public void saveMaterielDownloadImgHis(MemberActivityPictureReqDTO memberActivityPictureReqDTO) {
 		materielDownloadService.saveMaterielDownloadImgHis(memberActivityPictureReqDTO);
-		
+
 	}
 
 	@Override
-	public String selectMaterielDownloadCountByMemberCode(String memberCode,
-			String pictureType, String messageid) {
+	public String selectMaterielDownloadCountByMemberCode(String memberCode, String pictureType, String messageid) {
 		ExecuteResult<List<ActivityPictureInfoResDTO>> activityPictureInfoResDTO = materielDownloadService
-				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid);
-		if(null != activityPictureInfoResDTO){
-			if(null != activityPictureInfoResDTO.getResult()){
+				.selectMaterielDownloadByMemberCode(memberCode, pictureType, messageid, null);
+		if (null != activityPictureInfoResDTO) {
+			if (null != activityPictureInfoResDTO.getResult()) {
 				return JSON.toJSONString(activityPictureInfoResDTO.getResult().size());
 			}
 		}

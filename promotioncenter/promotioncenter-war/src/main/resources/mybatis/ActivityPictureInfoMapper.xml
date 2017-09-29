@@ -246,7 +246,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   
-  <select id="selectMaterielDownloadByMemberCode" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="selectMaterielDownloadByMemberCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
      a.id, a.picture_id, a.picture_name, a.picture_type, a.effective_time, a.invalid_time, a.upload_picture_front, 
     a.upload_picture_back, a.is_vip, a.delete_flag
@@ -260,6 +260,9 @@
 	and (a.is_vip=1 or
 	b.member_code=#{memberCode,jdbcType=VARCHAR}
 	)
+	<if test="pager!=null">
+	   limit #{pager.pageOffset} , #{pager.rows}
+	</if>
   </select>
   
 </mapper>

@@ -238,6 +238,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 couponInfoDTO = updateB2cCouponPromotionInfo(b2cCouponInfoSyncDMO, promotionInfoDTO);
             }
             if (couponInfoDTO == null) {
+                updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
                 return dealRst;
             }
             promotionId = couponInfoDTO.getPromotionId();
@@ -247,6 +248,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             targetCouponListSize =
                     marketRedisDB.getLlen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId).intValue();
             if (targetCouponListSize == 0) {
+                updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
                 return dealRst;
             }
             executorService = Executors.newFixedThreadPool(threadPoolSize);
@@ -268,19 +270,13 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             for (Future<Integer> workRst : workResultList) {
                 logger.info("\n 方法:[{}],线程执行结果:[{}]", "UpdateSyncB2cCouponInfoScheduleTask-execute", workRst.get());
             }
-            b2cCouponInfoSyncDMO.setDealFlag(YesNoEnum.YES.getValue());
-            b2cCouponInfoSyncDMO.setModifyId(0L);
-            b2cCouponInfoSyncDMO.setModifyName("sys");
-            b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfoDealSuccessResult(b2cCouponInfoSyncDMO);
+            updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
         } catch (MarketCenterBusinessException mcbe) {
             logger.warn("\n 方法:[{}],优惠券活动名称:[{}],异常:[{}],参数:[{}]",
                     "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", b2cCouponInfoSyncDMO.getCouponName(),
                     ExceptionUtils.getStackTraceAsString(mcbe), JSON.toJSONString(b2cCouponInfoSyncDMO));
-            b2cCouponInfoSyncDMO.setDealFlag(YesNoEnum.ERROR.getValue());
             b2cCouponInfoSyncDMO.setDealFailReason(mcbe.getMessage());
-            b2cCouponInfoSyncDMO.setModifyId(0L);
-            b2cCouponInfoSyncDMO.setModifyName("sys");
-            b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfoDealFailResult(b2cCouponInfoSyncDMO);
+            updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
             dealRst = false;
         } catch (Exception e) {
             logger.error("\n 方法:[{}],优惠券活动名称:[{}],异常:[{}],参数:[{}]",
@@ -293,6 +289,24 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             }
         }
         return dealRst;
+    }
+
+    /**
+     * 更新促销活动更新结果信息
+     *
+     * @param b2cCouponInfoSyncDMO
+     */
+    private void updateB2cCouponInfoDealResult(B2cCouponInfoSyncDMO b2cCouponInfoSyncDMO) {
+
+        b2cCouponInfoSyncDMO.setModifyId(0L);
+        b2cCouponInfoSyncDMO.setModifyName("sys");
+        if (StringUtils.isEmpty(b2cCouponInfoSyncDMO.getDealFailReason())) {
+            b2cCouponInfoSyncDMO.setDealFlag(YesNoEnum.YES.getValue());
+            b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfoDealSuccessResult(b2cCouponInfoSyncDMO);
+        } else {
+            b2cCouponInfoSyncDMO.setDealFlag(YesNoEnum.ERROR.getValue());
+            b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfoDealFailResult(b2cCouponInfoSyncDMO);
+        }
     }
 
     /**

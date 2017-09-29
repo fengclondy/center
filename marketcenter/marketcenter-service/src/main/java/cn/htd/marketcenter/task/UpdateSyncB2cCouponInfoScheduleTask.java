@@ -41,11 +41,13 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 
 /**
  * 根据B2C同步的触发返券活动信息更新促销活动信息
  */
+@Transactional
 public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMulti<B2cCouponInfoSyncDMO> {
 
     protected static transient Logger logger = LoggerFactory.getLogger(UpdateSyncB2cCouponInfoScheduleTask.class);
@@ -184,7 +186,8 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
      * @return
      * @throws Exception
      */
-    private List<B2cCouponInfoSyncDMO> queryDealTargetB2cCouponInfoSyncDMO(String targetB2cActivityCode) throws Exception {
+    private List<B2cCouponInfoSyncDMO> queryDealTargetB2cCouponInfoSyncDMO(String targetB2cActivityCode)
+            throws Exception {
         B2cCouponInfoSyncDMO couponInfoCondition = new B2cCouponInfoSyncDMO();
         couponInfoCondition.setB2cActivityCode(targetB2cActivityCode);
         couponInfoCondition.setDealFlag(YesNoEnum.NO.getValue());
@@ -271,7 +274,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfoDealSuccessResult(b2cCouponInfoSyncDMO);
         } catch (MarketCenterBusinessException mcbe) {
             logger.warn("\n 方法:[{}],优惠券活动名称:[{}],异常:[{}],参数:[{}]",
-                    "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", couponInfoDTO.getPromotionName(),
+                    "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", b2cCouponInfoSyncDMO.getCouponName(),
                     ExceptionUtils.getStackTraceAsString(mcbe), JSON.toJSONString(b2cCouponInfoSyncDMO));
             b2cCouponInfoSyncDMO.setDealFlag(YesNoEnum.ERROR.getValue());
             b2cCouponInfoSyncDMO.setDealFailReason(mcbe.getMessage());
@@ -281,7 +284,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             dealRst = false;
         } catch (Exception e) {
             logger.error("\n 方法:[{}],优惠券活动名称:[{}],异常:[{}],参数:[{}]",
-                    "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", couponInfoDTO.getPromotionName(),
+                    "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", b2cCouponInfoSyncDMO.getCouponName(),
                     ExceptionUtils.getStackTraceAsString(e), JSON.toJSONString(b2cCouponInfoSyncDMO));
             throw e;
         } finally {
@@ -402,6 +405,8 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
         couponInfoDTO.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
         couponInfoDTO.setB2cActivityCode(b2cCouponInfoSyncDMO.getB2cActivityCode());
+        couponInfoDTO.setRewardType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE,
+                DictionaryConst.OPT_PROMOTION_REWARD_TYPE_VOUCHER));
         couponInfoDTO.setCouponKind(b2cCouponInfoSyncDMO.getCouponType());
         couponInfoDTO.setCouponProvideType(b2cCouponInfoSyncDMO.getCouponProvideType());
         couponInfoDTO.setProvideCount(0);

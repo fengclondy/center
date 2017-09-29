@@ -230,6 +230,7 @@ public class Updateb2cMemberCouponAmountTask implements
 						BuyerCouponInfoDTO couponInfoDaoRes = buyerCouponInfoDAO
 								.queryBuyerCouponByBuyerCodeAndPomotionId(couponInfo);
 						if (null == couponInfoDaoRes) {
+							logger.warn("没有从会员优惠券表里查到记录BuyerCouponInfoDTO:{}",JSON.json(couponInfo));
 							continue;
 						}
 						String buyerCouponCode = couponInfoDaoRes

@@ -352,8 +352,9 @@
     </if>
   </select>
   <select id="queryBuyerCouponByBuyerCodeAndPomotionId" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO"
-          resultType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
-    	select buyer_coupon_code 
+          resultMap="BaseResultMap">
+    	select 
+    	 <include refid="Base_Column_List"/> 
     	from buyer_coupon_info
     	where 1=1 
     	and buyer_code = #{buyerCode}

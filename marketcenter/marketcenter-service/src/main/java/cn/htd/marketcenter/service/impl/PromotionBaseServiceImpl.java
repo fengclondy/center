@@ -191,7 +191,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throws MarketCenterBusinessException, Exception {
         String promotionType = "";
         String promotionId = "";
-        List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
+        List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         int vipFlg = -1;
         if (promotionInfo == null) {
@@ -204,17 +204,19 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
         }
         promotionInfo.setPromotionId(promotionId);
-        if (dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                .equals(promotionType)) {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-        } else {
-            if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
-                promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-            }
-        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+//        if (dictionary
+//                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+//                .equals(promotionType)) {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+//        } else {
+//            if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
+//                promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//            }
+//        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
         setPromotionStatusInfo(promotionInfo);
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);
@@ -709,7 +711,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throws MarketCenterBusinessException, Exception {
         String promotionType = "";
         String promotionId = "";
-        List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
+        List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         List<PromotionAccumulatyDTO> accumulatyDTOList = null;
         Map<String, PromotionAccumulatyDTO> oldAccumulatyMap = new HashMap<String, PromotionAccumulatyDTO>();
@@ -724,15 +726,17 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
         }
-        if (dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                .equals(promotionType)) {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-        } else {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+//        if (dictionary
+//                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+//                .equals(promotionType)) {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+//        } else {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
         setPromotionStatusInfo(promotionInfo);
         accumulatyDTOList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionId, null);
         if (accumulatyDTOList != null && !accumulatyDTOList.isEmpty()) {
@@ -861,7 +865,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @return
      */
     public PromotionAccumulatyDTO convertSingleAccumulatyPromotion2Info(PromotionInfoDTO promotionInfo) {
-        List<PromotionAccumulatyDTO> accumulatyList = promotionInfo.getPromotionAccumulatyList();
+        List<? extends PromotionAccumulatyDTO> accumulatyList = promotionInfo.getPromotionAccumulatyList();
         PromotionAccumulatyDTO accumulatyLevelDTO = null;
         PromotionAccumulatyDTO accumulatyDTO = new PromotionAccumulatyDTO();
         if (accumulatyList.size() == 1) {

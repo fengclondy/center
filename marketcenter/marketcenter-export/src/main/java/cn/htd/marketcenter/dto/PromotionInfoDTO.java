@@ -172,7 +172,7 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 活动层级列表
      */
-    private List<PromotionAccumulatyDTO> promotionAccumulatyList;
+    private List<? extends PromotionAccumulatyDTO> promotionAccumulatyList;
     /**
      * 促销活动状态履历
      */
@@ -522,11 +522,11 @@ public class PromotionInfoDTO implements Serializable {
         this.categoryItemRuleDesc = categoryItemRuleDesc;
     }
 
-    public List<PromotionAccumulatyDTO> getPromotionAccumulatyList() {
+    public List<? extends PromotionAccumulatyDTO> getPromotionAccumulatyList() {
         return promotionAccumulatyList;
     }
 
-    public void setPromotionAccumulatyList(List<PromotionAccumulatyDTO> promotionAccumulatyList) {
+    public void setPromotionAccumulatyList(List<? extends PromotionAccumulatyDTO> promotionAccumulatyList) {
         this.promotionAccumulatyList = promotionAccumulatyList;
     }
 

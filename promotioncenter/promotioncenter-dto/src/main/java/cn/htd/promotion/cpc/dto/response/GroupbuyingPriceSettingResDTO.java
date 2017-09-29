@@ -13,8 +13,8 @@ public class GroupbuyingPriceSettingResDTO implements Serializable {
 	
 	// 团购价格设置ID
 	private Long priceSettingId;
-	// 团购活动ID
-	private Long groupbuyingId;
+	// 促销活动编码
+	private String promotionId;
 	// 商品ITEMID
 	private Long itemId;
 	// 商品SKU编码
@@ -46,12 +46,12 @@ public class GroupbuyingPriceSettingResDTO implements Serializable {
 		this.priceSettingId = priceSettingId;
 	}
 
-	public Long getGroupbuyingId() {
-		return groupbuyingId;
+	public String getPromotionId() {
+		return promotionId;
 	}
 
-	public void setGroupbuyingId(Long groupbuyingId) {
-		this.groupbuyingId = groupbuyingId;
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
 	}
 
 	public Long getItemId() {

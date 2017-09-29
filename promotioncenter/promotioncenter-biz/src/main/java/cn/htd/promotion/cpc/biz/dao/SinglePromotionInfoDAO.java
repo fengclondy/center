@@ -3,7 +3,7 @@ package cn.htd.promotion.cpc.biz.dao;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.SinglePromotionInfoResDTO;
 
-public interface SinglePromotionInfoMapper {
+public interface SinglePromotionInfoDAO {
 	
     int deleteByPrimaryKey(Long id);
 

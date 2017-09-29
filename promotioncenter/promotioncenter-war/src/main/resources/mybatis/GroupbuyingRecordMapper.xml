@@ -3,7 +3,6 @@
 <mapper namespace="cn.htd.promotion.cpc.biz.dao.GroupbuyingRecordDAO" >
   <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO" >
     <id column="record_id" property="recordId" jdbcType="BIGINT" />
-    <result column="groupbuying_id" property="groupbuyingId" jdbcType="BIGINT" />
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
     <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
@@ -19,7 +18,7 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    record_id, groupbuying_id, promotion_id, seller_code, buyer_code, buyer_name, buyer_contact, 
+    record_id, promotion_id, seller_code, buyer_code, buyer_name, buyer_contact, 
     delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
   
@@ -36,12 +35,12 @@
   </delete>
   
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO" >
-    insert into groupbuying_record (record_id, groupbuying_id, promotion_id, 
+    insert into groupbuying_record (record_id, promotion_id, 
       seller_code, buyer_code, buyer_name, 
       buyer_contact, delete_flag, create_id, 
       create_name, create_time, modify_id, 
       modify_name, modify_time)
-    values (#{recordId,jdbcType=BIGINT}, #{groupbuyingId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, 
+    values (#{recordId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, 
       #{sellerCode,jdbcType=VARCHAR}, #{buyerCode,jdbcType=VARCHAR}, #{buyerName,jdbcType=VARCHAR}, 
       #{buyerContact,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, 
       #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
@@ -53,9 +52,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="recordId != null" >
         record_id,
-      </if>
-      <if test="groupbuyingId != null" >
-        groupbuying_id,
       </if>
       <if test="promotionId != null" >
         promotion_id,
@@ -97,9 +93,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="recordId != null" >
         #{recordId,jdbcType=BIGINT},
-      </if>
-      <if test="groupbuyingId != null" >
-        #{groupbuyingId,jdbcType=BIGINT},
       </if>
       <if test="promotionId != null" >
         #{promotionId,jdbcType=VARCHAR},
@@ -143,9 +136,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO" >
     update groupbuying_record
     <set >
-      <if test="groupbuyingId != null" >
-        groupbuying_id = #{groupbuyingId,jdbcType=BIGINT},
-      </if>
       <if test="promotionId != null" >
         promotion_id = #{promotionId,jdbcType=VARCHAR},
       </if>
@@ -188,7 +178,7 @@
   
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO" >
     update groupbuying_record
-    set groupbuying_id = #{groupbuyingId,jdbcType=BIGINT},
+    set 
       promotion_id = #{promotionId,jdbcType=VARCHAR},
       seller_code = #{sellerCode,jdbcType=VARCHAR},
       buyer_code = #{buyerCode,jdbcType=VARCHAR},

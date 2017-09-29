@@ -12,8 +12,6 @@ public class GroupbuyingRecordResDTO implements Serializable {
 	
 	// 参团记录ID
 	private Long recordId;
-	// 团购活动ID
-	private Long groupbuyingId;
 	// 促销活动编码
 	private String promotionId;
 	// 商家编码
@@ -45,12 +43,6 @@ public class GroupbuyingRecordResDTO implements Serializable {
 	}
 	public void setRecordId(Long recordId) {
 		this.recordId = recordId;
-	}
-	public Long getGroupbuyingId() {
-		return groupbuyingId;
-	}
-	public void setGroupbuyingId(Long groupbuyingId) {
-		this.groupbuyingId = groupbuyingId;
 	}
 	public String getPromotionId() {
 		return promotionId;

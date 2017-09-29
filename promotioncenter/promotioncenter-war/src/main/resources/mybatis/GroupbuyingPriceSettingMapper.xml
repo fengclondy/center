@@ -4,7 +4,7 @@
 
   <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO" >
     <id column="price_setting_id" property="priceSettingId" jdbcType="BIGINT" />
-    <result column="groupbuying_id" property="groupbuyingId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="item_id" property="itemId" jdbcType="BIGINT" />
     <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
     <result column="actor_count" property="actorCount" jdbcType="INTEGER" />
@@ -19,7 +19,7 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    price_setting_id, groupbuying_id, item_id, sku_code, actor_count, groupbuying_price, 
+    price_setting_id, promotion_id, item_id, sku_code, actor_count, groupbuying_price, 
     delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
   
@@ -36,12 +36,12 @@
   </delete>
   
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
-    insert into groupbuying_price_setting (price_setting_id, groupbuying_id, item_id, 
+    insert into groupbuying_price_setting (price_setting_id, promotion_id, item_id, 
       sku_code, actor_count, groupbuying_price, 
       delete_flag, create_id, create_name, 
       create_time, modify_id, modify_name, 
       modify_time)
-    values (#{priceSettingId,jdbcType=BIGINT}, #{groupbuyingId,jdbcType=BIGINT}, #{itemId,jdbcType=BIGINT}, 
+    values (#{priceSettingId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{itemId,jdbcType=BIGINT}, 
       #{skuCode,jdbcType=VARCHAR}, #{actorCount,jdbcType=INTEGER}, #{groupbuyingPrice,jdbcType=DECIMAL}, 
       #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
@@ -54,8 +54,8 @@
       <if test="priceSettingId != null" >
         price_setting_id,
       </if>
-      <if test="groupbuyingId != null" >
-        groupbuying_id,
+      <if test="promotionId != null" >
+        promotion_id,
       </if>
       <if test="itemId != null" >
         item_id,
@@ -95,8 +95,8 @@
       <if test="priceSettingId != null" >
         #{priceSettingId,jdbcType=BIGINT},
       </if>
-      <if test="groupbuyingId != null" >
-        #{groupbuyingId,jdbcType=BIGINT},
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=VARCHAR},
       </if>
       <if test="itemId != null" >
         #{itemId,jdbcType=BIGINT},
@@ -137,9 +137,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
     update groupbuying_price_setting
     <set >
-      <if test="groupbuyingId != null" >
-        groupbuying_id = #{groupbuyingId,jdbcType=BIGINT},
-      </if>
       <if test="itemId != null" >
         item_id = #{itemId,jdbcType=BIGINT},
       </if>
@@ -179,7 +176,7 @@
   
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
     update groupbuying_price_setting
-    set groupbuying_id = #{groupbuyingId,jdbcType=BIGINT},
+    set 
       item_id = #{itemId,jdbcType=BIGINT},
       sku_code = #{skuCode,jdbcType=VARCHAR},
       actor_count = #{actorCount,jdbcType=INTEGER},

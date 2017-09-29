@@ -206,10 +206,13 @@ public class Updateb2cMemberCouponAmountTask implements
 							.getB2cCouponUsedAmount();
 					if (StringUtils.isEmpty(count)) {
 						// 做券
-						String belongSuperiorCode = b2cCouponUseLogSyncDMO
-								.getBelongSuperiorCode();
+						/*
+						 * String belongSuperiorCode = b2cCouponUseLogSyncDMO
+						 * .getBelongSuperiorCode();
+						 */
 						doCoupon(useType, b2cActivityCode, buyerCode,
-								belongSuperiorCode, promotionId, couponAmount);
+								b2cCouponUseLogSyncDMO, promotionId,
+								couponAmount);
 					} else {
 						// 增加或者扣减金额
 						BuyerCouponInfoDTO couponInfo = new BuyerCouponInfoDTO();
@@ -249,7 +252,8 @@ public class Updateb2cMemberCouponAmountTask implements
 	 * @throws ParseException
 	 */
 	public void doCoupon(String useType, String b2cActivityCode,
-			String buyerCode, String belongSuperiorCode,String promotionId, BigDecimal couponAmount) throws ParseException {
+			String buyerCode, B2cCouponUseLogSyncDMO b2cCouponUseLogSyncDMO,
+			String promotionId, BigDecimal couponAmount) throws ParseException {
 		PromotionDiscountInfoDTO promotionDiscountInfoDTO = JSON.parse(
 				marketRedisDB.getHash(RedisConst.REDIS_COUPON_TRIGGER,
 						b2cActivityCode), PromotionDiscountInfoDTO.class);
@@ -258,27 +262,63 @@ public class Updateb2cMemberCouponAmountTask implements
 		}
 		BuyerCouponInfoDTO couponInfo = new BuyerCouponInfoDTO();
 		couponInfo.setBuyerCode(buyerCode);
-		//couponInfo.setBuyerName(buyerName);//TODO
+		couponInfo.setBuyerName(b2cCouponUseLogSyncDMO.getB2cSellerName());
 		String couponType = promotionDiscountInfoDTO.getCouponKind();
 		String buyerCouponCode = noGenerator.generateCouponCode(couponType);
 		couponInfo.setBuyerCouponCode(buyerCouponCode);
 		couponInfo.setPromotionId(promotionId);
 		couponInfo.setLevelCode(promotionDiscountInfoDTO.getLevelCode());
-		couponInfo.setPromotionProviderType(promotionDiscountInfoDTO.getPromotionProviderType());
-		couponInfo.setPromotionProviderSellerCode(belongSuperiorCode);
-		//couponInfo.setCouponUseRang(couponUseRang);//TODO 大B名称+"专用"
+		couponInfo.setPromotionProviderType(promotionDiscountInfoDTO
+				.getPromotionProviderType());
+		couponInfo.setPromotionProviderSellerCode(b2cCouponUseLogSyncDMO
+				.getBelongSuperiorCode());
+		couponInfo.setCouponUseRang(b2cCouponUseLogSyncDMO
+				.getBelongSuperiorName() + "专用");
 		couponInfo.setCouponName(promotionDiscountInfoDTO.getPromotionName());
 		couponInfo.setCouponType(couponType);
-		couponInfo.setCouponStartTime(promotionDiscountInfoDTO.getEffectiveStartTime());
-		couponInfo.setCouponEndTime(promotionDiscountInfoDTO.getEffectiveEndTime());
-		couponInfo.setDiscountThreshold(promotionDiscountInfoDTO.getDiscountThreshold());
-		couponInfo.setCouponAmount(new BigDecimal(0));//TODO 这个值要不要set
+		couponInfo.setCouponStartTime(promotionDiscountInfoDTO
+				.getEffectiveStartTime());
+		couponInfo.setCouponEndTime(promotionDiscountInfoDTO
+				.getEffectiveEndTime());
+		couponInfo.setDiscountThreshold(promotionDiscountInfoDTO
+				.getDiscountThreshold());
+		couponInfo.setCouponAmount(new BigDecimal(0));
 		couponInfo.setCouponLeftAmount(couponAmount);
-		String status = dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_STATUS,
+		String status = dictionary.getValueByCode(
+				DictionaryConst.TYPE_COUPON_STATUS,
 				DictionaryConst.OPT_COUPON_STATUS_UNUSED);
 		couponInfo.setStatus(status);
 		couponInfo.setCreateId(0L);
 		couponInfo.setCreateName("sys");
+		int insertResult = buyerCouponInfoDAO.addBuyerCouponInfo(couponInfo);
+		if (insertResult == 1) {
+			saveBuyerCoupon2RedisAfter2DB(couponInfo);
+		}
+	}
+
+	/**
+	 * 插入DB后再插入redis
+	 * @param couponInfo
+	 */
+	public void saveBuyerCoupon2RedisAfter2DB(BuyerCouponInfoDTO couponInfo) {
+		String buyerCode = couponInfo.getBuyerCode();
+		String buyerCouponCode = couponInfo.getBuyerCouponCode();
+		String promotionId = couponInfo.getPromotionId();
+		String buyerCouponRedisKey = RedisConst.REDIS_BUYER_COUPON + "_"
+				+ buyerCode;
+		String couponJsonStr = com.alibaba.fastjson.JSON
+				.toJSONString(couponInfo);
+		marketRedisDB.setHash(buyerCouponRedisKey, buyerCouponCode,
+				couponJsonStr);
+		long redisAmount = CalculateUtils.multiply(
+				couponInfo.getCouponLeftAmount(), new BigDecimal(100))
+				.longValue();
+		marketRedisDB.setHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode
+				+ "&" + buyerCouponCode, String.valueOf(redisAmount));
+		marketRedisDB.incrHash(RedisConst.REDIS_COUPON_RECEIVE_COUNT,
+				promotionId);
+		marketRedisDB.tailPush(RedisConst.REDIS_COUPON_SEND_LIST + "_"
+				+ promotionId, buyerCode + "&" + buyerCouponCode);
 	}
 
 	/**
@@ -296,26 +336,30 @@ public class Updateb2cMemberCouponAmountTask implements
 		long redisCouponAmount = 0;
 		if (ON_LINE_ORDER.equals(useType)
 				|| CASH_ON_DELIVERY_ORDER_SURE.equals(useType)) {
-			redisCouponAmount = couponAmount.multiply(new BigDecimal(100)).longValue();
+			redisCouponAmount = couponAmount.multiply(new BigDecimal(100))
+					.longValue();
 		} else if (ON_LINE_SURE_CANCLE_ORDER.equals(useType)) {
-			redisCouponAmount = -couponAmount.multiply(new BigDecimal(100)).longValue();
+			redisCouponAmount = -couponAmount.multiply(new BigDecimal(100))
+					.longValue();
 		}
-		Long buyerCouponLeftAmount = marketRedisDB.incrHashBy(RedisConst.REDIS_BUYER_COUPON_AMOUNT,
-				buyerCode + "&" + buyerCouponCode, redisCouponAmount);
-        buyerCouponLeftAmount = null == buyerCouponLeftAmount ? 0L : buyerCouponLeftAmount;
-        BuyerCouponInfoDTO couponInfo = new BuyerCouponInfoDTO();
-        couponInfo.setCouponLeftAmount(
-                CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
-        couponInfo.setModifyId(0L);
-        couponInfo.setModifyName("sys"); 
-        couponInfo.setBuyerCode(buyerCode);
-        couponInfo.setBuyerCouponCode(buyerCouponCode);
-		
-        //不需要写这个入库操作，只需要push到指定的redis对列里就行了
-		marketRedisDB.tailPush(
-                RedisConst.REDIS_BUYER_COUPON_NEED_UPDATE_LIST + "_" + buyerCode + "_" + buyerCouponCode,
-                com.alibaba.fastjson.JSON.toJSONString(couponInfo));
-        marketRedisDB
-                .addSet(RedisConst.REDIS_BUYER_COUPON_NEED_UPDATE_LIST, buyerCode + "_" + buyerCouponCode);
+		Long buyerCouponLeftAmount = marketRedisDB.incrHashBy(
+				RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&"
+						+ buyerCouponCode, redisCouponAmount);
+		buyerCouponLeftAmount = null == buyerCouponLeftAmount ? 0L
+				: buyerCouponLeftAmount;
+		BuyerCouponInfoDTO couponInfo = new BuyerCouponInfoDTO();
+		couponInfo.setCouponLeftAmount(CalculateUtils.divide(new BigDecimal(
+				buyerCouponLeftAmount), new BigDecimal(100)));
+		couponInfo.setModifyId(0L);
+		couponInfo.setModifyName("sys");
+		couponInfo.setBuyerCode(buyerCode);
+		couponInfo.setBuyerCouponCode(buyerCouponCode);
+
+		// 不需要写这个入库操作，只需要push到指定的redis对列里就行了
+		marketRedisDB.tailPush(RedisConst.REDIS_BUYER_COUPON_NEED_UPDATE_LIST
+				+ "_" + buyerCode + "_" + buyerCouponCode,
+				com.alibaba.fastjson.JSON.toJSONString(couponInfo));
+		marketRedisDB.addSet(RedisConst.REDIS_BUYER_COUPON_NEED_UPDATE_LIST,
+				buyerCode + "_" + buyerCouponCode);
 	}
 }

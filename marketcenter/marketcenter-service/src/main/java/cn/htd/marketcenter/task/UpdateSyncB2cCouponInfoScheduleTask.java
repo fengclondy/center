@@ -160,12 +160,20 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                     }
                     promotionInfoDTO = queryB2cCouponPromotionInfo(targetB2cActivityCode, deleteStatus);
                     for (B2cCouponInfoSyncDMO syncCouponInfo : syncCouponInfoList) {
-                        updateSyncB2cCouponInfo(syncCouponInfo, promotionInfoDTO);
+                        try {
+                            updateSyncB2cCouponInfo(syncCouponInfo, promotionInfoDTO);
+                            updateB2cCouponInfoDealResult(syncCouponInfo);
+                            break;
+                        } catch (MarketCenterBusinessException mcbe) {
+                            updateB2cCouponInfoDealResult(syncCouponInfo);
+                            continue;
+                        }
                     }
                 } catch (Exception ex) {
                     marketRedisDB.addSet(RedisConst.REDIS_SYNC_B2C_COUPON_SET, targetB2cActivityCode);
-                    marketRedisDB.delHash(RedisConst.REDIS_DEAL_B2C_COUPON_HASH, targetB2cActivityCode);
                     throw ex;
+                } finally {
+                    marketRedisDB.delHash(RedisConst.REDIS_DEAL_B2C_COUPON_HASH, targetB2cActivityCode);
                 }
             }
         } catch (Exception e) {
@@ -215,12 +223,10 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
      *
      * @param b2cCouponInfoSyncDMO
      * @param promotionInfoDTO
-     * @return
      * @throws Exception
      */
-    public boolean updateSyncB2cCouponInfo(B2cCouponInfoSyncDMO b2cCouponInfoSyncDMO, PromotionInfoDTO promotionInfoDTO)
+    public void updateSyncB2cCouponInfo(B2cCouponInfoSyncDMO b2cCouponInfoSyncDMO, PromotionInfoDTO promotionInfoDTO)
             throws Exception {
-        boolean dealRst = true;
         PromotionDiscountInfoDTO couponInfoDTO = null;
         String promotionId = "";
         int targetCouponListSize = 0;
@@ -238,8 +244,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 couponInfoDTO = updateB2cCouponPromotionInfo(b2cCouponInfoSyncDMO, promotionInfoDTO);
             }
             if (couponInfoDTO == null) {
-                updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
-                return dealRst;
+                return;
             }
             promotionId = couponInfoDTO.getPromotionId();
             marketRedisDB.setHash(RedisConst.REDIS_COUPON_VALID, promotionId, couponInfoDTO.getShowStatus());
@@ -248,8 +253,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             targetCouponListSize =
                     marketRedisDB.getLlen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId).intValue();
             if (targetCouponListSize == 0) {
-                updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
-                return dealRst;
+                return;
             }
             executorService = Executors.newFixedThreadPool(threadPoolSize);
             taskProvideCount = (new BigDecimal(targetCouponListSize))
@@ -270,14 +274,12 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             for (Future<Integer> workRst : workResultList) {
                 logger.info("\n 方法:[{}],线程执行结果:[{}]", "UpdateSyncB2cCouponInfoScheduleTask-execute", workRst.get());
             }
-            updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
         } catch (MarketCenterBusinessException mcbe) {
             logger.warn("\n 方法:[{}],优惠券活动名称:[{}],异常:[{}],参数:[{}]",
                     "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", b2cCouponInfoSyncDMO.getCouponName(),
                     ExceptionUtils.getStackTraceAsString(mcbe), JSON.toJSONString(b2cCouponInfoSyncDMO));
             b2cCouponInfoSyncDMO.setDealFailReason(mcbe.getMessage());
-            updateB2cCouponInfoDealResult(b2cCouponInfoSyncDMO);
-            dealRst = false;
+            throw mcbe;
         } catch (Exception e) {
             logger.error("\n 方法:[{}],优惠券活动名称:[{}],异常:[{}],参数:[{}]",
                     "UpdateSyncB2cCouponInfoScheduleTask-updateSyncB2cCouponInfo", b2cCouponInfoSyncDMO.getCouponName(),
@@ -288,7 +290,6 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 executorService.shutdown();
             }
         }
-        return dealRst;
     }
 
     /**
@@ -338,7 +339,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_PROVIDER_TYPE_HAS_CHANGED,
                     "同步的优惠券活动的券发送方式发生变化");
         }
-        if (checkHasChangeCouponInfo(b2cCouponInfoSyncDMO, targeCouponInfoDTO)) {
+        if (!checkHasChangeCouponInfo(b2cCouponInfoSyncDMO, targeCouponInfoDTO)) {
             return null;
         }
         targeCouponInfoDTO.setPromotionName(b2cCouponInfoSyncDMO.getCouponName());

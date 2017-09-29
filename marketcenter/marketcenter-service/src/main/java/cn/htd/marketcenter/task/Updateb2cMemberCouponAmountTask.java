@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,6 +174,9 @@ public class Updateb2cMemberCouponAmountTask implements
 									.getB2cOrderNo());
 							record.setB2cBuyerCouponCode(b2cCouponUseLogSyncDMO
 									.getB2cBuyerCouponCode());
+							record.setDealFlag(2);
+							record.setModifyTime(new Date());
+							record.setUseType(ON_LINE_SURE_CANCLE_ORDER);
 							int updateResult = b2cCouponUseLogSyncHistoryDAO
 									.updateB2cCouponUseLogSyncHistory(record);
 							logger.warn(
@@ -186,13 +190,22 @@ public class Updateb2cMemberCouponAmountTask implements
 
 					String b2cActivityCode = b2cCouponUseLogSyncDMO
 							.getB2cActivityCode();
-					String promotionId = "";// TODO 1-从redis里获取到对应的中台promotionId
+					PromotionDiscountInfoDTO promotionDiscountInfoDTO = JSON.parse(
+							marketRedisDB.getHash(RedisConst.REDIS_COUPON_TRIGGER,
+									b2cActivityCode), PromotionDiscountInfoDTO.class);
+					if (promotionDiscountInfoDTO == null) {
+						logger.warn("不存在该促销活动数据b2cActivityCode:{}",b2cActivityCode);
+						continue;
+					}
+					
+					String promotionId = promotionDiscountInfoDTO.getPromotionId();
 					String validStatus = dictionary.getValueByCode(
 							DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 							DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
 					String promotionStatus = marketRedisDB.getHash(
 							RedisConst.REDIS_COUPON_VALID, promotionId);
 					if (!validStatus.equals(promotionStatus)) {
+						logger.warn("该活动已经失效promotionId:{}",promotionId);
 						continue;
 					}
 
@@ -206,11 +219,7 @@ public class Updateb2cMemberCouponAmountTask implements
 							.getB2cCouponUsedAmount();
 					if (StringUtils.isEmpty(count)) {
 						// 做券
-						/*
-						 * String belongSuperiorCode = b2cCouponUseLogSyncDMO
-						 * .getBelongSuperiorCode();
-						 */
-						doCoupon(useType, b2cActivityCode, buyerCode,
+						doCoupon(useType, promotionDiscountInfoDTO, buyerCode,
 								b2cCouponUseLogSyncDMO, promotionId,
 								couponAmount);
 					} else {
@@ -229,6 +238,15 @@ public class Updateb2cMemberCouponAmountTask implements
 						updateCouponAmt(useType, buyerCode, buyerCouponCode,
 								promotionId, couponAmount);
 					}
+					B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
+					record.setB2cOrderNo(b2cCouponUseLogSyncDMO
+							.getB2cOrderNo());
+					record.setB2cBuyerCouponCode(b2cCouponUseLogSyncDMO
+							.getB2cBuyerCouponCode());
+					record.setDealFlag(1);
+					record.setModifyTime(new Date());
+					record.setUseType(useType);
+					b2cCouponUseLogSyncHistoryDAO.updateB2cCouponUseLogSyncHistory(record);
 				}
 			}
 		} catch (Exception e) {
@@ -251,15 +269,9 @@ public class Updateb2cMemberCouponAmountTask implements
 	 * @param couponAmount
 	 * @throws ParseException
 	 */
-	public void doCoupon(String useType, String b2cActivityCode,
+	public void doCoupon(String useType, PromotionDiscountInfoDTO promotionDiscountInfoDTO,
 			String buyerCode, B2cCouponUseLogSyncDMO b2cCouponUseLogSyncDMO,
 			String promotionId, BigDecimal couponAmount) throws ParseException {
-		PromotionDiscountInfoDTO promotionDiscountInfoDTO = JSON.parse(
-				marketRedisDB.getHash(RedisConst.REDIS_COUPON_TRIGGER,
-						b2cActivityCode), PromotionDiscountInfoDTO.class);
-		if (promotionDiscountInfoDTO == null) {
-			return;
-		}
 		BuyerCouponInfoDTO couponInfo = new BuyerCouponInfoDTO();
 		couponInfo.setBuyerCode(buyerCode);
 		couponInfo.setBuyerName(b2cCouponUseLogSyncDMO.getB2cSellerName());
@@ -276,6 +288,7 @@ public class Updateb2cMemberCouponAmountTask implements
 				.getBelongSuperiorName() + "专用");
 		couponInfo.setCouponName(promotionDiscountInfoDTO.getPromotionName());
 		couponInfo.setCouponType(couponType);
+		couponInfo.setGetCouponTime(new Date());
 		couponInfo.setCouponStartTime(promotionDiscountInfoDTO
 				.getEffectiveStartTime());
 		couponInfo.setCouponEndTime(promotionDiscountInfoDTO
@@ -315,8 +328,9 @@ public class Updateb2cMemberCouponAmountTask implements
 				.longValue();
 		marketRedisDB.setHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode
 				+ "&" + buyerCouponCode, String.valueOf(redisAmount));
-		marketRedisDB.incrHash(RedisConst.REDIS_COUPON_RECEIVE_COUNT,
-				promotionId);
+		String buyerCouponReceiveKey = buyerCode + "&" + promotionId;
+		marketRedisDB.incrHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT,
+				buyerCouponReceiveKey);
 		marketRedisDB.tailPush(RedisConst.REDIS_COUPON_SEND_LIST + "_"
 				+ promotionId, buyerCode + "&" + buyerCouponCode);
 	}

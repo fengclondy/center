@@ -153,16 +153,66 @@
 		AND b2c_buyer_coupon_code = #{b2cBuyerCouponCode}
   </select>
   <update id="updateB2cCouponUseLogSyncHistory" parameterType="cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO">
-  	update b2c_coupon_use_log_sync_history
-  	<set>
-	  	deal_flag = 2,
-	  	modify_id = #{modifyId},
-		modify_name = #{modifyName},
-	  	modify_time = now(),
-	  	deal_fail_reason = #{dealFailReason},
-  	</set>
+  	 update b2c_coupon_use_log_sync_history
+    <set >
+      <if test="b2cActivityCode != null" >
+        b2c_activity_code = #{b2cActivityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cBuyerCode != null" >
+        b2c_buyer_code = #{b2cBuyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cSellerCode != null" >
+        b2c_seller_code = #{b2cSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cSellerName != null" >
+        b2c_seller_name = #{b2cSellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorCode != null" >
+        belong_superior_code = #{belongSuperiorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="belongSuperiorName != null" >
+        belong_superior_name = #{belongSuperiorName,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cOrderNo != null" >
+        b2c_order_no = #{b2cOrderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cBuyerCouponCode != null" >
+        b2c_buyer_coupon_code = #{b2cBuyerCouponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="b2cCouponUsedAmount != null" >
+        b2c_coupon_used_amount = #{b2cCouponUsedAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="useType != null" >
+        use_type = #{useType,jdbcType=VARCHAR},
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="dealFailReason != null" >
+        deal_fail_reason = #{dealFailReason,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
   	where 1 = 1
   	and b2c_order_no = #{b2cOrderNo}
   	and b2c_buyer_coupon_code = #{b2cBuyerCouponCode}
+  	and use_type = #{useType}
   </update>
 </mapper>

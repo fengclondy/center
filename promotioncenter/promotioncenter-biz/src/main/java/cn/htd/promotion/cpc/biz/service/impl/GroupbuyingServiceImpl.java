@@ -93,7 +93,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	singlePromotionInfoReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
         	singlePromotionInfoReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
         	singlePromotionInfoReqDTO.setModifyTime(currentTime);
-        	int singlePromotionInfoRet = singlePromotionInfoDAO.insertSelective(singlePromotionInfoReqDTO);
+        	int singlePromotionInfoRet = singlePromotionInfoDAO.addPromotionInfo(singlePromotionInfoReqDTO);
         	if(1 != singlePromotionInfoRet){
         		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "新建促销活动失败！");
         	}
@@ -154,7 +154,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【addGroupbuyingInfo】报错：{}", messageId, e.toString());
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
 

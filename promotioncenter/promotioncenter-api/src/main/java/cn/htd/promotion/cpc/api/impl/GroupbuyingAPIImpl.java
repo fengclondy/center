@@ -42,7 +42,12 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
-            result.setErrorMessage(e.toString());
+            result.setErrorMessage(e.getMessage());
+//            String msg=e.getMessage();  
+//            if(e.getCause() instanceof PromotionCenterBusinessException){  
+//            	PromotionCenterBusinessException be = (PromotionCenterBusinessException) e.getCause();
+//                msg=be.getMessage();
+//            }  
             logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.addGroupbuyingInfo出现异常{}", messageId,  e.toString());
         }
         return result;

@@ -10,6 +10,8 @@ public interface SinglePromotionInfoDAO {
     int insert(SinglePromotionInfoReqDTO record);
 
     int insertSelective(SinglePromotionInfoReqDTO record);
+    
+    int addPromotionInfo(SinglePromotionInfoReqDTO record);
 
     SinglePromotionInfoResDTO selectByPrimaryKey(Long id);
 

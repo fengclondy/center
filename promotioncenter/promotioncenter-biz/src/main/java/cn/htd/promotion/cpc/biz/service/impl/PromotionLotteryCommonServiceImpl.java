@@ -156,18 +156,19 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     "该活动粉丝没有抽奖记录信息 入参:" + JSON.toJSONString(requestDTO));
         }
         if (Integer.parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES)) <= 0) {
-            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES)
-                    || Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES))
-                    <= 0) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
-                        "粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机 入参:" + JSON.toJSONString(requestDTO));
-            } else if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES) ||
+            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES) ||
                     Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES))
                             <= 0 || (buyerTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)
                     && YesNoEnum.YES.getValue() == Integer
                     .parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)))) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE.getCode(),
                         "粉丝已经用完了自有和分享额外获取的抽奖机 入参:" + JSON.toJSONString(requestDTO));
+            }
+            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES)
+                    || Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES))
+                    <= 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
+                        "粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机 入参:" + JSON.toJSONString(requestDTO));
             }
         }
         return true;

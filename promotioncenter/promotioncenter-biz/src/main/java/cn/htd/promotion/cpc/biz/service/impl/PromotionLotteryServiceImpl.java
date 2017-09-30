@@ -181,10 +181,6 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         BuyerWinningRecordDTO winningRecordDTO = null;
         Map<String, String> dictMap = new HashMap<String, String>();
         String promotionType = "";
-        String gashaphonType = dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON);
-        String scratchCardType = dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD);
 
         responseDTO.setMessageId(requestDTO.getMessageId());
         responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
@@ -240,10 +236,14 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
         //如果是扭蛋就删除抽奖结果key，如果是刮刮乐就不删除，等刮刮乐活动结束用定时任务删除
         promotionType = winningRecordDTO.getPromotionType();
-        if (gashaphonType.equals(promotionType)) {
+        baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_TYPE);
+        if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON)
+                .equals(promotionType)) {
             promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
                     promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
-        } else if (scratchCardType.equals(promotionType)) {
+        } else if (dictMap
+                .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD)
+                .equals(promotionType)) {
             promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
                     promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket,
                     JSON.toJSONString(winningRecordDTO));

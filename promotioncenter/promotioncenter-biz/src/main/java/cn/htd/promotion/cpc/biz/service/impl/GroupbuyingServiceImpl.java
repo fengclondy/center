@@ -21,6 +21,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -30,7 +31,12 @@ import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
+import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
+import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 
 @Service("groupbuyingService")
@@ -162,82 +168,89 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     @Override
     public void updateGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
 
-//        try {
-//
-//            TimelimitedInfoResDTO timelimitedInfoRes_check =
-//                    getSingleTimelimitedInfoByPromotionId(timelimitedInfoReqDTO.getPromotionId(), messageId);
-//            if (null == timelimitedInfoRes_check) {
-//                throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "秒杀促销活动不存在！");
-//            }
-//
-//            Calendar calendar = Calendar.getInstance();
-//            Date currentTime = calendar.getTime();
-//
-//            // 修改促销活动信息
-//            PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfoReqDTO.getPromotionExtendInfoDTO();
-//            PromotionExtendInfoDTO promotionExtendInfoReturn = baseService.updatePromotionInfo(promotionExtendInfoDTO);
-//            if (null == promotionExtendInfoReturn || null == promotionExtendInfoReturn.getPromotionId() || ""
-//                    .equals(promotionExtendInfoReturn.getPromotionId().trim())) {
-//                throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "修改秒杀促销活动失败！");
-//            }
-//
-//            // 添加秒杀活动履历
-//            addPromotionStatusHistory(promotionExtendInfoReturn, timelimitedInfoReqDTO);
-//
-//            // 设置层级编码
-//            List<? extends PromotionAccumulatyDTO> promotionAccumulatyDTOList =
-//                    promotionExtendInfoReturn.getPromotionAccumulatyList();
-//            if (null != promotionAccumulatyDTOList && promotionAccumulatyDTOList.size() == 1) {
-//                timelimitedInfoReqDTO.setLevelCode(promotionAccumulatyDTOList.get(0).getLevelCode());
-//            } else {
-//                throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
-//                        "查询秒杀促销活动层级失败！");
-//            }
-//
-//            // 伪删除商品活动的所有图片
-//            TimelimitedSkuPictureReqDTO timelimitedSkuPictureReqDTO_delete = new TimelimitedSkuPictureReqDTO();
-//            timelimitedSkuPictureReqDTO_delete.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
-//            timelimitedSkuPictureReqDTO_delete.setDeleteFlag(Boolean.TRUE);
-//            timelimitedSkuPictureReqDTO_delete.setModifyId(timelimitedInfoReqDTO.getModifyId());
-//            timelimitedSkuPictureReqDTO_delete.setModifyName(timelimitedInfoReqDTO.getModifyName());
-//            timelimitedSkuPictureReqDTO_delete.setModifyTime(currentTime);
-//            timelimitedSkuPictureDAO.pseudoDelete(timelimitedSkuPictureReqDTO_delete);
-//            // 添加商品图片,返回商品主图
-//            addTimelimitedSkuPictureList(timelimitedInfoReqDTO, currentTime);
-//            
-//            // 修改秒杀商品
-////            String skuPicUrl = timelimitedInfoReqDTO.getSkuPicUrl();
-////            if(null != skuPicUrl && !"".equals(skuPicUrl.trim())){
-////            	if(skuPicUrl.indexOf("hl/") == -1){
-////            		timelimitedInfoReqDTO.setSkuPicUrl("hl/" + skuPicUrl);
-////            	}
-////            }
-//            timelimitedInfoReqDTO.setModifyTime(currentTime);
-//            timelimitedInfoDAO.updateTimelimitedInfoByPromotionId(timelimitedInfoReqDTO);
-//
-//            // 伪删除商品详情的所有图片
-//            TimelimitedSkuDescribeReqDTO timelimitedSkuDescribeReqDTO_delete = new TimelimitedSkuDescribeReqDTO();
-//            timelimitedSkuDescribeReqDTO_delete.setPromotionId(timelimitedInfoReqDTO.getPromotionId());
-//            timelimitedSkuDescribeReqDTO_delete.setDeleteFlag(Boolean.TRUE);
-//            timelimitedSkuDescribeReqDTO_delete.setModifyId(timelimitedInfoReqDTO.getModifyId());
-//            timelimitedSkuDescribeReqDTO_delete.setModifyName(timelimitedInfoReqDTO.getModifyName());
-//            timelimitedSkuDescribeReqDTO_delete.setModifyTime(currentTime);
-//            timelimitedSkuDescribeDAO.pseudoDelete(timelimitedSkuDescribeReqDTO_delete);
-//            // 添加商品详情
-//            addTimelimitedSkuDescribeList(timelimitedInfoReqDTO, currentTime);
-//            
-//            // 处理促销活动供应商规则详情
-//            handlePromotionSellerDetail(timelimitedInfoReqDTO,TimelimitedConstants.SELLERDETAIL_OPERATETYPE_UPDATE);
-//
-//            // 异步初始化秒杀活动的Redis数据
-//            TimelimitedInfoResDTO timelimitedInfoResDTO =
-//                    getSingleFullTimelimitedInfoByPromotionId(timelimitedInfoReqDTO.getPromotionId(),TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT, messageId);
-//            initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
-//
-//        } catch (Exception e) {
-//            logger.error("messageId{}:执行方法【updateTimelimitedInfo】报错：{}", messageId, e.toString());
-//            throw new RuntimeException(e);
-//        }
+        try {
+
+        	String promotionId = groupbuyingInfoCmplReqDTO.getPromotionId();
+        	GroupbuyingInfoResDTO groupbuyingInfoRes_check = groupbuyingInfoDAO.selectByPromotionId(promotionId);
+            if (null == groupbuyingInfoRes_check) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            Date currentTime = calendar.getTime();
+
+           
+        	SinglePromotionInfoReqDTO singlePromotionInfoReqDTO = groupbuyingInfoCmplReqDTO.getSinglePromotionInfoReqDTO();
+        	
+        	// 修改活动信息
+        	singlePromotionInfoReqDTO.setIsVip(1);//是VIP
+        	setPromotionStatusInfo(singlePromotionInfoReqDTO);
+        	singlePromotionInfoReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+        	singlePromotionInfoReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+        	singlePromotionInfoReqDTO.setModifyTime(currentTime);
+        	int singlePromotionInfoRet = singlePromotionInfoDAO.updatePromotionInfo(singlePromotionInfoReqDTO);
+        	if(1 != singlePromotionInfoRet){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "修改促销活动失败！");
+        	}
+        	
+        	// 添加配置信息 (先伪删除所有活动的配置信息，然后再添加)
+        	promotionConfigureDAO.deleteByPromotionId(promotionId);
+        	SinglePromotionInfoCmplReqDTO singlePromotionInfoCmplReqDTO = (SinglePromotionInfoCmplReqDTO) singlePromotionInfoReqDTO;
+            List<PromotionConfigureDTO> pclist = singlePromotionInfoCmplReqDTO.getPromotionConfigureList();
+            if (pclist != null && pclist.size() > 0) {
+                for (PromotionConfigureDTO pcd : pclist) {
+                    pcd.setPromotionId(groupbuyingInfoCmplReqDTO.getPromotionId());
+                    pcd.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
+                    pcd.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());
+                    pcd.setDeleteFlag(YesNoEnum.NO.getValue());
+                    promotionConfigureDAO.add(pcd);
+                }
+            }
+        	
+        	// 修改团购活动信息
+        	groupbuyingInfoCmplReqDTO.setModifyTime(currentTime);
+        	int groupbuyingInfoRet = groupbuyingInfoDAO.updateGroupbuyingInfo(groupbuyingInfoCmplReqDTO);
+        	if(1 != groupbuyingInfoRet){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "修改团购促销活动失败！");
+        	}
+        	
+
+        	
+        	// 添加团购价格设置信息  (先伪删除所有团购价格设置信息，然后再添加)
+        	GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_delete = new GroupbuyingPriceSettingReqDTO();
+        	groupbuyingPriceSettingReqDTO_delete.setPromotionId(promotionId);
+            groupbuyingPriceSettingReqDTO_delete.setDeleteFlag(Boolean.TRUE);
+            groupbuyingPriceSettingReqDTO_delete.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+            groupbuyingPriceSettingReqDTO_delete.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+            groupbuyingPriceSettingReqDTO_delete.setModifyTime(currentTime);
+        	groupbuyingPriceSettingDAO.pseudoDelete(groupbuyingPriceSettingReqDTO_delete);
+        	List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = groupbuyingInfoCmplReqDTO.getGroupbuyingPriceSettingReqDTOList();
+        	if(null != groupbuyingPriceSettingReqDTOList && groupbuyingPriceSettingReqDTOList.size() > 0){
+            	for(GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO : groupbuyingPriceSettingReqDTOList){
+                	groupbuyingPriceSettingReqDTO.setPromotionId(promotionId);
+            		groupbuyingPriceSettingReqDTO.setItemId(groupbuyingInfoCmplReqDTO.getItemId());
+            		groupbuyingPriceSettingReqDTO.setSkuCode(groupbuyingInfoCmplReqDTO.getSkuCode());
+            		groupbuyingPriceSettingReqDTO.setDeleteFlag(Boolean.FALSE);
+            		groupbuyingPriceSettingReqDTO.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
+            		groupbuyingPriceSettingReqDTO.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());
+            		groupbuyingPriceSettingReqDTO.setCreateTime(currentTime);
+            		groupbuyingPriceSettingReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+            		groupbuyingPriceSettingReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+                	groupbuyingPriceSettingReqDTO.setModifyTime(currentTime);
+                	groupbuyingPriceSettingDAO.insert(groupbuyingPriceSettingReqDTO);
+            	}
+        	}
+
+        	
+
+            // 添加团购活动履历
+            addPromotionStatusHistory(singlePromotionInfoReqDTO);
+
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【updateGroupbuyingInfo】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -282,10 +295,8 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 
     /**
-     * 添加秒杀活动履历
-     *
-     * @param promotionExtendInfo
-     * @param timelimitedInfoReqDTO
+     * 添加团购活动履历
+     * @param singlePromotionInfoReqDTO
      */
     private void addPromotionStatusHistory(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO) {
 

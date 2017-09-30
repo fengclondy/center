@@ -16,4 +16,6 @@ public interface GroupbuyingPriceSettingDAO {
     int updateByPrimaryKeySelective(GroupbuyingPriceSettingReqDTO record);
 
     int updateByPrimaryKey(GroupbuyingPriceSettingReqDTO record);
+    
+    void pseudoDelete(GroupbuyingPriceSettingReqDTO record);
 }

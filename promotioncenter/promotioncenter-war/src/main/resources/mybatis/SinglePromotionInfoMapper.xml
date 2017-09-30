@@ -456,6 +456,47 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   
+  
+    <update id="updatePromotionInfo" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    update promotion_info
+    <set >
+      <if test="promotionName != null" >
+        promotion_name = #{promotionName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionType != null" >
+        promotion_type = #{promotionType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invalidTime != null" >
+        invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isVip != null" >
+        is_vip = #{isVip,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null" >
+        show_status = #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="hasRedisClean != null" >
+        has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null" >
+        has_up_flag = #{hasUpFlag,jdbcType=TINYINT},
+      </if>
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
     update promotion_info
     set promotion_id = #{promotionId,jdbcType=VARCHAR},

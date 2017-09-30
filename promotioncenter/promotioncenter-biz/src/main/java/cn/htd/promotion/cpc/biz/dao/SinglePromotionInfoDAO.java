@@ -16,6 +16,8 @@ public interface SinglePromotionInfoDAO {
     SinglePromotionInfoResDTO selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(SinglePromotionInfoReqDTO record);
+    
+    int updatePromotionInfo(SinglePromotionInfoReqDTO record);
 
     int updateByPrimaryKey(SinglePromotionInfoReqDTO record);
 }

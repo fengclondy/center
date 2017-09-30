@@ -45,6 +45,13 @@
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
   </select>
   
+   <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from groupbuying_info
+    where promotion_id = #{promotionId,jdbcType=VARCHAR} and delete_flag = 0 
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from groupbuying_info
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
@@ -306,6 +313,64 @@
       </if>
     </set>
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
+  </update>
+  
+    <update id="updateGroupbuyingInfo" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
+    update groupbuying_info
+    <set >
+      <if test="sellerCode != null" >
+        seller_code = #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="skuCode != null" >
+        sku_code = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="skuName != null" >
+        sku_name = #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuLabel != null" >
+        sku_label = #{skuLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="skuPicUrl != null" >
+        sku_pic_url = #{skuPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCostPrice != null" >
+        sku_cost_price = #{skuCostPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="realActorCount != null" >
+        real_actor_count = #{realActorCount,jdbcType=INTEGER},
+      </if>
+      <if test="realGroupbuyingPrice != null" >
+        real_groupbuying_price = #{realGroupbuyingPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="salesAreaCode != null" >
+        sales_area_code = #{salesAreaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="salesAreaName != null" >
+        sales_area_name = #{salesAreaName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupbuyingSkuCount != null" >
+        groupbuying_sku_count = #{groupbuyingSkuCount,jdbcType=INTEGER},
+      </if>
+      <if test="groupbuyingThreshold != null" >
+        groupbuying_threshold = #{groupbuyingThreshold,jdbcType=INTEGER},
+      </if>
+      <if test="groupbuyingValidInterval != null" >
+        groupbuying_valid_interval = #{groupbuyingValidInterval,jdbcType=INTEGER},
+      </if>
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+    </set>
+    where  promotion_id = #{promotionId,jdbcType=VARCHAR}  
   </update>
   
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >

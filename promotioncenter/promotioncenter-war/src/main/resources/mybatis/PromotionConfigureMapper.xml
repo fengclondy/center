@@ -120,4 +120,10 @@
       create_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+    <update id="deleteByPromotionId" parameterType="java.lang.String" >
+    update promotion_configure  
+    set delete_flag = 1  
+    where  promotion_id = #{promotionId,jdbcType=VARCHAR} 
+  </update>
 </mapper>

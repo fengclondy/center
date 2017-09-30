@@ -6,15 +6,15 @@ import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 public interface GroupbuyingService {
 
 	/**
-	 * 添加秒杀活动
-	 * @param timelimitedInfoReqDTO
+	 * 添加团购活动
+	 * @param groupbuyingInfoCmplReqDTO
 	 * @param messageId
 	 */
 	public void addGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId);
 
 	/**
-	 * 修改秒杀活动
-	 * @param timelimitedInfoReqDTO
+	 * 修改团购活动
+	 * @param groupbuyingInfoCmplReqDTO
 	 * @param messageId
 	 */
 	public void updateGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId);

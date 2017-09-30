@@ -35,6 +35,16 @@
     where price_setting_id = #{priceSettingId,jdbcType=BIGINT}
   </delete>
   
+  <update id="pseudoDelete" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
+    update groupbuying_price_setting  
+    set 
+      delete_flag = 1,
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}  
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}  
+  </update>
+  
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
     insert into groupbuying_price_setting (price_setting_id, promotion_id, item_id, 
       sku_code, actor_count, groupbuying_price, 

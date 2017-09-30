@@ -748,7 +748,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         if (dictMap
                 .get(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&" + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)
                 .equals(ruleDTO.getRuleTargetType())) {
-            if (promotionRedisDB.isSetMember(RedisConst.REIDS_LOTTERY_TARGET_SELLER_SET + "_" + promotionId, sellerCode)) {
+            if (promotionRedisDB.isSetMember(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId, sellerCode)) {
                 return true;
             }
             return false;

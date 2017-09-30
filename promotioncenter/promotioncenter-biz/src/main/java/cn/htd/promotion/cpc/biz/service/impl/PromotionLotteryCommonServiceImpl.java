@@ -517,11 +517,11 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
                             for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
                                 stringRedisConnection
-                                        .sAdd(RedisConst.REIDS_LOTTERY_TARGET_SELLER_SET + "_" + promotionId,
+                                        .sAdd(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId,
                                                 sellerDetailDTO.getSellerCode());
                             }
                             stringRedisConnection
-                                    .expire(RedisConst.REIDS_LOTTERY_TARGET_SELLER_SET + "_" + promotionId, seconds);
+                                    .expire(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId, seconds);
                             sellerRuleDTO.setSellerDetailList(null);
                         }
                         timesInfoMap

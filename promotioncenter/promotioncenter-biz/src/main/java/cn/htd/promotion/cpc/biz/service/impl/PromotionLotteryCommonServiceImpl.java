@@ -29,8 +29,12 @@ import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBuyerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -449,8 +453,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
         promotionInfoDMO.setPromotionId(promotionInfoDTO.getPromotionId());
         try {
-            promotionInfoDTO.setPromotionStatusHistoryList(null);
-            promotionInfoDTO.setPromotionDetailDescribeDTO(null);
+            prepareSaveRedisInfo(promotionInfoDTO);
             stringRedisTemplate = promotionRedisDB.getStringRedisTemplate();
             stringRedisTemplate.executePipelined(new RedisCallback<List<Object>>() {
                 @Override
@@ -540,4 +543,61 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         }
     }
 
+    /**
+     * 保存Redis之前清理促销活动中的多余数据
+     *
+     * @param promotionInfoDTO
+     */
+    private void prepareSaveRedisInfo(PromotionExtendInfoDTO promotionInfoDTO) {
+        PromotionBuyerRuleDTO buyerRuleDTO = promotionInfoDTO.getBuyerRuleDTO();
+        PromotionSellerRuleDTO sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
+        List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
+        List<PromotionBuyerDetailDTO> newBuyerDetailDTOList = new ArrayList<PromotionBuyerDetailDTO>();
+        PromotionBuyerDetailDTO newBuyerDetailDTO = null;
+        List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
+        List<PromotionSellerDetailDTO> newSellerDetailDTOList = new ArrayList<PromotionSellerDetailDTO>();
+        PromotionSellerDetailDTO newSellerDetailDTO = null;
+        if (buyerRuleDTO != null) {
+            buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
+            if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
+                for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
+                    newBuyerDetailDTO = new PromotionBuyerDetailDTO();
+                    newBuyerDetailDTO.setBuyerCode(buyerDetailDTO.getBuyerCode());
+                    newBuyerDetailDTOList.add(newBuyerDetailDTO);
+                }
+                buyerRuleDTO.setBuyerDetailList(newBuyerDetailDTOList);
+            }
+            buyerRuleDTO.setCreateId(null);
+            buyerRuleDTO.setCreateName(null);
+            buyerRuleDTO.setCreateTime(null);
+            buyerRuleDTO.setModifyId(null);
+            buyerRuleDTO.setModifyName(null);
+            buyerRuleDTO.setModifyTime(null);
+        }
+        if (sellerRuleDTO != null) {
+            sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
+            if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
+                    newSellerDetailDTO = new PromotionSellerDetailDTO();
+                    newSellerDetailDTO.setSellerCode(sellerDetailDTO.getSellerCode());
+                    newSellerDetailDTOList.add(newSellerDetailDTO);
+                }
+                sellerRuleDTO.setSellerDetailList(newSellerDetailDTOList);
+            }
+            sellerRuleDTO.setCreateId(null);
+            sellerRuleDTO.setCreateName(null);
+            sellerRuleDTO.setCreateTime(null);
+            sellerRuleDTO.setModifyId(null);
+            sellerRuleDTO.setModifyName(null);
+            sellerRuleDTO.setModifyTime(null);
+        }
+        promotionInfoDTO.setPromotionStatusHistoryList(null);
+        promotionInfoDTO.setPromotionDetailDescribeDTO(null);
+        promotionInfoDTO.setCreateId(null);
+        promotionInfoDTO.setCreateName(null);
+        promotionInfoDTO.setCreateTime(null);
+        promotionInfoDTO.setModifyId(null);
+        promotionInfoDTO.setModifyName(null);
+        promotionInfoDTO.setModifyTime(null);
+    }
 }

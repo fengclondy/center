@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import cn.htd.common.constant.DictionaryConst;
-import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryService;
@@ -45,9 +44,6 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 
     @Resource
     private PromotionLotteryCommonService promotionLotteryCommonService;
-
-    @Resource
-    private DictionaryUtils dictionary;
 
     /**
      * 开始抽奖处理

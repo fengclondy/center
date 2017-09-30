@@ -454,7 +454,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
         promotionInfoDMO.setPromotionId(promotionInfoDTO.getPromotionId());
         try {
-            prepareSaveRedisInfo(promotionInfoDTO);
+            beforeSaveRedisLotteryInfo(promotionInfoDTO);
             stringRedisTemplate = promotionRedisDB.getStringRedisTemplate();
             stringRedisTemplate.executePipelined(new RedisCallback<List<Object>>() {
                 @Override
@@ -463,6 +463,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     String promotionId = promotionInfoDTO.getPromotionId();
                     List<PromotionAwardInfoDTO> promotionAwardInfoDTOList =
                             (List<PromotionAwardInfoDTO>) promotionInfoDTO.getPromotionAccumulatyList();
+                    PromotionSellerRuleDTO sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
+                    List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
                     BuyerWinningRecordDTO buyerWinningRecordDTO = null;
                     PromotionAccumulatyDTO accuDTO = null;
                     List<PromotionAccumulatyDTO> accuList = new ArrayList<PromotionAccumulatyDTO>();
@@ -473,6 +475,9 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     long pushCnt = 0L;
                     long diffTime = promotionInfoDTO.getInvalidTime().getTime() - new Date().getTime();
                     int seconds = (int) (diffTime / 1000);
+                    if (sellerRuleDTO != null) {
+                        sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
+                    }
                     try {
                         timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES,
                                 String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
@@ -489,7 +494,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                         String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
                             }
                         }
-                        stringRedisConnection.openPipeline();
                         for (PromotionAwardInfoDTO awardInfoDTO : promotionAwardInfoDTOList) {
                             accuDTO = new PromotionAccumulatyDTO();
                             accuDTO.setPromotionAccumulaty(awardInfoDTO);
@@ -510,6 +514,16 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             }
                             stringRedisConnection.expire(redisKey, seconds);
                         }
+                        if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                            for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
+                                stringRedisConnection
+                                        .sAdd(RedisConst.REIDS_LOTTERY_TARGET_SELLER_SET + "_" + promotionId,
+                                                sellerDetailDTO.getSellerCode());
+                            }
+                            stringRedisConnection
+                                    .expire(RedisConst.REIDS_LOTTERY_TARGET_SELLER_SET + "_" + promotionId, seconds);
+                            sellerRuleDTO.setSellerDetailList(null);
+                        }
                         timesInfoMap
                                 .put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
                         timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT, String.valueOf(totalAwardCnt));
@@ -525,7 +539,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                 promotionInfoDTO.getPromotionType() + "_" + promotionId,
                                 promotionInfoDTO.getEffectiveTime().getTime() + "_" + promotionInfoDTO.getInvalidTime()
                                         .getTime());
-                        stringRedisConnection.closePipeline();
                     } catch (Exception e) {
                         logger.info(
                                 "初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
@@ -549,16 +562,10 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
      *
      * @param promotionInfoDTO
      */
-    private void prepareSaveRedisInfo(PromotionExtendInfoDTO promotionInfoDTO) {
+    private void beforeSaveRedisLotteryInfo(PromotionExtendInfoDTO promotionInfoDTO) {
         List<? extends PromotionAccumulatyDTO> accuListDTO = promotionInfoDTO.getPromotionAccumulatyList();
         PromotionBuyerRuleDTO buyerRuleDTO = promotionInfoDTO.getBuyerRuleDTO();
         PromotionSellerRuleDTO sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
-        List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
-        List<PromotionBuyerDetailDTO> newBuyerDetailDTOList = new ArrayList<PromotionBuyerDetailDTO>();
-        PromotionBuyerDetailDTO newBuyerDetailDTO = null;
-        List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
-        List<PromotionSellerDetailDTO> newSellerDetailDTOList = new ArrayList<PromotionSellerDetailDTO>();
-        PromotionSellerDetailDTO newSellerDetailDTO = null;
         if (accuListDTO != null && !accuListDTO.isEmpty()) {
             for (PromotionAccumulatyDTO accuDTO : accuListDTO) {
                 accuDTO.setCreateId(null);
@@ -570,15 +577,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             }
         }
         if (buyerRuleDTO != null) {
-            buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
-            if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
-                for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
-                    newBuyerDetailDTO = new PromotionBuyerDetailDTO();
-                    newBuyerDetailDTO.setBuyerCode(buyerDetailDTO.getBuyerCode());
-                    newBuyerDetailDTOList.add(newBuyerDetailDTO);
-                }
-                buyerRuleDTO.setBuyerDetailList(newBuyerDetailDTOList);
-            }
             buyerRuleDTO.setCreateId(null);
             buyerRuleDTO.setCreateName(null);
             buyerRuleDTO.setCreateTime(null);
@@ -587,15 +585,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             buyerRuleDTO.setModifyTime(null);
         }
         if (sellerRuleDTO != null) {
-            sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
-            if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
-                for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
-                    newSellerDetailDTO = new PromotionSellerDetailDTO();
-                    newSellerDetailDTO.setSellerCode(sellerDetailDTO.getSellerCode());
-                    newSellerDetailDTOList.add(newSellerDetailDTO);
-                }
-                sellerRuleDTO.setSellerDetailList(newSellerDetailDTOList);
-            }
             sellerRuleDTO.setCreateId(null);
             sellerRuleDTO.setCreateName(null);
             sellerRuleDTO.setCreateTime(null);

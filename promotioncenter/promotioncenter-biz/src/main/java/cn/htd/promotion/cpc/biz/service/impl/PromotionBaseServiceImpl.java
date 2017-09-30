@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,9 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
     @Resource
     private GeneratorUtils noGenerator;
+
+    @Resource
+    private PromotionRedisDB promotionRedisDB;
 
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
@@ -735,22 +740,16 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     @Override
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap) {
+        String promotionId = promotionInfoDTO.getPromotionId();
         PromotionSellerRuleDTO ruleDTO = promotionInfoDTO.getSellerRuleDTO();
-        List<PromotionSellerDetailDTO> detailList = null;
         if (ruleDTO == null) {
             return true;
         }
         if (dictMap
                 .get(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&" + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)
                 .equals(ruleDTO.getRuleTargetType())) {
-            detailList = ruleDTO.getSellerDetailList();
-            if (detailList == null || detailList.isEmpty()) {
-                return false;
-            }
-            for (PromotionSellerDetailDTO detailDTO : detailList) {
-                if (detailDTO.getSellerCode().equals(sellerCode)) {
-                    return true;
-                }
+            if (promotionRedisDB.isSetMember(RedisConst.REIDS_LOTTERY_TARGET_SELLER_SET + "_" + promotionId, sellerCode)) {
+                return true;
             }
             return false;
         }

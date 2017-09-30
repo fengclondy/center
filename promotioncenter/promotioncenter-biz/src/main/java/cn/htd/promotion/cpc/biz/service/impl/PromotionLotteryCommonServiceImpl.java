@@ -549,6 +549,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
      * @param promotionInfoDTO
      */
     private void prepareSaveRedisInfo(PromotionExtendInfoDTO promotionInfoDTO) {
+        List<? extends PromotionAccumulatyDTO> accuListDTO = promotionInfoDTO.getPromotionAccumulatyList();
         PromotionBuyerRuleDTO buyerRuleDTO = promotionInfoDTO.getBuyerRuleDTO();
         PromotionSellerRuleDTO sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
         List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
@@ -557,6 +558,16 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
         List<PromotionSellerDetailDTO> newSellerDetailDTOList = new ArrayList<PromotionSellerDetailDTO>();
         PromotionSellerDetailDTO newSellerDetailDTO = null;
+        if (accuListDTO != null && !accuListDTO.isEmpty()) {
+            for (PromotionAccumulatyDTO accuDTO : accuListDTO) {
+                accuDTO.setCreateId(null);
+                accuDTO.setCreateName(null);
+                accuDTO.setCreateTime(null);
+                accuDTO.setModifyId(null);
+                accuDTO.setModifyName(null);
+                accuDTO.setModifyTime(null);
+            }
+        }
         if (buyerRuleDTO != null) {
             buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
             if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
@@ -591,6 +602,9 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             sellerRuleDTO.setModifyName(null);
             sellerRuleDTO.setModifyTime(null);
         }
+        promotionInfoDTO.setMessageId(null);
+        promotionInfoDTO.setResponseCode(null);
+        promotionInfoDTO.setResponseMsg(null);
         promotionInfoDTO.setPromotionStatusHistoryList(null);
         promotionInfoDTO.setPromotionDetailDescribeDTO(null);
         promotionInfoDTO.setCreateId(null);

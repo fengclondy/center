@@ -33,4 +33,6 @@
 	
 	<dubbo:service interface="cn.htd.marketcenter.service.PromotionGroupService" ref="promotionGroupService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 	
+	<dubbo:service interface="cn.htd.marketcenter.service.TimelimitedPurchaseService" ref="timelimitedPurchaseService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
 </beans>

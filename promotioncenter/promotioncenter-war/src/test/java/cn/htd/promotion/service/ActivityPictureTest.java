@@ -16,8 +16,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 
 import cn.htd.promotion.cpc.api.MaterielDownloadAPI;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ActivityPictureMemberDetailReqDTO;
 import cn.htd.promotion.cpc.dto.response.ActivityPictureInfoResDTO;
@@ -78,9 +80,11 @@ public class ActivityPictureTest {
 	@Rollback(false)
 	public void testSelectMaterielDownloadByMemberCode() {
 		PageableData page = new PageableData();
-		String list = materielDownloadAPI.selectMaterielDownloadByMemberCode("htd10", "2", "htd10",
-				null);
-		System.out.println(list.toString());
+		String list = materielDownloadAPI.selectMaterielDownloadByMemberCode("htd10", "1", "htd10",
+				JSON.toJSONString(page));
+		JSONArray totalList = (JSONArray) JSON.parseObject(list, ExecuteResult.class).getResult();
+		int Total = totalList.size();
+		System.out.println(Total);
 	}
 
 	public class PageableData implements java.io.Serializable {
@@ -93,7 +97,7 @@ public class ActivityPictureTest {
 		/**
 		 * 页数
 		 */
-		private int page = 2;
+		private int page = 1;
 		/**
 		 * 排序方式
 		 */

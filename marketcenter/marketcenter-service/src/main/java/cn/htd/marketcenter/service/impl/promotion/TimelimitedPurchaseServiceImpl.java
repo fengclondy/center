@@ -179,7 +179,7 @@ public class TimelimitedPurchaseServiceImpl implements
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,
 										"该商品限时活动未开始");
-							} else if (nowDt.after(timelimite.getStartTime())) {
+							} else if (nowDt.after(timelimite.getEndTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,
 										"该商品限时活动已结束");

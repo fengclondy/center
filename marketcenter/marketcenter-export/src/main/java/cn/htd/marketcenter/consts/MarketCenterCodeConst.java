@@ -122,7 +122,10 @@ public class MarketCenterCodeConst {
 
 	// 团购限制买家购买数量
 	public static final int GROUP_LIMIT_PRODUCT_NUM = 5;
-	
-
-
+	//限时购状态未开始
+	public static final String LIMITED_TIME_PURCHASE_NOT_BEGIN = "15400";
+	//限时购状态已结束
+	public static final String LIMITED_TIME_PURCHASE_IS_OVER = "15401";
+	//限时购状态已下架
+	public static final String LIMITED_TIME_PURCHASE_DOWN_SHELF = "15402";
 }

@@ -110,7 +110,7 @@ public class CouponRedisHandle {
         couponInfo.setSellerRuleId(null);
         couponInfo.setCategoryItemRuleId(null);
         couponInfo.setPromotionStatusHistoryList(null);
-        diffTime = couponInfo.getPrepEndTime().getTime() - new Date().getTime();
+        diffTime = couponInfo.getInvalidTime().getTime() - new Date().getTime();
         seconds = (int) (diffTime / 1000);
         try {
             jedis = marketRedisDB.getResource();

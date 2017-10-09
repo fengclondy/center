@@ -129,10 +129,10 @@ public class CouponRedisHandle {
                 }
                 if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
                     for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_SET + "_" + promotionId,
-                                buyerDetailDTO.getBuyerCode());
+                        pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
+                                buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
                     }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_SET + "_" + promotionId, seconds);
+                    pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId, seconds);
                     buyerRuleDTO.setBuyerDetailList(null);
                 }
             }

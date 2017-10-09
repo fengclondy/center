@@ -7,7 +7,7 @@ public class RedisConst {
     // Redis促销活动会员规则Set
     public static final String REDIS_PROMOTION_BUYER_RULE_GROUP_SET = "B2B_MIDDLE_PROMOTION_BUYER_RULE_GROUP_SET";
     // Redis促销活动会员规则Set
-    public static final String REDIS_PROMOTION_BUYER_RULE_DETAIL_SET = "B2B_MIDDLE_PROMOTION_BUYER_RULE_DETAIL_SET";
+    public static final String REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH = "B2B_MIDDLE_PROMOTION_BUYER_RULE_DETAIL_HASH";
     // Redis促销活动卖家规则Set
     public static final String REDIS_PROMOTION_SELLER_RULE_DETAIL_SET = "B2B_MIDDLE_PROMOTION_SELLER_RULE_DETAIL_SET";
     // Redis促销活动品类规则Set

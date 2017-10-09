@@ -1005,10 +1005,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 //                    return true;
 //                }
 //            }
-            if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_SET + "_" + promotionId)) {
+            if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId)) {
                 return true;
             }
-            if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_SET + "_" + promotionId,
+            if (marketRedisDB.existsHash(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
                     buyerInfo.getBuyerCode())) {
                 return true;
             }

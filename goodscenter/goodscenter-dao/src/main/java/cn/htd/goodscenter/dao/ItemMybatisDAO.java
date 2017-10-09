@@ -348,5 +348,8 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	void updateItemModifiedByItemId(Long itemId);
 	
 	public ItemQueryOutDTO querySellerCenterItem(@Param("entity") ItemQueryInDTO itemInDTO);
+	
+	public List<ItemQueryOutDTO> querySellerCenterItemList(@Param("entity") ItemQueryInDTO itemInDTO);
+
 
 }

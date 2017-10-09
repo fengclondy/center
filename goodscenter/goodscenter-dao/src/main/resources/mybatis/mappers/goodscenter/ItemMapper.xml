@@ -2506,6 +2506,16 @@
 		<include refid="selectAllColumns"/>
 		<include refid="where_fragement_SellerCenter" />
 	</select>
+	
+	<select id="querySellerCenterItemList" resultMap="itemDTOMap">
+		select DISTINCT item_.* from item item_,item_sku_publish_info  item_sku_publish_info_
+		where 1=1 and item_.item_id = item_sku_publish_info_.item_id and item_sku_publish_info_.is_box_flag=0 and item_.item_status != 6
+		<if test="entity!=null">
+		     <if test="entity.itemName != null  and entity.itemName !=''">
+				<![CDATA[ and (item_.item_name like CONCAT('%',#{entity.itemName},'%'))]]>
+			</if>
+		</if>
+	</select>
 
 	<sql id="where_fragement_SellerCenter">
 		item item_,item_category item_category_
@@ -2519,6 +2529,7 @@
 			</if>
 		</if>
 	</sql>
+	
 	
 	<!-- add by li.jun for 限时购 end -->
 	

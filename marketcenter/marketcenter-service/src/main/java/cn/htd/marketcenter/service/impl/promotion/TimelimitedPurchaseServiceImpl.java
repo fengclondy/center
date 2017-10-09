@@ -45,26 +45,30 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
     private TimelimitedInfoDAO timelimitedInfoDAO;
 
 
-
+	/**
+	 * 限时购  -  新增限时购活动信息
+	 * @author li.jun
+	 * @time 2017-10-09
+	 * @param timelimitedInfo
+	 * @return
+	 */
     @Override
     public ExecuteResult<TimelimitedInfoDTO> addTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) { 
         ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
-        PromotionInfoDTO dd=null;
+        PromotionInfoDTO promotionInfo=null;
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
         List<PromotionStatusHistoryDTO> historyList = new ArrayList<PromotionStatusHistoryDTO>();
         try {
             timelimitedInfo.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
             timelimitedInfo.setSkuTimelimitedPrice(CalculateUtils.setScale(timelimitedInfo.getSkuTimelimitedPrice()));
-            dd = baseService.insertPromotionInfo(timelimitedInfo);
-            timelimitedInfo.setPromoionInfo(dd);
+            promotionInfo = baseService.insertPromotionInfo(timelimitedInfo);
+            timelimitedInfo.setPromoionInfo(promotionInfo);
             List<PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
             if(accumulatyList.size() > 0) {
             	for(PromotionAccumulatyDTO accumulaty: accumulatyList){ 
                     timelimitedInfoDAO.add((TimelimitedInfoDTO) accumulaty);
             	}
             }
-            List<TimelimitedInfoDTO> aa = timelimitedInfoDAO.queryTimelimitedInfoByPromotionId(dd.getPromotionId());
-            System.out.println(aa.toString());
             historyDTO.setPromotionId(timelimitedInfo.getPromotionId());
             historyDTO.setPromotionStatus(timelimitedInfo.getShowStatus());
             historyDTO.setPromotionStatusText(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
@@ -73,8 +77,9 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
             historyDTO.setCreateName(timelimitedInfo.getCreateName());
             promotionStatusHistoryDAO.add(historyDTO);
             historyList.add(historyDTO);
-            //timelimitedInfo.setPromotionStatusHistoryList(historyList);
+            timelimitedInfo.setPromotionStatusHistoryList(historyList);
             //timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
+            timelimitedRedisHandle.addTimelimitedPurchaseInfo2Redis(timelimitedInfo);
             result.setResult(timelimitedInfo);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());

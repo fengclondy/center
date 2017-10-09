@@ -48,10 +48,10 @@
 		<result column="item_category_brand" jdbcType="VARCHAR"
 			property="itemCategoryBrand" />
 		<result column="item_code" jdbcType="VARCHAR" property="itemCode" />
-		<result column="timelimitedThresholdMin" jdbcType="BIGINT"
+		<result column="timelimited_threshold_min" jdbcType="BIGINT"
 			property="timelimitedThresholdMin" />
-		<result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
-		<result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		timelimited_id,
@@ -66,9 +66,9 @@
 		timelimited_sku_count,
 		timelimited_threshold,
 		timelimited_valid_interval,
-		timelimitedThresholdMin,
-		startTime,
-		endTime,
+		timelimited_threshold_min,
+		start_time,
+		end_time,
 		create_id,
 		create_name,
 		create_time,
@@ -222,15 +222,14 @@
 			<if test="itemCode != null and itemCode != ''">
 				item_code,
 			</if>
-			<if
-				test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
+			<if	test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
 				timelimited_threshold_min,
 			</if>
 			<if test="startTime != null and startTime != ''">
 				start_time,
 			</if>
 			<if test="endTime != null and endTime != ''">
-				start_time.
+				end_time,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -257,8 +256,7 @@
 			<if test="itemCode != null and itemCode != ''">
 				#{itemCode,jdbcType=VARCHAR},
 			</if>
-			<if
-				test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
+			<if	test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
 				#{timelimitedThresholdMin,jdbcType=BIGINT},
 			</if>
 			<if test="startTime != null and startTime != ''">

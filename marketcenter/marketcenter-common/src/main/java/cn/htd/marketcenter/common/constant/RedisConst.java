@@ -59,4 +59,6 @@ public class RedisConst {
     // Redis会员优惠券的使用log信息
     public static final String REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG =
             "B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
+    // Redis 限时购 活动数据
+    public static final String REDIS_TIMELIMITED_PURCHASE_INDEX = "B2B_MIDDLE_TIMELIMITED_PURCHASE_INDEX";
 }

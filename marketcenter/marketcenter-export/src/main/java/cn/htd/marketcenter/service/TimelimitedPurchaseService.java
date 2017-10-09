@@ -8,7 +8,7 @@ import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 public interface TimelimitedPurchaseService {
 
 	/**
-	 * 新增限时购活动信息
+	 * 限时购  -  新增限时购活动信息
 	 * 
 	 * @param timelimitedInfo
 	 * @return

@@ -751,4 +751,55 @@ public class TimelimitedRedisHandle {
         }
         return returnCount;
     }
+    
+    
+	/**
+	 * 限时购  -  保存限时购活动信息进Redis
+	 * @author li.jun
+	 * @time 2017-10-09
+	 * @param timelimitedInfo
+	 * @return
+	 */
+    public void addTimelimitedPurchaseInfo2Redis(TimelimitedInfoDTO timelimitedInfo) {
+ 
+        Map<String, String> resultMap = new HashMap<String, String>();
+        String promotionId = timelimitedInfo.getPromotionId();
+        String timelimitedResultKey = RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+        timelimitedInfo.setCreateTime(new Date());
+        timelimitedInfo.setModifyTime(new Date());
+        timelimitedInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_TOTAL_COUNT,
+                String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT,
+                String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_ACTOR_COUNT, "0");
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
+                String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_ACTOR_COUNT, "0");
+        marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
+        marketRedisDB.setHash(timelimitedResultKey, resultMap);
+        saveTimelimitedPurchaseIndex2Redis(timelimitedInfo);
+        saveTimelimitedValidStatus2Redis(timelimitedInfo);
+    }
+    
+    /**
+     * 限时购  -  保存秒杀活动ID索引
+     * @author li.jun
+	 * @time 2017-10-09
+     * @param timelimitedInfo
+     */
+    private void saveTimelimitedPurchaseIndex2Redis(TimelimitedInfoDTO timelimitedInfo) {
+        String promotionId = timelimitedInfo.getPromotionId();
+        String key = timelimitedInfo.getSkuCode() + "&" + "1"; //1.限时购
+        String promotionIdStr = "";
+        promotionIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_PURCHASE_INDEX, key);
+        if (StringUtils.isEmpty(promotionIdStr)) {
+            promotionIdStr = promotionId;
+        } else {
+            promotionIdStr += "," + promotionId;
+        }
+        marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_PURCHASE_INDEX, key, promotionIdStr);
+    }
+
 }

@@ -116,5 +116,13 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public PromotionInfoDTO queryPromotionInfoByB2cActivityCode(PromotionInfoDTO promotionInfoDTO);
+
+    /**
+     * 取得需要刷新Redis促销信息规则的活动对象
+     *
+     * @param promotionInfoDTO
+     * @return
+     */
+    public List<PromotionInfoDTO> queryFlushRuleTargetPromotionList(PromotionInfoDTO promotionInfoDTO);
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
 }

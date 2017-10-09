@@ -129,7 +129,7 @@ public class CouponRedisHandle {
                 }
                 if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
                     for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
+                        pipeline.hset(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
                                 buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
                     }
                     pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId, seconds);
@@ -227,6 +227,11 @@ public class CouponRedisHandle {
         String popedJsonStr = "";
         String validStatus = "";
         BuyerCouponInfoDTO popedCoupon = null;
+        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
+        PromotionBuyerRuleDTO buyerRuleDTO = null;
+        PromotionSellerRuleDTO sellerRuleDTO = null;
+        PromotionCategoryItemRuleDTO categoryItemRuleDTO = null;
+        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         List<DictionaryInfo> promotionStatusList =
                 dictionary.getDictionaryOptList(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS);
         Map<String, String> promotionStatusMap = new HashMap<String, String>();
@@ -251,6 +256,23 @@ public class CouponRedisHandle {
             popedCoupon.setBuyerName(receiveDTO.getBuyerName());
             popedCoupon.setCreateId(receiveDTO.getOperatorId());
             popedCoupon.setCreateName(receiveDTO.getOperatorName());
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
+            buyerRuleDTO = popedCoupon.getBuyerRuleDTO();
+            if (buyerRuleDTO != null) {
+                buyerRuleDTO.setTargetBuyerGroupList(null);
+                buyerRuleDTO.setTargetBuyerGroup(null);
+                buyerRuleDTO.setBuyerDetailList(null);
+            }
+            sellerRuleDTO = popedCoupon.getSellerRuleDTO();
+            if (sellerRuleDTO != null) {
+                sellerRuleDTO.setSellerDetailList(null);
+            }
+            categoryItemRuleDTO = popedCoupon.getCategoryItemRuleDTO();
+            if (categoryItemRuleDTO != null) {
+                categoryItemRuleDTO.setCategoryDetailList(null);
+                categoryItemRuleDTO.setItemDetailList(null);
+            }
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         } catch (MarketCenterBusinessException mcbe) {
             if (popedCoupon != null) {
                 marketRedisDB.tailPush(couponRedisKey, popedJsonStr);

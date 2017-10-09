@@ -2,6 +2,7 @@ package cn.htd.marketcenter.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.validation.constraints.Min;
@@ -83,6 +84,42 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	 */
 	private String itemCode;
 	private HashMap<String,String> itemStockInfo;
+	/**
+	 * 每人起购数量
+	 */
+	private Integer timelimitedThresholdMin;
+	/**
+	 * 限时购开始时间
+	 */
+	private Date startTime;
+	/**
+	 * 限时购结束时间
+	 */
+	private Date endTime;
+	
+	public Integer getTimelimitedThresholdMin() {
+		return timelimitedThresholdMin;
+	}
+
+	public void setTimelimitedThresholdMin(Integer timelimitedThresholdMin) {
+		this.timelimitedThresholdMin = timelimitedThresholdMin;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -201,6 +238,9 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
 		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
 		this.timelimitedResult = timelimitedInfo.getTimelimitedResult();
+		this.timelimitedThresholdMin = timelimitedInfo.getTimelimitedThresholdMin();
+		this.startTime = timelimitedInfo.getStartTime();
+		this.endTime = timelimitedInfo.getEndTime();
 	}
 
 	public HashMap<String, String> getItemStockInfo() {

@@ -45,8 +45,13 @@
 		<result column="modify_id" jdbcType="BIGINT" property="modifyId" />
 		<result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
 		<result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
-		<result column="item_category_brand" jdbcType="VARCHAR" property="itemCategoryBrand" />
+		<result column="item_category_brand" jdbcType="VARCHAR"
+			property="itemCategoryBrand" />
 		<result column="item_code" jdbcType="VARCHAR" property="itemCode" />
+		<result column="timelimitedThresholdMin" jdbcType="BIGINT"
+			property="timelimitedThresholdMin" />
+		<result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+		<result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		timelimited_id,
@@ -61,6 +66,9 @@
 		timelimited_sku_count,
 		timelimited_threshold,
 		timelimited_valid_interval,
+		timelimitedThresholdMin,
+		startTime,
+		endTime,
 		create_id,
 		create_name,
 		create_time,
@@ -118,8 +126,10 @@
 		promotion_info.promotion_provider_type promotionProviderType,
 		promotion_info.promotion_provider_seller_code
 		promotionProviderSellerCode,
-		promotion_info.promotion_provider_shop_id promotionProviderShopId,
-		promotion_info.cost_allocation_type costAllocationType,
+		promotion_info.promotion_provider_shop_id
+		promotionProviderShopId,
+		promotion_info.cost_allocation_type
+		costAllocationType,
 		promotion_info.promotion_type promotionType,
 		promotion_info.effective_time effectiveTime,
 		promotion_info.invalid_time invalidTime,
@@ -133,23 +143,28 @@
 		promotion_accumulaty.quantifier_type quantifierType,
 		timelimited_info.timelimited_id timelimitedId,
 		timelimited_info.seller_code sellerCode,
-		timelimited_info.item_id itemId,
+		timelimited_info.item_id
+		itemId,
 		timelimited_info.sku_code skuCode,
-		timelimited_info.sku_name skuName,
+		timelimited_info.sku_name
+		skuName,
 		timelimited_info.sku_pic_url skuPicUrl,
 		timelimited_info.sku_timelimited_price skuTimelimitedPrice,
 		timelimited_info.timelimited_sku_count timelimitedSkuCount,
 		timelimited_info.timelimited_threshold timelimitedThreshold,
 		timelimited_info.timelimited_valid_interval timelimitedValidInterval,
 		promotion_info.create_id createId,
-		promotion_info.create_name createName,
+		promotion_info.create_name
+		createName,
 		promotion_info.create_time createTime,
 		promotion_info.modify_id modifyId,
-		promotion_info.modify_name modifyName,
+		promotion_info.modify_name
+		modifyName,
 		promotion_info.modify_time modifyTime,
 		timelimited_info.item_category_brand,
 		timelimited_info.item_code
-		from promotion_info inner join promotion_accumulaty on
+		from
+		promotion_info inner join promotion_accumulaty on
 		(promotion_info.promotion_id = promotion_accumulaty.promotion_id)
 		inner join timelimited_info on (promotion_accumulaty.promotion_id =
 		timelimited_info.promotion_id and promotion_accumulaty.level_code =
@@ -157,7 +172,8 @@
 		where 1 = 1
 		<include refid="where_fragement" />
 		and promotion_accumulaty.delete_flag = 0
-		order by promotion_info.modify_time desc
+		order by
+		promotion_info.modify_time desc
 		<if test="page!=null">
 			<include refid="pagination_tail" />
 		</if>
@@ -167,7 +183,8 @@
 		select
 		<include refid="Base_Column_List" />
 		from timelimited_info
-		where promotion_id = #{promotionId, jdbcType=VARCHAR}
+		where promotion_id = #{promotionId,
+		jdbcType=VARCHAR}
 		and level_code = #{levelCode, jdbcType=VARCHAR}
 	</select>
 	<select id="queryTimelimitedInfoByPromotionId" parameterType="java.lang.String"
@@ -175,7 +192,8 @@
 		select
 		<include refid="Base_Column_List" />
 		from timelimited_info
-		where promotion_id = #{_parameter, jdbcType=VARCHAR}
+		where promotion_id = #{_parameter,
+		jdbcType=VARCHAR}
 		order by level_code asc
 	</select>
 	<insert id="add" useGeneratedKeys="true" keyProperty="timelimitedId">
@@ -199,10 +217,20 @@
 			modify_name,
 			modify_time,
 			<if test="itemCategoryBrand != null and itemCategoryBrand != ''">
-			item_category_brand,
+				item_category_brand,
 			</if>
 			<if test="itemCode != null and itemCode != ''">
-			item_code,
+				item_code,
+			</if>
+			<if
+				test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
+				timelimited_threshold_min,
+			</if>
+			<if test="startTime != null and startTime != ''">
+				start_time,
+			</if>
+			<if test="endTime != null and endTime != ''">
+				start_time.
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -224,10 +252,20 @@
 			#{createName,jdbcType=VARCHAR},
 			now(),
 			<if test="itemCategoryBrand != null and itemCategoryBrand != ''">
-			    #{itemCategoryBrand,jdbcType=VARCHAR},
+				#{itemCategoryBrand,jdbcType=VARCHAR},
 			</if>
 			<if test="itemCode != null and itemCode != ''">
-			    #{itemCode,jdbcType=VARCHAR},
+				#{itemCode,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
+				#{timelimitedThresholdMin,jdbcType=BIGINT},
+			</if>
+			<if test="startTime != null and startTime != ''">
+				#{startTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				#{endTime,jdbcType=TIMESTAMP},
 			</if>
 		</trim>
 	</insert>
@@ -249,26 +287,40 @@
 				sku_pic_url=#{skuPicUrl,jdbcType=VARCHAR},
 			</if>
 			<if test="skuTimelimitedPrice != null and skuTimelimitedPrice != ''">
-				sku_timelimited_price = #{skuTimelimitedPrice,jdbcType=VARCHAR},
+				sku_timelimited_price =
+				#{skuTimelimitedPrice,jdbcType=VARCHAR},
 			</if>
 			<if test="timelimitedSkuCount != null and timelimitedSkuCount != ''">
-				timelimited_sku_count = #{timelimitedSkuCount,jdbcType=VARCHAR},
+				timelimited_sku_count =
+				#{timelimitedSkuCount,jdbcType=VARCHAR},
 			</if>
 			<if test="timelimitedThreshold != null and timelimitedThreshold != ''">
-				timelimited_threshold = #{timelimitedThreshold,jdbcType=VARCHAR},
+				timelimited_threshold =
+				#{timelimitedThreshold,jdbcType=VARCHAR},
 			</if>
 			modify_id = #{modifyId,jdbcType=BIGINT},
 			modify_name =
 			#{modifyName,jdbcType=VARCHAR},
 			modify_time = now(),
-		   <if test="itemCategoryBrand != null and itemCategoryBrand != ''">
-				item_category_brand = #{itemCategoryBrand,jdbcType=VARCHAR},
-		   </if>
-		  <if test="itemCode != null and itemCode != ''">
+			<if test="itemCategoryBrand != null and itemCategoryBrand != ''">
+				item_category_brand =
+				#{itemCategoryBrand,jdbcType=VARCHAR},
+			</if>
+			<if test="itemCode != null and itemCode != ''">
 				item_code = #{itemCode,jdbcType=VARCHAR},
-		   </if>
+			</if>
+			<if test="timelimitedThresholdMin != null and timelimitedThresholdMin != ''">
+				timelimited_threshold_min = #{timelimitedThresholdMin,jdbcType=BIGINT},
+			</if>
+			<if test="startTime != null and startTime != ''">
+				start_time = #{startTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				end_time = #{endTime,jdbcType=TIMESTAMP},
+			</if>
 		</set>
 		where promotion_id = #{promotionId,jdbcType=VARCHAR}
-		and level_code = #{levelCode,jdbcType=VARCHAR}
+		and level_code =
+		#{levelCode,jdbcType=VARCHAR}
 	</update>
 </mapper>

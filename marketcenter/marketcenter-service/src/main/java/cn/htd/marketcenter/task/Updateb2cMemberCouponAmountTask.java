@@ -369,8 +369,8 @@ public class Updateb2cMemberCouponAmountTask implements
 		couponInfo.setModifyName("sys");
 		couponInfo.setBuyerCode(buyerCode);
 		couponInfo.setBuyerCouponCode(buyerCouponCode);
-
-		// 不需要写这个入库操作，只需要push到指定的redis对列里就行了
+		couponInfo.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_STATUS, DictionaryConst.OPT_COUPON_STATUS_UNUSED));
+		//只需要push到指定的redis对列里就行了
 		marketRedisDB.tailPush(RedisConst.REDIS_BUYER_COUPON_NEED_UPDATE_LIST
 				+ "_" + buyerCode + "_" + buyerCouponCode,
 				com.alibaba.fastjson.JSON.toJSONString(couponInfo));

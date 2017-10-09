@@ -29,8 +29,12 @@ import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionBuyerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -152,18 +156,19 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     "该活动粉丝没有抽奖记录信息 入参:" + JSON.toJSONString(requestDTO));
         }
         if (Integer.parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES)) <= 0) {
-            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES)
-                    || Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES))
-                    <= 0) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
-                        "粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机 入参:" + JSON.toJSONString(requestDTO));
-            } else if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES) ||
+            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES) ||
                     Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES))
                             <= 0 || (buyerTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)
                     && YesNoEnum.YES.getValue() == Integer
                     .parseInt(buyerTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_HAS_TOP_EXTRA_TIMES)))) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_EXTRA_CHANCE.getCode(),
                         "粉丝已经用完了自有和分享额外获取的抽奖机 入参:" + JSON.toJSONString(requestDTO));
+            }
+            if (!lotteryTimesInfoMap.containsKey(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES)
+                    || Integer.parseInt(lotteryTimesInfoMap.get(RedisConst.REDIS_LOTTERY_BUYER_TOP_EXTRA_PARTAKE_TIMES))
+                    <= 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_BUYER_NO_MORE_DRAW_CHANCE.getCode(),
+                        "粉丝已经用完了所有抽奖机会，需分享获得额外抽奖机 入参:" + JSON.toJSONString(requestDTO));
             }
         }
         return true;
@@ -449,8 +454,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
         promotionInfoDMO.setPromotionId(promotionInfoDTO.getPromotionId());
         try {
-            promotionInfoDTO.setPromotionStatusHistoryList(null);
-            promotionInfoDTO.setPromotionDetailDescribeDTO(null);
+            beforeSaveRedisLotteryInfo(promotionInfoDTO);
             stringRedisTemplate = promotionRedisDB.getStringRedisTemplate();
             stringRedisTemplate.executePipelined(new RedisCallback<List<Object>>() {
                 @Override
@@ -459,6 +463,8 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     String promotionId = promotionInfoDTO.getPromotionId();
                     List<PromotionAwardInfoDTO> promotionAwardInfoDTOList =
                             (List<PromotionAwardInfoDTO>) promotionInfoDTO.getPromotionAccumulatyList();
+                    PromotionSellerRuleDTO sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
+                    List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
                     BuyerWinningRecordDTO buyerWinningRecordDTO = null;
                     PromotionAccumulatyDTO accuDTO = null;
                     List<PromotionAccumulatyDTO> accuList = new ArrayList<PromotionAccumulatyDTO>();
@@ -469,6 +475,9 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     long pushCnt = 0L;
                     long diffTime = promotionInfoDTO.getInvalidTime().getTime() - new Date().getTime();
                     int seconds = (int) (diffTime / 1000);
+                    if (sellerRuleDTO != null) {
+                        sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
+                    }
                     try {
                         timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES,
                                 String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
@@ -485,7 +494,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                         String.valueOf(promotionInfoDTO.getTopExtraPartakeTimes()));
                             }
                         }
-                        stringRedisConnection.openPipeline();
                         for (PromotionAwardInfoDTO awardInfoDTO : promotionAwardInfoDTOList) {
                             accuDTO = new PromotionAccumulatyDTO();
                             accuDTO.setPromotionAccumulaty(awardInfoDTO);
@@ -506,6 +514,16 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             }
                             stringRedisConnection.expire(redisKey, seconds);
                         }
+                        if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                            for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
+                                stringRedisConnection
+                                        .sAdd(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId,
+                                                sellerDetailDTO.getSellerCode());
+                            }
+                            stringRedisConnection
+                                    .expire(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId, seconds);
+                            sellerRuleDTO.setSellerDetailList(null);
+                        }
                         timesInfoMap
                                 .put(RedisConst.REDIS_LOTTERY_AWARD_WINNING_PERCENTAGE, JSON.toJSONString(accuList));
                         timesInfoMap.put(RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT, String.valueOf(totalAwardCnt));
@@ -521,7 +539,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                                 promotionInfoDTO.getPromotionType() + "_" + promotionId,
                                 promotionInfoDTO.getEffectiveTime().getTime() + "_" + promotionInfoDTO.getInvalidTime()
                                         .getTime());
-                        stringRedisConnection.closePipeline();
                     } catch (Exception e) {
                         logger.info(
                                 "初始化抽奖活动Redis数据PromotionLotteryCommonServiceImpl-initPromotionLotteryRedisInfo:入参:{},异常:{}",
@@ -540,4 +557,51 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
         }
     }
 
+    /**
+     * 保存Redis之前清理促销活动中的多余数据
+     *
+     * @param promotionInfoDTO
+     */
+    private void beforeSaveRedisLotteryInfo(PromotionExtendInfoDTO promotionInfoDTO) {
+        List<? extends PromotionAccumulatyDTO> accuListDTO = promotionInfoDTO.getPromotionAccumulatyList();
+        PromotionBuyerRuleDTO buyerRuleDTO = promotionInfoDTO.getBuyerRuleDTO();
+        PromotionSellerRuleDTO sellerRuleDTO = promotionInfoDTO.getSellerRuleDTO();
+        if (accuListDTO != null && !accuListDTO.isEmpty()) {
+            for (PromotionAccumulatyDTO accuDTO : accuListDTO) {
+                accuDTO.setCreateId(null);
+                accuDTO.setCreateName(null);
+                accuDTO.setCreateTime(null);
+                accuDTO.setModifyId(null);
+                accuDTO.setModifyName(null);
+                accuDTO.setModifyTime(null);
+            }
+        }
+        if (buyerRuleDTO != null) {
+            buyerRuleDTO.setCreateId(null);
+            buyerRuleDTO.setCreateName(null);
+            buyerRuleDTO.setCreateTime(null);
+            buyerRuleDTO.setModifyId(null);
+            buyerRuleDTO.setModifyName(null);
+            buyerRuleDTO.setModifyTime(null);
+        }
+        if (sellerRuleDTO != null) {
+            sellerRuleDTO.setCreateId(null);
+            sellerRuleDTO.setCreateName(null);
+            sellerRuleDTO.setCreateTime(null);
+            sellerRuleDTO.setModifyId(null);
+            sellerRuleDTO.setModifyName(null);
+            sellerRuleDTO.setModifyTime(null);
+        }
+        promotionInfoDTO.setMessageId(null);
+        promotionInfoDTO.setResponseCode(null);
+        promotionInfoDTO.setResponseMsg(null);
+        promotionInfoDTO.setPromotionStatusHistoryList(null);
+        promotionInfoDTO.setPromotionDetailDescribeDTO(null);
+        promotionInfoDTO.setCreateId(null);
+        promotionInfoDTO.setCreateName(null);
+        promotionInfoDTO.setCreateTime(null);
+        promotionInfoDTO.setModifyId(null);
+        promotionInfoDTO.setModifyName(null);
+        promotionInfoDTO.setModifyTime(null);
+    }
 }

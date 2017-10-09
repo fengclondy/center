@@ -643,6 +643,27 @@ public class PromotionRedisDB {
     }
 
     /**
+     * 获取Value是否是redis的set中的元素
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean isSetMember(String key, String value) {
+        logger.debug("\n 方法:[{}]，入参:[{}]", "promotionRedisDB-isSetMember", "key=" + key);
+        Boolean isMember = false;
+
+        try {
+            isMember = stringRedisTemplate.opsForSet().isMember(key, value);
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-isSetMember", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-isSetMember", "returnValue=" + isMember);
+        }
+        return isMember.booleanValue();
+    }
+
+    /**
      * 添加一个或多个值到列表
      *
      * @param key

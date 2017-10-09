@@ -41,11 +41,11 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
  * @author 张丁
  * 
  */
-public class Updateb2cMemberCouponAmountTask implements
+public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 		IScheduleTaskDealMulti<B2cCouponUseLogSyncDMO> {
 
 	protected static transient Logger logger = LoggerFactory
-			.getLogger(Updateb2cMemberCouponAmountTask.class);
+			.getLogger(UpdateSyncB2cMemberCouponAmountScheduleTask.class);
 
 	@Resource
 	private B2cCouponUseLogSyncHistoryDAO b2cCouponUseLogSyncHistoryDAO;

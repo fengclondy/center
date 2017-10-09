@@ -50,5 +50,6 @@
   <!-- 定时任务 根据B2C同步的触发返券活动信息更新促销活动信息 -->
   <bean id="updateSyncB2cCouponInfoScheduleTask" class="cn.htd.marketcenter.task.UpdateSyncB2cCouponInfoScheduleTask"/>
   <!-- 定时任务 粉丝用券同步到会员店 -->
-  <bean id="updateb2cMemberCouponAmountTask" class="cn.htd.marketcenter.task.Updateb2cMemberCouponAmountTask"></bean>
+  <bean id="updateSyncB2cMemberCouponAmountScheduleTask"
+        class="cn.htd.marketcenter.task.UpdateSyncB2cMemberCouponAmountScheduleTask"></bean>
 </beans>

@@ -23,6 +23,7 @@ import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.consts.MarketCenterCodeConst;
 import cn.htd.marketcenter.domain.BuyerUseTimelimitedLog;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
+import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
@@ -791,7 +792,14 @@ public class TimelimitedRedisHandle {
      */
     private void saveTimelimitedPurchaseIndex2Redis(TimelimitedInfoDTO timelimitedInfo) {
         String promotionId = timelimitedInfo.getPromotionId();
-        String key = timelimitedInfo.getSkuCode() + "&" + "1"; //1.限时购
+        String key = "";
+        List<PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
+        if(accumulatyList.size() > 0) {
+        	for(PromotionAccumulatyDTO accumulaty: accumulatyList){ 
+        		key +=((TimelimitedInfoDTO) accumulaty).getSkuCode() +"&";
+        	}
+        }
+        key = key + "&" + "1"; //1.限时购
         String promotionIdStr = "";
         promotionIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_PURCHASE_INDEX, key);
         if (StringUtils.isEmpty(promotionIdStr)) {

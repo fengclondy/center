@@ -30,8 +30,10 @@ import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.TimelimitedPurchaseService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
+import net.sf.json.JSONObject;
 
 import com.alibaba.fastjson.JSON;
+
 
 @Service("timelimitedPurchaseService")
 public class TimelimitedPurchaseServiceImpl implements
@@ -81,7 +83,7 @@ public class TimelimitedPurchaseServiceImpl implements
 					.setScale(timelimitedInfo.getSkuTimelimitedPrice()));
 			promotionInfo = baseService.insertPromotionInfo(timelimitedInfo);
 			timelimitedInfo.setPromoionInfo(promotionInfo);
-			List<PromotionAccumulatyDTO> accumulatyList = timelimitedInfo
+			List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo
 					.getPromotionAccumulatyList();
 			if (accumulatyList.size() > 0) {
 				for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
@@ -166,10 +168,10 @@ public class TimelimitedPurchaseServiceImpl implements
 								RedisConst.REDIS_TIMELIMITED, promotionId);
 						timelimitedInfoDTO = JSON.parseObject(
 								timelimitedJSONStr, TimelimitedInfoDTO.class);
-						List<PromotionAccumulatyDTO> AccumulatyList = timelimitedInfoDTO
+						List AccumulatyList = timelimitedInfoDTO
 								.getPromotionAccumulatyList();
-						for (PromotionAccumulatyDTO accmulaty : AccumulatyList) {
-							TimelimitedInfoDTO timelimite = (TimelimitedInfoDTO) accmulaty;
+						for (int i=0;i<AccumulatyList.size();i++) {  ;
+						 TimelimitedInfoDTO timelimite  = (TimelimitedInfoDTO) JSONObject.toBean(JSONObject.fromObject(AccumulatyList.get(i)), TimelimitedInfoDTO.class);
 							if (nowDt.before(timelimite.getStartTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,

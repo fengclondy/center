@@ -184,6 +184,7 @@ public class TimelimitedPurchaseServiceImpl implements
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,
 										"该商品限时活动已结束");
 							}
+							result.setCode("00000");
 							result.setResult(timelimitedInfoDTO);
 						}
 					}

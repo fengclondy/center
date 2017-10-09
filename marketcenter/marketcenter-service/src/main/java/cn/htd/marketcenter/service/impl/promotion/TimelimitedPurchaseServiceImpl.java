@@ -34,7 +34,6 @@ import net.sf.json.JSONObject;
 
 import com.alibaba.fastjson.JSON;
 
-
 @Service("timelimitedPurchaseService")
 public class TimelimitedPurchaseServiceImpl implements
 		TimelimitedPurchaseService {
@@ -157,7 +156,7 @@ public class TimelimitedPurchaseServiceImpl implements
 												DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
 										.equals(validStatus)) {
 							promotionIdList.add(promotionIdStr);
-						}else{
+						} else {
 							throw new MarketCenterBusinessException(
 									MarketCenterCodeConst.LIMITED_TIME_PURCHASE_DOWN_SHELF,
 									"该商品限时活动已下架");
@@ -170,13 +169,17 @@ public class TimelimitedPurchaseServiceImpl implements
 								timelimitedJSONStr, TimelimitedInfoDTO.class);
 						List AccumulatyList = timelimitedInfoDTO
 								.getPromotionAccumulatyList();
-						for (int i=0;i<AccumulatyList.size();i++) {  ;
-						 TimelimitedInfoDTO timelimite  = (TimelimitedInfoDTO) JSONObject.toBean(JSONObject.fromObject(AccumulatyList.get(i)), TimelimitedInfoDTO.class);
+						for (int i = 0; i < AccumulatyList.size(); i++) {
+							;
+							TimelimitedInfoDTO timelimite = (TimelimitedInfoDTO) JSONObject
+									.toBean(JSONObject
+											.fromObject(AccumulatyList.get(i)),
+											TimelimitedInfoDTO.class);
 							if (nowDt.before(timelimite.getStartTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,
 										"该商品限时活动未开始");
-							}else if (nowDt.after(timelimite.getStartTime())) {
+							} else if (nowDt.after(timelimite.getStartTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,
 										"该商品限时活动已结束");
@@ -184,6 +187,10 @@ public class TimelimitedPurchaseServiceImpl implements
 							result.setResult(timelimitedInfoDTO);
 						}
 					}
+				} else {
+					throw new MarketCenterBusinessException(
+							MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
+							"该限时购商品不存在");
 				}
 			} else {
 				// 聚合页限时抢购信息查询

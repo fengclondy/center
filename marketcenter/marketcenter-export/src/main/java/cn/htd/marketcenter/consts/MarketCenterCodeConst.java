@@ -128,4 +128,6 @@ public class MarketCenterCodeConst {
 	public static final String LIMITED_TIME_PURCHASE_IS_OVER = "15401";
 	//限时购状态已下架
 	public static final String LIMITED_TIME_PURCHASE_DOWN_SHELF = "15402";
+	//限时购商品不存在
+	public static final String LIMITED_TIME_PURCHASE_NULL = "15403";
 }

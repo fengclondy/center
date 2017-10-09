@@ -165,6 +165,13 @@ public class TimelimitedPurchaseServiceImpl implements
 					for (String promotionId : promotionIdList) {
 						timelimitedJSONStr = marketRedisDB.getHash(
 								RedisConst.REDIS_TIMELIMITED, promotionId);
+						//用这种方法
+						List<?> list =  (List<?>) JSONObject.fromObject(timelimitedJSONStr).get("promotionAccumulatyList");
+						if(list != null && list.size()>0){
+							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject.toBean(JSONObject.fromObject(list.get(0)), TimelimitedInfoDTO.class);
+						}
+						
+						//此种方法作废
 						timelimitedInfoDTO = JSON.parseObject(
 								timelimitedJSONStr, TimelimitedInfoDTO.class);
 						List AccumulatyList = timelimitedInfoDTO

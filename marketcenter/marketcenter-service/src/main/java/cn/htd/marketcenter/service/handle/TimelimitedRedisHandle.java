@@ -189,10 +189,10 @@ public class TimelimitedRedisHandle {
             if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
                 key = key + "&" + timelimitedInfo.getPromotionProviderSellerCode();
             }
-            promotionIdStr = jedis.hget(RedisConst.REDIS_TIMELIMITED_INDEX, key);
-            if (StringUtils.isEmpty(promotionIdStr)) {
+            if (!jedis.hexists(RedisConst.REDIS_TIMELIMITED_INDEX, key)) {
                 promotionIdStr = promotionId;
             } else {
+                promotionIdStr = jedis.hget(RedisConst.REDIS_TIMELIMITED_INDEX, key);
                 promotionIdStr += "," + promotionId;
             }
             pipeline.hset(RedisConst.REDIS_TIMELIMITED_INDEX, key, promotionIdStr);

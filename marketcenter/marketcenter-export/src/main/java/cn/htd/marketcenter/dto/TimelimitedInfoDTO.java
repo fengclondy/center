@@ -96,7 +96,32 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	 * 限时购结束时间
 	 */
 	private Date endTime;
+	/**
+	 * 限时购聚合页标识  1:今日特惠 2:开售预告
+	 */
+	private int purchaseFlag;
+	/**
+	 * 限时购排序标识  1:销售量  2:上架时间  3:价格升序  4:价格倒序
+	 * @return
+	 */
+	private int purchaseSort;
 	
+	public int getPurchaseSort() {
+		return purchaseSort;
+	}
+
+	public void setPurchaseSort(int purchaseSort) {
+		this.purchaseSort = purchaseSort;
+	}
+
+	public int getPurchaseFlag() {
+		return purchaseFlag;
+	}
+
+	public void setPurchaseFlag(int purchaseFlag) {
+		this.purchaseFlag = purchaseFlag;
+	}
+
 	public Integer getTimelimitedThresholdMin() {
 		return timelimitedThresholdMin;
 	}

@@ -190,8 +190,12 @@ public class TimelimitedPurchaseServiceImpl implements
 //									.toBean(JSONObject.fromObject(list.get(i)),
 //											TimelimitedInfoDTO.class);
                             TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
-							if (!nowDt.after(timelimite.getEndTime())) {
+                            if (nowDt.after(timelimite.getEndTime()) && nowDt.before(timelimite.getStartTime())) {
 								resultList.add(timelimite);
+								break;
+							}else if(nowDt.after(timelimite.getStartTime())){
+								resultList.add(timelimite);
+								break;
 							}
 						}
 						if(resultList.size()==0){

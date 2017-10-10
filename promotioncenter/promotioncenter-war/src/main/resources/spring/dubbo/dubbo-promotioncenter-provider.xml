@@ -31,4 +31,7 @@
    <!--物料下载接口-->
    <dubbo:service interface="cn.htd.promotion.cpc.api.MaterielDownloadAPI" ref="materielDownloadAPI"
                  version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+  <!-- 团购-->
+  <dubbo:service interface="cn.htd.promotion.cpc.api.GroupbuyingAPI" ref="groupbuyingAPI"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 </beans>

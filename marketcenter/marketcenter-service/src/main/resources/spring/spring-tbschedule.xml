@@ -51,5 +51,5 @@
   <bean id="updateSyncB2cCouponInfoScheduleTask" class="cn.htd.marketcenter.task.UpdateSyncB2cCouponInfoScheduleTask"/>
   <!-- 定时任务 粉丝用券同步到会员店 -->
   <bean id="updateSyncB2cMemberCouponAmountScheduleTask"
-        class="cn.htd.marketcenter.task.UpdateSyncB2cMemberCouponAmountScheduleTask"></bean>
+        class="cn.htd.marketcenter.task.UpdateSyncB2cMemberCouponAmountScheduleTask"/>
 </beans>

@@ -161,22 +161,21 @@ public class TimelimitedPurchaseServiceImpl implements
 							timelimitedJSONStr, TimelimitedInfoDTO.class);
 					List list = timelimitedInfoDTO
 							.getPromotionAccumulatyList();
+
+//					List<?> list = (List<?>) JSONObject.fromObject(
+//							timelimitedJSONStr).get("promotionAccumulatyList");
 					if (list != null && list.size() > 0) {
 						for (int i = 0; i < list.size(); i++) {
+//							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
+//									.toBean(JSONObject.fromObject(list.get(i)),
+//											TimelimitedInfoDTO.class);
                             TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
-//							if (!nowDt
-//									.before(timelimite.getStartTime())) {
-//								throw new MarketCenterBusinessException(
-//										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,
-//										"该商品限时活动未开始");
-//							} else 
-                            if (nowDt.after(timelimite
-									.getEndTime())) {
-								throw new MarketCenterBusinessException(
-										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,
-										"该商品限时活动已结束");
+							if (!nowDt.after(timelimite.getEndTime())) {
+								resultList.add(timelimite);
 							}
-							resultList.add(timelimite);
+						}
+						if(resultList.size()==0){
+							throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,"该商品限时活动已结束");
 						}
 					}
 				}
@@ -232,12 +231,17 @@ public class TimelimitedPurchaseServiceImpl implements
 			for (String promotionId : promotionIdList) {
 				timelimitedJSONStr = marketRedisDB.getHash(
 						RedisConst.REDIS_TIMELIMITED, promotionId);
+//				List<?> list = (List<?>) JSONObject.fromObject(
+//						timelimitedJSONStr).get("promotionAccumulatyList");
 				timelimitedInfoDTO = JSON.parseObject(
 						timelimitedJSONStr, TimelimitedInfoDTO.class);
 				List list = timelimitedInfoDTO
 						.getPromotionAccumulatyList();
 				if (list != null && list.size() > 0) {
 					for (int i = 0; i < list.size(); i++) {
+//						timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
+//								.toBean(JSONObject.fromObject(list.get(i)),
+//										TimelimitedInfoDTO.class);
                         TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
 
 						if (dto.getPurchaseFlag() == 1
@@ -292,7 +296,7 @@ public class TimelimitedPurchaseServiceImpl implements
 					String purchaseSecond = pur.substring(1, 2);
 					if("&".equals(purchaseSecond) && dictionary.getValueByCode(
 							DictionaryConst.TYPE_PROMOTION_TYPE,
-							DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(purchaseFirst)){
+							DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED).equals(purchaseFirst)){
 						if (StringUtils.isNotEmpty(skuCode)) {
 							if (pur.contains(skuCode)) {
 								purchaseIndexList.add(pur);

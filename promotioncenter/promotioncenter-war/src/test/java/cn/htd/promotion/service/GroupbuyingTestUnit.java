@@ -185,6 +185,116 @@ public class GroupbuyingTestUnit {
 		
 	}
 
+	
+	
+    /**
+     * 修改团购活动
+     */
+	@Test
+	@Rollback(false) 
+    public void updateGroupbuyingInfoTest(){
+    	try {
+            String messageId = "342453251349";
+    		Long userId = 10001L;
+    		String userName = "admin";
+    		
+    		String promotionId = "25171601240015";
+    		
+            Calendar calendar = Calendar.getInstance();
+            Date currentTime = calendar.getTime();
+            
+        	// 商品ITEMID
+        	Long itemId = 20001L;
+        	// 商品SKU编码
+        	String skuCode = "200001";
+        	
+        	//团购商品信息
+            GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO = new GroupbuyingInfoCmplReqDTO();
+//            groupbuyingInfoCmplReqDTO.setSellerCode("1001");
+            groupbuyingInfoCmplReqDTO.setItemId(itemId);
+            groupbuyingInfoCmplReqDTO.setSkuCode(skuCode);
+//            groupbuyingInfoCmplReqDTO.setSkuName("测试商品");
+//            groupbuyingInfoCmplReqDTO.setSkuLabel("测试商品标签");
+    		//设置主图
+//            groupbuyingInfoCmplReqDTO.setSkuPicUrl("/img1622/123.jpg");
+            
+            groupbuyingInfoCmplReqDTO.setPromotionId(promotionId);
+    		
+    		// 商品原价
+    		BigDecimal skuCostPrice = new BigDecimal("50");
+    		groupbuyingInfoCmplReqDTO.setSkuCostPrice(skuCostPrice);
+    		// 真实参团人数
+    		Integer realActorCount = 10;
+    		groupbuyingInfoCmplReqDTO.setRealActorCount(realActorCount);
+    		// 真实拼团价
+    		BigDecimal realGroupbuyingPrice = new BigDecimal("100");
+    		groupbuyingInfoCmplReqDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+    		
+    		
+    		// 团购开始时间
+    		Date startTime = currentTime;
+    		// 团购结束时间
+    		Date endTime = DateUtils.addDays(currentTime, 1);
+    		groupbuyingInfoCmplReqDTO.setStartTime(startTime);
+    		groupbuyingInfoCmplReqDTO.setEndTime(endTime);
+    		
+    		// 销售区域编码
+    		String salesAreaCode = "0102";
+    		groupbuyingInfoCmplReqDTO.setSalesAreaCode(salesAreaCode);
+    		// 销售区域名称
+    		String salesAreaName = "南京";
+    		groupbuyingInfoCmplReqDTO.setSalesAreaName(salesAreaName);
+    		
+    		
+    		// 参与团购商品数量
+    		Integer groupbuyingSkuCount = 100;
+    		groupbuyingInfoCmplReqDTO.setGroupbuyingSkuCount(groupbuyingSkuCount);
+    		// 每人限购数量
+    		Integer groupbuyingThreshold = 1;
+    		groupbuyingInfoCmplReqDTO.setGroupbuyingThreshold(groupbuyingThreshold);
+    		// 团购订单有效时间（单位：分钟）
+    		Integer groupbuyingValidInterval = 15;
+    		groupbuyingInfoCmplReqDTO.setGroupbuyingValidInterval(groupbuyingValidInterval);
+
+    		groupbuyingInfoCmplReqDTO.setCreateId(userId);
+    		groupbuyingInfoCmplReqDTO.setCreateName(userName);
+    		groupbuyingInfoCmplReqDTO.setModifyId(userId);
+    		groupbuyingInfoCmplReqDTO.setModifyName(userName);
+    		
+    		// 设置活动信息
+    		SinglePromotionInfoCmplReqDTO singlePromotionInfoCmplReqDTO = new SinglePromotionInfoCmplReqDTO();
+    		setPromotionParam(singlePromotionInfoCmplReqDTO);
+    		groupbuyingInfoCmplReqDTO.setSinglePromotionInfoReqDTO(singlePromotionInfoCmplReqDTO);
+    		
+    		
+    		// 设置团购价格
+    		List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = new ArrayList<GroupbuyingPriceSettingReqDTO>();
+    		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO.setActorCount(1);// 参团人数
+    		BigDecimal groupbuyingPrice = new BigDecimal("100");// 拼团价
+    		groupbuyingPriceSettingReqDTO.setGroupbuyingPrice(groupbuyingPrice);
+    		
+    		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_2 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_2.setActorCount(50);
+    		groupbuyingPriceSettingReqDTO_2.setGroupbuyingPrice(new BigDecimal("90"));
+    		
+    		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_3 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_3.setActorCount(100);
+    		groupbuyingPriceSettingReqDTO_3.setGroupbuyingPrice(new BigDecimal("70"));
+    		groupbuyingPriceSettingReqDTOList.add(groupbuyingPriceSettingReqDTO);
+    		groupbuyingPriceSettingReqDTOList.add(groupbuyingPriceSettingReqDTO_2);
+    		groupbuyingPriceSettingReqDTOList.add(groupbuyingPriceSettingReqDTO_3);
+    		
+    		groupbuyingInfoCmplReqDTO.setGroupbuyingPriceSettingReqDTOList(groupbuyingPriceSettingReqDTOList);
+    		
+    		groupbuyingAPI.updateGroupbuyingInfo(groupbuyingInfoCmplReqDTO, messageId);
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+    }
+	
     
 
 }

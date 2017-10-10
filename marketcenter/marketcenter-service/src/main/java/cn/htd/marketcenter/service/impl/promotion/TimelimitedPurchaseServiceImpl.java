@@ -281,32 +281,41 @@ public class TimelimitedPurchaseServiceImpl implements
 		String validStatus = "";
 		try {
 			purChaseSet = marketRedisDB
-					.getHashFields(RedisConst.REDIS_TIMELIMITED_PURCHASE_INDEX);
+					.getHashFields(RedisConst.REDIS_TIMELIMITED_INDEX);
 			if (null != purChaseSet && !purChaseSet.isEmpty()) {
 				for (String pur : purChaseSet) {
-					if (StringUtils.isNotEmpty(skuCode)) {
-						if (pur.contains(skuCode)) {
+					String purchaseFirst = pur.substring(0, 1);
+					String purchaseSecond = pur.substring(1, 2);
+					if("&".equals(purchaseSecond) && dictionary.getValueByCode(
+							DictionaryConst.TYPE_PROMOTION_TYPE,
+							DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED).equals(purchaseFirst)){
+						if (StringUtils.isNotEmpty(skuCode)) {
+							if (pur.contains(skuCode)) {
+								
+								purchaseIndexList.add(pur);
+							}
+						} else {
 							purchaseIndexList.add(pur);
 						}
-					} else {
-						purchaseIndexList.add(pur);
 					}
 				}
-				for (String purchaseIndex : purchaseIndexList) {
-					promotionIdStr = marketRedisDB.getHash(
-							RedisConst.REDIS_TIMELIMITED_PURCHASE_INDEX,
-							purchaseIndex);
-					validStatus = marketRedisDB.getHash(
-							RedisConst.REDIS_TIMELIMITED_VALID, promotionIdStr);
-					if (!StringUtils.isEmpty(validStatus)
-							&& dictionary
-									.getValueByCode(
-											DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-											DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
-									.equals(validStatus)) {
-						promotionIdList.add(promotionIdStr);
-					} else {
-						resultMap.put("ERROR1", "ERROR1");
+				if(!purchaseIndexList.isEmpty()){
+					for (String purchaseIndex : purchaseIndexList) {
+						promotionIdStr = marketRedisDB.getHash(
+								RedisConst.REDIS_TIMELIMITED_INDEX,
+								purchaseIndex);
+						validStatus = marketRedisDB.getHash(
+								RedisConst.REDIS_TIMELIMITED_VALID, promotionIdStr);
+						if (!StringUtils.isEmpty(validStatus)
+								&& dictionary
+										.getValueByCode(
+												DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+												DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
+										.equals(validStatus)) {
+							promotionIdList.add(promotionIdStr);
+						} else {
+							resultMap.put("ERROR1", "ERROR1");
+						}
 					}
 				}
 				if (promotionIdList.size() > 0) {

@@ -136,6 +136,11 @@ public class TimelimitedPurchaseServiceImpl implements
 		try {
 			if (StringUtils.isNotEmpty(skuCode)) {
 				Map<String, String> resultMap = getPromotionlistRedis(skuCode);
+				if(resultMap.isEmpty()){
+					throw new MarketCenterBusinessException(
+							MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
+							"该商品限时活动不存在");
+				}
 				if (resultMap.get("SUCCESS") != null) {
 					String promotionIdStr = resultMap.get("SUCCESS");
 					promotionIdList = JSON.parseObject(promotionIdStr,
@@ -144,13 +149,9 @@ public class TimelimitedPurchaseServiceImpl implements
 					throw new MarketCenterBusinessException(
 							MarketCenterCodeConst.LIMITED_TIME_PURCHASE_DOWN_SHELF,
 							"该商品限时活动已下架");
-				} else if (resultMap.get("ERROR2").equals("ERROR2")) {
-					throw new MarketCenterBusinessException(
-							MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
-							"该商品限时活动不存在");
-				} else if (resultMap.get("ERROR3") != null) {
+				} else if (resultMap.get("ERROR2") != null) {
 					result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
-					result.addErrorMessage(resultMap.get("ERROR3"));
+					result.addErrorMessage(resultMap.get("ERROR2"));
 					return result;
 				}
 				for (String promotionId : promotionIdList) {
@@ -210,6 +211,11 @@ public class TimelimitedPurchaseServiceImpl implements
 		String timelimitedJSONStr = "";
 		try {
 			Map<String, String> resultMap = getPromotionlistRedis(null);
+			if(resultMap.isEmpty()){
+				throw new MarketCenterBusinessException(
+						MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
+						"该商品限时活动不存在");
+			}
 			if (resultMap.get("SUCCESS") != null) {
 				String promotionIdStr = resultMap.get("SUCCESS");
 				promotionIdList = JSON.parseObject(promotionIdStr, List.class);
@@ -217,13 +223,9 @@ public class TimelimitedPurchaseServiceImpl implements
 				throw new MarketCenterBusinessException(
 						MarketCenterCodeConst.LIMITED_TIME_PURCHASE_DOWN_SHELF,
 						"该商品限时活动已下架");
-			} else if (resultMap.get("ERROR2").equals("ERROR2")) {
-				throw new MarketCenterBusinessException(
-						MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
-						"该商品限时活动不存在");
-			} else if (resultMap.get("ERROR3") != null) {
+			} else if (resultMap.get("ERROR2") != null) {
 				result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
-				result.addErrorMessage(resultMap.get("ERROR3"));
+				result.addErrorMessage(resultMap.get("ERROR2"));
 				return result;
 			}
 			for (String promotionId : promotionIdList) {
@@ -291,7 +293,6 @@ public class TimelimitedPurchaseServiceImpl implements
 							DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED).equals(purchaseFirst)){
 						if (StringUtils.isNotEmpty(skuCode)) {
 							if (pur.contains(skuCode)) {
-								
 								purchaseIndexList.add(pur);
 							}
 						} else {
@@ -322,11 +323,9 @@ public class TimelimitedPurchaseServiceImpl implements
 					resultMap
 							.put("SUCCESS", JSON.toJSONString(promotionIdList));
 				}
-			} else {
-				resultMap.put("ERROR2", "ERROR2");
 			}
 		} catch (Exception e) {
-			resultMap.put("ERROR3", ExceptionUtils.getStackTraceAsString(e));
+			resultMap.put("ERROR2", ExceptionUtils.getStackTraceAsString(e));
 		}
 		return resultMap;
 	}

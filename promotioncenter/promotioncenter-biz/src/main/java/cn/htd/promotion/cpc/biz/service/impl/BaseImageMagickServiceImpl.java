@@ -99,8 +99,11 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 					}
 					logger.info("subimg:" + subimg);
 					op.addImage(subimg);
-					op.geometry((int) (baseImageSubDTO.getWidth() * wb), (int) (baseImageSubDTO.getHeight() * hb),
-							(int) (baseImageSubDTO.getLeft() * wb), (int) (baseImageSubDTO.getTop() * hb));
+//					op.geometry((int) (baseImageSubDTO.getWidth() * wb), (int) (baseImageSubDTO.getHeight() * hb),
+//							(int) (baseImageSubDTO.getLeft() * wb), (int) (baseImageSubDTO.getTop() * hb));
+					op.addRawArgs(
+							"-geometry " + baseImageSubDTO.getWidth() * wb + "x" + baseImageSubDTO.getHeight() * hb
+									+ "!+" + baseImageSubDTO.getLeft() * wb + "+" + baseImageSubDTO.getTop());
 					op.composite();
 				}
 			} else {

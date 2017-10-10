@@ -292,7 +292,7 @@ public class TimelimitedPurchaseServiceImpl implements
 					String purchaseSecond = pur.substring(1, 2);
 					if("&".equals(purchaseSecond) && dictionary.getValueByCode(
 							DictionaryConst.TYPE_PROMOTION_TYPE,
-							DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED).equals(purchaseFirst)){
+							DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(purchaseFirst)){
 						if (StringUtils.isNotEmpty(skuCode)) {
 							if (pur.contains(skuCode)) {
 								purchaseIndexList.add(pur);

@@ -70,6 +70,15 @@ public class OrderSkuInfoDTO implements Serializable {
 	private String weightUnit; // 单位
 
 	private Long shopFreightTemplateId;// 运费模版ID 【外部供应商】
+	
+	//是否是限时购商品  0：不是，1：是
+	private Integer isLimitedTimePurchase;
+	
+	//促销活动类型 1：优惠券，2:秒杀,3:限时购
+	private String promotionType;
+	
+	//促销活动编码
+	private String promotionId;
 
 	/**
 	 * @return the skuId
@@ -481,6 +490,30 @@ public class OrderSkuInfoDTO implements Serializable {
 	 */
 	public void setItemAttributeList(List<OrderItemAttributeDTO> itemAttributeList) {
 		this.itemAttributeList = itemAttributeList;
+	}
+
+	public Integer getIsLimitedTimePurchase() {
+		return isLimitedTimePurchase;
+	}
+
+	public void setIsLimitedTimePurchase(Integer isLimitedTimePurchase) {
+		this.isLimitedTimePurchase = isLimitedTimePurchase;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
+	}
+
+	public String getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
 	}
 
 }

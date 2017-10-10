@@ -3,6 +3,7 @@ package cn.htd.zeus.tc.biz.rao;
 import java.util.List;
 
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TradeInfoDTO;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
@@ -47,4 +48,12 @@ public interface MarketCenterRAO {
 	 */
 	public OtherCenterResDTO<TradeInfoDTO> calculateCouponDiscount(List<String> couponCodeList,
 			TradeInfoDTO cart, String messageId);
+	
+	/**
+	 * 限时购	  －  获取对应的限时购信息
+	 * @param skuCode
+	 * @return
+	 */
+	public OtherCenterResDTO<List<TimelimitedInfoDTO>> getTimelimitedInfo(
+			String skuCode, String messageId);
 }

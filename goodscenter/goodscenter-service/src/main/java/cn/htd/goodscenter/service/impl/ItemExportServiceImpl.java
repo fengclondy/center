@@ -3551,4 +3551,11 @@ public class ItemExportServiceImpl implements ItemExportService {
 			return itemOutDto;
 	}
 
+	@Override
+	public List<ItemQueryOutDTO> querySellerCenterItemList(ItemQueryInDTO itemInDTO) {
+		List<ItemQueryOutDTO> itemOutDto= new ArrayList<ItemQueryOutDTO>();
+		itemOutDto = itemMybatisDAO.querySellerCenterItemList(itemInDTO);
+		return itemOutDto;
+	}
+
 }

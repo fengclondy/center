@@ -1,4 +1,3 @@
-
 package cn.htd.marketcenter.task;
 
 import java.math.BigDecimal;
@@ -97,8 +96,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
      */
     @Override
     public List<PromotionDiscountInfoDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
-                                                      List<TaskItemDefine> taskQueueList, int eachFetchDataNum)
-            throws Exception {
+            List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
         logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "PrepareSendCouponScheduleTask-selectTasks",
                 "taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
                 JSON.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
@@ -133,8 +131,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         Jedis jedis = null;
         PromotionDiscountInfoDTO discountInfo = null;
         List<Future<Integer>> workResultList = null;
-        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_VALID);
+        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
         String collectType = dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
                 DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT);
         String presentType = dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
@@ -144,8 +142,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         try {
             jedis = marketRedisDB.getResource();
             workQueue = new ArrayBlockingQueue<Runnable>(10);
-            threadPoolExecutor = new ThreadPoolExecutor(threadPoolSize, threadPoolSize * 2, 1, TimeUnit.MINUTES,
-                    workQueue, new ThreadPoolExecutor.AbortPolicy());
+            threadPoolExecutor =
+                    new ThreadPoolExecutor(threadPoolSize, threadPoolSize * 2, 1, TimeUnit.MINUTES, workQueue,
+                            new ThreadPoolExecutor.AbortPolicy());
             while (jedis.llen(RedisConst.REDIS_COUPON_NEED_DEAL_LIST) > 0) {
                 long startTime = System.currentTimeMillis();
                 try {
@@ -155,8 +154,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     if (discountInfo == null) {
                         continue;
                     }
-                    if (!validStatus
-                            .equals(jedis.hget(RedisConst.REDIS_COUPON_VALID, discountInfo.getPromotionId()))) {
+                    if (!validStatus.equals(jedis.hget(RedisConst.REDIS_COUPON_VALID, discountInfo.getPromotionId()))) {
                         continue;
                     }
                     couponProvideType = discountInfo.getCouponProvideType();
@@ -166,8 +164,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         updateAutoPresentCoupon(threadPoolExecutor, jedis, workResultList, discountInfo);
                     }
                     for (Future<Integer> workRst : workResultList) {
-                        logger.info("\n 方法:[{}],线程执行结果:[{}]", "PrepareSendCouponScheduleTask-execute",
-                                workRst.get());
+                        logger.info("\n 方法:[{}],线程执行结果:[{}]", "PrepareSendCouponScheduleTask-execute", workRst.get());
 
                     }
                     discountInfo.setDealFlag(YesNoEnum.YES.getValue());
@@ -205,8 +202,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
      */
 
     private void updateMemberCollectCoupon(ThreadPoolExecutor threadPoolExecutor, Jedis jedis,
-                                           List<Future<Integer>> workResultList,
-                                           PromotionDiscountInfoDTO dealTargetInfo) throws Exception {
+            List<Future<Integer>> workResultList, PromotionDiscountInfoDTO dealTargetInfo) throws Exception {
         String promotionId = dealTargetInfo.getPromotionId();
         String tmpPromotionId = dealTargetInfo.getModifyPromotionId();
         String couponRedisListKey = RedisConst.REDIS_COUPON_COLLECT + "_" + promotionId;
@@ -233,8 +229,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 tmpPromotionId = promotionId;
             } else {
                 if (jedis.exists(RedisConst.REDIS_COUPON_SEND_LIST + "_" + dealTargetInfo.getModifyPromotionId())) {
-                    replaceCount = jedis.llen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + dealTargetInfo
-                            .getModifyPromotionId()).intValue();
+                    replaceCount =
+                            jedis.llen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + dealTargetInfo.getModifyPromotionId())
+                                    .intValue();
                 }
             }
             if (jedis.hexists(RedisConst.REDIS_COUPON_RECEIVE_COUNT, tmpPromotionId)) {
@@ -245,8 +242,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             }
             needProvideAllCount = provideCount - receivedCount;
             if (jedis.exists(couponRedisListKey)) {
-                sendedCount =
-                        new AtomicInteger(jedis.llen(couponRedisListKey).intValue());
+                sendedCount = new AtomicInteger(jedis.llen(couponRedisListKey).intValue());
             } else {
                 sendedCount = new AtomicInteger();
             }
@@ -256,27 +252,25 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                             .submit(new InitMemberCollectCoupon(i, needProvideAllCount, dealTargetInfo));
                     workResultList.add(workResult);
                     logger.info("\n 方法:[{}],线程池中现在的线程数目[{}],队列中正在等待执行的任务数量[{}]",
-                            "PrepareSendCouponScheduleTask-updateMemberCollectCoupon",
-                            threadPoolExecutor.getPoolSize(),
+                            "PrepareSendCouponScheduleTask-updateMemberCollectCoupon", threadPoolExecutor.getPoolSize(),
                             threadPoolExecutor.getQueue().size());
                 }
             }
             if (replaceCount > 0) {
-                taskProvideCount = (new BigDecimal(replaceCount))
-                        .divide(new BigDecimal(threadPoolSize), 0, RoundingMode.CEILING).intValue();
+                taskProvideCount =
+                        (new BigDecimal(replaceCount)).divide(new BigDecimal(threadPoolSize), 0, RoundingMode.CEILING)
+                                .intValue();
                 for (int i = 0; i < threadPoolSize; i++) {
                     cellCount = replaceCount - distributedCount > taskProvideCount ? taskProvideCount
-                                                                                   : replaceCount - distributedCount;
+                            : replaceCount - distributedCount;
                     if (cellCount <= 0) {
                         break;
                     }
-                    workResult = threadPoolExecutor
-                            .submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
+                    workResult = threadPoolExecutor.submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
                     workResultList.add(workResult);
                     distributedCount += cellCount;
                     logger.info("\n 方法:[{}],线程池中现在的线程数目[{}],队列中正在等待执行的任务数量[{}]",
-                            "PrepareSendCouponScheduleTask-updateMemberCollectCoupon",
-                            threadPoolExecutor.getPoolSize(),
+                            "PrepareSendCouponScheduleTask-updateMemberCollectCoupon", threadPoolExecutor.getPoolSize(),
                             threadPoolExecutor.getQueue().size());
                 }
             }
@@ -287,9 +281,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     dealTargetInfo.getPromotionName());
         } catch (Exception e) {
             logger.error("\n 方法:[{}],发券名称:[{}],异常:[{}],参数:[{}]",
-                    "PrepareSendCouponScheduleTask-updateMemberCollectCoupon",
-                    dealTargetInfo.getPromotionName(), ExceptionUtils.getStackTraceAsString(e), JSON.toJSONString
-                            (dealTargetInfo));
+                    "PrepareSendCouponScheduleTask-updateMemberCollectCoupon", dealTargetInfo.getPromotionName(),
+                    ExceptionUtils.getStackTraceAsString(e), JSON.toJSONString(dealTargetInfo));
 
             throw e;
         }
@@ -305,13 +298,13 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
      * @throws Exception
      */
     private void updateAutoPresentCoupon(ThreadPoolExecutor threadPoolExecutor, Jedis jedis,
-                                         List<Future<Integer>> workResultList,
-                                         PromotionDiscountInfoDTO dealTargetInfo) throws Exception {
+            List<Future<Integer>> workResultList, PromotionDiscountInfoDTO dealTargetInfo) throws Exception {
         String promotionId = dealTargetInfo.getPromotionId();
         PromotionBuyerRuleDTO buyerRule = null;
         List<String> targetBuyerLevelList = new ArrayList<String>();
         ExecuteResult<List<MemberGradeDTO>> targetMemberResult = null;
         List<MemberGradeDTO> targetMemberList = null;
+        Map<String, String> buyerDetailMap = null;
         List<PromotionBuyerDetailDTO> buyerDetailList = new ArrayList<PromotionBuyerDetailDTO>();
         PromotionBuyerDetailDTO buyerDTO = null;
         int provideCount = 0;
@@ -330,36 +323,34 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             }
             if (!StringUtils.isEmpty(dealTargetInfo.getModifyPromotionId())) {
                 if (jedis.exists(RedisConst.REDIS_COUPON_SEND_LIST + "_" + dealTargetInfo.getModifyPromotionId())) {
-                    provideCount = jedis.llen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + dealTargetInfo
-                            .getModifyPromotionId()).intValue();
+                    provideCount =
+                            jedis.llen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + dealTargetInfo.getModifyPromotionId())
+                                    .intValue();
                 }
                 if (provideCount > 0) {
                     logger.info("\n 方法:[{}],新发券活动名称:[{}],替代发券对象数量:[{}]",
-                            "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon",
-                            dealTargetInfo.getPromotionName(), provideCount);
+                            "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon", dealTargetInfo.getPromotionName(),
+                            provideCount);
                     distributedCount = 0;
                     taskProvideCount = (new BigDecimal(provideCount))
                             .divide(new BigDecimal(threadPoolSize), 0, RoundingMode.CEILING).intValue();
                     for (int i = 0; i < threadPoolSize; i++) {
-                        cellCount = provideCount - distributedCount > taskProvideCount ? taskProvideCount :
-                                    provideCount - distributedCount;
+                        cellCount = provideCount - distributedCount > taskProvideCount ? taskProvideCount
+                                : provideCount - distributedCount;
                         if (cellCount <= 0) {
                             break;
                         }
-                        workResult = threadPoolExecutor
-                                .submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
+                        workResult = threadPoolExecutor.submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
                         tmpWorkResultList.add(workResult);
                         distributedCount += cellCount;
                         logger.info("\n 方法:[{}],线程池中现在的线程数目[{}],队列中正在等待执行的任务数量[{}]",
                                 "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon",
-                                threadPoolExecutor.getPoolSize(),
-                                threadPoolExecutor.getQueue().size());
+                                threadPoolExecutor.getPoolSize(), threadPoolExecutor.getQueue().size());
                     }
                 }
                 for (Future<Integer> workRst : tmpWorkResultList) {
                     logger.info("\n 方法:[{}],新发券活动名称:[{}],线程执行结果:[{}]",
-                            "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon",
-                            workRst.get());
+                            "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon", workRst.get());
                 }
             }
             buyerRule = dealTargetInfo.getBuyerRuleDTO();
@@ -373,8 +364,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     for (String level : targetBuyerLevelList) {
                         targetMemberResult = memberGradeService.selectMemberByGrade(level);
                         if (!targetMemberResult.isSuccess()) {
-                            throw new MarketCenterBusinessException(
-                                    MarketCenterCodeConst.COUPON_AUTO_PRESENT_NO_MEMBER,
+                            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_AUTO_PRESENT_NO_MEMBER,
                                     StringUtils.join(targetMemberResult.getErrorMessages(), ","));
                         }
                         targetMemberList = targetMemberResult.getResult();
@@ -392,7 +382,18 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     }
                 }
             } else {
-                buyerDetailList = buyerRule.getBuyerDetailList();
+                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
+//                buyerDetailList = buyerRule.getBuyerDetailList();
+                buyerDetailMap = jedis.hgetAll(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId);
+                if (buyerDetailMap != null && !buyerDetailMap.isEmpty()) {
+                    for (Map.Entry<String, String> buyerDetailEntry : buyerDetailMap.entrySet()) {
+                        buyerDTO = new PromotionBuyerDetailDTO();
+                        buyerDTO.setBuyerCode(buyerDetailEntry.getKey());
+                        buyerDTO.setBuyerName(buyerDetailEntry.getValue());
+                        buyerDetailList.add(buyerDTO);
+                    }
+                }
+                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
             }
             if (buyerDetailList == null || buyerDetailList.isEmpty()) {
                 return;
@@ -403,16 +404,18 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             if (provideCount > 0) {
                 workResultList = new ArrayList<Future<Integer>>();
                 distributedCount = 0;
-                taskProvideCount = (new BigDecimal(provideCount))
-                        .divide(new BigDecimal(threadPoolSize), 0, RoundingMode.CEILING).intValue();
+                taskProvideCount =
+                        (new BigDecimal(provideCount)).divide(new BigDecimal(threadPoolSize), 0, RoundingMode.CEILING)
+                                .intValue();
                 for (int i = 0; i < threadPoolSize; i++) {
                     cellCount = provideCount - distributedCount > taskProvideCount ? taskProvideCount
-                                                                                   : provideCount - distributedCount;
+                            : provideCount - distributedCount;
                     if (cellCount <= 0) {
                         break;
                     }
-                    workResult = threadPoolExecutor.submit(new AutoPresentBuyerCoupon(distributedCount,
-                            distributedCount + cellCount, dealTargetInfo, buyerDetailList));
+                    workResult = threadPoolExecutor
+                            .submit(new AutoPresentBuyerCoupon(distributedCount, distributedCount + cellCount,
+                                    dealTargetInfo, buyerDetailList));
                     workResultList.add(workResult);
                     distributedCount += cellCount;
                     logger.info("\n 方法:[{}],线程池中现在的线程数目[{}],队列中正在等待执行的任务数量[{}]",
@@ -426,9 +429,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             throw mcbe;
         } catch (Exception e) {
             logger.error("\n 方法:[{}],发券名称:[{}],异常:[{}],参数:[{}]",
-                    "PrepareSendCouponScheduleTask-updateAutoPresentCoupon",
-                    dealTargetInfo.getPromotionName(), ExceptionUtils.getStackTraceAsString(e),
-                    JSON.toJSONString(dealTargetInfo));
+                    "PrepareSendCouponScheduleTask-updateAutoPresentCoupon", dealTargetInfo.getPromotionName(),
+                    ExceptionUtils.getStackTraceAsString(e), JSON.toJSONString(dealTargetInfo));
             throw e;
         }
     }
@@ -439,8 +441,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         private int needSendCount = 0;
 
         public InitMemberCollectCoupon(int id, int needSendCount, PromotionDiscountInfoDTO discountInfo) {
-            this.threadName = String.valueOf(Thread.currentThread().getId()) + "-" + discountInfo.getPromotionName()
-                    + "-" + id;
+            this.threadName =
+                    String.valueOf(Thread.currentThread().getId()) + "-" + discountInfo.getPromotionName() + "-" + id;
             this.targetDiscountInfo = discountInfo;
             this.needSendCount = needSendCount;
         }
@@ -506,8 +508,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         private PromotionDiscountInfoDTO targetDiscountInfo;
 
         public ReplaceSendedBuyerCoupon(PromotionDiscountInfoDTO discountInfo) {
-            this.threadName = String.valueOf(Thread.currentThread().getId()) + "-" + discountInfo.getPromotionName()
-                    + "-REPLACE";
+            this.threadName =
+                    String.valueOf(Thread.currentThread().getId()) + "-" + discountInfo.getPromotionName() + "-REPLACE";
             this.targetDiscountInfo = discountInfo;
         }
 
@@ -570,8 +572,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 jedis = marketRedisDB.getResource();
                 while (jedis.llen(RedisConst.REDIS_COUPON_SEND_LIST + "_" + oldPromotionId) > 0) {
                     buyerCouponKey = jedis.lpop(RedisConst.REDIS_COUPON_SEND_LIST + "_" + oldPromotionId);
-                    logger.info("\n 线程名称:[{}],方法:[{}],原优惠券Key:[{}]", threadName,
-                            "ReplaceMemberCollectCoupon-work", buyerCouponKey);
+                    logger.info("\n 线程名称:[{}],方法:[{}],原优惠券Key:[{}]", threadName, "ReplaceMemberCollectCoupon-work",
+                            buyerCouponKey);
                     if (buyerCouponKey.indexOf("&") <= 0) {
                         continue;
                     }
@@ -587,7 +589,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         continue;
                     }
                     if (!couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_UNUSED).equals(oldCouponDTO.getStatus())
-                            && !couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID).equals(oldCouponDTO.getStatus())) {
+                            && !couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID)
+                            .equals(oldCouponDTO.getStatus())) {
                         logger.info("\n 线程名称:[{}],方法:[{}],跳过原因:[{}],原优惠券:[{}]", threadName,
                                 "ReplaceMemberCollectCoupon-work", "非可用状态", oldCouponStr);
                         jedis.hincrBy(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCode + "&" + promotionId, 1);
@@ -606,17 +609,16 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     newBuyerCouponCode = generateCouponCode(jedis, couponDTO.getCouponType());
                     couponDTO.setBuyerCouponCode(newBuyerCouponCode);
                     couponDTO.setGetCouponTime(new Date());
-                    if (couponTypeMap.get(DictionaryConst.OPT_COUPON_KIND_DISCOUNT).equals(targetDiscountInfo
-                            .getCouponKind())) {
+                    if (couponTypeMap.get(DictionaryConst.OPT_COUPON_KIND_DISCOUNT)
+                            .equals(targetDiscountInfo.getCouponKind())) {
                         couponDTO.setCouponAmount(oldCouponDecimal);
                         couponDTO.setCouponLeftAmount(oldCouponDecimal);
-                        couponAmountStr = String.valueOf(CalculateUtils.multiply(couponDTO.getCouponAmount(), new
-                                BigDecimal(100)).longValue());
+                        couponAmountStr = String.valueOf(
+                                CalculateUtils.multiply(couponDTO.getCouponAmount(), new BigDecimal(100)).longValue());
                     }
                     couponStr = JSON.toJSONString(couponDTO);
                     logger.info("\n 线程名称:[{}],方法:[{}],原优惠券:[{}],替换优惠券:[{}]", threadName,
-                            "ReplaceMemberCollectCoupon-start",
-                            oldCouponStr, couponStr);
+                            "ReplaceMemberCollectCoupon-start", oldCouponStr, couponStr);
                     multi = jedis.multi();
                     multi.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, newBuyerCouponCode, couponStr);
                     multi.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + newBuyerCouponCode,
@@ -624,8 +626,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     multi.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
                     multi.hincrBy(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCode + "&" + promotionId, 1);
                     multi.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
-                    multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, buyerCode + "&" +
-                            newBuyerCouponCode);
+                    multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
+                            buyerCode + "&" + newBuyerCouponCode);
                     mutilRst = multi.exec();
                     if (mutilRst == null || mutilRst.isEmpty()) {
                         logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "ReplaceMemberCollectCoupon-work",
@@ -635,8 +637,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 }
                 for (int i = 0; i < result.size(); i++) {
                     logger.info("\n 线程名称:[{}],方法:[{}],发送数量:[{}], 发送结果:[{}]", threadName,
-                            "ReplaceMemberCollectCoupon-work",
-                            i, result.get(i).toString());
+                            "ReplaceMemberCollectCoupon-work", i, result.get(i).toString());
                 }
             } catch (Exception e) {
                 logger.error("\n 线程名称:[{}],方法:[{}],总发送数量:[{}],错误内容:[{}]", threadName, "ReplaceMemberCollectCoupon-end",
@@ -661,11 +662,12 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         private List<PromotionBuyerDetailDTO> buyerDetailList;
 
         public AutoPresentBuyerCoupon(int startIdx, int endIdx, PromotionDiscountInfoDTO discountInfo,
-                                      List<PromotionBuyerDetailDTO> buyerDetailList) {
+                List<PromotionBuyerDetailDTO> buyerDetailList) {
             this.startIdx = startIdx;
             this.endIdx = endIdx;
-            this.threadName = String.valueOf(Thread.currentThread().getId()) + "-" + discountInfo.getPromotionName()
-                    + "-" + startIdx + "-" + endIdx;
+            this.threadName =
+                    String.valueOf(Thread.currentThread().getId()) + "-" + discountInfo.getPromotionName() + "-"
+                            + startIdx + "-" + endIdx;
             this.targetDiscountInfo = discountInfo;
             this.buyerDetailList = buyerDetailList;
         }
@@ -691,8 +693,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             String buyerCouponCode = "";
             String couponStr = "";
             List<Object> mutilRst = null;
-            String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                    .OPT_PROMOTION_VERIFY_STATUS_VALID);
+            String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
             logger.info("\n 线程名称:[{}],方法:[{}],开始时间:[{}]", threadName, "autoPresentBuyerCoupon-work",
                     DateUtils.getCurrentDate(""));
             if (buyerDetailList == null || buyerDetailList.isEmpty() || receiveLimit <= 0) {
@@ -774,8 +776,8 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                                 couponAmountStr);
                         multi.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
                         multi.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
-                        multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, buyerCode + "&" +
-                                buyerCouponCode);
+                        multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
+                                buyerCode + "&" + buyerCouponCode);
                         mutilRst = multi.exec();
                         if (mutilRst == null || mutilRst.isEmpty()) {
                             logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",

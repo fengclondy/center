@@ -39,10 +39,10 @@ public class MarketCenterCodeConst {
 	// *******************************************************
 	// 会员优惠券信息不存在
 	public static final String COUPON_NOT_EXIST = "15101";
-	// 非会员领取优惠券信息
-	public static final String COUPON_NOT_MEMBER_COLLECT = "15102";
-	// 会员领取优惠券的领取期间还未开始
-	public static final String COUPON_COLLECT_NOT_START = "15103";
+	// 优惠券定义类型发生变化
+	public static final String COUPON_KIND_HAS_CHANGED = "15102";
+	// 优惠券定义发送方式发生变化
+	public static final String COUPON_PROVIDER_TYPE_HAS_CHANGED = "15103";
 	// 会员领取优惠券的领取期间已过期
 	public static final String COUPON_COLLECT_HAS_EXPIRED = "15104";
 	// 会员优惠券已领光

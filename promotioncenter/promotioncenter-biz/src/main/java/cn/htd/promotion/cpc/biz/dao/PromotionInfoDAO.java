@@ -157,5 +157,5 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
             @Param("page") Pager<PromotionInfoDTO> page);
 
 	public Integer queryUpPromotionLotteryCount(@Param("promotionId")String promotionId, @Param("effectiveTime") Date effectiveTime,
-			@Param("invalidTime") Date invalidTime);
+			@Param("invalidTime") Date invalidTime,@Param("promotionType") String promotionType);
 }

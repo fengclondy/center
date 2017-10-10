@@ -60,7 +60,29 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String buyerCode = requestDTO.getBuyerCode();
         String sellerCode = requestDTO.getSellerCode();
         String promotionId = requestDTO.getPromotionId();
-        String ticket = "";
+        String ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
+        boolean useThread = true;
+        responseDTO = this.beginDrawLotteryExecute(requestDTO, ticket, useThread);
+        return responseDTO;
+    }
+
+    /**
+     * 执行抽奖处理
+     *
+     * @param requestDTO
+     * @param ticket
+     * @param useThread
+     * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
+     */
+    @Override
+    public DrawLotteryResDTO beginDrawLotteryExecute(DrawLotteryReqDTO requestDTO, String ticket, boolean useThread)
+            throws PromotionCenterBusinessException, Exception {
+        DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+        String buyerCode = requestDTO.getBuyerCode();
+        String sellerCode = requestDTO.getSellerCode();
+        String promotionId = requestDTO.getPromotionId();
         Map<String, String> dictMap = null;
         PromotionExtendInfoDTO promotionInfoDTO = null;
         BuyerWinningRecordDTO errorWinningRecord = new BuyerWinningRecordDTO();
@@ -75,9 +97,14 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
             errorWinningRecord.setBuyerCode(buyerCode);
             errorWinningRecord.setSellerCode(sellerCode);
             errorWinningRecord.setRewardType("0");
-            ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
             responseDTO.setTicket(ticket);
-            promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
+            //使用异步线程处理
+            if (useThread) {
+                promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
+            } else {
+                //使用同步处理
+                promotionLotteryCommonService.doDrawLottery(requestDTO, errorWinningRecord, ticket);
+            }
         }
         return responseDTO;
     }
@@ -149,6 +176,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         GenricResDTO responseDTO = new GenricResDTO();
         BuyerWinningRecordDTO winningRecordDTO = null;
         Map<String, String> dictMap = new HashMap<String, String>();
+        String promotionType = "";
 
         responseDTO.setMessageId(requestDTO.getMessageId());
         responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
@@ -199,10 +227,23 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setChargeTelephone(requestDTO.getChargeTelephone());
         winningRecordDTO.setCreateId(0L);
         winningRecordDTO.setCreateName(requestDTO.getBuyerName());
+        winningRecordDTO.setOrderNo(ticket);
         promotionRedisDB
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
-        promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
-                promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
+        //如果是扭蛋就删除抽奖结果key，如果是刮刮乐就不删除，等刮刮乐活动结束用定时任务删除
+        promotionType = winningRecordDTO.getPromotionType();
+        baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_TYPE);
+        if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON)
+                .equals(promotionType)) {
+            promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
+        } else if (dictMap
+                .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD)
+                .equals(promotionType)) {
+            promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket,
+                    JSON.toJSONString(winningRecordDTO));
+        }
         responseDTO.setMessageId(requestDTO.getMessageId());
         return responseDTO;
     }

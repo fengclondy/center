@@ -37,7 +37,7 @@
     where picture_id = #{pictureId}
   </select>
   
-  <select id="selectMaterielDownloadListCount" resultMap="BaseResultMap" parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
+  <select id="selectMaterielDownloadListCount" resultType="java.lang.Long"  parameterType="cn.htd.promotion.cpc.dto.request.ActivityPictureInfoReqDTO" >
     select count(*)
     from activity_picture_info
     where delete_flag = 0

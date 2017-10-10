@@ -30,9 +30,10 @@ import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.TimelimitedPurchaseService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
-import net.sf.json.JSONObject;
+
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("timelimitedPurchaseService")
 public class TimelimitedPurchaseServiceImpl implements
@@ -166,22 +167,24 @@ public class TimelimitedPurchaseServiceImpl implements
 						timelimitedJSONStr = marketRedisDB.getHash(
 								RedisConst.REDIS_TIMELIMITED, promotionId);
 						//用这种方法
-						List<?> list =  (List<?>) JSONObject.fromObject(timelimitedJSONStr).get("promotionAccumulatyList");
-						if(list != null && list.size()>0){
-							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject.toBean(JSONObject.fromObject(list.get(0)), TimelimitedInfoDTO.class);
-						}
-						
+//						List<?> list =  (List<?>) JSONObject.fromObject(timelimitedJSONStr).get("promotionAccumulatyList");
+//						if(list != null && list.size()>0){
+//							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject.toBean(JSONObject.fromObject(list.get(0)), TimelimitedInfoDTO.class);
+//						}
+//						
 						//此种方法作废
 						timelimitedInfoDTO = JSON.parseObject(
 								timelimitedJSONStr, TimelimitedInfoDTO.class);
 						List AccumulatyList = timelimitedInfoDTO
 								.getPromotionAccumulatyList();
 						for (int i = 0; i < AccumulatyList.size(); i++) {
-							;
-							TimelimitedInfoDTO timelimite = (TimelimitedInfoDTO) JSONObject
-									.toBean(JSONObject
-											.fromObject(AccumulatyList.get(i)),
-											TimelimitedInfoDTO.class);
+//							;
+//							TimelimitedInfoDTO timelimite = (TimelimitedInfoDTO) JSONObject
+//									.toBean(JSONObject
+//											.fromObject(AccumulatyList.get(i)),
+//											TimelimitedInfoDTO.class);
+							TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) AccumulatyList.get(i), TimelimitedInfoDTO.class);
+
 							if (nowDt.before(timelimite.getStartTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,

@@ -243,6 +243,31 @@ public class MarketCenterRedisDB {
 	}
 
 	/**
+	 * 向Redis中设定hash对象
+	 *
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	public Long setHashNx(String key, String field, String value) {
+		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "marketRedisDB-setHash", "key=" + key, "field=" + field,
+				"value=" + value);
+		Jedis jedis = null;
+		Long ret = 0L;
+		try {
+			jedis = getResource();
+			ret = jedis.hsetnx(key, field, value);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-setHash", "无");
+		}
+		return ret;
+	}
+
+	/**
 	 * 从Redis中设定hash对象
 	 * 
 	 * @param key
@@ -700,5 +725,28 @@ public class MarketCenterRedisDB {
 			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-getSetLen", "returnValue=" + returnValue);
 		}
 		return returnValue;
+	}
+
+	/**
+	 * 获取Value是否是redis的set中的元素
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public boolean isSetMember(String key, String value) {
+		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-isSetMember", "key=" + key);
+		Boolean isMember = false;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			isMember = jedis.sismember(key, value);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-isSetMember", ExceptionUtils.getStackTraceAsString(e));
+		} finally {
+		    releaseResource(jedis);
+			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-isSetMember", "returnValue=" + isMember);
+		}
+		return isMember.booleanValue();
 	}
 }

@@ -27,6 +27,16 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 	private Date activityEndTime;
 	
 	/**
+	 * 活动开始时间
+	 */
+	private Date effectiveTime;
+	
+	/**
+	 * 活动结束时间
+	 */
+	private Date invalidTime;
+	
+	/**
 	 * 粉丝剩余抽奖次数
 	 */
 	private Integer remainingTimes;
@@ -75,4 +85,21 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 	public void setPictureUrl(List<String> pictureUrl) {
 		this.pictureUrl = pictureUrl;
 	}
+
+	public Date getEffectiveTime() {
+		return effectiveTime;
+	}
+
+	public void setEffectiveTime(Date effectiveTime) {
+		this.effectiveTime = effectiveTime;
+	}
+
+	public Date getInvalidTime() {
+		return invalidTime;
+	}
+
+	public void setInvalidTime(Date invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+	
 }

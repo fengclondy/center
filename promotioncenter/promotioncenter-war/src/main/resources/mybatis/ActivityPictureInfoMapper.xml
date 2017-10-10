@@ -265,4 +265,33 @@
 	</if>
   </select>
   
+  <select id="checkActivityName" resultType="java.lang.Integer">
+  		SELECT COUNT(1)
+        FROM activity_picture_info
+        WHERE picture_type = #{pictureType} 
+        AND delete_flag = 0
+        <if test="pictureName != null">
+  		<![CDATA[AND  picture_name = #{pictureName}   	]]>
+  		</if>
+  		<if test="pictureId != null" >
+  			and picture_id not in(#{pictureId} )
+  		</if>
+  </select>
+  
+  <select id="checkActivityTime" resultType="java.lang.Integer">
+  		SELECT COUNT(1)
+        FROM activity_picture_info
+        WHERE picture_type = #{pictureType} 
+        AND delete_flag = 0
+        <if test="effectiveTime != null">
+  		<![CDATA[AND  invalid_time >= #{effectiveTime}   	]]>
+  		</if>
+  		<if test="invalidTime != null">
+  	 		<![CDATA[AND  effective_time <= #{invalidTime} 	]]>
+  		</if>
+  		<if test="pictureId != null" >
+  			and picture_id not in(#{pictureId} )
+  		</if>
+  </select>
+  
 </mapper>

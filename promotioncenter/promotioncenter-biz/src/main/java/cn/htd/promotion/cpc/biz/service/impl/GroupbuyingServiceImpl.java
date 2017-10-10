@@ -183,6 +183,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	SinglePromotionInfoReqDTO singlePromotionInfoReqDTO = groupbuyingInfoCmplReqDTO.getSinglePromotionInfoReqDTO();
         	
         	// 修改活动信息
+        	singlePromotionInfoReqDTO.setPromotionId(promotionId);
         	singlePromotionInfoReqDTO.setIsVip(1);//是VIP
         	setPromotionStatusInfo(singlePromotionInfoReqDTO);
         	singlePromotionInfoReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
@@ -318,8 +319,8 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, singlePromotionInfoReqDTO.getShowStatus()));
         historyDTO.setPromotionStatusText(dictionary
                 .getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, singlePromotionInfoReqDTO.getShowStatus()));
-        historyDTO.setCreateId(singlePromotionInfoReqDTO.getCreateId());
-        historyDTO.setCreateName(singlePromotionInfoReqDTO.getCreateName());
+        historyDTO.setCreateId(singlePromotionInfoReqDTO.getModifyId());
+        historyDTO.setCreateName(singlePromotionInfoReqDTO.getModifyName());
         promotionStatusHistoryDAO.add(historyDTO);
     }
 

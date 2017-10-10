@@ -54,6 +54,33 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
 	}
 	
 	
+	@Override
+	public ExecuteResult<?> updateGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
+		
+        ExecuteResult<?> result = new ExecuteResult<>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+    		if (null == groupbuyingInfoCmplReqDTO) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数不能为空！");
+    		}
+    		
+			if (null == groupbuyingInfoCmplReqDTO.getPromotionId() || "".equals(groupbuyingInfoCmplReqDTO.getPromotionId().trim())) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动编码不能为空！");
+			}
+    		
+			groupbuyingService.updateGroupbuyingInfo(groupbuyingInfoCmplReqDTO, messageId);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.updateGroupbuyingInfo出现异常{}", messageId, groupbuyingInfoCmplReqDTO.getPromotionId() + ":" + e.toString());
+        }
+        return result;
+	}
+	
+	
 	
 
 }

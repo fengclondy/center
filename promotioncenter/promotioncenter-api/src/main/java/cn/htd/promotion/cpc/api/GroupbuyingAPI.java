@@ -13,13 +13,13 @@ public interface GroupbuyingAPI {
 	 */
 	public ExecuteResult<?> addGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId);
 	
-//	/**
-//	 * 修改秒杀活动
-//	 * @param timelimitedInfoReqDTO
-//	 * @param messageId
-//	 * @return
-//	 */
-//	public ExecuteResult<?> updateTimelimitedInfo(TimelimitedInfoReqDTO timelimitedInfoReqDTO,String messageId);
+	/**
+	 * 修改团购活动
+	 * @param timelimitedInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<?> updateGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO,String messageId);
 //	
 //	/**
 //	 * 根据promotionId获取完整的秒杀活动信息

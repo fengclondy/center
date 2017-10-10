@@ -117,7 +117,7 @@ public class TimelimitedRedisHandleTest {
 	
 	@Test
 	public void getTimelimitedInfo() throws Exception {
-		ExecuteResult<TimelimitedInfoDTO> result = timelimitedPurchaseService.getTimelimitedInfo("1000042333");
+		ExecuteResult<List<TimelimitedInfoDTO>> result = timelimitedPurchaseService.getTimelimitedInfo("1000042333");
 		System.out.println(JSON.toJSONString(result));
 	}
 }

@@ -78,15 +78,11 @@ public class TimelimitedPurchaseServiceImpl implements
 		PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
 		List<PromotionStatusHistoryDTO> historyList = new ArrayList<PromotionStatusHistoryDTO>();
 		try {
-			timelimitedInfo.setPromotionType(dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_TYPE,
-					DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
-			timelimitedInfo.setSkuTimelimitedPrice(CalculateUtils
-					.setScale(timelimitedInfo.getSkuTimelimitedPrice()));
+			timelimitedInfo.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+			timelimitedInfo.setSkuTimelimitedPrice(CalculateUtils.setScale(timelimitedInfo.getSkuTimelimitedPrice()));
 			promotionInfo = baseService.insertPromotionInfo(timelimitedInfo);
 			timelimitedInfo.setPromoionInfo(promotionInfo);
-			List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo
-					.getPromotionAccumulatyList();
+			List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
 			if (accumulatyList.size() > 0) {
 				for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
 					timelimitedInfoDAO.add((TimelimitedInfoDTO) accumulaty);
@@ -94,17 +90,14 @@ public class TimelimitedPurchaseServiceImpl implements
 			}
 			historyDTO.setPromotionId(timelimitedInfo.getPromotionId());
 			historyDTO.setPromotionStatus(timelimitedInfo.getShowStatus());
-			historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					timelimitedInfo.getShowStatus()));
+			historyDTO.setPromotionStatusText(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,timelimitedInfo.getShowStatus()));
 			historyDTO.setCreateId(timelimitedInfo.getCreateId());
 			historyDTO.setCreateName(timelimitedInfo.getCreateName());
 			promotionStatusHistoryDAO.add(historyDTO);
 			historyList.add(historyDTO);
 			timelimitedInfo.setPromotionStatusHistoryList(historyList);
-			// timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
-			timelimitedRedisHandle
-					.addTimelimitedPurchaseInfo2Redis(timelimitedInfo);
+		    timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
+			//timelimitedRedisHandle.addTimelimitedPurchaseInfo2Redis(timelimitedInfo);
 			result.setResult(timelimitedInfo);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
@@ -119,6 +112,33 @@ public class TimelimitedPurchaseServiceImpl implements
 		}
 		return result;
 	}
+	
+	
+	
+	/**
+	 * 限时购 － 根据promotionId获取限时购结果信息
+	 */
+	@Override
+	public ExecuteResult<List<TimelimitedInfoDTO>>queryTimelimitedInfo(String promotionId) {
+		ExecuteResult<List<TimelimitedInfoDTO>> result = new ExecuteResult<List<TimelimitedInfoDTO>>();
+        List<TimelimitedInfoDTO> timelimitedInfoDTO = null;
+        try {
+             //获取限时购活动信息
+             timelimitedInfoDTO = timelimitedInfoDAO.queryTimelimitedInfoByPromotionId(promotionId);
+            if (timelimitedInfoDTO == null) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该限时购活动不存在!");
+            }
+            result.setResult(timelimitedInfoDTO);
+        } catch (MarketCenterBusinessException bcbe) {
+            result.setCode(bcbe.getCode());
+            result.addErrorMessage(bcbe.getMessage());
+        } catch (Exception e) {
+            result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+        }
+        return result;
+	}
+
 
 	/**
 	 * 限时购 － 获取对应的限时购信息(根据sku查询)

@@ -181,21 +181,19 @@ public class TimelimitedPurchaseServiceImpl implements
 							timelimitedJSONStr, TimelimitedInfoDTO.class);
 					List list = timelimitedInfoDTO
 							.getPromotionAccumulatyList();
-
-//					List<?> list = (List<?>) JSONObject.fromObject(
-//							timelimitedJSONStr).get("promotionAccumulatyList");
 					if (list != null && list.size() > 0) {
 						for (int i = 0; i < list.size(); i++) {
-//							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
-//									.toBean(JSONObject.fromObject(list.get(i)),
-//											TimelimitedInfoDTO.class);
                             TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
                             if (nowDt.after(timelimite.getEndTime()) && nowDt.before(timelimite.getStartTime())) {
 								resultList.add(timelimite);
-								break;
+								result.setCode("00000");
+								result.setResult(resultList);
+								return result;
 							}else if(nowDt.after(timelimite.getStartTime())){
 								resultList.add(timelimite);
-								break;
+								result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN);
+								result.setResult(resultList);
+								return result;
 							}
 						}
 						if(resultList.size()==0){
@@ -255,19 +253,13 @@ public class TimelimitedPurchaseServiceImpl implements
 			for (String promotionId : promotionIdList) {
 				timelimitedJSONStr = marketRedisDB.getHash(
 						RedisConst.REDIS_TIMELIMITED, promotionId);
-//				List<?> list = (List<?>) JSONObject.fromObject(
-//						timelimitedJSONStr).get("promotionAccumulatyList");
 				timelimitedInfoDTO = JSON.parseObject(
 						timelimitedJSONStr, TimelimitedInfoDTO.class);
 				List list = timelimitedInfoDTO
 						.getPromotionAccumulatyList();
 				if (list != null && list.size() > 0) {
 					for (int i = 0; i < list.size(); i++) {
-//						timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
-//								.toBean(JSONObject.fromObject(list.get(i)),
-//										TimelimitedInfoDTO.class);
                         TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
-
 						if (dto.getPurchaseFlag() == 1
 								&& !nowDt.before(timelimite
 										.getEffectiveTime())

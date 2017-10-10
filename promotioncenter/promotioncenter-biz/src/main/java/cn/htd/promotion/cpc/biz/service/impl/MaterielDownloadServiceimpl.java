@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +76,24 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 				cal.set(Calendar.SECOND, 59);
 				activityPictureInfoReqDTO.setInvalidTime(cal.getTime());
 			}
+			
+			Integer isUpPromotionFlag = activityPictureInfoDAO.checkActivityName(
+					null, activityPictureInfoReqDTO.getPictureName(),
+					activityPictureInfoReqDTO.getPictureType());
+			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+						"该活动名称和其他活动一样，请重新设置");
+			}
+			if(activityPictureInfoReqDTO.getPictureType().equals("3")) {
+				isUpPromotionFlag = activityPictureInfoDAO.checkActivityTime(null,
+						activityPictureInfoReqDTO.getEffectiveTime(),activityPictureInfoReqDTO.getInvalidTime(), activityPictureInfoReqDTO.getPictureType());
+				if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+					throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+							"该活动有效期和其他活动重叠，请重新设置");
+				}
+			}
+
+			
 			activityPictureInfoDAO.add(activityPictureInfoReqDTO);
 
 			if (activityPictureInfoReqDTO.getIsVip() == 2) {
@@ -124,6 +141,24 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 					cal.set(Calendar.SECOND, 59);
 					activityPictureInfoReqDTO.setInvalidTime(cal.getTime());
 				}
+				
+				Integer isUpPromotionFlag = activityPictureInfoDAO.checkActivityName(
+						activityPictureInfoReqDTO.getPictureId(), activityPictureInfoReqDTO.getPictureName(),
+						activityPictureInfoReqDTO.getPictureType());
+				if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+					throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+							"该活动名称和其他活动一样，请重新设置");
+				}
+				if(activityPictureInfoReqDTO.getPictureType().equals("3")) {
+					isUpPromotionFlag = activityPictureInfoDAO.checkActivityTime(activityPictureInfoReqDTO.getPictureId(),
+							activityPictureInfoReqDTO.getEffectiveTime(),activityPictureInfoReqDTO.getInvalidTime(), activityPictureInfoReqDTO.getPictureType());
+					if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+						throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+								"该活动有效期和其他活动重叠，请重新设置");
+					}
+				}
+
+				
 				activityPictureInfoDAO.update(activityPictureInfoReqDTO);
 
 				if (activityPictureInfoReqDTO.getIsVip() == 2) {

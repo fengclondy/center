@@ -316,6 +316,14 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		BigDecimal JDAcountAmt = new BigDecimal(0);
 		for (int i = 0; i < orderList.size(); i++) {
 			OrderCreateListInfoReqDTO orderTemp = orderList.get(i);
+			//买家和卖家不能是同一个账号
+			if(orderTemp.getSellerCode().equals(orderCreateInfoReqDTO.getBuyerCode())){
+				orderCreateInfoDMO.setResultCode(
+						ResultCodeEnum.ORDER_BUYER_SELLER_SAME.getCode());
+				orderCreateInfoDMO.setResultMsg(
+						ResultCodeEnum.ORDER_BUYER_SELLER_SAME.getMsg());
+				return orderCreateInfoDMO;
+			}
 			List<OrderCreateItemListInfoReqDTO> orderItemList = orderTemp.getOrderItemList();
 			BatchGetStockReqDTO batchGetStockReqDTO = new BatchGetStockReqDTO();
 			List<BatchGetStockSkuNumsReqDTO> skuNums = new ArrayList<>();
@@ -472,11 +480,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 								.equals(ResultCodeEnum.SUCCESS.getCode())) {
 							return orderCreateInfoDMO;
 						}
-
-						orderItemTemp.setGoodsFreight(new BigDecimal(0));// TODO
-																			// 2017-02-08
-																			// 外部供应商运费先写成0,等蒋坤提供运费接口(外部供应商是用运费模板，然后计算)
-
+						orderItemTemp.setGoodsFreight(new BigDecimal(0));	
 						// 如果是外部供应商-将saleprice不用赋值，计算阶梯价格计算goodprice即可
 						BigDecimal goodsPrice = new ExternalSupplierCostCaculateUtil()
 								.caculateLadderPrice4outer(orderItemTemp.getGoodsCount().intValue(),

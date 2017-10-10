@@ -103,6 +103,9 @@ public class OrderCreateInfoReqDTO extends OrderCreateInfoMarketReqDTO{
 	@NotNull(message = "orderList不能为空")
 	@Valid
 	private List<OrderCreateListInfoReqDTO> orderList;
+	
+	//是否有限时购商品  0:没有，1：有
+	private int isHasLimitedTimePurchase;
 
 	public String getTradeNo() {
 		return tradeNo;
@@ -318,6 +321,14 @@ public class OrderCreateInfoReqDTO extends OrderCreateInfoMarketReqDTO{
 
 	public void setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
+	}
+
+	public int getIsHasLimitedTimePurchase() {
+		return isHasLimitedTimePurchase;
+	}
+
+	public void setIsHasLimitedTimePurchase(int isHasLimitedTimePurchase) {
+		this.isHasLimitedTimePurchase = isHasLimitedTimePurchase;
 	}	
 	
 }

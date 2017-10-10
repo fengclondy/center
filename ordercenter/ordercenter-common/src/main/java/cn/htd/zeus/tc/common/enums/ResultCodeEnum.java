@@ -91,6 +91,7 @@ public enum ResultCodeEnum {
 	ORDERSETTLEMENT_PROMOTION_ID_NULL("10217", "秒杀活动编码为空"),
 	SHOPINFO_IS_NULL("10218", "查询店铺信息返回为空！"),
 	MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND("10219","商品购买数量超过促销中心每单限制数量或超过剩余库存数量"),
+	ORDER_BUYER_SELLER_SAME("10220","买家和卖家不能是同一个账号"),
 	
 	SHOPORDER_ANALSIS_PARAM_IS_NULL("10126","店铺经营状况查询参数为空！"),
 	SHOPORDER_ANALSIS_DATEPARAM_IS_NULL("10127","查询时间参数格式错误！"),

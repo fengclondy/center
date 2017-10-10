@@ -9,13 +9,13 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
@@ -157,25 +157,31 @@ public class TimelimitedPurchaseServiceImpl implements
 				for (String promotionId : promotionIdList) {
 					timelimitedJSONStr = marketRedisDB.getHash(
 							RedisConst.REDIS_TIMELIMITED, promotionId);
-					List<?> list = (List<?>) JSONObject.fromObject(
-							timelimitedJSONStr).get("promotionAccumulatyList");
+					timelimitedInfoDTO = JSON.parseObject(
+							timelimitedJSONStr, TimelimitedInfoDTO.class);
+					List list = timelimitedInfoDTO
+							.getPromotionAccumulatyList();
+
+//					List<?> list = (List<?>) JSONObject.fromObject(
+//							timelimitedJSONStr).get("promotionAccumulatyList");
 					if (list != null && list.size() > 0) {
 						for (int i = 0; i < list.size(); i++) {
-							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
-									.toBean(JSONObject.fromObject(list.get(i)),
-											TimelimitedInfoDTO.class);
+//							timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
+//									.toBean(JSONObject.fromObject(list.get(i)),
+//											TimelimitedInfoDTO.class);
+                            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
 							if (!nowDt
-									.before(timelimitedInfoDTO.getStartTime())) {
+									.before(timelimite.getStartTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,
 										"该商品限时活动未开始");
-							} else if (nowDt.after(timelimitedInfoDTO
+							} else if (nowDt.after(timelimite
 									.getEndTime())) {
 								throw new MarketCenterBusinessException(
 										MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,
 										"该商品限时活动已结束");
 							}
-							resultList.add(timelimitedInfoDTO);
+							resultList.add(timelimite);
 						}
 					}
 				}
@@ -231,29 +237,35 @@ public class TimelimitedPurchaseServiceImpl implements
 			for (String promotionId : promotionIdList) {
 				timelimitedJSONStr = marketRedisDB.getHash(
 						RedisConst.REDIS_TIMELIMITED, promotionId);
-				List<?> list = (List<?>) JSONObject.fromObject(
-						timelimitedJSONStr).get("promotionAccumulatyList");
+//				List<?> list = (List<?>) JSONObject.fromObject(
+//						timelimitedJSONStr).get("promotionAccumulatyList");
+				timelimitedInfoDTO = JSON.parseObject(
+						timelimitedJSONStr, TimelimitedInfoDTO.class);
+				List list = timelimitedInfoDTO
+						.getPromotionAccumulatyList();
 				if (list != null && list.size() > 0) {
 					for (int i = 0; i < list.size(); i++) {
-						timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
-								.toBean(JSONObject.fromObject(list.get(i)),
-										TimelimitedInfoDTO.class);
+//						timelimitedInfoDTO = (TimelimitedInfoDTO) JSONObject
+//								.toBean(JSONObject.fromObject(list.get(i)),
+//										TimelimitedInfoDTO.class);
+                        TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
+
 						if (dto.getPurchaseFlag() == 1
-								&& !nowDt.before(timelimitedInfoDTO
+								&& !nowDt.before(timelimite
 										.getEffectiveTime())
-								&& !nowDt.after(timelimitedInfoDTO
+								&& !nowDt.after(timelimite
 										.getInvalidTime())) {
 							/**
 							 * 今日特惠
 							 */
-							resultList.add(timelimitedInfoDTO);
+							resultList.add(timelimite);
 						} else if (dto.getPurchaseFlag() == 2
-								&& !nowDt.before(timelimitedInfoDTO
+								&& !nowDt.before(timelimite
 										.getStartTime())) {
 							/**
 							 * 开售预告
 							 */
-							resultList.add(timelimitedInfoDTO);
+							resultList.add(timelimite);
 						}
 					}
 				}

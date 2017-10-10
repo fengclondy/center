@@ -14,11 +14,13 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TradeInfoDTO;
 import cn.htd.marketcenter.service.BuyerInterestChangeService;
 import cn.htd.marketcenter.service.BuyerInterestValidService;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
+import cn.htd.marketcenter.service.TimelimitedPurchaseService;
 import cn.htd.zeus.tc.biz.rao.MarketCenterRAO;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
@@ -35,8 +37,11 @@ public class MarketCenterRAOImpl implements MarketCenterRAO {
 	@Autowired
 	private BuyerInterestChangeService buyerInterestChangeService;
 
-	@Autowired(required = false)
+	@Autowired
 	private TimelimitedInfoService timelimitedInfoService;
+	
+	@Autowired
+	private TimelimitedPurchaseService timelimitedPurchaseService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MarketCenterRAOImpl.class);
 
@@ -332,6 +337,46 @@ public class MarketCenterRAOImpl implements MarketCenterRAO {
 					messageId, w.toString());
 			otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
+		}
+		return otherCenterResDTO;
+	}
+	
+	/**
+	 * 限时购	  －  获取对应的限时购信息
+	 * @param skuCode
+	 * @return
+	 */
+	@Override
+	public OtherCenterResDTO<List<TimelimitedInfoDTO>> getTimelimitedInfo(
+			String skuCode, String messageId) {
+		OtherCenterResDTO<List<TimelimitedInfoDTO>> otherCenterResDTO = new OtherCenterResDTO<List<TimelimitedInfoDTO>>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info(
+					"调用促销中心(getTimelimitedInfo获取对应的限时购信息)--组装查询参数开始:MessageId:{},skuCode:{}",
+					messageId, skuCode);
+			ExecuteResult<List<TimelimitedInfoDTO>> timelimitedInfoDTORes = timelimitedPurchaseService
+					.getTimelimitedInfo(skuCode);
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info(
+					"MessageId:{}调用促销中心(getTimelimitedInfo获取对应的限时购信息)--返回结果:{}",
+					messageId, JSONObject.toJSONString(timelimitedInfoDTORes)
+							+ " 耗时:" + (endTime - startTime));
+			String resCode = timelimitedInfoDTORes.getCode();
+			if (ResultCodeEnum.SUCCESS.getCode().equals(resCode)) {
+				otherCenterResDTO.setOtherCenterResult(timelimitedInfoDTORes.getResult());
+				otherCenterResDTO.setOtherCenterResponseCode(resCode);
+			} else {
+				String errorMsg = "没有成功获取到skuCode:"+skuCode+"对应的限时购信息";
+				if (null != timelimitedInfoDTORes && null != timelimitedInfoDTORes.getErrorMessages()) {
+					List<String> errorMessages = timelimitedInfoDTORes.getErrorMessages();
+					errorMsg = JSONObject.toJSONString(errorMessages);
+				}
+				otherCenterResDTO.setOtherCenterResponseMsg(errorMsg);
+				otherCenterResDTO.setOtherCenterResponseCode(resCode);
+			}
+		} catch (Exception e) {
+
 		}
 		return otherCenterResDTO;
 	}

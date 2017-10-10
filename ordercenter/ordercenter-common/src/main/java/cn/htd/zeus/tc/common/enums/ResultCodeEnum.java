@@ -67,6 +67,7 @@ public enum ResultCodeEnum {
 	VALIDATE_HAS_BARGAIN("10066","打开收银台后含有议价的订单行"),
 	VALIDATE_HAS_CANCEL("10067","打开收银台后含有取消的订单行"),
 	VALIDATE_COMPARE_ORDER_PAY_AMT("10068","打开收银台后订单支付和中台支付金额不一致"),
+	MARKETCENTER_LIMITED_TIME_PURCHASE_IS_NULL("10070","促销中心获取限时购商品信息为空"),
 	// 订单结算功能报错信息  102XX开头 haozy使用
 	ORDERSETTLEMENT_CHECK_SUCCESS("10200","订单结算信息查询成功"),
 	ORDERSETTLEMENT_PRODUCT_IS_NULL("10201", "商品信息为空"),
@@ -89,6 +90,7 @@ public enum ResultCodeEnum {
 	ORDERSETTLEMENT_JD_STOCK_CHECK_FAIL("10216", "京东商品库存数量不足"),
 	ORDERSETTLEMENT_PROMOTION_ID_NULL("10217", "秒杀活动编码为空"),
 	SHOPINFO_IS_NULL("10218", "查询店铺信息返回为空！"),
+	MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND("10219","商品购买数量超过促销中心每单限制数量或超过剩余库存数量"),
 	
 	SHOPORDER_ANALSIS_PARAM_IS_NULL("10126","店铺经营状况查询参数为空！"),
 	SHOPORDER_ANALSIS_DATEPARAM_IS_NULL("10127","查询时间参数格式错误！"),

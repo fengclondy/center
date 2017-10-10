@@ -184,12 +184,12 @@ public class TimelimitedPurchaseServiceImpl implements
 					if (list != null && list.size() > 0) {
 						for (int i = 0; i < list.size(); i++) {
                             TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
-                            if (nowDt.after(timelimite.getEndTime()) && nowDt.before(timelimite.getStartTime())) {
+                            if (!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
 								resultList.add(timelimite);
 								result.setCode("00000");
 								result.setResult(resultList);
 								return result;
-							}else if(nowDt.after(timelimite.getStartTime())){
+							}else if(nowDt.before(timelimite.getStartTime())){
 								resultList.add(timelimite);
 								result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN);
 								result.setResult(resultList);

@@ -102,10 +102,45 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	private int purchaseFlag;
 	/**
 	 * 限时购排序标识  1:销售量  2:上架时间  3:价格升序  4:价格倒序
-	 * @return
 	 */
 	private int purchaseSort;
+	/**
+	 * 优惠力度
+	 */
+	private double preferentialStrength;
+	/**
+	 * 销量
+	 */
+	private int salesVolume;
+	/**
+	 * 销售额（销量*销售价）
+	 */
+	private double salesVolumePrice;
 	
+	public double getPreferentialStrength() {
+		return preferentialStrength;
+	}
+
+	public void setPreferentialStrength(double preferentialStrength) {
+		this.preferentialStrength = preferentialStrength;
+	}
+
+	public int getSalesVolume() {
+		return salesVolume;
+	}
+
+	public void setSalesVolume(int salesVolume) {
+		this.salesVolume = salesVolume;
+	}
+
+	public double getSalesVolumePrice() {
+		return salesVolumePrice;
+	}
+
+	public void setSalesVolumePrice(double salesVolumePrice) {
+		this.salesVolumePrice = salesVolumePrice;
+	}
+
 	public int getPurchaseSort() {
 		return purchaseSort;
 	}
@@ -266,6 +301,9 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 		this.timelimitedThresholdMin = timelimitedInfo.getTimelimitedThresholdMin();
 		this.startTime = timelimitedInfo.getStartTime();
 		this.endTime = timelimitedInfo.getEndTime();
+		this.preferentialStrength = timelimitedInfo.getPreferentialStrength();
+		this.salesVolume = timelimitedInfo.getSalesVolume();
+		this.salesVolumePrice = timelimitedInfo.getSalesVolumePrice();
 	}
 
 	public HashMap<String, String> getItemStockInfo() {

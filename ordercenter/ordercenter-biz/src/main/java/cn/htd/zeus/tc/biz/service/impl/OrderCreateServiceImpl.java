@@ -73,6 +73,7 @@ import cn.htd.zeus.tc.common.goodplus.JDConfig;
 import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
+import cn.htd.zeus.tc.dto.JDAcountDTO;
 import cn.htd.zeus.tc.dto.OrderItemCouponDTO;
 import cn.htd.zeus.tc.dto.TimelimitedInfoDTO;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
@@ -313,7 +314,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 
 		// 汇通达在京东备用金
 		OtherCenterResDTO<String> accountAmount4JDRes = new OtherCenterResDTO<String>();
-		BigDecimal JDAcountAmt = new BigDecimal(0);
+		JDAcountDTO jdAcountDTO = new JDAcountDTO();
+		jdAcountDTO.setJDAcountAmt(new BigDecimal(0));
 		for (int i = 0; i < orderList.size(); i++) {
 			OrderCreateListInfoReqDTO orderTemp = orderList.get(i);
 			//买家和卖家不能是同一个账号
@@ -419,52 +421,16 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					if (StringUtilHelper.isNotNull(mallSkuOutDTO.getProductChannelCode())
 							&& mallSkuOutDTO.getProductChannelCode()
 									.startsWith(GoodCenterEnum.EXTERNAL_CHANNELS.getCode())) {
-						// 是否有外接渠道商品 如果订单行里有一个有外接渠道商品则有
-						orderTemp.setHasProductplusFlag(
-								Integer.valueOf(OrderStatusEnum.HAS_PRODUCTPLUS_FLAG.getCode()));
-						orderItemTemp.setGoodsFreight(mallSkuOutDTO.getFreightAmount() == null
-								? new BigDecimal(0) : mallSkuOutDTO.getFreightAmount());
-						BatchGetStockSkuNumsReqDTO skuNumsTemp = new BatchGetStockSkuNumsReqDTO();
-						skuNumsTemp.setNum(orderItemTemp.getGoodsCount());
-						skuNumsTemp.setSkuId(String.valueOf(mallSkuOutDTO.getOuterSkuId()));
-						skuNums.add(skuNumsTemp);
-						orderItemTemp.setSalePrice(orderItemSkuPriceDTO.getSalePrice() == null
-								? new BigDecimal(0) : orderItemSkuPriceDTO.getSalePrice());
-
-						JDAcountAmt = JDAcountAmt.add(orderItemTemp.getGoodsPrice()
-								.multiply(new BigDecimal(orderItemTemp.getGoodsCount())));
-
-						// 汇通达在京东备用金
-						accountAmount4JDRes = goodsPlusRAO
-								.queryAccountAmount4JD(orderCreateInfoReqDTO.getMessageId());
-						if (!accountAmount4JDRes.getOtherCenterResponseCode()
-								.equals(ResultCodeEnum.SUCCESS.getCode())) {
-							orderCreateInfoDMO.setResultCode(
-									accountAmount4JDRes.getOtherCenterResponseCode());
-							orderCreateInfoDMO
-									.setResultMsg(accountAmount4JDRes.getOtherCenterResponseMsg());
+						validateExternalChannels(orderTemp, orderItemTemp,
+								mallSkuOutDTO, skuNums, orderItemSkuPriceDTO,
+								accountAmount4JDRes, jdAcountDTO,
+								orderCreateInfoReqDTO, skuList,
+								orderCreateInfoDMO);
+						if(!ResultCodeEnum.SUCCESS.getCode()
+								.equals(orderCreateInfoDMO.getResultCode())){
 							return orderCreateInfoDMO;
-						} else {
-							BigDecimal bd = new BigDecimal(
-									accountAmount4JDRes.getOtherCenterResult());
-							if (bd.compareTo(JDAcountAmt) < 0) {
-								orderCreateInfoDMO.setResultCode(
-										ResultCodeEnum.ORDERSETTLEMENT_DEAL_JDAMOUNT_BEYOND
-												.getCode());
-								orderCreateInfoDMO.setResultMsg(
-										ResultCodeEnum.ORDERSETTLEMENT_DEAL_JDAMOUNT_BEYOND
-												.getMsg());
-								return orderCreateInfoDMO;
-							}
 						}
-
-						// 创建京东订单 --2
-						JDCreateOrderSkuReqDTO sku = new JDCreateOrderSkuReqDTO();
-						sku.setSkuId(mallSkuOutDTO.getOuterSkuId());
-						sku.setNum(Integer.valueOf(orderItemTemp.getGoodsCount().toString()));
-						sku.setbNeedAnnex(true);
-						sku.setbNeedGift(false);
-						skuList.add(sku);
+						
 					} else if ((StringUtilHelper.isNotNull(mallSkuOutDTO.getProductChannelCode())
 							&& mallSkuOutDTO.getProductChannelCode()
 									.equals(GoodCenterEnum.EXTERNAL_SUPPLIER.getCode()))) {
@@ -557,40 +523,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 
 			// 京东商品校验
 			if (null != orderTemp.getHasProductplusFlag()) {
-				batchGetStockReqDTO.setSkuNums(skuNums);
-				OtherCenterResDTO<String> selectChannelAddressDTO = memberCenterRAO
-						.selectChannelAddressDTO(orderCreateInfoReqDTO.getMessageId(),
-								orderTemp.getSellerCode(), Constant.PRODUCT_CHANNEL_CODE_OUTLINE);
-				if (!selectChannelAddressDTO.getOtherCenterResponseCode()
-						.equals(ResultCodeEnum.SUCCESS.getCode())) {
-					orderCreateInfoDMO
-							.setResultCode(selectChannelAddressDTO.getOtherCenterResponseCode());
-					orderCreateInfoDMO
-							.setResultMsg(selectChannelAddressDTO.getOtherCenterResponseMsg());
-					return orderCreateInfoDMO;
-				}
-				batchGetStockReqDTO.setArea(selectChannelAddressDTO.getOtherCenterResult());
-				orderCreateInfoDMO = validateJDGoodsStock(batchGetStockReqDTO, orderCreateInfoDMO,
-						orderCreateInfoReqDTO.getMessageId());
-				if (!orderCreateInfoDMO.getResultCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
-					return orderCreateInfoDMO;
-				}
-
-				BigDecimal accountAmount4JD = new BigDecimal(
-						accountAmount4JDRes.getOtherCenterResult());
-				if (accountAmount4JD.compareTo(JDAcountAmt) < ZERO) {
-					orderCreateInfoDMO
-							.setResultCode(ResultCodeEnum.JD_RESERVE_FUND_NOT_ENOUGH.getCode());
-					orderCreateInfoDMO
-							.setResultMsg(ResultCodeEnum.JD_RESERVE_FUND_NOT_ENOUGH.getMsg());
-					return orderCreateInfoDMO;
-				}
-				// 创建京东订单 --3
-				OrderCreateInfoDMO jdCreateRes = jdCreateOrderService.createJDOrder(
-						orderCreateInfoReqDTO.getMessageId(), jdCreateOrderReqDTO, orderTemp);
-				if (!ResultCodeEnum.SUCCESS.getCode().equals(jdCreateRes.getResultCode())) {
-					orderCreateInfoDMO.setResultCode(jdCreateRes.getResultCode());
-					orderCreateInfoDMO.setResultMsg(jdCreateRes.getResultMsg());
+				createJDOrder(batchGetStockReqDTO,skuNums,orderCreateInfoReqDTO,orderTemp,accountAmount4JDRes,
+						jdAcountDTO,jdCreateOrderReqDTO,orderCreateInfoDMO);
+				if(!ResultCodeEnum.SUCCESS.getCode()
+						.equals(orderCreateInfoDMO.getResultCode())){
 					return orderCreateInfoDMO;
 				}
 			}
@@ -620,6 +556,142 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		return orderCreateInfoDMO;
 	}
 
+	/**
+	 * 校验京东订单数据，组装京东订单参数
+	 * @param orderTemp
+	 * @param orderItemTemp
+	 * @param mallSkuOutDTO
+	 * @param skuNums
+	 * @param orderItemSkuPriceDTO
+	 * @param accountAmount4JDRes
+	 * @param jdAcountDTO
+	 * @param orderCreateInfoReqDTO
+	 * @param skuList
+	 * @param orderCreateInfoDMO
+	 * @return
+	 */
+	public OrderCreateInfoDMO validateExternalChannels(OrderCreateListInfoReqDTO orderTemp,OrderCreateItemListInfoReqDTO orderItemTemp,
+			MallSkuOutDTO mallSkuOutDTO,List<BatchGetStockSkuNumsReqDTO> skuNums,OrderItemSkuPriceDTO orderItemSkuPriceDTO,
+			OtherCenterResDTO<String> accountAmount4JDRes,JDAcountDTO jdAcountDTO,OrderCreateInfoReqDTO orderCreateInfoReqDTO,
+			List<JDCreateOrderSkuReqDTO> skuList,OrderCreateInfoDMO orderCreateInfoDMO){
+
+		// 是否有外接渠道商品 如果订单行里有一个有外接渠道商品则有
+		orderTemp.setHasProductplusFlag(
+				Integer.valueOf(OrderStatusEnum.HAS_PRODUCTPLUS_FLAG.getCode()));
+		orderItemTemp.setGoodsFreight(mallSkuOutDTO.getFreightAmount() == null
+				? new BigDecimal(0) : mallSkuOutDTO.getFreightAmount());
+		BatchGetStockSkuNumsReqDTO skuNumsTemp = new BatchGetStockSkuNumsReqDTO();
+		skuNumsTemp.setNum(orderItemTemp.getGoodsCount());
+		skuNumsTemp.setSkuId(String.valueOf(mallSkuOutDTO.getOuterSkuId()));
+		skuNums.add(skuNumsTemp);
+		orderItemTemp.setSalePrice(orderItemSkuPriceDTO.getSalePrice() == null
+				? new BigDecimal(0) : orderItemSkuPriceDTO.getSalePrice());
+
+		jdAcountDTO.setJDAcountAmt(jdAcountDTO.getJDAcountAmt().add(orderItemTemp.getGoodsPrice()
+				.multiply(new BigDecimal(orderItemTemp.getGoodsCount()))));
+
+		// 汇通达在京东备用金
+		accountAmount4JDRes = goodsPlusRAO
+				.queryAccountAmount4JD(orderCreateInfoReqDTO.getMessageId());
+		if (!accountAmount4JDRes.getOtherCenterResponseCode()
+				.equals(ResultCodeEnum.SUCCESS.getCode())) {
+			orderCreateInfoDMO.setResultCode(
+					accountAmount4JDRes.getOtherCenterResponseCode());
+			orderCreateInfoDMO
+					.setResultMsg(accountAmount4JDRes.getOtherCenterResponseMsg());
+			return orderCreateInfoDMO;
+		} else {
+			BigDecimal bd = new BigDecimal(
+					accountAmount4JDRes.getOtherCenterResult());
+			if (bd.compareTo(jdAcountDTO.getJDAcountAmt()) < 0) {
+				orderCreateInfoDMO.setResultCode(
+						ResultCodeEnum.ORDERSETTLEMENT_DEAL_JDAMOUNT_BEYOND
+								.getCode());
+				orderCreateInfoDMO.setResultMsg(
+						ResultCodeEnum.ORDERSETTLEMENT_DEAL_JDAMOUNT_BEYOND
+								.getMsg());
+				return orderCreateInfoDMO;
+			}
+		}
+
+		// 创建京东订单 --2
+		JDCreateOrderSkuReqDTO sku = new JDCreateOrderSkuReqDTO();
+		sku.setSkuId(mallSkuOutDTO.getOuterSkuId());
+		sku.setNum(Integer.valueOf(orderItemTemp.getGoodsCount().toString()));
+		sku.setbNeedAnnex(true);
+		sku.setbNeedGift(false);
+		skuList.add(sku);
+		orderCreateInfoDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+		return orderCreateInfoDMO;
+	}
+	
+	/**
+	 * 创建京东订单
+	 * @param batchGetStockReqDTO
+	 * @param skuNums
+	 * @param orderCreateInfoReqDTO
+	 * @param orderTemp
+	 * @param accountAmount4JDRes
+	 * @param jdAcountDTO
+	 * @param jdCreateOrderReqDTO
+	 * @param orderCreateInfoDMO
+	 * @return
+	 */
+	public OrderCreateInfoDMO createJDOrder(
+			BatchGetStockReqDTO batchGetStockReqDTO,
+			List<BatchGetStockSkuNumsReqDTO> skuNums,
+			OrderCreateInfoReqDTO orderCreateInfoReqDTO,
+			OrderCreateListInfoReqDTO orderTemp,
+			OtherCenterResDTO<String> accountAmount4JDRes,
+			JDAcountDTO jdAcountDTO, JDCreateOrderReqDTO jdCreateOrderReqDTO,
+			OrderCreateInfoDMO orderCreateInfoDMO) {
+		batchGetStockReqDTO.setSkuNums(skuNums);
+		OtherCenterResDTO<String> selectChannelAddressDTO = memberCenterRAO
+				.selectChannelAddressDTO(orderCreateInfoReqDTO.getMessageId(),
+						orderTemp.getSellerCode(),
+						Constant.PRODUCT_CHANNEL_CODE_OUTLINE);
+		if (!selectChannelAddressDTO.getOtherCenterResponseCode().equals(
+				ResultCodeEnum.SUCCESS.getCode())) {
+			orderCreateInfoDMO.setResultCode(selectChannelAddressDTO
+					.getOtherCenterResponseCode());
+			orderCreateInfoDMO.setResultMsg(selectChannelAddressDTO
+					.getOtherCenterResponseMsg());
+			return orderCreateInfoDMO;
+		}
+		batchGetStockReqDTO.setArea(selectChannelAddressDTO
+				.getOtherCenterResult());
+		orderCreateInfoDMO = validateJDGoodsStock(batchGetStockReqDTO,
+				orderCreateInfoDMO, orderCreateInfoReqDTO.getMessageId());
+		if (!orderCreateInfoDMO.getResultCode().equals(
+				ResultCodeEnum.SUCCESS.getCode())) {
+			return orderCreateInfoDMO;
+		}
+
+		BigDecimal accountAmount4JD = new BigDecimal(
+				accountAmount4JDRes.getOtherCenterResult());
+		if (accountAmount4JD.compareTo(jdAcountDTO.getJDAcountAmt()) < ZERO) {
+			orderCreateInfoDMO
+					.setResultCode(ResultCodeEnum.JD_RESERVE_FUND_NOT_ENOUGH
+							.getCode());
+			orderCreateInfoDMO
+					.setResultMsg(ResultCodeEnum.JD_RESERVE_FUND_NOT_ENOUGH
+							.getMsg());
+			return orderCreateInfoDMO;
+		}
+		// 创建京东订单 --3
+		OrderCreateInfoDMO jdCreateRes = jdCreateOrderService.createJDOrder(
+				orderCreateInfoReqDTO.getMessageId(), jdCreateOrderReqDTO,
+				orderTemp);
+		if (!ResultCodeEnum.SUCCESS.getCode().equals(
+				jdCreateRes.getResultCode())) {
+			orderCreateInfoDMO.setResultCode(jdCreateRes.getResultCode());
+			orderCreateInfoDMO.setResultMsg(jdCreateRes.getResultMsg());
+			return orderCreateInfoDMO;
+		}
+		orderCreateInfoDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+		return orderCreateInfoDMO;
+	}
+	
 	/*
 	 * 组装订单行数据
 	 */

@@ -12,79 +12,99 @@ public class TimelimitPurchaseMallInfoDTO extends TimelimitedInfoDTO implements
 	/**
 	 * 上架时间
 	 */
-	private Date startTime;
+	private Date startTimeSort;
 	/**
 	 * 销售量
 	 */
-	private int salesVolume;
+	private int salesVolumeSort;
 	/**
 	 * 优惠力度
 	 */
-	private double preferentialStrength;
+	private double preferentialStrengthSort;
 	/**
 	 * 销售额（销量*销售价）
 	 */
-	private double salesVolumePrice;
+	private double salesVolumePriceSort;
 	/**
 	 * 价格
 	 */
-	private BigDecimal skuTimelimitedPrice;
+	private BigDecimal skuTimelimitedPriceSort;
 
-	public BigDecimal getSkuTimelimitedPrice() {
-		return skuTimelimitedPrice;
+	public Date getStartTimeSort() {
+		return startTimeSort;
 	}
 
-	public void setSkuTimelimitedPrice(BigDecimal skuTimelimitedPrice) {
-		this.skuTimelimitedPrice = skuTimelimitedPrice;
+
+
+	public void setStartTimeSort(Date startTimeSort) {
+		this.startTimeSort = startTimeSort;
 	}
 
-	public Date getStartTime() {
-		return startTime;
+
+
+	public int getSalesVolumeSort() {
+		return salesVolumeSort;
 	}
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+
+
+	public void setSalesVolumeSort(int salesVolumeSort) {
+		this.salesVolumeSort = salesVolumeSort;
 	}
 
-	public int getSalesVolume() {
-		return salesVolume;
+
+
+	public double getPreferentialStrengthSort() {
+		return preferentialStrengthSort;
 	}
 
-	public void setSalesVolume(int salesVolume) {
-		this.salesVolume = salesVolume;
+
+
+	public void setPreferentialStrengthSort(double preferentialStrengthSort) {
+		this.preferentialStrengthSort = preferentialStrengthSort;
 	}
 
-	public double getPreferentialStrength() {
-		return preferentialStrength;
+
+
+	public double getSalesVolumePriceSort() {
+		return salesVolumePriceSort;
 	}
 
-	public void setPreferentialStrength(double preferentialStrength) {
-		this.preferentialStrength = preferentialStrength;
+
+
+	public void setSalesVolumePriceSort(double salesVolumePriceSort) {
+		this.salesVolumePriceSort = salesVolumePriceSort;
 	}
 
-	public double getSalesVolumePrice() {
-		return salesVolumePrice;
+
+
+	public BigDecimal getSkuTimelimitedPriceSort() {
+		return skuTimelimitedPriceSort;
 	}
 
-	public void setSalesVolumePrice(double salesVolumePrice) {
-		this.salesVolumePrice = salesVolumePrice;
+
+
+	public void setSkuTimelimitedPriceSort(BigDecimal skuTimelimitedPriceSort) {
+		this.skuTimelimitedPriceSort = skuTimelimitedPriceSort;
 	}
+
+
 
 	@Override
 	public int compareTo(TimelimitPurchaseMallInfoDTO o) {
-		int diffSalesVolume = o.getSalesVolume() - this.salesVolume;
-		int compareResult1 = Double.compare(o.getPreferentialStrength(),this.preferentialStrength);
-		int compareResult2 = Double.compare(o.getSalesVolumePrice(),this.salesVolumePrice);
-		int compareResult3 = Long.compare(o.getStartTime().getTime(),this.startTime.getTime());
+		int diffSalesVolume = o.getSalesVolume() - this.salesVolumeSort;
+		int compareResult1 = Double.compare(o.getPreferentialStrength(),this.preferentialStrengthSort);
+		int compareResult2 = Double.compare(o.getSalesVolumePrice(),this.salesVolumePriceSort);
+		int compareResult3 = Long.compare(o.getStartTime().getTime(),this.startTimeSort.getTime());
 		if(o.getPurchaseSort() != 0){
 			if(o.getPurchaseSort() == 1){
 				return diffSalesVolume;
 			}else if(o.getPurchaseSort() == 2){
 				return compareResult3;
 			}else if(o.getPurchaseSort() == 3){
-				return o.getSkuTimelimitedPrice().compareTo(this.skuTimelimitedPrice);
+				return o.getSkuTimelimitedPrice().compareTo(this.skuTimelimitedPriceSort);
 			}else if(o.getPurchaseSort() == 4){
-				return this.skuTimelimitedPrice.compareTo(o.getSkuTimelimitedPrice());
+				return this.skuTimelimitedPriceSort.compareTo(o.getSkuTimelimitedPrice());
 			}
 		}
 		if (compareResult1 != 0) {

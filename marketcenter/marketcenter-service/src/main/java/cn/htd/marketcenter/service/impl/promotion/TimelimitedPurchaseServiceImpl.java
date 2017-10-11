@@ -1,7 +1,9 @@
 package cn.htd.marketcenter.service.impl.promotion;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +15,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -211,18 +215,23 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 				for (String promotionId : promotionIdList) {
 					timelimitedJSONStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
 					timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr, TimelimitedInfoDTO.class);
+					String status = timelimitedInfoDTO.getStatus();
 					List list = timelimitedInfoDTO.getPromotionAccumulatyList();
-					if (list != null && list.size() > 0) {
+					if (null != list && !list.isEmpty()) {
 						for (int i = 0; i < list.size(); i++) {
 							TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i),
 									TimelimitedInfoDTO.class);
 							if (timelimite.getSkuCode().equals(skuCode)) {
-								if (!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
+								if (status.equals(dictionary.getValueByCode(
+										DictionaryConst.TYPE_PROMOTION_STATUS,
+										DictionaryConst.OPT_PROMOTION_STATUS_START))) {
 									resultList.add(timelimite);
 									result.setCode("00000");
 									result.setResult(resultList);
 									return result;
-								} else if (nowDt.before(timelimite.getStartTime())) {
+								} else if (status.equals(dictionary.getValueByCode(
+										DictionaryConst.TYPE_PROMOTION_STATUS,
+										DictionaryConst.OPT_PROMOTION_STATUS_NO_START))) {
 									resultList.add(timelimite);
 									result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN);
 									result.setResult(resultList);
@@ -256,15 +265,12 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>> getTimelimitedInfo(
+	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(
 			TimelimitedInfoDTO dto) {
-		ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>> result = new ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>>();
-		Map<String, List<TimelimitPurchaseMallInfoDTO>> timelimitedInfoMap = new HashMap<String, List<TimelimitPurchaseMallInfoDTO>>();
-		List<TimelimitPurchaseMallInfoDTO> resultValidList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
-		List<TimelimitPurchaseMallInfoDTO> resultInvalidList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
+		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = new ExecuteResult<List<TimelimitPurchaseMallInfoDTO>>();
+		List<TimelimitPurchaseMallInfoDTO> resultList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
 		List<String> promotionIdList = new ArrayList<String>();
 		TimelimitedInfoDTO timelimitedInfoDTO = null;
-		Date nowDt = new Date();
 		String timelimitedJSONStr = "";
 		try {
 			Map<String, String> resultMap = getPromotionlistRedis(null);
@@ -274,9 +280,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			if (resultMap.get("SUCCESS") != null) {
 				String promotionIdStr = resultMap.get("SUCCESS");
 				promotionIdList = JSON.parseObject(promotionIdStr, List.class);
-			} else if (resultMap.get("ERROR1").equals("ERROR1")) {
-				throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_DOWN_SHELF,
-						"该商品限时活动已下架");
 			} else if (resultMap.get("ERROR2") != null) {
 				result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
 				result.addErrorMessage(resultMap.get("ERROR2"));
@@ -285,40 +288,46 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			for (String promotionId : promotionIdList) {
 				timelimitedJSONStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
 				timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr, TimelimitedInfoDTO.class);
+				String status = timelimitedInfoDTO.getStatus();
 				List list = timelimitedInfoDTO.getPromotionAccumulatyList();
-				if (list != null && list.size() > 0) {
-					for (int i = 0; i < list.size(); i++) {
-                        TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
- 
-						if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimite.getEffectiveTime())
-								&& !nowDt.after(timelimite.getInvalidTime())) {
-							/**
-							 * 今日特惠
-							 */
-							TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
-							timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimite);
-							resultValidList.add(timelimitPurchaseMallInfoDTO);
-						} else if (dto.getPurchaseFlag() == 2 && !nowDt.before(timelimite.getStartTime())) {
-							/**
-							 * 开售预告
-							 */
-							TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
-							timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimite);
-							resultInvalidList.add(timelimitPurchaseMallInfoDTO);
-						}
+				if (null != list && !list.isEmpty()) {
+					TimelimitedInfoDTO timelimitedConvert = timilimitedConvert(list);
+					if (dto.getPurchaseFlag() == 1 && status.equals(
+							dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+							DictionaryConst.OPT_PROMOTION_STATUS_START))) {
+						/**
+						 * 今日特惠
+						 */
+						TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
+						timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimitedConvert);
+						timelimitPurchaseMallInfoDTO.setStartTimeSort(timelimitedConvert.getStartTime());
+						timelimitPurchaseMallInfoDTO.setSalesVolume(timelimitedConvert.getSalesVolume());
+						timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimitedConvert.getSalesVolumePrice());
+						timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimitedConvert.getPreferentialStrength());
+						resultList.add(timelimitPurchaseMallInfoDTO);
+					} else if (dto.getPurchaseFlag() == 2 && status.equals(
+							dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+							DictionaryConst.OPT_PROMOTION_STATUS_NO_START))) {
+						/**
+						 * 开售预告
+						 */
+						TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
+						timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimitedConvert);
+						timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimitedConvert);
+						timelimitPurchaseMallInfoDTO.setStartTimeSort(timelimitedConvert.getStartTime());
+						timelimitPurchaseMallInfoDTO.setSalesVolume(timelimitedConvert.getSalesVolume());
+						timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimitedConvert.getSalesVolumePrice());
+						timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimitedConvert.getPreferentialStrength());
+						resultList.add(timelimitPurchaseMallInfoDTO);
 					}
 				}
 			}
-			if(!resultValidList.isEmpty()){
-				Collections.sort(resultValidList);
-				timelimitedInfoMap.put("validData", resultValidList);
-			}
-			if(!resultInvalidList.isEmpty()){
-				Collections.sort(resultInvalidList);
-				timelimitedInfoMap.put("inValidData", resultInvalidList);
+			if(!resultList.isEmpty()){
+				System.out.println(JSONObject.toJSONString(resultList));
+				Collections.sort(resultList);
 			}
 			result.setCode("00000");
-			result.setResult(timelimitedInfoMap);
+			result.setResult(resultList);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());
@@ -330,6 +339,26 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		}
 		return result;
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private TimelimitedInfoDTO timilimitedConvert(List list) {
+		List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
+		for (int i = 0; i < list.size(); i++) {
+            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
+            timelimitedInfoList.add(timelimite);
+		}
+		Collections.sort(timelimitedInfoList, new PriceComparator());
+		return timelimitedInfoList.get(0);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static class PriceComparator implements Comparator { 
+	    public int compare(Object object1, Object object2) {
+		    TimelimitedInfoDTO t1 = (TimelimitedInfoDTO) object1; 
+		    TimelimitedInfoDTO t2 = (TimelimitedInfoDTO) object2; 
+		    	return t1.getSkuTimelimitedPrice().compareTo(t2.getSkuTimelimitedPrice()); 
+		    } 
+	} 
 
 	private Map<String, String> getPromotionlistRedis(String skuCode) {
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -344,11 +373,9 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 				for (String pur : purChaseSet) {
 					String purchaseFirst = pur.substring(0, 1);
 					String purchaseSecond = pur.substring(1, 2);
-					if ("&".equals(purchaseSecond)
-							&& dictionary
-									.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-											DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT)
-									.equals(purchaseFirst)) {
+					if ("&".equals(purchaseSecond) 
+							&& dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+											DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(purchaseFirst)) {
 						if (StringUtils.isNotEmpty(skuCode)) {
 							if (pur.contains(skuCode)) {
 								purchaseIndexList.add(pur);

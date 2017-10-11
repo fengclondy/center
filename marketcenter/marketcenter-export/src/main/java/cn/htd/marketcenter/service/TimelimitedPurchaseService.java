@@ -56,6 +56,6 @@ public interface TimelimitedPurchaseService {
 	 * @param
 	 * @return
 	 */
-	public ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
+	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
 	
 }

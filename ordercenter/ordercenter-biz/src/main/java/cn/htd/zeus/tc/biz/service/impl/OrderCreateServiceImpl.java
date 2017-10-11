@@ -57,6 +57,7 @@ import cn.htd.zeus.tc.biz.rao.MemberCenterRAO;
 import cn.htd.zeus.tc.biz.rao.PriceCenterRAO;
 import cn.htd.zeus.tc.biz.rao.StoreCenterRAO;
 import cn.htd.zeus.tc.biz.service.JDCreateOrderService;
+import cn.htd.zeus.tc.biz.service.OrderCreate4BusinessHandleService;
 import cn.htd.zeus.tc.biz.service.OrderCreateService;
 import cn.htd.zeus.tc.biz.service.OrderFreightInfoService;
 import cn.htd.zeus.tc.biz.service.TradeOrderItemStatusHistoryService;
@@ -69,6 +70,7 @@ import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.enums.PayStatusEnum;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
+import cn.htd.zeus.tc.common.exception.OrderCenterBusinessException;
 import cn.htd.zeus.tc.common.goodplus.JDConfig;
 import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
@@ -155,6 +157,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 
 	@Autowired
 	private JDCreateOrderService jdCreateOrderService;
+	
+	@Autowired
+	private OrderCreate4BusinessHandleService orderCreate4BusinessHandleService;
 
 	DecimalFormat df1 = new DecimalFormat("0.0000");
 
@@ -186,6 +191,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		try {
 			List<OrderCreateListInfoReqDTO> orderList = orderCreateInfoReqDTO.getOrderList();
 			if (null != orderList && orderList.size() > 0) {
+				orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
 				// 调用 memberCallCenterService查询会员信息
 				String buyerCode = orderCreateInfoReqDTO.getBuyerCode();
 				OtherCenterResDTO<MemberBaseInfoDTO> memberBaseInfoResDTO = memberCenterRAO
@@ -228,6 +234,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				orderCreateInfoDMO = preInsertOrderAndOrderItem(buyerInfoDTO, orderCreateInfoReqDTO,
 						orderCreateInfoDMO);
 			}
+		} catch(OrderCenterBusinessException ocbe) {
+			orderCreateInfoDMO.setResultCode(ocbe.getCode());
+			orderCreateInfoDMO.setResultMsg(ocbe.getMessage());
 		} catch (Exception e) {
 			orderCreateInfoDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
 			orderCreateInfoDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
@@ -318,14 +327,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		jdAcountDTO.setJDAcountAmt(new BigDecimal(0));
 		for (int i = 0; i < orderList.size(); i++) {
 			OrderCreateListInfoReqDTO orderTemp = orderList.get(i);
-			//买家和卖家不能是同一个账号
-			if(orderTemp.getSellerCode().equals(orderCreateInfoReqDTO.getBuyerCode())){
-				orderCreateInfoDMO.setResultCode(
-						ResultCodeEnum.ORDER_BUYER_SELLER_SAME.getCode());
-				orderCreateInfoDMO.setResultMsg(
-						ResultCodeEnum.ORDER_BUYER_SELLER_SAME.getMsg());
-				return orderCreateInfoDMO;
-			}
+			
 			List<OrderCreateItemListInfoReqDTO> orderItemList = orderTemp.getOrderItemList();
 			BatchGetStockReqDTO batchGetStockReqDTO = new BatchGetStockReqDTO();
 			List<BatchGetStockSkuNumsReqDTO> skuNums = new ArrayList<>();

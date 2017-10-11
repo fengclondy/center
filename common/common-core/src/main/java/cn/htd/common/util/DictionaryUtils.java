@@ -38,6 +38,7 @@ public class DictionaryUtils {
 	//----- add by jiangkun for 性能优化 on 20171011 start -----
 	/**
 	 * 初始化字典静态变量
+     *
 	 * @throws Exception
 	 */
 	public void init() throws Exception {
@@ -46,9 +47,7 @@ public class DictionaryUtils {
 		String dictionaryValKey = "";
 		Map<String, String> dictValueMap = null;
 		Map<String, String> dictTypeMap = redisDB.getHashOperations(REDIS_DICTIONARY_TYPE);
-		if (DICTIONARY_VALUE_MAP == null) {
-			DICTIONARY_VALUE_MAP = new HashMap<String, Map<String, String>>();
-		}
+
 		if (dictTypeMap != null && !dictTypeMap.isEmpty() ) {
 			for (Map.Entry<String, String> entry : dictTypeMap.entrySet()) {
 				key = entry.getKey();
@@ -65,6 +64,7 @@ public class DictionaryUtils {
 
 	/**
 	 * 取得字典信息
+	 *
 	 * @param typeCode
 	 * @return
 	 */

@@ -68,9 +68,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
             datagrid = timelimitedRedisHandle
-                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.NO.getValue()), "", page);
+                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.NO.getValue()), "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -87,9 +88,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
             datagrid = timelimitedRedisHandle
-                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.YES.getValue()), "", page);
+                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.YES.getValue()), "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -133,12 +135,14 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         List<String> promotionIdList = null;
         TimelimitedInfoDTO timelimitedInfoDTO = null;
         int allCount = 0;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+
         try {
             if (StringUtils.isEmpty(skuCode)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true);
+            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true,promotionType);
             if (promotionIdList != null && !promotionIdList.isEmpty()) {
                 for (String promotionId : promotionIdList) {
                     try {

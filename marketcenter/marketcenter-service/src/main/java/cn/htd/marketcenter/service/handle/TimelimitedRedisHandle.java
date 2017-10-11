@@ -128,7 +128,7 @@ public class TimelimitedRedisHandle {
      * @param timelimitedInfo
      */
     public void addTimelimitedInfo2Redis(TimelimitedInfoDTO timelimitedInfo) {
-
+    	 
         Map<String, String> resultMap = new HashMap<String, String>();
         String promotionId = timelimitedInfo.getPromotionId();
         String timelimitedResultKey = RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId;
@@ -136,10 +136,6 @@ public class TimelimitedRedisHandle {
         PromotionBuyerRuleDTO buyerRuleDTO = timelimitedInfo.getBuyerRuleDTO();
         List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
         List<String> buyerGroupList = null;
-        String key = timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();
-        String promotionIdStr = "";
-        Jedis jedis = null;
-        Pipeline pipeline = null;
         long diffTime = 0L;
         int seconds = 0;
         //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
@@ -155,78 +151,91 @@ public class TimelimitedRedisHandle {
         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
                 String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_ACTOR_COUNT, "0");
-        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//        marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
-//        marketRedisDB.setHash(timelimitedResultKey, resultMap);
-//        saveTimelimitedIndex2Redis(timelimitedInfo);
-//        saveTimelimitedValidStatus2Redis(timelimitedInfo);
+        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
         diffTime = timelimitedInfo.getInvalidTime().getTime() - new Date().getTime();
         seconds = (int) (diffTime / 1000);
-        try {
-            jedis = marketRedisDB.getResource();
-            pipeline = jedis.pipelined();
-            if (buyerRuleDTO != null) {
-                buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
-                buyerGroupList = buyerRuleDTO.getTargetBuyerGroupList();
-                if (buyerGroupList != null && !buyerGroupList.isEmpty()) {
-                    for (String buyerGroupId : buyerGroupList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, buyerGroupId);
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, seconds);
-                    buyerRuleDTO.setTargetBuyerGroupList(null);
-                    buyerRuleDTO.setTargetBuyerGroup(null);
+        if (buyerRuleDTO != null) {
+            buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
+            buyerGroupList = buyerRuleDTO.getTargetBuyerGroupList();
+            if (buyerGroupList != null && !buyerGroupList.isEmpty()) {
+                for (String buyerGroupId : buyerGroupList) {
+                    marketRedisDB.addSet(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, buyerGroupId);
                 }
-                if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
-                    for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
-                                buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId, seconds);
-                    buyerRuleDTO.setBuyerDetailList(null);
+                marketRedisDB.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, seconds);
+                buyerRuleDTO.setTargetBuyerGroupList(null);
+                buyerRuleDTO.setTargetBuyerGroup(null);
+            }
+            if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
+                for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
+                    marketRedisDB.setHash(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
+                            buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
                 }
+                marketRedisDB.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId, seconds);
+                buyerRuleDTO.setBuyerDetailList(null);
             }
-            pipeline.hset(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
-            pipeline.hmset(timelimitedResultKey, resultMap);
-            if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
-                key = key + "&" + timelimitedInfo.getPromotionProviderSellerCode();
-            }
-            promotionIdStr = jedis.hget(RedisConst.REDIS_TIMELIMITED_INDEX, key);
+        }
+        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
+        marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
+        marketRedisDB.setHash(timelimitedResultKey, resultMap);
+        saveTimelimitedIndex2Redis(timelimitedInfo);
+        saveTimelimitedValidStatus2Redis(timelimitedInfo);
+    }
+    
+    /**
+     * 保存秒杀活动ID索引
+     *
+     * @param timelimitedInfo
+     */
+    private void saveTimelimitedIndex2Redis(TimelimitedInfoDTO timelimitedInfo) {
+        String promotionId = timelimitedInfo.getPromotionId();
+        //String key = timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();
+        String promotionIdStr = "";
+        String key = "";
+        List<String> keyList = new ArrayList<String>();
+        //add by lijun for 限时购 start
+        //限时购 - 活动类型
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        if(promotionType.equals(timelimitedInfo.getPromotionType())){
+        	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
+			if (accumulatyList.size() > 0) {
+				for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
+					String  sku_code = ((TimelimitedInfoDTO) accumulaty).getSkuCode();
+				    key = timelimitedInfo.getPromotionType() +"&"+ sku_code + "&" + timelimitedInfo.getIsVip();
+					keyList.add(key);
+				}
+			}
+        }else {
+        	 key = timelimitedInfo.getPromotionType() +"&"+ timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();
+        }
+       //add by lijun for 限时购 end
+        
+        if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
+            key = key + "&" + timelimitedInfo.getPromotionProviderSellerCode();
+        }
+       //add by lijun for 限时购 start
+        if(promotionType.equals(timelimitedInfo.getPromotionType())){
+        	for(String promotionkey :keyList){
+                promotionIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, promotionkey);
+                if (StringUtils.isEmpty(promotionIdStr)) {
+                    promotionIdStr = promotionId;
+                } else {
+                    promotionIdStr += "," + promotionId;
+                }
+                marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_INDEX, promotionkey, promotionIdStr);
+        	}
+        }else{
+        	//add by lijun for 限时购 end
+            promotionIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, key);
             if (StringUtils.isEmpty(promotionIdStr)) {
                 promotionIdStr = promotionId;
             } else {
                 promotionIdStr += "," + promotionId;
             }
-            pipeline.hset(RedisConst.REDIS_TIMELIMITED_INDEX, key, promotionIdStr);
-            pipeline.hset(RedisConst.REDIS_TIMELIMITED_VALID, promotionId, timelimitedInfo.getShowStatus());
-            pipeline.sync();
-        } finally {
-            marketRedisDB.releaseResource(jedis);
+            marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_INDEX, key, promotionIdStr);
         }
-        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
-    }
+        
 
-    //----- delete by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//    /**
-//     * 保存秒杀活动ID索引
-//     *
-//     * @param timelimitedInfo
-//     */
-//    private void saveTimelimitedIndex2Redis(TimelimitedInfoDTO timelimitedInfo) {
-//        String promotionId = timelimitedInfo.getPromotionId();
-//        String key = timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();
-//        String promotionIdStr = "";
-//        if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
-//            key = key + "&" + timelimitedInfo.getPromotionProviderSellerCode();
-//        }
-//        promotionIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, key);
-//        if (StringUtils.isEmpty(promotionIdStr)) {
-//            promotionIdStr = promotionId;
-//        } else {
-//            promotionIdStr += "," + promotionId;
-//        }
-//        marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_INDEX, key, promotionIdStr);
-//    }
-    //----- delete by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
+    }
 
     /**
      * 根据VIP标记、商品SkuCode列表取得秒杀活动信息列表
@@ -237,7 +246,7 @@ public class TimelimitedRedisHandle {
      * @param isContainSellerTimelimitedFlag
      */
     public List<String> getRedisTimelimitedIndex(String isVipFlag, List<String> skuCodeList, String sellerCode,
-            boolean isContainSellerTimelimitedFlag) {
+            boolean isContainSellerTimelimitedFlag,String promotionType) {
         List<String> promotionIdList = new ArrayList<String>();
         Map<String, String> indexMap = null;
         String key = "";
@@ -247,6 +256,8 @@ public class TimelimitedRedisHandle {
         String tmpIsVip = "";
         String tmpSkuCode = "";
         String tmpSellerCode = "";
+        //限时购 - 活动类型
+        String temp_promotion_type ="";
         indexMap = marketRedisDB.getHashOperations(RedisConst.REDIS_TIMELIMITED_INDEX);
         if (indexMap == null || indexMap.isEmpty()) {
             return null;
@@ -258,9 +269,13 @@ public class TimelimitedRedisHandle {
                 marketRedisDB.delHash(RedisConst.REDIS_TIMELIMITED_INDEX, key);
                 continue;
             }
+            
             keyArr = key.split("&");
-            tmpSkuCode = keyArr[0];
-            tmpIsVip = keyArr[1];
+            //edit
+            temp_promotion_type = keyArr[0];
+            tmpSkuCode = keyArr[1];
+            tmpIsVip = keyArr[2];	
+            //edit
             tmpSellerCode = "";
             if (skuCodeList != null && !skuCodeList.isEmpty() && !skuCodeList.contains(tmpSkuCode)) {
                 continue;
@@ -268,9 +283,12 @@ public class TimelimitedRedisHandle {
             if (!StringUtils.isEmpty(isVipFlag) && !tmpIsVip.equals(isVipFlag)) {
                 continue;
             }
+            if(!StringUtils.isEmpty(promotionType) && !temp_promotion_type.equals(promotionType)){
+            	 continue;
+            }
             if (!isContainSellerTimelimitedFlag) {
-                if (keyArr.length > 2) {
-                    tmpSellerCode = keyArr[2];
+                if (keyArr.length > 3) {
+                    tmpSellerCode = keyArr[3];
                 }
                 if (StringUtils.isEmpty(sellerCode)) {
                     if (!StringUtils.isEmpty(tmpSellerCode)) {
@@ -300,7 +318,7 @@ public class TimelimitedRedisHandle {
      * @return
      */
     public DataGrid<TimelimitedMallInfoDTO> getRedisTimelimitedInfoList(String isVipFlag, String sellerCode,
-            Pager<TimelimitedInfoDTO> page) {
+            Pager<TimelimitedInfoDTO> page,String promotionType) {
         DataGrid<TimelimitedMallInfoDTO> datagrid = new DataGrid<TimelimitedMallInfoDTO>();
         List<TimelimitedMallInfoDTO> mallDTOList = new ArrayList<TimelimitedMallInfoDTO>();
         List<TimelimitedMallInfoDTO> mallAllDTOList = new ArrayList<TimelimitedMallInfoDTO>();
@@ -316,7 +334,7 @@ public class TimelimitedRedisHandle {
             offset = page.getPageOffset();
             rows = page.getRows();
         }
-        promotionIdList = getRedisTimelimitedIndex(isVipFlag, null, "", false);
+        promotionIdList = getRedisTimelimitedIndex(isVipFlag, null, "", false,promotionType);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return datagrid;
         }
@@ -377,8 +395,8 @@ public class TimelimitedRedisHandle {
         List<String> promotionIdList = null;
         TimelimitedInfoDTO timelimitedInfoDTO = null;
         List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
-
-        promotionIdList = getRedisTimelimitedIndex("", skuCodeList, "", false);
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        promotionIdList = getRedisTimelimitedIndex("", skuCodeList, "", false,promotionType);
         if (promotionIdList == null || promotionIdList.isEmpty()) {
             return timelimitedInfoList;
         }

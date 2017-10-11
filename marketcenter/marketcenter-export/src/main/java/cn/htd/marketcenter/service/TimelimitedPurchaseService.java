@@ -58,4 +58,12 @@ public interface TimelimitedPurchaseService {
 	 */
 	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
 	
+	/**
+	 * 限时购 － 修改限时购活动信息
+	 * 
+	 * @param
+	 * @return
+	 */
+	public ExecuteResult<TimelimitedInfoDTO> updateTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo);
+
 }

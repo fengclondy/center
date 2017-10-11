@@ -397,7 +397,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 											.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 													DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
 											.equals(validStatus)) {
-								promotionIdList.add(promotionIdStr);
+								promotionIdList.add(promotionIdSplit[i]);
 							} else {
 								resultMap.put("ERROR1", "ERROR1");
 							}

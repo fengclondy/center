@@ -35,9 +35,6 @@ public class OrderSettleMentReqDTO implements Serializable {
 
 	// 秒杀活动编码
 	private String promotionId;
-	
-	//是否有限时购商品  0:没有，1：有
-	private int isHasLimitedTimePurchase;
 
 	/**
 	 * @return the memberId
@@ -135,13 +132,4 @@ public class OrderSettleMentReqDTO implements Serializable {
 	public void setPromotionId(String promotionId) {
 		this.promotionId = promotionId;
 	}
-
-	public int getIsHasLimitedTimePurchase() {
-		return isHasLimitedTimePurchase;
-	}
-
-	public void setIsHasLimitedTimePurchase(int isHasLimitedTimePurchase) {
-		this.isHasLimitedTimePurchase = isHasLimitedTimePurchase;
-	}
-
 }

@@ -182,6 +182,29 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		}
 		return result;
 	}
+	
+	/**
+	 * 限时购 － 根据promotionId获取限时购活动信息
+	 */
+	@Override
+	public ExecuteResult<PromotionInfoDTO> queryPromotionInfo(String promotionId) {
+		 ExecuteResult<PromotionInfoDTO> result = new ExecuteResult<PromotionInfoDTO>();
+		 PromotionInfoDTO promotionInfoDTO = null;
+			try {
+				promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
+				if (promotionInfoDTO == null) {
+					throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该限时购活动不存在!");
+				}
+				result.setResult(promotionInfoDTO);
+			} catch (MarketCenterBusinessException bcbe) {
+				result.setCode(bcbe.getCode());
+				result.addErrorMessage(bcbe.getMessage());
+			} catch (Exception e) {
+				result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+				result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+			}
+			return result;
+	}
 
 	/**
 	 * 限时购 － 获取对应的限时购信息(根据sku查询)
@@ -491,7 +514,12 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
             timelimitedInfo.setShowStatus(status);
             promotionInfoDTO = baseService.updatePromotionInfo(timelimitedInfo);
             timelimitedInfo.setPromoionInfo(promotionInfoDTO);
-            timelimitedInfoDAO.update(timelimitedInfo);
+         	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
+			if (accumulatyList.size() > 0) {
+				for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
+					timelimitedInfoDAO.update((TimelimitedInfoDTO) accumulaty);
+				}
+			}
             historyDTO.setPromotionId(timelimitedInfo.getPromotionId());
             historyDTO.setPromotionStatus(timelimitedInfo.getShowStatus());
             historyDTO.setPromotionStatusText("修改限时购活动信息");
@@ -515,4 +543,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
         }
         return result;
 	}
+
+
 }

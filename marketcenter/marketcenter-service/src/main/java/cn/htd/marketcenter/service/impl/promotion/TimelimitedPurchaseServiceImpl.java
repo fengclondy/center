@@ -323,7 +323,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 				}
 			}
 			if(!resultList.isEmpty()){
-				System.out.println(JSONObject.toJSONString(resultList));
+//				System.out.println(JSONObject.toJSONString(resultList));
 				Collections.sort(resultList);
 			}
 			result.setCode("00000");
@@ -388,15 +388,18 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 				if (!purchaseIndexList.isEmpty()) {
 					for (String purchaseIndex : purchaseIndexList) {
 						promotionIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, purchaseIndex);
-						validStatus = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_VALID, promotionIdStr);
-						if (!StringUtils.isEmpty(validStatus)
-								&& dictionary
-										.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-												DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
-										.equals(validStatus)) {
-							promotionIdList.add(promotionIdStr);
-						} else {
-							resultMap.put("ERROR1", "ERROR1");
+						String[] promotionIdSplit = promotionIdStr.split(",");
+						for (int i = 0; i < promotionIdSplit.length; i++) {
+							validStatus = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_VALID, promotionIdSplit[i]);
+							if (!StringUtils.isEmpty(validStatus)
+									&& dictionary
+											.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+													DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
+											.equals(validStatus)) {
+								promotionIdList.add(promotionIdStr);
+							} else {
+								resultMap.put("ERROR1", "ERROR1");
+							}
 						}
 					}
 				}
@@ -408,5 +411,49 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			resultMap.put("ERROR2", ExceptionUtils.getStackTraceAsString(e));
 		}
 		return resultMap;
+	}
+
+	@Override
+	public ExecuteResult<String> updateTimitedInfoSalesVolumeRedis(TimelimitedInfoDTO timelimitedInfoDTO) {
+		 ExecuteResult<String> result = new ExecuteResult<String>();
+		 List<TimelimitedInfoDTO> TimelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
+		 TimelimitedInfoDTO timelimitedInfo = null;
+		 String timelimitedJsonStr = "";
+		 String promotionId = timelimitedInfoDTO.getPromotionId();
+		 int salesVolume = timelimitedInfoDTO.getSalesVolume();
+		 String skuCode = timelimitedInfoDTO.getSkuCode();
+		 try {
+			 if(StringUtils.isNotEmpty(promotionId)){
+				 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "限时购活动id不能为空");
+			 }else if(salesVolume == 0){
+				 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "限时购活动销量不能为0");
+			 }else if(StringUtils.isNotEmpty(skuCode)){
+				 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "限时购sku编码不能为空");
+			 }
+			 timelimitedJsonStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
+		     timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoDTO.class);
+		     if (timelimitedInfo == null) {
+		    	 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST,
+		    			 "限时购活动ID:" + promotionId + " 该限时购活动不存在!");
+		     }
+		     List list = timelimitedInfo.getPromotionAccumulatyList();
+		     for (int i = 0; i < list.size(); i++) {
+		    	 TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
+		    	 if(timelimite.getSkuCode().equals(skuCode)){
+		    		 int salesVolumeResult = timelimite.getSalesVolume() + salesVolume;
+		    		 BigDecimal salesVolumePriceResult = timelimite.getSkuTimelimitedPrice().multiply(new BigDecimal(salesVolumeResult));
+		    		 timelimite.setSalesVolume(salesVolumeResult);
+		    		 timelimite.setSalesVolumePrice(salesVolumePriceResult.doubleValue());
+		    	 }
+		    	 TimelimitedInfoList.add(timelimite);
+			 }
+		     timelimitedInfo.setPromotionAccumulatyList(TimelimitedInfoList);
+		     timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
+		} catch (Exception e) {
+			result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		return result;
 	}
 }

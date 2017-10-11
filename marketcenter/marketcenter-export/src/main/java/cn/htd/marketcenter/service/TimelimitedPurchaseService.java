@@ -58,4 +58,6 @@ public interface TimelimitedPurchaseService {
 	 */
 	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
 	
+
+	public ExecuteResult<String> updateTimitedInfoSalesVolumeRedis(TimelimitedInfoDTO timelimitedInfoDTO);
 }

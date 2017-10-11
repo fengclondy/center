@@ -148,14 +148,6 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 		orderSku.setFreight(Constant.PRODUCT_INNER_FREIGHT);
 		if (null != limitedTimePurchaseInfo) {
 			orderSku.setPrice(limitedTimePurchaseInfo.getSkuTimelimitedPrice());
-			orderSku.setPromotionId(limitedTimePurchaseInfo.getPromotionId());
-			orderSku.setPromotionType(limitedTimePurchaseInfo
-					.getPromotionType());
-			orderSku.setIsLimitedTimePurchase(Integer
-					.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()));
-			orderSettleMentReqDTO.setIsHasLimitedTimePurchase(Integer.valueOf(
-					OrderStatusEnum.HAS_LIMITED_TIME_PURCHASE.getCode())
-					.intValue());
 		} else {
 			// 计算外部供应商价格
 			orderSku.setPrice(new ExternalSupplierCostCaculateUtil()
@@ -238,8 +230,7 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 				String skuCode = mallSku.getMallSkuStockOutDTO().getSkuCode();
 				OtherCenterResDTO<List<TimelimitedInfoDTO>> timeLimitedInfoRes = marketCenterRAO.getTimelimitedInfo(skuCode, messageId);
 				String timeLimitedInfoResCode = timeLimitedInfoRes.getOtherCenterResponseCode();
-				if(timeLimitedInfoResCode.equals(ResultCodeEnum.ERROR.getCode())
-						|| timeLimitedInfoResCode.equals(FacadeOtherResultCodeEnum.LIMITED_TIME_PURCHASE_DOWN_SHELF.getCode())){
+				if(timeLimitedInfoResCode.equals(ResultCodeEnum.ERROR.getCode())){
 					orderSettleMentResDTO.setResponseCode(timeLimitedInfoResCode);
 					orderSettleMentResDTO.setReponseMsg(timeLimitedInfoRes.getOtherCenterResponseMsg());
 					break;

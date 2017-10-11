@@ -23,6 +23,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DateUtils;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
@@ -455,5 +456,63 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return result;
+	}	
+	
+	@Override
+	public ExecuteResult<TimelimitedInfoDTO> updateTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) {
+        ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
+        PromotionInfoDTO promotionInfoDTO = null;
+        PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+        List<PromotionStatusHistoryDTO> historyList = null;
+        String promotionId = timelimitedInfo.getPromotionId();
+        String modifyTimeStr = "";
+        String paramModifyTimeStr = "";
+        String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
+        try {
+            if (StringUtils.isEmpty(promotionId)) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "修改限时购活动ID不能为空");
+            }
+            paramModifyTimeStr = DateUtils.format(timelimitedInfo.getModifyTime(), DateUtils.YMDHMS);
+            // 根据活动ID获取活动信息
+            promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
+            if (promotionInfoDTO == null) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "限时购活动不存在");
+            }
+            if (!(new Date()).before(promotionInfoDTO.getEffectiveTime()) || !status
+                    .equals(promotionInfoDTO.getShowStatus())) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
+                        "限时购活动:" + promotionId + " 只有在未启用状态时才能修改");
+            }
+            modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
+            if (!modifyTimeStr.equals(paramModifyTimeStr)) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_HAS_MODIFIED,
+                        "限时购活动:" + promotionId + " 已被修改请重新确认");
+            }
+            timelimitedInfo.setShowStatus(status);
+            promotionInfoDTO = baseService.updatePromotionInfo(timelimitedInfo);
+            timelimitedInfo.setPromoionInfo(promotionInfoDTO);
+            timelimitedInfoDAO.update(timelimitedInfo);
+            historyDTO.setPromotionId(timelimitedInfo.getPromotionId());
+            historyDTO.setPromotionStatus(timelimitedInfo.getShowStatus());
+            historyDTO.setPromotionStatusText("修改限时购活动信息");
+            historyDTO.setCreateId(timelimitedInfo.getCreateId());
+            historyDTO.setCreateName(timelimitedInfo.getCreateName());
+            promotionStatusHistoryDAO.add(historyDTO);
+            historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
+            int a = 1/0;
+            timelimitedInfo.setPromotionStatusHistoryList(historyList);
+            timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
+            timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
+            result.setResult(timelimitedInfo);
+        } catch (MarketCenterBusinessException bcbe) {
+            result.setCode(bcbe.getCode());
+            result.addErrorMessage(bcbe.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        } catch (Exception e) {
+            result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
 	}
 }

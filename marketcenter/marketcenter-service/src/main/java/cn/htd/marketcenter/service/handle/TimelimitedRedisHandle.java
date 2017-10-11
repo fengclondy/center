@@ -31,6 +31,8 @@ import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,13 +107,14 @@ public class TimelimitedRedisHandle {
             //add by lijun for 限时购 start
             String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
             if(promotionType.equals(timelimitedInfo.getPromotionType())){
-            	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
+            	List accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
     			if (accumulatyList.size() > 0) {
-    				for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
-    					String  sku_code = ((TimelimitedInfoDTO) accumulaty).getSkuCode();
-    		            indexKey = timelimitedInfo.getPromotionType() + "&" + sku_code + "&" + timelimitedInfo.getIsVip();
+    				for(int i=0;i<accumulatyList.size();i++){
+                		TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) accumulatyList.get(i),TimelimitedInfoDTO.class);
+                		String sku_code = timelimite.getSkuCode();
+                		indexKey = timelimitedInfo.getPromotionType() + "&" + sku_code + "&" + timelimitedInfo.getIsVip();
     					keyList.add(indexKey);
-    				}
+                	}
     			}
             }else {
 	            indexKey = timelimitedInfo.getPromotionType() + "&" + timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();

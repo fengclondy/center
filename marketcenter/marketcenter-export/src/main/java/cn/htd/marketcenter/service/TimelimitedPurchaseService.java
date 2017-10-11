@@ -5,6 +5,7 @@ import java.util.Map;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
+import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.common.Pager;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
@@ -35,12 +36,20 @@ public interface TimelimitedPurchaseService {
 			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedListDTO> page);
 
 	/**
-	 * 限时购 - 查询限时购活动详情
+	 * 限时购 - 根据促销活动id查询促销活动集合
 	 * 
 	 * @param promotionId
 	 * @return
 	 */
 	public ExecuteResult<List<TimelimitedInfoDTO>> queryTimelimitedInfo(String promotionId);
+	
+	/**
+	 * 限时购 - 根据促销活动id查询促销活动
+	 * 
+	 * @param promotionId
+	 * @return
+	 */
+	public ExecuteResult<PromotionInfoDTO> queryPromotionInfo(String promotionId);
 
 	/**
 	 * 限时购 － 获取对应的限时购信息(根据skuCode查询)

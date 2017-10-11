@@ -424,11 +424,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		 int salesVolume = timelimitedInfoDTO.getSalesVolume();
 		 String skuCode = timelimitedInfoDTO.getSkuCode();
 		 try {
-			 if(StringUtils.isNotEmpty(promotionId)){
+			 if(StringUtils.isEmpty(promotionId)){
 				 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "限时购活动id不能为空");
 			 }else if(salesVolume == 0){
 				 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "限时购活动销量不能为0");
-			 }else if(StringUtils.isNotEmpty(skuCode)){
+			 }else if(StringUtils.isEmpty(skuCode)){
 				 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "限时购sku编码不能为空");
 			 }
 			 timelimitedJsonStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
@@ -450,6 +450,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			 }
 		     timelimitedInfo.setPromotionAccumulatyList(TimelimitedInfoList);
 		     timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
+		     result.setCode("00000");
+		     result.setResult("SUCCESS");
 		} catch (Exception e) {
 			result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
 			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));

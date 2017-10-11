@@ -1,6 +1,7 @@
 package cn.htd.marketcenter.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 秒杀活动检索条件
@@ -20,11 +21,20 @@ public class TimelimitedConditionDTO implements Serializable {
 	 * 活动状态
 	 */
 	private String status;
-	
+
 	/**
 	 * 供应商编码
 	 */
 	private String selleCode;
+
+	/**
+	 * 限时购开始时间
+	 */
+	private Date startTime;
+	/**
+	 * 限时购结束时间
+	 */
+	private Date endTime;
 
 	public String getSkuCode() {
 		return skuCode;
@@ -57,5 +67,21 @@ public class TimelimitedConditionDTO implements Serializable {
 	public void setSelleCode(String selleCode) {
 		this.selleCode = selleCode;
 	}
-	
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
 }

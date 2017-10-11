@@ -254,6 +254,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         }
 
     }
+    
+    
+    
 
     /**
      * 根据促销活动的有效期间设定促销活动状态
@@ -323,6 +326,22 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         historyDTO.setCreateName(singlePromotionInfoReqDTO.getModifyName());
         promotionStatusHistoryDAO.add(historyDTO);
     }
+
+    
+    
+	@Override
+	public void initGroupbuyingInfoRedisInfoWithThread(
+			GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initGroupbuyingInfoRedisInfo(
+			GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 

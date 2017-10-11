@@ -1,6 +1,7 @@
 package cn.htd.marketcenter.service.impl.promotion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,13 +10,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
@@ -32,10 +29,14 @@ import cn.htd.marketcenter.dao.TimelimitedInfoDAO;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionStatusHistoryDTO;
+import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.TimelimitedPurchaseService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("timelimitedPurchaseService")
 public class TimelimitedPurchaseServiceImpl implements
@@ -225,13 +226,14 @@ public class TimelimitedPurchaseServiceImpl implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ExecuteResult<List<TimelimitedInfoDTO>> getTimelimitedInfo(
+	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(
 			TimelimitedInfoDTO dto) {
-		ExecuteResult<List<TimelimitedInfoDTO>> result = new ExecuteResult<List<TimelimitedInfoDTO>>();
-		List<TimelimitedInfoDTO> resultList = new ArrayList<TimelimitedInfoDTO>();
+		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = new ExecuteResult<List<TimelimitPurchaseMallInfoDTO>>();
+		List<TimelimitPurchaseMallInfoDTO> resultList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
 		List<String> promotionIdList = new ArrayList<String>();
-		Date nowDt = new Date();
 		TimelimitedInfoDTO timelimitedInfoDTO = null;
+		TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = null;
+		Date nowDt = new Date();
 		String timelimitedJSONStr = "";
 		try {
 			Map<String, String> resultMap = getPromotionlistRedis(null);
@@ -262,25 +264,27 @@ public class TimelimitedPurchaseServiceImpl implements
 				if (list != null && list.size() > 0) {
 					for (int i = 0; i < list.size(); i++) {
                         TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
-						if (dto.getPurchaseFlag() == 1
-								&& !nowDt.before(timelimite
-										.getEffectiveTime())
-								&& !nowDt.after(timelimite
-										.getInvalidTime())) {
+						if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimite.getEffectiveTime())
+								&& !nowDt.after(timelimite.getInvalidTime())) {
 							/**
 							 * 今日特惠
 							 */
-							resultList.add(timelimite);
-						} else if (dto.getPurchaseFlag() == 2
-								&& !nowDt.before(timelimite
-										.getStartTime())) {
+							timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
+							timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimite);
+							resultList.add(timelimitPurchaseMallInfoDTO);
+						} else if (dto.getPurchaseFlag() == 2 && !nowDt.before(timelimite.getStartTime())) {
 							/**
 							 * 开售预告
 							 */
-							resultList.add(timelimite);
+							timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
+							timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimite);
+							resultList.add(timelimitPurchaseMallInfoDTO);
 						}
 					}
 				}
+			}
+			if(!resultList.isEmpty()){
+				Collections.sort(resultList);
 			}
 			result.setCode("00000");
 			result.setResult(resultList);

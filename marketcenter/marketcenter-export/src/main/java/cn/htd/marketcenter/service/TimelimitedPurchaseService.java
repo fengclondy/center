@@ -2,6 +2,7 @@ package cn.htd.marketcenter.service;
 import java.util.List;
 
 import cn.htd.common.ExecuteResult;
+import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 
 /**
@@ -37,7 +38,7 @@ public interface TimelimitedPurchaseService {
 	 * @param
 	 * @return
 	 */
-	public ExecuteResult<List<TimelimitedInfoDTO>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
+	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
 	
 
 }

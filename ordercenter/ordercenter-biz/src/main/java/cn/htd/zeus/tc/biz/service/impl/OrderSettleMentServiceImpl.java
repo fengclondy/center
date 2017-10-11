@@ -344,9 +344,11 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 										if (null != limitedTimePurchaseInfo) {
 											//每单限制数量
 											Integer timelimitedThreshold = limitedTimePurchaseInfo.getTimelimitedThreshold();
-											// TODO 限时购商品剩余数量，找小明确认字段
+											//限时购商品剩余数量
+											Integer timelimitedSkuCount = limitedTimePurchaseInfo.getTimelimitedSkuCount();
 											Integer buyCount = orderSku.getProductCount();
-											if(buyCount > timelimitedThreshold){
+											if (buyCount > timelimitedThreshold
+													|| buyCount > timelimitedSkuCount) {
 												orderSettleMentResDTO
 														.setResponseCode(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
 																.getCode());

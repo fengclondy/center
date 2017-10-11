@@ -54,22 +54,22 @@ public interface GroupbuyingService {
 //	 * @return
 //	 */
 //	public String updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
-//	
-//	
-//    /**
-//     * 异步初始化秒杀活动的Redis数据
-//     *
-//     * @param timelimitedInfoResDTO
-//     */
-//    public void initTimelimitedInfoRedisInfoWithThread(TimelimitedInfoResDTO timelimitedInfoResDTO);
-//    
-//    /**
-//     * 初始化秒杀活动的Redis数据
-//     *
-//     * @param timelimitedInfoResDTO
-//     */
-//    public void initTimelimitedInfoRedisInfo(TimelimitedInfoResDTO timelimitedInfoResDTO);
-//
+	
+	
+    /**
+     * 异步初始化团购活动的Redis数据
+     *
+     * @param timelimitedInfoResDTO
+     */
+    public void initGroupbuyingInfoRedisInfoWithThread(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO);
+    
+    /**
+     * 初始化团购活动的Redis数据
+     *
+     * @param timelimitedInfoResDTO
+     */
+    public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO);
+
 //	/**
 //	 * 保存秒杀活动信息到redis
 //	 * 

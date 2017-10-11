@@ -356,8 +356,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 
 					OrderItemSkuPriceDTO orderItemSkuPriceDTO = null;
 					Map<String, String> buyerGradeMap = new HashMap<String, String>();// 卖家等级
-					// 如果是秒杀就不查价格中心
-					if (promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())) {
+					// 如果是秒杀和限时购就不查价格中心
+					Integer isLimitedTimePurchase = orderItemTemp.getIsLimitedTimePurchase();
+					if (promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())
+							|| isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
 						OtherCenterResDTO<MallSkuOutDTO> mallSkuOutResDTO = goodsCenterRAO
 								.queryMallItemDetail4SecKill(orderItemTemp, site,
 										orderCreateInfoReqDTO.getMessageId());
@@ -436,17 +438,13 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					} else if ((StringUtilHelper.isNotNull(mallSkuOutDTO.getProductChannelCode())
 							&& mallSkuOutDTO.getProductChannelCode()
 									.equals(GoodCenterEnum.EXTERNAL_SUPPLIER.getCode()))) {
-						// 校验外部供应商的商品数量是否大于提交数量--秒杀不需要校验
+						// 校验外部供应商的商品数量是否大于提交数量--秒杀和限时购商品不需要校验
 						if (!promotionType
-								.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())) {
-							orderCreateInfoDMO = validateInternalSupplierQuantity(
-									mallSkuStockOutDTO, orderItemTemp, orderCreateInfoDMO);
+								.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode()) 
+								&& !isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
+							validateInternalSupplierQuantity(mallSkuStockOutDTO, orderItemTemp, orderCreateInfoDMO);
 							isNeedBatchReserveStockMap.put(IS_NEED_BATCH_RESERVE_STOCK_KEY,
 									OrderStatusEnum.ORDER_RELEASE_STOCK.getCode());
-						}
-						if (!orderCreateInfoDMO.getResultCode()
-								.equals(ResultCodeEnum.SUCCESS.getCode())) {
-							return orderCreateInfoDMO;
 						}
 						orderItemTemp.setGoodsFreight(new BigDecimal(0));	
 						// 如果是外部供应商-将saleprice不用赋值，计算阶梯价格计算goodprice即可
@@ -464,15 +462,11 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					} else {
 						// 校验内部供应商的商品数量是否大于提交数量--秒杀不需要校验
 						if (!promotionType
-								.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())) {
-							orderCreateInfoDMO = validateInternalSupplierQuantity(
-									mallSkuStockOutDTO, orderItemTemp, orderCreateInfoDMO);
+								.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())
+								&& !isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
+							validateInternalSupplierQuantity(mallSkuStockOutDTO, orderItemTemp, orderCreateInfoDMO);
 							isNeedBatchReserveStockMap.put(IS_NEED_BATCH_RESERVE_STOCK_KEY,
 									OrderStatusEnum.ORDER_RELEASE_STOCK.getCode());
-						}
-						if (!orderCreateInfoDMO.getResultCode()
-								.equals(ResultCodeEnum.SUCCESS.getCode())) {
-							return orderCreateInfoDMO;
 						}
 						orderItemTemp.setGoodsFreight(mallSkuOutDTO.getFreightAmount() == null
 								? new BigDecimal(0) : mallSkuOutDTO.getFreightAmount());
@@ -511,8 +505,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					// TODO 运费总金额 total_freight
 					// 判断是不是外接渠道商品,如果是外接渠道商品就不用组装商品对象
 					if (StringUtilHelper.isNotNull(mallSkuOutDTO.getProductChannelCode())
-							&& !mallSkuOutDTO.getProductChannelCode()
-									.startsWith(GoodCenterEnum.EXTERNAL_CHANNELS.getCode())) {
+							&& !mallSkuOutDTO.getProductChannelCode().startsWith(GoodCenterEnum.EXTERNAL_CHANNELS.getCode())
+							&& !promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())
+						    && !isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
 						Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();// 锁商品库存创建对象4
 						order4StockEntryDTO.setIsBoxFlag(orderItemTemp.getIsBoxFlag());
 						order4StockEntryDTO.setSkuCode(mallSkuOutDTO.getSkuCode());
@@ -1238,30 +1233,22 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 	/*
 	 * 校验内外部供应商的商品数量是否大于提交数量
 	 */
-	private OrderCreateInfoDMO validateInternalSupplierQuantity(
+	private void validateInternalSupplierQuantity(
 			MallSkuStockOutDTO mallSkuStockOutDTO, OrderCreateItemListInfoReqDTO orderItemTemp,
 			OrderCreateInfoDMO orderCreateInfoDMO) {
-		orderCreateInfoDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
-
 		if (null == mallSkuStockOutDTO.getItemSkuPublishInfo()) {
 			// 没有库存信息，或者区域和包厢的已经下架
-			orderCreateInfoDMO.setResultCode(
-					ResultCodeEnum.GOODSCENTER_NOT_STOCKINFO_OR_GOODS_OFF_SHELF.getCode());
-			orderCreateInfoDMO.setResultMsg(
+			throw new OrderCenterBusinessException(ResultCodeEnum.GOODSCENTER_NOT_STOCKINFO_OR_GOODS_OFF_SHELF.getCode(),
 					ResultCodeEnum.GOODSCENTER_NOT_STOCKINFO_OR_GOODS_OFF_SHELF.getMsg());
-			return orderCreateInfoDMO;
 		}
 		Integer displayQuantity = mallSkuStockOutDTO.getItemSkuPublishInfo().getDisplayQuantity();// 显示库存，可用库存
 		Integer reserveQuantity = mallSkuStockOutDTO.getItemSkuPublishInfo().getReserveQuantity(); // 锁定库存
 		Long preReserveQuantity = orderItemTemp.getGoodsCount();
 		// 去商品中心校验库存数量是不是大于等于提交的数量
 		if (displayQuantity - reserveQuantity - preReserveQuantity < ZERO) {
-			orderCreateInfoDMO.setResultCode(
-					ResultCodeEnum.GOODSCENTER_QUERY_SKUINFO_STOCK_LESS_THAN_ZERO.getCode());
-			orderCreateInfoDMO.setResultMsg(
+			throw new OrderCenterBusinessException(ResultCodeEnum.GOODSCENTER_QUERY_SKUINFO_STOCK_LESS_THAN_ZERO.getCode(),
 					ResultCodeEnum.GOODSCENTER_QUERY_SKUINFO_STOCK_LESS_THAN_ZERO.getMsg());
 		}
-		return orderCreateInfoDMO;
 	}
 
 	/*

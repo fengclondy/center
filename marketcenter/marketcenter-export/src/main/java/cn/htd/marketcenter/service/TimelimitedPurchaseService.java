@@ -1,6 +1,7 @@
 package cn.htd.marketcenter.service;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
@@ -55,6 +56,6 @@ public interface TimelimitedPurchaseService {
 	 * @param
 	 * @return
 	 */
-	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
+	public ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>> getTimelimitedInfo(TimelimitedInfoDTO timelimitedInfoDTO);
 	
 }

@@ -256,13 +256,14 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> getTimelimitedInfo(
+	public ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>> getTimelimitedInfo(
 			TimelimitedInfoDTO dto) {
-		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = new ExecuteResult<List<TimelimitPurchaseMallInfoDTO>>();
-		List<TimelimitPurchaseMallInfoDTO> resultList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
+		ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>> result = new ExecuteResult<Map<String, List<TimelimitPurchaseMallInfoDTO>>>();
+		Map<String, List<TimelimitPurchaseMallInfoDTO>> timelimitedInfoMap = new HashMap<String, List<TimelimitPurchaseMallInfoDTO>>();
+		List<TimelimitPurchaseMallInfoDTO> resultValidList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
+		List<TimelimitPurchaseMallInfoDTO> resultInvalidList = new ArrayList<TimelimitPurchaseMallInfoDTO>();
 		List<String> promotionIdList = new ArrayList<String>();
 		TimelimitedInfoDTO timelimitedInfoDTO = null;
-		TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = null;
 		Date nowDt = new Date();
 		String timelimitedJSONStr = "";
 		try {
@@ -294,25 +295,30 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 							/**
 							 * 今日特惠
 							 */
-							timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
+							TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
 							timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimite);
-							resultList.add(timelimitPurchaseMallInfoDTO);
+							resultValidList.add(timelimitPurchaseMallInfoDTO);
 						} else if (dto.getPurchaseFlag() == 2 && !nowDt.before(timelimite.getStartTime())) {
 							/**
 							 * 开售预告
 							 */
-							timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
+							TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
 							timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimite);
-							resultList.add(timelimitPurchaseMallInfoDTO);
+							resultInvalidList.add(timelimitPurchaseMallInfoDTO);
 						}
 					}
 				}
 			}
-			if(!resultList.isEmpty()){
-				Collections.sort(resultList);
+			if(!resultValidList.isEmpty()){
+				Collections.sort(resultValidList);
+				timelimitedInfoMap.put("validData", resultValidList);
+			}
+			if(!resultInvalidList.isEmpty()){
+				Collections.sort(resultInvalidList);
+				timelimitedInfoMap.put("inValidData", resultInvalidList);
 			}
 			result.setCode("00000");
-			result.setResult(resultList);
+			result.setResult(timelimitedInfoMap);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());

@@ -30,6 +30,58 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
+    <resultMap id="GroupbuyingInfoCmplResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO" extends="BaseResultMap">
+    
+    <association property="singlePromotionInfoCmplResDTO" javaType="cn.htd.promotion.cpc.dto.response.SinglePromotionInfoCmplResDTO">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
+    <result column="promotion_describe" property="promotionDescribe" jdbcType="VARCHAR" />
+    <result column="promotion_provider_type" property="promotionProviderType" jdbcType="VARCHAR" />
+    <result column="promotion_provider_seller_code" property="promotionProviderSellerCode" jdbcType="VARCHAR" />
+    <result column="promotion_provider_shop_id" property="promotionProviderShopId" jdbcType="BIGINT" />
+    <result column="cost_allocation_type" property="costAllocationType" jdbcType="VARCHAR" />
+    <result column="promotion_type" property="promotionType" jdbcType="VARCHAR" />
+    <result column="effective_time" property="effectiveTime" jdbcType="TIMESTAMP" />
+    <result column="invalid_time" property="invalidTime" jdbcType="TIMESTAMP" />
+    <result column="is_vip" property="isVip" jdbcType="TINYINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="show_status" property="showStatus" jdbcType="VARCHAR" />
+    <result column="verifier_id" property="verifierId" jdbcType="BIGINT" />
+    <result column="verifier_name" property="verifierName" jdbcType="VARCHAR" />
+    <result column="verify_time" property="verifyTime" jdbcType="TIMESTAMP" />
+    <result column="verify_remark" property="verifyRemark" jdbcType="VARCHAR" />
+    <result column="modify_promotion_id" property="modifyPromotionId" jdbcType="VARCHAR" />
+    <result column="has_redis_clean" property="hasRedisClean" jdbcType="TINYINT" />
+    <result column="deal_flag" property="dealFlag" jdbcType="TINYINT" />
+    <result column="has_up_flag" property="hasUpFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    </association>
+    
+    <collection property="groupbuyingPriceSettingResDTOList" ofType="cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO">
+    <id column="price_setting_id" property="priceSettingId" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="BIGINT" />
+    <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
+    <result column="actor_count" property="actorCount" jdbcType="INTEGER" />
+    <result column="groupbuying_price" property="groupbuyingPrice" jdbcType="DECIMAL" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    </collection>
+    
+  </resultMap>
+  
+  
   <sql id="Base_Column_List" >
     groupbuying_id, promotion_id, seller_code, item_id, sku_code, sku_name, sku_label, 
     sku_pic_url, sku_cost_price, real_actor_count, real_groupbuying_price, start_time, 
@@ -401,5 +453,89 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
   </update>
+  
+  
+
+	<sql id="dynamic_fragment_groupbuyingInfo">
+		<if test="dto.promotionId != null">
+			and gi.promotion_id = #{dto.promotionId,jdbcType=VARCHAR}  
+		</if>
+		<if test="dto.skuName != null and dto.skuName != ''">
+			and	gi.sku_name like CONCAT('%',#{dto.skuName,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="dto.status != null and dto.status != ''">
+			and pi.status = #{dto.status,jdbcType=VARCHAR}  
+		</if>
+	    <if test="dto.showStatus != null and dto.showStatus != ''">
+			and pi.show_status = #{dto.showStatus,jdbcType=VARCHAR}  
+		</if>
+		<if test="dto.startTime != null">
+		 <![CDATA[ 
+			and pi.effective_time >= #{dto.startTime,jdbcType=TIMESTAMP}
+		  ]]> 
+		</if>
+		<if test="dto.endTime != null">
+		 <![CDATA[ 
+			and gi.end_time <= #{dto.endTime,jdbcType=TIMESTAMP}
+		 ]]>
+		</if>
+	</sql>
+
+	<select id="getGroupbuyingInfoCmplCount" resultType="java.lang.Integer">
+		select count(distinct gi.promotion_id)     FROM groupbuying_info gi 
+   left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id  
+   left join promotion_info pi on pi.promotion_id = gi.promotion_id  
+		WHERE gps.delete_flag = 0    
+        <include refid="dynamic_fragment_groupbuyingInfo"/>
+	</select>
+
+	<select id="getGroupbuyingInfoCmplForPage" resultMap="GroupbuyingInfoCmplResultMap">
+   SELECT 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
+    gi.modify_id, gi.modify_name, gi.modify_time,
+    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, 
+    gps.delete_flag, gps.create_id, gps.create_name, gps.create_time, 
+    gps.modify_id, gps.modify_name, gps.modify_time,
+    pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
+    pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
+    pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
+    pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
+    pi.create_id, pi.create_name, pi.create_time, 
+    pi.modify_id, pi.modify_name, pi.modify_time  
+   FROM groupbuying_info gi 
+   left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gi.promotion_id  
+		WHERE  gps.delete_flag = 0    
+        <include refid="dynamic_fragment_groupbuyingInfo"/>
+		ORDER BY gi.modify_time desc 
+		LIMIT #{page.pageOffset},#{page.rows}
+	</select>
+
+	<select id="getGroupbuyingInfoCmplByPromotionId" resultMap="GroupbuyingInfoCmplResultMap">
+   SELECT 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
+    gi.modify_id, gi.modify_name, gi.modify_time,
+    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, 
+    gps.delete_flag, gps.create_id, gps.create_name, gps.create_time, 
+    gps.modify_id, gps.modify_name, gps.modify_time,
+    pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
+    pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
+    pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
+    pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
+    pi.create_id, pi.create_name, pi.create_time, 
+    pi.modify_id, pi.modify_name, pi.modify_time 
+   FROM groupbuying_info gi 
+   left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gi.promotion_id  
+		WHERE  gps.delete_flag = 0  and gi.promotion_id = #{promotionId,jdbcType=VARCHAR} 
+	</select>
+
+
   
 </mapper>

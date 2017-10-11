@@ -1,6 +1,10 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 
 
 public interface GroupbuyingService {
@@ -19,32 +23,24 @@ public interface GroupbuyingService {
 	 */
 	public void updateGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId);
 
-//	/**
-//	 * 根据promotionId获取完整的秒杀活动信息
-//	 * @param promotionId
-//	 * @param type 1.数据库商品库存,2.redis商品真实库存 
-//	 * @param messageId
-//	 * @return
-//	 */
-//	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId,String type,String messageId) ;
-//	
-//	/**
-//	 * 根据promotionId获取简单的秒杀活动信息
-//	 * @param promotionId
-//	 * @param messageId
-//	 * @return
-//	 */
-//	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
-//
-//	/**
-//	 * 分页查询秒杀活动信息
-//	 * @param page
-//	 * @param timelimitedInfoReqDTO
-//	 * @param messageId
-//	 * @return
-//	 */
-//	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
-//			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
+	/**
+	 * 根据promotionId获取的团购活动信息
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId,String messageId) ;
+
+	/**
+	 * 分页查询团购活动信息
+	 * @param page
+	 * @param groupbuyingInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page,
+			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
+	
 //	
 //	/**
 //	 * 活动上下架

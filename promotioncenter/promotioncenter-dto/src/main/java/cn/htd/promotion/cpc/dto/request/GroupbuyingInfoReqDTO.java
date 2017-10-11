@@ -61,6 +61,12 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	private String modifyName;
 	// 更新时间
 	private Date modifyTime;
+	
+	
+	// 状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
+	private String status;
+	// 审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
+	private String showStatus;
 
 	public Long getGroupbuyingId() {
 		return groupbuyingId;
@@ -261,5 +267,23 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getShowStatus() {
+		return showStatus;
+	}
+
+	public void setShowStatus(String showStatus) {
+		this.showStatus = showStatus;
+	}
+	
+	
 
 }

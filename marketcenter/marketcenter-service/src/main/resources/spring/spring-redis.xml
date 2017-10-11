@@ -20,4 +20,6 @@
         <constructor-arg index="0" ref="jedisPoolConfig"/>
         <constructor-arg index="1" value="${redis.host}"/>
     </bean>
+    <!--初始化字典信息-->
+    <bean id="dictionaryUtils" class ="cn.htd.common.util.DictionaryUtils" init-method="init"/>
 </beans>

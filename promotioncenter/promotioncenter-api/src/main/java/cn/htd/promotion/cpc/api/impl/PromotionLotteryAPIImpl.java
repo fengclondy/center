@@ -31,6 +31,7 @@ import cn.htd.promotion.cpc.dto.request.LotteryActivityPageReqDTO;
 import cn.htd.promotion.cpc.dto.request.LotteryActivityRulePageReqDTO;
 import cn.htd.promotion.cpc.dto.request.PromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.ScratchCardActivityPageReqDTO;
+import cn.htd.promotion.cpc.dto.request.ScratchCardDrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.ShareLinkHandleReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateLuckDrawReqDTO;
 import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
@@ -268,6 +269,45 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 		return JSON.toJSONString(responseDTO);
 	}
 
+	/**
+	 * 开始抽奖处理4刮刮卡
+	 * 
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	@Override
+	public String beginDrawLotteryScratchCard(String drawLotteryParam) {
+		ScratchCardDrawLotteryReqDTO requestDTO = null;
+		DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+		try {
+			requestDTO = JSON.parseObject(drawLotteryParam,
+					ScratchCardDrawLotteryReqDTO.class);
+			if (requestDTO == null) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.ERROR.getCode(),
+						ResultCodeEnum.ERROR.getMsg());
+			}
+			responseDTO.setMessageId(requestDTO.getMessageId());
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils
+					.validateEntity(requestDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			responseDTO = promotionLotteryService.beginDrawLotteryScratchCard(requestDTO);
+		} catch (PromotionCenterBusinessException bcbe) {
+			responseDTO.setResponseCode(bcbe.getCode());
+			responseDTO.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(responseDTO);
+	}
+	
 	/**
 	 * 查询抽奖结果
 	 * 

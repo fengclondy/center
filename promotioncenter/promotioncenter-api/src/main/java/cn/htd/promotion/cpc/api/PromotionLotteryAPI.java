@@ -66,6 +66,13 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String beginDrawLottery(String drawLotteryParam);
+	
+	/**
+	 * 开始抽奖处理4刮刮卡
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	public String beginDrawLotteryScratchCard(String drawLotteryParam);
 
 	/**
 	 * 查询抽奖结果

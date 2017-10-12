@@ -6,6 +6,11 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
 import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
@@ -18,15 +23,13 @@ import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryResultReqDTO;
 import cn.htd.promotion.cpc.dto.request.DrawLotteryWinningReqDTO;
+import cn.htd.promotion.cpc.dto.request.ScratchCardDrawLotteryReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
+
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service("promotionLotteryService")
 public class PromotionLotteryServiceImpl implements PromotionLotteryService {
@@ -66,6 +69,34 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         return responseDTO;
     }
 
+    /**
+     * 开始抽奖处理4刮刮卡
+     *
+     * @param requestDTO
+     * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
+     */
+    @Override
+    public DrawLotteryResDTO beginDrawLotteryScratchCard(ScratchCardDrawLotteryReqDTO requestDTO)
+            throws PromotionCenterBusinessException, Exception {
+        DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
+        String buyerCode = requestDTO.getBuyerCode();
+        String sellerCode = requestDTO.getSellerCode();
+        String promotionId = requestDTO.getPromotionId();
+        String ticket = requestDTO.getOrderNo();
+        boolean useSync = requestDTO.isUseSync();
+        DrawLotteryReqDTO drawLotteryReqDTO = new DrawLotteryReqDTO();
+        drawLotteryReqDTO.setBuyerCode(buyerCode);
+        drawLotteryReqDTO.setMessageId(requestDTO.getMessageId());
+        drawLotteryReqDTO.setOrderNo(requestDTO.getOrderNo());
+        drawLotteryReqDTO.setPromotionId(promotionId);
+        drawLotteryReqDTO.setSellerCode(sellerCode);
+        drawLotteryReqDTO.setUseSync(useSync);
+        responseDTO = this.beginDrawLotteryExecute(drawLotteryReqDTO, ticket, useSync);
+        return responseDTO;
+    }
+    
     /**
      * 执行抽奖处理
      *

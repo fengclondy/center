@@ -21,8 +21,8 @@ public final class SettlementConstants {
     public static final String SORT_DIR_DESC = "DESC";
     
     
-    // 出结算单时间间隔【默认为7天】
-    public static final String TIME_INTERVAL = "7";
+    // 出结算单时间间隔【默认为7天】  变更：由7天改为0天
+    public static final String TIME_INTERVAL = "0";
     
     
     

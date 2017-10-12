@@ -160,16 +160,16 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	 * 限时购 － 根据promotionId获取限时购结果信息
 	 */
 	@Override
-	public ExecuteResult<List<TimelimitedInfoDTO>> queryTimelimitedInfo(String promotionId) {
-		ExecuteResult<List<TimelimitedInfoDTO>> result = new ExecuteResult<List<TimelimitedInfoDTO>>();
-		List<TimelimitedInfoDTO> timelimitedInfoDTO = null;
+	public ExecuteResult<List<TimelimitedListDTO>> queryPromotionInfoByItemCode(String itemCode) {
+		ExecuteResult<List<TimelimitedListDTO>> result = new ExecuteResult<List<TimelimitedListDTO>>();
+		List<TimelimitedListDTO>  timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
-			timelimitedInfoDTO = timelimitedInfoDAO.queryTimelimitedInfoByPromotionId(promotionId);
-			if (timelimitedInfoDTO == null) {
-				throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该限时购活动不存在!");
+			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemCode);
+			if (timelimitedListDTO == null) {
+				throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该商品没有正在参加限时购活动!");
 			}
-			result.setResult(timelimitedInfoDTO);
+			result.setResult(timelimitedListDTO);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());
@@ -187,11 +187,18 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	public ExecuteResult<PromotionInfoDTO> queryPromotionInfo(String promotionId) {
 		 ExecuteResult<PromotionInfoDTO> result = new ExecuteResult<PromotionInfoDTO>();
 		 PromotionInfoDTO promotionInfoDTO = null;
+		 List<TimelimitedInfoDTO> timelimitedInfoDTO = null;
 			try {
 				promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
 				if (promotionInfoDTO == null) {
 					throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该限时购活动不存在!");
 				}
+				// 获取限时购活动信息
+				timelimitedInfoDTO = timelimitedInfoDAO.queryTimelimitedInfoByPromotionId(promotionId);
+				if (timelimitedInfoDTO == null) {
+					throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该限时购活动不存在!");
+				}
+				promotionInfoDTO.setPromotionAccumulatyList(timelimitedInfoDTO);
 				result.setResult(promotionInfoDTO);
 			} catch (MarketCenterBusinessException bcbe) {
 				result.setCode(bcbe.getCode());

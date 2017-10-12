@@ -36,12 +36,12 @@ public interface TimelimitedPurchaseService {
 			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedListDTO> page);
 
 	/**
-	 * 限时购 - 根据促销活动id查询促销活动集合
+	 * 限时购 - 根据itemcode查询商品是否正在参加活动
 	 * 
 	 * @param promotionId
 	 * @return
 	 */
-	public ExecuteResult<List<TimelimitedInfoDTO>> queryTimelimitedInfo(String promotionId);
+	public ExecuteResult<List<TimelimitedListDTO>> queryPromotionInfoByItemCode(String itemCode);
 	
 	/**
 	 * 限时购 - 根据促销活动id查询促销活动

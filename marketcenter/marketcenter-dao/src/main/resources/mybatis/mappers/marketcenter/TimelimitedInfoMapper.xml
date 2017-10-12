@@ -219,6 +219,48 @@
 		order by level_code asc
 	</select>
 	
+		
+  <select id="queryPromotionInfoByItemCode" resultMap="BaseResultMap" >
+	 select promotion_info.promotion_id promotionId,
+		promotion_info.promotion_name promotionName,
+		promotion_info.promotion_type promotionType,
+		promotion_info.effective_time effectiveTime,
+		promotion_info.invalid_time invalidTime,
+		promotion_info.is_vip isVip,
+		promotion_info.status status,
+		promotion_info.show_status showStatus,
+		promotion_accumulaty.level_number levelNumber,
+		promotion_accumulaty.level_code levelCode,
+		timelimited_info.timelimited_id timelimitedId,
+		timelimited_info.seller_code sellerCode,
+		timelimited_info.item_id
+		itemId,
+		timelimited_info.sku_code skuCode,
+		timelimited_info.sku_name
+		skuName,
+		timelimited_info.sku_pic_url skuPicUrl,
+		timelimited_info.sku_timelimited_price skuTimelimitedPrice,
+		timelimited_info.timelimited_sku_count timelimitedSkuCount,
+		timelimited_info.timelimited_threshold timelimitedThreshold,
+		timelimited_info.timelimited_valid_interval timelimitedValidInterval,
+		timelimited_info.item_category_brand itemCategoryBrand,
+		timelimited_info.item_code itemCode,
+		timelimited_info.timelimited_threshold_min timelimitedThresholdMin,
+		timelimited_info.start_time startTime,
+		timelimited_info.end_time endTime
+		from
+		promotion_info inner join promotion_accumulaty on
+		(promotion_info.promotion_id = promotion_accumulaty.promotion_id)
+		inner join timelimited_info on (promotion_accumulaty.promotion_id =
+		timelimited_info.promotion_id and promotion_accumulaty.level_code =
+		timelimited_info.level_code)
+		where 1 = 1
+		 and timelimited_info.item_code =#{_parameter,jdbcType=VARCHAR}
+	     and promotion_info.status in ('1','2') 
+	     <![CDATA[ and timelimited_info.end_time > now() ]]>
+		 and promotion_accumulaty.delete_flag = 0
+	   </select>
+	
 	<select id="queryTimelimitedInfoListCount" resultType="java.lang.Long" parameterType="cn.htd.marketcenter.dto.TimelimitedInfoDTO">
 		select count(1)
 		from
@@ -409,4 +451,6 @@
 		and level_code =
 		#{levelCode,jdbcType=VARCHAR}
 	</update>
+	
+
 </mapper>

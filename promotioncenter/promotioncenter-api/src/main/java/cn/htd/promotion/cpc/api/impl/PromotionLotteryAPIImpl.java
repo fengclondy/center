@@ -550,4 +550,43 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 		}
 		return JSON.toJSONString(result);
 	}
+
+	/**
+	 * 保存中奖信息
+	 * @param winningInfoParam
+	 * @return
+	 */
+	@Override
+	public String saveRedRainWinningInfo(String winningInfoParam) {
+		DrawLotteryWinningReqDTO requestDTO = null;
+		GenricResDTO responseDTO = new GenricResDTO();
+		try {
+			requestDTO = JSON.parseObject(winningInfoParam,
+					DrawLotteryWinningReqDTO.class);
+			if (requestDTO == null) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.ERROR.getCode(),
+						ResultCodeEnum.ERROR.getMsg());
+			}
+			responseDTO.setMessageId(requestDTO.getMessageId());
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils
+					.validateEntity(requestDTO);
+			// 有错误信息时返回错误信息
+			if (validateResult.isHasErrors()) {
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.PARAMETER_ERROR.getCode(),
+						validateResult.getErrorMsg());
+			}
+			responseDTO = promotionLotteryService
+					.saveRedRainWinningInfo(requestDTO);
+		} catch (PromotionCenterBusinessException bcbe) {
+			responseDTO.setResponseCode(bcbe.getCode());
+			responseDTO.setResponseMsg(bcbe.getMessage());
+		} catch (Exception e) {
+			responseDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			responseDTO.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return JSON.toJSONString(responseDTO);
+	}
 }

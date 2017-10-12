@@ -32,11 +32,11 @@ public class OrderManagementAnalysisServiceImpl implements OrderManagementAnalys
 
 	@Override
 	public OrderManagementAnalysisDMO queryOrderManagermentInfo(String sellerCode,
-			String payOrderDate) {
+			String lastDayStart, String lastDayEnd) {
 		OrderManagementAnalysisDMO analysis = null;
 		try {
 			analysis = orderManagementAnalysisDAO.queryOrderManagermentInfo(sellerCode,
-					payOrderDate);
+					lastDayStart, lastDayEnd);
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));

@@ -19,7 +19,7 @@
         WHERE a.order_no = b.order_no
         and a.order_status>=30 and a.seller_code = #{sellerCode}
         and a.is_cancel_order = '0' 
-        and DATE_FORMAT(a.pay_order_time,'%Y-%m-%d') = #{payOrderDate}
+        and a.pay_order_time between #{lastDayStart} and #{lastDayEnd}
         group by b.sku_code) s
         LEFT JOIN
         (select ifnull(sum(b.goods_count),0) orderGoodsCount,
@@ -27,7 +27,7 @@
         from trade_orders a,trade_order_items b 
         where a.order_no = b.order_no
         and a.seller_code = #{sellerCode}
-        and DATE_FORMAT(a.create_order_time,'%Y-%m-%d') = #{payOrderDate}
+        and a.create_order_time between #{lastDayStart} and #{lastDayEnd}
         group by b.sku_code) t
         on t.dealDate = s.dealDate
         

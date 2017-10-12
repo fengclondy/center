@@ -20,12 +20,13 @@
           (SELECT t.order_no,t.seller_code,
         t.buyer_code,t.order_total_amount,sum(s.goods_count) num,DATE_FORMAT(t.pay_order_time,'%Y-%m-%d') dealDate
         FROM trade_orders t, trade_order_items s
-        WHERE t.order_no=s.order_no and t.order_status>=30 and DATE_FORMAT(t.pay_order_time,'%Y-%m-%d') = #{payOrderDate}
+        WHERE t.order_no=s.order_no and t.order_status>=30 
+        and t.pay_order_time between #{lastDayStart} and #{lastDayEnd}
         and t.seller_code = #{sellerCode} and t.is_cancel_order = '0'
         group by t.order_no) r                                                       
         LEFT JOIN (SELECT DATE_FORMAT(pay_order_time,'%Y-%m-%d')
         dealDate,COUNT(order_no) orderCount FROM trade_orders where 
-        DATE_FORMAT(pay_order_time,'%Y-%m-%d') = #{payOrderDate}
+        pay_order_time between #{lastDayStart} and #{lastDayEnd}
         and seller_code = #{sellerCode}) v
         on r.dealDate = v.dealDate) k
 </select>

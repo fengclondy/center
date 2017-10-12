@@ -195,7 +195,7 @@ WHERE 1=1
 	and picture_type =#{entity.pictureType}
 	</if>
 	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime != null and entity.createEndTime != '' ">
-	and date_format(create_time,'%Y-%m-%d %H:%i:%S') BETWEEN #{entity.entity.createStartTime} and  #{entity.createEndTime}
+	and date_format(create_time,'%Y-%m-%d') BETWEEN #{entity.createStartTime} and  #{entity.createEndTime}
 	</if>
 	<if test="entity.memberCode != null and entity.memberCode != ''">
 	and member_code =#{entity.memberCode}

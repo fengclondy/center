@@ -48,11 +48,26 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>quartz</groupId>
-			<artifactId>quartz</artifactId>
-			<version>${quartz.version}</version>
-		</dependency>
+		    <dependency>
+		      <groupId>cn.htd.promotion.cpc</groupId>
+		      <artifactId>imagecenter-common</artifactId>
+		      <version>${imagecenter.version}</version>
+		    </dependency>
+		    <dependency>
+		      <groupId>cn.htd.promotion.cpc</groupId>
+		      <artifactId>imagecenter-dto</artifactId>
+		      <version>${imagecenter.version}</version>
+		    </dependency>
+		    <dependency>
+		      <groupId>cn.htd.promotion.cpc</groupId>
+		      <artifactId>imagecenter-api</artifactId>
+		      <version>${imagecenter.version}</version>
+		    </dependency>
+		    <dependency>
+		      <groupId>cn.htd.promotion.cpc</groupId>
+		      <artifactId>imagecenter-biz</artifactId>
+		      <version>${imagecenter.version}</version>
+		    </dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -120,16 +135,6 @@
 			<version>${spring.context.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-			<version>${mybatis.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>${mybatis-spring.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback-classic.version}</version>
@@ -138,11 +143,6 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectjweaver.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>${freemarker.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -154,23 +154,6 @@
 			<artifactId>jsp-api</artifactId>
 			<version>${jsp-api.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql-connector-java.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>cn.htd.promotion.cpc</groupId>
-			<artifactId>imagecenter-api</artifactId>
-			<version>${imagecenter.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>cn.htd.promotion.cpc</groupId>
-			<artifactId>imagecenter-biz</artifactId>
-			<version>${imagecenter.version}</version>
 		</dependency>
 
 		<dependency>
@@ -208,7 +191,7 @@
 					<configuration>
 						<webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
 						<scanIntervalSeconds>3</scanIntervalSeconds>
-						<contextPath>/imagecenter</contextPath>
+						<contextPath>/promotioncenter</contextPath>
 						<webDefaultXml>jetty.xml</webDefaultXml>
 						<jettyEnvXml>jetty-env.xml</jettyEnvXml>
 						<connectors>

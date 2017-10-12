@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>imagecenter</artifactId>
+    <groupId>cn.htd.promotion.cpc</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <groupId>cn.htd.promotion.cpc</groupId>
+  <artifactId>imagecenter-biz</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>imagecenter-biz</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.release.version>1.1.0-RELEASE</project.release.version>
+    <ssf.version>1.2.0</ssf.version>
+    <junit.version>4.7</junit.version>
+    <imagecenter.version>1.0.0-SNAPSHOT</imagecenter.version>
+  </properties>
+  <dependencies>
+    <!-- 引用其他中心的包 -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cn.htd.promotion.cpc</groupId>
+      <artifactId>imagecenter-common</artifactId>
+      <version>${imagecenter.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.htd.promotion.cpc</groupId>
+      <artifactId>imagecenter-dto</artifactId>
+      <version>${imagecenter.version}</version>
+    </dependency>
+    <!-- tbschedule -->
+    <dependency>
+      <groupId>com.taobao.pamirs.schedule</groupId>
+      <artifactId>tbschedule</artifactId>
+      <version>3.3.3.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun.jmx</groupId>
+          <artifactId>jmxri</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jdmk</groupId>
+          <artifactId>jmxtools</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.jms</groupId>
+          <artifactId>jms</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+    <groupId>org.im4java</groupId>
+<artifactId>im4java</artifactId>
+<version>1.4.0</version>
+</dependency>
+  </dependencies>
+</project>

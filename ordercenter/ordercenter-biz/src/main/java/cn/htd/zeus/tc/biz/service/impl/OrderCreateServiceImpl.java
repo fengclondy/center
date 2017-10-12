@@ -1617,6 +1617,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrderItemsDiscountDMO.setShopId(orderTemp.getShopId());
 		tradeOrderItemsDiscountDMO
 				.setPromotionId(orderItemTemp.getPromotionId()==null?orderCreateInfoReqDTO.getPromotionId().toString():orderItemTemp.getPromotionId());
+		tradeOrderItemsDiscountDMO.setPromotionType(orderItemTemp.getPromotionType()==null?orderCreateInfoReqDTO.getPromotionType():orderItemTemp.getPromotionType());
 		List<OrderItemCouponDTO> avalibleCouponList = orderItemTemp.getAvalibleCouponList();
 		LOGGER.info(
 				"从促销中心返回优惠券信息avalibleCouponList:" + JSONObject.toJSONString(avalibleCouponList));

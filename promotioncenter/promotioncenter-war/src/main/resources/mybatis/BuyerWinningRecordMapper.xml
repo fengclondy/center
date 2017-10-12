@@ -184,11 +184,11 @@
     </if>
   </select>
 
-  <select id="getAwardRecordForBoss" resultMap="BaseResultMap">
+<select id="getAwardRecordForBoss" resultMap="BaseResultMap">
     select
     bwr.*,pi.effective_time,pi.invalid_time
-    from buyer_winning_record bwr,promotion_info pi
-    where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    from buyer_winning_record bwr left join promotion_info pi on (bwr.promotion_id = pi.promotion_id)
+    where 1 = 1
     <include refid="awardRecordBoss_mid"/>
     order by bwr.winning_time desc
     <if test="page!=null">

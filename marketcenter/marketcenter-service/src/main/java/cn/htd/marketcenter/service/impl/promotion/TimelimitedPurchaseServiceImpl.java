@@ -457,7 +457,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
          	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
 			if (accumulatyList.size() > 0) {
 				for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
-					timelimitedInfoDAO.update((TimelimitedInfoDTO) accumulaty);
+					timelimitedInfoDAO.add((TimelimitedInfoDTO) accumulaty);
 				}
 			}
             historyDTO.setPromotionId(timelimitedInfo.getPromotionId());
@@ -467,7 +467,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
             historyDTO.setCreateName(timelimitedInfo.getCreateName());
             promotionStatusHistoryDAO.add(historyDTO);
             historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
-            int a = 1/0;
             timelimitedInfo.setPromotionStatusHistoryList(historyList);
             timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
             timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);

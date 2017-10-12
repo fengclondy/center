@@ -191,7 +191,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		try {
 			List<OrderCreateListInfoReqDTO> orderList = orderCreateInfoReqDTO.getOrderList();
 			if (null != orderList && orderList.size() > 0) {
-				orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
+				if(!OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode().equals(promotionType)){					
+					orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
+				}
 				// 调用 memberCallCenterService查询会员信息
 				String buyerCode = orderCreateInfoReqDTO.getBuyerCode();
 				OtherCenterResDTO<MemberBaseInfoDTO> memberBaseInfoResDTO = memberCenterRAO
@@ -220,8 +222,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					return orderCreateInfoDMO;
 				}
 
-				// 如果会员选择用券或者秒杀
-				if (StringUtilHelper.isNotNull(promotionType)) {
+				// 如果会员选择用券或者秒杀或者含有限时购商品
+				int isHasLimitedTimePurchase = orderCreateInfoReqDTO.getIsHasLimitedTimePurchase();
+				if (StringUtilHelper.isNotNull(promotionType) 
+						|| isHasLimitedTimePurchase == Integer.valueOf(OrderStatusEnum.HAS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 
 					orderCreateInfoReqDTO = usePromotion(orderCreateInfoReqDTO, orderCreateInfoDMO,
 							order4StockChangeDTOs, isNeedBatchReserveStockMap,
@@ -357,9 +361,9 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					OrderItemSkuPriceDTO orderItemSkuPriceDTO = null;
 					Map<String, String> buyerGradeMap = new HashMap<String, String>();// 卖家等级
 					// 如果是秒杀和限时购就不查价格中心
-					Integer isLimitedTimePurchase = orderItemTemp.getIsLimitedTimePurchase();
+					int isLimitedTimePurchase = orderItemTemp.getIsLimitedTimePurchase();
 					if (promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())
-							|| isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
+							|| isLimitedTimePurchase==Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 						OtherCenterResDTO<MallSkuOutDTO> mallSkuOutResDTO = goodsCenterRAO
 								.queryMallItemDetail4SecKill(orderItemTemp, site,
 										orderCreateInfoReqDTO.getMessageId());
@@ -441,7 +445,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 						// 校验外部供应商的商品数量是否大于提交数量--秒杀和限时购商品不需要校验
 						if (!promotionType
 								.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode()) 
-								&& !isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
+								&& isLimitedTimePurchase != Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 							validateInternalSupplierQuantity(mallSkuStockOutDTO, orderItemTemp, orderCreateInfoDMO);
 							isNeedBatchReserveStockMap.put(IS_NEED_BATCH_RESERVE_STOCK_KEY,
 									OrderStatusEnum.ORDER_RELEASE_STOCK.getCode());
@@ -463,7 +467,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 						// 校验内部供应商的商品数量是否大于提交数量--秒杀不需要校验
 						if (!promotionType
 								.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())
-								&& !isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
+								&& isLimitedTimePurchase != Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 							validateInternalSupplierQuantity(mallSkuStockOutDTO, orderItemTemp, orderCreateInfoDMO);
 							isNeedBatchReserveStockMap.put(IS_NEED_BATCH_RESERVE_STOCK_KEY,
 									OrderStatusEnum.ORDER_RELEASE_STOCK.getCode());
@@ -507,7 +511,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 					if (StringUtilHelper.isNotNull(mallSkuOutDTO.getProductChannelCode())
 							&& !mallSkuOutDTO.getProductChannelCode().startsWith(GoodCenterEnum.EXTERNAL_CHANNELS.getCode())
 							&& !promotionType.equals(OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode())
-						    && !isLimitedTimePurchase.equals(Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()))) {
+						    && isLimitedTimePurchase != Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 						Order4StockEntryDTO order4StockEntryDTO = new Order4StockEntryDTO();// 锁商品库存创建对象4
 						order4StockEntryDTO.setIsBoxFlag(orderItemTemp.getIsBoxFlag());
 						order4StockEntryDTO.setSkuCode(mallSkuOutDTO.getSkuCode());
@@ -781,15 +785,17 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				if (null != orderItemList && orderItemList.size() > 0) {
 					for (int j = 0; j < orderItemList.size(); j++) {
 						OrderCreateItemListInfoReqDTO orderItemTemp = orderItemList.get(j);
-						// 如果是秒杀或者用券 就去促销中心锁定库存 且插入订单行优惠信息表
-						if (StringUtilHelper.isNotNull(orderCreateInfoReqDTO.getPromotionType())) {
+						// 如果是秒杀或者用券或限时购 就去促销中心锁定库存 且插入订单行优惠信息表
+						int isLimitedTimePurchase = orderItemTemp.getIsLimitedTimePurchase();
+						if (StringUtilHelper.isNotNull(orderCreateInfoReqDTO.getPromotionType())
+								|| isLimitedTimePurchase==Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 							// 插入订单行优惠信息表
 							insertTradeOrderItemsDiscount(orderCreateInfoReqDTO, orderTemp,
 									orderItemTemp);
 						}
 						// 插入订单行表
 						TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
-						OrderCreateInfoDMO insertTradeOrderItemsRes = insertTradeOrderItems(
+						insertTradeOrderItems(
 								orderCreateInfoReqDTO, orderTemp, orderItemTemp, tradeOrderItemsDMO,
 								orderCreateInfoDMO);
 						totalFreight = totalFreight.add(tradeOrderItemsDMO.getGoodsFreight());
@@ -1195,12 +1201,13 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		orderItemPromotionDTO.setOrderItemNo(orderItemTemp.getOrderItemNo());
 		orderItemPromotionDTO.setQuantity(orderItemTemp.getGoodsCount().intValue());
 		orderItemPromotionDTO.setBuyerCode(orderCreateInfoReqDTO.getBuyerCode());
-		orderItemPromotionDTO.setPromotionType(orderCreateInfoReqDTO.getPromotionType());
-		orderItemPromotionDTO.setPromotionId(orderCreateInfoReqDTO.getPromotionId() == null ? ""
-				: orderCreateInfoReqDTO.getPromotionId().toString());
 		orderItemPromotionDTO.setOperaterId(buyerInfoDTO.getId());
 		orderItemPromotionDTO.setOperaterName(buyerInfoDTO.getCompanyName());
-		if (orderItemTemp.isHasTimelimitedFlag()) {
+		orderItemPromotionDTO.setDiscountAmount(orderItemTemp.getTotalDiscountAmount());
+		orderItemPromotionDTO.setSeckillLockNo(orderCreateInfoReqDTO.getSeckillLockNo());
+		int isLimitedTimePurchase = orderItemTemp.getIsLimitedTimePurchase();
+		if (orderItemTemp.isHasTimelimitedFlag()
+				|| isLimitedTimePurchase==Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 			orderItemPromotionDTO.setLevelCode(orderItemTemp.getTimelimitedInfo().getLevelCode());
 			LOGGER.info("秒杀商品--查询秒杀laveCode:" + orderItemTemp.getTimelimitedInfo().getLevelCode());
 		} else {
@@ -1209,8 +1216,14 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				orderItemPromotionDTO.setLevelCode(avalibleCouponList.get(0).getLevelCode());
 			}
 		}
-		orderItemPromotionDTO.setDiscountAmount(orderItemTemp.getTotalDiscountAmount());
-		orderItemPromotionDTO.setSeckillLockNo(orderCreateInfoReqDTO.getSeckillLockNo());
+		if(isLimitedTimePurchase==Integer.valueOf(OrderStatusEnum.HAS_LIMITED_TIME_PURCHASE.getCode()).intValue()){
+			orderItemPromotionDTO.setPromotionType(orderItemTemp.getPromotionType());
+			orderItemPromotionDTO.setPromotionId(orderItemTemp.getPromotionId());
+		}else{
+			orderItemPromotionDTO.setPromotionType(orderCreateInfoReqDTO.getPromotionType());
+			orderItemPromotionDTO.setPromotionId(orderCreateInfoReqDTO.getPromotionId() == null ? ""
+					: orderCreateInfoReqDTO.getPromotionId().toString());
+		}
 		orderItemPromotionList.add(orderItemPromotionDTO);
 	}
 
@@ -1603,7 +1616,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrderItemsDiscountDMO.setSellerCode(orderTemp.getSellerCode());
 		tradeOrderItemsDiscountDMO.setShopId(orderTemp.getShopId());
 		tradeOrderItemsDiscountDMO
-				.setPromotionId(orderCreateInfoReqDTO.getPromotionId().toString());
+				.setPromotionId(orderItemTemp.getPromotionId()==null?orderCreateInfoReqDTO.getPromotionId().toString():orderItemTemp.getPromotionId());
+		tradeOrderItemsDiscountDMO.setPromotionType(orderItemTemp.getPromotionType()==null?orderCreateInfoReqDTO.getPromotionType():orderItemTemp.getPromotionType());
 		List<OrderItemCouponDTO> avalibleCouponList = orderItemTemp.getAvalibleCouponList();
 		LOGGER.info(
 				"从促销中心返回优惠券信息avalibleCouponList:" + JSONObject.toJSONString(avalibleCouponList));

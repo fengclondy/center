@@ -1,13 +1,14 @@
 package cn.htd.promotion.service;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Locale;
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,12 +17,16 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
 import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 
 /**
@@ -292,6 +297,52 @@ public class GroupbuyingTestUnit {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+    }
+	
+	
+	
+    @Test
+    public void getGroupbuyingInfoCmplByPromotionIdTest(){
+    	
+        String messageId = "342453251349";
+        String promotionId = "25171601240015";
+        try {
+        	ExecuteResult<GroupbuyingInfoCmplResDTO> executeResult = groupbuyingAPI.getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+        	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    @Test
+    public void getGroupbuyingInfoCmplForPageTest(){
+    	
+        String messageId = "342453251349";
+        
+        String startTimeString = "2017-10-01 16:20:02";
+        String endTimeString = "2017-10-21 16:20:02";
+        		
+        try {
+        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        	
+    		Pager<GroupbuyingInfoReqDTO> page = new Pager<GroupbuyingInfoReqDTO>();
+    		page.setPage(1);
+    		page.setRows(20);
+    		
+    		GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
+//    		groupbuyingInfoReqDTO.setSkuName("测试商品");//商品名称
+    		groupbuyingInfoReqDTO.setShowStatus("3");//审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
+    		groupbuyingInfoReqDTO.setStatus("2");// 状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
+    		groupbuyingInfoReqDTO.setStartTime(sdf.parse(startTimeString));
+    		groupbuyingInfoReqDTO.setEndTime(sdf.parse(endTimeString));
+    		
+    		ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getGroupbuyingInfoCmplForPage(page, groupbuyingInfoReqDTO, messageId);
+        	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 	

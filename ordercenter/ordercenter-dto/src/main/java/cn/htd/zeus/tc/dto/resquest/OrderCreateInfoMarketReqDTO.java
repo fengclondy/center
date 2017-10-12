@@ -29,6 +29,9 @@ public class OrderCreateInfoMarketReqDTO extends GenricReqDTO implements Seriali
 	 * 使用优惠券时设定优惠券编码列表
 	 */
 	private List<String> couponCodeList;
+	
+	//是否有限时购商品  0:没有，1：有
+	private int isHasLimitedTimePurchase;
 
 	public String getCouponType() {
 		return couponType;
@@ -69,4 +72,12 @@ public class OrderCreateInfoMarketReqDTO extends GenricReqDTO implements Seriali
 	public void setCouponCodeList(List<String> couponCodeList) {
 		this.couponCodeList = couponCodeList;
 	}
+	
+	public int getIsHasLimitedTimePurchase() {
+		return isHasLimitedTimePurchase;
+	}
+	
+	public void setIsHasLimitedTimePurchase(int isHasLimitedTimePurchase) {
+		this.isHasLimitedTimePurchase = isHasLimitedTimePurchase;
+	}	
 }

@@ -111,7 +111,7 @@ public class OrderCreateItemListInfoReqMarketDTO extends OrderCreateItemListInfo
 	private List<OrderItemCouponDTO> avaliableCouponList;
 	
 	// 是否是限时购商品 0：不是，1：是
-	private Integer isLimitedTimePurchase;
+	private int isLimitedTimePurchase;
 
 	// 促销活动类型 1：优惠券，2:秒杀,3:限时购
 	private String promotionType;
@@ -400,11 +400,11 @@ public class OrderCreateItemListInfoReqMarketDTO extends OrderCreateItemListInfo
 		this.timelimitedInfo = timelimitedInfo;
 	}
 
-	public Integer getIsLimitedTimePurchase() {
+	public int getIsLimitedTimePurchase() {
 		return isLimitedTimePurchase;
 	}
 
-	public void setIsLimitedTimePurchase(Integer isLimitedTimePurchase) {
+	public void setIsLimitedTimePurchase(int isLimitedTimePurchase) {
 		this.isLimitedTimePurchase = isLimitedTimePurchase;
 	}
 

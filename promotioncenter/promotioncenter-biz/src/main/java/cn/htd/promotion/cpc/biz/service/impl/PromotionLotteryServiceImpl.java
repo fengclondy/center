@@ -61,8 +61,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String sellerCode = requestDTO.getSellerCode();
         String promotionId = requestDTO.getPromotionId();
         String ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
-        boolean useThread = true;
-        responseDTO = this.beginDrawLotteryExecute(requestDTO, ticket, useThread);
+        boolean useSync = requestDTO.isUseSync();
+        responseDTO = this.beginDrawLotteryExecute(requestDTO, ticket, useSync);
         return responseDTO;
     }
 
@@ -77,7 +77,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
      * @throws Exception
      */
     @Override
-    public DrawLotteryResDTO beginDrawLotteryExecute(DrawLotteryReqDTO requestDTO, String ticket, boolean useThread)
+    public DrawLotteryResDTO beginDrawLotteryExecute(DrawLotteryReqDTO requestDTO, String ticket, boolean useSync)
             throws PromotionCenterBusinessException, Exception {
         DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
         String buyerCode = requestDTO.getBuyerCode();
@@ -99,11 +99,11 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
             errorWinningRecord.setRewardType("0");
             responseDTO.setTicket(ticket);
             //使用异步线程处理
-            if (useThread) {
-                promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
-            } else {
-                //使用同步处理
+            if (useSync) {
+            	//使用同步处理
                 promotionLotteryCommonService.doDrawLottery(requestDTO, errorWinningRecord, ticket);
+            } else {
+            	promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
             }
         }
         return responseDTO;
@@ -247,4 +247,63 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         responseDTO.setMessageId(requestDTO.getMessageId());
         return responseDTO;
     }
+    /**
+     * 保存红包雨信息
+     *
+     * @param requestDTO
+     * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
+     */
+	public GenricResDTO saveRedRainWinningInfo(
+			DrawLotteryWinningReqDTO requestDTO)
+			throws PromotionCenterBusinessException, Exception {
+        String buyerCode = requestDTO.getBuyerCode();
+        String sellerCode = requestDTO.getSellerCode();
+        String promotionId = requestDTO.getPromotionId();
+        String ticket = requestDTO.getTicket();
+        String relevanceCouponCode = requestDTO.getRelevanceCouponCode();
+//        String recordJsonStr = "";
+        GenricResDTO responseDTO = new GenricResDTO();
+        BuyerWinningRecordDTO winningRecordDTO = new BuyerWinningRecordDTO();
+        Map<String, String> dictMap = new HashMap<String, String>();
+        String promotionType = "";
+
+        responseDTO.setMessageId(requestDTO.getMessageId());
+        responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+        responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+
+        baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_REWARD_TYPE);
+
+        winningRecordDTO.setBuyerName(requestDTO.getBuyerName());
+        winningRecordDTO.setBuyerTelephone(requestDTO.getBuyerTelephone());
+        winningRecordDTO.setSellerName(requestDTO.getSellerName());
+        winningRecordDTO.setSellerAddress(requestDTO.getSellerAddress());
+        winningRecordDTO.setBelongSuperiorName(requestDTO.getBelongsSuperiorName());
+        winningRecordDTO.setWinnerName(requestDTO.getWinnerName());
+        winningRecordDTO.setWinningContact(requestDTO.getWinningContact());
+        winningRecordDTO.setChargeTelephone(requestDTO.getChargeTelephone());
+        winningRecordDTO.setCreateId(0L);
+        winningRecordDTO.setCreateName(requestDTO.getBuyerName());
+        winningRecordDTO.setOrderNo(ticket);
+        winningRecordDTO.setRelevanceCouponCode(relevanceCouponCode);
+        promotionRedisDB
+                .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
+//        //如果是扭蛋就删除抽奖结果key，如果是刮刮乐就不删除，等刮刮乐活动结束用定时任务删除
+//        promotionType = winningRecordDTO.getPromotionType();
+//        baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_TYPE);
+//        if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON)
+//                .equals(promotionType)) {
+//            promotionRedisDB.delHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+//                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket);
+//        } else if (dictMap
+//                .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD)
+//                .equals(promotionType)) {
+//            promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,
+//                    promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket,
+//                    JSON.toJSONString(winningRecordDTO));
+//        }
+        responseDTO.setMessageId(requestDTO.getMessageId());
+        return responseDTO;
+	}
 }

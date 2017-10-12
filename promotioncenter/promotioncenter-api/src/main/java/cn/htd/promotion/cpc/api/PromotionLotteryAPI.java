@@ -82,6 +82,13 @@ public interface PromotionLotteryAPI {
 	public String saveDrawLotteryWinningInfo(String winningInfoParam);
 
 	/**
+	 * 保存红包雨信息
+	 * @param winningInfoParam
+	 * @return
+	 */
+	public String saveRedRainWinningInfo(String winningInfoParam);
+	
+	/**
 	 * 新建扭蛋
 	 * @param json
 	 * @return

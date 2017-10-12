@@ -44,6 +44,16 @@ public interface PromotionLotteryService {
             throws PromotionCenterBusinessException, Exception;
 
     /**
+     * 保存红包雨信息
+     *
+     * @param requestDTO
+     * @return
+     * @throws PromotionCenterBusinessException
+     * @throws Exception
+     */
+    public GenricResDTO saveRedRainWinningInfo(DrawLotteryWinningReqDTO requestDTO)
+            throws PromotionCenterBusinessException, Exception;
+    /**
      * 执行抽奖处理
      *
      * @param requestDTO

@@ -258,16 +258,11 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 	public GenricResDTO saveRedRainWinningInfo(
 			DrawLotteryWinningReqDTO requestDTO)
 			throws PromotionCenterBusinessException, Exception {
-        String buyerCode = requestDTO.getBuyerCode();
-        String sellerCode = requestDTO.getSellerCode();
-        String promotionId = requestDTO.getPromotionId();
         String ticket = requestDTO.getTicket();
         String relevanceCouponCode = requestDTO.getRelevanceCouponCode();
-//        String recordJsonStr = "";
         GenricResDTO responseDTO = new GenricResDTO();
         BuyerWinningRecordDTO winningRecordDTO = new BuyerWinningRecordDTO();
         Map<String, String> dictMap = new HashMap<String, String>();
-        String promotionType = "";
 
         responseDTO.setMessageId(requestDTO.getMessageId());
         responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
@@ -275,6 +270,9 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
 
         baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_REWARD_TYPE);
 
+        winningRecordDTO.setPromotionId(requestDTO.getPromotionId());
+        winningRecordDTO.setBuyerCode(requestDTO.getBuyerCode());
+        winningRecordDTO.setSellerCode(requestDTO.getSellerCode());
         winningRecordDTO.setBuyerName(requestDTO.getBuyerName());
         winningRecordDTO.setBuyerTelephone(requestDTO.getBuyerTelephone());
         winningRecordDTO.setSellerName(requestDTO.getSellerName());

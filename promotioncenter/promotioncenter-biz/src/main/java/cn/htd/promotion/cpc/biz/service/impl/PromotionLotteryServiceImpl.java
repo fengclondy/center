@@ -61,8 +61,8 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String sellerCode = requestDTO.getSellerCode();
         String promotionId = requestDTO.getPromotionId();
         String ticket = noGenerator.generateLotteryTicket(promotionId + sellerCode + buyerCode);
-        boolean useThread = true;
-        responseDTO = this.beginDrawLotteryExecute(requestDTO, ticket, useThread);
+        boolean useSync = requestDTO.isUseSync();
+        responseDTO = this.beginDrawLotteryExecute(requestDTO, ticket, useSync);
         return responseDTO;
     }
 
@@ -77,7 +77,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
      * @throws Exception
      */
     @Override
-    public DrawLotteryResDTO beginDrawLotteryExecute(DrawLotteryReqDTO requestDTO, String ticket, boolean useThread)
+    public DrawLotteryResDTO beginDrawLotteryExecute(DrawLotteryReqDTO requestDTO, String ticket, boolean useSync)
             throws PromotionCenterBusinessException, Exception {
         DrawLotteryResDTO responseDTO = new DrawLotteryResDTO();
         String buyerCode = requestDTO.getBuyerCode();
@@ -99,11 +99,11 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
             errorWinningRecord.setRewardType("0");
             responseDTO.setTicket(ticket);
             //使用异步线程处理
-            if (useThread) {
-                promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
-            } else {
-                //使用同步处理
+            if (useSync) {
+            	//使用同步处理
                 promotionLotteryCommonService.doDrawLottery(requestDTO, errorWinningRecord, ticket);
+            } else {
+            	promotionLotteryCommonService.doDrawLotteryWithThread(requestDTO, errorWinningRecord, ticket);
             }
         }
         return responseDTO;

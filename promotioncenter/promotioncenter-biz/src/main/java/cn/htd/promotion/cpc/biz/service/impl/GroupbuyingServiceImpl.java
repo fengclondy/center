@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+
+import cn.htd.promotion.cpc.dto.request.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +72,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     
     @Resource
 	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
-    
 
     @Override
     public void addGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
@@ -324,8 +325,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         promotionStatusHistoryDAO.add(historyDTO);
     }
 
-    
-    
 	@Override
 	public void initGroupbuyingInfoRedisInfoWithThread(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
 		// TODO Auto-generated method stub
@@ -389,6 +388,13 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		
 	}
 
+    @Override
+    public int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto) {
+        return groupbuyingRecordDAO.insertSelective(dto);
+    }
 
-
+    @Override
+    public int updateGroupbuyingInfoByRecord(GroupbuyingRecordReqDTO dto, String messageId) {
+        return 0;
+    }
 }

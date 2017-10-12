@@ -5,6 +5,7 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 
 
 public interface GroupbuyingService {
@@ -41,6 +42,36 @@ public interface GroupbuyingService {
 	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page,
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
+	int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto);
+
+	int updateGroupbuyingInfoByRecord(GroupbuyingRecordReqDTO dto, String messageId);
+
+//	/**
+//	 * 根据promotionId获取完整的秒杀活动信息
+//	 * @param promotionId
+//	 * @param type 1.数据库商品库存,2.redis商品真实库存 
+//	 * @param messageId
+//	 * @return
+//	 */
+//	public TimelimitedInfoResDTO getSingleFullTimelimitedInfoByPromotionId(String promotionId,String type,String messageId) ;
+//	
+//	/**
+//	 * 根据promotionId获取简单的秒杀活动信息
+//	 * @param promotionId
+//	 * @param messageId
+//	 * @return
+//	 */
+//	public TimelimitedInfoResDTO getSingleTimelimitedInfoByPromotionId(String promotionId,String messageId) ;
+//
+//	/**
+//	 * 分页查询秒杀活动信息
+//	 * @param page
+//	 * @param timelimitedInfoReqDTO
+//	 * @param messageId
+//	 * @return
+//	 */
+//	public DataGrid<TimelimitedInfoResDTO> getTimelimitedInfosForPage(Pager<TimelimitedInfoReqDTO> page,
+//			TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
 //	
 //	/**
 //	 * 活动上下架
@@ -55,14 +86,14 @@ public interface GroupbuyingService {
     /**
      * 异步初始化团购活动的Redis数据
      *
-     * @param timelimitedInfoResDTO
+     * @param groupbuyingInfoCmplReqDTO
      */
     public void initGroupbuyingInfoRedisInfoWithThread(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO);
     
     /**
      * 初始化团购活动的Redis数据
      *
-     * @param timelimitedInfoResDTO
+     * @param groupbuyingInfoCmplReqDTO
      */
     public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO);
 

@@ -6,6 +6,7 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 
 public interface GroupbuyingAPI {
 	
@@ -19,12 +20,12 @@ public interface GroupbuyingAPI {
 	
 	/**
 	 * 修改团购活动
-	 * @param timelimitedInfoReqDTO
+	 * @param groupbuyingInfoCmplReqDTO
 	 * @param messageId
 	 * @return
 	 */
 	public ExecuteResult<?> updateGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO,String messageId);
-	
+
 	/**
 	 * 根据promotionId获取的团购活动信息
 	 * @param promotionId
@@ -43,23 +44,13 @@ public interface GroupbuyingAPI {
 	public ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page,
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
-	
-//	
-//	/**
-//	 * 根据活动编码进行上下架操作
-//	 * @param timelimitedInfoReqDTO
-//	 * @param messageId
-//	 * @return
-//	 */
-//	public ExecuteResult<String> updateShowStatusByPromotionId(TimelimitedInfoReqDTO timelimitedInfoReqDTO, String messageId);
-//	
-//	/**
-//	 * 总部秒杀参与会员店列表取得
-//	 * 
-//	 * @param promotionId 活动ID
-//	 * @param messageId 消息ID
-//	 * @return 总部秒杀参与会员店列表
-//	 */
-//	public ExecuteResult<List<PromotionSellerDetailDTO>> getPromotionSellerDetailList(String promotionId, String messageId);
+	/**
+	 * 参团记录
+	 * @param dto
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<?> addGroupbuyingRecord(GroupbuyingRecordReqDTO dto,String messageId);
+
 
 }

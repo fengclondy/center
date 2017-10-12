@@ -1,6 +1,8 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
+
+import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -82,7 +84,6 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         return result;
 	}
 
-
 	@Override
 	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplByPromotionId(String promotionId, String messageId) {
         ExecuteResult<GroupbuyingInfoCmplResDTO> result = new ExecuteResult<GroupbuyingInfoCmplResDTO>();
@@ -120,9 +121,32 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         return result;
 	}
 	
-	
-	
-	
-	
+    @Override
+    public ExecuteResult<?> addGroupbuyingRecord(GroupbuyingRecordReqDTO dto, String messageId) {
+        ExecuteResult<?> result = new ExecuteResult<>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
+        try {
+            if (null == dto) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
+            }
+            //参团实际人数+1 重新计算真实价格
+            int updateResult = groupbuyingService.updateGroupbuyingInfoByRecord(dto, messageId);
+            if(updateResult > 0){
+                //参团记录表插入新数据
+                int addResult = groupbuyingService.addGroupbuyingRecord(dto);
+            }else{
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编码不正确！");
+            }
+
+
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.addGroupbuyingRecord 出现异常{}", messageId, dto.getPromotionId() + ":" + e.toString());
+        }
+        return result;
+    }
 }

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="log.path" value="/home/htd/logs/imagecenter" />
+
+	<!-- Action访问记录 -->
+	<appender name="actionAccessAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/action-access.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/action-access.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%X{ip}|%X{user}|SessionId:%X{sessionId}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 具体api类内部日志 -->
+	<appender name="tcApiServiceAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-api.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-api.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- cache层日志输出日志 -->
+	<appender name="tcCacheAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-cache.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-cache.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- rcb公共类输出日志 -->
+	<appender name="tcCommonAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-common.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-common.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="tcInterceptorAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-interceptor.log</file>
+   		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-interceptor.%i.log</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>500MB</maxFileSize>
+		</triggeringPolicy>
+		<!-- 
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-interceptor.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		-->
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="tcBizAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-biz.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-biz.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="tcRaoAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-rao.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-rao.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	
+	<appender name="tcBizTaskAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/imagecenter-task.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-task.%i.log</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>500MB</maxFileSize>
+		</triggeringPolicy>
+		<!-- 
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/imagecenter-task.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		-->
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	
+	<!-- 错误 -->
+	<appender name="errorAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<file>${log.path}/error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/error.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%logger{0}|%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 业务跟踪 -->
+	<appender name="bizTraceAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/biz-trace.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/biz-trace.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 其他日志 -->
+	<appender name="otherAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<file>${log.path}/other.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/other.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%level|%logger{50}|%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 其他错误日志 -->
+	<appender name="otherErrorAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<file>${log.path}/other-error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/other-error.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%logger{50}|%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ActionResponseLoggerStdOut" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%date|%thread|%X{invokeNo}|%logger{0}|%msg%n</pattern>
+		</encoder>
+	</appender>
+	<!-- 需要记录日志的包 -->
+	<logger name="ActionAccessLogger" level="${tc.log.level}" additivity="false">
+		<appender-ref ref="actionAccessAppender" />
+	</logger>
+	<logger name="cn.htd.promotion.cpc.common" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcCommonAppender" />
+		<appender-ref ref="errorAppender" />
+		<!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+	<!-- 张丁修改，2017-09-05  此处拦截的是基础包的路径 -->
+	<logger name="cn.htd.common.interceptor" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcInterceptorAppender" />
+		<appender-ref ref="errorAppender" />
+		<!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+	<logger name="cn.htd.promotion.cpc.biz.rao" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcRaoAppender" />
+		<appender-ref ref="errorAppender" />
+		<!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	<!-- 	<appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+	
+	<logger name="cn.htd.promotion.cpc.biz" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcBizAppender" />
+		<appender-ref ref="errorAppender" />
+		<!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+	
+	<logger name="cn.htd.promotion.cpc.biz.task" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcBizTaskAppender" />
+		<appender-ref ref="errorAppender" />
+		<!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	<!-- 	<appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+	
+	
+	<logger name="cn.htd.promotion.cpc.api" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcApiServiceAppender" />
+		<appender-ref ref="errorAppender" />
+		<!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+
+	<!-- <logger name="htd.zeus.tc" level="${tc.log.level}"
+		additivity="false">
+		<appender-ref ref="tcCommonAppender" />
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="ActionResponseLoggerStdOut" />
+	</logger> -->
+	<logger name="org.apache" level="${other.log.level}" additivity="false">
+		<appender-ref ref="bizTraceAppender" />
+		<appender-ref ref="errorAppender" />
+	</logger>
+	<logger name="org.mybatis" level="${other.log.level}" additivity="false">
+		<appender-ref ref="bizTraceAppender" />
+		<appender-ref ref="errorAppender" />
+	</logger>
+	<logger name="com.alibaba.dubbo" level="${other.log.level}" additivity="false">
+		<appender-ref ref="bizTraceAppender" />
+		<appender-ref ref="errorAppender" />
+	<!-- 	<appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</logger>
+	<!-- <logger name="net.sf.ehcache" level="${other.log.level}" additivity="false">
+		<appender-ref ref="bizTraceAppender" />
+		<appender-ref ref="errorAppender" />
+	</logger> -->
+	<logger name="java.sql" level="${other.log.level}" additivity="false">
+		<appender-ref ref="bizTraceAppender" />
+		<appender-ref ref="errorAppender" />
+	</logger>
+	<root>
+		<level value="${other.log.level}" />
+		<appender-ref ref="otherAppender" />
+		<appender-ref ref="otherErrorAppender" />
+        <!-- <appender-ref ref="ActionResponseLoggerStdOut" /> -->
+	</root>
+</configuration>

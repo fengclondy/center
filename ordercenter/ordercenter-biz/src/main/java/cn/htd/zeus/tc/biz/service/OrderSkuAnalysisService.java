@@ -8,7 +8,8 @@ public interface OrderSkuAnalysisService {
 
 	public List<OrderSkuAnalysisDMO> queryShopInfo();
 
-	public List<OrderSkuAnalysisDMO> queryOrderSkuInfo(String sellerCode, String payOrderDate);
+	public List<OrderSkuAnalysisDMO> queryOrderSkuInfo(String sellerCode, String lastDayStart,
+			String lastDayEnd);
 
 	public void insertOrderSkuInfo(OrderSkuAnalysisDMO orderSkuAnalysisDMO);
 }

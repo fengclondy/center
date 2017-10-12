@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        ">
+
+	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+<!-- 	<dubbo:application name="hehe_consumer" /> -->
+
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<!-- <dubbo:registry address="multicast://224.5.6.7:1234" /> -->
+	<!-- <dubbo:registry address="172.16.1.157:2181" /> -->
+
+	<!-- 生成远程服务代理，可以像使用本地bean一样使用demoService -->
+
+	 <dubbo:application name="ordercenter" />
+    <dubbo:protocol name="dubbo" port="28097" />
+    <dubbo:registry id="beijingRegistry" protocol="zookeeper" address="172.16.1.157:2181" client="zkclient" />
+
+
+  <!--  <dubbo:reference id="demoService"
+		interface="com.unj.dubbotest.provider.DemoService" /> -->
+	<dubbo:reference id="orderQueryAPI"
+		interface="cn.htd.zeus.tc.api.OrderQueryAPI" retries="0" timeout="600" version="dev"/>
+
+	<dubbo:reference id="orderSalesMonthAPI"
+	interface="cn.htd.zeus.tc.api.OrderSalesMonthAPI" timeout="600" version="dev"/>
+
+	<dubbo:reference id="orderCompensateERPCallBackAPI"
+	interface="cn.htd.zeus.tc.api.OrderCompensateERPCallBackAPI" retries="0" timeout="6000" version="dev"/>
+
+	<dubbo:reference id="orderPaymentResultAPI"
+		interface="cn.htd.zeus.tc.api.OrderPaymentResultAPI" retries="0" timeout="6000" version="dev"/>
+
+		<dubbo:reference id="tradeOrderStatusHistoryAPI"
+		interface="cn.htd.zeus.tc.api.TradeOrderStatusHistoryAPI" retries="0" timeout="6000" version="dev"/>
+
+	<dubbo:reference id="orderSettleMentAPI"
+		interface="cn.htd.zeus.tc.api.OrderSettleMentAPI" retries="0" timeout="30000" version="haozy-dev"/>
+
+	<dubbo:reference id="orderCreateAPI"
+		interface="cn.htd.zeus.tc.api.OrderCreateAPI" retries="0" timeout="30000" version="dev"/>
+		
+</beans>

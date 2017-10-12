@@ -57,7 +57,7 @@ public interface TimelimitedPurchaseService {
 	 * @param skuCode
 	 * @return
 	 */
-	public ExecuteResult<List<TimelimitedInfoDTO>> getTimelimitedInfo(String skuCode);
+	public ExecuteResult<TimelimitedInfoDTO> getTimelimitedInfo(String skuCode);
 
 	/**
 	 * 限时购 － 获取对应的限时购信息

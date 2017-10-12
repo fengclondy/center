@@ -2,14 +2,19 @@ package cn.htd.promotion.cpc.biz.service.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
-import cn.htd.promotion.cpc.dto.request.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -18,24 +23,31 @@ import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.GroupbuyingPriceSettingDAO;
 import cn.htd.promotion.cpc.biz.dao.GroupbuyingRecordDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionConfigureDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
+import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
+import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+
+import com.alibaba.fastjson.JSON;
 
 
 @Service("groupbuyingService")
@@ -72,6 +84,13 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     
     @Resource
 	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
+    
+    @Resource
+    private PromotionInfoDAO promotionInfoDAO;
+    
+    @Autowired
+    private KeyGeneratorUtils keyGeneratorUtils;
+    
 
     @Override
     public void addGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
@@ -150,11 +169,8 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             // 添加团购活动履历
             addPromotionStatusHistory(singlePromotionInfoReqDTO);
 
-
-            // 异步初始化秒杀活动的Redis数据
-//            TimelimitedInfoResDTO timelimitedInfoResDTO =
-//                    getSingleFullTimelimitedInfoByPromotionId(promotionExtendInfoReturn.getPromotionId(),TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT, messageId);
-//            initTimelimitedInfoRedisInfoWithThread(timelimitedInfoResDTO);
+            // 异步初始化团购活动的Redis数据
+            initGroupbuyingInfoRedisInfoWithThread(promotionId);
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【addGroupbuyingInfo】报错：{}", messageId, e.toString());
@@ -244,7 +260,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
             // 添加团购活动履历
             addPromotionStatusHistory(singlePromotionInfoReqDTO);
-
+            
+            // 异步初始化团购活动的Redis数据
+            initGroupbuyingInfoRedisInfoWithThread(promotionId);
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【updateGroupbuyingInfo】报错：{}", messageId, e.toString());
@@ -326,15 +344,33 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     }
 
 	@Override
-	public void initGroupbuyingInfoRedisInfoWithThread(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
-		// TODO Auto-generated method stub
-		
+	public void initGroupbuyingInfoRedisInfoWithThread(final String promotionId) {
+        new Thread() {
+            public void run() {
+                String messageId = keyGeneratorUtils.generateMessageId();
+            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
+            }
+        }.start();
 	}
 
 	@Override
-	public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
-		// TODO Auto-generated method stub
-		
+	public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) {
+
+        PromotionInfoDMO promotionInfoDMO = new PromotionInfoDMO();
+        promotionInfoDMO.setPromotionId(groupbuyingInfoCmplResDTO.getPromotionId());
+        try {
+        	// 保存团购活动信息到redis
+        	setGroupbuyingInfoCmpl2Redis(groupbuyingInfoCmplResDTO);
+            promotionInfoDMO.setDealFlag(YesNoEnum.NO.getValue());
+        } catch (Exception e) {
+            promotionInfoDMO.setDealFlag(YesNoEnum.YES.getValue());
+            logger.info("初始化秒杀活动Redis数据GroupbuyingServiceImpl-initGroupbuyingInfoRedisInfo:入参:{},异常:{}",
+                    JSON.toJSONString(groupbuyingInfoCmplResDTO), ExceptionUtils.getFullStackTrace(e));
+            throw new RuntimeException(e);
+        } finally {
+            promotionInfoDAO.updatePromotionDealFlag(promotionInfoDMO);
+        }
 	}
 
 	@Override
@@ -387,6 +423,41 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         return dataGrid;
 		
 	}
+	
+	/**
+	 * 保存团购活动信息到redis
+	 * @param groupbuyingInfoCmplResDTO
+	 * @throws Exception
+	 */
+    public void setGroupbuyingInfoCmpl2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) throws Exception {
+        if (groupbuyingInfoCmplResDTO != null) {
+            String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
+            String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+            promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+            // 设置团购活动具体数量
+            this.addGroupbuyingInfoResult2Redis(groupbuyingInfoCmplResDTO);
+        }
+    }
+
+    /**
+     * 保存团购活动信息进Redis
+     *
+     * @param groupbuyingInfoCmplResDTO
+     */
+    private void addGroupbuyingInfoResult2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
+        String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+        String groupbuyingResultStr = promotionRedisDB.get(groupbuyingResultKey);
+        if (StringUtils.isNotBlank(groupbuyingResultStr)) {
+            promotionRedisDB.del(groupbuyingResultKey);
+        }
+        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,
+                String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
+        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,
+                String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
+        promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
+    }
 
     @Override
     public int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto) {

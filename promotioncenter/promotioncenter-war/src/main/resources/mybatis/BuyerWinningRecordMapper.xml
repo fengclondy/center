@@ -350,6 +350,9 @@
       <if test="orderNo != null and orderNo != ''">
         order_no,
       </if>
+      <if test="relevanceCouponCode != null and relevanceCouponCode != ''">
+        relevance_coupon_code,
+      </if>
       deal_flag,
       create_id,
       create_name,

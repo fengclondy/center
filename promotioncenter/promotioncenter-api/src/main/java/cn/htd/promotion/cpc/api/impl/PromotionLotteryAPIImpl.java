@@ -552,7 +552,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	}
 
 	/**
-	 * 保存中奖信息
+	 * 保存红包雨信息
 	 * @param winningInfoParam
 	 * @return
 	 */

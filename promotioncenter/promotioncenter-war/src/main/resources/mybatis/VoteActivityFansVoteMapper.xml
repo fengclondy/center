@@ -30,12 +30,10 @@
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
     insert into vote_activity_fans_vote (vote_fans_id, vote_member_id, fans_id, 
       fans_sign_up_time, create_id, create_name, 
-      create_time, modify_id, modify_name, 
-      modify_time)
+      create_time)
     values (#{voteFansId,jdbcType=BIGINT}, #{voteMemberId,jdbcType=BIGINT}, #{fansId,jdbcType=BIGINT}, 
       #{fansSignUpTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
-      #{modifyTime,jdbcType=TIMESTAMP})
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
     insert into vote_activity_fans_vote

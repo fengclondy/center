@@ -256,4 +256,13 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByVoteIdAndMemberCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from vote_activity_member
+    where vote_id = #{voteId,jdbcType=BIGINT}
+    AND member_code = #{memberCode,jdbcType=VARCHAR}
+    limit 1
+  </select>
 </mapper>

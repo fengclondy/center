@@ -37,10 +37,11 @@ public class OrderSkuAnalysisServiceImpl implements OrderSkuAnalysisService {
 	}
 
 	@Override
-	public List<OrderSkuAnalysisDMO> queryOrderSkuInfo(String sellerCode, String payOrderDate) {
+	public List<OrderSkuAnalysisDMO> queryOrderSkuInfo(String sellerCode, String lastDayStart,
+			String lastDayEnd) {
 		List<OrderSkuAnalysisDMO> analysis = null;
 		try {
-			analysis = orderSkuAnalysisDAO.queryOrderSkuInfo(sellerCode, payOrderDate);
+			analysis = orderSkuAnalysisDAO.queryOrderSkuInfo(sellerCode, lastDayStart, lastDayEnd);
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));

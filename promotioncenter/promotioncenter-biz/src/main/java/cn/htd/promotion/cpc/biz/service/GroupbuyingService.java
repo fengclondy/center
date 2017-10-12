@@ -88,14 +88,14 @@ public interface GroupbuyingService {
      *
      * @param groupbuyingInfoCmplReqDTO
      */
-    public void initGroupbuyingInfoRedisInfoWithThread(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO);
+    public void initGroupbuyingInfoRedisInfoWithThread(String promotionId);
     
     /**
      * 初始化团购活动的Redis数据
      *
      * @param groupbuyingInfoCmplReqDTO
      */
-    public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO);
+    public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO);
 
 //	/**
 //	 * 保存秒杀活动信息到redis

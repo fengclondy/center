@@ -226,8 +226,28 @@ public class DateUtil {
 		return sqlTime;
 	}
 
+	public static String getLastDayStart() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		return sdf.format(calendar.getTime());
+	}
+
+	public static String getLastDayEnd() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		return sdf.format(calendar.getTime());
+	}
+
 	public static void main(String[] args) throws Exception {
-		System.out.println(Integer.valueOf(getLastMonth()));
+		System.out.println(getLastDayStart());
 		// String date1="20161129153852"; //
 		// System.out.println("20161201200101".substring(0,8));
 		// // String date2="20161116150201";

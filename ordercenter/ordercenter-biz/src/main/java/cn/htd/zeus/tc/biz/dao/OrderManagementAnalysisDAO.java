@@ -13,7 +13,8 @@ public interface OrderManagementAnalysisDAO {
 	public List<OrderManagementAnalysisDMO> queryShopInfo();
 
 	public OrderManagementAnalysisDMO queryOrderManagermentInfo(
-			@Param("sellerCode") String sellerCode, @Param("payOrderDate") String payOrderDate);
+			@Param("sellerCode") String sellerCode, @Param("lastDayStart") String lastDayStart,
+			@Param("lastDayEnd") String lastDayEnd);
 
 	public void insertOrderManagementInfo(
 			@Param("orderManagementAnalysisDMO") OrderManagementAnalysisDMO orderManagementAnalysisDMO);

@@ -24,6 +24,7 @@ import cn.htd.zeus.tc.biz.dmo.OrderSkuAnalysisDMO;
 import cn.htd.zeus.tc.biz.rao.MemberCenterRAO;
 import cn.htd.zeus.tc.biz.service.OrderManagementAnalysisService;
 import cn.htd.zeus.tc.biz.service.OrderSkuAnalysisService;
+import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 
@@ -82,16 +83,16 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<ShopDTO> {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		int date = Integer
 				.valueOf(sdf.format(DateUtils.offsetDate(new Date(), Calendar.DAY_OF_MONTH, -1)));
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		String payOrderDate = sdf2
-				.format(DateUtils.offsetDate(new Date(), Calendar.DAY_OF_MONTH, -1));
+		String lastDayStart = DateUtil.getLastDayStart();
+		String lastDayEnd = DateUtil.getLastDayEnd();
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (ShopDTO analysis : tasks) {
 					OtherCenterResDTO<String> sellerCode = memberCenterRAO
 							.queryMemberCodeByMemberId(analysis.getSellerId(), "123456");
-					List<OrderSkuAnalysisDMO> analysis2 = orderskuAnalysisService
-							.queryOrderSkuInfo(sellerCode.getOtherCenterResult(), payOrderDate);
+					List<OrderSkuAnalysisDMO> analysis2 = orderskuAnalysisService.queryOrderSkuInfo(
+							sellerCode.getOtherCenterResult(), lastDayStart,
+							lastDayEnd);
 					if (CollectionUtils.isNotEmpty(analysis2)) {
 						for (OrderSkuAnalysisDMO skuInfo : analysis2) {
 							skuInfo.setShopId(analysis.getShopId());
@@ -113,4 +114,30 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<ShopDTO> {
 		return result;
 	}
 
+	public static void main(String[] args) {
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String payOrderDate = sdf2
+				.format(DateUtils.offsetDate(new Date(), Calendar.DAY_OF_MONTH, -1));
+		System.out.println(payOrderDate);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+
+		Date start = calendar.getTime();
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.add(Calendar.DAY_OF_MONTH, -1);
+		calendar2.set(Calendar.HOUR_OF_DAY, 23);
+		calendar2.set(Calendar.MINUTE, 59);
+		calendar2.set(Calendar.SECOND, 59);
+
+		Date end = calendar2.getTime();
+
+		System.out.println(sdf.format(start));
+		System.out.println(sdf.format(end));
+
+	}
 }

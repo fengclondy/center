@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -19,6 +20,7 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.enums.TimelimitedStatusEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
+import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.consts.MarketCenterCodeConst;
 import cn.htd.marketcenter.domain.BuyerUseTimelimitedLog;
@@ -30,6 +32,7 @@ import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedResultDTO;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -37,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -307,8 +311,10 @@ public class TimelimitedRedisHandle {
                 marketRedisDB.delHash(RedisConst.REDIS_TIMELIMITED_INDEX, key);
                 continue;
             }
-            
             keyArr = key.split("&");
+            if(keyArr.length <= 2){
+            	continue;
+            }
             //edit
             temp_promotion_type = keyArr[0];
             tmpSkuCode = keyArr[1];
@@ -926,5 +932,44 @@ public class TimelimitedRedisHandle {
         }
         marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_PURCHASE_INDEX, key, promotionIdStr);
     }
+    
+	public Map<String, String> getPromotionlistRedis(String skuCode) {
+		Map<String, String> resultMap = new HashMap<String, String>();
+		List<String> promotionIdList = new ArrayList<String>();
+		List<String> promotionIdResultList = new ArrayList<String>();
+		String validStatus = "";
+		try {
+			if(StringUtils.isNotEmpty(skuCode)){
+				List<String> skuCodeList = new ArrayList<String>();
+				skuCodeList.add(skuCode);
+				promotionIdList = getRedisTimelimitedIndex("0", skuCodeList, null, false, 
+						dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+						DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+			}else{
+				promotionIdList = getRedisTimelimitedIndex("0", null, null, false, 
+						dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+						DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+			}
+			if (!promotionIdList.isEmpty()) {
+				for (int i = 0; i < promotionIdList.size(); i++) {
+					validStatus = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_VALID, promotionIdList.get(i));
+					if (!StringUtils.isEmpty(validStatus)
+							&& dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+							DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
+								.equals(validStatus)) {
+							promotionIdResultList.add(promotionIdList.get(i));
+					} else {
+							resultMap.put("ERROR1", "ERROR1");
+					}
+				}
+			}
+			if (promotionIdResultList.size() > 0) {
+				resultMap.put("SUCCESS", JSON.toJSONString(promotionIdResultList));
+			}
+		} catch (Exception e) {
+			resultMap.put("ERROR2", ExceptionUtils.getStackTraceAsString(e));
+		}
+		return resultMap;
+	}
 
 }

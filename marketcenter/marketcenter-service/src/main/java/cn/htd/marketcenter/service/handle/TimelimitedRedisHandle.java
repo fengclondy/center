@@ -31,6 +31,8 @@ import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,22 +100,58 @@ public class TimelimitedRedisHandle {
         String timelimitedJsonStr = "";
         String promotionAllIdStr = "";
         String indexKey = "";
+        List<String> keyList = new ArrayList<String>();
         timelimitedJsonStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
         timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoDTO.class);
         if (timelimitedInfo != null) {
-            indexKey = timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();
+            //add by lijun for 限时购 start
+            String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+            if(promotionType.equals(timelimitedInfo.getPromotionType())){
+            	List accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
+    			if (accumulatyList.size() > 0) {
+    				for(int i=0;i<accumulatyList.size();i++){
+                		TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) accumulatyList.get(i),TimelimitedInfoDTO.class);
+                		String sku_code = timelimite.getSkuCode();
+                		indexKey = timelimitedInfo.getPromotionType() + "&" + sku_code + "&" + timelimitedInfo.getIsVip();
+    					keyList.add(indexKey);
+                	}
+    			}
+            }else {
+	            indexKey = timelimitedInfo.getPromotionType() + "&" + timelimitedInfo.getSkuCode() + "&" + timelimitedInfo.getIsVip();
+            }
+           //add by lijun for 限时购 end
+
             if (!StringUtils.isEmpty(timelimitedInfo.getPromotionProviderSellerCode())) {
                 indexKey = indexKey + "&" + timelimitedInfo.getPromotionProviderSellerCode();
             }
-            promotionAllIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, indexKey);
-            if (!StringUtils.isEmpty(promotionAllIdStr)) {
-                if (promotionAllIdStr.equals(promotionId)) {
-                    marketRedisDB.delHash(RedisConst.REDIS_TIMELIMITED_INDEX, indexKey);
-                } else {
-                    promotionAllIdStr = "," + promotionAllIdStr + ",";
-                    promotionAllIdStr = promotionAllIdStr.replace("," + promotionId + ",", ",");
-                    promotionAllIdStr = promotionAllIdStr.substring(1, promotionAllIdStr.length() - 1);
-                    marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_INDEX, indexKey, promotionAllIdStr);
+            
+          //add by lijun for 限时购 start
+            if(promotionType.equals(timelimitedInfo.getPromotionType())){
+            	for(String promotionkey :keyList){
+                     promotionAllIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, promotionkey);
+                     if (!StringUtils.isEmpty(promotionAllIdStr)) {
+                         if (promotionAllIdStr.equals(promotionId)) {
+                             marketRedisDB.delHash(RedisConst.REDIS_TIMELIMITED_INDEX, promotionkey);
+                         } else {
+                             promotionAllIdStr = "," + promotionAllIdStr + ",";
+                             promotionAllIdStr = promotionAllIdStr.replace("," + promotionId + ",", ",");
+                             promotionAllIdStr = promotionAllIdStr.substring(1, promotionAllIdStr.length() - 1);
+                             marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_INDEX, promotionkey, promotionAllIdStr);
+                         }
+                     }
+                   }
+            }else{
+            //add by lijun for 限时购 end
+                promotionAllIdStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, indexKey);
+                if (!StringUtils.isEmpty(promotionAllIdStr)) {
+                    if (promotionAllIdStr.equals(promotionId)) {
+                        marketRedisDB.delHash(RedisConst.REDIS_TIMELIMITED_INDEX, indexKey);
+                    } else {
+                        promotionAllIdStr = "," + promotionAllIdStr + ",";
+                        promotionAllIdStr = promotionAllIdStr.replace("," + promotionId + ",", ",");
+                        promotionAllIdStr = promotionAllIdStr.substring(1, promotionAllIdStr.length() - 1);
+                        marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED_INDEX, indexKey, promotionAllIdStr);
+                    }
                 }
             }
         }

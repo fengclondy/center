@@ -190,9 +190,31 @@
 	<select id="queryTimelimitedInfoByPromotionId" parameterType="java.lang.String"
 		resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />
-		from timelimited_info
-		where promotion_id = #{_parameter,
+			t.timelimited_id,
+			t.promotion_id,
+			t.level_code,
+			t.seller_code,
+			t.item_id,
+			t.sku_code,
+			t.sku_name,
+			t.sku_pic_url,
+			t.sku_timelimited_price,
+			t.timelimited_sku_count,
+			t.timelimited_threshold,
+			t.timelimited_valid_interval,
+			t.timelimited_threshold_min,
+			t.start_time,
+			t.end_time,
+			t.create_id,
+			t.create_name,
+			t.create_time,
+			t.modify_id,
+			t.modify_name,
+			t.modify_time
+		from timelimited_info t, promotion_accumulaty p
+		where 1=1 and t.promotion_id = p.promotion_id and p.delete_flag =0 and 
+		 t.level_code = p.level_code and
+	    t.promotion_id = #{_parameter,
 		jdbcType=VARCHAR}
 		order by level_code asc
 	</select>

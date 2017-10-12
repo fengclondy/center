@@ -260,6 +260,7 @@
 	and (a.is_vip=1 or
 	b.member_code=#{memberCode,jdbcType=VARCHAR}
 	)
+	order by a.create_time desc
 	<if test="pager!=null">
 	   limit #{pager.pageOffset} , #{pager.rows}
 	</if>

@@ -2,10 +2,12 @@ package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
@@ -13,6 +15,8 @@ import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 
 @Service("groupbuyingAPI")
 public class GroupbuyingAPIImpl implements GroupbuyingAPI {
@@ -79,8 +83,70 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
 	}
-	
-	
-	
 
+	@Override
+	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplByPromotionId(String promotionId, String messageId) {
+        ExecuteResult<GroupbuyingInfoCmplResDTO> result = new ExecuteResult<GroupbuyingInfoCmplResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingService.getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+        	result.setResult(groupbuyingInfoCmplResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGroupbuyingInfoCmplByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+
+
+	@Override
+	public ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> result = new ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>>(); 
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingInfoCmplForPage(page,groupbuyingInfoReqDTO, messageId);
+        	result.setResult(groupbuyingInfoCmplResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGroupbuyingInfoCmplForPage出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+	
+    @Override
+    public ExecuteResult<?> addGroupbuyingRecord(GroupbuyingRecordReqDTO dto, String messageId) {
+        ExecuteResult<?> result = new ExecuteResult<>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+            if (null == dto) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
+            }
+            //参团实际人数+1 重新计算真实价格
+            int updateResult = groupbuyingService.updateGroupbuyingInfoByRecord(dto, messageId);
+            if(updateResult > 0){
+                //参团记录表插入新数据
+                int addResult = groupbuyingService.addGroupbuyingRecord(dto);
+            }else{
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编码不正确！");
+            }
+
+
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.addGroupbuyingRecord 出现异常{}", messageId, dto.getPromotionId() + ":" + e.toString());
+        }
+        return result;
+    }
 }

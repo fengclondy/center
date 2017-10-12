@@ -12,7 +12,7 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	// 团购价格设置
 	private List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList;
 	// 活动信息
-	private SinglePromotionInfoResDTO singlePromotionInfoResDTO;
+	private SinglePromotionInfoCmplResDTO singlePromotionInfoCmplResDTO;
 	
 	public List<GroupbuyingPriceSettingResDTO> getGroupbuyingPriceSettingResDTOList() {
 		return groupbuyingPriceSettingResDTOList;
@@ -21,14 +21,16 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 			List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList) {
 		this.groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingResDTOList;
 	}
-	public SinglePromotionInfoResDTO getSinglePromotionInfoResDTO() {
-		return singlePromotionInfoResDTO;
+	public SinglePromotionInfoCmplResDTO getSinglePromotionInfoCmplResDTO() {
+		return singlePromotionInfoCmplResDTO;
 	}
-	public void setSinglePromotionInfoResDTO(
-			SinglePromotionInfoResDTO singlePromotionInfoResDTO) {
-		this.singlePromotionInfoResDTO = singlePromotionInfoResDTO;
+	public void setSinglePromotionInfoCmplResDTO(
+			SinglePromotionInfoCmplResDTO singlePromotionInfoCmplResDTO) {
+		this.singlePromotionInfoCmplResDTO = singlePromotionInfoCmplResDTO;
 	}
+	
 
+	
 
 	
 	

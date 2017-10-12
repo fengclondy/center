@@ -3,14 +3,15 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.dto.request.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
@@ -21,23 +22,21 @@ import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
-import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
-import cn.htd.promotion.cpc.dto.request.TimelimitedSkuDescribeReqDTO;
-import cn.htd.promotion.cpc.dto.request.TimelimitedSkuPictureReqDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+
 
 @Service("groupbuyingService")
 public class GroupbuyingServiceImpl implements GroupbuyingService {
@@ -73,7 +72,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     
     @Resource
 	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
-    
 
     @Override
     public void addGroupbuyingInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
@@ -327,22 +325,76 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         promotionStatusHistoryDAO.add(historyDTO);
     }
 
-    
-    
 	@Override
-	public void initGroupbuyingInfoRedisInfoWithThread(
-			GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
+	public void initGroupbuyingInfoRedisInfoWithThread(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void initGroupbuyingInfoRedisInfo(
-			GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
+	public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
+	public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId, String messageId) {
+		
+		GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = null;
 
+	        try {
 
+	            if (null == promotionId) {
+	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
+	            }
+
+	            // 查询活动信息
+	            groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfoCmplByPromotionId(promotionId);
+	            
+	            List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.getPromotionConfiguresByPromotionId(promotionId);
+	            // 设置配置信息
+	            if(null != groupbuyingInfoCmplResDTO && null != groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO()){
+	            	groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setPromotionConfigureList(promotionConfigureDTOlist);
+	            }
+
+	        } catch (Exception e) {
+	            logger.error("messageId{}:执行方法【getGroupbuyingInfoCmplByPromotionId】报错：{}", messageId, e.toString());
+	            throw new RuntimeException(e);
+	        }
+
+	        return groupbuyingInfoCmplResDTO;
+	}
+
+	@Override
+	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page,GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		
+
+        DataGrid<GroupbuyingInfoCmplResDTO> dataGrid = null;
+        try {
+//            if (null == groupbuyingInfoReqDTO) {
+//                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数不能为空！");
+//            }
+
+            dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
+            List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfoCmplForPage(page, groupbuyingInfoReqDTO);
+            int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
+            dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+            dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【getGroupbuyingInfoCmplForPage】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+        return dataGrid;
+		
+	}
+
+    @Override
+    public int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto) {
+        return groupbuyingRecordDAO.insertSelective(dto);
+    }
+
+    @Override
+    public int updateGroupbuyingInfoByRecord(GroupbuyingRecordReqDTO dto, String messageId) {
+        return 0;
+    }
 }

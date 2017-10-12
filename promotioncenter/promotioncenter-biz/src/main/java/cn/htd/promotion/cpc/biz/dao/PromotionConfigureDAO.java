@@ -24,4 +24,7 @@ public interface PromotionConfigureDAO extends BaseDAO<PromotionConfigureDTO> {
 	
 	void deleteByPromotionId(String promotionId);
 	
+	
+	List<PromotionConfigureDTO> getPromotionConfiguresByPromotionId(String promotionInfoId);
+	
 }

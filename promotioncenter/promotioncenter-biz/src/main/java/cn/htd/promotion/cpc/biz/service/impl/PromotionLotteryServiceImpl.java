@@ -300,7 +300,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
 
         baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_REWARD_TYPE);
-
+        winningRecordDTO.setPromotionType(requestDTO.getPromotionType());
         winningRecordDTO.setPromotionId(requestDTO.getPromotionId());
         winningRecordDTO.setBuyerCode(requestDTO.getBuyerCode());
         winningRecordDTO.setSellerCode(requestDTO.getSellerCode());

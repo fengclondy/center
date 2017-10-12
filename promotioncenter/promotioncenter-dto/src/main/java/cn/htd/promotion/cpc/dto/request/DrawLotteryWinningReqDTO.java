@@ -38,6 +38,11 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
      * 卷号（红包雨使用）
      */
     private String relevanceCouponCode;
+    /**
+     * 活动类型（红包雨使用）
+     */
+    private String promotionType;
+    
 
     public String getBuyerName() {
         return buyerName;
@@ -109,6 +114,14 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 
 	public void setRelevanceCouponCode(String relevanceCouponCode) {
 		this.relevanceCouponCode = relevanceCouponCode;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
 	}
 
 }

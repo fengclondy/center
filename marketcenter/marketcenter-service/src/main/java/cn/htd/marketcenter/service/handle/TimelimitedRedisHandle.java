@@ -940,11 +940,12 @@ public class TimelimitedRedisHandle {
 		String validStatus = "";
 		try {
 			if(StringUtils.isNotEmpty(skuCode)){
-				List<String> skuCodeList = new ArrayList<String>();
-				skuCodeList.add(skuCode);
-				promotionIdList = getRedisTimelimitedIndex("0", skuCodeList, null, false, 
-						dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-						DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+				String purchaseKey = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+						DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT) + "&" + skuCode + "&0";
+				String promotionIds = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_INDEX, purchaseKey);
+				if(StringUtils.isNotEmpty(promotionIds)){
+					promotionIdList = Arrays.asList(promotionIds.split(","));
+				}
 			}else{
 				promotionIdList = getRedisTimelimitedIndex("0", null, null, false, 
 						dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,

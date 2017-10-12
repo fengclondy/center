@@ -239,11 +239,9 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					List list = timelimitedInfoDTO.getPromotionAccumulatyList();
 					if (null != list && !list.isEmpty()) {
 						for (int i = 0; i < list.size(); i++) {
-							timelimite = JSONObject.toJavaObject((JSONObject) list.get(i),
-									TimelimitedInfoDTO.class);
+							timelimite = JSONObject.toJavaObject((JSONObject) list.get(i),TimelimitedInfoDTO.class);
 							if (timelimite.getSkuCode().equals(skuCode)) {
-								if(!nowDt.before(timelimite.getStartTime())
-										&& !nowDt.after(timelimite.getEndTime())) {
+								if(!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
 									result.setCode("00000");
 									result.setResult(timelimite);
 									return result;

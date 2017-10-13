@@ -238,6 +238,12 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                     ResultCodeEnum.LOTTERY_BUYER_CURRENT_DAY_NO_MORE_DRAW_CHANCE.getCode(),
                     "粉丝当日抽奖次数已用完 入参:" + JSON.toJSONString(requestDTO));
         }
+        //货到付款验证下单时间createdate在promotiongateway已经转成paydate，在线支付验证支付时间是否在促销活动范围内()
+        Date payDate = requestDTO.getPayDate();
+        if (payDate.before(promotionInfoDTO.getEffectiveTime()) || payDate.after(promotionInfoDTO.getInvalidTime())) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_ORDER_NOT_IN_EFFECTIVE_DATE.getCode(),
+                   "货到付款的下单时间或者在线支付的支付时间不在活动:" + promotionId + " 有效期之内");
+        }
         //下单支付方式验证
         String payType = requestDTO.getPayType();
         List<PromotionConfigureDTO> promotionConfigureList = promotionInfoDTO.getPromotionConfigureList();

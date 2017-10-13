@@ -86,6 +86,27 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String promotionId = requestDTO.getPromotionId();
         String ticket = requestDTO.getOrderNo();
         boolean useSync = requestDTO.isUseSync();
+        
+        //校验是否已经挂过奖了,如果已经挂过了且报存了中奖信息，告诉前端已经挂过了，如果没有填写中奖信息，返回ticket
+        String buyerAwardInfo =  promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket;
+		if(promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo)){
+			//判断orderNo是不是存在-如果存在就 “抱歉，这笔订单您已经刮过奖啦~请重新下单刮奖~”
+			String recordJsonStr = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo);
+			BuyerWinningRecordDTO winningRecordDTO = JSON.parseObject(recordJsonStr, BuyerWinningRecordDTO.class);
+			String redisOrderNo = winningRecordDTO.getOrderNo();
+			//如果redisOrderNo存在说明已经挂过奖了，如果不存在说明还没有刮奖
+			if(!StringUtils.isEmpty(redisOrderNo)){
+				throw new PromotionCenterBusinessException(
+						ResultCodeEnum.LOTTERY_ORDER_HAD_LUCK_DRAW.getCode(),
+						"抱歉，这笔订单您已经刮过奖啦~请重新下单刮奖~ 入参:" + JSON.toJSONString(requestDTO));
+			}else{
+				responseDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+				responseDTO.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+				responseDTO.setTicket(ticket);
+				return responseDTO;
+			}					
+		}
+        
         DrawLotteryReqDTO drawLotteryReqDTO = new DrawLotteryReqDTO();
         drawLotteryReqDTO.setBuyerCode(buyerCode);
         drawLotteryReqDTO.setMessageId(requestDTO.getMessageId());

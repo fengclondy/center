@@ -65,4 +65,9 @@
 	
 	<!-- 预售商品 -->
 	<dubbo:service interface="cn.htd.goodscenter.service.PreSaleItemExportService" ref="preSaleItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	<!-- 限时购商品库存扣减  -->
+	<dubbo:service interface="cn.htd.goodscenter.service.promotionstock.PromotionSkuStockChangeExportService" ref="promotionSkuStockChangeExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	
+	
 </beans>

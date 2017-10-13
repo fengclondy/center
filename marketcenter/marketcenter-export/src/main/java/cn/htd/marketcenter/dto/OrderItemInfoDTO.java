@@ -206,7 +206,7 @@ public class OrderItemInfoDTO implements Serializable {
 	private int isLimitedTimePurchase;
 
 	/**
-	 * 促销活动类型 1：优惠券，2:秒杀,3:限时购
+	 * 促销活动类型 1：优惠券，2:秒杀，3:限时购
 	 */
 	private String promotionType;
 

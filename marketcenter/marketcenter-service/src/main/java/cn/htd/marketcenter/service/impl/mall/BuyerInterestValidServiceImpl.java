@@ -131,7 +131,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 }
             }
             // 校验购物车商品是否有秒杀商品
-            validateTimelimitedProducts(messageId, cart);
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            validateTimelimitedProducts(messageId, cart);
+            validateTimelimitedProducts(messageId, cart, dictMap);
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             validateCouponProducts(messageId, cart, null, dictMap);
             result.setResult(cart);
         } catch (MarketCenterBusinessException bcbe) {
@@ -145,13 +148,19 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
     }
 
     /**
-     * 校验购物车中是否有秒杀商品
+     * 校验购物车中是否有秒杀和限时购商品
      *
      * @param messageId
      * @param cart
+     * @param dictMap
      * @throws MarketCenterBusinessException
      */
-    private void validateTimelimitedProducts(String messageId, TradeInfoDTO cart) throws MarketCenterBusinessException {
+
+    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//    private void validateTimelimitedProducts(String messageId, TradeInfoDTO cart) throws MarketCenterBusinessException {
+    private void validateTimelimitedProducts(String messageId, TradeInfoDTO cart, Map<String, String> dictMap)
+            throws MarketCenterBusinessException {
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
         logger.info("***********校验购物车中是否有秒杀商品 messageId:[{}] 开始***********", messageId);
         long startTime = System.currentTimeMillis();
         List<OrderInfoDTO> orderList = cart.getOrderList();
@@ -179,12 +188,30 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         }
         timelimitedInfoList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
         if (timelimitedInfoList != null && !timelimitedInfoList.isEmpty()) {
-            hasTimelimitedSkuFlg = true;
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            hasTimelimitedSkuFlg = true;
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             for (TimelimitedInfoDTO timelimitedInfo : timelimitedInfoList) {
                 skuCode = timelimitedInfo.getSkuCode();
                 tmpProductsList = skuCodeMap.get(skuCode);
                 for (OrderItemInfoDTO tmpProductDTO : tmpProductsList) {
-                    tmpProductDTO.setHasTimelimitedFlag(true);
+                    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//                    tmpProductDTO.setHasTimelimitedFlag(true);
+                    if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&"
+                            + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+                            .equals(timelimitedInfo.getPromotionType())) {
+                        hasTimelimitedSkuFlg = true;
+                        tmpProductDTO.setHasTimelimitedFlag(true);
+                    } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&"
+                            + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT)
+                            .equals(timelimitedInfo.getPromotionType())) {
+                        if ((new Date()).before(timelimitedInfo.getEffectiveTime())) {
+                            continue;
+                        }
+                    }
+                    tmpProductDTO.setPromotionType(timelimitedInfo.getPromotionType());
+                    tmpProductDTO.setPromotionId(timelimitedInfo.getPromotionId());
+                    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
                     tmpProductDTO.setTimelimitedInfo(timelimitedInfo);
                 }
                 logger.info("***********校验购物车中是否有秒杀商品 messageId:[{}],商品skuCode:[{}],参加秒杀活动PromotionId:[{}]***********",

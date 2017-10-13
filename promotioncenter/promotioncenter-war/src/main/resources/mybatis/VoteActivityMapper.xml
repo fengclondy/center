@@ -273,4 +273,15 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where vote_id = #{voteId,jdbcType=BIGINT}
   </update>
+  
+  <select id="queryVoteActivityByTime" resultMap="ResultMapWithBLOBs" >
+   select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+   from vote_activity va where 
+    <![CDATA[  va.vote_start_time <  #{startTime} ]]>
+    <![CDATA[ and va.vote_end_time > #{endTime}   ]]>
+    and va.delete_flag=0
+  </select>
 </mapper>

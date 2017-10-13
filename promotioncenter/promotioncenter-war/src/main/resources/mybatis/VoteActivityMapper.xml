@@ -23,6 +23,7 @@
   <resultMap id="ResultMapWithBLOBs" type="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" extends="BaseResultMap" >
     <result column="vote_rule" property="voteRule" jdbcType="LONGVARCHAR" />
   </resultMap>
+
   <sql id="Base_Column_List" >
     vote_id, vote_name, vote_topic_pic, vote_sample_pic, vote_sotre_num_p_account_p_day, 
     vote_num_p_account_p_day_p_store, vote_sign_up_start_time, vote_sign_up_end_time, 
@@ -40,6 +41,18 @@
     from vote_activity
     where vote_id = #{voteId,jdbcType=BIGINT}
   </select>
+
+  <select id="selectCurrentActivity" resultMap="BaseResultMap">
+    select
+      <include refid="Base_Column_List" />
+    from
+      vote_activity
+    where
+      DATE_FORMAT(vote_sign_up_start_time,'%Y-%m-%d') >=DATE_FORMAT(now(),'%Y-%m-%d')
+      <![CDATA[and DATE_FORMAT(now(),'%Y-%m-%d') <= DATE_FORMAT(vote_end_time,'%Y-%m-%d') ]]>
+      limit 1
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from vote_activity
     where vote_id = #{voteId,jdbcType=BIGINT}

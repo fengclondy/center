@@ -44,6 +44,7 @@ import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 
@@ -460,12 +461,23 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     }
 
     @Override
-    public int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto) {
-        return groupbuyingRecordDAO.insertSelective(dto);
+    public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto, String messageId) {
+        groupbuyingRecordDAO.insertSelective(dto);
     }
 
-    @Override
-    public int updateGroupbuyingInfoByRecord(GroupbuyingRecordReqDTO dto, String messageId) {
-        return 0;
-    }
+	@Override
+	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO dto, String messageId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataGrid<GroupbuyingRecordResDTO> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page, GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+    
+    
+
 }

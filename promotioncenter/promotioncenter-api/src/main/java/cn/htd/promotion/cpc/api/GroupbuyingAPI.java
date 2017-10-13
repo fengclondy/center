@@ -45,12 +45,12 @@ public interface GroupbuyingAPI {
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
 	/**
-	 * 参团记录
+	 * http接口添加参团记录
 	 * @param dto
 	 * @param messageId
 	 * @return
 	 */
-	ExecuteResult<?> addGroupbuyingRecord(GroupbuyingRecordReqDTO dto,String messageId);
+	ExecuteResult<?> addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto,String messageId);
 
 
 }

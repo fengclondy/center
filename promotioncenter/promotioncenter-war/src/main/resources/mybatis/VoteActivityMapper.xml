@@ -273,4 +273,16 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where vote_id = #{voteId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectCurrentActivity" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from vote_activity
+    where
+    vote_sign_up_start_time <= NOW()
+    and vote_end_time >= NOW()
+    limit 1
+  </select>
 </mapper>

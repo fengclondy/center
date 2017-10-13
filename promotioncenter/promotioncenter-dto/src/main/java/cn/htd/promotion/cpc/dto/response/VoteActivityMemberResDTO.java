@@ -24,9 +24,9 @@ public class VoteActivityMemberResDTO implements Serializable{
 
     private String contactPhone;
 
-    private Byte signStatus;
+    private Integer signStatus;
 
-    private Byte auditStatus;
+    private Integer auditStatus;
 
     private Date signUpTime;
 
@@ -34,7 +34,7 @@ public class VoteActivityMemberResDTO implements Serializable{
 
     private Date memberVoteLastTime;
 
-    private Byte deleteFlag;
+    private Integer deleteFlag;
 
     private Long createId;
 
@@ -104,19 +104,19 @@ public class VoteActivityMemberResDTO implements Serializable{
         this.contactPhone = contactPhone == null ? null : contactPhone.trim();
     }
 
-    public Byte getSignStatus() {
+    public Integer getSignStatus() {
         return signStatus;
     }
 
-    public void setSignStatus(Byte signStatus) {
+    public void setSignStatus(Integer signStatus) {
         this.signStatus = signStatus;
     }
 
-    public Byte getAuditStatus() {
+    public Integer getAuditStatus() {
         return auditStatus;
     }
 
-    public void setAuditStatus(Byte auditStatus) {
+    public void setAuditStatus(Integer auditStatus) {
         this.auditStatus = auditStatus;
     }
 
@@ -144,11 +144,11 @@ public class VoteActivityMemberResDTO implements Serializable{
         this.memberVoteLastTime = memberVoteLastTime;
     }
 
-    public Byte getDeleteFlag() {
+    public Integer getDeleteFlag() {
         return deleteFlag;
     }
 
-    public void setDeleteFlag(Byte deleteFlag) {
+    public void setDeleteFlag(Integer deleteFlag) {
         this.deleteFlag = deleteFlag;
     }
 

@@ -1,5 +1,8 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
+
 import java.util.Date;
 
 /**
@@ -55,4 +58,19 @@ public interface VoteActivityFansVoteService {
      * @return 投票是否成功
      */
     boolean voteByFans(Long voteActivityId, Long fansId, String memberCode);
+
+    /**
+     * 该会员店是否展示投票活动
+     * @param memberCode 会员店编码
+     * @return 是否展示投票活动
+     */
+    boolean isShowVoteActivityByMemberCode(String memberCode);
+
+    /**
+     * 获取会员店投票详情
+     * @param voteActivityId
+     * @param memberCode
+     * @return
+     */
+    ExecuteResult<VoteActivityMemberVoteDetailDTO> getMemberVoteDetail(Long voteActivityId, String memberCode);
 }

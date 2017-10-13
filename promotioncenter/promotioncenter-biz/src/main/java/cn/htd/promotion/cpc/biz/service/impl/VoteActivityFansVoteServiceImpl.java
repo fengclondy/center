@@ -5,9 +5,11 @@ import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
 import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityFansVoteService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 投票活动-粉丝投票相关服务
@@ -73,7 +78,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             String value = promotionRedisDB.getHash(key, field);
             count = Integer.valueOf(value);
         }
-        // 查询数据库
+        // TODO :查询数据库
         return count;
     }
 
@@ -84,6 +89,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         if (promotionRedisDB.exists(key)) {
             count = promotionRedisDB.getHLen(key);
         }
+        // TODO :查询数据库
         return count;
     }
 
@@ -154,5 +160,54 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             promotionRedisDB.setHash(key, field, "1");
         }
         return false;
+    }
+
+    @Override
+    public boolean isShowVoteActivityByMemberCode(String memberCode) {
+        // 有没有所处当前时间的投票活动
+        VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectCurrentActivity();
+        if (voteActivityResDTO != null) {
+            Long voteId = voteActivityResDTO.getVoteId();
+            // 校验会员店报名情况，是否审核通过
+            VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteId, memberCode);
+            // 状态是否是已审核和已报名
+            if (voteActivityMemberResDTO != null && voteActivityMemberResDTO.getAuditStatus() == 1 && voteActivityMemberResDTO.getSignStatus() == 1) {
+                return true;
+            } else {
+                logger.info("isShowVoteActivityByMemberCode, voteActivityMemberResDTO不满足展示条件, result:false, voteActivityMemberResDTO:{}", voteActivityMemberResDTO);
+                return false;
+            }
+        } else {
+            logger.info("isShowVoteActivityByMemberCode, voteActivityResDTO is null, result:false");
+            return false;
+        }
+    }
+
+    @Override
+    public ExecuteResult<VoteActivityMemberVoteDetailDTO> getMemberVoteDetail(Long voteActivityId, String memberCode) {
+        ExecuteResult<VoteActivityMemberVoteDetailDTO> executeResult = new ExecuteResult<>();
+        try {
+            VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);
+            if (voteActivityResDTO == null) {
+                executeResult.setCode("");//TODO:
+                executeResult.setResultMessage("查询不到该活动，voteActivityId：" + voteActivityId);
+                return executeResult;
+            }
+            VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteActivityId, memberCode);
+            if (voteActivityMemberResDTO == null) {
+                executeResult.setCode("");//TODO:
+                executeResult.setResultMessage("查询不到该会员店的报名信息，voteActivityId：" + voteActivityId + ",memberCode:" + memberCode);
+                return executeResult;
+            }
+            // 获取投票排名top10
+            List<HashMap<String, String>> rankingList = this.voteActivityMemberDAO.selectMemberRankingTop10(voteActivityId);
+            // 获取排名
+            int ranking = this.voteActivityMemberDAO.selectMemberRankingByMemberCode(voteActivityId, memberCode);
+
+
+        } catch (Exception e) {
+
+        }
+        return null;
     }
 }

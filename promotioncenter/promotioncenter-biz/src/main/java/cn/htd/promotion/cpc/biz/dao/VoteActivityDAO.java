@@ -16,4 +16,7 @@ public interface VoteActivityDAO {
     int updateByPrimaryKeyWithBLOBs(VoteActivityResDTO record);
 
     int updateByPrimaryKey(VoteActivityResDTO record);
+
+    // 查询当前时间所处的投票活动
+    VoteActivityResDTO selectCurrentActivity();
 }

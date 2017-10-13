@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.api;
 
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
 
 import java.util.Date;
 
@@ -58,6 +59,18 @@ public interface VoteActivityFansVoteApi {
      */
     ExecuteResult<Boolean> voteByFans(Long voteActivityId, Long fansId, String memberCode);
 
+    /**
+     * 该会员店是否展示投票活动
+     * @param memberCode 会员店编码
+     * @return 是否展示投票活动
+     */
+    ExecuteResult<Boolean> isShowVoteActivityByMemberCode(String memberCode);
 
-
+    /**
+     * 获取会员店投票详情
+     * @param voteActivityId
+     * @param memberCode
+     * @return
+     */
+    ExecuteResult<VoteActivityMemberVoteDetailDTO> getMemberVoteDetail(Long voteActivityId, String memberCode);
 }

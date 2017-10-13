@@ -265,4 +265,48 @@
     AND member_code = #{memberCode,jdbcType=VARCHAR}
     limit 1
   </select>
+
+  <!-- 投票排名 -->
+  <sql id="vote_ranking">
+    SELECT
+			a.vote_id,
+			a.member_code,
+			(
+				SELECT
+					count(1)
+				FROM
+					vote_activity_fans_vote b
+				WHERE
+					a.vote_member_id = b.vote_member_id
+			) AS voteNum,
+			a.member_vote_last_time
+		FROM
+			vote_activity_member a
+		WHERE
+			vote_id = #{voteId}
+		ORDER BY
+			voteNum DESC,
+			member_vote_last_time ASC
+  </sql>
+
+  <select id="selectMemberRankingTop10" resultMap="map">
+    SELECT
+	  c.*, (@rownum :=@rownum + 1) AS rowNum
+    FROM
+	( <include refid="vote_ranking" /> )c,
+    (SELECT @rownum := 0) r
+    LIMIT 10
+  </select>
+
+  <select id="selectMemberRankingByMemberCode" resultType="int">
+    SELECT rowNum FROM
+    (
+      SELECT
+      c.*, (@rownum :=@rownum + 1) AS rowNum
+      FROM
+      ( <include refid="vote_ranking" /> )c,
+      (SELECT @rownum := 0) r
+    ) d
+    where member_code = #{memberCode}
+  </select>
 </mapper>

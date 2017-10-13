@@ -3,35 +3,54 @@ package cn.htd.promotion.cpc.dto.response;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class VoteActivityResDTO implements Serializable{
 	
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -2180315925144834135L;
-
+	
+    //投票活动id
 	private Long voteId;
-
+	//投票活动名称
+	@NotEmpty(message="投票活动名称未维护")
+	@Length(max=10,message="投票活动名称不能超过10个字符")
     private String voteName;
-
+    //活动主题图片
+	@NotEmpty(message="活动主题图片未维护")
     private String voteTopicPic;
-
+    //活动报名示意
+	@NotEmpty(message="活动报名示意未维护")
     private String voteSamplePic;
-
+    //每个帐户每日最多可投多少家店
+	@Digits(integer=5,fraction=5,message="每个帐户每日最多可投多少家店要为数字")
+	@NotNull(message="每个帐户每日最多可投多少家店未维护")
     private Integer voteSotreNumPAccountPDay;
-
+    //每个帐户每日最多可投多少张票
+	@Digits(integer=5,fraction=5,message="每个帐户每日最多可投多少张票要为数字")
+	@NotNull(message="每个帐户每日最多可投多少张票未维护")
     private Integer voteNumPAccountPDayPStore;
-
+    //投票报名开始时间
+	@NotNull(message="投票报名开始时间未维护")
     private Date voteSignUpStartTime;
-
+    //投票报名结束时间
+	@NotNull(message="投票报名结束时间未维护")
     private Date voteSignUpEndTime;
-
+    //投票开始时间
+	@NotNull(message="投票开始时间未维护")
     private Date voteStartTime;
-
+    //投票结束时间
+	@NotNull(message="投票结束时间未维护")
     private Date voteEndTime;
-
-    private Byte deleteFlag;
-
+    //删除标志：0 未删除 1 已删除
+    private Integer deleteFlag;
+    
     private Long createId;
 
     private String createName;
@@ -43,7 +62,9 @@ public class VoteActivityResDTO implements Serializable{
     private String modifyName;
 
     private Date modifyTime;
-
+    //报名规则
+    @NotNull(message="报名规则未维护")
+    @Length(max=1000,message="报名规则不能超过1000个字符")
     private String voteRule;
 
     public Long getVoteId() {
@@ -126,11 +147,11 @@ public class VoteActivityResDTO implements Serializable{
         this.voteEndTime = voteEndTime;
     }
 
-    public Byte getDeleteFlag() {
+    public Integer getDeleteFlag() {
         return deleteFlag;
     }
 
-    public void setDeleteFlag(Byte deleteFlag) {
+    public void setDeleteFlag(Integer deleteFlag) {
         this.deleteFlag = deleteFlag;
     }
 

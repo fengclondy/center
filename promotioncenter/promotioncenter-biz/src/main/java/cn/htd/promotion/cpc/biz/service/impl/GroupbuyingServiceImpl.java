@@ -461,20 +461,61 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     }
 
     @Override
-    public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto, String messageId) {
-        groupbuyingRecordDAO.insertSelective(dto);
+    public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+       
+        // 当前时间
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+
+        try {
+        	groupbuyingRecordReqDTO.setDeleteFlag(Boolean.FALSE);
+        	groupbuyingRecordReqDTO.setCreateTime(currentTime);
+        	groupbuyingRecordReqDTO.setModifyTime(currentTime);
+        	groupbuyingRecordDAO.addGroupbuyingRecord(groupbuyingRecordReqDTO);
+        	
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【addGroupbuyingRecord2HttpINTFC】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
     }
 
 	@Override
-	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO dto, String messageId) {
-		// TODO Auto-generated method stub
-		return null;
+	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		
+		GroupbuyingRecordResDTO groupbuyingRecordResDTO = null;
+
+	        try {
+
+	            if (null == groupbuyingRecordReqDTO) {
+	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数不能为空！");
+	            }
+
+	            groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+
+	        } catch (Exception e) {
+	            logger.error("messageId{}:执行方法【getSingleGroupbuyingRecord】报错：{}", messageId, e.toString());
+	            throw new RuntimeException(e);
+	        }
+
+	        return groupbuyingRecordResDTO;
 	}
 
 	@Override
 	public DataGrid<GroupbuyingRecordResDTO> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page, GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
-		// TODO Auto-generated method stub
-		return null;
+
+        DataGrid<GroupbuyingRecordResDTO> dataGrid = null;
+        try {
+
+            dataGrid = new DataGrid<GroupbuyingRecordResDTO>();
+            List<GroupbuyingRecordResDTO> groupbuyingRecordResDTOList = groupbuyingRecordDAO.getGroupbuyingRecordForPage(page, groupbuyingRecordReqDTO);
+            int count = groupbuyingRecordDAO.getGroupbuyingRecordCount(groupbuyingRecordReqDTO);
+            dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+            dataGrid.setRows(groupbuyingRecordResDTOList);
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【geGroupbuyingRecordForPage】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+        return dataGrid;
 	}
     
     

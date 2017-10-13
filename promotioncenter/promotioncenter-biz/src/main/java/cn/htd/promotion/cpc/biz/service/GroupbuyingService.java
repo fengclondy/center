@@ -48,7 +48,7 @@ public interface GroupbuyingService {
 	 * @param dto
 	 * @param messageId
 	 */
-	void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto, String messageId);
+	void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
 	
 	/**
 	 * 根据条件获取单条参团记录
@@ -56,7 +56,7 @@ public interface GroupbuyingService {
 	 * @param messageId
 	 * @return
 	 */
-	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO dto, String messageId);
+	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
 	
 	/**
 	 * 分页查询参团记录

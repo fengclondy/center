@@ -87,6 +87,15 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         String ticket = requestDTO.getOrderNo();
         boolean useSync = requestDTO.isUseSync();
         
+        //如果从redis里查不到订单信息，说明是从非法途径(比如浏览器输入地址)进入的
+        String field = promotionId+"_"+sellerCode+"_"+buyerCode+"_"+ticket;
+		boolean orderExist = promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_B2C_MIDDLE_LOTTERY_ORDER_INFO, field);
+		if(!orderExist){
+			throw new PromotionCenterBusinessException(
+					ResultCodeEnum.LOTTERY_ORDER_WRONGFUL.getCode(),
+					"抱歉，抽奖订单不合法(通过非法途径抽奖)~ 入参:" + JSON.toJSONString(requestDTO));
+		}
+        
         //校验是否已经挂过奖了,如果已经挂过了且报存了中奖信息，告诉前端已经挂过了，如果没有填写中奖信息，返回ticket
         String buyerAwardInfo =  promotionId + "_" + sellerCode + "_" + buyerCode + "_" + ticket;
 		if(promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo)){

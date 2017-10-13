@@ -59,6 +59,7 @@ public enum ResultCodeEnum {
     NOT_FOUND_HUI_LIN_ORDER_INFO("26220","根据交易流水号没有找到汇林订单相关信息"),
     LOTTERY_MEMBER_NO_VALIDATE_FAIL("26221","前台传入的和从汇林查出的不是同一个粉丝号"),
     LOTTERY_ORDER_NOT_IN_EFFECTIVE_DATE("26222","货到付款的下单时间或者在线支付的支付时间不在活动有效期之内"),
+    LOTTERY_ORDER_WRONGFUL("26223","抽奖订单数据不合法"),
     ;
 
     private ResultCodeEnum(String code, String msg) {

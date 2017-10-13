@@ -16,4 +16,10 @@ public interface VoteActivityDAO {
     int updateByPrimaryKeyWithBLOBs(VoteActivityResDTO record);
 
     int updateByPrimaryKey(VoteActivityResDTO record);
+
+    /***
+     * 查询当前活动
+     * @return
+     */
+    VoteActivityResDTO selectCurrentActivity();
 }

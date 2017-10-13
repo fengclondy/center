@@ -48,25 +48,28 @@ public interface MaterielDownloadService {
 			ActivityPictureInfoReqDTO activityPictureInfoReqDTO, Pager<ActivityPictureInfoResDTO> pager);
 
 	public ActivityPictureInfoResDTO delMaterielDownload(String activityPictureInfoReqID);
-	
-	
+
 	/**
 	 * 物料历史记录查询
+	 * 
 	 * @param memberActivityPictureReqDTO
 	 * @param pager
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(MemberActivityPictureReqDTO memberActivityPictureReqDTO);
-	
+	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
+			MemberActivityPictureReqDTO memberActivityPictureReqDTO);
+
 	/**
 	 * 物料历史记录删除
+	 * 
 	 * @param memberActivityPictureReqDTO
 	 * @param pager
 	 * @return
 	 */
 	public MemberActivityPictureResDTO delMemberActivityPicture(Long id);
 
-	public ExecuteResult<List<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode, String pictureType, String messageid);
+	public ExecuteResult<List<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode,
+			String pictureType, String messageid, Pager<ActivityPictureInfoResDTO> page);
 
 	public ExecuteResult<DataGrid<ActivityPictureMemberDetailResDTO>> selectMaterielDownloadMember(String pictureID,
 			Pager<ActivityPictureMemberDetailResDTO> page, String messageid);

@@ -21,5 +21,4 @@
 	 	<property name="redisAddress" value="${promotion.redis.host}:${promotion.redis.port}"/>
 		<property name="connectionPoolSize" value="${promotion.redis.maxTotal}"/>  
   </bean>
-  
 </beans>

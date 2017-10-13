@@ -10,7 +10,7 @@ public interface OrderManagementAnalysisService {
 	public List<ShopDTO> queryShopInfo(String messageId);
 
 	public OrderManagementAnalysisDMO queryOrderManagermentInfo(String sellerCode,
-			String payOrderDate);
+			String lastDayStart, String lastDayEnd);
 
 	public void insertOrderManagementInfo(OrderManagementAnalysisDMO orderManagementAnalysisDMO);
 }

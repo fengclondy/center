@@ -9,27 +9,26 @@
 
 <select id="queryOrderManagermentInfo" resultType="cn.htd.zeus.tc.biz.dmo.OrderManagementAnalysisDMO"
 		parameterType="Object">
-     	SELECT ifnull(SUM(t.order_total_amount),0) payPriceTotal,
+        SELECT ifnull(SUM(order_total_amount),0) payPriceTotal,
         seller_code,
         COUNT(DISTINCT buyer_code) buyPersonNum,
-        COUNT(DISTINCT t.order_no) tradeNum,
-        ifnull(SUM(s.num),0) payGoodsNum,
-        v.orderCount
+        COUNT(DISTINCT order_no) tradeNum,
+        ifnull(SUM(num),0) payGoodsNum,
+        orderCount
         FROM
-        (SELECT order_no,seller_code,buyer_code,order_total_amount,DATE_FORMAT(pay_order_time,'%Y-%m-%d')
-        dealDate
-        FROM trade_orders
-        WHERE order_status>=30 and DATE_FORMAT(pay_order_time,'%Y-%m-%d') = #{payOrderDate}
-        and seller_code = #{sellerCode} and is_cancel_order = '0'                                                        
-        ) t
-        INNER JOIN (SELECT order_no,sum(goods_count) num FROM trade_order_items
-        group by order_no) s
-        ON t.order_no=s.order_no
-        LEFT JOIN (SELECT DATE_FORMAT(create_order_time,'%Y-%m-%d')
+        (select order_no,seller_code,buyer_code,order_total_amount,num,orderCount from 
+          (SELECT t.order_no,t.seller_code,
+        t.buyer_code,t.order_total_amount,sum(s.goods_count) num,DATE_FORMAT(t.pay_order_time,'%Y-%m-%d') dealDate
+        FROM trade_orders t, trade_order_items s
+        WHERE t.order_no=s.order_no and t.order_status>=30 
+        and t.pay_order_time between #{lastDayStart} and #{lastDayEnd}
+        and t.seller_code = #{sellerCode} and t.is_cancel_order = '0'
+        group by t.order_no) r                                                       
+        LEFT JOIN (SELECT DATE_FORMAT(pay_order_time,'%Y-%m-%d')
         dealDate,COUNT(order_no) orderCount FROM trade_orders where 
-        DATE_FORMAT(create_order_time,'%Y-%m-%d') = #{payOrderDate}
+        pay_order_time between #{lastDayStart} and #{lastDayEnd}
         and seller_code = #{sellerCode}) v
-        on t.dealDate = v.dealDate
+        on r.dealDate = v.dealDate) k
 </select>
 
 <insert id="insertOrderManagementInfo" parameterType="java.lang.Object">

@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 
 	@Resource
 	private MemberActivityPictureDAO memberActivityPictureDAO;
-	
+
 	@Resource
 	private BaseImageMagickService baseImageMagickService;
 
@@ -77,6 +76,24 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 				cal.set(Calendar.SECOND, 59);
 				activityPictureInfoReqDTO.setInvalidTime(cal.getTime());
 			}
+			
+			Integer isUpPromotionFlag = activityPictureInfoDAO.checkActivityName(
+					null, activityPictureInfoReqDTO.getPictureName(),
+					activityPictureInfoReqDTO.getPictureType());
+			if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+						"该活动名称和其他活动一样，请重新设置");
+			}
+			if(activityPictureInfoReqDTO.getPictureType().equals("3")) {
+				isUpPromotionFlag = activityPictureInfoDAO.checkActivityTime(null,
+						activityPictureInfoReqDTO.getEffectiveTime(),activityPictureInfoReqDTO.getInvalidTime(), activityPictureInfoReqDTO.getPictureType());
+				if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+					throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+							"该活动有效期和其他活动重叠，请重新设置");
+				}
+			}
+
+			
 			activityPictureInfoDAO.add(activityPictureInfoReqDTO);
 
 			if (activityPictureInfoReqDTO.getIsVip() == 2) {
@@ -124,6 +141,24 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 					cal.set(Calendar.SECOND, 59);
 					activityPictureInfoReqDTO.setInvalidTime(cal.getTime());
 				}
+				
+				Integer isUpPromotionFlag = activityPictureInfoDAO.checkActivityName(
+						activityPictureInfoReqDTO.getPictureId(), activityPictureInfoReqDTO.getPictureName(),
+						activityPictureInfoReqDTO.getPictureType());
+				if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+					throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+							"该活动名称和其他活动一样，请重新设置");
+				}
+				if(activityPictureInfoReqDTO.getPictureType().equals("3")) {
+					isUpPromotionFlag = activityPictureInfoDAO.checkActivityTime(activityPictureInfoReqDTO.getPictureId(),
+							activityPictureInfoReqDTO.getEffectiveTime(),activityPictureInfoReqDTO.getInvalidTime(), activityPictureInfoReqDTO.getPictureType());
+					if (null != isUpPromotionFlag && isUpPromotionFlag.intValue() > 0) {
+						throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_TIME_NOT_UP.getCode(),
+								"该活动有效期和其他活动重叠，请重新设置");
+					}
+				}
+
+				
 				activityPictureInfoDAO.update(activityPictureInfoReqDTO);
 
 				if (activityPictureInfoReqDTO.getIsVip() == 2) {
@@ -235,10 +270,10 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 	@Override
 	public ExecuteResult<DataGrid<MemberActivityPictureResDTO>> selectMemberActivityPicture(
 			MemberActivityPictureReqDTO memberActivityPictureReqDTO) {
-        //分页
-        Pager<MemberActivityPictureReqDTO> pager = new Pager<MemberActivityPictureReqDTO>();
-        pager.setPage(memberActivityPictureReqDTO.getPage());
-        pager.setRows(memberActivityPictureReqDTO.getPageSize());
+		// 分页
+		Pager<MemberActivityPictureReqDTO> pager = new Pager<MemberActivityPictureReqDTO>();
+		pager.setPage(memberActivityPictureReqDTO.getPage());
+		pager.setRows(memberActivityPictureReqDTO.getPageSize());
 		DataGrid<MemberActivityPictureResDTO> dataGrid = new DataGrid<MemberActivityPictureResDTO>();
 		List<MemberActivityPictureResDTO> resList = new ArrayList<MemberActivityPictureResDTO>();
 		ExecuteResult<DataGrid<MemberActivityPictureResDTO>> result = new ExecuteResult<DataGrid<MemberActivityPictureResDTO>>();
@@ -250,9 +285,11 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 			result.setResult(dataGrid);
 
 		} catch (Exception e) {
-            StringWriter w = new StringWriter();
-            e.printStackTrace(new PrintWriter(w));
-			logger.error("MessageId:{} 调用方法MaterielDownloadServiceimpl.selectMemberActivityPicture出现异常 request：{}异常信息：{}",w.toString());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			logger.error(
+					"MessageId:{} 调用方法MaterielDownloadServiceimpl.selectMemberActivityPicture出现异常 request：{}异常信息：{}",
+					w.toString());
 			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
@@ -290,14 +327,14 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 
 	@Override
 	public ExecuteResult<List<ActivityPictureInfoResDTO>> selectMaterielDownloadByMemberCode(String memberCode,
-			String pictureType, String messageid) {
+			String pictureType, String messageid, Pager<ActivityPictureInfoResDTO> pager) {
 		List<ActivityPictureInfoResDTO> resList = new ArrayList<ActivityPictureInfoResDTO>();
 		ExecuteResult<List<ActivityPictureInfoResDTO>> result = new ExecuteResult<List<ActivityPictureInfoResDTO>>();
 		try {
-			Map<String, String> map = new HashMap<String, String>();
+			/*Map<String, String> map = new HashMap<String, String>();
 			map.put("memberCode", memberCode);
-			map.put("pictureType", pictureType);
-			resList = activityPictureInfoDAO.selectMaterielDownloadByMemberCode(map);
+			map.put("pictureType", pictureType);*/
+			resList = activityPictureInfoDAO.selectMaterielDownloadByMemberCode(pictureType, memberCode, pager);
 			result.setResult(resList);
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
@@ -337,11 +374,12 @@ public class MaterielDownloadServiceimpl implements MaterielDownloadService {
 	}
 
 	@Override
-	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid,int type) {
-		
-		if(type==3) {
+	public String saveMaterielDownloadImg(BaseImageDTO bid, String messageid, int type) {
+
+		if (type == 3) {
 			Map<String, Integer> info = baseImageMagickService.getImgInfo(bid.getMainImageUrl());
-			String newbg = baseImageMagickService.margeImgHeight(bid.getMainImageUrl(),(int)(info.get("height")*1.5 ));
+			String newbg = baseImageMagickService.margeImgHeight(bid.getMainImageUrl(),
+					(int) (info.get("height") * 1.5));
 			bid.setMainImageUrl(newbg);
 			return baseImageMagickService.margeImage(bid);
 		}

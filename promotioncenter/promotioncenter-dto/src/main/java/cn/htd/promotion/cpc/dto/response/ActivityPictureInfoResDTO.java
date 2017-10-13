@@ -21,6 +21,10 @@ public class ActivityPictureInfoResDTO  extends GenricResDTO  {
 
     private Date invalidTime;
 
+    private String effectiveTimeStr;
+
+    private String invalidTimeStr;
+    
     private String uploadPictureFront;
 
     private String uploadPictureBack;
@@ -41,7 +45,25 @@ public class ActivityPictureInfoResDTO  extends GenricResDTO  {
 
     private Date modifyTime;
     
-    private List<ActivityPictureMemberDetailResDTO> activityPictureMemberDetailList;
+    
+    
+    public String getEffectiveTimeStr() {
+		return effectiveTimeStr;
+	}
+
+	public void setEffectiveTimeStr(String effectiveTimeStr) {
+		this.effectiveTimeStr = effectiveTimeStr;
+	}
+
+	public String getInvalidTimeStr() {
+		return invalidTimeStr;
+	}
+
+	public void setInvalidTimeStr(String invalidTimeStr) {
+		this.invalidTimeStr = invalidTimeStr;
+	}
+
+	private List<ActivityPictureMemberDetailResDTO> activityPictureMemberDetailList;
     
     public List<ActivityPictureMemberDetailResDTO> getActivityPictureMemberDetailList() {
 		return activityPictureMemberDetailList;

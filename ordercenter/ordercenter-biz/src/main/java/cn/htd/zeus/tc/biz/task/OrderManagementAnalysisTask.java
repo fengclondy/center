@@ -22,6 +22,7 @@ import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.zeus.tc.biz.dmo.OrderManagementAnalysisDMO;
 import cn.htd.zeus.tc.biz.rao.MemberCenterRAO;
 import cn.htd.zeus.tc.biz.service.OrderManagementAnalysisService;
+import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 
@@ -77,9 +78,8 @@ public class OrderManagementAnalysisTask implements IScheduleTaskDealMulti<ShopD
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		int date = Integer
 				.valueOf(sdf.format(DateUtils.offsetDate(new Date(), Calendar.DAY_OF_MONTH, -1)));
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		String payOrderDate = sdf2
-				.format(DateUtils.offsetDate(new Date(), Calendar.DAY_OF_MONTH, -1));
+		String lastDayStart = DateUtil.getLastDayStart();
+		String lastDayEnd = DateUtil.getLastDayEnd();
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (ShopDTO analysis : tasks) {
@@ -87,7 +87,7 @@ public class OrderManagementAnalysisTask implements IScheduleTaskDealMulti<ShopD
 							.queryMemberCodeByMemberId(analysis.getSellerId(), "123456");
 					OrderManagementAnalysisDMO analysis2 = orderManagementAnalysisService
 							.queryOrderManagermentInfo(sellerCode.getOtherCenterResult(),
-									payOrderDate);
+									lastDayStart, lastDayEnd);
 					OrderManagementAnalysisDMO orderManagementAnalysisDMO = new OrderManagementAnalysisDMO();
 					orderManagementAnalysisDMO.setSellerCode(sellerCode.getOtherCenterResult());
 					orderManagementAnalysisDMO.setShopId(analysis.getShopId());

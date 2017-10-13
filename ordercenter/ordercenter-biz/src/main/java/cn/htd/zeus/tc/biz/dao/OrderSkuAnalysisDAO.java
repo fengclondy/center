@@ -13,7 +13,7 @@ public interface OrderSkuAnalysisDAO {
 	public List<OrderSkuAnalysisDMO> queryShopInfo();
 
 	public List<OrderSkuAnalysisDMO> queryOrderSkuInfo(@Param("sellerCode") String sellerCode,
-			@Param("payOrderDate") String payOrderDate);
+			@Param("lastDayStart") String lastDayStart, @Param("lastDayEnd") String lastDayEnd);
 
 	public void insertOrderSkuInfo(
 			@Param("orderSkuAnalysisDMO") OrderSkuAnalysisDMO orderSkuAnalysisDMO);

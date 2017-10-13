@@ -1,7 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -29,11 +29,25 @@ public interface ActivityPictureInfoDAO extends BaseDAO<ActivityPictureInfoReqDT
 
 	void deleteByPictureId(String activityPictureInfoId);
 
-	List<ActivityPictureInfoResDTO> selectMaterielDownloadList(@Param("dto") ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
+	List<ActivityPictureInfoResDTO> selectMaterielDownloadList(
+			@Param("dto") ActivityPictureInfoReqDTO activityPictureInfoReqDTO,
 			@Param("pager") Pager<ActivityPictureInfoResDTO> pager);
 
 	Long selectMaterielDownloadListCount(@Param("dto") ActivityPictureInfoReqDTO activityPictureInfoReqDTO);
 
-	List<ActivityPictureInfoResDTO> selectMaterielDownloadByMemberCode(Map<String, String> map);
+	/*
+	 * List<ActivityPictureInfoResDTO>
+	 * selectMaterielDownloadByMemberCode(Map<String, String> map,
+	 * 
+	 * @Param("pager") Pager<ActivityPictureInfoResDTO> pager);
+	 */
+	List<ActivityPictureInfoResDTO> selectMaterielDownloadByMemberCode(@Param("pictureType") String pictureID,
+			@Param("memberCode") String memberCode, @Param("pager") Pager<ActivityPictureInfoResDTO> pager);
+
+	Integer checkActivityName(@Param("pictureId") String pictureId, @Param("pictureName") String pictureName,
+			@Param("pictureType") String pictureType);
+
+	Integer checkActivityTime(@Param("pictureId") String pictureId, @Param("effectiveTime") Date effectiveTime,
+			@Param("invalidTime") Date invalidTime, @Param("pictureType") String pictureType);
 
 }

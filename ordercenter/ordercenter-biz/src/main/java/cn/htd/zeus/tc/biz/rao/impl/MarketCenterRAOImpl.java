@@ -347,15 +347,15 @@ public class MarketCenterRAOImpl implements MarketCenterRAO {
 	 * @return
 	 */
 	@Override
-	public OtherCenterResDTO<List<TimelimitedInfoDTO>> getTimelimitedInfo(
+	public OtherCenterResDTO<TimelimitedInfoDTO> getTimelimitedInfo(
 			String skuCode, String messageId) {
-		OtherCenterResDTO<List<TimelimitedInfoDTO>> otherCenterResDTO = new OtherCenterResDTO<List<TimelimitedInfoDTO>>();
+		OtherCenterResDTO<TimelimitedInfoDTO> otherCenterResDTO = new OtherCenterResDTO<TimelimitedInfoDTO>();
 		try {
 			Long startTime = System.currentTimeMillis();
 			LOGGER.info(
 					"调用促销中心(getTimelimitedInfo获取对应的限时购信息)--组装查询参数开始:MessageId:{},skuCode:{}",
 					messageId, skuCode);
-			ExecuteResult<List<TimelimitedInfoDTO>> timelimitedInfoDTORes = timelimitedPurchaseService
+			ExecuteResult<TimelimitedInfoDTO> timelimitedInfoDTORes = timelimitedPurchaseService
 					.getTimelimitedInfo(skuCode);
 			Long endTime = System.currentTimeMillis();
 			LOGGER.info(

@@ -47,6 +47,19 @@
       #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
   
+  <insert id="addGroupbuyingRecord" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO" >
+    insert into groupbuying_record (promotion_id, 
+      seller_code, buyer_code, buyer_name, 
+      buyer_contact, delete_flag, create_id, 
+      create_name, create_time, modify_id, 
+      modify_name, modify_time)
+    values (#{promotionId,jdbcType=VARCHAR}, 
+      #{sellerCode,jdbcType=VARCHAR}, #{buyerCode,jdbcType=VARCHAR}, #{buyerName,jdbcType=VARCHAR}, 
+      #{buyerContact,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, 
+      #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  
   <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO" >
     insert into groupbuying_record
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -193,5 +206,48 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where record_id = #{recordId,jdbcType=BIGINT}
   </update>
+  
+  
+  	<sql id="dynamic_fragment_groupbuyingRecord">
+      <if test="dto.promotionId != null and dto.promotionId != ''" >
+       and  promotion_id = #{dto.promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.sellerCode != null and dto.sellerCode != ''" >
+       and seller_code = #{dto.sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.buyerCode != null and dto.buyerCode != ''" >
+       and buyer_code = #{dto.buyerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.buyerName != null and dto.buyerName != ''" >
+       and buyer_name = #{dto.buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="dto.buyerContact != null and dto.buyerContact != ''" >
+       and buyer_contact = #{dto.buyerContact,jdbcType=VARCHAR},
+      </if>
+	</sql>
+  
+  <select id="getGroupbuyingRecordByParams" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from groupbuying_record
+    where delete_flag = 0   
+    <include refid="dynamic_fragment_groupbuyingRecord"/>
+  </select>
+
+  
+  	<select id="getGroupbuyingRecordCount" resultType="java.lang.Integer">
+	  select count(1)   from groupbuying_record  
+      where delete_flag = 0   
+      <include refid="dynamic_fragment_groupbuyingRecord"/>
+	</select>
+
+	<select id="getGroupbuyingRecordForPage" resultMap="BaseResultMap">
+      select  <include refid="Base_Column_List" />
+       from groupbuying_record  
+       where delete_flag = 0   
+       <include refid="dynamic_fragment_groupbuyingRecord"/> 
+		ORDER BY modify_time desc 
+		LIMIT #{page.pageOffset},#{page.rows}
+	</select>
   
 </mapper>

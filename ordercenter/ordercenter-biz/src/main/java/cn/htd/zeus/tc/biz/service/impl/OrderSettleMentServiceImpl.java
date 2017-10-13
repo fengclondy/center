@@ -228,7 +228,7 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 			for (MallSkuWithStockOutDTO mallSku : resultList) {
 				//校验是否是限时购商品，如果是校验上下架状态，如果是限时购状态未开始，已结束，或者是限时购商品不存在就走正常的商品校验逻辑
 				String skuCode = mallSku.getMallSkuStockOutDTO().getSkuCode();
-				OtherCenterResDTO<List<TimelimitedInfoDTO>> timeLimitedInfoRes = marketCenterRAO.getTimelimitedInfo(skuCode, messageId);
+				OtherCenterResDTO<TimelimitedInfoDTO> timeLimitedInfoRes = marketCenterRAO.getTimelimitedInfo(skuCode, messageId);
 				String timeLimitedInfoResCode = timeLimitedInfoRes.getOtherCenterResponseCode();
 				if(timeLimitedInfoResCode.equals(ResultCodeEnum.ERROR.getCode())){
 					orderSettleMentResDTO.setResponseCode(timeLimitedInfoResCode);
@@ -236,13 +236,13 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 					break;
 				}
 				if(timeLimitedInfoResCode.equals(ResultCodeEnum.SUCCESS.getCode())){
-					List<TimelimitedInfoDTO> timelimitedInfoDTOList = timeLimitedInfoRes.getOtherCenterResult();
-					if(null == timelimitedInfoDTOList || timelimitedInfoDTOList.size() < 1){
+					TimelimitedInfoDTO timelimitedInfoDTOInfo = timeLimitedInfoRes.getOtherCenterResult();
+					if(null == timelimitedInfoDTOInfo){
 						orderSettleMentResDTO.setResponseCode(ResultCodeEnum.MARKETCENTER_LIMITED_TIME_PURCHASE_IS_NULL.getCode());
 						orderSettleMentResDTO.setReponseMsg(ResultCodeEnum.MARKETCENTER_LIMITED_TIME_PURCHASE_IS_NULL.getMsg());
 						break;
 					}
-					String value = JSON.toJSONString(timelimitedInfoDTOList.get(0));
+					String value = JSON.toJSONString(timelimitedInfoDTOInfo);
 					timelimitedInfoMap.put(skuCode, value);
 					continue;
 				}

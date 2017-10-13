@@ -57,16 +57,15 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 				if (GoodCenterEnum.EXTERNAL_SUPPLIER.getCode().equals(
 						channelCode)) {
 					String skuCode = orderItemTemp.getSkuCode();
-					OtherCenterResDTO<List<TimelimitedInfoDTO>> timeLimitedInfoRes = marketCenterRAO
+					OtherCenterResDTO<TimelimitedInfoDTO> timeLimitedInfoRes = marketCenterRAO
 							.getTimelimitedInfo(skuCode, messageId);
 					String timeLimitedInfoResCode = timeLimitedInfoRes
 							.getOtherCenterResponseCode();
 					if (timeLimitedInfoResCode.equals(ResultCodeEnum.SUCCESS
 							.getCode())) {
-						List<TimelimitedInfoDTO> timelimitedInfoDTOList = timeLimitedInfoRes
+						TimelimitedInfoDTO timelimitedInfoDTOInfo = timeLimitedInfoRes
 								.getOtherCenterResult();
-						if (null == timelimitedInfoDTOList
-								|| timelimitedInfoDTOList.size() < 1) {
+						if (null == timelimitedInfoDTOInfo) {
 							throw new OrderCenterBusinessException(
 									ResultCodeEnum.MARKETCENTER_LIMITED_TIME_PURCHASE_IS_NULL
 											.getCode(),
@@ -75,13 +74,11 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 													.getMsg() + " 入参skuCode:"
 											+ skuCode);
 						}
-						TimelimitedInfoDTO timelimitedInfo = timelimitedInfoDTOList
-								.get(0);
 						// 每单限制数量
-						Integer timelimitedThreshold = timelimitedInfo
+						Integer timelimitedThreshold = timelimitedInfoDTOInfo
 								.getTimelimitedThreshold();
 						// 限时购商品剩余数量
-						Integer timelimitedSkuCount = timelimitedInfo
+						Integer timelimitedSkuCount = timelimitedInfoDTOInfo
 								.getTimelimitedSkuCount();
 						Integer goodsCount = Integer.valueOf(orderItemTemp
 								.getGoodsCount().toString());
@@ -94,9 +91,9 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 											+ ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
 													.getMsg());
 						}
-						orderItemTemp.setPromotionId(timelimitedInfo
+						orderItemTemp.setPromotionId(timelimitedInfoDTOInfo
 								.getPromotionId());
-						orderItemTemp.setPromotionType(timelimitedInfo
+						orderItemTemp.setPromotionType(timelimitedInfoDTOInfo
 								.getPromotionType());
 						orderItemTemp
 								.setIsLimitedTimePurchase(Integer

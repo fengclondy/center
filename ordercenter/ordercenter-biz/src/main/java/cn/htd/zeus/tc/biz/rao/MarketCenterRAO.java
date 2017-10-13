@@ -54,6 +54,6 @@ public interface MarketCenterRAO {
 	 * @param skuCode
 	 * @return
 	 */
-	public OtherCenterResDTO<List<TimelimitedInfoDTO>> getTimelimitedInfo(
+	public OtherCenterResDTO<TimelimitedInfoDTO> getTimelimitedInfo(
 			String skuCode, String messageId);
 }

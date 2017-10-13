@@ -168,12 +168,12 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
         this.ranking = ranking;
     }
 
-    public Integer getVoteum() {
-        return voteum;
+    public Integer getVoteNum() {
+        return voteNum;
     }
 
-    public void setVoteum(Integer voteum) {
-        this.voteum = voteum;
+    public void setVoteNum(Integer voteNum) {
+        this.voteNum = voteNum;
     }
 
     public List<VoteActivityMemberPictureResDTO> getVoteActivityMemberPictureResDTOList() {

@@ -27,12 +27,14 @@
     sign_status, audit_status, sign_up_time, member_activity_dec, member_vote_last_time, 
     delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from vote_activity_member
     where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from vote_activity_member
     where vote_member_id = #{voteMemberId,jdbcType=BIGINT}

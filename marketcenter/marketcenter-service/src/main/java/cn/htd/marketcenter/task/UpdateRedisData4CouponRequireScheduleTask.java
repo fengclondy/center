@@ -491,15 +491,14 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
     	 Map<String, String> indexMap = null;
          String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
          String timelimitedPurchaseType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
-
-         String newKey = promotionType + "&";
-         String key = "";
-         String[] keyArr = null;
-         String promotionIdStr ="";
     	 if (jedis.exists(RedisConst.REDIS_TIMELIMITED_INDEX)) {
     	        indexMap = jedis.hgetAll(RedisConst.REDIS_TIMELIMITED_INDEX);
     	        for (Entry<String, String> entry : indexMap.entrySet()) {
-    	        	 key =  entry.getKey();
+    	             String newKey = promotionType + "&";
+    	             String[] keyArr = null;
+    	             String key = "";
+    	             String promotionIdStr ="";
+    	             key =  entry.getKey();
     	        	 newKey = newKey + key;
     	        	 promotionIdStr = entry.getValue();
     	        	 keyArr = key.split("&");

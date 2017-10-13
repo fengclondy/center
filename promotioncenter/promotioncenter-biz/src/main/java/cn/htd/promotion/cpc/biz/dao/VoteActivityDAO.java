@@ -23,4 +23,10 @@ public interface VoteActivityDAO {
     int updateByPrimaryKey(VoteActivityResDTO record);
     
     VoteActivityResDTO queryVoteActivityByTime(@Param("startTime") Date startTime,@Param("endTime") Date endTime);
+
+    /***
+     * 查询当前活动
+     * @return
+     */
+    VoteActivityResDTO selectCurrentActivity();
 }

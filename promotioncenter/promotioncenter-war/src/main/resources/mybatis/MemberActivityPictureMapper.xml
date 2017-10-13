@@ -197,6 +197,12 @@ WHERE 1=1
 	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime != null and entity.createEndTime != '' ">
 	and date_format(create_time,'%Y-%m-%d') BETWEEN #{entity.createStartTime} and  #{entity.createEndTime}
 	</if>
+	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime == null and entity.createEndTime == '' ">
+	and date_format(create_time,'%Y-%m-%d') = #{entity.createStartTime}
+	</if>
+	<if test="entity.createStartTime == null and entity.createStartTime == '' and entity.createEndTime != null and entity.createEndTime != '' ">
+	and date_format(create_time,'%Y-%m-%d') = #{entity.createEndTime}
+	</if>
 	<if test="entity.memberCode != null and entity.memberCode != ''">
 	and member_code =#{entity.memberCode}
 	</if>
@@ -221,6 +227,12 @@ WHERE 1=1
 	</if>
 	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime != null and entity.createEndTime != '' ">
 	and date_format(create_time,'%Y-%m-%d') BETWEEN #{entity.createStartTime} and  #{entity.createEndTime}
+	</if>
+	<if test="entity.createStartTime != null and entity.createStartTime != '' and entity.createEndTime == null and entity.createEndTime == '' ">
+	and date_format(create_time,'%Y-%m-%d') = #{entity.createStartTime}
+	</if>
+	<if test="entity.createStartTime == null and entity.createStartTime == '' and entity.createEndTime != null and entity.createEndTime != '' ">
+	and date_format(create_time,'%Y-%m-%d') = #{entity.createEndTime}
 	</if>
 	<if test="entity.memberCode != null and entity.memberCode != ''">
 	and member_code =#{entity.memberCode}

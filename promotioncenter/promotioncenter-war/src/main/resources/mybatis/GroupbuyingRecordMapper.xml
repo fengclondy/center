@@ -210,19 +210,19 @@
   
   	<sql id="dynamic_fragment_groupbuyingRecord">
       <if test="dto.promotionId != null and dto.promotionId != ''" >
-       and  promotion_id = #{dto.promotionId,jdbcType=VARCHAR},
+       and  promotion_id = #{dto.promotionId,jdbcType=VARCHAR} 
       </if>
       <if test="dto.sellerCode != null and dto.sellerCode != ''" >
-       and seller_code = #{dto.sellerCode,jdbcType=VARCHAR},
+       and seller_code = #{dto.sellerCode,jdbcType=VARCHAR} 
       </if>
       <if test="dto.buyerCode != null and dto.buyerCode != ''" >
-       and buyer_code = #{dto.buyerCode,jdbcType=VARCHAR},
+       and buyer_code = #{dto.buyerCode,jdbcType=VARCHAR} 
       </if>
       <if test="dto.buyerName != null and dto.buyerName != ''" >
-       and buyer_name = #{dto.buyerName,jdbcType=VARCHAR},
+       and buyer_name = #{dto.buyerName,jdbcType=VARCHAR} 
       </if>
       <if test="dto.buyerContact != null and dto.buyerContact != ''" >
-       and buyer_contact = #{dto.buyerContact,jdbcType=VARCHAR},
+       and buyer_contact = #{dto.buyerContact,jdbcType=VARCHAR}  
       </if>
 	</sql>
   

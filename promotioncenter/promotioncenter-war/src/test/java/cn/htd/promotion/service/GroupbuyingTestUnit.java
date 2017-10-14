@@ -22,11 +22,15 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
 import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
+import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 
 /**
@@ -39,7 +43,9 @@ public class GroupbuyingTestUnit {
 
 	@Resource
 	private GroupbuyingAPI groupbuyingAPI;
-
+	@Resource
+    private KeyGeneratorUtils keyGeneratorUtils;
+    
 	
     @Before
     public void setUp() throws Exception {
@@ -47,7 +53,7 @@ public class GroupbuyingTestUnit {
     }
 
     /**
-     * 添加团购活动
+     * 添加团购活动-测试用例
      */
 	@Test
 	@Rollback(false) 
@@ -193,7 +199,7 @@ public class GroupbuyingTestUnit {
 	
 	
     /**
-     * 修改团购活动
+     * 修改团购活动-测试用例
      */
 	@Test
 	@Rollback(false) 
@@ -301,7 +307,9 @@ public class GroupbuyingTestUnit {
     }
 	
 	
-	
+	/**
+	 * 根据promotionId获取的团购活动信息-测试用例
+	 */
     @Test
     public void getGroupbuyingInfoCmplByPromotionIdTest(){
     	
@@ -316,6 +324,26 @@ public class GroupbuyingTestUnit {
 
     }
     
+    /**
+     * 根据promotionId获取简单的团购活动信息-测试用例
+     */
+    @Test
+    public void getSingleGroupbuyingInfoByPromotionIdTest(){
+    	String messageId = keyGeneratorUtils.generateMessageId();
+//    	 String messageId = "342453251349";
+        String promotionId = "25171749290011";
+        try {
+        	ExecuteResult<GroupbuyingInfoResDTO> executeResult = groupbuyingAPI.getSingleGroupbuyingInfoByPromotionId(promotionId, messageId);
+        	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    /**
+     * 根据条件分页查询团购活动信息-测试用例
+     */
     @Test
     public void getGroupbuyingInfoCmplForPageTest(){
     	
@@ -332,6 +360,7 @@ public class GroupbuyingTestUnit {
     		page.setRows(20);
     		
     		GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
+    		groupbuyingInfoReqDTO.setSellerCode("1001");// 商家编码
 //    		groupbuyingInfoReqDTO.setSkuName("测试商品");//商品名称
     		groupbuyingInfoReqDTO.setShowStatus("3");//审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
     		groupbuyingInfoReqDTO.setStatus("2");// 状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
@@ -339,6 +368,89 @@ public class GroupbuyingTestUnit {
     		groupbuyingInfoReqDTO.setEndTime(sdf.parse(endTimeString));
     		
     		ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getGroupbuyingInfoCmplForPage(page, groupbuyingInfoReqDTO, messageId);
+        	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    
+    /**
+     * 添加团购记录（参团测试）-测试用例
+     */
+	@Test
+	@Rollback(false) 
+    public void addGroupbuyingRecord2HttpINTFCTest(){
+		
+    	try {
+    		
+    		String messageId = keyGeneratorUtils.generateMessageId();
+    		Long userId = 10001L;
+    		String userName = "admin";
+    		
+    		String promotionId = "25171601240015";
+            
+            GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+            
+            groupbuyingRecordReqDTO.setPromotionId(promotionId);// 促销活动编码
+        	groupbuyingRecordReqDTO.setSellerCode("1001");// 商家编码
+        	groupbuyingRecordReqDTO.setBuyerCode("2002");// 参团人账号
+        	groupbuyingRecordReqDTO.setBuyerName("林寻");// 参团人姓名
+        	groupbuyingRecordReqDTO.setBuyerContact("18801011008");// 参团人联系方式
+
+        	groupbuyingRecordReqDTO.setCreateId(userId);
+        	groupbuyingRecordReqDTO.setCreateName(userName);
+        	groupbuyingRecordReqDTO.setModifyId(userId);
+        	groupbuyingRecordReqDTO.setModifyName(userName);
+    		
+    		groupbuyingAPI.addGroupbuyingRecord2HttpINTFC(groupbuyingRecordReqDTO, messageId);
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+    }
+    
+    /**
+     * 根据条件获取单条参团记录-测试用例
+     */
+    @Test
+    public void getSingleGroupbuyingRecordTest(){
+        String messageId = keyGeneratorUtils.generateMessageId();
+        String promotionId = "25171601240015";
+        try {
+        	GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+            groupbuyingRecordReqDTO.setPromotionId(promotionId);// 促销活动编码
+        	groupbuyingRecordReqDTO.setBuyerCode("2002");// 参团人账号
+        	ExecuteResult<GroupbuyingRecordResDTO> executeResult = groupbuyingAPI.getSingleGroupbuyingRecord(groupbuyingRecordReqDTO, messageId);
+        	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    
+    /**
+     * 分页查询参团记录-测试用例
+     */
+    @Test
+    public void geGroupbuyingRecordForPageTest(){
+    	
+        String messageId = keyGeneratorUtils.generateMessageId();
+        String promotionId = "25171601240015";
+        		
+        try {
+        	
+    		Pager<GroupbuyingRecordReqDTO> page = new Pager<GroupbuyingRecordReqDTO>();
+    		page.setPage(1);
+    		page.setRows(20);
+    		
+    		GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+            groupbuyingRecordReqDTO.setPromotionId(promotionId);// 促销活动编码
+    		
+    		ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> executeResult = groupbuyingAPI.geGroupbuyingRecordForPage(page, groupbuyingRecordReqDTO, messageId);
         	System.out.println("===>executeResult:" + executeResult);
         } catch (Exception e) {
             e.printStackTrace();

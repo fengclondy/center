@@ -35,6 +35,14 @@ public class TimelimitedConditionDTO implements Serializable {
 	 * 限时购结束时间
 	 */
 	private Date endTime;
+	/**
+	 * 限时购开始时间
+	 */
+	private String startTimeStr;
+	/**
+	 * 限时购结束时间
+	 */
+	private String endTimeStr;
 
 	public String getSkuCode() {
 		return skuCode;
@@ -82,6 +90,22 @@ public class TimelimitedConditionDTO implements Serializable {
 
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getStartTimeStr() {
+		return startTimeStr;
+	}
+
+	public void setStartTimeStr(String startTimeStr) {
+		this.startTimeStr = startTimeStr;
+	}
+
+	public String getEndTimeStr() {
+		return endTimeStr;
+	}
+
+	public void setEndTimeStr(String endTimeStr) {
+		this.endTimeStr = endTimeStr;
 	}
 
 }

@@ -7,7 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import cn.htd.common.Pager;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
-import cn.htd.marketcenter.dto.TimelimitedListDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 
 public class TimelimitedPurchaseServiceImplTestTest {
 
@@ -27,7 +27,7 @@ public class TimelimitedPurchaseServiceImplTestTest {
 		String promotionId = "2171328280492";
 		String buyerGrade = "5";
 		String sellerCode = "htd1000000";
-		Pager<TimelimitedListDTO> page = new Pager<TimelimitedListDTO>();
+		Pager<TimelimitedInfoDTO> page = new Pager<TimelimitedInfoDTO>();
 		TimelimitedConditionDTO conditionDTO = new TimelimitedConditionDTO();
 		// conditionDTO.setSelleCode(sellerCode);
 		timelimitedInfoService.queryTimelimitedListByCondition(conditionDTO, page);

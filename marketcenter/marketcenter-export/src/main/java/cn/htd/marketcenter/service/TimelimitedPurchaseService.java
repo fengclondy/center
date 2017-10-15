@@ -32,8 +32,8 @@ public interface TimelimitedPurchaseService {
 	 * @param page
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<TimelimitedListDTO>> queryTimelimitedListByCondition(
-			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedListDTO> page);
+	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
+			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedInfoDTO> page);
 
 	/**
 	 * 限时购 - 根据itemcode查询商品是否正在参加活动

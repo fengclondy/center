@@ -120,11 +120,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<TimelimitedListDTO>> queryTimelimitedListByCondition(
-			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedListDTO> page) {
-		ExecuteResult<DataGrid<TimelimitedListDTO>> result = new ExecuteResult<DataGrid<TimelimitedListDTO>>();
-		DataGrid<TimelimitedListDTO> dataGrid = new DataGrid<TimelimitedListDTO>();
-		List<TimelimitedListDTO> timelimitedInfoList = new ArrayList<TimelimitedListDTO>();
+	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
+			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedInfoDTO> page) {
+		ExecuteResult<DataGrid<TimelimitedInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedInfoDTO>>();
+		DataGrid<TimelimitedInfoDTO> dataGrid = new DataGrid<TimelimitedInfoDTO>();
+		List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
 		TimelimitedInfoDTO searchConditionDTO = new TimelimitedInfoDTO();
 		long count = 0;
 		try {

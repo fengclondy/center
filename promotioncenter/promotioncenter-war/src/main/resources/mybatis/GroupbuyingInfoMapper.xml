@@ -474,19 +474,19 @@
 		<if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
 		<when test="dto.activeState=='1'">
-		  <![CDATA[  sysdate() < pi.effective_time ]]>
+		  <![CDATA[ and sysdate() < pi.effective_time ]]>
 		</when>
 		<when test="dto.activeState=='2'">
-		  <![CDATA[  pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time ]]>
+		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time ]]>
 		</when>
 		<when test="dto.activeState=='3'">
-		  <![CDATA[  pi.invalid_time < sysdate() and sysdate() < gi.start_time ]]>
+		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() < gi.start_time ]]>
 		</when>
 		<when test="dto.activeState=='4'">
-		  <![CDATA[  gi.start_time <= sysdate() and sysdate() <= gi.end_time ]]>
+		  <![CDATA[ and gi.start_time <= sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
 		<when test="dto.activeState=='5'">
-		  <![CDATA[  sysdate() > gi.end_time ]]>
+		  <![CDATA[ and sysdate() > gi.end_time ]]>
 		</when>
 		<otherwise></otherwise>
 		</choose>

@@ -291,7 +291,7 @@
 			member_vote_last_time ASC
   </sql>
 
-  <select id="selectMemberRankingTop10" resultMap="map">
+  <select id="selectMemberRankingTop10" resultType="map">
     SELECT
 	  c.*, (@rownum :=@rownum + 1) AS rowNum
     FROM

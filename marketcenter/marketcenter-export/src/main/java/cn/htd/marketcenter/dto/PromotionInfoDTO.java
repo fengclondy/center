@@ -101,6 +101,12 @@ public class PromotionInfoDTO implements Serializable {
      * 修改促销活动编码
      */
     private String modifyPromotionId;
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+    /**
+     * 关联B2C活动编号
+     */
+    private String b2cActivityCode;
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
     /**
      * 创建人ID
      */
@@ -166,7 +172,7 @@ public class PromotionInfoDTO implements Serializable {
     /**
      * 活动层级列表
      */
-    private List<PromotionAccumulatyDTO> promotionAccumulatyList;
+    private List<? extends PromotionAccumulatyDTO> promotionAccumulatyList;
     /**
      * 促销活动状态履历
      */
@@ -388,6 +394,14 @@ public class PromotionInfoDTO implements Serializable {
         this.modifyPromotionId = modifyPromotionId;
     }
 
+    public String getB2cActivityCode() {
+        return b2cActivityCode;
+    }
+
+    public void setB2cActivityCode(String b2cActivityCode) {
+        this.b2cActivityCode = b2cActivityCode;
+    }
+
     public Long getCreateId() {
         return createId;
     }
@@ -508,11 +522,11 @@ public class PromotionInfoDTO implements Serializable {
         this.categoryItemRuleDesc = categoryItemRuleDesc;
     }
 
-    public List<PromotionAccumulatyDTO> getPromotionAccumulatyList() {
+    public List<? extends PromotionAccumulatyDTO> getPromotionAccumulatyList() {
         return promotionAccumulatyList;
     }
 
-    public void setPromotionAccumulatyList(List<PromotionAccumulatyDTO> promotionAccumulatyList) {
+    public void setPromotionAccumulatyList(List<? extends PromotionAccumulatyDTO> promotionAccumulatyList) {
         this.promotionAccumulatyList = promotionAccumulatyList;
     }
 
@@ -568,6 +582,7 @@ public class PromotionInfoDTO implements Serializable {
         this.verifyTime = promotionInfoDTO.getVerifyTime();
         this.verifyRemark = promotionInfoDTO.getVerifyRemark();
         this.modifyPromotionId = promotionInfoDTO.getModifyPromotionId();
+        this.b2cActivityCode = promotionInfoDTO.getB2cActivityCode();
         this.createId = promotionInfoDTO.getCreateId();
         this.createName = promotionInfoDTO.getCreateName();
         this.createTime = promotionInfoDTO.getCreateTime();

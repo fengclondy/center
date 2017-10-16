@@ -70,4 +70,5 @@ public class Constants {
 
 	// 秒杀库存锁
 	public static final String REDIS_KEY_PREFIX_STOCK = "B2B_MIDDLE_SECKILL_STOCK";
+	
 }

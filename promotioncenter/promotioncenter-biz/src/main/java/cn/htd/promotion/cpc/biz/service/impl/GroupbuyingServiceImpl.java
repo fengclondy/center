@@ -5,16 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -89,7 +85,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
     
-    @Autowired
+    @Resource
     private KeyGeneratorUtils keyGeneratorUtils;
     
 
@@ -400,6 +396,29 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	        }
 
 	        return groupbuyingInfoCmplResDTO;
+	}
+	
+	
+	@Override
+	public GroupbuyingInfoResDTO getSingleGroupbuyingInfoByPromotionId(String promotionId, String messageId) {
+		
+		GroupbuyingInfoResDTO groupbuyingInfoResDTO = null;
+
+	        try {
+
+	            if (null == promotionId) {
+	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
+	            }
+	            
+	            // 查询活动信息
+	            groupbuyingInfoResDTO = groupbuyingInfoDAO.selectByPromotionId(promotionId);
+
+	        } catch (Exception e) {
+	            logger.error("messageId{}:执行方法【getSingleGroupbuyingInfoByPromotionId】报错：{}", messageId, e.toString());
+	            throw new RuntimeException(e);
+	        }
+
+	        return groupbuyingInfoResDTO;
 	}
 
 	@Override

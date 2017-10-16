@@ -44,8 +44,8 @@ public interface TimelimitedInfoDAO extends BaseDAO<TimelimitedInfoDTO> {
 	 * @param timelimitedDTO
 	 * @return
 	 */
-	public List<TimelimitedListDTO> queryTimelimitedInfoList(@Param("entity") TimelimitedInfoDTO timelimitedDTO,
-			@Param("page") Pager<TimelimitedListDTO> pager);
+	public List<TimelimitedInfoDTO> queryTimelimitedInfoList(@Param("entity") TimelimitedInfoDTO timelimitedDTO,
+			@Param("page") Pager<TimelimitedInfoDTO> pager);
 	
 	/**
 	 * 根据商品编码查询该商品是否在参加限时购活动

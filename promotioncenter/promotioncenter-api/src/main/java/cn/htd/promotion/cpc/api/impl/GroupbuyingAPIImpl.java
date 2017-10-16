@@ -3,9 +3,11 @@ package cn.htd.promotion.cpc.api.impl;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
@@ -17,6 +19,8 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 
 @Service("groupbuyingAPI")
 public class GroupbuyingAPIImpl implements GroupbuyingAPI {
@@ -101,6 +105,24 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
 	}
+	
+	@Override
+	public ExecuteResult<GroupbuyingInfoResDTO> getSingleGroupbuyingInfoByPromotionId(String promotionId, String messageId) {
+        ExecuteResult<GroupbuyingInfoResDTO> result = new ExecuteResult<GroupbuyingInfoResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	GroupbuyingInfoResDTO groupbuyingInfoResDTO = groupbuyingService.getSingleGroupbuyingInfoByPromotionId(promotionId, messageId);
+        	result.setResult(groupbuyingInfoResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getSingleGroupbuyingInfoByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
 
 
 	@Override
@@ -150,4 +172,48 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
     }
+
+
+	@Override
+	public ExecuteResult<GroupbuyingRecordResDTO> getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		
+        ExecuteResult<GroupbuyingRecordResDTO> result = new ExecuteResult<GroupbuyingRecordResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingService.getSingleGroupbuyingRecord(groupbuyingRecordReqDTO, messageId);
+        	result.setResult(groupbuyingRecordResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getSingleGroupbuyingRecord出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+
+
+	@Override
+	public ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page,GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		
+		ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> result = new ExecuteResult<DataGrid<GroupbuyingRecordResDTO>>(); 
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	DataGrid<GroupbuyingRecordResDTO> groupbuyingRecordResDTOData = groupbuyingService.geGroupbuyingRecordForPage(page,groupbuyingRecordReqDTO, messageId);
+        	result.setResult(groupbuyingRecordResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.geGroupbuyingRecordForPage出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+    
+    
+    
+    
 }

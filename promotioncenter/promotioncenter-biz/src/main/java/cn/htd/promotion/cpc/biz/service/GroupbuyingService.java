@@ -6,6 +6,7 @@ import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 
 
@@ -32,6 +33,14 @@ public interface GroupbuyingService {
 	 * @return
 	 */
 	public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId,String messageId) ;
+	
+	/**
+	 * 根据promotionId获取简单的团购活动信息
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public GroupbuyingInfoResDTO getSingleGroupbuyingInfoByPromotionId(String promotionId,String messageId) ;
 
 	/**
 	 * 分页查询团购活动信息

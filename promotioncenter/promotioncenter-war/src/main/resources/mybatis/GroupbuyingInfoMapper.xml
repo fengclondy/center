@@ -93,14 +93,14 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from groupbuying_info
+    from groupbuying_info 
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
   </select>
   
    <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from groupbuying_info
+    from groupbuying_info  
     where promotion_id = #{promotionId,jdbcType=VARCHAR} and delete_flag = 0 
   </select>
   
@@ -457,11 +457,14 @@
   
 
 	<sql id="dynamic_fragment_groupbuyingInfo">
-		<if test="dto.promotionId != null">
+		<if test="dto.promotionId != null and dto.promotionId != ''">
 			and gi.promotion_id = #{dto.promotionId,jdbcType=VARCHAR}  
 		</if>
+		<if test="dto.sellerCode != null and dto.sellerCode != ''">
+			and gi.seller_code = #{dto.sellerCode,jdbcType=VARCHAR}   
+		</if>
 		<if test="dto.skuName != null and dto.skuName != ''">
-			and	gi.sku_name like CONCAT('%',#{dto.skuName,jdbcType=VARCHAR},'%')
+			and	gi.sku_name like CONCAT('%',#{dto.skuName,jdbcType=VARCHAR},'%')  
 		</if>
 		<if test="dto.status != null and dto.status != ''">
 			and pi.status = #{dto.status,jdbcType=VARCHAR}  

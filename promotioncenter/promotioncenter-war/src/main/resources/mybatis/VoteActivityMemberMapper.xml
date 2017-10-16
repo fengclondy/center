@@ -273,6 +273,7 @@
     SELECT
 			a.vote_id,
 			a.member_code,
+			a.member_name,
 			(
 				SELECT
 					count(1)
@@ -300,8 +301,8 @@
     LIMIT 10
   </select>
 
-  <select id="selectMemberRankingByMemberCode" resultType="int">
-    SELECT rowNum FROM
+  <select id="selectMemberRankingByMemberCode" resultType="map">
+    SELECT * FROM
     (
       SELECT
       c.*, (@rownum :=@rownum + 1) AS rowNum
@@ -310,5 +311,6 @@
       (SELECT @rownum := 0) r
     ) d
     where member_code = #{memberCode}
+    limit 1
   </select>
 </mapper>

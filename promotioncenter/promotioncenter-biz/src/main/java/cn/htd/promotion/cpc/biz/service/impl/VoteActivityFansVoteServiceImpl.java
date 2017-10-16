@@ -3,15 +3,13 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import cn.htd.promotion.cpc.biz.dao.VoteActivityDAO;
 import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
 import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
+import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberPictureDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityFansVoteService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
-import cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
+import cn.htd.promotion.cpc.dto.response.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +48,9 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
 
     @Resource
     private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
+
+    @Resource
+    private VoteActivityMemberPictureDAO voteActivityMemberPictureDAO;
 
     private Logger logger = LoggerFactory.getLogger(VoteActivityFansVoteServiceImpl.class);
 
@@ -186,7 +188,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         // 查询活动
         VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);
         if (voteActivityResDTO == null) {
-            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());//TODO:
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
             executeResult.setResultMessage("查询不到该活动，voteActivityId：" + voteActivityId);
             return executeResult;
         }
@@ -210,11 +212,27 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberVoteDetailDTO.setVoteEndTime(voteActivityResDTO.getVoteEndTime());
         voteActivityMemberVoteDetailDTO.setSystemTime(systemTime);
         voteActivityMemberVoteDetailDTO.setMemberActivityDec(voteActivityMemberResDTO.getMemberActivityDec());
+        // 获取图片
+        List<VoteActivityMemberPictureResDTO> voteActivityMemberPictureResDTOList = this.voteActivityMemberPictureDAO.selectByVoteMemberId(voteActivityMemberResDTO.getVoteMemberId());
+        voteActivityMemberVoteDetailDTO.setVoteActivityMemberPictureResDTOList(voteActivityMemberPictureResDTOList);
         // 获取投票排名top10
+        List<VoteActivityMemberRankingDTO> voteActivityMemberRankingDTOList = new ArrayList<>();
         List<HashMap<String, String>> rankingList = this.voteActivityMemberDAO.selectMemberRankingTop10(voteActivityId);
-        // 获取排名
-        int rankingNum = this.voteActivityMemberDAO.selectMemberRankingByMemberCode(voteActivityId, memberCode);
-        return null;
+        for (HashMap<String, String> hashMap : rankingList) {
+            VoteActivityMemberRankingDTO voteActivityMemberRankingDTO = new VoteActivityMemberRankingDTO();
+            voteActivityMemberRankingDTO.setMemberName(hashMap.get("member_name"));
+            voteActivityMemberVoteDetailDTO.setRanking(Integer.valueOf(hashMap.get("rowNum")));
+            voteActivityMemberVoteDetailDTO.setVoteNum(Integer.valueOf(hashMap.get("voteNum")));
+            voteActivityMemberRankingDTOList.add(voteActivityMemberRankingDTO);
+        }
+        // 获取当前会员店排名情况
+        HashMap<String, String> rankingByMemberCode = this.voteActivityMemberDAO.selectMemberRankingByMemberCode(voteActivityId, memberCode);
+        if (rankingByMemberCode != null) {
+            voteActivityMemberVoteDetailDTO.setRanking(Integer.valueOf(rankingByMemberCode.get("rowNum")));
+            voteActivityMemberVoteDetailDTO.setVoteNum(Integer.valueOf(rankingByMemberCode.get("voteNum")));
+        }
+        executeResult.setResult(voteActivityMemberVoteDetailDTO);
+        return executeResult;
     }
 
     /**

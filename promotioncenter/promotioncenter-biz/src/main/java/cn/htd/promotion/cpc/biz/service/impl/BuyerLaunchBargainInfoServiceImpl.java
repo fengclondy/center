@@ -303,7 +303,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		  buyerBargainLaunch.setLevelCode(levelCode);
 		  buyerBargainLaunch.setPromotionId(promotionId);
 		  buyerBargainLaunch.setMessageId(messageId);
-		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",messageId,
+		  LOGGER.debug("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法开始,入参{}",messageId,
 				  JSON.toJSONString(buyerBargainLaunch));
 		  PromotionBargainInfoDMO promotionBargainInfo = promotionBargainInfoDAO.getPromotionBargainInfoDetail(buyerBargainLaunch);
 		  if(promotionBargainInfo == null){
@@ -342,7 +342,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 	            	}
 	            }
 	        }
-		  LOGGER.info("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法结束,出参{}",messageId,
+		  LOGGER.debug("MessageId{}:调用promotionBargainInfoDAO.getPromotionBargainInfoDetail（）方法结束,出参{}",messageId,
 				  JSON.toJSONString(promotionBargainInfo));
 			  if(promotionBargainInfo != null){
 //				  //查看该种商品是否已经售罄
@@ -355,7 +355,7 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 //				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法开始,入参{}",messageId,
 //							JSON.toJSONString(buyerLaunchBargainInfo));
 				  List<BuyerBargainRecordDMO> buyerBargainRecordList= buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode(bargainCode);
-				  LOGGER.info("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法结束,出参{}",messageId,
+				  LOGGER.debug("MessageId{}:调用buyerBargainRecordDAO.getBuyerBargainRecordByBargainCode（）方法结束,出参{}",messageId,
 							JSON.toJSONString(buyerBargainRecordList));
 					  if(buyerBargainRecordList.size() == partakeTimes){
 						  result.setCode(Constants.PROMOTION_PATYIESIN_IS_EXCEED);

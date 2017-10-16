@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1615,9 +1616,16 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrderItemsDiscountDMO.setBuyerCode(orderCreateInfoReqDTO.getBuyerCode());
 		tradeOrderItemsDiscountDMO.setSellerCode(orderTemp.getSellerCode());
 		tradeOrderItemsDiscountDMO.setShopId(orderTemp.getShopId());
-		tradeOrderItemsDiscountDMO
-				.setPromotionId(orderItemTemp.getPromotionId()==null?orderCreateInfoReqDTO.getPromotionId().toString():orderItemTemp.getPromotionId());
-		tradeOrderItemsDiscountDMO.setPromotionType(orderItemTemp.getPromotionType()==null?orderCreateInfoReqDTO.getPromotionType():orderItemTemp.getPromotionType());
+		String promotionId = orderItemTemp.getPromotionId();
+		if(StringUtils.isEmpty(promotionId)){
+			promotionId = orderCreateInfoReqDTO.getPromotionId().toString();
+		}
+		tradeOrderItemsDiscountDMO.setPromotionId(promotionId);
+		String promotionType = orderItemTemp.getPromotionType();
+		if(StringUtils.isEmpty(promotionType)){
+			promotionType = orderCreateInfoReqDTO.getPromotionType();
+		}
+		tradeOrderItemsDiscountDMO.setPromotionType(promotionType);
 		List<OrderItemCouponDTO> avalibleCouponList = orderItemTemp.getAvalibleCouponList();
 		LOGGER.info(
 				"从促销中心返回优惠券信息avalibleCouponList:" + JSONObject.toJSONString(avalibleCouponList));

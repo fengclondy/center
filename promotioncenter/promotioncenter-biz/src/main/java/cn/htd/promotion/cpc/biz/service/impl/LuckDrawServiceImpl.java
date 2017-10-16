@@ -906,6 +906,12 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					promotionInfoDTO, requestDTO, dictMap);
 			result.setOrgId(requestDTO.getOrgId());
 			result.setPromotionId(promotionId);
+			//设置redis订单信息
+			String orgId = requestDTO.getOrgId();
+			String memberNo = requestDTO.getMemberNo();
+			String orderNo = requestDTO.getOrderNo();
+			Date payDate = requestDTO.getPayDate();
+			setOrderRedisInfo(promotionId,orgId,memberNo,orderNo,payDate);
 		} catch (PromotionCenterBusinessException pcbe) {
 			result.setResponseCode(pcbe.getCode());
 			result.setResponseMsg(pcbe.getMessage());
@@ -947,15 +953,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			}else{
 				String orderNo = requestDTO.getOrderNo();
 				String buyerAwardInfo =  promotionId + "_" + orgId + "_" + memberNo + "_" + orderNo;
-				if(!promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo)){
-					boolean useThread = false;
-					DrawLotteryReqDTO drawLotteryReqDTO = new DrawLotteryReqDTO();
-					drawLotteryReqDTO.setMessageId(messageId);
-					drawLotteryReqDTO.setBuyerCode(memberNo);
-					drawLotteryReqDTO.setPromotionId(promotionId);
-					drawLotteryReqDTO.setSellerCode(orgId);
-					promotionLotteryService.beginDrawLotteryExecute(drawLotteryReqDTO, orderNo, useThread);
-				}else{
+				if(promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo)){
 					//判断orderNo是不是存在-如果存在就 “抱歉，这笔订单您已经刮过奖啦~请重新下单刮奖~”
 					String recordJsonStr = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_BUYER_AWARD_INFO,buyerAwardInfo);
 					BuyerWinningRecordDTO winningRecordDTO = JSON.parseObject(recordJsonStr, BuyerWinningRecordDTO.class);
@@ -968,6 +966,10 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					}					
 				}
 			}
+			//设置redis订单信息
+			String orderNo = requestDTO.getOrderNo();
+			Date payDate = requestDTO.getPayDate();
+			setOrderRedisInfo(promotionId,orgId,memberNo,orderNo,payDate);
 		}catch (PromotionCenterBusinessException pcbe) {
 			result.setResponseCode(pcbe.getCode());
 			result.setResponseMsg(pcbe.getMessage());
@@ -979,5 +981,14 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 					messageId, ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
+	}
+	
+	public void setOrderRedisInfo(String promotionId,String orgId,String memberNo,String orderNo,Date payDate){
+		String field = promotionId+"_"+orgId+"_"+memberNo+"_"+orderNo;
+		boolean orderExist = promotionRedisDB.existsHash(RedisConst.REDIS_LOTTERY_B2C_MIDDLE_LOTTERY_ORDER_INFO, field);
+		if(!orderExist){
+			promotionRedisDB.setHash(RedisConst.REDIS_LOTTERY_B2C_MIDDLE_LOTTERY_ORDER_INFO, field, 
+					payDate==null?"":payDate.getTime()+"");
+		}
 	}
 }

@@ -56,9 +56,10 @@ public enum ResultCodeEnum {
     LOTTERY_BUYER_ORDER_DISSATISFACTION_AMOUNT("26219","该笔订单的支付金额不满足刮奖条件"),
     
     //此错误码写在此处目的是给promotiongateway用，防止返回码重复
-    NOT_FOUND_HUI_LIN_ORDER_INFO("26220","根据交易流水号没有找到汇林订单相关信息"),
-    LOTTERY_MEMBER_NO_VALIDATE_FAIL("26221","前台传入的和从汇林查出的不是同一个粉丝号"),
-
+    NOT_FOUND_HUI_LIN_ORDER_INFO("26220","根据交易流水号没有找到汇邻订单相关信息"),
+    LOTTERY_MEMBER_NO_VALIDATE_FAIL("26221","前台传入的和从汇邻查出的不是同一个粉丝号"),
+    LOTTERY_ORDER_NOT_IN_EFFECTIVE_DATE("26222","货到付款的下单时间或者在线支付的支付时间不在活动有效期之内"),
+    LOTTERY_ORDER_WRONGFUL("26223","抽奖订单数据不合法"),
 
     // 投票活动错误码
     VOTE_ACTIVITY_NOT_EXIST("26301", "投票活动不存在"),

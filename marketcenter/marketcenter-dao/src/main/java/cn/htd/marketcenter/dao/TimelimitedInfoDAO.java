@@ -53,5 +53,5 @@ public interface TimelimitedInfoDAO extends BaseDAO<TimelimitedInfoDTO> {
 	 * @param promotionId
 	 * @return
 	 */
-	public List<TimelimitedListDTO> queryPromotionInfoByItemCode(String itemCode);
+	public List<TimelimitedInfoDTO> queryPromotionInfoByItemCode(String itemCode);
 }

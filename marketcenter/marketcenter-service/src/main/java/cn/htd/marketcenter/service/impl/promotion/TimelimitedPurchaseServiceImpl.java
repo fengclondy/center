@@ -160,9 +160,9 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	 * 限时购 － 根据promotionId获取限时购结果信息
 	 */
 	@Override
-	public ExecuteResult<List<TimelimitedListDTO>> queryPromotionInfoByItemCode(String itemCode) {
-		ExecuteResult<List<TimelimitedListDTO>> result = new ExecuteResult<List<TimelimitedListDTO>>();
-		List<TimelimitedListDTO>  timelimitedListDTO = null;
+	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(String itemCode) {
+		ExecuteResult<List<TimelimitedInfoDTO>> result = new ExecuteResult<List<TimelimitedInfoDTO>>();
+		List<TimelimitedInfoDTO>  timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
 			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemCode);

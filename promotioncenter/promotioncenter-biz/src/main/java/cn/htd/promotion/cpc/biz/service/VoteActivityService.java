@@ -13,9 +13,31 @@ import java.util.Date;
  */
 public interface VoteActivityService {
 
-    /***
-     * 查询当前活动
-     * @return
-     */
-    VoteActivityResDTO selectCurrentActivity();
+	/**
+	 * 创建投票活动
+	 * 
+	 * @param VoteActivityResDTO
+	 * @return
+	 */
+	ExecuteResult<String> saveVoteActivity(VoteActivityResDTO voteActivityResDTO);
+	
+	
+	/**
+	 * 根据主键查询投票活动
+	 * 
+	 * @param voteId
+	 * @return
+	 */
+	ExecuteResult<VoteActivityResDTO> queryVoteActivityById(Long voteId);
+	
+	/**
+	 * 查询投票活动列表
+	 * 
+	 * @param voteActivityListReqDTO
+	 * @return
+	 */
+	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page);
+	
+	VoteActivityResDTO selectCurrentActivity();
+	
 }

@@ -347,6 +347,9 @@
       <if test="logisticsNo != null and logisticsNo != ''">
         logistics_no,
       </if>
+      <if test="orderNo != null and orderNo != ''">
+        order_no,
+      </if>
       deal_flag,
       create_id,
       create_name,
@@ -412,6 +415,9 @@
       </if>
       <if test="logisticsNo != null and logisticsNo != ''">
         #{logisticsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null and orderNo != ''">
+        #{orderNo,jdbcType=VARCHAR},
       </if>
       1,
       #{createId,jdbcType=BIGINT},

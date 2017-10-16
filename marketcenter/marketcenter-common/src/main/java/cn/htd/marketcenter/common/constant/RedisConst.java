@@ -3,6 +3,19 @@ package cn.htd.marketcenter.common.constant;
 public class RedisConst {
     // Redis操作Hash
     public static final String REDIS_PROMOTION_ACTION_HASH = "B2B_MIDDLE_PROMOTION_ACTION_HASH";
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+    // Redis促销活动会员规则Set
+    public static final String REDIS_PROMOTION_BUYER_RULE_GROUP_SET = "B2B_MIDDLE_PROMOTION_BUYER_RULE_GROUP_SET";
+    // Redis促销活动会员规则Set
+    public static final String REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH = "B2B_MIDDLE_PROMOTION_BUYER_RULE_DETAIL_HASH";
+    // Redis促销活动卖家规则Set
+    public static final String REDIS_PROMOTION_SELLER_RULE_DETAIL_SET = "B2B_MIDDLE_PROMOTION_SELLER_RULE_DETAIL_SET";
+    // Redis促销活动品类规则Set
+    public static final String REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH = "B2B_MIDDLE_PROMOTION_CATEGORY_RULE_DETAIL_HASH";
+    // Redis促销活动商品规则Set
+    public static final String REDIS_PROMOTION_ITEM_RULE_DETAIL_SET = "B2B_MIDDLE_PROMOTION_ITEM_RULE_DETAIL_SET";
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+
     // Redis优惠券有效信息
     public static final String REDIS_COUPON_VALID = "B2B_MIDDLE_COUPON_VALID";
     // Redis优惠券自助领券活动信息
@@ -59,4 +72,14 @@ public class RedisConst {
     // Redis会员优惠券的使用log信息
     public static final String REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG =
             "B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
+            
+    // Redis 限时购 活动数据
+    public static final String REDIS_TIMELIMITED_PURCHASE_INDEX = "B2B_MIDDLE_TIMELIMITED_PURCHASE_INDEX";
+
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+    // Redis同步B2C触发返券活动编号Set
+    public static final String REDIS_SYNC_B2C_COUPON_SET = "B2B_MIDDLE_SYNC_B2C_COUPON_SET";
+    // Redis处理中B2C触发返券活动Hash
+    public static final String REDIS_DEAL_B2C_COUPON_HASH = "B2B_MIDDLE_DEAL_B2C_COUPON_HASH";
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
 }

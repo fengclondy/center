@@ -5,7 +5,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,10 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 
 import cn.htd.goodscenter.dto.mall.MallSkuAttributeDTO;
 import cn.htd.goodscenter.dto.mall.MallSkuInDTO;
@@ -28,6 +26,7 @@ import cn.htd.marketcenter.dto.OrderInfoDTO;
 import cn.htd.marketcenter.dto.OrderItemCouponDTO;
 import cn.htd.marketcenter.dto.OrderItemInfoDTO;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TradeInfoDTO;
 import cn.htd.membercenter.dto.MemberConsigAddressDTO;
@@ -44,6 +43,8 @@ import cn.htd.zeus.tc.biz.service.OrderFreightInfoService;
 import cn.htd.zeus.tc.biz.service.OrderSettleMentService;
 import cn.htd.zeus.tc.biz.util.ExternalSupplierCostCaculateUtil;
 import cn.htd.zeus.tc.common.constant.Constant;
+import cn.htd.zeus.tc.common.enums.FacadeOtherResultCodeEnum;
+import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
 import cn.htd.zeus.tc.dto.OrderConsigAddressDTO;
@@ -57,6 +58,10 @@ import cn.htd.zeus.tc.dto.response.OrderSettleMentResDTO;
 import cn.htd.zeus.tc.dto.resquest.BatchGetStockReqDTO;
 import cn.htd.zeus.tc.dto.resquest.BatchGetStockSkuNumsReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderSettleMentReqDTO;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 
 @Service
 public class OrderSettleMentServiceImpl implements OrderSettleMentService {
@@ -89,7 +94,7 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 	 * @return
 	 */
 	public void orderItemsSettlement(MallSkuWithStockOutDTO mallSku, OrderSkuInfoDTO orderSku,
-			CommonItemSkuPriceDTO skuPrice) {
+			CommonItemSkuPriceDTO skuPrice,TimelimitedInfoDTO limitedTimePurchaseInfo,OrderSettleMentReqDTO orderSettleMentReqDTO) {
 		// 内部供应商商品处理
 		if (Constant.PRODUCT_CHANNEL_CODE_INNER
 				.equals(mallSku.getMallSkuOutDTO().getProductChannelCode())) {
@@ -97,7 +102,7 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 			// 外部供应商商品处理
 		} else if (Constant.PRODUCT_CHANNEL_CODE_OUTER
 				.equals(mallSku.getMallSkuOutDTO().getProductChannelCode())) {
-			orderItems4outer(mallSku, orderSku, skuPrice);
+			orderItems4outer(mallSku, orderSku, skuPrice,limitedTimePurchaseInfo,orderSettleMentReqDTO);
 			// 外接供应商商品处理
 		} else if (Constant.PRODUCT_CHANNEL_CODE_OUTLINE
 				.equals(mallSku.getMallSkuOutDTO().getProductChannelCode())) {
@@ -138,12 +143,17 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 	 * @return
 	 */
 	private void orderItems4outer(MallSkuWithStockOutDTO mallSku, OrderSkuInfoDTO orderSku,
-			CommonItemSkuPriceDTO skuPrice) {
+			CommonItemSkuPriceDTO skuPrice,TimelimitedInfoDTO limitedTimePurchaseInfo,OrderSettleMentReqDTO orderSettleMentReqDTO) {
 		// 根据运费模板ID计算运费信息
 		orderSku.setFreight(Constant.PRODUCT_INNER_FREIGHT);
-		// 计算外部供应商价格
-		orderSku.setPrice(new ExternalSupplierCostCaculateUtil().caculateLadderPrice4outer(
-				orderSku.getProductCount(), skuPrice.getLadderPriceList()));
+		if (null != limitedTimePurchaseInfo) {
+			orderSku.setPrice(limitedTimePurchaseInfo.getSkuTimelimitedPrice());
+		} else {
+			// 计算外部供应商价格
+			orderSku.setPrice(new ExternalSupplierCostCaculateUtil()
+					.caculateLadderPrice4outer(orderSku.getProductCount(),
+							skuPrice.getLadderPriceList()));
+		}
 		orderSku.setProductName(mallSku.getMallSkuOutDTO().getItemName());
 		orderSku.setProductUrl(mallSku.getMallSkuOutDTO().getItemPictureUrl());
 		orderSku.setProductCode(mallSku.getMallSkuOutDTO().getItemCode());
@@ -213,9 +223,29 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 	}
 
 	private void checkUpShelf(OrderSettleMentResDTO orderSettleMentResDTO,
-			List<MallSkuWithStockOutDTO> resultList) {
+			List<MallSkuWithStockOutDTO> resultList,Map<String,String> timelimitedInfoMap,String messageId) {
 		if (CollectionUtils.isNotEmpty(resultList)) {
 			for (MallSkuWithStockOutDTO mallSku : resultList) {
+				//校验是否是限时购商品，如果是校验上下架状态，如果是限时购状态未开始，已结束，或者是限时购商品不存在就走正常的商品校验逻辑
+				String skuCode = mallSku.getMallSkuStockOutDTO().getSkuCode();
+				OtherCenterResDTO<TimelimitedInfoDTO> timeLimitedInfoRes = marketCenterRAO.getTimelimitedInfo(skuCode, messageId);
+				String timeLimitedInfoResCode = timeLimitedInfoRes.getOtherCenterResponseCode();
+				if(timeLimitedInfoResCode.equals(ResultCodeEnum.ERROR.getCode())){
+					orderSettleMentResDTO.setResponseCode(timeLimitedInfoResCode);
+					orderSettleMentResDTO.setReponseMsg(timeLimitedInfoRes.getOtherCenterResponseMsg());
+					break;
+				}
+				if(timeLimitedInfoResCode.equals(ResultCodeEnum.SUCCESS.getCode())){
+					TimelimitedInfoDTO timelimitedInfoDTOInfo = timeLimitedInfoRes.getOtherCenterResult();
+					if(null == timelimitedInfoDTOInfo){
+						orderSettleMentResDTO.setResponseCode(ResultCodeEnum.MARKETCENTER_LIMITED_TIME_PURCHASE_IS_NULL.getCode());
+						orderSettleMentResDTO.setReponseMsg(ResultCodeEnum.MARKETCENTER_LIMITED_TIME_PURCHASE_IS_NULL.getMsg());
+						break;
+					}
+					String value = JSON.toJSONString(timelimitedInfoDTOInfo);
+					timelimitedInfoMap.put(skuCode, value);
+					continue;
+				}
 				// 判断商品是否下架
 				if (mallSku.getMallSkuStockOutDTO().getIsUpShelf() == 0) {
 					orderSettleMentResDTO.setResponseCode(
@@ -243,7 +273,8 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 		if (ResultCodeEnum.SUCCESS.getCode().equals(sku.getOtherCenterResponseCode())) {
 			List<MallSkuWithStockOutDTO> resultList = sku.getOtherCenterResult();
 			// 校验商品上下架情况,如果是vip套餐商品加入标志位
-			this.checkUpShelf(orderSettleMentResDTO, resultList);
+			Map<String,String> timelimitedInfoMap = new HashMap<String,String>();
+			this.checkUpShelf(orderSettleMentResDTO, resultList,timelimitedInfoMap,messageId);
 			if (orderSettleMentResDTO.getResponseCode() == ResultCodeEnum.SUCCESS.getCode()) {
 				// 初始化京东订单商品价格
 				BigDecimal dealPrice = BigDecimal.ZERO;
@@ -259,26 +290,34 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 					List<OrderSkuInfoDTO> skuList = seller.getSkuInfoList();
 					for (OrderSkuInfoDTO orderSku : skuList) {
 						for (MallSkuWithStockOutDTO mallSku : resultList) {
-							if (mallSku.getMallSkuOutDTO().getSkuCode()
-									.equals(orderSku.getSkuCode())) {
-								// 转换查询条件为商品价格所需查询条件
-								QueryCommonItemSkuPriceDTO priceDTO = this
-										.transformSearchCondition4price(mallSku, orderSku,
-												memberCode, seller.getSellerId());
-								// 查询商品价格
-								OtherCenterResDTO<CommonItemSkuPriceDTO> skuPrice = priceCenterRAO
-										.queryCommonItemSkuPrice(priceDTO, messageId);
-								if (skuPrice.getOtherCenterResponseCode() != ResultCodeEnum.SUCCESS
-										.getCode()) {
-									orderSettleMentResDTO
-											.setResponseCode(skuPrice.getOtherCenterResponseCode());
-									orderSettleMentResDTO
-											.setReponseMsg(skuPrice.getOtherCenterResponseMsg());
-									break outterLoop;
+							String skuCode = mallSku.getMallSkuOutDTO().getSkuCode();
+							if (skuCode.equals(orderSku.getSkuCode())) {
+								OtherCenterResDTO<CommonItemSkuPriceDTO> skuPrice = new OtherCenterResDTO<CommonItemSkuPriceDTO>();
+								//限时购信息
+								TimelimitedInfoDTO limitedTimePurchaseInfo = JSON
+										.parseObject(
+												timelimitedInfoMap.get(skuCode),
+												TimelimitedInfoDTO.class);
+								if(null == limitedTimePurchaseInfo){
+									// 转换查询条件为商品价格所需查询条件
+									QueryCommonItemSkuPriceDTO priceDTO = this
+											.transformSearchCondition4price(mallSku, orderSku,
+													memberCode, seller.getSellerId());
+									// 查询商品价格
+									skuPrice = priceCenterRAO
+											.queryCommonItemSkuPrice(priceDTO, messageId);
+									if (skuPrice.getOtherCenterResponseCode() != ResultCodeEnum.SUCCESS
+											.getCode()) {
+										orderSettleMentResDTO
+												.setResponseCode(skuPrice.getOtherCenterResponseCode());
+										orderSettleMentResDTO
+												.setReponseMsg(skuPrice.getOtherCenterResponseMsg());
+										break outterLoop;
+									}
 								}
 								// 处理商品信息
 								this.orderItemsSettlement(mallSku, orderSku,
-										skuPrice.getOtherCenterResult());
+										skuPrice.getOtherCenterResult(),limitedTimePurchaseInfo,orderSettleMentReqDTO);
 								// 查询出商品中含有的京东商品
 								if (mallSku.getMallSkuOutDTO().getProductChannelCode()
 										.equals(Constant.PRODUCT_CHANNEL_CODE_OUTLINE)) {
@@ -292,19 +331,39 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 									// 非京东商品需要校验库存数量是否大于购买数量
 									if (!Constant.PRODUCT_CHANNEL_CODE_OUTLINE.equals(
 											mallSku.getMallSkuOutDTO().getProductChannelCode())
-											&& (mallSku.getMallSkuStockOutDTO()
-													.getItemSkuPublishInfo().getDisplayQuantity()
-													- mallSku.getMallSkuStockOutDTO()
-															.getItemSkuPublishInfo()
-															.getReserveQuantity()) < orderSku
-																	.getProductCount()) {
-										orderSettleMentResDTO.setResponseCode(
-												ResultCodeEnum.ORDERSETTLEMENT_BUYCOUNT_BEYOND
-														.getCode());
-										orderSettleMentResDTO.setReponseMsg(
-												ResultCodeEnum.ORDERSETTLEMENT_BUYCOUNT_BEYOND
-														.getMsg());
-										break outterLoop;
+											) {
+										if (null != limitedTimePurchaseInfo) {
+											//每单限制数量
+											Integer timelimitedThreshold = limitedTimePurchaseInfo.getTimelimitedThreshold();
+											//限时购商品剩余数量
+											Integer timelimitedSkuCount = limitedTimePurchaseInfo.getTimelimitedSkuCount();
+											Integer buyCount = orderSku.getProductCount();
+											if (buyCount > timelimitedThreshold
+													|| buyCount > timelimitedSkuCount) {
+												orderSettleMentResDTO
+														.setResponseCode(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
+																.getCode());
+												orderSettleMentResDTO
+														.setReponseMsg(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
+																.getMsg());
+												break outterLoop;
+											}
+										} else if ((mallSku
+												.getMallSkuStockOutDTO()
+												.getItemSkuPublishInfo()
+												.getDisplayQuantity() - mallSku
+												.getMallSkuStockOutDTO()
+												.getItemSkuPublishInfo()
+												.getReserveQuantity()) < orderSku
+												.getProductCount()) {
+											orderSettleMentResDTO
+													.setResponseCode(ResultCodeEnum.ORDERSETTLEMENT_BUYCOUNT_BEYOND
+															.getCode());
+											orderSettleMentResDTO
+													.setReponseMsg(ResultCodeEnum.ORDERSETTLEMENT_BUYCOUNT_BEYOND
+															.getMsg());
+											break outterLoop;
+										}
 									}
 								}
 							}

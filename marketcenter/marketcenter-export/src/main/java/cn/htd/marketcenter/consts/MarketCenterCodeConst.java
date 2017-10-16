@@ -39,10 +39,10 @@ public class MarketCenterCodeConst {
 	// *******************************************************
 	// 会员优惠券信息不存在
 	public static final String COUPON_NOT_EXIST = "15101";
-	// 非会员领取优惠券信息
-	public static final String COUPON_NOT_MEMBER_COLLECT = "15102";
-	// 会员领取优惠券的领取期间还未开始
-	public static final String COUPON_COLLECT_NOT_START = "15103";
+	// 优惠券定义类型发生变化
+	public static final String COUPON_KIND_HAS_CHANGED = "15102";
+	// 优惠券定义发送方式发生变化
+	public static final String COUPON_PROVIDER_TYPE_HAS_CHANGED = "15103";
 	// 会员领取优惠券的领取期间已过期
 	public static final String COUPON_COLLECT_HAS_EXPIRED = "15104";
 	// 会员优惠券已领光
@@ -122,7 +122,12 @@ public class MarketCenterCodeConst {
 
 	// 团购限制买家购买数量
 	public static final int GROUP_LIMIT_PRODUCT_NUM = 5;
-	
-
-
+	//限时购状态未开始
+	public static final String LIMITED_TIME_PURCHASE_NOT_BEGIN = "15400";
+	//限时购状态已结束
+	public static final String LIMITED_TIME_PURCHASE_IS_OVER = "15401";
+	//限时购状态已下架
+	public static final String LIMITED_TIME_PURCHASE_DOWN_SHELF = "15402";
+	//限时购商品不存在
+	public static final String LIMITED_TIME_PURCHASE_NULL = "15403";
 }

@@ -34,6 +34,7 @@ import cn.htd.marketcenter.consts.MarketCenterCodeConst;
 import cn.htd.marketcenter.dao.PromotionInfoDAO;
 import cn.htd.marketcenter.dao.PromotionStatusHistoryDAO;
 import cn.htd.marketcenter.dao.TimelimitedInfoDAO;
+import cn.htd.marketcenter.domain.TimelimitedCheckInfo;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionStatusHistoryDTO;
@@ -87,6 +88,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			timelimitedInfo.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
 					DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
 			timelimitedInfo.setSkuTimelimitedPrice(CalculateUtils.setScale(timelimitedInfo.getSkuTimelimitedPrice()));
+			checkTimelimitedDuringRepeat(timelimitedInfo);
 			promotionInfo = baseService.insertPromotionInfo(timelimitedInfo);
 			timelimitedInfo.setPromoionInfo(promotionInfo);
 			List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
@@ -118,6 +120,38 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		}
 		return result;
 	}
+	
+    /**
+     * 校验活动期间是否已经存在活动
+     *
+     * @param timelimitedInfo
+     * @throws MarketCenterBusinessException
+     */
+    private void checkTimelimitedDuringRepeat(TimelimitedInfoDTO timelimitedInfo) throws MarketCenterBusinessException {
+        List<PromotionInfoDTO> promotionList = null;
+        TimelimitedCheckInfo condition = new TimelimitedCheckInfo();
+        PromotionInfoDTO promotionInfo = null;
+        String errorMsg = "";
+        condition.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+        condition.setDeleteStatus(dictionary .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
+    	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
+		if (accumulatyList.size() > 0) {
+			for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
+				TimelimitedInfoDTO timeLimited = (TimelimitedInfoDTO) accumulaty;
+				if(!(new Date()).before(timeLimited.getStartTime())){
+		            throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_START, "不能创建已经开始的限时购活动");
+				}
+				condition.setSkuCode(timeLimited.getSkuCode());
+		        promotionList = promotionInfoDAO.queryRepeatTimelimitedList(condition);
+
+			}
+		}
+        if(promotionList != null && !promotionList.isEmpty()) {
+            promotionInfo = promotionList.get(0);
+            errorMsg = promotionInfo.getPromotionName();
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT, "和 " + errorMsg + " 限时购活动的商品重复");
+         } 
+       }
 
 	@Override
 	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
@@ -437,6 +471,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
         String paramModifyTimeStr = "";
         String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
         try {
+        	checkTimelimitedDuringRepeat(timelimitedInfo);
             if (StringUtils.isEmpty(promotionId)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "修改限时购活动ID不能为空");
             }

@@ -1,10 +1,10 @@
 package cn.htd.promotion.cpc.biz.service;
 
-import cn.htd.promotion.cpc.common.util.ExecuteResult;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
+import cn.htd.common.DataGrid;
+import cn.htd.common.ExecuteResult;
+import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
-
-import java.util.Date;
 
 /**
  * 投票活动-活动相关服务

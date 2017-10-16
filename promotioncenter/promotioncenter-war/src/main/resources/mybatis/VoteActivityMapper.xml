@@ -296,4 +296,22 @@
     <![CDATA[ and va.vote_end_time > #{endTime}   ]]>
     and va.delete_flag=0
   </select>
+  
+  <select id="selectPagedVoteActivity" resultMap="ResultMapWithBLOBs" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from vote_activity
+    where delete_flag = 0
+    limit #{start},#{pageSize}
+  </select>
+  
+  <select id="selectVoteActivityTotalCount" resultType="Long">
+    select 
+   count(1)
+    from vote_activity
+    where delete_flag = 0
+  </select>
+  
 </mapper>

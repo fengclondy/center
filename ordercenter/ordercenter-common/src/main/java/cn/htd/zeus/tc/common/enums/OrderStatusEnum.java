@@ -58,7 +58,7 @@ public enum OrderStatusEnum {
 	//促销活动类型 1：优惠券，2:秒杀
 	PROMOTION_TYPE_COUPON("1","优惠券"),
 	PROMOTION_TYPE_SECKILL("2","秒杀"),
-	PROMOTION_TYPE_GROUP_PURCHASE("3","团购"),
+	PROMOTION_TYPE_LIMITED_TIME_PURCHASE("3","限时购"),
 
 	//是否为秒杀订单
 	IS_TIMELIMITED_ORDER("1","是秒杀订单"),

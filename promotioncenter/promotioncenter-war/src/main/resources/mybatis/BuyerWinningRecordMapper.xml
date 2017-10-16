@@ -423,6 +423,9 @@
       <if test="orderNo != null and orderNo != ''">
         #{orderNo,jdbcType=VARCHAR},
       </if>
+      <if test="relevanceCouponCode != null and relevanceCouponCode != ''">
+        #{relevanceCouponCode,jdbcType=VARCHAR},
+      </if>
       1,
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},

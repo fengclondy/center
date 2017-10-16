@@ -73,8 +73,8 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
         List<PromotionDiscountInfoDTO> couponInfoList = new ArrayList<PromotionDiscountInfoDTO>();
         long count = 0;
         try {
-            searchConditionDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                    DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
+            searchConditionDTO.setPromotionType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
             searchConditionDTO.setPromotionName(conditionDTO.getDiscountName());
             searchConditionDTO.setRewardType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE,
                     DictionaryConst.OPT_PROMOTION_REWARD_TYPE_VOUCHER));
@@ -132,8 +132,8 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
     public ExecuteResult<PromotionDiscountInfoDTO> addCouponInfo(PromotionDiscountInfoDTO couponInfo) {
         ExecuteResult<PromotionDiscountInfoDTO> result = new ExecuteResult<PromotionDiscountInfoDTO>();
         try {
-            couponInfo.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                    DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
+            couponInfo.setPromotionType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
             couponInfo.setEffectiveTime(couponInfo.getEffectiveStartTime());
             couponInfo.setInvalidTime(couponInfo.getEffectiveEndTime());
             checkCouponParamValid(couponInfo);
@@ -163,17 +163,17 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
         String couponReceiveUrl = "";
         String modifyTimeStr = "";
         String paramModifyTimeStr = "";
-        String pendingStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_PENDING);
-        String refuseStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_FEFUSE);
+        String pendingStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING);
+        String refuseStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_FEFUSE);
         try {
             if (StringUtils.isEmpty(promotionId) || StringUtils.isEmpty(couponInfo.getLevelCode())) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                         "修改优惠券活动的促销活动ID和层级编码不能为空");
             }
-            couponInfo.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                    DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
+            couponInfo.setPromotionType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
             couponInfo.setModifyId(couponInfo.getCreateId());
             couponInfo.setModifyName(couponInfo.getCreateName());
             couponInfo.setEffectiveTime(couponInfo.getEffectiveStartTime());
@@ -198,12 +198,14 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
                         "优惠券活动:" + promotionId + " 只有待审核或审核拒绝时才能修改");
             }
+            couponInfo.setShowStatus(pendingStatus);
             accuDTO = baseService.updateSingleAccumulatyPromotionInfo(couponInfo);
             couponInfo.setPromotionAccumulaty(accuDTO);
             if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
                     DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProviceType)) {
-                couponReceiveUrl = SysProperties.getProperty(MEMBER_COLLECT_COUPON_BASE_URL) + "?promotionId=" +
-                        couponInfo.getPromotionId() + "&levelCode=" + couponInfo.getLevelCode();
+                couponReceiveUrl =
+                        SysProperties.getProperty(MEMBER_COLLECT_COUPON_BASE_URL) + "?promotionId=" + couponInfo
+                                .getPromotionId() + "&levelCode=" + couponInfo.getLevelCode();
                 couponInfo.setCouponReceiveUrl(couponReceiveUrl);
             }
             promotionDiscountInfoDAO.update(couponInfo);
@@ -237,10 +239,10 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
         String paramModifyTimeStr = "";
         String modifyTimeStr = "";
         String promotionId = modifyCouponInfo.getPromotionId();
-        String passStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_PASS);
-        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_VALID);
+        String passStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS);
+        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
         try {
             // 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(modifyCouponInfo);
@@ -273,8 +275,8 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
             if (couponInfoDTO == null) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该促销活动不存在!");
             }
-            if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE, DictionaryConst
-                    .OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponInfoDTO.getCouponProvideType())) {
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
+                    DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponInfoDTO.getCouponProvideType())) {
                 if (modifyCouponInfo.getPrepStartTime() == null || modifyCouponInfo.getPrepEndTime() == null) {
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "自助领券的开始日和结束日都不能为空");
                 }
@@ -322,10 +324,10 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
         String promotionId = verifyInfo.getPromotionId();
         String paramModifyTimeStr = "";
         String modifyTimeStr = "";
-        String pendingStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_PENDING);
-        String passStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_PASS);
+        String pendingStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING);
+        String passStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS);
         try {
             // 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(verifyInfo);
@@ -366,8 +368,9 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
             historyDTO = new PromotionStatusHistoryDTO();
             historyDTO.setPromotionId(promotionId);
             historyDTO.setPromotionStatus(verifyInfo.getVerifyResult());
-            historyDTO.setPromotionStatusText(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    verifyInfo.getVerifyResult()) + " " + verifyInfo.getVerifyRemark());
+            historyDTO.setPromotionStatusText(dictionary
+                    .getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, verifyInfo.getVerifyResult()) + " "
+                    + verifyInfo.getVerifyRemark());
             historyDTO.setCreateId(verifyInfo.getVerifierId());
             historyDTO.setCreateName(verifyInfo.getVerifierName());
             promotionStatusHistoryDAO.add(historyDTO);
@@ -377,8 +380,8 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
                     historyDTO = new PromotionStatusHistoryDTO();
                     historyDTO.setPromotionId(promotionId);
                     historyDTO.setPromotionStatus(couponInfo.getStatus());
-                    historyDTO.setPromotionStatusText(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS,
-                            couponInfo.getStatus()));
+                    historyDTO.setPromotionStatusText(
+                            dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, couponInfo.getStatus()));
                     historyDTO.setCreateId(verifyInfo.getVerifierId());
                     historyDTO.setCreateName(verifyInfo.getVerifierName());
                     promotionStatusHistoryDAO.add(historyDTO);
@@ -455,12 +458,12 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
         String searchVerifyStatus = conditionDTO.getVerifyStatus();
         String passStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS);
-        
+
         if (StringUtils.isEmpty(searchVerifyStatus)) {
             return verifyStatusList;
         }
-        if (StringUtils.isNotEmpty(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                searchVerifyStatus))) {
+        if (StringUtils.isNotEmpty(
+                dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, searchVerifyStatus))) {
             verifyStatusList.add(searchVerifyStatus);
             if (passStatus.equals(searchVerifyStatus)) {
                 verifyStatusList.add(dictionary.getCodeByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
@@ -493,10 +496,8 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
         if (couponInfo.getDiscountThreshold().compareTo(couponInfo.getDiscountAmount()) < 0) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "优惠券使用门槛不能低于优惠券金额");
         }
-        if (dictionary
-                .getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
-                        DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT)
-                .equals(couponInfo.getCouponProvideType())) {
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
+                DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponInfo.getCouponProvideType())) {
             if (couponInfo.getPrepStartTime() == null) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "领券结束日期不能为空");
             }
@@ -507,18 +508,18 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "领券开始日期必须小于结束日期");
             }
             if (couponInfo.getProvideCount() == null || couponInfo.getProvideCount().intValue() < 1) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                        "申请数量不能为空不能为空且必须大于0");
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "申请数量不能为空不能为空且必须大于0");
             }
         }
-        if (!dictionary
-                .getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
-                        DictionaryConst.OPT_COUPON_PROVIDE_TRIGGER_SEND)
-                .equals(couponInfo.getCouponProvideType())) {
+        if (!dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
+                DictionaryConst.OPT_COUPON_PROVIDE_TRIGGER_SEND).equals(couponInfo.getCouponProvideType())) {
             if (couponInfo.getReceiveLimit() == null || couponInfo.getReceiveLimit().intValue() < 1) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                        "每人最大领取次数不能为空且必须大于0");
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "每人最大领取次数不能为空且必须大于0");
             }
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+        } else {
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "不能新增触发返券类型优惠券");
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
         }
     }
 
@@ -570,43 +571,44 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
      * @throws Exception
      */
     private PromotionDiscountInfoDTO saveCouponInfo(PromotionDiscountInfoDTO couponInfo)
-            throws MarketCenterBusinessException,
-            Exception {
+            throws MarketCenterBusinessException, Exception {
         PromotionAccumulatyDTO accuDTO = null;
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
         List<PromotionStatusHistoryDTO> historyList = new ArrayList<PromotionStatusHistoryDTO>();
         String couponProviceType = couponInfo.getCouponProvideType();
         String couponReceiveUrl = "";
 
+        if (StringUtils.isEmpty(couponInfo.getShowStatus())) {
+            couponInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+        }
         accuDTO = baseService.insertSingleAccumulatyPromotionInfo(couponInfo);
         couponInfo.setPromotionAccumulaty(accuDTO);
         if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
                 DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProviceType)) {
-            couponReceiveUrl = SysProperties.getProperty(MEMBER_COLLECT_COUPON_BASE_URL) + "?promotionId=" +
-                    couponInfo.getPromotionId() + "&levelCode=" + couponInfo.getLevelCode();
+            couponReceiveUrl = SysProperties.getProperty(MEMBER_COLLECT_COUPON_BASE_URL) + "?promotionId=" + couponInfo
+                    .getPromotionId() + "&levelCode=" + couponInfo.getLevelCode();
             couponInfo.setCouponReceiveUrl(couponReceiveUrl);
         }
         promotionDiscountInfoDAO.add(couponInfo);
         historyDTO.setPromotionId(couponInfo.getPromotionId());
         historyDTO.setCreateId(couponInfo.getCreateId());
         historyDTO.setCreateName(couponInfo.getCreateName());
-        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_PASS).equals(couponInfo.getShowStatus()) || dictionary.getValueByCode
-                (DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)
-                .equals(couponInfo.getShowStatus())) {
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS).equals(couponInfo.getShowStatus()) || dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(couponInfo.getShowStatus())) {
             historyDTO.setPromotionStatus(couponInfo.getStatus());
             historyDTO.setPromotionStatusText(
-                    dictionary
-                            .getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, couponInfo.getStatus()));
+                    dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS, couponInfo.getStatus()));
         } else {
             historyDTO.setPromotionStatus(couponInfo.getShowStatus());
-            historyDTO.setPromotionStatusText(
-                    dictionary
-                            .getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, couponInfo.getShowStatus()));
+            historyDTO.setPromotionStatusText(dictionary
+                    .getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, couponInfo.getShowStatus()));
         }
         if (!StringUtils.isEmpty(couponInfo.getModifyPromotionId())) {
-            historyDTO.setPromotionStatusText(historyDTO.getPromotionStatusText() + "(替代促销活动编号:" + couponInfo
-                    .getModifyPromotionId() + ")");
+            historyDTO.setPromotionStatusText(
+                    historyDTO.getPromotionStatusText() + "(替代促销活动编号:" + couponInfo.getModifyPromotionId() + ")");
         }
         promotionStatusHistoryDAO.add(historyDTO);
         historyList.add(historyDTO);

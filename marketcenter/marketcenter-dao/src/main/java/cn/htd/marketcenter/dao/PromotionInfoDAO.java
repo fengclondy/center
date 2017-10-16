@@ -2,13 +2,12 @@ package cn.htd.marketcenter.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-
 import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.marketcenter.domain.TimelimitedCheckInfo;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 促销活动
@@ -79,7 +78,8 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @param condition
      * @return
      */
-    public List<PromotionInfoDTO> queryTimelimitedListBySku(@Param("entity")TimelimitedCheckInfo condition,@Param("sellerCode")String sellerCode);
+    public List<PromotionInfoDTO> queryTimelimitedListBySku(@Param("entity") TimelimitedCheckInfo condition,
+            @Param("sellerCode") String sellerCode);
 
     /**
      * 更新促销活动已经结束，且状态为已开启的活动信息
@@ -87,7 +87,8 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @param condition
      * @return
      */
-    public void updateTimelimitedListBySku(@Param("promotionIdList")List<String> promotionIdList,@Param("entity")TimelimitedInfoDTO timelimitedInfoDTO);
+    public void updateTimelimitedListBySku(@Param("promotionIdList") List<String> promotionIdList,
+            @Param("entity") TimelimitedInfoDTO timelimitedInfoDTO);
 
     /**
      * 根据是否已清除Redis标记，查询需要清除的促销活动信息
@@ -106,4 +107,22 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public Integer updateCleanedRedisPromotionStatus(PromotionInfoDTO promotionInfoDTO);
+
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+    /**
+     * 根据B2C活动编码查询促销活动信息
+     *
+     * @param promotionInfoDTO
+     * @return
+     */
+    public PromotionInfoDTO queryPromotionInfoByB2cActivityCode(PromotionInfoDTO promotionInfoDTO);
+
+    /**
+     * 取得需要刷新Redis促销信息规则的活动对象
+     *
+     * @param promotionInfoDTO
+     * @return
+     */
+    public List<PromotionInfoDTO> queryFlushRuleTargetPromotionList(PromotionInfoDTO promotionInfoDTO);
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
 }

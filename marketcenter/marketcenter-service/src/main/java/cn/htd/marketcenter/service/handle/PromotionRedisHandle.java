@@ -45,14 +45,23 @@ public class PromotionRedisHandle {
         if (StringUtils.isEmpty(key)) {
             return false;
         }
-        if (!marketRedisDB.existsHash(RedisConst.REDIS_PROMOTION_ACTION_HASH, key)) {
-            marketRedisDB.setHash(RedisConst.REDIS_PROMOTION_ACTION_HASH, key, messageId);
-        } else {
+
+        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
+//        if (!marketRedisDB.existsHash(RedisConst.REDIS_PROMOTION_ACTION_HASH, key)) {
+//            marketRedisDB.setHash(RedisConst.REDIS_PROMOTION_ACTION_HASH, key, messageId);
+//        } else {
+//            tmpStr = marketRedisDB.getHash(RedisConst.REDIS_PROMOTION_ACTION_HASH, key);
+//            if (!messageId.equals(tmpStr)) {
+//                returnFlag = false;
+//            }
+//        }
+        if (marketRedisDB.setHashNx(RedisConst.REDIS_PROMOTION_ACTION_HASH, key, messageId).longValue() <= 0) {
             tmpStr = marketRedisDB.getHash(RedisConst.REDIS_PROMOTION_ACTION_HASH, key);
             if (!messageId.equals(tmpStr)) {
                 returnFlag = false;
             }
         }
+        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         return returnFlag;
     }
 

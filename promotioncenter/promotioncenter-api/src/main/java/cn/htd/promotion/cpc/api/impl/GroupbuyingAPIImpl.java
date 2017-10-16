@@ -3,9 +3,11 @@ package cn.htd.promotion.cpc.api.impl;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
@@ -17,6 +19,8 @@ import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 
 @Service("groupbuyingAPI")
 public class GroupbuyingAPIImpl implements GroupbuyingAPI {
@@ -101,6 +105,24 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
 	}
+	
+	@Override
+	public ExecuteResult<GroupbuyingInfoResDTO> getSingleGroupbuyingInfoByPromotionId(String promotionId, String messageId) {
+        ExecuteResult<GroupbuyingInfoResDTO> result = new ExecuteResult<GroupbuyingInfoResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	GroupbuyingInfoResDTO groupbuyingInfoResDTO = groupbuyingService.getSingleGroupbuyingInfoByPromotionId(promotionId, messageId);
+        	result.setResult(groupbuyingInfoResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getSingleGroupbuyingInfoByPromotionId出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
 
 
 	@Override
@@ -122,7 +144,7 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
 	}
 	
     @Override
-    public ExecuteResult<?> addGroupbuyingRecord(GroupbuyingRecordReqDTO dto, String messageId) {
+    public ExecuteResult<?> addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto, String messageId) {
         ExecuteResult<?> result = new ExecuteResult<>();
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
@@ -131,22 +153,67 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
             if (null == dto) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
             }
-            //参团实际人数+1 重新计算真实价格
-            int updateResult = groupbuyingService.updateGroupbuyingInfoByRecord(dto, messageId);
-            if(updateResult > 0){
-                //参团记录表插入新数据
-                int addResult = groupbuyingService.addGroupbuyingRecord(dto);
-            }else{
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编码不正确！");
-            }
+//            //参团实际人数+1 重新计算真实价格
+//            int updateResult = groupbuyingService.updateGroupbuyingInfoByRecord(dto, messageId);
+//            if(updateResult > 0){
+//                //参团记录表插入新数据
+//                int addResult = groupbuyingService.addGroupbuyingRecord(dto);
+//            }else{
+//                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编码不正确！");
+//            }
 
+            groupbuyingService.addGroupbuyingRecord2HttpINTFC(dto,messageId);
 
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
-            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.addGroupbuyingRecord 出现异常{}", messageId, dto.getPromotionId() + ":" + e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.addGroupbuyingRecord2HttpINTFC 出现异常{}", messageId, dto.getPromotionId() + ":" + e.toString());
         }
         return result;
     }
+
+
+	@Override
+	public ExecuteResult<GroupbuyingRecordResDTO> getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		
+        ExecuteResult<GroupbuyingRecordResDTO> result = new ExecuteResult<GroupbuyingRecordResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingService.getSingleGroupbuyingRecord(groupbuyingRecordReqDTO, messageId);
+        	result.setResult(groupbuyingRecordResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getSingleGroupbuyingRecord出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+
+
+	@Override
+	public ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page,GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		
+		ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> result = new ExecuteResult<DataGrid<GroupbuyingRecordResDTO>>(); 
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	DataGrid<GroupbuyingRecordResDTO> groupbuyingRecordResDTOData = groupbuyingService.geGroupbuyingRecordForPage(page,groupbuyingRecordReqDTO, messageId);
+        	result.setResult(groupbuyingRecordResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.geGroupbuyingRecordForPage出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+    
+    
+    
+    
 }

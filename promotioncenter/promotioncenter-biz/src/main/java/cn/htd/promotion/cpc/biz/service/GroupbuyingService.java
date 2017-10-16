@@ -4,8 +4,10 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
-import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 
 
 public interface GroupbuyingService {
@@ -31,6 +33,14 @@ public interface GroupbuyingService {
 	 * @return
 	 */
 	public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId,String messageId) ;
+	
+	/**
+	 * 根据promotionId获取简单的团购活动信息
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public GroupbuyingInfoResDTO getSingleGroupbuyingInfoByPromotionId(String promotionId,String messageId) ;
 
 	/**
 	 * 分页查询团购活动信息
@@ -42,9 +52,31 @@ public interface GroupbuyingService {
 	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page,
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
-	int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto);
+	/**
+	 * 添加参团记录
+	 * @param dto
+	 * @param messageId
+	 */
+	void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
+	
+	/**
+	 * 根据条件获取单条参团记录
+	 * @param dto
+	 * @param messageId
+	 * @return
+	 */
+	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
+	
+	/**
+	 * 分页查询参团记录
+	 * @param page
+	 * @param groupbuyingInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public DataGrid<GroupbuyingRecordResDTO> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page,
+			GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
 
-	int updateGroupbuyingInfoByRecord(GroupbuyingRecordReqDTO dto, String messageId);
 
 //	/**
 //	 * 根据promotionId获取完整的秒杀活动信息

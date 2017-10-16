@@ -27,12 +27,14 @@
     sign_status, audit_status, sign_up_time, member_activity_dec, member_vote_last_time, 
     delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from vote_activity_member
     where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from vote_activity_member
     where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
@@ -265,4 +267,68 @@
     AND member_code = #{memberCode,jdbcType=VARCHAR}
     limit 1
   </select>
+
+  <!-- 投票排名 -->
+  <sql id="vote_ranking">
+    SELECT
+			a.vote_id,
+			a.member_code,
+			a.member_name,
+			(
+				SELECT
+					count(1)
+				FROM
+					vote_activity_fans_vote b
+				WHERE
+					a.vote_member_id = b.vote_member_id
+			) AS voteNum,
+			a.member_vote_last_time
+		FROM
+			vote_activity_member a
+		WHERE
+			vote_id = #{voteId}
+		ORDER BY
+			voteNum DESC,
+			member_vote_last_time ASC
+  </sql>
+
+  <select id="selectMemberRankingTop10" resultType="map">
+    SELECT
+	  c.*, (@rownum :=@rownum + 1) AS rowNum
+    FROM
+	( <include refid="vote_ranking" /> )c,
+    (SELECT @rownum := 0) r
+    LIMIT 10
+  </select>
+
+  <select id="selectMemberRankingByMemberCode" resultType="map">
+    SELECT * FROM
+    (
+      SELECT
+      c.*, (@rownum :=@rownum + 1) AS rowNum
+      FROM
+      ( <include refid="vote_ranking" /> )c,
+      (SELECT @rownum := 0) r
+    ) d
+    where member_code = #{memberCode}
+    limit 1
+  </select>
+  
+   <select id="selectVoteCountByActivityId" parameterType="Long" resultType="Long">
+	  	select count(1) from
+	vote_activity_fans_vote vaf
+	left join 
+	vote_activity_member vam on vaf.vote_member_id=vam.vote_member_id
+	where vam.delete_flag=0 
+	and vam.vote_id=#{voteId}
+  </select>
+  
+  <select id="querySignupMemberCount" parameterType="Long" resultType="list">
+	  select sign_status,count(1) as c from 
+	vote_activity_member
+	where vote_id=#{voteId}
+	  group by sign_status
+ </select>
+  
+  
 </mapper>

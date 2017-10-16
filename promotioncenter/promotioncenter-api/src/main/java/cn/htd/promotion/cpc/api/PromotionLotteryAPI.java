@@ -66,6 +66,13 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String beginDrawLottery(String drawLotteryParam);
+	
+	/**
+	 * 开始抽奖处理4刮刮卡
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	public String beginDrawLotteryScratchCard(String drawLotteryParam);
 
 	/**
 	 * 查询抽奖结果
@@ -81,6 +88,13 @@ public interface PromotionLotteryAPI {
 	 */
 	public String saveDrawLotteryWinningInfo(String winningInfoParam);
 
+	/**
+	 * 保存红包雨信息
+	 * @param winningInfoParam
+	 * @return
+	 */
+	public String saveRedRainWinningInfo(String winningInfoParam);
+	
 	/**
 	 * 新建扭蛋
 	 * @param json

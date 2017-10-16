@@ -14,4 +14,7 @@ public interface VoteActivityFansForwardDAO {
     int updateByPrimaryKeySelective(VoteActivityFansForwardResDTO record);
 
     int updateByPrimaryKey(VoteActivityFansForwardResDTO record);
+    
+    Long selectVoteActivityForwardCount(Long voteId);
+
 }

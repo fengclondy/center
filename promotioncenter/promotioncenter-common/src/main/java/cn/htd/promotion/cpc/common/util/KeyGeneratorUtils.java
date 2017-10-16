@@ -8,7 +8,9 @@ import java.util.Random;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,10 +24,11 @@ public class KeyGeneratorUtils {
     // RedisMessageId数据
     private static final String REDIS_MESSAGE_ID_KEY = "B2C_MIDDLE_MESSAGEID_MSB_SEQ";
     
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
-    /**
+
+	/**
      * ID生成 23位，13位时间戳+6位IP4后两段左补0+4位循环（0001-9999）左补0
      *
      * @return

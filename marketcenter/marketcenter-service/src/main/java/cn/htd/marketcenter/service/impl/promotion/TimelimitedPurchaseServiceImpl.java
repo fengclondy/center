@@ -120,11 +120,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<TimelimitedListDTO>> queryTimelimitedListByCondition(
-			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedListDTO> page) {
-		ExecuteResult<DataGrid<TimelimitedListDTO>> result = new ExecuteResult<DataGrid<TimelimitedListDTO>>();
-		DataGrid<TimelimitedListDTO> dataGrid = new DataGrid<TimelimitedListDTO>();
-		List<TimelimitedListDTO> timelimitedInfoList = new ArrayList<TimelimitedListDTO>();
+	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
+			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedInfoDTO> page) {
+		ExecuteResult<DataGrid<TimelimitedInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedInfoDTO>>();
+		DataGrid<TimelimitedInfoDTO> dataGrid = new DataGrid<TimelimitedInfoDTO>();
+		List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
 		TimelimitedInfoDTO searchConditionDTO = new TimelimitedInfoDTO();
 		long count = 0;
 		try {
@@ -160,9 +160,9 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	 * 限时购 － 根据promotionId获取限时购结果信息
 	 */
 	@Override
-	public ExecuteResult<List<TimelimitedListDTO>> queryPromotionInfoByItemCode(String itemCode) {
-		ExecuteResult<List<TimelimitedListDTO>> result = new ExecuteResult<List<TimelimitedListDTO>>();
-		List<TimelimitedListDTO>  timelimitedListDTO = null;
+	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(String itemCode) {
+		ExecuteResult<List<TimelimitedInfoDTO>> result = new ExecuteResult<List<TimelimitedInfoDTO>>();
+		List<TimelimitedInfoDTO>  timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
 			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemCode);

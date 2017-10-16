@@ -17,6 +17,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.goodscenter.dto.stock.PromotionStockChangeDTO;
 import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.enums.TimelimitedStatusEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
@@ -538,7 +539,7 @@ public class TimelimitedRedisHandle {
         timelimitedInfo.setStatus(promotionInfo.getStatus());
         marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
     }
-
+    
     /**
      * 处理会员秒杀活动信息
      *
@@ -971,6 +972,35 @@ public class TimelimitedRedisHandle {
 			resultMap.put("ERROR2", ExceptionUtils.getStackTraceAsString(e));
 		}
 		return resultMap;
+	}
+
+	public List<PromotionStockChangeDTO> getPromotionStockChangeList(String promotionId, String promotionType) {
+		List<PromotionStockChangeDTO> resultList = new ArrayList<PromotionStockChangeDTO>();
+        TimelimitedInfoDTO timelimitedInfo = null;
+        String timelimitedJsonStr = "";
+        timelimitedJsonStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
+        timelimitedInfo = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoDTO.class);
+        if (timelimitedInfo == null) {
+            return null;
+        }
+        if(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+				DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionType)) {
+        	List list = timelimitedInfo.getPromotionAccumulatyList();
+    		if (null != list && !list.isEmpty()) {
+    			resultList = new ArrayList<PromotionStockChangeDTO>();
+    			for (int i = 0; i < list.size(); i++) {
+    	            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
+    	            if(timelimite.getTimelimitedSkuCount().intValue() <= 0){
+    	            	continue;
+    	            }
+    	            PromotionStockChangeDTO promotionStockChangeDTO = new PromotionStockChangeDTO();
+    	            promotionStockChangeDTO.setSkuCode(timelimite.getSkuCode());
+    	            promotionStockChangeDTO.setQuantity(timelimite.getTimelimitedSkuCount());
+    	            resultList.add(promotionStockChangeDTO);
+    			}
+    		}
+		}
+        return resultList;
 	}
 
 }

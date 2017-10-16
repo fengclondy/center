@@ -34,4 +34,8 @@
   <!-- 团购-->
   <dubbo:service interface="cn.htd.promotion.cpc.api.GroupbuyingAPI" ref="groupbuyingAPI"
                  version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+
+  <!-- 投票活动 -->
+  <dubbo:service interface="cn.htd.promotion.cpc.api.VoteActivityAPI" ref="voteActivityAPI"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 </beans>

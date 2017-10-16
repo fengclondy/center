@@ -35,6 +35,7 @@
 
 	<dubbo:service interface="cn.htd.marketcenter.service.TimelimitedPurchaseService" ref="timelimitedPurchaseService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 
+	<dubbo:service interface="cn.htd.marketcenter.service.TimelimitedInfoService" ref="timelimitedInfoService" version="${dubbo.version}" timeout="${dubbo.timeout}" /> 
 	<!-- B2C无敌券信息同步接口 -->
 	<dubbo:service interface="cn.htd.marketcenter.service.B2cCouponInfoSyncService" ref="b2cCouponInfoSyncService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 	<!-- 粉丝用券同步券到促销中心 -->

@@ -1,5 +1,11 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 public interface VoteActivityDAO {
@@ -16,4 +22,17 @@ public interface VoteActivityDAO {
     int updateByPrimaryKeyWithBLOBs(VoteActivityResDTO record);
 
     int updateByPrimaryKey(VoteActivityResDTO record);
+
+    // 查询当前时间所处的投票活动
+    VoteActivityResDTO queryVoteActivityByTime(@Param("startTime") Date startTime,@Param("endTime") Date endTime);
+
+    /***
+     * 查询当前活动
+     * @return
+     */
+    VoteActivityResDTO selectCurrentActivity();
+    
+    Long selectVoteActivityTotalCount();
+    
+    List<VoteActivityResDTO> selectPagedVoteActivity(@Param("start") int start,@Param("pageSize") int pageSize);
 }

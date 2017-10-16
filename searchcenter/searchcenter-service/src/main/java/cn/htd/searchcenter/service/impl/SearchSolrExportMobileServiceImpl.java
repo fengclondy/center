@@ -128,7 +128,7 @@ public class SearchSolrExportMobileServiceImpl implements
 				}
 				filterStr = filterStr.substring(0, filterStr.length() - 4);
 			}
-			filterStr = filterStr + " NOT sellerType:2";
+//			filterStr = filterStr + " NOT sellerType:2";
 			logger.info("queryStr:" + queryStr);
 			logger.info("filterStr:" + filterStr);
 			query.setQuery(queryStr);
@@ -237,10 +237,10 @@ public class SearchSolrExportMobileServiceImpl implements
 			if (StringUtils.isNotEmpty(sellerTypeAndSellerId)) {
 				sellerType = sellerTypeAndSellerId.split(":")[0];
 				sellerIdStr = sellerTypeAndSellerId.split(":")[1];
-				if ("2".equals(sellerType)) {
-					logger.info("外部供应商店铺不展示任何商品:" + sellerIdStr);
-					return null;
-				}
+//				if ("2".equals(sellerType)) {
+//					logger.info("外部供应商店铺不展示任何商品:" + sellerIdStr);
+//					return null;
+//				}
 			}
 			if (categoryId != null && StringUtils.isNotEmpty(sellerType)) {
 				qList.add("(cid:" + categoryId.longValue() + ")");
@@ -275,6 +275,7 @@ public class SearchSolrExportMobileServiceImpl implements
 			addressSb.append(") AND (" + addressCode);
 			addressSb.append(" OR isSalesWholeCountry:true NOT shelvesFlag:4)))");
 			addressSb.append(" AND hasQuantity:true");
+			addressSb.append(" OR itemType:1");
 			filterList.add(addressSb.toString());
 		} else {
 			logger.info("该会员地址为空：" + addressCode);
@@ -967,6 +968,6 @@ public class SearchSolrExportMobileServiceImpl implements
 			logger.error("searchScreenMobile is error", e);
 		}
 		logger.info("come in searchScreenMobile end");
-		return dg;
+		return dg;   
 	}
 }

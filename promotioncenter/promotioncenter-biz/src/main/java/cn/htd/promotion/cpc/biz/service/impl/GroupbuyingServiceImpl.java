@@ -5,16 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -44,6 +40,7 @@ import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 
@@ -88,7 +85,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
     
-    @Autowired
+    @Resource
     private KeyGeneratorUtils keyGeneratorUtils;
     
 
@@ -400,6 +397,29 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	        return groupbuyingInfoCmplResDTO;
 	}
+	
+	
+	@Override
+	public GroupbuyingInfoResDTO getSingleGroupbuyingInfoByPromotionId(String promotionId, String messageId) {
+		
+		GroupbuyingInfoResDTO groupbuyingInfoResDTO = null;
+
+	        try {
+
+	            if (null == promotionId) {
+	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
+	            }
+	            
+	            // 查询活动信息
+	            groupbuyingInfoResDTO = groupbuyingInfoDAO.selectByPromotionId(promotionId);
+
+	        } catch (Exception e) {
+	            logger.error("messageId{}:执行方法【getSingleGroupbuyingInfoByPromotionId】报错：{}", messageId, e.toString());
+	            throw new RuntimeException(e);
+	        }
+
+	        return groupbuyingInfoResDTO;
+	}
 
 	@Override
 	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmplForPage(Pager<GroupbuyingInfoReqDTO> page,GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
@@ -460,12 +480,64 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     }
 
     @Override
-    public int addGroupbuyingRecord(GroupbuyingRecordReqDTO dto) {
-        return groupbuyingRecordDAO.insertSelective(dto);
+    public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+       
+        // 当前时间
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+
+        try {
+        	groupbuyingRecordReqDTO.setDeleteFlag(Boolean.FALSE);
+        	groupbuyingRecordReqDTO.setCreateTime(currentTime);
+        	groupbuyingRecordReqDTO.setModifyTime(currentTime);
+        	groupbuyingRecordDAO.addGroupbuyingRecord(groupbuyingRecordReqDTO);
+        	
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【addGroupbuyingRecord2HttpINTFC】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public int updateGroupbuyingInfoByRecord(GroupbuyingRecordReqDTO dto, String messageId) {
-        return 0;
-    }
+	@Override
+	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+		
+		GroupbuyingRecordResDTO groupbuyingRecordResDTO = null;
+
+	        try {
+
+	            if (null == groupbuyingRecordReqDTO) {
+	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数不能为空！");
+	            }
+
+	            groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+
+	        } catch (Exception e) {
+	            logger.error("messageId{}:执行方法【getSingleGroupbuyingRecord】报错：{}", messageId, e.toString());
+	            throw new RuntimeException(e);
+	        }
+
+	        return groupbuyingRecordResDTO;
+	}
+
+	@Override
+	public DataGrid<GroupbuyingRecordResDTO> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page, GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+
+        DataGrid<GroupbuyingRecordResDTO> dataGrid = null;
+        try {
+
+            dataGrid = new DataGrid<GroupbuyingRecordResDTO>();
+            List<GroupbuyingRecordResDTO> groupbuyingRecordResDTOList = groupbuyingRecordDAO.getGroupbuyingRecordForPage(page, groupbuyingRecordReqDTO);
+            int count = groupbuyingRecordDAO.getGroupbuyingRecordCount(groupbuyingRecordReqDTO);
+            dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+            dataGrid.setRows(groupbuyingRecordResDTOList);
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【geGroupbuyingRecordForPage】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+        return dataGrid;
+	}
+    
+    
+    
+
 }

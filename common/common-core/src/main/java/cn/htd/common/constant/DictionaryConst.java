@@ -857,5 +857,7 @@ public class DictionaryConst {
     public static final String OPT_PAY_TYPE_CASH_ON_DELIVERY = "PAY_TYPE_CASH_ON_DELIVERY";
     //字典信息-促销活动图片类型-活动底图
     public static final String OPT_PROMOTION_PRICTURE_TYPE_BACKGROUD = "PROMOTION_PRICTURE_TYPE_BACKGROUD";
+    //字典信息-促销活动类型-红包雨
+    public static final String OPT_PROMOTION_TYPE_RED_ENVELOPER_RAIN = "PROMOTION_TYPE_RED_ENVELOPER_RAIN";
     //******************* add by jiangkun on 20170917 for PromotionCenter End *********************
 }

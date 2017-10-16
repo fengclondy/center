@@ -33,6 +33,8 @@ public class BuyerWinningRecordDMO {
 
     private String relevanceBargainCode;
 
+    private String relevanceCouponCode;
+
     private String rewardName;
 
     private String awardValue;
@@ -405,4 +407,13 @@ public class BuyerWinningRecordDMO {
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
+
+	public String getRelevanceCouponCode() {
+		return relevanceCouponCode;
+	}
+
+	public void setRelevanceCouponCode(String relevanceCouponCode) {
+		this.relevanceCouponCode = relevanceCouponCode;
+	}
+    
 }

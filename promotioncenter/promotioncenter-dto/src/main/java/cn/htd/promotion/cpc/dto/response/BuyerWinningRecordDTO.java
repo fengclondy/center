@@ -65,6 +65,10 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
      */
     private String relevanceBargainCode;
     /**
+     * 关联砍价发起编码
+     */
+    private String relevanceCouponCode;
+    /**
      * 奖品名称
      */
     private String rewardName;
@@ -387,6 +391,15 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
 
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+	
+
+	public String getRelevanceCouponCode() {
+		return relevanceCouponCode;
+	}
+
+	public void setRelevanceCouponCode(String relevanceCouponCode) {
+		this.relevanceCouponCode = relevanceCouponCode;
 	}
 
 	public void setBuyerWinningRecordByPromoitonInfo(PromotionInfoDTO promoitonInfoDTO) {

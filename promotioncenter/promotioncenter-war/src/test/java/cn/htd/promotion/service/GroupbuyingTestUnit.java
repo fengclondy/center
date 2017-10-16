@@ -317,6 +317,7 @@ public class GroupbuyingTestUnit {
         String promotionId = "25171601240015";
         try {
         	ExecuteResult<GroupbuyingInfoCmplResDTO> executeResult = groupbuyingAPI.getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+        	System.out.println("===>getActiveStateText:" + executeResult.getResult().getActiveStateText());
         	System.out.println("===>executeResult:" + executeResult);
         } catch (Exception e) {
             e.printStackTrace();

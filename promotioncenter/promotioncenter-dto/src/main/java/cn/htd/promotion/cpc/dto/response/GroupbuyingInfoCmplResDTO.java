@@ -47,34 +47,34 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	}
 	
 
-	public String getActiveStateText() {
-		String activeStateText = null;
-		// 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束,-1.无效活动]
-		switch (getActiveState()) {
-		case "1":
-			activeStateText = "未开始";
-			break;
-		case "2":
-			activeStateText = "开团进行中";
-			break;
-		case "3":
-			activeStateText = "下单未开始";
-			break;
-		case "4":
-			activeStateText = "下单进行中";
-			break;
-		case "5":
-			activeStateText = "已结束";
-			break;
-		case "-1":
-			activeStateText = "无效活动";
-			break;
-		default:
-			activeStateText = null;
-			break;
-		}
-		return activeStateText;
-	}
+//	public String getActiveStateText() {
+//		String activeStateText = null;
+//		// 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束,-1.无效活动]
+//		switch (getActiveState()) {
+//		case "1":
+//			activeStateText = "未开始";
+//			break;
+//		case "2":
+//			activeStateText = "开团进行中";
+//			break;
+//		case "3":
+//			activeStateText = "下单未开始";
+//			break;
+//		case "4":
+//			activeStateText = "下单进行中";
+//			break;
+//		case "5":
+//			activeStateText = "已结束";
+//			break;
+//		case "-1":
+//			activeStateText = "无效活动";
+//			break;
+//		default:
+//			activeStateText = null;
+//			break;
+//		}
+//		return activeStateText;
+//	}
 
 	
 

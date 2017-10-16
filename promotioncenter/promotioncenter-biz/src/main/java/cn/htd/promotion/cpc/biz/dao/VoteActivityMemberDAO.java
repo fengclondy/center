@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
 public interface VoteActivityMemberDAO {
@@ -41,5 +42,7 @@ public interface VoteActivityMemberDAO {
     Long queryTotalSignupMemberInfo(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
     
     List<VoteActivityMemListResDTO> queryPagedSignupMemberInfoList(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+    
+    VoteActivityMemResDTO querySignupMemberDetailInfo(Long voteMemberId);
 
 }

@@ -58,6 +58,14 @@ public enum ResultCodeEnum {
     //此错误码写在此处目的是给promotiongateway用，防止返回码重复
     NOT_FOUND_HUI_LIN_ORDER_INFO("26220","根据交易流水号没有找到汇林订单相关信息"),
     LOTTERY_MEMBER_NO_VALIDATE_FAIL("26221","前台传入的和从汇林查出的不是同一个粉丝号"),
+
+
+    // 投票活动错误码
+    VOTE_ACTIVITY_NOT_EXIST("26301", "投票活动不存在"),
+    VOTE_ACTIVITY_NOT_EXIST_MEMBER("26302", "投票活动不存在该会员店报名信息"),
+    OTE_ACTIVITY_HAVA_NO_VOTE_ACTIVITY("26303", "当前没有投票活动"),
+    OTE_ACTIVITY_MEMBER_NOT_SIGN_UP("26304", "会员店未报名"),
+    OTE_ACTIVITY_MEMBER_NOT_AUDIT_PASSED("26305", "会员店未审核通过")
     ;
 
     private ResultCodeEnum(String code, String msg) {

@@ -21,7 +21,6 @@
     <result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime"/>
     <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
     <result column="modify_promotion_id" jdbcType="VARCHAR" property="modifyPromotionId"/>
-    <result column="b2c_activity_code" jdbcType="VARCHAR" property="b2cActivityCode"/>
     <result column="create_id" jdbcType="BIGINT" property="createId"/>
     <result column="create_name" jdbcType="VARCHAR" property="createName"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -49,7 +48,6 @@
 		verify_time,
 		verify_remark,
 		modify_promotion_id,
-		b2c_activity_code,
 		create_id,
 		create_name,
 		create_time,
@@ -154,9 +152,6 @@
       <if test="modifyPromotionId != null and modifyPromotionId != ''">
         modify_promotion_id,
       </if>
-      <if test="b2cActivityCode != null and b2cActivityCode != ''">
-        b2c_activity_code,
-      </if>
       create_id,
       create_name,
       create_time,
@@ -200,9 +195,6 @@
       </if>
       <if test="modifyPromotionId != null and modifyPromotionId != ''">
         #{modifyPromotionId,jdbcType=VARCHAR},
-      </if>
-      <if test="b2cActivityCode != null and b2cActivityCode != ''">
-        #{b2cActivityCode,jdbcType=VARCHAR},
       </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
@@ -281,24 +273,27 @@
     from promotion_info
     where promotion_type = #{promotionType, jdbcType=VARCHAR}
     and <![CDATA[ status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
-    and <![CDATA[ now() <= invalid_time ]]>
+    and <![CDATA[ now() <= invalid_time]]>
   </select>
-  <select id="queryTimelimitedListBySku" resultMap="BaseResultMap">
+  
+  
+  
+  <select id="queryTimelimitedListBySku"  resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from promotion_info
     where promotion_type = #{entity.promotionType, jdbcType=VARCHAR}
     and <![CDATA[ status <> #{entity.deleteStatus, jdbcType=VARCHAR} ]]>
-    and <![CDATA[ now() >= invalid_time ]]>
-    and <![CDATA[ show_status = #{entity.showStatus, jdbcType=VARCHAR} ]]>
-    and <![CDATA[ promotion_provider_seller_code = #{sellerCode, jdbcType=VARCHAR} ]]>
-    and exists (
-    select 1
+    and <![CDATA[ now() >= invalid_time]]>
+    and <![CDATA[ show_status = #{entity.showStatus, jdbcType=VARCHAR}]]>
+    and <![CDATA[ promotion_provider_seller_code = #{sellerCode, jdbcType=VARCHAR}]]>
+    and exists (select 1
     from timelimited_info
     where promotion_info.promotion_id = timelimited_info.promotion_id
     and timelimited_info.sku_code = #{entity.skuCode, jdbcType=VARCHAR}
     )
   </select>
+  
   <update id="updateTimelimitedListBySku">
     update promotion_info
     <set>
@@ -307,12 +302,13 @@
       modify_name = #{entity.createName,jdbcType=VARCHAR},
       modify_time = now()
     </set>
-    where show_status= 3
+    where 
+    show_status= 3
     and promotion_provider_seller_code = #{entity.promotionProviderSellerCode, jdbcType=VARCHAR}
     and promotion_id in
-    <foreach collection="promotionIdList" index="index" item="promotionId" open="(" separator="," close=")">
-      #{promotionId}
-    </foreach>
+     <foreach collection="promotionIdList" index="index" item="promotionId" open="(" separator="," close=")">
+        #{promotionId}
+      </foreach>
   </update>
   <select id="queryNeedCleanRedisPromotion4Task" resultMap="BaseResultMap">
     select
@@ -321,7 +317,7 @@
     where has_redis_clean = 0
     <if test="entity != null">
       <if test="entity.promotionType != null and entity.promotionType != ''">
-        and promotion_type = #{entity.promotionType}
+      and promotion_type = #{entity.promotionType}
       </if>
       and <![CDATA[ invalid_time < now() ]]>
       and mod(id, #{entity.taskQueueNum}) in
@@ -343,21 +339,4 @@
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
     and has_redis_clean = 0
   </update>
-  <select id="queryPromotionInfoByB2cActivityCode" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO"
-          resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List"/>
-    from promotion_info
-    where b2c_activity_code = #{b2cActivityCode, jdbcType=VARCHAR}
-    and <![CDATA[ status <> #{status, jdbcType=VARCHAR} ]]>
-  </select>
-  <select id="queryFlushRuleTargetPromotionList" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO"
-          resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List"/>
-    from promotion_info
-    where 1 = 1
-    and <![CDATA[ status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
-    and <![CDATA[ now() < invalid_time ]]>
-  </select>
 </mapper>

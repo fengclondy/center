@@ -375,10 +375,7 @@
 	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5) as winningNum,
 	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5 and to_days(bw.winning_time) = to_days(now())) as winningTodayNum,
 	a.modify_time
-	FROM promotion_info a WHERE 1=1 
-	<if test="entity.promotionType != null and entity.	promotionType != ''">
-	and  a.promotion_type = #{entity.promotionType}
-	</if>
+	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
 	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
@@ -401,10 +398,7 @@
     <select id="getTotalPromotionGashaponByInfo" resultType="java.lang.Long">
   	SELECT 
   	count(1)
-	FROM promotion_info a WHERE 1=1
-    <if test="entity.promotionType != null and entity.promotionType != ''">
-	and  a.promotion_type = #{entity.promotionType}
-	</if>
+	FROM promotion_info a WHERE a.promotion_type = '21'
 	<if test="entity.promotionName != null and entity.promotionName != ''">
 	and  a.promotion_name like concat('%', #{entity.promotionName} ,'%')
 	</if>
@@ -518,11 +512,8 @@
   <select id="queryUpPromotionLotteryCount" resultType="java.lang.Integer">
   		SELECT COUNT(1)
         FROM promotion_info
-        WHERE 1=1
+        WHERE promotion_type = '21'
         AND (status = '1' or status = '2')
-        <if test="promotionType != null">
-        <![CDATA[AND promotion_type = #{promotionType}   	]]>
-        </if>
         <if test="effectiveTime != null">
   		<![CDATA[AND  invalid_time >= #{effectiveTime}   	]]>
   		</if>
@@ -563,12 +554,12 @@
   </update>
   
   <select id="queryInitRedisPromotion4Task" resultMap="BaseResultMap">
-    select  
+    select
     <include refid="Base_Column_List"/>
-    from promotion_info  
+    from promotion_info
     where deal_flag = '1'  
     <if test="entity != null">
-      and promotion_type in ('21','23','25')       
+      and ( promotion_type = '21' or promotion_type = '23')   
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}

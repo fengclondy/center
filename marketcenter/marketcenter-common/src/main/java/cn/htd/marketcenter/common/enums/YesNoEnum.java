@@ -18,7 +18,7 @@ package cn.htd.marketcenter.common.enums;
  */
 public enum YesNoEnum {
 
-	NO("否", 0), YES("是", 1), ERROR("异常", 2);
+	NO("否", 0), YES("是", 1);
 
 	private String name;
 	private int value;

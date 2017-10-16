@@ -316,19 +316,5 @@ public interface ItemExportService {
 	 * @return
 	 */
 	public ExecuteResult<QueryItemStockDetailOutDTO> queryItemQuantityInfo(QueryItemStockDetailInDTO quantityInfoInDTO);
-	
-	
-	/**
-	 * 限时购 - 新增活动 - 查询商品接口
-	 * @author li.jun
-	 * @time 2017-10-09
-	 */
-	public ItemQueryOutDTO querySellerCenterItem(ItemQueryInDTO itemInDTO);
 
-	/**
-	 * 限时购 - 新增活动 - 模糊查询商品名称
-	 * @author li.jun
-	 * @time 2017-10-09
-	 */
-	public List<ItemQueryOutDTO> querySellerCenterItemList(ItemQueryInDTO itemInDTO);
 }

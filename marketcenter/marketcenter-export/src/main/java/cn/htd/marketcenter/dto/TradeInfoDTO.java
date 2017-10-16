@@ -170,11 +170,6 @@ public class TradeInfoDTO implements Serializable {
 	 * 参加优惠活动类型 1:优惠券，2:秒杀
 	 */
 	private String promotionType;
-	
-	/**
-	 * 是否有限时购商品  0:没有，1：有
-	 */
-	private int isHasLimitedTimePurchase;
 
 	/**
 	 * 使用优惠券时设定优惠券编码列表
@@ -443,14 +438,6 @@ public class TradeInfoDTO implements Serializable {
 
 	public void setCouponCodeList(List<String> couponCodeList) {
 		this.couponCodeList = couponCodeList;
-	}
-
-	public int getIsHasLimitedTimePurchase() {
-		return isHasLimitedTimePurchase;
-	}
-
-	public void setIsHasLimitedTimePurchase(int isHasLimitedTimePurchase) {
-		this.isHasLimitedTimePurchase = isHasLimitedTimePurchase;
 	}
 
 	public void initBeforeCalculateCoupon() {

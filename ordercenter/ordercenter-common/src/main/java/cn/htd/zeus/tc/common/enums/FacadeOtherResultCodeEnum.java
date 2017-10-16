@@ -17,12 +17,6 @@ public enum FacadeOtherResultCodeEnum {
 	MEMBERCENTER_QUERY_NOT_RESULT("13999","从会员中心没查询到数据"),
 	MEMBERCENTER_QUERY_NOT_JD_ADRESS("13888","从会员中心没有查到卖家的商品+地址"),
 	MEMBERCENTER_QUERY_BUYERGRADE_AND_MEMBERGROUPID_NOT_RESULT("14000","查询会员中心根据卖家code和买家code没有查到数据"),
-	
-	LIMITED_TIME_PURCHASE_NOT_BEGIN("15400","限时购状态未开始"),
-	LIMITED_TIME_PURCHASE_IS_OVER("15401","限时购状态已结束"),
-	LIMITED_TIME_PURCHASE_DOWN_SHELF("15402","限时购状态已下架"),
-	LIMITED_TIME_PURCHASE_NULL("15403","限时购商品不存在"),
-	
 	/*
 	 * 会员中心返回结束
 	 */

@@ -1,6 +1,5 @@
 package cn.htd.promotion.cpc.dto.response;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -26,8 +25,6 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 	
 	private Integer isDailyTimesLimit;//是否有每日次数限制
 	
-	private Integer isDailyWinningLimit;//是否有每日中奖次数限制
-	
 	private Long dailyWinningTimes;//每日中奖总次数
 	
 	private Long dailyBuyerPartakeTimes;//每会员每日参与次数
@@ -45,10 +42,6 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 	private String contactTelephone;//联系电话
 	
 	private String contactAddress;//联系地址
-	
-	private Integer isOrderAmountLimit;//是否有下单金额限制
-	
-	private BigDecimal orderAmountThreshold;//下单金额限制
 
 	/**
 	 * 模版标志
@@ -207,31 +200,6 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 		this.templateFlag = templateFlag;
 	}
 
-	
-	public Integer getIsOrderAmountLimit() {
-		return isOrderAmountLimit;
-	}
-
-	public void setIsOrderAmountLimit(Integer isOrderAmountLimit) {
-		this.isOrderAmountLimit = isOrderAmountLimit;
-	}
-
-	public BigDecimal getOrderAmountThreshold() {
-		return orderAmountThreshold;
-	}
-
-	public void setOrderAmountThreshold(BigDecimal orderAmountThreshold) {
-		this.orderAmountThreshold = orderAmountThreshold;
-	}
-
-	public Integer getIsDailyWinningLimit() {
-		return isDailyWinningLimit;
-	}
-
-	public void setIsDailyWinningLimit(Integer isDailyWinningLimit) {
-		this.isDailyWinningLimit = isDailyWinningLimit;
-	}
-
 	public void setPromoionExtendInfo(PromotionExtendInfoDTO extendDTO){
 		super.setPromoionInfo(extendDTO);
 		this.offlineStartTime = extendDTO.getOfflineStartTime();
@@ -253,8 +221,5 @@ public class PromotionExtendInfoDTO extends PromotionInfoDTO {
 		this.contactTelephone = extendDTO.getContactTelephone();
 		this.contactAddress = extendDTO.getContactAddress();
 		this.templateFlag = extendDTO.getTemplateFlag();
-		this.isOrderAmountLimit = extendDTO.getIsOrderAmountLimit();
-		this.orderAmountThreshold = extendDTO.getOrderAmountThreshold();
-		this.isDailyWinningLimit = extendDTO.getIsDailyWinningLimit();
 	}
 }

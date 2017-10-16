@@ -29,12 +29,8 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
-import cn.htd.promotion.cpc.biz.service.PromotionLotteryCommonService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
-import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
-import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 
 /**
  * 每日初始化投票值 1.BUYER_PARTAKE_TIMES 粉丝活动粉丝当日剩余参与次数 2.BUYER_WINNING_TIMES 粉丝当日中奖次数
@@ -51,12 +47,6 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
     private DictionaryUtils dictionary;
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
-	
-	@Resource
-	private PromotionBaseService baseService;
-	
-	@Resource
-	private PromotionLotteryCommonService promotionLotteryCommonService;
 
 	@Override
 	public Comparator<Long> getComparator() {
@@ -91,6 +81,7 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 		logger.info("\n 方法[{}]，入参：[{}]", "HTDUserGradeDailyTask-selectTasks", JSONObject.toJSONString(taskParameter),
 				JSONObject.toJSONString(ownSign), JSONObject.toJSONString(taskQueueNum),
 				JSONObject.toJSONString(taskItemList), JSONObject.toJSONString(eachFetchDataNum));
+		Date jobDate = new Date();
 		Map<String, String> keyset = promotionRedisDB.getHashOperations(RedisConst.REDIS_LOTTERY_VALID);
 		Set<Entry<String, String>> mset = keyset.entrySet();
 		String promotionId = "";
@@ -109,11 +100,6 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 			if (entry.getValue().equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID))) {
 				promotionId = entry.getKey();
-				
-				Map<String, String> dictMap = baseService.initPromotionDictMap();
-				PromotionExtendInfoDTO promotionInfoDTO = promotionLotteryCommonService
-						.getRedisLotteryInfo(promotionId, dictMap);
-				
 				// 粉丝每日抽奖次数限制
 				buyerDailyDrawTimes = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
 						RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES);
@@ -171,45 +157,22 @@ public class PromotionAddDailyTask implements IScheduleTaskDealMulti<Long> {
 									+ (BUYER_SHARE_EXTRA_PARTAKE_TIMESint * BUYER_SHARE_TIMESint);
 						}
 					}
-					
-					if (null != promotionInfoDTO.getIsDailyTimesLimit()
-							&& YesNoEnum.YES.getValue() == promotionInfoDTO
-									.getIsDailyTimesLimit()) {
-						// 粉丝活动粉丝当日剩余参与次数
-						promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
-								RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, buyerDailyDrawTimesint.toString());
-					}else{
-						// 粉丝活动粉丝当日剩余参与次数
-						promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
-								RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, Integer.MAX_VALUE+"");
-					}
-					if (null != promotionInfoDTO.getIsDailyWinningLimit()
-							&& YesNoEnum.YES.getValue() == promotionInfoDTO
-									.getIsDailyWinningLimit()) {
-						// 粉丝当日中奖次数
-						promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
-								RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES, buyerDailyWinningTimes);
-					}else{
-						// 粉丝当日中奖次数
-						promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
-								RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES, Integer.MAX_VALUE+"");
-					}
+
+					// 粉丝活动粉丝当日剩余参与次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_PARTAKE_TIMES, buyerDailyDrawTimesint.toString());
+					// 粉丝当日中奖次数
+					promotionRedisDB.setHash(b2bMiddleLotteryBuyerTimesInfo,
+							RedisConst.REDIS_LOTTERY_BUYER_WINNING_TIMES, buyerDailyWinningTimes);
 				}
 
 				sset = promotionRedisDB.getStringRedisTemplate()
 						.keys(RedisConst.REDIS_LOTTERY_SELLER_WINED_TIMES + "_" + promotionId + "_*");
-				
 				for (String skey : sset) {
-					if (null != promotionInfoDTO.getIsDailyWinningLimit()
-							&& YesNoEnum.YES.getValue() == promotionInfoDTO
-									.getIsDailyWinningLimit().intValue()) {
-						swt = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
-								RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES);
-						if(!StringUtils.isEmpty(skey)&&!StringUtils.isEmpty(swt) ){
-							promotionRedisDB.set(skey, swt);
-						}
-					}else{
-						promotionRedisDB.set(skey, Integer.MAX_VALUE+"");
+					swt = promotionRedisDB.getHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
+							RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES);
+					if(!StringUtils.isEmpty(skey)&&!StringUtils.isEmpty(swt) ){
+						promotionRedisDB.set(skey, swt);
 					}
 				}
 			}

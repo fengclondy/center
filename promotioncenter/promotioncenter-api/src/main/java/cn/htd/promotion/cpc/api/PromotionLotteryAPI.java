@@ -111,18 +111,4 @@ public interface PromotionLotteryAPI {
 
 	public void updateLotteryResultState(Map<String, Object> map);
 
-	/**
-	 * 校验刮刮乐图标是否显示
-	 * @param validateScratchCardReqDTOJson
-	 * @return
-	 */
-	public String validateScratchCard(String validateScratchCardReqDTOJson);
-	
-	/**
-	 * 刮刮乐活动页
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public String scratchCardActivityPage(String scratchCardActivityPageReqDTOJson);
 }

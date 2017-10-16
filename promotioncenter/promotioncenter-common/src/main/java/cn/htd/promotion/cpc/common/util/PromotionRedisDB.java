@@ -224,28 +224,6 @@ public class PromotionRedisDB {
     }
 
     /**
-     * 获取hash 键值对数量
-     *
-     * @param key
-     * @return
-     */
-    public int getHLen(String key) {
-        logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-getHLen", "key=" + key);
-        int length = 0;
-        try {
-            Map<Object, Object> value = stringRedisTemplate.opsForHash().entries(key);
-            if (value != null) {
-                length = value.keySet().size();
-            }
-        } catch (Exception e) {
-            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getHLen", ExceptionUtils.getStackTraceAsString(e));
-        } finally {
-            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-getHLen", "length=" + length);
-        }
-        return length;
-    }
-
-    /**
      * 从Redis中设定hash对象
      *
      * @param key
@@ -662,27 +640,6 @@ public class PromotionRedisDB {
             logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-getSetLen", "returnValue=" + returnValue);
         }
         return returnValue;
-    }
-
-    /**
-     * 获取Value是否是redis的set中的元素
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    public boolean isSetMember(String key, String value) {
-        logger.debug("\n 方法:[{}]，入参:[{}]", "promotionRedisDB-isSetMember", "key=" + key);
-        Boolean isMember = false;
-
-        try {
-            isMember = stringRedisTemplate.opsForSet().isMember(key, value);
-        } catch (Exception e) {
-            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-isSetMember", ExceptionUtils.getStackTraceAsString(e));
-        } finally {
-            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-isSetMember", "returnValue=" + isMember);
-        }
-        return isMember.booleanValue();
     }
 
     /**

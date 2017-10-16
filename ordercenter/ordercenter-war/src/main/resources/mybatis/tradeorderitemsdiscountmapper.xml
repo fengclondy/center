@@ -14,11 +14,10 @@
     <result column="coupon_provider_type" property="couponProviderType" jdbcType="VARCHAR" />
     <result column="coupon_type" property="couponType" jdbcType="VARCHAR" />
     <result column="coupon_discount" property="couponDiscount" jdbcType="DECIMAL" />
-    <result column="promotion_type" property="promotionType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, order_no, order_item_no, buyer_code, seller_code, shop_id, promotion_id, level_code,
-    buyer_coupon_code, coupon_provider_type, coupon_type, coupon_discount,promotion_type
+    buyer_coupon_code, coupon_provider_type, coupon_type, coupon_discount
   </sql>
 
   <select id="selectBuyerCouponCodeByOrderNo" resultMap="BaseResultMap" parameterType="String">
@@ -71,9 +70,6 @@
       <if test="couponDiscount != null" >
         coupon_discount,
       </if>
-      <if test="promotionType != null">
-      	promotion_type,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -111,9 +107,6 @@
       </if>
       <if test="couponDiscount != null" >
         #{couponDiscount,jdbcType=DECIMAL},
-      </if>
-      <if test="promotionType != null">
-        #{promotion_type,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -153,9 +146,6 @@
       </if>
       <if test="couponDiscount != null" >
         coupon_discount = #{couponDiscount,jdbcType=DECIMAL},
-      </if>
-      <if test="promotionType != null">
-        promotion_type = #{promotionType,jdbcType=VARCHAR},
       </if>
     </set>
     where order_no = #{orderNo,jdbcType=VARCHAR}

@@ -8,8 +8,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import cn.htd.promotion.cpc.common.constants.RedisConst;
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +57,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
     @Resource
     private GeneratorUtils noGenerator;
-
-    @Resource
-    private PromotionRedisDB promotionRedisDB;
 
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
@@ -358,10 +353,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             psr.setSellerDetailList(sdlist);
             promotionInfo.setSellerRuleDTO(psr);
         }
-        //-------xuwei---------
-        List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.selectByPromotionId(promotionId);
-        promotionInfo.setPromotionConfigureList(promotionConfigureDTOlist);
-        //-------xuwei---------
 
         PromotionSloganDTO psd = promotionSloganDAO.queryBargainSloganByPromotionId(promotionId);
         promotionInfo.setPromotionSloganDTO(psd);
@@ -559,39 +550,22 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 }
             }
         }
-        //--------xuwei-----------
-//
-//        List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
-//        if (pclist != null && pclist.size() > 0) {
-//            for (PromotionConfigureDTO pcd : pclist) {
-//                if (oldpclist != null && oldpclist.size() > 0) {
-//                	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
-//						if(promotionConfigureDTO.getConfType().equals(pcd.getConfType())){
-//							pcd.setId(promotionConfigureDTO.getId());
-//			                promotionConfigureDAO.update(pcd);
-//			                break;
-//						}
-//					}
-//                }
-//            }
-//        }
         List<PromotionConfigureDTO> oldpclist = promotionConfigureDAO.selectByPromotionId(promotionId);
-        if(oldpclist != null && oldpclist.size() >0){
-        	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
-        		promotionConfigureDAO.deleteByPrimaryKey(promotionConfigureDTO.getId());	
-			}
-        }
+
         List<PromotionConfigureDTO> pclist = promotionInfo.getPromotionConfigureList();
         if (pclist != null && pclist.size() > 0) {
-        	for (PromotionConfigureDTO pcd : pclist) {
-                pcd.setPromotionId(promotionId);
-                pcd.setCreateId(promotionInfo.getCreateId());
-                pcd.setCreateName(promotionInfo.getCreateName());
-                pcd.setDeleteFlag(YesNoEnum.NO.getValue());
-                promotionConfigureDAO.add(pcd);
-        	}
+            for (PromotionConfigureDTO pcd : pclist) {
+                if (oldpclist != null && oldpclist.size() > 0) {
+                	for (PromotionConfigureDTO promotionConfigureDTO : oldpclist) {
+						if(promotionConfigureDTO.getConfType().equals(pcd.getConfType())){
+							pcd.setId(promotionConfigureDTO.getId());
+			                promotionConfigureDAO.update(pcd);
+			                break;
+						}
+					}
+                }
+            }
         }
-        //--------xuwei-----------
         promotionInfo.setPromotionConfigureList(pclist);
         return promotionInfo;
     }
@@ -740,16 +714,22 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     @Override
     public boolean checkPromotionSellerRule(PromotionInfoDTO promotionInfoDTO, String sellerCode,
             Map<String, String> dictMap) {
-        String promotionId = promotionInfoDTO.getPromotionId();
         PromotionSellerRuleDTO ruleDTO = promotionInfoDTO.getSellerRuleDTO();
+        List<PromotionSellerDetailDTO> detailList = null;
         if (ruleDTO == null) {
             return true;
         }
         if (dictMap
                 .get(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&" + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART)
                 .equals(ruleDTO.getRuleTargetType())) {
-            if (promotionRedisDB.isSetMember(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId, sellerCode)) {
-                return true;
+            detailList = ruleDTO.getSellerDetailList();
+            if (detailList == null || detailList.isEmpty()) {
+                return false;
+            }
+            for (PromotionSellerDetailDTO detailDTO : detailList) {
+                if (detailDTO.getSellerCode().equals(sellerCode)) {
+                    return true;
+                }
             }
             return false;
         }

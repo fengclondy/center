@@ -27,8 +27,6 @@ public class TradeOrderItemsDiscountDMO {
     private String couponType;
 
     private BigDecimal couponDiscount;
-    
-    private String promotionType;
 
     public Long getId() {
         return id;
@@ -125,12 +123,4 @@ public class TradeOrderItemsDiscountDMO {
     public void setCouponDiscount(BigDecimal couponDiscount) {
         this.couponDiscount = couponDiscount;
     }
-
-	public String getPromotionType() {
-		return promotionType;
-	}
-
-	public void setPromotionType(String promotionType) {
-		this.promotionType = promotionType;
-	}
 }

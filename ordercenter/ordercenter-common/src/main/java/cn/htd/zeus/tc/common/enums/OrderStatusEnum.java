@@ -110,10 +110,8 @@ public enum OrderStatusEnum {
 	ORDER_ERROR_STATUS_JD_FAIL("908","商品+订单确失败"),
 	
 	ORDER_DELIVERY_TYPE_SINCE("2","自提"),
-	COUPON_TYPE_SKILL("3","秒杀"),
+	COUPON_TYPE_SKILL("3","秒杀");
 	
-	IS_LIMITED_TIME_PURCHASE("1","是限时购商品"),
-	HAS_LIMITED_TIME_PURCHASE("1","含有限时购商品");
 	
     // 成员变量
     private String code;

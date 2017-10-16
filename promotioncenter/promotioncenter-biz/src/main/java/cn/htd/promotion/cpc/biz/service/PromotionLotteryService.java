@@ -42,17 +42,4 @@ public interface PromotionLotteryService {
      */
     public GenricResDTO saveDrawLotteryWinning(DrawLotteryWinningReqDTO requestDTO)
             throws PromotionCenterBusinessException, Exception;
-
-    /**
-     * 执行抽奖处理
-     *
-     * @param requestDTO
-     * @param ticket
-     * @param useThread
-     * @return
-     * @throws PromotionCenterBusinessException
-     * @throws Exception
-     */
-    public DrawLotteryResDTO beginDrawLotteryExecute(DrawLotteryReqDTO requestDTO, String ticket, boolean useThread)
-            throws PromotionCenterBusinessException, Exception;
 }

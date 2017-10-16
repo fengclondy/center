@@ -37,7 +37,4 @@
 	
 	  <!-- 秒杀活动结束超过24小时自动下架 -->
   <bean id="updateTimelimitedStatus4invalidScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateTimelimitedStatus4invalidScheduleTask"/>
-  <!-- 活动过期后删除相关的key -->
-  <bean id="promotionExpireDeleteKeysTask" class="cn.htd.promotion.cpc.biz.task.PromotionExpireDeleteKeysTask"/>
-  
 </beans>

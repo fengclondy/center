@@ -2,7 +2,6 @@ package cn.htd.marketcenter.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.validation.constraints.Min;
@@ -84,114 +83,6 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	 */
 	private String itemCode;
 	private HashMap<String,String> itemStockInfo;
-	/**
-	 * 每人起购数量
-	 */
-	private Integer timelimitedThresholdMin;
-	/**
-	 * 限时购开始时间
-	 */
-	private Date startTime;
-	/**
-	 * 限时购结束时间
-	 */
-	private Date endTime;
-	/**
-	 * 限时购聚合页标识  1:今日特惠 2:开售预告
-	 */
-	private int purchaseFlag;
-	/**
-	 * 限时购排序标识  1:销售量  2:上架时间  3:价格倒序  4:价格升序
-	 */
-	private int purchaseSort;
-	/**
-	 * 优惠力度
-	 */
-	private double preferentialStrength;
-	/**
-	 * 销量
-	 */
-	private int salesVolume;
-	/**
-	 * 销售额（销量*销售价）
-	 */
-	private double salesVolumePrice;
-	/**
-	 * 限时购起价标示
-	 */
-	private int purchasePriceFlag;
-	
-	public int getPurchasePriceFlag() {
-		return purchasePriceFlag;
-	}
-
-	public void setPurchasePriceFlag(int purchasePriceFlag) {
-		this.purchasePriceFlag = purchasePriceFlag;
-	}
-
-	public double getPreferentialStrength() {
-		return preferentialStrength;
-	}
-
-	public void setPreferentialStrength(double preferentialStrength) {
-		this.preferentialStrength = preferentialStrength;
-	}
-
-	public int getSalesVolume() {
-		return salesVolume;
-	}
-
-	public void setSalesVolume(int salesVolume) {
-		this.salesVolume = salesVolume;
-	}
-
-	public double getSalesVolumePrice() {
-		return salesVolumePrice;
-	}
-
-	public void setSalesVolumePrice(double salesVolumePrice) {
-		this.salesVolumePrice = salesVolumePrice;
-	}
-
-	public int getPurchaseSort() {
-		return purchaseSort;
-	}
-
-	public void setPurchaseSort(int purchaseSort) {
-		this.purchaseSort = purchaseSort;
-	}
-
-	public int getPurchaseFlag() {
-		return purchaseFlag;
-	}
-
-	public void setPurchaseFlag(int purchaseFlag) {
-		this.purchaseFlag = purchaseFlag;
-	}
-
-	public Integer getTimelimitedThresholdMin() {
-		return timelimitedThresholdMin;
-	}
-
-	public void setTimelimitedThresholdMin(Integer timelimitedThresholdMin) {
-		this.timelimitedThresholdMin = timelimitedThresholdMin;
-	}
-
-	public Date getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-
-	public Date getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
 
 	public Long getTimelimitedId() {
 		return timelimitedId;
@@ -310,14 +201,6 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 		this.timelimitedThreshold = timelimitedInfo.getTimelimitedThreshold();
 		this.timelimitedValidInterval = timelimitedInfo.getTimelimitedValidInterval();
 		this.timelimitedResult = timelimitedInfo.getTimelimitedResult();
-		this.timelimitedThresholdMin = timelimitedInfo.getTimelimitedThresholdMin();
-		this.startTime = timelimitedInfo.getStartTime();
-		this.endTime = timelimitedInfo.getEndTime();
-		this.purchaseSort = timelimitedInfo.getPurchaseSort();
-		this.preferentialStrength = timelimitedInfo.getPreferentialStrength();
-		this.salesVolume = timelimitedInfo.getSalesVolume();
-		this.salesVolumePrice = timelimitedInfo.getSalesVolumePrice();
-		this.purchasePriceFlag = timelimitedInfo.getPurchasePriceFlag();
 	}
 
 	public HashMap<String, String> getItemStockInfo() {

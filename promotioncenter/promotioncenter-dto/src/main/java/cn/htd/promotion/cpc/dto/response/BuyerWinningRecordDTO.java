@@ -105,10 +105,6 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
      */
     private String logisticsNo;
     /**
-     * 订单号
-     */
-    private String orderNo;
-    /**
      * 创建人ID
      */
     private Long createId;
@@ -381,15 +377,7 @@ public class BuyerWinningRecordDTO extends GenricResDTO {
         this.modifyTime = modifyTime;
     }
 
-    public String getOrderNo() {
-		return orderNo;
-	}
-
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
-	}
-
-	public void setBuyerWinningRecordByPromoitonInfo(PromotionInfoDTO promoitonInfoDTO) {
+    public void setBuyerWinningRecordByPromoitonInfo(PromotionInfoDTO promoitonInfoDTO) {
         this.promotionId = promoitonInfoDTO.getPromotionId();
         this.promotionType = promoitonInfoDTO.getPromotionType();
         this.promotionName = promoitonInfoDTO.getPromotionName();

@@ -21,10 +21,4 @@ public interface PromotionConfigureDAO extends BaseDAO<PromotionConfigureDTO> {
     int updateByPrimaryKey(PromotionConfigureDTO record);
 
 	List<PromotionConfigureDTO> selectByPromotionId(String promotionInfoId);
-	
-	void deleteByPromotionId(String promotionId);
-	
-	
-	List<PromotionConfigureDTO> getPromotionConfiguresByPromotionId(String promotionInfoId);
-	
 }

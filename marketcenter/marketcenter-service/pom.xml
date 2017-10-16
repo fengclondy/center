@@ -28,10 +28,6 @@
 			<artifactId>membercenter-export</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>cn.htd.goodscenter</groupId>
-				<artifactId>goodscenter-export</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>cn.htd.marketcenter</groupId>
 			<artifactId>marketcenter-dao</artifactId>
 		</dependency>
@@ -109,10 +105,6 @@
                 <exclusion>
                     <groupId>javax.jms</groupId>
                     <artifactId>jms</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
                 </exclusion>
             </exclusions>
 		</dependency>

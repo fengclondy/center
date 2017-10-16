@@ -101,11 +101,6 @@
 				<version>${project.release.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>cn.htd.goodscenter</groupId>
-				<artifactId>goodscenter-export</artifactId>
-				<version>${project.release.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>cn.htd.marketcenter</groupId>
 				<artifactId>marketcenter-export</artifactId>
 				<version>${project.release.version}</version>

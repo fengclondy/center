@@ -174,13 +174,5 @@ public class PromotionSellerDetailDTO extends GenricResDTO {
 		this.operateType = operateType;
 	}
 	
-	public int hashCode(){
-		return sellerCode.hashCode();
-	}
-	@Override
-	public boolean equals(Object o){
-		PromotionSellerDetailDTO p = (PromotionSellerDetailDTO)o;
-		return sellerCode.equals(p.sellerCode);
-	}
-	 
+	
 }

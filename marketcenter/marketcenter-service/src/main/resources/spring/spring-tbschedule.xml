@@ -51,7 +51,7 @@
   <bean id="updateSyncB2cCouponInfoScheduleTask" class="cn.htd.marketcenter.task.UpdateSyncB2cCouponInfoScheduleTask"/>
   <!-- 定时任务 粉丝用券同步到会员店 -->
   <bean id="updateSyncB2cMemberCouponAmountScheduleTask"
-        class="cn.htd.marketcenter.task.UpdateSyncB2cMemberCouponAmountScheduleTask"></bean>
-   <!-- 定时任务 对于过期7天的限时购活动，清除Redis中过期限时购相关信息，并回归暂用的库存 -->
-    <bean id="cleanExpiredPurchchaseScheduleTask" class="cn.htd.marketcenter.task.CleanExpiredPurchaseScheduleTask"></bean>
+        class="cn.htd.marketcenter.task.UpdateSyncB2cMemberCouponAmountScheduleTask"/>
+  <!-- 定时任务 对于过期7天的限时购活动，清除Redis中过期限时购相关信息，并回归暂用的库存 -->
+  <bean id="cleanExpiredPurchchaseScheduleTask" class="cn.htd.marketcenter.task.CleanExpiredPurchaseScheduleTask"/>
 </beans>

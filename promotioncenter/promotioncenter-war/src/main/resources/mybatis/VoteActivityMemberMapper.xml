@@ -313,4 +313,22 @@
     where member_code = #{memberCode}
     limit 1
   </select>
+  
+   <select id="selectVoteCountByActivityId" parameterType="Long" resultType="Long">
+	  	select count(1) from
+	vote_activity_fans_vote vaf
+	left join 
+	vote_activity_member vam on vaf.vote_member_id=vam.vote_member_id
+	where vam.delete_flag=0 
+	and vam.vote_id=#{voteId}
+  </select>
+  
+  <select id="querySignupMemberCount" parameterType="Long" resultType="list">
+	  select sign_status,count(1) as c from 
+	vote_activity_member
+	where vote_id=#{voteId}
+	  group by sign_status
+ </select>
+  
+  
 </mapper>

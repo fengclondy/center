@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.dto.request;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
@@ -47,6 +48,11 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 	 * 订单号对应的粉丝id
 	 */
 	private String oldMemberNo;
+	
+	/**
+	 * 支付时间
+	 */
+	private Date payDate;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -94,6 +100,14 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 
 	public void setOldMemberNo(String oldMemberNo) {
 		this.oldMemberNo = oldMemberNo;
+	}
+
+	public Date getPayDate() {
+		return payDate;
+	}
+
+	public void setPayDate(Date payDate) {
+		this.payDate = payDate;
 	}
 	
 }

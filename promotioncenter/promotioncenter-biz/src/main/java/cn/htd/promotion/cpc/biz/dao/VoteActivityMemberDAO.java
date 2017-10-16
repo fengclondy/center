@@ -1,10 +1,12 @@
 package cn.htd.promotion.cpc.biz.dao;
 
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
 public interface VoteActivityMemberDAO {
     int deleteByPrimaryKey(Long voteMemberId);
@@ -31,5 +33,7 @@ public interface VoteActivityMemberDAO {
 
     // 根据活动ID，会员店编码获取当前会员店的投票排情况
     HashMap<String, String> selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
+    
+    List<Map> querySignupMemberCount(@Param("voteId") Long voteId);
 
 }

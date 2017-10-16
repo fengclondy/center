@@ -1,8 +1,6 @@
 package cn.htd.promotion.cpc.dto.request;
 
-import java.math.BigDecimal;
-
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -42,6 +40,11 @@ public class ScratchCardActivityPageReqDTO extends GenricReqDTO{
 	 */
 	@NotEmpty(message = "oldMemberNo不能为空")
 	private String oldMemberNo;
+	
+	/**
+	 * 支付时间
+	 */
+	private Date payDate;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -81,5 +84,13 @@ public class ScratchCardActivityPageReqDTO extends GenricReqDTO{
 
 	public void setOldMemberNo(String oldMemberNo) {
 		this.oldMemberNo = oldMemberNo;
+	}
+
+	public Date getPayDate() {
+		return payDate;
+	}
+
+	public void setPayDate(Date payDate) {
+		this.payDate = payDate;
 	}
 }

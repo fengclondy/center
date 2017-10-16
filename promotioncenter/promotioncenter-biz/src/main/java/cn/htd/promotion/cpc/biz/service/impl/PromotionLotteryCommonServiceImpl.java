@@ -218,10 +218,10 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             Map<String, String> dictMap) {
         String buyerCode = requestDTO.getMemberNo();
         String promotionId = promotionInfoDTO.getPromotionId();
-        //验证从汇林查出的粉丝号和前台传入的是否是一个值，防止有人篡改
+        //验证从汇邻查出的粉丝号和前台传入的是否是一个值，防止有人篡改
         if (!requestDTO.getMemberNo().equals(requestDTO.getOldMemberNo())) {
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_MEMBER_NO_VALIDATE_FAIL.getCode(),
-                    "前台传入的和从汇林查出的不是同一个粉丝号 入参:" + JSON.toJSONString(requestDTO));
+                    "前台传入的和从汇邻查出的不是同一个粉丝号 入参:" + JSON.toJSONString(requestDTO));
         }
 
         //验证会员店是否参与本次抽奖活动
@@ -237,6 +237,12 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             throw new PromotionCenterBusinessException(
                     ResultCodeEnum.LOTTERY_BUYER_CURRENT_DAY_NO_MORE_DRAW_CHANCE.getCode(),
                     "粉丝当日抽奖次数已用完 入参:" + JSON.toJSONString(requestDTO));
+        }
+        //货到付款验证下单时间createdate在promotiongateway已经转成paydate，在线支付验证支付时间是否在促销活动范围内()
+        Date payDate = requestDTO.getPayDate();
+        if (payDate.before(promotionInfoDTO.getEffectiveTime()) || payDate.after(promotionInfoDTO.getInvalidTime())) {
+            throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_ORDER_NOT_IN_EFFECTIVE_DATE.getCode(),
+                   "货到付款的下单时间或者在线支付的支付时间不在活动:" + promotionId + " 有效期之内");
         }
         //下单支付方式验证
         String payType = requestDTO.getPayType();

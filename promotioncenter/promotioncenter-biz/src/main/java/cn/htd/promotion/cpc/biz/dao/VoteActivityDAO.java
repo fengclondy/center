@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.biz.dao;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -30,4 +31,8 @@ public interface VoteActivityDAO {
      * @return
      */
     VoteActivityResDTO selectCurrentActivity();
+    
+    Long selectVoteActivityTotalCount();
+    
+    List<VoteActivityResDTO> selectPagedVoteActivity(@Param("start") int start,@Param("pageSize") int pageSize);
 }

@@ -14,4 +14,6 @@ public interface VoteActivityFansVoteDAO {
     int updateByPrimaryKeySelective(VoteActivityFansVoteResDTO record);
 
     int updateByPrimaryKey(VoteActivityFansVoteResDTO record);
+    
+    Long selectVoteCountByActivityId(Long voteId);
 }

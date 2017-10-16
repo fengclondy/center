@@ -41,7 +41,7 @@ public interface TimelimitedPurchaseService {
 	 * @param promotionId
 	 * @return
 	 */
-	public ExecuteResult<List<TimelimitedListDTO>> queryPromotionInfoByItemCode(String itemCode);
+	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(String itemCode);
 	
 	/**
 	 * 限时购 - 根据促销活动id查询促销活动

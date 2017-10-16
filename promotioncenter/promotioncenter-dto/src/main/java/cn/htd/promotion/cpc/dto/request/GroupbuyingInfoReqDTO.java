@@ -67,6 +67,11 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	private String status;
 	// 审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
 	private String showStatus;
+	
+	// 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
+	private String activeState;
+	// 活动状态文本
+	private String activeStateText;
 
 	public Long getGroupbuyingId() {
 		return groupbuyingId;
@@ -283,6 +288,23 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	public void setShowStatus(String showStatus) {
 		this.showStatus = showStatus;
 	}
+
+	public String getActiveState() {
+		return activeState;
+	}
+
+	public void setActiveState(String activeState) {
+		this.activeState = activeState;
+	}
+
+	public String getActiveStateText() {
+		return activeStateText;
+	}
+
+	public void setActiveStateText(String activeStateText) {
+		this.activeStateText = activeStateText;
+	}
+	
 	
 	
 

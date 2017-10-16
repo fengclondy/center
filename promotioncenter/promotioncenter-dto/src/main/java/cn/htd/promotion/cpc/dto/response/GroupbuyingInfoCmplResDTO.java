@@ -13,6 +13,12 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	private List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList;
 	// 活动信息
 	private SinglePromotionInfoCmplResDTO singlePromotionInfoCmplResDTO;
+	// 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
+	private String activeState;
+	// 活动状态文本
+	private String activeStateText;
+	// 下订单数量
+	private Integer orderQuantity;
 	
 	public List<GroupbuyingPriceSettingResDTO> getGroupbuyingPriceSettingResDTOList() {
 		return groupbuyingPriceSettingResDTOList;
@@ -28,6 +34,26 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 			SinglePromotionInfoCmplResDTO singlePromotionInfoCmplResDTO) {
 		this.singlePromotionInfoCmplResDTO = singlePromotionInfoCmplResDTO;
 	}
+	public String getActiveState() {
+		return activeState;
+	}
+	public void setActiveState(String activeState) {
+		this.activeState = activeState;
+	}
+	public String getActiveStateText() {
+		return activeStateText;
+	}
+	public void setActiveStateText(String activeStateText) {
+		this.activeStateText = activeStateText;
+	}
+	public Integer getOrderQuantity() {
+		return orderQuantity;
+	}
+	public void setOrderQuantity(Integer orderQuantity) {
+		this.orderQuantity = orderQuantity;
+	}
+	
+	
 	
 
 	

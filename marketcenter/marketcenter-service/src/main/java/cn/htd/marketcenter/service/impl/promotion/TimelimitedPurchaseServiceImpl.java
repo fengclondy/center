@@ -105,7 +105,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			historyDTO.setCreateName(timelimitedInfo.getCreateName());
 			promotionStatusHistoryDAO.add(historyDTO);
 			historyList.add(historyDTO);
-			int a = 1/0;
 			timelimitedInfo.setPromotionStatusHistoryList(historyList);
 			timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
 			// timelimitedRedisHandle.addTimelimitedPurchaseInfo2Redis(timelimitedInfo);

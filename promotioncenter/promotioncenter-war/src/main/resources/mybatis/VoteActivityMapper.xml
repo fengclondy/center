@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.VoteActivityDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" >
+    <id column="vote_id" property="voteId" jdbcType="BIGINT" />
+    <result column="vote_name" property="voteName" jdbcType="VARCHAR" />
+    <result column="vote_topic_pic" property="voteTopicPic" jdbcType="VARCHAR" />
+    <result column="vote_sample_pic" property="voteSamplePic" jdbcType="VARCHAR" />
+    <result column="vote_sotre_num_p_account_p_day" property="voteSotreNumPAccountPDay" jdbcType="INTEGER" />
+    <result column="vote_num_p_account_p_day_p_store" property="voteNumPAccountPDayPStore" jdbcType="INTEGER" />
+    <result column="vote_sign_up_start_time" property="voteSignUpStartTime" jdbcType="TIMESTAMP" />
+    <result column="vote_sign_up_end_time" property="voteSignUpEndTime" jdbcType="TIMESTAMP" />
+    <result column="vote_start_time" property="voteStartTime" jdbcType="TIMESTAMP" />
+    <result column="vote_end_time" property="voteEndTime" jdbcType="TIMESTAMP" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" extends="BaseResultMap" >
+    <result column="vote_rule" property="voteRule" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    vote_id, vote_name, vote_topic_pic, vote_sample_pic, vote_sotre_num_p_account_p_day, 
+    vote_num_p_account_p_day_p_store, vote_sign_up_start_time, vote_sign_up_end_time, 
+    vote_start_time, vote_end_time, delete_flag, create_id, create_name, create_time, 
+    modify_id, modify_name, modify_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    vote_rule
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from vote_activity
+    where vote_id = #{voteId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vote_activity
+    where vote_id = #{voteId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" >
+    insert into vote_activity (vote_id, vote_name, vote_topic_pic, 
+      vote_sample_pic, vote_sotre_num_p_account_p_day, 
+      vote_num_p_account_p_day_p_store, vote_sign_up_start_time, 
+      vote_sign_up_end_time, vote_start_time, vote_end_time, 
+      delete_flag, create_id, create_name, 
+      create_time, modify_id, modify_name, 
+      modify_time, vote_rule)
+    values (#{voteId,jdbcType=BIGINT}, #{voteName,jdbcType=VARCHAR}, #{voteTopicPic,jdbcType=VARCHAR}, 
+      #{voteSamplePic,jdbcType=VARCHAR}, #{voteSotreNumPAccountPDay,jdbcType=INTEGER}, 
+      #{voteNumPAccountPDayPStore,jdbcType=INTEGER}, #{voteSignUpStartTime,jdbcType=TIMESTAMP}, 
+      #{voteSignUpEndTime,jdbcType=TIMESTAMP}, #{voteStartTime,jdbcType=TIMESTAMP}, #{voteEndTime,jdbcType=TIMESTAMP}, 
+      #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
+      #{modifyTime,jdbcType=TIMESTAMP}, #{voteRule,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" >
+    insert into vote_activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="voteId != null" >
+        vote_id,
+      </if>
+      <if test="voteName != null" >
+        vote_name,
+      </if>
+      <if test="voteTopicPic != null" >
+        vote_topic_pic,
+      </if>
+      <if test="voteSamplePic != null" >
+        vote_sample_pic,
+      </if>
+      <if test="voteSotreNumPAccountPDay != null" >
+        vote_sotre_num_p_account_p_day,
+      </if>
+      <if test="voteNumPAccountPDayPStore != null" >
+        vote_num_p_account_p_day_p_store,
+      </if>
+      <if test="voteSignUpStartTime != null" >
+        vote_sign_up_start_time,
+      </if>
+      <if test="voteSignUpEndTime != null" >
+        vote_sign_up_end_time,
+      </if>
+      <if test="voteStartTime != null" >
+        vote_start_time,
+      </if>
+      <if test="voteEndTime != null" >
+        vote_end_time,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="voteRule != null" >
+        vote_rule,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="voteId != null" >
+        #{voteId,jdbcType=BIGINT},
+      </if>
+      <if test="voteName != null" >
+        #{voteName,jdbcType=VARCHAR},
+      </if>
+      <if test="voteTopicPic != null" >
+        #{voteTopicPic,jdbcType=VARCHAR},
+      </if>
+      <if test="voteSamplePic != null" >
+        #{voteSamplePic,jdbcType=VARCHAR},
+      </if>
+      <if test="voteSotreNumPAccountPDay != null" >
+        #{voteSotreNumPAccountPDay,jdbcType=INTEGER},
+      </if>
+      <if test="voteNumPAccountPDayPStore != null" >
+        #{voteNumPAccountPDayPStore,jdbcType=INTEGER},
+      </if>
+      <if test="voteSignUpStartTime != null" >
+        #{voteSignUpStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteSignUpEndTime != null" >
+        #{voteSignUpEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteStartTime != null" >
+        #{voteStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteEndTime != null" >
+        #{voteEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteRule != null" >
+        #{voteRule,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" >
+    update vote_activity
+    <set >
+      <if test="voteName != null" >
+        vote_name = #{voteName,jdbcType=VARCHAR},
+      </if>
+      <if test="voteTopicPic != null" >
+        vote_topic_pic = #{voteTopicPic,jdbcType=VARCHAR},
+      </if>
+      <if test="voteSamplePic != null" >
+        vote_sample_pic = #{voteSamplePic,jdbcType=VARCHAR},
+      </if>
+      <if test="voteSotreNumPAccountPDay != null" >
+        vote_sotre_num_p_account_p_day = #{voteSotreNumPAccountPDay,jdbcType=INTEGER},
+      </if>
+      <if test="voteNumPAccountPDayPStore != null" >
+        vote_num_p_account_p_day_p_store = #{voteNumPAccountPDayPStore,jdbcType=INTEGER},
+      </if>
+      <if test="voteSignUpStartTime != null" >
+        vote_sign_up_start_time = #{voteSignUpStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteSignUpEndTime != null" >
+        vote_sign_up_end_time = #{voteSignUpEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteStartTime != null" >
+        vote_start_time = #{voteStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteEndTime != null" >
+        vote_end_time = #{voteEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="voteRule != null" >
+        vote_rule = #{voteRule,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where vote_id = #{voteId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" >
+    update vote_activity
+    set vote_name = #{voteName,jdbcType=VARCHAR},
+      vote_topic_pic = #{voteTopicPic,jdbcType=VARCHAR},
+      vote_sample_pic = #{voteSamplePic,jdbcType=VARCHAR},
+      vote_sotre_num_p_account_p_day = #{voteSotreNumPAccountPDay,jdbcType=INTEGER},
+      vote_num_p_account_p_day_p_store = #{voteNumPAccountPDayPStore,jdbcType=INTEGER},
+      vote_sign_up_start_time = #{voteSignUpStartTime,jdbcType=TIMESTAMP},
+      vote_sign_up_end_time = #{voteSignUpEndTime,jdbcType=TIMESTAMP},
+      vote_start_time = #{voteStartTime,jdbcType=TIMESTAMP},
+      vote_end_time = #{voteEndTime,jdbcType=TIMESTAMP},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      vote_rule = #{voteRule,jdbcType=LONGVARCHAR}
+    where vote_id = #{voteId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityResDTO" >
+    update vote_activity
+    set vote_name = #{voteName,jdbcType=VARCHAR},
+      vote_topic_pic = #{voteTopicPic,jdbcType=VARCHAR},
+      vote_sample_pic = #{voteSamplePic,jdbcType=VARCHAR},
+      vote_sotre_num_p_account_p_day = #{voteSotreNumPAccountPDay,jdbcType=INTEGER},
+      vote_num_p_account_p_day_p_store = #{voteNumPAccountPDayPStore,jdbcType=INTEGER},
+      vote_sign_up_start_time = #{voteSignUpStartTime,jdbcType=TIMESTAMP},
+      vote_sign_up_end_time = #{voteSignUpEndTime,jdbcType=TIMESTAMP},
+      vote_start_time = #{voteStartTime,jdbcType=TIMESTAMP},
+      vote_end_time = #{voteEndTime,jdbcType=TIMESTAMP},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where vote_id = #{voteId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectCurrentActivity" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from vote_activity
+    where
+    <![CDATA[  vote_sign_up_start_time <= NOW()]]>
+    and vote_end_time >= NOW()
+    limit 1
+  </select>
+  
+  <select id="queryVoteActivityByTime" resultMap="ResultMapWithBLOBs" >
+   select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+   from vote_activity va where 
+    <![CDATA[  va.vote_start_time <  #{startTime} ]]>
+    <![CDATA[ and va.vote_end_time > #{endTime}   ]]>
+    and va.delete_flag=0
+  </select>
+</mapper>

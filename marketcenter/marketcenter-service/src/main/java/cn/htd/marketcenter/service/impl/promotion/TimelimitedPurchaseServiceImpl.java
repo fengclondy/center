@@ -105,6 +105,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			historyDTO.setCreateName(timelimitedInfo.getCreateName());
 			promotionStatusHistoryDAO.add(historyDTO);
 			historyList.add(historyDTO);
+			int a = 1/0;
 			timelimitedInfo.setPromotionStatusHistoryList(historyList);
 			timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
 			// timelimitedRedisHandle.addTimelimitedPurchaseInfo2Redis(timelimitedInfo);
@@ -139,7 +140,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			for (PromotionAccumulatyDTO accumulaty : accumulatyList) {
 				TimelimitedInfoDTO timeLimited = (TimelimitedInfoDTO) accumulaty;
 				if(!(new Date()).before(timeLimited.getStartTime())){
-		            throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_START, "不能创建已经开始的限时购活动");
+		            throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_START, "不能创建已经开始的限时购活动!");
 				}
 				condition.setSkuCode(timeLimited.getSkuCode());
 		        promotionList = promotionInfoDAO.queryRepeatTimelimitedList(condition);
@@ -149,7 +150,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
         if(promotionList != null && !promotionList.isEmpty()) {
             promotionInfo = promotionList.get(0);
             errorMsg = promotionInfo.getPromotionName();
-            throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT, "和 " + errorMsg + " 限时购活动的商品重复");
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT, " 该商品存在未结束的限时购活动!");
          } 
        }
 

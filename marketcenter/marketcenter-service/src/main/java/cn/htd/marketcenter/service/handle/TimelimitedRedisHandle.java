@@ -1002,5 +1002,16 @@ public class TimelimitedRedisHandle {
 		}
         return resultList;
 	}
+	
+	public int getRealRemainCount(String promotionId, String skuCode){
+		Map<String, String> resultMap = null;
+        String timelimitedResultKey = RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+		int realRemainCount = 0;
+        resultMap = marketRedisDB.getHashOperations(timelimitedResultKey);
+        if (resultMap != null) {
+            realRemainCount = Integer.valueOf(resultMap.get(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT + "_" + skuCode));
+        }
+		return realRemainCount;
+	}
 
 }

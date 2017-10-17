@@ -5,20 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -248,6 +242,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						for (int i = 0; i < list.size(); i++) {
 							timelimite = JSONObject.toJavaObject((JSONObject) list.get(i),TimelimitedInfoDTO.class);
 							if (timelimite.getSkuCode().equals(skuCode)) {
+								int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, skuCode);
+								timelimite.setTimelimitedSkuCount(skuTotal);
 								if(!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
 									result.setCode("00000");
 									result.setResult(timelimite);
@@ -314,6 +310,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					int listSize = list.size();
 					TimelimitedInfoDTO timelimitedConvert = timilimitedConvert(list);
 					timelimitedConvert.setPurchasePriceFlag(listSize);
+					int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, timelimitedConvert.getSkuCode());
+					timelimitedConvert.setTimelimitedSkuCount(skuTotal);
 					if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimitedInfoDTO.getEffectiveTime())
 							&& !nowDt.after(timelimitedInfoDTO.getInvalidTime())) {
 						/**

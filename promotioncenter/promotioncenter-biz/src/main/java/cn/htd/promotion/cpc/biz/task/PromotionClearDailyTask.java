@@ -137,6 +137,7 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfoDTO : tasks) {
+					
 					if(TimelimitedConstants.PromotionTypeEnum.DRAW_LOTTERY.key().equals(promotionInfoDTO.getPromotionType())){//扭蛋机
 						PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo(promotionInfoDTO.getPromotionId());
 						promotionLotteryCommonService.initPromotionLotteryRedisInfo(dbo);

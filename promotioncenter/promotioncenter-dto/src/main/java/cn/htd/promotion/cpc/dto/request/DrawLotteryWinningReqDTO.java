@@ -34,6 +34,19 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
      * 充值电话号码
      */
     private String chargeTelephone;
+    /**
+     * 卷号（红包雨使用）
+     */
+    private String relevanceCouponCode;
+    /**
+     * 活动类型（红包雨使用）
+     */
+    private String promotionType;
+    /**
+     * 活动名称（红包雨使用）
+     */
+    private String promotionName;
+    
 
     public String getBuyerName() {
         return buyerName;
@@ -98,4 +111,29 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
     public void setChargeTelephone(String chargeTelephone) {
         this.chargeTelephone = chargeTelephone;
     }
+
+	public String getRelevanceCouponCode() {
+		return relevanceCouponCode;
+	}
+
+	public void setRelevanceCouponCode(String relevanceCouponCode) {
+		this.relevanceCouponCode = relevanceCouponCode;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
+	}
+
+	public String getPromotionName() {
+		return promotionName;
+	}
+
+	public void setPromotionName(String promotionName) {
+		this.promotionName = promotionName;
+	}
+	
 }

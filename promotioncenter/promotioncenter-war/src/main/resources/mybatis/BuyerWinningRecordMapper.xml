@@ -18,6 +18,7 @@
     <result column="RELEVANCE_BARGAIN_CODE" property="relevanceBargainCode" jdbcType="VARCHAR"/>
     <result column="REWARD_NAME" property="rewardName" jdbcType="VARCHAR"/>
     <result column="AWARD_VALUE" property="awardValue" jdbcType="VARCHAR"/>
+    <result column="RELEVANCE_COUPON_CODE" property="relevanceCouponCode" jdbcType="VARCHAR"/>
     <result column="WINNING_TIME" property="winningTime" jdbcType="TIMESTAMP"/>
     <result column="WINNER_NAME" property="winnerName" jdbcType="VARCHAR"/>
     <result column="WINNING_CONTACT" property="winningContact" jdbcType="VARCHAR"/>
@@ -163,8 +164,14 @@
     <if test="params.promotionType == '21'">
       and bwr.promotion_type = '21'
     </if>
+    <if test="params.promotionType == '24'">
+      and bwr.promotion_type = '24'
+    </if>
+    <if test="params.promotionType == '25'">
+      and bwr.promotion_type = '25'
+    </if>
     <if test="params.promotionType == '' or params.promotionType == null">
-      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')))
+      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')) or bwr.promotion_type = '25' or bwr.promotion_type = '24')
     </if>
   </sql>
   <!-- mysql 分页 -->
@@ -184,11 +191,11 @@
     </if>
   </select>
 
-  <select id="getAwardRecordForBoss" resultMap="BaseResultMap">
+<select id="getAwardRecordForBoss" resultMap="BaseResultMap">
     select
     bwr.*,pi.effective_time,pi.invalid_time
-    from buyer_winning_record bwr,promotion_info pi
-    where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    from buyer_winning_record bwr left join promotion_info pi on (bwr.promotion_id = pi.promotion_id)
+    where 1 = 1
     <include refid="awardRecordBoss_mid"/>
     order by bwr.winning_time desc
     <if test="page!=null">
@@ -219,8 +226,8 @@
   <select id="getTotalAwardRecordForBoss" resultType="java.lang.Long">
     select
     count(1)
-    from buyer_winning_record bwr,promotion_info pi
-    where 1 = 1 and bwr.promotion_id = pi.promotion_id
+    from buyer_winning_record bwr left join promotion_info pi on (bwr.promotion_id = pi.promotion_id)
+    where 1 = 1
     <include refid="awardRecordBoss_mid"/>
   </select>
 
@@ -350,6 +357,9 @@
       <if test="orderNo != null and orderNo != ''">
         order_no,
       </if>
+      <if test="relevanceCouponCode != null and relevanceCouponCode != ''">
+        relevance_coupon_code,
+      </if>
       deal_flag,
       create_id,
       create_name,
@@ -418,6 +428,9 @@
       </if>
       <if test="orderNo != null and orderNo != ''">
         #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="relevanceCouponCode != null and relevanceCouponCode != ''">
+        #{relevanceCouponCode,jdbcType=VARCHAR},
       </if>
       1,
       #{createId,jdbcType=BIGINT},

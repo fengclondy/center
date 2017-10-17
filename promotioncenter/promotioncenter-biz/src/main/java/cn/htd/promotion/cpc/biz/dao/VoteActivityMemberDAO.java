@@ -1,10 +1,15 @@
 package cn.htd.promotion.cpc.biz.dao;
 
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
 public interface VoteActivityMemberDAO {
     int deleteByPrimaryKey(Long voteMemberId);
@@ -27,9 +32,19 @@ public interface VoteActivityMemberDAO {
     // memberCode 会员店编码
     // memberName 会员店名称
     // votenum 得票数
-    List<HashMap<String, String>> selectMemberRankingTop10(@Param("voteId") Long voteId);
+    List<HashMap<String, Object>> selectMemberRankingTop10(@Param("voteId") Long voteId);
 
-    // 根据活动ID，会员店编码获取当前会员店的投票排名数
-    int selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
+    // 根据活动ID，会员店编码获取当前会员店的投票排情况
+    HashMap<String, Object> selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
+    
+    List<HashMap<String, Object>> querySignupMemberCount(@Param("voteId") Long voteId);
+    
+    Long queryTotalSignupMemberInfo(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+    
+    List<VoteActivityMemListResDTO> queryPagedSignupMemberInfoList(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+    
+    VoteActivityMemResDTO querySignupMemberDetailInfo(Long voteMemberId);
+    
+    void batchInsertVoteActMember(List<VoteActivityMemReqDTO> list);
 
 }

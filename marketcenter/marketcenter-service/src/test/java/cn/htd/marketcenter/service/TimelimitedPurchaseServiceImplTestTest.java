@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.alibaba.fastjson.JSONObject;
+
+import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
@@ -31,6 +34,12 @@ public class TimelimitedPurchaseServiceImplTestTest {
 		TimelimitedConditionDTO conditionDTO = new TimelimitedConditionDTO();
 		// conditionDTO.setSelleCode(sellerCode);
 		timelimitedInfoService.queryTimelimitedListByCondition(conditionDTO, page);
+	}
+	
+	@Test
+	public void testQueryTimelimitedList() {
+		ExecuteResult<TimelimitedInfoDTO> result = timelimitedInfoService.getTimelimitedInfo("1000");
+		System.out.println(JSONObject.toJSONString(result));
 	}
 
 }

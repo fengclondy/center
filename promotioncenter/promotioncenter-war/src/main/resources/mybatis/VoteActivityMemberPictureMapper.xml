@@ -34,8 +34,8 @@
       modify_time)
     values (#{pictureId,jdbcType=BIGINT}, #{voteMemberId,jdbcType=BIGINT}, #{pictureUrl,jdbcType=VARCHAR}, 
       #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
-      #{modifyTime,jdbcType=TIMESTAMP})
+      SYSDATE, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR},
+      SYSDATE
   </insert>
   <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberPictureResDTO" >
     insert into vote_activity_member_picture
@@ -131,9 +131,7 @@
       <if test="modifyName != null" >
         modify_name = #{modifyName,jdbcType=VARCHAR},
       </if>
-      <if test="modifyTime != null" >
-        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
+      modify_time = SYSDATE
     </set>
     where picture_id = #{pictureId,jdbcType=BIGINT}
   </update>
@@ -150,4 +148,11 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where picture_id = #{pictureId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByVoteMemberId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from vote_activity_member_picture
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </select>
 </mapper>

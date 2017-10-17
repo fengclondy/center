@@ -77,6 +77,11 @@ public class PromotionAwardDTO implements Serializable{
 
     private String orderNo;//订单编号
 
+    private String relevanceCouponCode;
+    
+    private String isUsed;//特定只给红包雨使用 是否使用 0 未使用 1使用
+    
+    
 	public Long getId() {
         return id;
     }
@@ -332,4 +337,23 @@ public class PromotionAwardDTO implements Serializable{
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
+
+	public String getRelevanceCouponCode() {
+		return relevanceCouponCode;
+	}
+
+	public void setRelevanceCouponCode(String relevanceCouponCode) {
+		this.relevanceCouponCode = relevanceCouponCode;
+	}
+
+	public String getIsUsed() {
+		return isUsed;
+	}
+
+	public void setIsUsed(String isUsed) {
+		this.isUsed = isUsed;
+	}
+	
+	
+    
 }

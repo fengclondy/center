@@ -131,15 +131,18 @@ public class GroupbuyingTestUnit {
     		// 设置团购价格
     		List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = new ArrayList<GroupbuyingPriceSettingReqDTO>();
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO.setSortNum(1);
     		groupbuyingPriceSettingReqDTO.setActorCount(1);// 参团人数
     		BigDecimal groupbuyingPrice = new BigDecimal("100");// 拼团价
     		groupbuyingPriceSettingReqDTO.setGroupbuyingPrice(groupbuyingPrice);
     		
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_2 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_2.setSortNum(2);
     		groupbuyingPriceSettingReqDTO_2.setActorCount(50);
     		groupbuyingPriceSettingReqDTO_2.setGroupbuyingPrice(new BigDecimal("90"));
     		
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_3 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_3.setSortNum(3);
     		groupbuyingPriceSettingReqDTO_3.setActorCount(100);
     		groupbuyingPriceSettingReqDTO_3.setGroupbuyingPrice(new BigDecimal("70"));
     		groupbuyingPriceSettingReqDTOList.add(groupbuyingPriceSettingReqDTO);
@@ -209,7 +212,7 @@ public class GroupbuyingTestUnit {
     		Long userId = 10001L;
     		String userName = "admin";
     		
-    		String promotionId = "25171601240015";
+    		String promotionId = "25171430390018";
     		
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
@@ -235,10 +238,10 @@ public class GroupbuyingTestUnit {
     		BigDecimal skuCostPrice = new BigDecimal("50");
     		groupbuyingInfoCmplReqDTO.setSkuCostPrice(skuCostPrice);
     		// 真实参团人数
-    		Integer realActorCount = 10;
+    		Integer realActorCount = 20;
     		groupbuyingInfoCmplReqDTO.setRealActorCount(realActorCount);
     		// 真实拼团价
-    		BigDecimal realGroupbuyingPrice = new BigDecimal("100");
+    		BigDecimal realGroupbuyingPrice = new BigDecimal("80");
     		groupbuyingInfoCmplReqDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
     		
     		
@@ -281,15 +284,18 @@ public class GroupbuyingTestUnit {
     		// 设置团购价格
     		List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = new ArrayList<GroupbuyingPriceSettingReqDTO>();
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO.setSortNum(1);
     		groupbuyingPriceSettingReqDTO.setActorCount(1);// 参团人数
     		BigDecimal groupbuyingPrice = new BigDecimal("100");// 拼团价
     		groupbuyingPriceSettingReqDTO.setGroupbuyingPrice(groupbuyingPrice);
     		
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_2 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_2.setSortNum(2);
     		groupbuyingPriceSettingReqDTO_2.setActorCount(50);
     		groupbuyingPriceSettingReqDTO_2.setGroupbuyingPrice(new BigDecimal("90"));
     		
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_3 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_3.setSortNum(3);
     		groupbuyingPriceSettingReqDTO_3.setActorCount(100);
     		groupbuyingPriceSettingReqDTO_3.setGroupbuyingPrice(new BigDecimal("70"));
     		groupbuyingPriceSettingReqDTOList.add(groupbuyingPriceSettingReqDTO);
@@ -363,7 +369,7 @@ public class GroupbuyingTestUnit {
     		groupbuyingInfoReqDTO.setSellerCode("1001");// 商家编码
 //    		groupbuyingInfoReqDTO.setSkuName("测试商品");//商品名称
     		groupbuyingInfoReqDTO.setShowStatus("3");//审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
-    		groupbuyingInfoReqDTO.setStatus("2");// 状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
+    		groupbuyingInfoReqDTO.setActiveState("1");// 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
     		groupbuyingInfoReqDTO.setStartTime(sdf.parse(startTimeString));
     		groupbuyingInfoReqDTO.setEndTime(sdf.parse(endTimeString));
     		

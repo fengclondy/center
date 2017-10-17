@@ -360,9 +360,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         TimelimitedCheckInfo condition = new TimelimitedCheckInfo();
         PromotionInfoDTO promotionInfo = null;
         String errorMsg = "";
-
-        condition.setPromotionType(dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
+        List<String> promotionTypeList = new ArrayList<String>();
+        String  promotionTypePurchase= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        String  promotionTypeTimelited= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        promotionTypeList.add(promotionTypePurchase);
+        promotionTypeList.add(promotionTypeTimelited);
+        condition.setPromotionTypeList(promotionTypeList);
         condition.setDeleteStatus(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
         condition.setSkuCode(timelimitedInfo.getSkuCode());

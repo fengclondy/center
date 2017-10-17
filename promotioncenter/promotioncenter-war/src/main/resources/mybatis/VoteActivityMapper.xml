@@ -296,4 +296,54 @@
     <![CDATA[ and va.vote_end_time > #{endTime}   ]]>
     and va.delete_flag=0
   </select>
+  
+  <select id="selectPagedVoteActivity" resultMap="ResultMapWithBLOBs" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from vote_activity
+    where delete_flag = 0
+    <if test="voteActName !=null and voteActName != '' ">
+    	AND vote_name like CONCAT(#{voteActName},'%')
+    </if>
+    <if test="actStatus !=null and actStatus != '' ">
+    	<!-- 1 进行中、2 未开始、3 已结束 -->
+    	<if test="actStatus == 1 ">
+    	 <![CDATA[ and  vote_start_time <= NOW()]]>
+    		and vote_end_time >= NOW()
+    	</if>
+    	<if test="actStatus == 2 ">
+    		and vote_start_time  > NOW()
+    	</if>
+    	<if test="actStatus == 3 ">
+    		<![CDATA[and vote_end_time < NOW() ]]>
+    	</if>
+    </if>
+    limit #{start},#{pageSize}
+  </select>
+  
+  <select id="selectVoteActivityTotalCount" resultType="Long">
+    select 
+   count(1)
+    from vote_activity
+    where delete_flag = 0
+     <if test="voteActName !=null and voteActName != '' ">
+    	AND vote_name like CONCAT(#{voteActName},'%')
+    </if>
+    <if test="actStatus !=null and actStatus != '' ">
+    	<!-- 1 进行中、2 未开始、3 已结束 -->
+    	<if test="actStatus == 1 ">
+    	 <![CDATA[ and  vote_start_time <= NOW()]]>
+    		and vote_end_time >= NOW()
+    	</if>
+    	<if test="actStatus == 2 ">
+    		and vote_start_time  > NOW()
+    	</if>
+    	<if test="actStatus == 3 ">
+    		<![CDATA[and vote_end_time < NOW() ]]>
+    	</if>
+    </if>
+  </select>
+  
 </mapper>

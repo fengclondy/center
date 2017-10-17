@@ -337,14 +337,33 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 											Integer timelimitedThreshold = limitedTimePurchaseInfo.getTimelimitedThreshold();
 											//限时购商品剩余数量
 											Integer timelimitedSkuCount = limitedTimePurchaseInfo.getTimelimitedSkuCount();
+											//每人起购数量
+											Integer timelimitedThresholdMin = limitedTimePurchaseInfo.getTimelimitedThresholdMin();
 											Integer buyCount = orderSku.getProductCount();
-											if (buyCount > timelimitedThreshold
-													|| buyCount > timelimitedSkuCount) {
+											if (buyCount > timelimitedThreshold) {
 												orderSettleMentResDTO
-														.setResponseCode(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
+														.setResponseCode(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_PURCHASE_COUNT
 																.getCode());
 												orderSettleMentResDTO
-														.setReponseMsg(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
+														.setReponseMsg(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_PURCHASE_COUNT
+																.getMsg());
+												break outterLoop;
+											}
+											if (buyCount > timelimitedSkuCount) {
+												orderSettleMentResDTO
+														.setResponseCode(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_INVENTORY
+																.getCode());
+												orderSettleMentResDTO
+														.setReponseMsg(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_INVENTORY
+																.getMsg());
+												break outterLoop;
+											}
+											if (buyCount < timelimitedThresholdMin) {
+												orderSettleMentResDTO
+														.setResponseCode(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_LESS_PURCHASE_COUNT
+																.getCode());
+												orderSettleMentResDTO
+														.setReponseMsg(ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_LESS_PURCHASE_COUNT
 																.getMsg());
 												break outterLoop;
 											}

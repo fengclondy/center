@@ -186,25 +186,14 @@ public class TimelimitedRedisHandle {
         timelimitedInfo.setModifyTime(new Date());
         timelimitedInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-        //edit by lijun 限时购
-        	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
-			if (null != accumulatyList && accumulatyList.size() > 0) {
-			    for(PromotionAccumulatyDTO accumulaty : accumulatyList) {
-			    	 TimelimitedInfoDTO timelimited = (TimelimitedInfoDTO) accumulaty;
-				     String  sku_code = timelimited.getSkuCode();
-			         resultMap.put(RedisConst.REDIS_TIMELIMITED_TOTAL_COUNT  +"_"+ sku_code, String.valueOf(timelimited.getTimelimitedSkuCount()));
-			         resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT  +"_"+ sku_code,String.valueOf(timelimited.getTimelimitedSkuCount()));
-			         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT +"_"+ sku_code, String.valueOf(timelimited.getTimelimitedSkuCount()));
-				}
-         }else{
-	         resultMap.put(RedisConst.REDIS_TIMELIMITED_TOTAL_COUNT,String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
-	         resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT , String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
-	         resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_ACTOR_COUNT, "0");
-	         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT, String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
-	         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_ACTOR_COUNT, "0");
-         }
-        //edit by lijun 限时购
- 
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_TOTAL_COUNT,
+                String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT,
+                String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_SHOW_ACTOR_COUNT, "0");
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
+                String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
+        resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_ACTOR_COUNT, "0");
         //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
         diffTime = timelimitedInfo.getInvalidTime().getTime() - new Date().getTime();
         seconds = (int) (diffTime / 1000);
@@ -230,7 +219,7 @@ public class TimelimitedRedisHandle {
         }
         //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
-        marketRedisDB.setHash(timelimitedResultKey, resultMap); 
+        marketRedisDB.setHash(timelimitedResultKey, resultMap);
         saveTimelimitedIndex2Redis(timelimitedInfo);
         saveTimelimitedValidStatus2Redis(timelimitedInfo);
     }
@@ -1012,6 +1001,17 @@ public class TimelimitedRedisHandle {
     		}
 		}
         return resultList;
+	}
+	
+	public int getRealRemainCount(String promotionId, String skuCode){
+		Map<String, String> resultMap = null;
+        String timelimitedResultKey = RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+		int realRemainCount = 0;
+        resultMap = marketRedisDB.getHashOperations(timelimitedResultKey);
+        if (resultMap != null) {
+            realRemainCount = Integer.valueOf(resultMap.get(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT + "_" + skuCode));
+        }
+		return realRemainCount;
 	}
 
 }

@@ -131,7 +131,8 @@
 		    belong_superior_code,
 		    belong_superior_name,
 		    b2c_coupon_used_amount,
-		    use_type
+		    use_type,
+		    create_time
 		FROM
 			b2c_coupon_use_log_sync_history
 		where 1=1

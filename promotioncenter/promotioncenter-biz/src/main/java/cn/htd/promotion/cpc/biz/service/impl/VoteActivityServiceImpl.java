@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		DataGrid<VoteActivityListResDTO> dataGrid=new DataGrid<VoteActivityListResDTO>();
 		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount(voteActName,actStatus);
 		dataGrid.setTotal(totalCount);
-		if(totalCount==null||totalCount<=0){
+		if(totalCount!=null&&totalCount>0L){
 			List<VoteActivityListResDTO> resultList=Lists.newArrayList();
 			//查询分页数据
 			List<VoteActivityResDTO> voteActList=voteActivityDAO.selectPagedVoteActivity(page.getPageOffset(), page.getRows(), voteActName,actStatus);
@@ -131,8 +132,13 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 				for(VoteActivityResDTO voteActResDTO:voteActList){
 					
 					VoteActivityListResDTO voteActivityListResDTO=new VoteActivityListResDTO();
+					try{
+						voteActivityMemberDAO.querySignupMemberCount(voteActResDTO.getVoteId());
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 					
-					List<Map> resultMapList=voteActivityMemberDAO.querySignupMemberCount(voteActResDTO.getVoteId());
+					List<HashMap<String, Object>> resultMapList=voteActivityMemberDAO.querySignupMemberCount(voteActResDTO.getVoteId());
 					if(CollectionUtils.isNotEmpty(resultMapList)){
 						for(Map resultMap:resultMapList){
 							if(resultMap!=null&&MapUtils.isNotEmpty(resultMap)&&resultMap.get("sign_status")!=null){

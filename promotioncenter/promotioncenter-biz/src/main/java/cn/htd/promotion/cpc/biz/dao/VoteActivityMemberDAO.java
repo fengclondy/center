@@ -2,7 +2,6 @@ package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -38,7 +37,7 @@ public interface VoteActivityMemberDAO {
     // 根据活动ID，会员店编码获取当前会员店的投票排情况
     HashMap<String, Object> selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
     
-    List<Map> querySignupMemberCount(@Param("voteId") Long voteId);
+    List<HashMap<String, Object>> querySignupMemberCount(@Param("voteId") Long voteId);
     
     Long queryTotalSignupMemberInfo(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
     

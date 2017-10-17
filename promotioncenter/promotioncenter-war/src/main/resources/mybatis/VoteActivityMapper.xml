@@ -307,16 +307,16 @@
     <if test="voteActName !=null and voteActName != '' ">
     	AND vote_name like CONCAT(#{voteActName},'%')
     </if>
-    <if test="actStatus !=null and voteActName != '' ">
+    <if test="actStatus !=null and actStatus != '' ">
     	<!-- 1 进行中、2 未开始、3 已结束 -->
-    	<if test="actStatus == '1' ">
+    	<if test="actStatus == 1 ">
     	 <![CDATA[ and  vote_start_time <= NOW()]]>
     		and vote_end_time >= NOW()
     	</if>
-    	<if test="actStatus == '2' ">
+    	<if test="actStatus == 2 ">
     		and vote_start_time  > NOW()
     	</if>
-    	<if test="actStatus == '3' ">
+    	<if test="actStatus == 3 ">
     		<![CDATA[and vote_end_time < NOW() ]]>
     	</if>
     </if>
@@ -331,16 +331,16 @@
      <if test="voteActName !=null and voteActName != '' ">
     	AND vote_name like CONCAT(#{voteActName},'%')
     </if>
-    <if test="actStatus !=null and voteActName != '' ">
+    <if test="actStatus !=null and actStatus != '' ">
     	<!-- 1 进行中、2 未开始、3 已结束 -->
-    	<if test="actStatus == '1' ">
+    	<if test="actStatus == 1 ">
     	 <![CDATA[ and  vote_start_time <= NOW()]]>
     		and vote_end_time >= NOW()
     	</if>
-    	<if test="actStatus == '2' ">
+    	<if test="actStatus == 2 ">
     		and vote_start_time  > NOW()
     	</if>
-    	<if test="actStatus == '3' ">
+    	<if test="actStatus == 3 ">
     		<![CDATA[and vote_end_time < NOW() ]]>
     	</if>
     </if>

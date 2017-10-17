@@ -4,6 +4,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.VoteActivityAPI;
+import cn.htd.promotion.cpc.biz.service.VoteActivityMemberPictureService;
 import cn.htd.promotion.cpc.biz.service.VoteActivityMemberService;
 import cn.htd.promotion.cpc.biz.service.VoteActivityService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -34,6 +35,9 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 
     @Resource
     private VoteActivityMemberService voteActivityMemberService;
+
+    @Resource
+    private VoteActivityMemberPictureService memberPictureService;
 
     @Override
     public ExecuteResult<String> saveVoteActivity(VoteActivityResDTO voteActivityResDTO) {
@@ -84,7 +88,15 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
         try{
             // 正确返回
             result.setCode(ResultCodeEnum.SUCCESS.getCode());
-            result.setResult(voteActivityMemberService.selectByVoteIdAndMemberCode(voteId,memberCode));
+            // 返回值
+            VoteActivityMemberResDTO memberResDTO = voteActivityMemberService.selectByVoteIdAndMemberCode(voteId,memberCode);
+            // 如果不为空则查询相关图片
+            if(memberResDTO != null && !NUtils.isEmpty(memberResDTO.getVoteMemberId())){
+                // 相关图片集合
+                memberResDTO.setMemberPictureResDTOList(memberPictureService.selectByVoteMemberId(memberResDTO.getVoteMemberId()));
+            }
+
+            result.setResult(memberResDTO);
         }catch (Exception e){
             // 打印错误消息
             e.printStackTrace();
@@ -101,20 +113,34 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
      * @return
      */
     public ExecuteResult<Boolean> saveVoteActivityMember(Map<String,Object> params){
-        // 实例化保存对象
-        VoteActivityMemberResDTO memberResDTO = new VoteActivityMemberResDTO();
-        // 投票活动主键
-        memberResDTO.setVoteMemberId(NUtils.convertToLong(params.get("voteMemberId")));
-        // 修改已报名
-        memberResDTO.setSignStatus(1);
-        // 报名时间为当前时间
-        memberResDTO.setSignUpTime(new Date());
-        // 活动宣言
-        memberResDTO.setMemberActivityDec(NUtils.convertToStr(params.get("desinfo")));
-        // 更新报名信息
-        voteActivityMemberService.updateByPrimaryKeySelective(memberResDTO);
-        // 保存图片
+        // 返回对象
+        ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+        try{
+            // 正确返回
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
+            // 正确返回
+            result.setResult(true);
+            // 实例化保存对象
+            VoteActivityMemberResDTO memberResDTO = new VoteActivityMemberResDTO();
+            // 投票活动主键
+            memberResDTO.setVoteMemberId(NUtils.convertToLong(params.get("voteMemberId")));
+            // 修改已报名
+            memberResDTO.setSignStatus(1);
+            // 报名时间为当前时间
+            memberResDTO.setSignUpTime(new Date());
+            // 活动宣言
+            memberResDTO.setMemberActivityDec(NUtils.convertToStr(params.get("desinfo")));
+            // 更新报名信息
+            voteActivityMemberService.updateByPrimaryKeySelective(memberResDTO);
+            // 保存图片
+            memberPictureService.saveVoteMemberPicture(params);
+        }catch (Exception e){
+            // 打印错误消息
+            e.printStackTrace();
+            logger.error("VoteActivityAPI方法saveVoteActivityMember调用出错，信息{}",e.getMessage());
 
-        return null;
+            result.setCode(ResultCodeEnum.ERROR.getMsg());
+        }
+        return result;
     }
 }

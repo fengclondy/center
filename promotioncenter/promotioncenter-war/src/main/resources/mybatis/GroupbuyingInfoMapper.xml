@@ -72,6 +72,7 @@
     <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
     <result column="actor_count" property="actorCount" jdbcType="INTEGER" />
     <result column="groupbuying_price" property="groupbuyingPrice" jdbcType="DECIMAL" />
+    <result column="sort_num" property="sortNum" jdbcType="TINYINT" />
     <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
@@ -522,7 +523,7 @@
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
     gi.modify_id, gi.modify_name, gi.modify_time,
-    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, 
+    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, gps.sort_num,
     gps.delete_flag, gps.create_id, gps.create_name, gps.create_time, 
     gps.modify_id, gps.modify_name, gps.modify_time,
     pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
@@ -556,7 +557,7 @@
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
     gi.modify_id, gi.modify_name, gi.modify_time,
-    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, 
+    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, gps.sort_num,
     gps.delete_flag, gps.create_id, gps.create_name, gps.create_time, 
     gps.modify_id, gps.modify_name, gps.modify_time,
     pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 

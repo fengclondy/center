@@ -24,9 +24,11 @@ import cn.htd.marketcenter.common.utils.GeneratorUtils;
 import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.dao.B2cCouponUseLogSyncHistoryDAO;
 import cn.htd.marketcenter.dao.BuyerCouponInfoDAO;
+import cn.htd.marketcenter.dao.PromotionInfoDAO;
 import cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
+import cn.htd.marketcenter.dto.PromotionInfoDTO;
 
 import com.alibaba.dubbo.common.json.JSON;
 import com.alibaba.dubbo.common.json.ParseException;
@@ -52,6 +54,9 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 
 	@Resource
 	private BuyerCouponInfoDAO buyerCouponInfoDAO;
+	
+	@Resource
+	private PromotionInfoDAO promotionInfoDAO;
 
 	@Resource
 	private MarketCenterRedisDB marketRedisDB;
@@ -166,19 +171,11 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 						if (null == useCouponCount
 								|| useCouponCount.intValue() == 0) {
 							B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
-							record.setModifyId(0L);
-							record.setModifyName("sys");
 							String dealFailReason = "该条数据非法--会员店的优惠券金额并未做过累加";
 							record.setDealFailReason(dealFailReason);
-							record.setB2cOrderNo(b2cCouponUseLogSyncDMO
-									.getB2cOrderNo());
-							record.setB2cBuyerCouponCode(b2cCouponUseLogSyncDMO
-									.getB2cBuyerCouponCode());
 							record.setDealFlag(2);
-							record.setModifyTime(new Date());
 							record.setUseType(ON_LINE_SURE_CANCLE_ORDER);
-							int updateResult = b2cCouponUseLogSyncHistoryDAO
-									.updateB2cCouponUseLogSyncHistory(record);
+							int updateResult = updateB2cCouponUseLogSyncHistory(b2cCouponUseLogSyncDMO,record);
 							logger.warn(
 									dealFailReason + "参数:{},跟新数据库结果{}",
 									JSONObject
@@ -187,7 +184,11 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 							continue;
 						}
 					}
-
+					//判断是否在活动期间，查不到数据continue
+					boolean validateEffective = validatePromotionEffective(b2cCouponUseLogSyncDMO);
+					if(!validateEffective){
+						continue;
+					}
 					String b2cActivityCode = b2cCouponUseLogSyncDMO
 							.getB2cActivityCode();
 					PromotionDiscountInfoDTO promotionDiscountInfoDTO = JSON.parse(
@@ -240,14 +241,9 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 								promotionId, couponAmount);
 					}
 					B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
-					record.setB2cOrderNo(b2cCouponUseLogSyncDMO
-							.getB2cOrderNo());
-					record.setB2cBuyerCouponCode(b2cCouponUseLogSyncDMO
-							.getB2cBuyerCouponCode());
 					record.setDealFlag(1);
-					record.setModifyTime(new Date());
 					record.setUseType(useType);
-					b2cCouponUseLogSyncHistoryDAO.updateB2cCouponUseLogSyncHistory(record);
+					updateB2cCouponUseLogSyncHistory(b2cCouponUseLogSyncDMO,record);
 				}
 			}
 		} catch (Exception e) {
@@ -258,6 +254,63 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 		} finally {
 		}
 		return result;
+	}
+	
+	/**
+	 * 更新用券信息表
+	 * @param b2cCouponUseLogSyncDMO
+	 * @param record
+	 * @return
+	 */
+	public int updateB2cCouponUseLogSyncHistory(B2cCouponUseLogSyncDMO b2cCouponUseLogSyncDMO,B2cCouponUseLogSyncDMO record){
+		record.setB2cOrderNo(b2cCouponUseLogSyncDMO
+				.getB2cOrderNo());
+		record.setB2cBuyerCouponCode(b2cCouponUseLogSyncDMO
+				.getB2cBuyerCouponCode());
+		record.setModifyId(0L);
+		record.setModifyName("sys");
+		record.setModifyTime(new Date());
+		int updateResult = b2cCouponUseLogSyncHistoryDAO.updateB2cCouponUseLogSyncHistory(record);
+		return updateResult;
+	}
+	/**
+	 * 校验是否在活用有效期内用券或者取消券
+	 * @param b2cCouponUseLogSyncDMO
+	 * @return
+	 */
+	public boolean validatePromotionEffective(B2cCouponUseLogSyncDMO b2cCouponUseLogSyncDMO){
+		boolean flag = false;
+		PromotionInfoDTO promotionInfoDTO = new PromotionInfoDTO();
+		promotionInfoDTO.setB2cActivityCode(b2cCouponUseLogSyncDMO.getB2cActivityCode());
+		promotionInfoDTO.setShowStatus(dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+		List<String> statusList = new ArrayList<String>();
+		statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+		statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                DictionaryConst.OPT_PROMOTION_STATUS_START));
+		promotionInfoDTO.setStatusList(statusList);
+		PromotionInfoDTO PromotionInfoDaoRes = promotionInfoDAO.queryPromotionInfoByParam(promotionInfoDTO);
+		if(null == PromotionInfoDaoRes){
+			logger.warn("根据参数:{}没有查到相关促销数据",JSONObject.toJSONString(promotionInfoDTO));
+		    return flag = true;
+		}
+		Date effectiveTime = PromotionInfoDaoRes.getEffectiveTime();
+		Date invalidTime = PromotionInfoDaoRes.getInvalidTime();
+		Date creteTime = b2cCouponUseLogSyncDMO.getCreateTime();
+		if(creteTime.before(effectiveTime) || creteTime.after(invalidTime)){
+			B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
+			String dealFailReason = "用券或者取消券不在活动有效期之内";
+			record.setDealFailReason(dealFailReason);
+			record.setDealFlag(2);
+			record.setUseType(b2cCouponUseLogSyncDMO.getUseType());
+			updateB2cCouponUseLogSyncHistory(b2cCouponUseLogSyncDMO,record);
+			flag = false;
+		}else{
+			flag = true;
+		}
+		return flag;
 	}
 
 	/**

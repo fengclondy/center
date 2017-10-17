@@ -39,7 +39,7 @@ public interface VoteActivityService {
 	 * @param voteActivityListReqDTO
 	 * @return
 	 */
-	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page);
+	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus);
 	
 	VoteActivityResDTO selectCurrentActivity();
 	

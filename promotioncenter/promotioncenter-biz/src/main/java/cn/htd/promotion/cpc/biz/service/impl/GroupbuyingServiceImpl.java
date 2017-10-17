@@ -5,12 +5,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -23,7 +26,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
-import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
+import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -80,7 +83,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
     
     @Resource
-	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
+	private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
     
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
@@ -451,11 +454,26 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	 */
     public void setGroupbuyingInfoCmpl2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) throws Exception {
         if (groupbuyingInfoCmplResDTO != null) {
+        	
             String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
             String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+            
+            Map<String, String> resultMap = new HashMap<String, String>();
+            String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,
+                    String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,
+                    String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
+            
+            // 设置团购活动
             promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
             // 设置团购活动具体数量
-            this.addGroupbuyingInfoResult2Redis(groupbuyingInfoCmplResDTO);
+            promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
+            
+//            System.out.println("setGroupbuyingInfoCmpl2Redis = end");
+            
+            // 设置团购活动具体数量
+//          this.addGroupbuyingInfoResult2Redis(groupbuyingInfoCmplResDTO);
         }
     }
 
@@ -464,20 +482,20 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
      *
      * @param groupbuyingInfoCmplResDTO
      */
-    private void addGroupbuyingInfoResult2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) {
-        Map<String, String> resultMap = new HashMap<String, String>();
-        String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
-        String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
-        String groupbuyingResultStr = promotionRedisDB.get(groupbuyingResultKey);
-        if (StringUtils.isNotBlank(groupbuyingResultStr)) {
-            promotionRedisDB.del(groupbuyingResultKey);
-        }
-        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,
-                String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
-        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,
-                String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
-        promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
-    }
+//    private void addGroupbuyingInfoResult2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) {
+//        Map<String, String> resultMap = new HashMap<String, String>();
+//        String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
+//        String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+//        String groupbuyingResultStr = promotionRedisDB.get(groupbuyingResultKey);
+//        if (StringUtils.isNotBlank(groupbuyingResultStr)) {
+//            promotionRedisDB.del(groupbuyingResultKey);
+//        }
+//        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,
+//                String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
+//        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,
+//                String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
+//        promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
+//    }
 
     @Override
     public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {

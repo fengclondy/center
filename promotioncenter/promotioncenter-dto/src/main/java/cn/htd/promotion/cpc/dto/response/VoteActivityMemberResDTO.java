@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class VoteActivityMemberResDTO implements Serializable{
 	
@@ -47,6 +48,11 @@ public class VoteActivityMemberResDTO implements Serializable{
     private String modifyName;
 
     private Date modifyTime;
+
+    /***
+     * 会员店投票报名相关图片集合
+     */
+    private List<VoteActivityMemberPictureResDTO> memberPictureResDTOList;
 
     public Long getVoteMemberId() {
         return voteMemberId;
@@ -198,5 +204,13 @@ public class VoteActivityMemberResDTO implements Serializable{
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public List<VoteActivityMemberPictureResDTO> getMemberPictureResDTOList() {
+        return memberPictureResDTOList;
+    }
+
+    public void setMemberPictureResDTOList(List<VoteActivityMemberPictureResDTO> memberPictureResDTOList) {
+        this.memberPictureResDTOList = memberPictureResDTOList;
     }
 }

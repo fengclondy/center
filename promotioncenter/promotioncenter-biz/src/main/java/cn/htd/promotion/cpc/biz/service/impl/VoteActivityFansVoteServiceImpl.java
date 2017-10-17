@@ -1,9 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import cn.htd.promotion.cpc.biz.dao.VoteActivityDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberPictureDAO;
+import cn.htd.promotion.cpc.biz.dao.*;
 import cn.htd.promotion.cpc.biz.service.VoteActivityFansVoteService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +48,9 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
     private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
 
     @Resource
+    private VoteActivityFansForwardDAO voteActivityFansForwardDAO;
+
+    @Resource
     private VoteActivityMemberPictureDAO voteActivityMemberPictureDAO;
 
     private Logger logger = LoggerFactory.getLogger(VoteActivityFansVoteServiceImpl.class);
@@ -67,7 +68,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
                 executeResult.setResultMessage("校验成功");
                 return executeResult;
             } else {
-                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE.getCode());
                 executeResult.setResultMessage("您今天已经投过我了，谢谢您！");
                 return executeResult;
             }
@@ -91,7 +92,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
                 executeResult.setResultMessage("校验成功");
                 return executeResult;
             } else {
-                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM.getCode());
                 executeResult.setResultMessage("您今天已经达到每日可投票门店数上限，明天再来吧！");
                 return executeResult;
             }
@@ -143,12 +144,40 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberResDTOUpdate.setVoteMemberId(voteMemberId);
         voteActivityMemberResDTOUpdate.setMemberVoteLastTime(date);
         this.voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTOUpdate);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 
     @Override
-    public ExecuteResult<String> isShowVoteActivityByMemberCode(String memberCode) {
+    public ExecuteResult<String> forwardByFans(Long voteActivityId, String memberCode) {
+        logger.info("开始转发, 活动ID:{}, 会员店编码:{}", voteActivityId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
+        Date date = new Date();
+        // 根据voteActivityId和memberCode查询voteActivityMemberResDTO
+        VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteActivityId, memberCode);
+        if (voteActivityMemberResDTO == null) {
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
+            executeResult.setResultMessage("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
+            return executeResult;
+        }
+        // 在数据库记录投票
+        Long voteMemberId = voteActivityMemberResDTO.getVoteMemberId();
+        VoteActivityFansForwardResDTO record = new VoteActivityFansForwardResDTO();
+        record.setVoteMemberId(voteMemberId); // 关联某个会员店和活动
+        record.setCreateId(0L);
+        record.setCreateName("SYSYTEM");
+        record.setCreateTime(date);
+        record.setModifyId(0L);
+        record.setModifyName("SYSYTEM");
+        record.setModifyTime(date);
+        this.voteActivityFansForwardDAO.insert(record);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<Long> isShowVoteActivityByMemberCode(String memberCode) {
+        ExecuteResult<Long> executeResult = new ExecuteResult<>();
         // 有没有所处当前时间的投票活动
         VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectCurrentActivity();
         if (voteActivityResDTO != null) {
@@ -170,6 +199,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
                 return executeResult;
             } else {
                 executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setResult(voteId);
                 executeResult.setResultMessage("可以展示投票活动");
                 return executeResult;
             }
@@ -217,21 +247,23 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberVoteDetailDTO.setVoteActivityMemberPictureResDTOList(voteActivityMemberPictureResDTOList);
         // 获取投票排名top10
         List<VoteActivityMemberRankingDTO> voteActivityMemberRankingDTOList = new ArrayList<>();
-        List<HashMap<String, String>> rankingList = this.voteActivityMemberDAO.selectMemberRankingTop10(voteActivityId);
-        for (HashMap<String, String> hashMap : rankingList) {
+        List<HashMap<String, Object>> rankingList = this.voteActivityMemberDAO.selectMemberRankingTop10(voteActivityId);
+        for (HashMap<String, Object> hashMap : rankingList) {
             VoteActivityMemberRankingDTO voteActivityMemberRankingDTO = new VoteActivityMemberRankingDTO();
-            voteActivityMemberRankingDTO.setMemberName(hashMap.get("member_name"));
-            voteActivityMemberVoteDetailDTO.setRanking(Integer.valueOf(hashMap.get("rowNum")));
-            voteActivityMemberVoteDetailDTO.setVoteNum(Integer.valueOf(hashMap.get("voteNum")));
+            voteActivityMemberRankingDTO.setMemberName(String.valueOf(hashMap.get("member_name")));
+            voteActivityMemberRankingDTO.setRowNum(((Long) hashMap.get("rowNum")).intValue());
+            voteActivityMemberRankingDTO.setVotenum(((Long) hashMap.get("voteNum")).intValue());
             voteActivityMemberRankingDTOList.add(voteActivityMemberRankingDTO);
         }
+        voteActivityMemberVoteDetailDTO.setVoteActivityMemberRankingDTOList(voteActivityMemberRankingDTOList);
         // 获取当前会员店排名情况
-        HashMap<String, String> rankingByMemberCode = this.voteActivityMemberDAO.selectMemberRankingByMemberCode(voteActivityId, memberCode);
+        HashMap<String, Object> rankingByMemberCode = this.voteActivityMemberDAO.selectMemberRankingByMemberCode(voteActivityId, memberCode);
         if (rankingByMemberCode != null) {
-            voteActivityMemberVoteDetailDTO.setRanking(Integer.valueOf(rankingByMemberCode.get("rowNum")));
-            voteActivityMemberVoteDetailDTO.setVoteNum(Integer.valueOf(rankingByMemberCode.get("voteNum")));
+            voteActivityMemberVoteDetailDTO.setRanking(((Long) rankingByMemberCode.get("rowNum")).intValue());
+            voteActivityMemberVoteDetailDTO.setVoteNum(((Long) rankingByMemberCode.get("voteNum")).intValue());
         }
         executeResult.setResult(voteActivityMemberVoteDetailDTO);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 

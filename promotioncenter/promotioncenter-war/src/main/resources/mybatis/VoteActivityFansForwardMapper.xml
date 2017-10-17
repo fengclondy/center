@@ -4,7 +4,6 @@
   <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
     <id column="forward_fans_id" property="forwardFansId" jdbcType="BIGINT" />
     <result column="vote_member_id" property="voteMemberId" jdbcType="BIGINT" />
-    <result column="fans_id" property="fansId" jdbcType="BIGINT" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -13,7 +12,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    forward_fans_id, vote_member_id, fans_id, create_id, create_name, create_time, modify_id, 
+    forward_fans_id, vote_member_id, create_id, create_name, create_time, modify_id,
     modify_name, modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -27,11 +26,11 @@
     where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
-    insert into vote_activity_fans_forward (forward_fans_id, vote_member_id, fans_id, 
+    insert into vote_activity_fans_forward (vote_member_id,
       create_id, create_name, create_time, 
       modify_id, modify_name, modify_time
       )
-    values (#{forwardFansId,jdbcType=BIGINT}, #{voteMemberId,jdbcType=BIGINT}, #{fansId,jdbcType=BIGINT}, 
+    values (#{voteMemberId,jdbcType=BIGINT},
       #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
       )
@@ -44,9 +43,6 @@
       </if>
       <if test="voteMemberId != null" >
         vote_member_id,
-      </if>
-      <if test="fansId != null" >
-        fans_id,
       </if>
       <if test="createId != null" >
         create_id,
@@ -74,9 +70,6 @@
       <if test="voteMemberId != null" >
         #{voteMemberId,jdbcType=BIGINT},
       </if>
-      <if test="fansId != null" >
-        #{fansId,jdbcType=BIGINT},
-      </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
       </if>
@@ -103,9 +96,6 @@
       <if test="voteMemberId != null" >
         vote_member_id = #{voteMemberId,jdbcType=BIGINT},
       </if>
-      <if test="fansId != null" >
-        fans_id = #{fansId,jdbcType=BIGINT},
-      </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
       </if>
@@ -130,7 +120,6 @@
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
     update vote_activity_fans_forward
     set vote_member_id = #{voteMemberId,jdbcType=BIGINT},
-      fans_id = #{fansId,jdbcType=BIGINT},
       create_id = #{createId,jdbcType=BIGINT},
       create_name = #{createName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},

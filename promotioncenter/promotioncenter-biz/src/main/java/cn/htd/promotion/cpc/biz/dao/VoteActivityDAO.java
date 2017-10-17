@@ -32,7 +32,8 @@ public interface VoteActivityDAO {
      */
     VoteActivityResDTO selectCurrentActivity();
     
-    Long selectVoteActivityTotalCount();
+    Long selectVoteActivityTotalCount(@Param("voteActName") String voteActName,@Param("actStatus") String actStatus);
     
-    List<VoteActivityResDTO> selectPagedVoteActivity(@Param("start") int start,@Param("pageSize") int pageSize);
+    List<VoteActivityResDTO> selectPagedVoteActivity(@Param("start") int start,@Param("pageSize") int pageSize, @Param("voteActName")
+    		String voteActName,@Param("actStatus") String actStatus);
 }

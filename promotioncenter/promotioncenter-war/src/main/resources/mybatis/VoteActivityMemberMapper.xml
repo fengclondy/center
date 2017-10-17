@@ -294,7 +294,7 @@
 
   <select id="selectMemberRankingTop10" resultType="map">
     SELECT
-	  c.*, (@rownum :=@rownum + 1) AS rowNum
+	  c.*, cast((@rownum :=@rownum + 1) as signed) AS rowNum
     FROM
 	( <include refid="vote_ranking" /> )c,
     (SELECT @rownum := 0) r
@@ -305,7 +305,7 @@
     SELECT * FROM
     (
       SELECT
-      c.*, (@rownum :=@rownum + 1) AS rowNum
+      c.*, cast((@rownum :=@rownum + 1) as signed) AS rowNum
       FROM
       ( <include refid="vote_ranking" /> )c,
       (SELECT @rownum := 0) r
@@ -450,5 +450,23 @@ select
       ) temp2
       where voteMemberId=#{voteMemberId}
   </select>
+  
+  <insert id="batchInsertVoteActMember">
+    insert into vote_activity_member ( vote_id, member_code, 
+      member_name, vendor_name, contact_name, 
+      contact_phone, sign_status, audit_status,  
+      delete_flag, create_id, create_name, 
+      create_time, modify_id, modify_name, 
+      modify_time)
+    values 
+    <foreach collection="list" item="item"  separator=",">
+    ( #{item.voteId,jdbcType=BIGINT}, #{item.memberCode,jdbcType=VARCHAR}, 
+      #{item.memberName,jdbcType=VARCHAR}, #{item.vendorName,jdbcType=VARCHAR}, #{item.contactName,jdbcType=VARCHAR}, 
+      #{item.contactPhone,jdbcType=VARCHAR},0, 0, 
+      0, #{item.createId,jdbcType=BIGINT}, #{item.createName,jdbcType=VARCHAR}, 
+      NOW(), #{item.modifyId,jdbcType=BIGINT}, #{item.modifyName,jdbcType=VARCHAR}, 
+      NOW())
+    </foreach>
+  </insert>
   
 </mapper>

@@ -27,7 +27,7 @@ public class VoteActivityFansVoteApiImpl implements VoteActivityFansVoteApi {
 
     @Override
     public ExecuteResult<String> voteByFans(Long voteActivityId, Long fansId, String memberCode) {
-        logger.info("粉丝投票服务, 投票活动ID:{}, 粉丝ID:{}，日期：{}", voteActivityId, fansId);
+        logger.info("粉丝投票服务, 投票活动ID:{}, 粉丝ID:{}，会员店编码：{}", voteActivityId, fansId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
         try {
             Date date = new Date();
@@ -51,9 +51,24 @@ public class VoteActivityFansVoteApiImpl implements VoteActivityFansVoteApi {
     }
 
     @Override
-    public ExecuteResult<String> isShowVoteActivityByMemberCode(String memberCode) {
-        logger.info("校验进入汇掌柜是否展示投票活动, 会员编码：{}", memberCode);
+    public ExecuteResult<String> forwardByFans(Long voteActivityId, String memberCode) {
+        logger.info("粉丝转发服务, 投票活动ID:{}, 会员店编码：{}", voteActivityId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
+        try {
+            executeResult = this.voteActivityFansVoteService.forwardByFans(voteActivityId, memberCode);
+        } catch (Exception e) {
+            logger.error("粉丝转发服务出错, 投票活动ID:{}, 会员编码：{}", voteActivityId, memberCode, e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            executeResult.setErrorMessage(e.getMessage());
+        }
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<Long> isShowVoteActivityByMemberCode(String memberCode) {
+        logger.info("校验进入汇掌柜是否展示投票活动, 会员编码：{}", memberCode);
+        ExecuteResult<Long> executeResult = new ExecuteResult<>();
         try {
             executeResult = voteActivityFansVoteService.isShowVoteActivityByMemberCode(memberCode);
         } catch (Exception e) {
@@ -68,7 +83,15 @@ public class VoteActivityFansVoteApiImpl implements VoteActivityFansVoteApi {
     @Override
     public ExecuteResult<VoteActivityMemberVoteDetailDTO> getMemberVoteDetail(Long voteActivityId, String memberCode) {
         logger.info("查询会员店投票活动详情，活动ID:{}, 会员店编码:{}", voteActivityId, memberCode);
-        ExecuteResult<VoteActivityMemberVoteDetailDTO> executeResult = this.voteActivityFansVoteService.getMemberVoteDetail(voteActivityId, memberCode);
+        ExecuteResult<VoteActivityMemberVoteDetailDTO> executeResult = new ExecuteResult<>();
+        try {
+            executeResult = this.voteActivityFansVoteService.getMemberVoteDetail(voteActivityId, memberCode);
+        } catch (Exception e) {
+            logger.error("校验进入汇掌柜是否展示投票活动错粗, 会员编码：{}", memberCode, e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            executeResult.setErrorMessage(e.getMessage());
+        }
         return executeResult;
     }
 }

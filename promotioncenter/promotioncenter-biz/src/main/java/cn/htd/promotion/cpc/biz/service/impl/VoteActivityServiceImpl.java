@@ -24,6 +24,7 @@ import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 import com.google.common.collect.Lists;
@@ -117,15 +118,15 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page) {
+	public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus) {
 		ExecuteResult<DataGrid<VoteActivityListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityListResDTO>>();
 		DataGrid<VoteActivityListResDTO> dataGrid=new DataGrid<VoteActivityListResDTO>();
-		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount();
+		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount(voteActName,actStatus);
 		dataGrid.setTotal(totalCount);
 		if(totalCount==null||totalCount<=0){
 			List<VoteActivityListResDTO> resultList=Lists.newArrayList();
 			//查询分页数据
-			List<VoteActivityResDTO> voteActList=voteActivityDAO.selectPagedVoteActivity(page.getPageOffset(), page.getRows());
+			List<VoteActivityResDTO> voteActList=voteActivityDAO.selectPagedVoteActivity(page.getPageOffset(), page.getRows(), voteActName,actStatus);
 			if(CollectionUtils.isNotEmpty(voteActList)){
 				for(VoteActivityResDTO voteActResDTO:voteActList){
 					
@@ -220,5 +221,21 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		}
 		result.setResult(datagrid);
 		return result;
+	}
+
+
+	@Override
+	public ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(
+			Long voteMemberId) {
+		ExecuteResult<VoteActivityMemResDTO> resut=new ExecuteResult<VoteActivityMemResDTO>();
+		
+		if(voteMemberId==null||voteMemberId<=0){
+			resut.setErrorMessages(Lists.newArrayList("参数为空"));
+			return resut;
+		}
+		
+		VoteActivityMemResDTO voteActivityMemResDTO=voteActivityMemberDAO.querySignupMemberDetailInfo(voteMemberId);
+		resut.setResult(voteActivityMemResDTO);
+		return resut;
 	}
 }

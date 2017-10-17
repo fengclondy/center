@@ -27,7 +27,7 @@ public class VoteActivityFansVoteApiImpl implements VoteActivityFansVoteApi {
 
     @Override
     public ExecuteResult<String> voteByFans(Long voteActivityId, Long fansId, String memberCode) {
-        logger.info("粉丝投票服务, 投票活动ID:{}, 粉丝ID:{}，日期：{}", voteActivityId, fansId);
+        logger.info("粉丝投票服务, 投票活动ID:{}, 粉丝ID:{}，会员店编码：{}", voteActivityId, fansId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
         try {
             Date date = new Date();
@@ -43,6 +43,21 @@ public class VoteActivityFansVoteApiImpl implements VoteActivityFansVoteApi {
             executeResult = voteActivityFansVoteService.voteByFans(voteActivityId, fansId, memberCode);
         } catch (Exception e) {
             logger.error("粉丝投票服务出错, 投票活动ID:{}, 粉丝ID:{}, 会员编码：{}", voteActivityId, fansId, memberCode, e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            executeResult.setErrorMessage(e.getMessage());
+        }
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<String> forwardByFans(Long voteActivityId, String memberCode) {
+        logger.info("粉丝转发服务, 投票活动ID:{}, 会员店编码：{}", voteActivityId, memberCode);
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        try {
+            executeResult = this.voteActivityFansVoteService.forwardByFans(voteActivityId, memberCode);
+        } catch (Exception e) {
+            logger.error("粉丝转发服务出错, 投票活动ID:{}, 会员编码：{}", voteActivityId, memberCode, e);
             executeResult.setCode(ResultCodeEnum.ERROR.getCode());
             executeResult.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             executeResult.setErrorMessage(e.getMessage());

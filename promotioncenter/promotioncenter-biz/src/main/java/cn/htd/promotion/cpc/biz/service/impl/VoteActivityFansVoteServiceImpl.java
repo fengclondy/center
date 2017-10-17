@@ -1,9 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
-import cn.htd.promotion.cpc.biz.dao.VoteActivityDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberPictureDAO;
+import cn.htd.promotion.cpc.biz.dao.*;
 import cn.htd.promotion.cpc.biz.service.VoteActivityFansVoteService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -48,6 +45,9 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
 
     @Resource
     private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
+
+    @Resource
+    private VoteActivityFansForwardDAO voteActivityFansForwardDAO;
 
     @Resource
     private VoteActivityMemberPictureDAO voteActivityMemberPictureDAO;
@@ -143,6 +143,32 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberResDTOUpdate.setVoteMemberId(voteMemberId);
         voteActivityMemberResDTOUpdate.setMemberVoteLastTime(date);
         this.voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTOUpdate);
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<String> forwardByFans(Long voteActivityId, String memberCode) {
+        logger.info("开始转发, 活动ID:{}, 会员店编码:{}", voteActivityId, memberCode);
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        Date date = new Date();
+        // 根据voteActivityId和memberCode查询voteActivityMemberResDTO
+        VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteActivityId, memberCode);
+        if (voteActivityMemberResDTO == null) {
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
+            executeResult.setResultMessage("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
+            return executeResult;
+        }
+        // 在数据库记录投票
+        Long voteMemberId = voteActivityMemberResDTO.getVoteMemberId();
+        VoteActivityFansForwardResDTO record = new VoteActivityFansForwardResDTO();
+        record.setVoteMemberId(voteMemberId); // 关联某个会员店和活动
+        record.setCreateId(0L);
+        record.setCreateName("SYSYTEM");
+        record.setCreateTime(date);
+        record.setModifyId(0L);
+        record.setModifyName("SYSYTEM");
+        record.setModifyTime(date);
+        this.voteActivityFansForwardDAO.insert(record);
         return executeResult;
     }
 

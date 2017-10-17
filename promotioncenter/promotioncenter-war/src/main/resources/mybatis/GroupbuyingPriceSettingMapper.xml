@@ -9,6 +9,7 @@
     <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
     <result column="actor_count" property="actorCount" jdbcType="INTEGER" />
     <result column="groupbuying_price" property="groupbuyingPrice" jdbcType="DECIMAL" />
+    <result column="sort_num" property="sortNum" jdbcType="TINYINT" />
     <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
@@ -19,7 +20,7 @@
   </resultMap>
   
   <sql id="Base_Column_List" >
-    price_setting_id, promotion_id, item_id, sku_code, actor_count, groupbuying_price, 
+    price_setting_id, promotion_id, item_id, sku_code, actor_count, groupbuying_price, sort_num,
     delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
   
@@ -47,12 +48,12 @@
   
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO" >
     insert into groupbuying_price_setting (price_setting_id, promotion_id, item_id, 
-      sku_code, actor_count, groupbuying_price, 
+      sku_code, actor_count, groupbuying_price, sort_num,
       delete_flag, create_id, create_name, 
       create_time, modify_id, modify_name, 
       modify_time)
     values (#{priceSettingId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{itemId,jdbcType=BIGINT}, 
-      #{skuCode,jdbcType=VARCHAR}, #{actorCount,jdbcType=INTEGER}, #{groupbuyingPrice,jdbcType=DECIMAL}, 
+      #{skuCode,jdbcType=VARCHAR}, #{actorCount,jdbcType=INTEGER}, #{groupbuyingPrice,jdbcType=DECIMAL}, #{sortNum,jdbcType=TINYINT}, 
       #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
       #{modifyTime,jdbcType=TIMESTAMP})
@@ -78,6 +79,9 @@
       </if>
       <if test="groupbuyingPrice != null" >
         groupbuying_price,
+      </if>
+      <if test="sortNum != null" >
+        sort_num,
       </if>
       <if test="deleteFlag != null" >
         delete_flag,
@@ -120,6 +124,9 @@
       <if test="groupbuyingPrice != null" >
         #{groupbuyingPrice,jdbcType=DECIMAL},
       </if>
+      <if test="sortNum != null" >
+        #{sortNum,jdbcType=TINYINT},
+      </if>
       <if test="deleteFlag != null" >
         #{deleteFlag,jdbcType=TINYINT},
       </if>
@@ -159,6 +166,9 @@
       <if test="groupbuyingPrice != null" >
         groupbuying_price = #{groupbuyingPrice,jdbcType=DECIMAL},
       </if>
+      <if test="sortNum != null" >
+        sort_num = #{sortNum,jdbcType=TINYINT},
+      </if>
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=TINYINT},
       </if>
@@ -191,6 +201,7 @@
       sku_code = #{skuCode,jdbcType=VARCHAR},
       actor_count = #{actorCount,jdbcType=INTEGER},
       groupbuying_price = #{groupbuyingPrice,jdbcType=DECIMAL},
+      sort_num = #{sortNum,jdbcType=TINYINT},
       delete_flag = #{deleteFlag,jdbcType=TINYINT},
       create_id = #{createId,jdbcType=BIGINT},
       create_name = #{createName,jdbcType=VARCHAR},

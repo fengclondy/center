@@ -1,16 +1,22 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -40,11 +46,13 @@ import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 
 @Service("groupbuyingService")
@@ -455,16 +463,17 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
             String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
             
+            String groupbuyingPriceSettingStr = JSON.toJSONString(groupbuyingInfoCmplResDTO.getGroupbuyingPriceSettingResDTOList());
+            
             Map<String, String> resultMap = new HashMap<String, String>();
             String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
-            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,
-                    String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
-            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,
-                    String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING, groupbuyingPriceSettingStr);
             
             // 设置团购活动
             promotionCenterRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
-            // 设置团购活动具体数量
+            // 设置团购活动其他信息
             promotionCenterRedisDB.setHash(groupbuyingResultKey, resultMap);
             
             // 设置团购活动具体数量
@@ -500,6 +509,51 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         Date currentTime = calendar.getTime();
 
         try {
+        	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
+         	// 真实参团人数
+         	Integer realActorCount = promotionCenterRedisDB.incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
+        	 // 获取团购活动其他信息
+        	 Map<String, String> resultMap = promotionCenterRedisDB.getHashOperations(groupbuyingResultKey);
+//        	 Integer realActorCount22 = Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT));
+        	// 真实拼团价
+//        	BigDecimal realGroupbuyingPrice = new BigDecimal(String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE)));
+        	
+        	// 阶梯价格
+        	String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
+        	List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = JSONObject.parseArray(groupbuyingPriceSettingStr,GroupbuyingPriceSettingResDTO.class);
+
+        	// 团购价格设置降序排序(sortNum)
+        	Collections.sort(groupbuyingPriceSettingResDTOList, new Comparator<GroupbuyingPriceSettingResDTO>(){
+				@Override
+				public int compare(GroupbuyingPriceSettingResDTO o1,GroupbuyingPriceSettingResDTO o2) {
+					//默认为升序
+					//o1.getSortNum().compareTo(o2.getSortNum())
+					return o2.getSortNum().compareTo(o1.getSortNum());
+				}
+        	});
+        	
+        	// 真实拼团价
+        	BigDecimal realGroupbuyingPrice = null;
+        	for(int i = 0;i<groupbuyingPriceSettingResDTOList.size();i++){
+        		GroupbuyingPriceSettingResDTO groupbuyingPriceSettingResDTO = groupbuyingPriceSettingResDTOList.get(i);
+        		Integer actorCount = groupbuyingPriceSettingResDTO.getActorCount();// 参团人数
+        		if(realActorCount >= actorCount){
+        			realGroupbuyingPrice = groupbuyingPriceSettingResDTO.getGroupbuyingPrice();// 拼团价
+        			break;
+        		}
+        	}
+        	// redis设置真实拼团价
+        	promotionCenterRedisDB.setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
+
+        	// 修改团购活动信息
+        	GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
+        	groupbuyingInfoReqDTO.setPromotionId(groupbuyingRecordReqDTO.getPromotionId());
+        	groupbuyingInfoReqDTO.setRealActorCount(realActorCount);// 真实参团人数
+        	groupbuyingInfoReqDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);// 真实拼团价
+        	groupbuyingInfoReqDTO.setModifyTime(currentTime);
+        	groupbuyingInfoDAO.updateGroupbuyingInfo(groupbuyingInfoReqDTO);
+        	
+        	// 添加参团记录
         	groupbuyingRecordReqDTO.setDeleteFlag(Boolean.FALSE);
         	groupbuyingRecordReqDTO.setCreateTime(currentTime);
         	groupbuyingRecordReqDTO.setModifyTime(currentTime);

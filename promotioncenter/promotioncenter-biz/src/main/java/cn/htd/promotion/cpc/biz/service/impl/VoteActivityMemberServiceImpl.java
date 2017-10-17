@@ -6,9 +6,12 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+
 /***
  * 会员店投票活动报名Service实现类
  */
+@Service("voteActivityMemberService")
 public class VoteActivityMemberServiceImpl implements VoteActivityMemberService{
 
     @Resource

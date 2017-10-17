@@ -5,15 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -34,7 +31,7 @@ import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
+import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
@@ -71,9 +68,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     private PromotionConfigureDAO promotionConfigureDAO;
 
     @Resource
-    private PromotionRedisDB promotionRedisDB;
-
-    @Resource
     private DictionaryUtils dictionary;
     
     @Resource
@@ -90,6 +84,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     
     @Resource
     private KeyGeneratorUtils keyGeneratorUtils;
+    
+    @Resource
+    private PromotionCenterRedisDB promotionCenterRedisDB;
     
 
     @Override
@@ -466,11 +463,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
                     String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
             
             // 设置团购活动
-            promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+            promotionCenterRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
             // 设置团购活动具体数量
-            promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
-            
-//            System.out.println("setGroupbuyingInfoCmpl2Redis = end");
+            promotionCenterRedisDB.setHash(groupbuyingResultKey, resultMap);
             
             // 设置团购活动具体数量
 //          this.addGroupbuyingInfoResult2Redis(groupbuyingInfoCmplResDTO);

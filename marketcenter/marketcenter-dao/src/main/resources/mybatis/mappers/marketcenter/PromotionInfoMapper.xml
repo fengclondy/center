@@ -363,4 +363,19 @@
     and <![CDATA[ status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
     and <![CDATA[ now() < invalid_time ]]>
   </select>
+  
+  <select id="queryPromotionInfoByParam" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+	from promotion_info
+	where b2c_activity_code = #{b2cActivityCode, jdbcType=VARCHAR}
+	<if test="statusList != null">
+		<foreach collection="statusList" item="status"
+			open=" and status in(" close=")" separator=",">
+			#{status}
+		</foreach>
+	</if>
+	and show_status = #{showStatus, jdbcType=VARCHAR}
+  </select>
 </mapper>

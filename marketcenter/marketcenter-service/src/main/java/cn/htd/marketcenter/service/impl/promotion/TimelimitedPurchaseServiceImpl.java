@@ -161,7 +161,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
 			searchConditionDTO.setSkuCode(conditionDTO.getSkuCode());
 			searchConditionDTO.setSkuName(conditionDTO.getSkuName());
-			searchConditionDTO.setStatus(conditionDTO.getStatus());
+			searchConditionDTO.setShowStatus(conditionDTO.getStatus());
 			searchConditionDTO.setPromotionProviderSellerCode(conditionDTO.getSelleCode());
 			searchConditionDTO.setDeleteStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 					DictionaryConst.OPT_PROMOTION_STATUS_DELETE));

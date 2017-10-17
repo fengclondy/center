@@ -23,4 +23,13 @@ public class VoteActivityMemberServiceImpl implements VoteActivityMemberService{
     public VoteActivityMemberResDTO selectByVoteIdAndMemberCode(Long voteId, String memberCode){
         return voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteId,memberCode);
     }
+
+    /***
+     * 根据主键修改会员店投票活动报名信息
+     * @param voteActivityMemberResDTO
+     * @return
+     */
+    public int updateByPrimaryKeySelective(VoteActivityMemberResDTO voteActivityMemberResDTO){
+        return voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTO);
+    }
 }

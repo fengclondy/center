@@ -1009,7 +1009,10 @@ public class TimelimitedRedisHandle {
 		int realRemainCount = 0;
         resultMap = marketRedisDB.getHashOperations(timelimitedResultKey);
         if (resultMap != null) {
-            realRemainCount = Integer.valueOf(resultMap.get(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT + "_" + skuCode));
+        	String resultCount = resultMap.get(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT + "_" + skuCode);
+        	if(StringUtils.isNotEmpty(resultCount)){
+                realRemainCount = Integer.valueOf(resultCount);
+        	}
         }
 		return realRemainCount;
 	}

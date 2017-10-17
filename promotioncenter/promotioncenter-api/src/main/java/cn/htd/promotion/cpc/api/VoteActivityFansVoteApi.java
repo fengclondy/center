@@ -33,7 +33,7 @@ public interface VoteActivityFansVoteApi {
      * @param memberCode 会员店编码
      * @return 是否展示投票活动
      */
-    ExecuteResult<String> isShowVoteActivityByMemberCode(String memberCode);
+    ExecuteResult<Long> isShowVoteActivityByMemberCode(String memberCode);
 
     /**
      * 获取会员店投票详情

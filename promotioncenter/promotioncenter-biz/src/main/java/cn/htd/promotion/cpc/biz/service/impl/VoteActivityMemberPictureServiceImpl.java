@@ -4,6 +4,7 @@ import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberPictureDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityMemberPictureService;
 import cn.htd.promotion.cpc.common.util.NUtils;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberPictureResDTO;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 /***
  * 会员店投票活动报名图片相关Service
  */
+@Service
 public class VoteActivityMemberPictureServiceImpl implements VoteActivityMemberPictureService{
 
     @Resource

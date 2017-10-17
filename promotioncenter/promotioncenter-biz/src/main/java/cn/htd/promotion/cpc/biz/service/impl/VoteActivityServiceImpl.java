@@ -21,7 +21,9 @@ import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityService;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 import com.google.common.collect.Lists;
@@ -198,4 +200,25 @@ public class VoteActivityServiceImpl implements VoteActivityService{
     public VoteActivityResDTO selectCurrentActivity(){
         return voteActivityDAO.selectCurrentActivity();
     }
+
+
+	@Override
+	public ExecuteResult<DataGrid<VoteActivityMemListResDTO>> queryPagedVoteActivityMemberList(
+			Pager page, VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
+		ExecuteResult<DataGrid<VoteActivityMemListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityMemListResDTO>>();
+		DataGrid<VoteActivityMemListResDTO> datagrid=new DataGrid<VoteActivityMemListResDTO>();
+		if(page==null||voteActivityMemListReqDTO==null){
+			result.setErrorMessages(Lists.newArrayList("参数为空"));
+		}
+		voteActivityMemListReqDTO.setPageSize(page.getRows());
+		voteActivityMemListReqDTO.setStart(page.getPageOffset());
+		
+		Long totalCount=voteActivityMemberDAO.queryTotalSignupMemberInfo(voteActivityMemListReqDTO);
+		if(totalCount!=null&&totalCount>0){
+			List<VoteActivityMemListResDTO>  resultList=voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
+			datagrid.setRows(resultList);
+		}
+		result.setResult(datagrid);
+		return result;
+	}
 }

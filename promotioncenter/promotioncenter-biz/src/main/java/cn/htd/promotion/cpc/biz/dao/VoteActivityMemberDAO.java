@@ -6,6 +6,9 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
 public interface VoteActivityMemberDAO {
@@ -35,5 +38,11 @@ public interface VoteActivityMemberDAO {
     HashMap<String, String> selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
     
     List<Map> querySignupMemberCount(@Param("voteId") Long voteId);
+    
+    Long queryTotalSignupMemberInfo(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+    
+    List<VoteActivityMemListResDTO> queryPagedSignupMemberInfoList(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+    
+    VoteActivityMemResDTO querySignupMemberDetailInfo(Long voteMemberId);
 
 }

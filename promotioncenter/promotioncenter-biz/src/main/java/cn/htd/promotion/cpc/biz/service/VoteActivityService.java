@@ -3,7 +3,9 @@ package cn.htd.promotion.cpc.biz.service;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 /**
@@ -39,5 +41,16 @@ public interface VoteActivityService {
 	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page);
 	
 	VoteActivityResDTO selectCurrentActivity();
+	
+	/**
+	 * 查看投票列表详细
+	 * 
+	 * @param page
+	 * @param voteActivityMemListReqDTO
+	 * @return
+	 */
+	ExecuteResult<DataGrid<VoteActivityMemListResDTO>> queryPagedVoteActivityMemberList(Pager page,VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+	
+	
 	
 }

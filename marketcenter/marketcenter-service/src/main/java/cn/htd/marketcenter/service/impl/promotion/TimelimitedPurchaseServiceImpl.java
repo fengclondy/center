@@ -130,9 +130,12 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
     private void checkTimelimitedDuringRepeat(TimelimitedInfoDTO timelimitedInfo) throws MarketCenterBusinessException {
         List<PromotionInfoDTO> promotionList = null;
         TimelimitedCheckInfo condition = new TimelimitedCheckInfo();
-        PromotionInfoDTO promotionInfo = null;
-        String errorMsg = "";
-        condition.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+        List<String> promotionTypeList = new ArrayList<String>();
+        String  promotionTypePurchase= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        String  promotionTypeTimelited= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        promotionTypeList.add(promotionTypePurchase);
+        promotionTypeList.add(promotionTypeTimelited);
+        condition.setPromotionTypeList(promotionTypeList);
         condition.setDeleteStatus(dictionary .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
     	List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo.getPromotionAccumulatyList();
 		if (accumulatyList.size() > 0) {
@@ -147,8 +150,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			}
 		}
         if(promotionList != null && !promotionList.isEmpty()) {
-            promotionInfo = promotionList.get(0);
-            errorMsg = promotionInfo.getPromotionName();
             throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT, " 该商品存在未结束的限时购活动!");
          } 
        }

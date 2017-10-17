@@ -1,5 +1,7 @@
 package cn.htd.marketcenter.domain;
 
+import java.util.List;
+
 /**
  * 秒杀订单数据
  */
@@ -21,6 +23,11 @@ public class TimelimitedCheckInfo {
 	 * 秒杀活动展示状态
 	 */
 	private String showStatus;
+	
+	/**
+	 * 促销活动类型
+	 */
+	private List<String> promotionTypeList;
 
 	public String getPromotionType() {
 		return promotionType;
@@ -52,6 +59,14 @@ public class TimelimitedCheckInfo {
 
 	public void setShowStatus(String showStatus) {
 		this.showStatus = showStatus;
+	}
+
+	public List<String> getPromotionTypeList() {
+		return promotionTypeList;
+	}
+
+	public void setPromotionTypeList(List<String> promotionTypeList) {
+		this.promotionTypeList = promotionTypeList;
 	}
 	
 }

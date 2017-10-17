@@ -1017,4 +1017,28 @@ public class TimelimitedRedisHandle {
 		return realRemainCount;
 	}
 
+    /**
+     * 查询Redis限时购活动展示结果信息
+     * @author li.jun
+     * @time 2017-10-17
+     * @param promotionId
+     * @return
+     */
+    public TimelimitedResultDTO getRedisTimelimitedPurchaseResult(String promotionId,String skuCode) throws MarketCenterBusinessException {
+        Map<String, String> resultMap = null;
+        TimelimitedResultDTO resultDTO = null;
+        String timelimitedResultKey = RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId;
+        resultMap = marketRedisDB.getHashOperations(timelimitedResultKey);
+        if (resultMap == null || resultMap.isEmpty()) {
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_RESULT_NOT_EXIST,"该秒杀活动的结果数据不存在!");
+        }
+        resultDTO = new TimelimitedResultDTO();
+        resultDTO.setPromotionId(promotionId);
+        resultDTO.setTotalSkuCount(Integer.valueOf(resultMap.get(RedisConst.REDIS_TIMELIMITED_TOTAL_COUNT + "_" + skuCode)));
+        resultDTO.setShowRemainSkuCount(Integer.valueOf(resultMap.get(RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT + "_" + skuCode)));
+        resultDTO.setRealRemainSkuCount(Integer.valueOf(resultMap.get(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT + "_" + skuCode)));
+        return resultDTO;
+    }
+
+	
 }

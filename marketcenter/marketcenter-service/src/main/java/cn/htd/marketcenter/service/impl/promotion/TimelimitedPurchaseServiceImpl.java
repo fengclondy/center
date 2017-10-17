@@ -36,6 +36,7 @@ import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedListDTO;
+import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.TimelimitedPurchaseService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
@@ -217,6 +218,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		 ExecuteResult<PromotionInfoDTO> result = new ExecuteResult<PromotionInfoDTO>();
 		 PromotionInfoDTO promotionInfoDTO = null;
 		 List<TimelimitedInfoDTO> timelimitedInfoDTO = null;
+		 TimelimitedResultDTO timelimitedResultDTO = null;
 			try {
 				promotionInfoDTO = promotionInfoDAO.queryById(promotionId);
 				if (promotionInfoDTO == null) {
@@ -226,6 +228,10 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 				timelimitedInfoDTO = timelimitedInfoDAO.queryTimelimitedInfoByPromotionId(promotionId);
 				if (timelimitedInfoDTO == null) {
 					throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该限时购活动不存在!");
+				}
+				for(TimelimitedInfoDTO timelimitedInfo: timelimitedInfoDTO){
+					timelimitedResultDTO = timelimitedRedisHandle.getRedisTimelimitedPurchaseResult(promotionId, timelimitedInfo.getSkuCode());
+					timelimitedInfo.setTimelimitedResult(timelimitedResultDTO);
 				}
 				promotionInfoDTO.setPromotionAccumulatyList(timelimitedInfoDTO);
 				result.setResult(promotionInfoDTO);

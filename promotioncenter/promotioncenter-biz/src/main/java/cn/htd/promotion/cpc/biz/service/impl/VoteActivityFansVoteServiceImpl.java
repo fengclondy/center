@@ -144,6 +144,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberResDTOUpdate.setVoteMemberId(voteMemberId);
         voteActivityMemberResDTOUpdate.setMemberVoteLastTime(date);
         this.voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTOUpdate);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 
@@ -170,6 +171,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         record.setModifyName("SYSYTEM");
         record.setModifyTime(date);
         this.voteActivityFansForwardDAO.insert(record);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 
@@ -261,6 +263,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             voteActivityMemberVoteDetailDTO.setVoteNum(((Long) rankingByMemberCode.get("voteNum")).intValue());
         }
         executeResult.setResult(voteActivityMemberVoteDetailDTO);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 

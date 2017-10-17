@@ -171,6 +171,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         List<TimelimitedInfoDTO> timelimitedInfoList = null;
         String skuCode = "";
         boolean hasTimelimitedSkuFlg = false;
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        boolean hasOtherPromotionFlg = false;
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
 
         for (OrderInfoDTO orderInfoDTO : orderList) {
             productsList = orderInfoDTO.getOrderItemList();
@@ -202,23 +205,23 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                             .equals(timelimitedInfo.getPromotionType())) {
                         hasTimelimitedSkuFlg = true;
                         tmpProductDTO.setHasTimelimitedFlag(true);
-                    } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&"
-                            + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT)
-                            .equals(timelimitedInfo.getPromotionType())) {
+                    } else {
                         if ((new Date()).before(timelimitedInfo.getEffectiveTime())) {
                             continue;
                         }
+                        hasOtherPromotionFlg = true;
                     }
-                    tmpProductDTO.setPromotionType(timelimitedInfo.getPromotionType());
-                    tmpProductDTO.setPromotionId(timelimitedInfo.getPromotionId());
-                    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
                     tmpProductDTO.setTimelimitedInfo(timelimitedInfo);
+                    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
                 }
                 logger.info("***********校验购物车中是否有秒杀商品 messageId:[{}],商品skuCode:[{}],参加秒杀活动PromotionId:[{}]***********",
                         messageId, skuCode, timelimitedInfo.getPromotionId());
             }
         }
         cart.setHasTimelimitedProduct(hasTimelimitedSkuFlg);
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        cart.setHasPromotionFlag(hasOtherPromotionFlg);
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         long endTime = System.currentTimeMillis();
         logger.info("***********校验购物车中是否有秒杀商品 messageId:[{}],是否存在参加秒杀活动商品:[{}] 结束|调用耗时[{}]ms***********", messageId,
                 hasTimelimitedSkuFlg, (endTime - startTime));
@@ -445,62 +448,89 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                         validateResult.getErrorMsg());
             }
             promotionType = cart.getPromotionType();
-            if (StringUtils.isEmpty(promotionType)) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不能为空");
-            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            if (StringUtils.isEmpty(promotionType)) {
+//                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不能为空");
+//            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             if (orderList.isEmpty()) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "订单信息不能为空");
             }
 
-            for (Entry<String, String> entry : dictMap.entrySet()) {
-                key = entry.getKey();
-                value = entry.getValue();
-                if (key.startsWith(DictionaryConst.TYPE_PROMOTION_TYPE) && value.equals(promotionType)) {
-                    isValidPromotionType = true;
-                    break;
-                }
-            }
-            if (!isValidPromotionType) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不正确");
-            }
-            // 秒杀活动时
-            if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                    .equals(promotionType)) {
-                if (orderList.size() > 1) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
-                }
-                if (StringUtils.isEmpty(cart.getPromotionId())) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加秒杀活动编号不能为空");
-                }
-                // 使用优惠券时
-            } else if (dictMap
-                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
-                    .equals(promotionType)) {
-                if (cart.getCouponCodeList() == null || cart.getCouponCodeList().isEmpty()) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "使用优惠券时优惠券编码不能为空");
-                }
-            }
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
             for (OrderInfoDTO productsDTO : orderList) {
                 productsList = productsDTO.getOrderItemList();
-                if (productsList.isEmpty()) {
+                if (productsList == null || productsList.isEmpty()) {
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "购买商品不能为空");
                 }
+            }
+            if (!StringUtils.isEmpty(promotionType)) {
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+                for (Entry<String, String> entry : dictMap.entrySet()) {
+                    key = entry.getKey();
+                    value = entry.getValue();
+                    if (key.startsWith(DictionaryConst.TYPE_PROMOTION_TYPE) && value.equals(promotionType)) {
+                        isValidPromotionType = true;
+                        break;
+                    }
+                }
+                if (!isValidPromotionType) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不正确");
+                }
+
                 // 秒杀活动时
-                if (dictMap
-                        .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                        .equals(promotionType) && productsList.size() > 1) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+                if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+                        .equals(promotionType)) {
+                    if (orderList.size() > 1) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+                    }
+                    //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+                    productsList = orderList.get(0).getOrderItemList();
+                    if (productsList.size() > 1) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+                    }
+                    //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+                    if (StringUtils.isEmpty(cart.getPromotionId())) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加秒杀活动编号不能为空");
+                    }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
                 }
             }
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
+//                // 使用优惠券时
+//            } else if (dictMap
+//                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
+//                    .equals(promotionType)) {
+//                if (cart.getCouponCodeList() == null || cart.getCouponCodeList().isEmpty()) {
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "使用优惠券时优惠券编码不能为空");
+//                }
+//            }
+//            for (OrderInfoDTO productsDTO : orderList) {
+//                productsList = productsDTO.getOrderItemList();
+//                if (productsList.isEmpty()) {
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "购买商品不能为空");
+//                }
+//                // 秒杀活动时
+//                if (dictMap
+//                        .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+//                        .equals(promotionType) && productsList.size() > 1) {
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+//                }
+//            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             // 秒杀活动时
             if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
                     .equals(promotionType)) {
                 logger.info("***********计算优惠券分摊或取得秒杀价格 messageId:[{}] 进入秒杀计算***********", messageId);
                 cart = calculateTimelimitedDiscount(messageId, cart.getPromotionId(), cart, dictMap);
                 // 使用优惠券时
-            } else if (dictMap
-                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
-                    .equals(promotionType)) {
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            } else if (dictMap
+//                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
+//                    .equals(promotionType)) {
+            } else {
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
                 logger.info("***********计算优惠券分摊或取得秒杀价格 messageId:[{}] 进入优惠券分摊计算***********", messageId);
                 couponCodeList = cart.getCouponCodeList();
                 cart = calculateCouponDiscount(messageId, couponCodeList, cart, dictMap);
@@ -593,7 +623,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         OrderItemCouponDTO unavaliableCoupon = null;
         try {
             // 校验购物车商品是否有秒杀商品
-            validateTimelimitedProducts(messageId, cart);
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            validateTimelimitedProducts(messageId, cart);
+            validateTimelimitedProducts(messageId, cart, dictMap);
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             if (cart.isHasTimelimitedProduct()) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.HAS_TIMELIMITED_SKU, "订单中有参加秒杀活动的商品");
             }
@@ -1032,6 +1065,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             SellerProductInfo sellerProductInfo = null;
 
             for (OrderItemInfoDTO productDTO : productsList) {
+                //----- add by jiangkun for 2017双12活动限时购 on 20171016 start -----
+                if (productDTO.getTimelimitedInfo() != null) {
+                    continue;
+                }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171016 end -----
                 if (BigDecimal.ZERO.compareTo(productDTO.getOrderItemTotal()) >= 0) {
                     continue;
                 }

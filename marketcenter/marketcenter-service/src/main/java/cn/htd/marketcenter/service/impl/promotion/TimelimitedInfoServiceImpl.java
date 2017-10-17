@@ -149,7 +149,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true,promotionType);
+            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true, promotionType);
             if (promotionIdList != null && !promotionIdList.isEmpty()) {
                 for (String promotionId : promotionIdList) {
                     try {
@@ -293,9 +293,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
             timelimitedInfoDTO.setPromotionAccumulaty(accuDTO);
             // 获取秒杀活动结果信息
-            timelimitedResultDTO =
-                    timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO.getPromotionId());
-            timelimitedInfoDTO.setTimelimitedResult(timelimitedResultDTO);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            timelimitedResultDTO =
+//                    timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO.getPromotionId());
+//            timelimitedInfoDTO.setTimelimitedResult(timelimitedResultDTO);
+            timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
             timelimitedInfoDTO.setPromotionStatusHistoryList(historyList);
             result.setResult(timelimitedInfoDTO);

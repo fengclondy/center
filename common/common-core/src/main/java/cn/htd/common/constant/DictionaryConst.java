@@ -859,5 +859,7 @@ public class DictionaryConst {
     public static final String OPT_PROMOTION_PRICTURE_TYPE_BACKGROUD = "PROMOTION_PRICTURE_TYPE_BACKGROUD";
     //字典信息-促销活动类型-红包雨
     public static final String OPT_PROMOTION_TYPE_RED_ENVELOPER_RAIN = "PROMOTION_TYPE_RED_ENVELOPER_RAIN";
+    //字典信息-商品价格类型-限时价
+    public static final String OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT = "SKU_PRICE_TYPE_LIMITED_DISCOUNT";
     //******************* add by jiangkun on 20170917 for PromotionCenter End *********************
 }

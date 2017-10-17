@@ -6,6 +6,7 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 /**
@@ -50,6 +51,14 @@ public interface VoteActivityService {
 	 * @return
 	 */
 	ExecuteResult<DataGrid<VoteActivityMemListResDTO>> queryPagedVoteActivityMemberList(Pager page,VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+	
+	/**
+	 * 查询投票会员详细
+	 * 
+	 * @param voteMemberId
+	 * @return
+	 */
+	ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteMemberId);
 	
 	
 	

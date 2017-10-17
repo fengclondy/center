@@ -5,12 +5,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -23,7 +26,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
-import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
+import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -80,7 +83,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
     
     @Resource
-	private PromotionTimelimitedRedisHandle promotionTimelimitedRedisHandle;
+	private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
     
     @Resource
     private PromotionInfoDAO promotionInfoDAO;

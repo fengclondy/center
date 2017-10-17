@@ -294,7 +294,7 @@
 
   <select id="selectMemberRankingTop10" resultType="map">
     SELECT
-	  c.*, (@rownum :=@rownum + 1) AS rowNum
+	  c.*, cast((@rownum :=@rownum + 1) as signed) AS rowNum
     FROM
 	( <include refid="vote_ranking" /> )c,
     (SELECT @rownum := 0) r
@@ -305,7 +305,7 @@
     SELECT * FROM
     (
       SELECT
-      c.*, (@rownum :=@rownum + 1) AS rowNum
+      c.*, cast((@rownum :=@rownum + 1) as signed) AS rowNum
       FROM
       ( <include refid="vote_ranking" /> )c,
       (SELECT @rownum := 0) r

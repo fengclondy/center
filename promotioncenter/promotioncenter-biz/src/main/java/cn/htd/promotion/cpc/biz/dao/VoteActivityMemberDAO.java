@@ -32,10 +32,10 @@ public interface VoteActivityMemberDAO {
     // memberCode 会员店编码
     // memberName 会员店名称
     // votenum 得票数
-    List<HashMap<String, String>> selectMemberRankingTop10(@Param("voteId") Long voteId);
+    List<HashMap<String, Object>> selectMemberRankingTop10(@Param("voteId") Long voteId);
 
     // 根据活动ID，会员店编码获取当前会员店的投票排情况
-    HashMap<String, String> selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
+    HashMap<String, Object> selectMemberRankingByMemberCode(@Param("voteId") Long voteId, @Param("memberCode") String memberCode);
     
     List<Map> querySignupMemberCount(@Param("voteId") Long voteId);
     

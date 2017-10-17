@@ -21,7 +21,7 @@ import cn.htd.common.util.DateUtils;
  * @date 2015年9月1日 下午11:43:02
  * @version V1.0
  **/
-@Component("cpcgeneratorUtils")
+@Component("generatorUtils")
 public class GeneratorUtils {
 	// Redis促销活动编码数据
 	private static final String REDIS_PROMOTION_ID_KEY = "B2B_MIDDLE_PROMOTIONID_PSB_SEQ";

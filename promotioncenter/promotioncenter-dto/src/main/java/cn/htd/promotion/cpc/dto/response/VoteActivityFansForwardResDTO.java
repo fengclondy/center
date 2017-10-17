@@ -14,8 +14,6 @@ public class VoteActivityFansForwardResDTO implements Serializable{
 
     private Long voteMemberId;
 
-    private Long fansId;
-
     private Long createId;
 
     private String createName;
@@ -42,14 +40,6 @@ public class VoteActivityFansForwardResDTO implements Serializable{
 
     public void setVoteMemberId(Long voteMemberId) {
         this.voteMemberId = voteMemberId;
-    }
-
-    public Long getFansId() {
-        return fansId;
-    }
-
-    public void setFansId(Long fansId) {
-        this.fansId = fansId;
     }
 
     public Long getCreateId() {

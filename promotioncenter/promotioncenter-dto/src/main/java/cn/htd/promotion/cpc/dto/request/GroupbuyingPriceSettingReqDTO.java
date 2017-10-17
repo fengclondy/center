@@ -23,6 +23,8 @@ public class GroupbuyingPriceSettingReqDTO implements Serializable {
 	private Integer actorCount;
 	// 拼团价
 	private BigDecimal groupbuyingPrice;
+	// 排序号,从1开始
+	private Integer sortNum;
 	// 删除标记
 	private Boolean deleteFlag;
 	// 创建人ID
@@ -141,5 +143,15 @@ public class GroupbuyingPriceSettingReqDTO implements Serializable {
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
 	}
+
+	public Integer getSortNum() {
+		return sortNum;
+	}
+
+	public void setSortNum(Integer sortNum) {
+		this.sortNum = sortNum;
+	}
+	
+	
 
 }

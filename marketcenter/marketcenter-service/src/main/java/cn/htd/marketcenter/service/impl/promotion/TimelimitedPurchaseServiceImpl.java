@@ -480,10 +480,13 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
             if (promotionInfoDTO == null) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "限时购活动不存在");
             }
-            if (!(new Date()).before(promotionInfoDTO.getEffectiveTime()) || !status
-                    .equals(promotionInfoDTO.getShowStatus())) {
+            if (!status.equals(promotionInfoDTO.getShowStatus())) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
                         "限时购活动:" + promotionId + " 只有在未启用状态时才能修改");
+            }
+            if (!(new Date()).before(promotionInfoDTO.getEffectiveTime())) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
+                        "限时购活动:" + promotionId + " 只有未开始的活动才能修改");
             }
             modifyTimeStr = DateUtils.format(promotionInfoDTO.getModifyTime(), DateUtils.YMDHMS);
             if (!modifyTimeStr.equals(paramModifyTimeStr)) {

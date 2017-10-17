@@ -26,11 +26,11 @@
     where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
-    insert into vote_activity_fans_forward (forward_fans_id, vote_member_id,
+    insert into vote_activity_fans_forward (vote_member_id,
       create_id, create_name, create_time, 
       modify_id, modify_name, modify_time
       )
-    values (#{forwardFansId,jdbcType=BIGINT}, #{voteMemberId,jdbcType=BIGINT},
+    values (#{voteMemberId,jdbcType=BIGINT},
       #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
       )

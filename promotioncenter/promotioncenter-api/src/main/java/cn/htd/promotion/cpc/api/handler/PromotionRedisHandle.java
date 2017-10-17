@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 
-@Service("cpcPromotionRedisHandle")
+@Service("promotionRedisHandle")
 public class PromotionRedisHandle {
 
     protected static transient Logger logger = LoggerFactory.getLogger(PromotionRedisHandle.class);

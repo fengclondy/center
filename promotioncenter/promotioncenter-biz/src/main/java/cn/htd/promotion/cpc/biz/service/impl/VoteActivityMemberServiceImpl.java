@@ -1,10 +1,11 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import javax.annotation.Resource;
+
 import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityMemberService;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
-
-import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 import org.springframework.stereotype.Service;
 

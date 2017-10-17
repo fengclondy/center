@@ -13,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+
 import cn.htd.basecenter.dto.SendSmsDTO;
 import cn.htd.basecenter.dto.TransactionRelationDTO;
 import cn.htd.basecenter.service.SendSmsEmailService;
@@ -28,11 +32,9 @@ import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.common.constant.StaticProperty;
-import cn.htd.membercenter.common.exception.MemberCenterException;
 import cn.htd.membercenter.common.util.HttpUtils;
 import cn.htd.membercenter.common.util.ValidateResult;
 import cn.htd.membercenter.common.util.ValidationUtils;
-import cn.htd.membercenter.costs.MemberCenterCodeConst;
 import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
@@ -97,10 +99,6 @@ import cn.htd.usercenter.dto.CustomerDTO;
 import cn.htd.usercenter.dto.UserDTO;
 import cn.htd.usercenter.service.CustomerService;
 import cn.htd.usercenter.service.UserExportService;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 
 @Service("memberBaseInfoService")
 public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
@@ -3200,6 +3198,48 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 				result.setCode(ErrorCodes.E00001.name());
 			}
 			return result;
+		}
+
+		@Override
+		public ExecuteResult<MemberDetailInfo> getMemberDetailByIdForLogin(Long id) {
+			ExecuteResult<MemberDetailInfo> rs = new ExecuteResult<MemberDetailInfo>();
+			MemberDetailInfo memberDetailInfo = new MemberDetailInfo();
+			try {
+				MemberBaseInfoDTO memberBaseInfoDTO = memberBaseOperationDAO.getMemberbaseById(id, GlobalConstant.IS_BUYER);// 查询会员基本信息
+				if (memberBaseInfoDTO == null) {
+					rs.setResultMessage("fail");
+					rs.addErrorMessage("查询不到会员信息");
+					return rs;
+				}
+
+				memberDetailInfo.setMemberBaseInfoDTO(memberBaseInfoDTO);
+				rs.setResultMessage("success");
+			} catch (Exception e) {
+				rs.setResultMessage("fail");
+				rs.addErrorMessage("查询异常");
+				logger.error("MemberBaseInfoServiceImpl----->getMemberDetailById=" + e);
+			}
+			rs.setResult(memberDetailInfo);
+			return rs;
+		}
+
+		@Override
+		public ExecuteResult<MemberDetailInfo> getMemberDetailBySellerIdForLogin(Long id) {
+			ExecuteResult<MemberDetailInfo> rs = new ExecuteResult<MemberDetailInfo>();
+			MemberDetailInfo memberDetailInfo = new MemberDetailInfo();
+			try {
+				MemberBaseInfoDTO memberBaseInfoDTO = memberBaseOperationDAO.getMemberbaseBySellerId(id,
+						GlobalConstant.IS_SELLER);// 查询会员基本信息
+
+				memberDetailInfo.setMemberBaseInfoDTO(memberBaseInfoDTO);
+				rs.setResultMessage("success");
+			} catch (Exception e) {
+				rs.setResultMessage("fail");
+				rs.addErrorMessage("查询异常");
+				logger.error("MemberBaseInfoServiceImpl----->getMemberDetailBySellerId=" + e);
+			}
+			rs.setResult(memberDetailInfo);
+			return rs;
 		}
 
 }

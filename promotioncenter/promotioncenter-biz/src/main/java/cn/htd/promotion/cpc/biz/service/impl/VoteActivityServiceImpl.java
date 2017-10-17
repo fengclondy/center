@@ -118,7 +118,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page) {
+	public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus) {
 		ExecuteResult<DataGrid<VoteActivityListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityListResDTO>>();
 		DataGrid<VoteActivityListResDTO> dataGrid=new DataGrid<VoteActivityListResDTO>();
 		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount();

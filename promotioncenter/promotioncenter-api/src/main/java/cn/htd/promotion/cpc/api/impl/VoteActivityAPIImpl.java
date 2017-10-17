@@ -1,30 +1,18 @@
 package cn.htd.promotion.cpc.api.impl;
 
-import cn.htd.common.DataGrid;
-import cn.htd.common.ExecuteResult;
-import cn.htd.common.Pager;
-import cn.htd.promotion.cpc.api.VoteActivityAPI;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityFansForwardDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
-import cn.htd.promotion.cpc.biz.service.VoteActivityService;
-import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
-import cn.htd.promotion.cpc.common.util.ValidateResult;
-import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import cn.htd.common.DataGrid;
+import cn.htd.common.ExecuteResult;
+import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.api.VoteActivityAPI;
+import cn.htd.promotion.cpc.biz.service.VoteActivityService;
+import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 /**
  * 投票活动相关API
@@ -51,8 +39,8 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
     }
 
     @Override
-    public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page) {
-        return voteActivityService.queryVoteActivityList(page);
+    public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus) {
+        return voteActivityService.queryVoteActivityList(page,voteActName,actStatus);
     }
 
     /***

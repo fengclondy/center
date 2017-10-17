@@ -33,10 +33,11 @@ public interface VoteActivityAPI {
 	/**
 	 * 查询投票活动列表
 	 * 
+	 * @param actStatus  1 进行中、2 未开始、3 已结束
 	 * @param voteActivityListReqDTO
 	 * @return
 	 */
-	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page);
+	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus);
 	
 	VoteActivityResDTO selectCurrentActivity();
 	

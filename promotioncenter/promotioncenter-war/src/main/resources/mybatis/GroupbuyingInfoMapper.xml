@@ -32,6 +32,8 @@
   
     <resultMap id="GroupbuyingInfoCmplResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO" extends="BaseResultMap">
     
+    <result column="activeState" property="activeState" jdbcType="VARCHAR" />
+    
     <association property="singlePromotionInfoCmplResDTO" javaType="cn.htd.promotion.cpc.dto.response.SinglePromotionInfoCmplResDTO">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
@@ -466,8 +468,28 @@
 		<if test="dto.skuName != null and dto.skuName != ''">
 			and	gi.sku_name like CONCAT('%',#{dto.skuName,jdbcType=VARCHAR},'%')  
 		</if>
-		<if test="dto.status != null and dto.status != ''">
+<!-- 		<if test="dto.status != null and dto.status != ''">
 			and pi.status = #{dto.status,jdbcType=VARCHAR}  
+		</if> -->
+		<if test="dto.activeState != null and dto.activeState != '' ">
+		<choose>
+		<when test="dto.activeState=='1'">
+		  <![CDATA[ and sysdate() < pi.effective_time ]]>
+		</when>
+		<when test="dto.activeState=='2'">
+		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time ]]>
+		</when>
+		<when test="dto.activeState=='3'">
+		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() < gi.start_time ]]>
+		</when>
+		<when test="dto.activeState=='4'">
+		  <![CDATA[ and gi.start_time <= sysdate() and sysdate() <= gi.end_time ]]>
+		</when>
+		<when test="dto.activeState=='5'">
+		  <![CDATA[ and sysdate() > gi.end_time ]]>
+		</when>
+		<otherwise></otherwise>
+		</choose>
 		</if>
 	    <if test="dto.showStatus != null and dto.showStatus != ''">
 			and pi.show_status = #{dto.showStatus,jdbcType=VARCHAR}  
@@ -482,6 +504,7 @@
 			and gi.end_time <= #{dto.endTime,jdbcType=TIMESTAMP}
 		 ]]>
 		</if>
+
 	</sql>
 
 	<select id="getGroupbuyingInfoCmplCount" resultType="java.lang.Integer">
@@ -507,7 +530,16 @@
     pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
     pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
     pi.create_id, pi.create_name, pi.create_time, 
-    pi.modify_id, pi.modify_name, pi.modify_time  
+    pi.modify_id, pi.modify_name, pi.modify_time,  
+    <![CDATA[ 
+        (case 
+    when pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time then '2' 
+    when pi.invalid_time < sysdate() and sysdate() < gi.start_time then '3' 
+    when gi.start_time <= sysdate() and sysdate() <= gi.end_time then '4' 
+	when sysdate() < pi.effective_time then '1' 
+	when sysdate() > gi.end_time then '5' 
+	else '-1' 
+	end) ]]> activeState 
    FROM groupbuying_info gi 
    left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
@@ -532,7 +564,16 @@
     pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
     pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
     pi.create_id, pi.create_name, pi.create_time, 
-    pi.modify_id, pi.modify_name, pi.modify_time 
+    pi.modify_id, pi.modify_name, pi.modify_time,
+    <![CDATA[ 
+        (case 
+    when pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time then '2' 
+    when pi.invalid_time < sysdate() and sysdate() < gi.start_time then '3' 
+    when gi.start_time <= sysdate() and sysdate() <= gi.end_time then '4' 
+	when sysdate() < pi.effective_time then '1' 
+	when sysdate() > gi.end_time then '5' 
+	else '-1' 
+	end) ]]> activeState  
    FROM groupbuying_info gi 
    left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  

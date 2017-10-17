@@ -2515,6 +2515,7 @@
 				<![CDATA[ and (item_.item_name like CONCAT('%',#{entity.itemName},'%'))]]>
 			</if>
 		</if>
+		limit 10
 	</select>
 
 	<sql id="where_fragement_SellerCenter">

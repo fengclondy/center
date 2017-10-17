@@ -82,13 +82,30 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 								.getTimelimitedSkuCount();
 						Integer goodsCount = Integer.valueOf(orderItemTemp
 								.getGoodsCount().toString());
-						if (goodsCount > timelimitedThreshold
-								|| goodsCount > timelimitedSkuCount) {
+						//每人起购数量
+						Integer timelimitedThresholdMin = timelimitedInfoDTOInfo.getTimelimitedThresholdMin();
+						if (goodsCount > timelimitedThreshold) {
 							throw new OrderCenterBusinessException(
-									ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
+									ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_PURCHASE_COUNT
 											.getCode(),
 									"提交订单时"
-											+ ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND
+											+ ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_PURCHASE_COUNT
+													.getMsg());
+						}
+						if (goodsCount > timelimitedSkuCount) {
+							throw new OrderCenterBusinessException(
+									ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_INVENTORY
+											.getCode(),
+									"提交订单时"
+											+ ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_BEYOND_INVENTORY
+													.getMsg());
+						}
+						if (goodsCount < timelimitedThresholdMin) {
+							throw new OrderCenterBusinessException(
+									ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_LESS_PURCHASE_COUNT
+											.getCode(),
+									"提交订单时"
+											+ ResultCodeEnum.MARKERCENTER_LIMITED_TIME_PURCHASE_BUYCOUNT_LESS_PURCHASE_COUNT
 													.getMsg());
 						}
 						orderItemTemp.setPromotionId(timelimitedInfoDTOInfo

@@ -130,4 +130,6 @@ public class MarketCenterCodeConst {
 	public static final String LIMITED_TIME_PURCHASE_DOWN_SHELF = "15402";
 	//限时购商品不存在
 	public static final String LIMITED_TIME_PURCHASE_NULL = "15403";
+	//不能创建已经开始的限时购活动
+	public static final String LIMITED_TIME_PURCHASE_START = "15501";
 }

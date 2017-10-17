@@ -273,6 +273,7 @@
     SELECT
 			a.vote_id,
 			a.member_code,
+			a.member_name,
 			(
 				SELECT
 					count(1)
@@ -300,8 +301,8 @@
     LIMIT 10
   </select>
 
-  <select id="selectMemberRankingByMemberCode" resultType="int">
-    SELECT rowNum FROM
+  <select id="selectMemberRankingByMemberCode" resultType="map">
+    SELECT * FROM
     (
       SELECT
       c.*, (@rownum :=@rownum + 1) AS rowNum
@@ -310,6 +311,7 @@
       (SELECT @rownum := 0) r
     ) d
     where member_code = #{memberCode}
+    limit 1
   </select>
   
    <select id="selectVoteCountByActivityId" parameterType="Long" resultType="Long">
@@ -327,6 +329,126 @@
 	where vote_id=#{voteId}
 	  group by sign_status
  </select>
+ 
+ <select id="queryPagedSignupMemberInfoList" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 
+ 	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
+	  select 
+		@rownum:=@rownum+1 as  sortNum,
+		temp.vendor_name as sellerName,
+	    temp.member_name as memberName,
+		temp.contact_name as contactName,
+		temp.contact_phone as phone,
+		temp.sign_status as signupStatus,
+		temp.audit_status as auditStatus,
+		temp.sign_up_time as signupTime,
+		temp.vote_member_id as voteMemberId,
+		temp.voteCount,
+		temp.forwardCount
+	 from ( select 
+	 @rownum:=0,
+	  vam.vendor_name,
+	  vam.member_name,
+	  vam.contact_name,
+	  vam.contact_phone,
+	  vam.sign_status,
+	  vam.audit_status,
+	  vam.sign_up_time,
+	  vam.vote_member_id,
+	  (select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
+	  (select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
+	  vam.member_vote_last_time
+	  from  vote_activity_member vam
+	  where 1=1
+	  <if test="sellerName !=null and sellerName != '' ">
+	 	 and vam.vendor_name like contact(#{sellerName},'%')
+	  </if> 
+	  <if test="memberName != null and memberName != '' ">
+	  	 and vam.member_name like contact(#{memberName},'%')
+	  </if>
+	  <if test="auditStatus !=null">
+	  	and vam.audit_status=#{auditStatus}
+	  </if>
+	  <if test="signUpStatus !=null">
+	  	and vam.sign_status=#{signUpStatus}
+	  </if>
+	  ) temp 
+	  order by voteCount desc,member_vote_last_time asc
+	  limit #{start},#{pageSize}
+ </select>
+ 
+ <select id="queryTotalSignupMemberInfo" resultType="Long" 
+ 	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
+	 select 
+		count(1)
+	  from  vote_activity_member vam
+	  where 1=1
+	  <if test="sellerName !=null and sellerName != '' ">
+	 	 and vam.vendor_name like contact(#{sellerName},'%')
+	  </if> 
+	  <if test="memberName != null and memberName != '' ">
+	  	 and vam.member_name like contact(#{memberName},'%')
+	  </if>
+	  <if test="auditStatus !=null">
+	  	and vam.audit_status=#{auditStatus}
+	  </if>
+	  <if test="signUpStatus !=null">
+	  	and vam.sign_status=#{signUpStatus}
+	  </if>
+ </select>
   
+  <select id="querySignupMemberDetailInfo" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO" 
+ 	parameterType="Long">
+ 	select temp2.* from 
+	(select @rownum:=@rownum+1 as  sortNum,
+	temp.vendor_name as sellerName,
+	  temp.member_name as memberName,
+	  temp.contact_name  as contactName,
+	  temp.contact_phone as contactPhone,
+	  temp.sign_status as signStatus,
+	  temp.audit_status  as auditStatus,
+	  temp.sign_up_time as signupTime,
+      temp.vote_start_time as voteStartTime,
+      temp.vote_sign_up_start_time  as voteSignupStartTime,
+      temp.vote_sign_up_end_time as voteSignupEndTime,
+      temp.vote_end_time as voteEndTime,
+      temp.member_activity_dec as memberActivityDec,
+      temp.vote_name as voteName,
+      temp.vote_topic_pic as voteTopicPic,
+       temp.vote_sample_pic  as voteSamplePic,
+       temp.voteCount,
+       temp.forwardCount,
+       temp.vote_member_id as voteMemberId,
+       temp.member_vote_last_time as memberVoteLastTime
+ from (
+select 
+	 @rownum:=0,
+     vam.vote_member_id ,
+	  vam.vendor_name,
+	  vam.member_name,
+	  vam.contact_name,
+	  vam.contact_phone,
+	  vam.sign_status,
+	  vam.audit_status,
+	  vam.sign_up_time,
+      va.vote_start_time,
+      va.vote_sign_up_start_time,
+      va.vote_sign_up_end_time,
+      va.vote_end_time,
+      vam.member_activity_dec,
+      va.vote_name,
+      va.vote_topic_pic,
+       va.vote_sample_pic,
+	  (select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
+	  (select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
+	  vam.member_vote_last_time
+	  from  vote_activity_member vam
+      join vote_activity va on vam.vote_id=va.vote_id
+	  where 1=1
+      and vam.delete_flag=0
+      ) temp
+      order by voteCount DESC,member_vote_last_time ASC
+      ) temp2
+      where voteMemberId=#{voteMemberId}
+  </select>
   
 </mapper>

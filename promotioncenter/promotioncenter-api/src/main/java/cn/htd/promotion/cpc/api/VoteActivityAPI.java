@@ -1,12 +1,9 @@
-package cn.htd.promotion.cpc.biz.service;
+package cn.htd.promotion.cpc.api;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
-import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 /**
@@ -14,7 +11,7 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
  * @author zhengy
  * @date 2017-10-12
  */
-public interface VoteActivityService {
+public interface VoteActivityAPI {
 
 	/**
 	 * 创建投票活动
@@ -36,30 +33,12 @@ public interface VoteActivityService {
 	/**
 	 * 查询投票活动列表
 	 * 
+	 * @param actStatus  1 进行中、2 未开始、3 已结束
 	 * @param voteActivityListReqDTO
 	 * @return
 	 */
 	ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus);
 	
 	VoteActivityResDTO selectCurrentActivity();
-	
-	/**
-	 * 查看投票列表详细
-	 * 
-	 * @param page
-	 * @param voteActivityMemListReqDTO
-	 * @return
-	 */
-	ExecuteResult<DataGrid<VoteActivityMemListResDTO>> queryPagedVoteActivityMemberList(Pager page,VoteActivityMemListReqDTO voteActivityMemListReqDTO);
-	
-	/**
-	 * 查询投票会员详细
-	 * 
-	 * @param voteMemberId
-	 * @return
-	 */
-	ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteMemberId);
-	
-	
 	
 }

@@ -2,6 +2,8 @@ package cn.htd.promotion.cpc.biz.dao;
 
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberPictureResDTO;
 
+import java.util.List;
+
 public interface VoteActivityMemberPictureDAO {
     int deleteByPrimaryKey(Long pictureId);
 
@@ -14,4 +16,6 @@ public interface VoteActivityMemberPictureDAO {
     int updateByPrimaryKeySelective(VoteActivityMemberPictureResDTO record);
 
     int updateByPrimaryKey(VoteActivityMemberPictureResDTO record);
+
+    List<VoteActivityMemberPictureResDTO> selectByVoteMemberId(Long voteMemberId);
 }

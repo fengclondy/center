@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -735,6 +736,15 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			// 只扣减外部供应商的库存
 		} else {
 			if (GoodCenterEnum.EXTERNAL_SUPPLIER.getCode().equals(channelCode)) {
+				String promotionType = "";
+				EmptyResDTO marketResDTO = reduceBuyerPromotion(record, messageId, promotionType,
+						memberDTO);
+				if (!marketResDTO.getResponseCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
+					emptyResDTO.setReponseMsg(marketResDTO.getReponseMsg());
+					emptyResDTO.setResponseCode(marketResDTO.getResponseCode());
+					return emptyResDTO;
+				}
+				
 				EmptyResDTO goodsResDTO = batchReduceStock(record, messageId);
 				if (!goodsResDTO.getResponseCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
 					emptyResDTO.setReponseMsg(goodsResDTO.getReponseMsg());
@@ -756,6 +766,8 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 	private EmptyResDTO batchReduceStock(final TradeOrdersDMO record, final String messageId) {
 		EmptyResDTO emptyResDTO = new EmptyResDTO();
 		try {
+			emptyResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			emptyResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 			List<Order4StockChangeDTO> order4StockChangeDTOs = new ArrayList<Order4StockChangeDTO>();
 			Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
 			order4StockChangeDTO.setOrderNo(record.getOrderNo());
@@ -769,7 +781,25 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 				order4StockEntryDTO.setSkuCode(itemsDMO.getSkuCode());
 				order4StockEntryDTO.setIsBoxFlag(itemsDMO.getIsBoxFlag());
 				order4StockEntryDTO.setQuantity(itemsDMO.getGoodsCount());
-				orderEntries.add(order4StockEntryDTO);
+				List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
+						.selectBuyerCouponCodeByOrderItemNo(itemsDMO.getOrderItemNo());
+				//如果没有从优惠表里查到数据，说明可以锁定商品中心库存，如果查到数据且活动类型不是3(限时购)，也可以锁定商品中心库存
+				if (null == tradeOrderItemsDiscountDMOList
+						|| tradeOrderItemsDiscountDMOList.size() == 0) {
+					orderEntries.add(order4StockEntryDTO);
+				} else {
+					TradeOrderItemsDiscountDMO tradeOrderItemsDiscountDMO = tradeOrderItemsDiscountDMOList
+							.get(0);
+					if (!OrderStatusEnum.PROMOTION_TYPE_LIMITED_TIME_PURCHASE
+							.getCode().equals(
+									tradeOrderItemsDiscountDMO
+											.getPromotionType())) {
+						orderEntries.add(order4StockEntryDTO);
+					}
+				}
+			}
+			if(CollectionUtils.isEmpty(orderEntries)){
+				return emptyResDTO;
 			}
 			order4StockChangeDTO.setOrderEntries(orderEntries);
 			order4StockChangeDTOs.add(order4StockChangeDTO);
@@ -784,8 +814,6 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 				emptyResDTO.setResponseCode(result.getOtherCenterResponseCode());
 				return emptyResDTO;
 			}
-			emptyResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-			emptyResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			emptyResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			emptyResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
@@ -805,15 +833,18 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 
 		EmptyResDTO emptyResDTO = new EmptyResDTO();
 		try {
+			emptyResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+			emptyResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			
 			List<OrderItemPromotionDTO> orderItemPromotionList = new ArrayList<OrderItemPromotionDTO>();
 
 			List<TradeOrderItemsDiscountDMO> discountList = tradeOrderItemsDiscountDAO
 					.selectBuyerCouponCodeByOrderNo(record.getOrderNo());
 			for (TradeOrderItemsDiscountDMO discountDMO : discountList) {
 				OrderItemPromotionDTO orderItemPromotionDTO = new OrderItemPromotionDTO();
-				orderItemPromotionDTO.setPromotionType(promotionType);
 				orderItemPromotionDTO.setBuyerCode(discountDMO.getBuyerCode());
-				if (OrderStatusEnum.PROMOTION_TYPE_COUPON.getCode().equals(promotionType)) {
+				if (OrderStatusEnum.PROMOTION_TYPE_COUPON.getCode().equals(promotionType)
+						&& !OrderStatusEnum.PROMOTION_TYPE_LIMITED_TIME_PURCHASE.getCode().equals(discountDMO.getPromotionType())) {
 					orderItemPromotionDTO.setCouponCode(discountDMO.getBuyerCouponCode());
 					orderItemPromotionDTO.setDiscountAmount(discountDMO.getCouponDiscount());
 				}
@@ -822,14 +853,25 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 				orderItemPromotionDTO.setOperaterName(memberDTO.getCompanyName());
 				orderItemPromotionDTO.setOrderItemNo(discountDMO.getOrderItemNo());
 				orderItemPromotionDTO.setOrderNo(discountDMO.getOrderNo());
-				orderItemPromotionDTO.setPromotionId(discountDMO.getPromotionId());
 				List<TradeOrderItemsDMO> itemsList = record.getOrderItemsList();
 				for (TradeOrderItemsDMO itemsDMO : itemsList) {
 					if (itemsDMO.getOrderItemNo().equals(discountDMO.getOrderItemNo())) {
+						if(StringUtils.isNotEmpty(discountDMO.getPromotionType())){
+							orderItemPromotionDTO.setPromotionType(discountDMO.getPromotionType());
+						}else{
+							orderItemPromotionDTO.setPromotionType(promotionType);
+						}
+						orderItemPromotionDTO.setPromotionId(discountDMO.getPromotionId());
 						orderItemPromotionDTO.setQuantity(itemsDMO.getGoodsCount());
+						orderItemPromotionList.add(orderItemPromotionDTO);
+						break;
 					}
 				}
-				orderItemPromotionList.add(orderItemPromotionDTO);
+				
+			}
+			//如果orderItemPromotionList为空，说明没有限时购，故返回成功
+			if(CollectionUtils.isEmpty(orderItemPromotionList)){
+				return emptyResDTO;
 			}
 			LOGGER.info("【支付回调】【扣减会员优惠券、秒杀开始】--组装查询参数开始:{}",
 					JSONObject.toJSONString(orderItemPromotionList));
@@ -841,8 +883,6 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 				emptyResDTO.setResponseCode(result.getOtherCenterResponseCode());
 				return emptyResDTO;
 			}
-			emptyResDTO.setReponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-			emptyResDTO.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			emptyResDTO.setResponseCode(ResultCodeEnum.ERROR.getCode());
 			emptyResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());

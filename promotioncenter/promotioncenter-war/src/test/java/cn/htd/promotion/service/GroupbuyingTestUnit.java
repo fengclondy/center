@@ -363,7 +363,7 @@ public class GroupbuyingTestUnit {
     		groupbuyingInfoReqDTO.setSellerCode("1001");// 商家编码
 //    		groupbuyingInfoReqDTO.setSkuName("测试商品");//商品名称
     		groupbuyingInfoReqDTO.setShowStatus("3");//审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
-    		groupbuyingInfoReqDTO.setStatus("2");// 状态 1：活动未开始，2：活动进行中，3：活动已结束，9：已删除
+    		groupbuyingInfoReqDTO.setActiveState("1");// 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
     		groupbuyingInfoReqDTO.setStartTime(sdf.parse(startTimeString));
     		groupbuyingInfoReqDTO.setEndTime(sdf.parse(endTimeString));
     		

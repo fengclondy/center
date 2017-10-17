@@ -22,4 +22,11 @@ public interface VoteActivityMemberService {
      * @return
      */
     VoteActivityMemberResDTO selectByVoteIdAndMemberCode(Long voteId,String memberCode);
+
+    /***
+     * 根据主键修改会员店投票活动报名信息
+     * @param voteActivityMemberResDTO
+     * @return
+     */
+    int updateByPrimaryKeySelective(VoteActivityMemberResDTO voteActivityMemberResDTO);
 }

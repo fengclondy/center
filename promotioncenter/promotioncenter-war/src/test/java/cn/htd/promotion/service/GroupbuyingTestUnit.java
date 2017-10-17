@@ -238,10 +238,10 @@ public class GroupbuyingTestUnit {
     		BigDecimal skuCostPrice = new BigDecimal("50");
     		groupbuyingInfoCmplReqDTO.setSkuCostPrice(skuCostPrice);
     		// 真实参团人数
-    		Integer realActorCount = 10;
+    		Integer realActorCount = 20;
     		groupbuyingInfoCmplReqDTO.setRealActorCount(realActorCount);
     		// 真实拼团价
-    		BigDecimal realGroupbuyingPrice = new BigDecimal("100");
+    		BigDecimal realGroupbuyingPrice = new BigDecimal("80");
     		groupbuyingInfoCmplReqDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
     		
     		

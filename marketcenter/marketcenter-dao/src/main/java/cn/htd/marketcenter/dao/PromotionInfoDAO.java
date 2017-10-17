@@ -116,6 +116,14 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public PromotionInfoDTO queryPromotionInfoByB2cActivityCode(PromotionInfoDTO promotionInfoDTO);
+    
+    /**
+     * 根据B2C活动编码|状态|showStatus查询促销活动信息
+     *
+     * @param promotionInfoDTO
+     * @return
+     */
+    public PromotionInfoDTO queryPromotionInfoByParam(PromotionInfoDTO promotionInfoDTO);
 
     /**
      * 取得需要刷新Redis促销信息规则的活动对象

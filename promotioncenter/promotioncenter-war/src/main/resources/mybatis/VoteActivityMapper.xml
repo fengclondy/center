@@ -304,6 +304,22 @@
     <include refid="Blob_Column_List" />
     from vote_activity
     where delete_flag = 0
+    <if test="voteActName !=null and voteActName != '' ">
+    	AND vote_name like CONCAT(#{voteActName},'%')
+    </if>
+    <if test="actStatus !=null and voteActName != '' ">
+    	<!-- 1 进行中、2 未开始、3 已结束 -->
+    	<if test="actStatus == '1' ">
+    	 <![CDATA[ and  vote_start_time <= NOW()]]>
+    		and vote_end_time >= NOW()
+    	</if>
+    	<if test="actStatus == '2' ">
+    		and vote_start_time  > NOW()
+    	</if>
+    	<if test="actStatus == '3' ">
+    		<![CDATA[and vote_end_time < NOW() ]]>
+    	</if>
+    </if>
     limit #{start},#{pageSize}
   </select>
   
@@ -312,6 +328,22 @@
    count(1)
     from vote_activity
     where delete_flag = 0
+     <if test="voteActName !=null and voteActName != '' ">
+    	AND vote_name like CONCAT(#{voteActName},'%')
+    </if>
+    <if test="actStatus !=null and voteActName != '' ">
+    	<!-- 1 进行中、2 未开始、3 已结束 -->
+    	<if test="actStatus == '1' ">
+    	 <![CDATA[ and  vote_start_time <= NOW()]]>
+    		and vote_end_time >= NOW()
+    	</if>
+    	<if test="actStatus == '2' ">
+    		and vote_start_time  > NOW()
+    	</if>
+    	<if test="actStatus == '3' ">
+    		<![CDATA[and vote_end_time < NOW() ]]>
+    	</if>
+    </if>
   </select>
   
 </mapper>

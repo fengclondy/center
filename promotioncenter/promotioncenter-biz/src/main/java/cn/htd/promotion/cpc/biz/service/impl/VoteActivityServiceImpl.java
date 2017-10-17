@@ -121,12 +121,12 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus) {
 		ExecuteResult<DataGrid<VoteActivityListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityListResDTO>>();
 		DataGrid<VoteActivityListResDTO> dataGrid=new DataGrid<VoteActivityListResDTO>();
-		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount();
+		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount(voteActName,actStatus);
 		dataGrid.setTotal(totalCount);
 		if(totalCount==null||totalCount<=0){
 			List<VoteActivityListResDTO> resultList=Lists.newArrayList();
 			//查询分页数据
-			List<VoteActivityResDTO> voteActList=voteActivityDAO.selectPagedVoteActivity(page.getPageOffset(), page.getRows());
+			List<VoteActivityResDTO> voteActList=voteActivityDAO.selectPagedVoteActivity(page.getPageOffset(), page.getRows(), voteActName,actStatus);
 			if(CollectionUtils.isNotEmpty(voteActList)){
 				for(VoteActivityResDTO voteActResDTO:voteActList){
 					

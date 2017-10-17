@@ -546,7 +546,7 @@
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
 		WHERE  gps.delete_flag = 0    
         <include refid="dynamic_fragment_groupbuyingInfo"/>
-		ORDER BY gi.modify_time desc 
+		ORDER BY gi.modify_time desc ,gps.sort_num asc
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
 
@@ -578,7 +578,8 @@
    FROM groupbuying_info gi 
    left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
-		WHERE  gps.delete_flag = 0  and gi.promotion_id = #{promotionId,jdbcType=VARCHAR} 
+		WHERE  gps.delete_flag = 0  and gi.promotion_id = #{promotionId,jdbcType=VARCHAR}  
+		ORDER BY gps.sort_num asc 
 	</select>
 
 

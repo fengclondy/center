@@ -8,7 +8,6 @@ import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityMemberService;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
-
 /***
  * 会员店投票活动报名Service实现类
  */

@@ -120,6 +120,10 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	 * 限时购起价标示
 	 */
 	private int purchasePriceFlag;
+	/**
+	 * 商家名称
+	 */
+	private String sellerName;
 	
 	public int getPurchasePriceFlag() {
 		return purchasePriceFlag;
@@ -295,6 +299,14 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
 	}
 
 	public void setTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) {

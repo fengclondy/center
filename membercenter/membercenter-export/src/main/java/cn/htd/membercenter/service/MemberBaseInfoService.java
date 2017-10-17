@@ -375,4 +375,8 @@ public interface MemberBaseInfoService {
 	 * @return
 	 */
 	public ExecuteResult<SellerInfoDTO> querySellerBaseInfo(Long sellerId);
+
+	public ExecuteResult<MemberDetailInfo> getMemberDetailByIdForLogin(Long cusCompanyId);
+
+	public ExecuteResult<MemberDetailInfo> getMemberDetailBySellerIdForLogin(Long curBelongSellerId);
 }

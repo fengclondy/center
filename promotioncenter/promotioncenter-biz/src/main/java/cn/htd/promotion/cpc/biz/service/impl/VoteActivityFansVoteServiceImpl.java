@@ -68,7 +68,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
                 executeResult.setResultMessage("校验成功");
                 return executeResult;
             } else {
-                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE.getCode());
                 executeResult.setResultMessage("您今天已经投过我了，谢谢您！");
                 return executeResult;
             }
@@ -92,7 +92,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
                 executeResult.setResultMessage("校验成功");
                 return executeResult;
             } else {
-                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM.getCode());
                 executeResult.setResultMessage("您今天已经达到每日可投票门店数上限，明天再来吧！");
                 return executeResult;
             }
@@ -144,6 +144,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberResDTOUpdate.setVoteMemberId(voteMemberId);
         voteActivityMemberResDTOUpdate.setMemberVoteLastTime(date);
         this.voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTOUpdate);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 
@@ -170,6 +171,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         record.setModifyName("SYSYTEM");
         record.setModifyTime(date);
         this.voteActivityFansForwardDAO.insert(record);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 
@@ -261,6 +263,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             voteActivityMemberVoteDetailDTO.setVoteNum(((Long) rankingByMemberCode.get("voteNum")).intValue());
         }
         executeResult.setResult(voteActivityMemberVoteDetailDTO);
+        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
         return executeResult;
     }
 

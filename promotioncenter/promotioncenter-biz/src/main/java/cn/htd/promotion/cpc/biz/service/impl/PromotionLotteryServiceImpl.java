@@ -332,6 +332,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         baseService.initDictionaryMap(dictMap, DictionaryConst.TYPE_PROMOTION_REWARD_TYPE);
         winningRecordDTO.setPromotionType(requestDTO.getPromotionType());
         winningRecordDTO.setPromotionId(requestDTO.getPromotionId());
+        winningRecordDTO.setPromotionName(requestDTO.getPromotionName());
         winningRecordDTO.setBuyerCode(requestDTO.getBuyerCode());
         winningRecordDTO.setSellerCode(requestDTO.getSellerCode());
         winningRecordDTO.setBuyerName(requestDTO.getBuyerName());

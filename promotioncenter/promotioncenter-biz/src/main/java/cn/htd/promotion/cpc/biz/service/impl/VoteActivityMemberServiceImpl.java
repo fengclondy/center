@@ -1,14 +1,17 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import javax.annotation.Resource;
+
 import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityMemberService;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
-import javax.annotation.Resource;
+import com.alibaba.dubbo.config.annotation.Service;
 
 /***
  * 会员店投票活动报名Service实现类
  */
+@Service
 public class VoteActivityMemberServiceImpl implements VoteActivityMemberService{
 
     @Resource

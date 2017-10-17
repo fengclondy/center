@@ -485,12 +485,16 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                         sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
                     }
                     try {
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES,
-                                String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_WINNING_TIMES,
-                                String.valueOf(promotionInfoDTO.getDailyBuyerWinningTimes()));
-                        timesInfoMap.put(RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES,
-                                String.valueOf(promotionInfoDTO.getDailyWinningTimes()));
+//                    	if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsDailyTimesLimit().intValue()){                   		
+//                    		timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_DRAW_TIMES,
+//                    				String.valueOf(promotionInfoDTO.getDailyBuyerPartakeTimes()));
+//                    	}
+//                    	if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsDailyWinningLimit().intValue()){                             		
+//                    		timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_DAILY_WINNING_TIMES,
+//                    				String.valueOf(promotionInfoDTO.getDailyBuyerWinningTimes()));
+//                    		timesInfoMap.put(RedisConst.REDIS_LOTTERY_SELLER_DAILY_TOTAL_TIMES,
+//                    				String.valueOf(promotionInfoDTO.getDailyWinningTimes()));
+//                    	}
                         if (YesNoEnum.YES.getValue() == promotionInfoDTO.getIsShareTimesLimit().intValue()) {
                             timesInfoMap.put(RedisConst.REDIS_LOTTERY_BUYER_SHARE_EXTRA_PARTAKE_TIMES,
                                     String.valueOf(promotionInfoDTO.getShareExtraPartakeTimes()));

@@ -164,8 +164,14 @@
     <if test="params.promotionType == '21'">
       and bwr.promotion_type = '21'
     </if>
+    <if test="params.promotionType == '24'">
+      and bwr.promotion_type = '24'
+    </if>
+    <if test="params.promotionType == '25'">
+      and bwr.promotion_type = '25'
+    </if>
     <if test="params.promotionType == '' or params.promotionType == null">
-      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')))
+      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')) or bwr.promotion_type = '25' or bwr.promotion_type = '24')
     </if>
   </sql>
   <!-- mysql 分页 -->

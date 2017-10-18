@@ -46,6 +46,8 @@ import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
 
 import cn.htd.common.Pager;
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.BuyerWinningRecordDAO;
 import cn.htd.promotion.cpc.biz.dmo.BuyerWinningRecordDMO;
@@ -62,6 +64,9 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 
 	protected static transient Logger logger = LoggerFactory.getLogger(PromotionSyncDbAwardTask.class);
 
+	@Resource
+	private DictionaryUtils dictionary;
+	
 	@Resource
 	public BuyerWinningRecordDAO buyerWinningRecordDAO;
 	
@@ -254,7 +259,8 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		formparams.add(new BasicNameValuePair("gold", promotionAwardDTO.getAwardValue()));
 		formparams.add(new BasicNameValuePair("promotionId", promotionAwardDTO.getPromotionId()));
 		formparams.add(new BasicNameValuePair("id", promotionAwardDTO.getId()+""));
-
+		formparams.add(new BasicNameValuePair("describe", dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_TYPE, promotionAwardDTO.getPromotionType()) + "活动加金币"));
+		
 		UrlEncodedFormEntity uefEntity;
 		try {
 			uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");

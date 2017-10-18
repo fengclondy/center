@@ -24,6 +24,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockEntryDTO;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.membercenter.dto.BoxAddDto;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberCompanyInfoDTO;
@@ -861,6 +862,10 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 						}else{
 							orderItemPromotionDTO.setPromotionType(promotionType);
 						}
+						if(OrderStatusEnum.PROMOTION_TYPE_LIMITED_TIME_PURCHASE.getCode().equals(discountDMO.getPromotionType())){
+							//异步通知小名统计限时购销量
+							asyncNoticeMarketStatisticalSales(discountDMO,itemsDMO,messageId);
+						}
 						orderItemPromotionDTO.setPromotionId(discountDMO.getPromotionId());
 						orderItemPromotionDTO.setQuantity(itemsDMO.getGoodsCount());
 						orderItemPromotionList.add(orderItemPromotionDTO);
@@ -891,6 +896,34 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			LOGGER.warn("扣减会员优惠券、秒杀失败");
 		}
 		return emptyResDTO;
+	}
+	
+	/**
+	 * 异步通知促销中心统计限时购销量
+	 * 
+	 * @param discountDMO
+	 */
+	public void asyncNoticeMarketStatisticalSales(
+			final TradeOrderItemsDiscountDMO discountDMO,
+			final TradeOrderItemsDMO itemsDMO, final String messageId) {
+		try {
+			new Thread(new Runnable() {
+				public void run() {
+					TimelimitedInfoDTO timelimitedInfoDTO = new TimelimitedInfoDTO();
+					timelimitedInfoDTO.setSkuCode(itemsDMO.getSkuCode());
+					timelimitedInfoDTO.setPromotionId(discountDMO
+							.getPromotionId());
+					timelimitedInfoDTO.setSalesVolume(itemsDMO.getGoodsCount());
+					marketCenterRAO.updateTimitedInfoSalesVolumeRedis(
+							timelimitedInfoDTO, messageId);
+
+				}
+			}).start();
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.warn("支付回调--统计限时购销量--出现异常-(此异常不需要回滚)" + w.toString());
+		}
 	}
 
 	@Override

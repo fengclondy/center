@@ -56,4 +56,13 @@ public interface MarketCenterRAO {
 	 */
 	public OtherCenterResDTO<TimelimitedInfoDTO> getTimelimitedInfo(
 			String skuCode, String messageId);
+	
+	/**
+	 * 促销中心统计限时购销量
+	 * @param timelimitedInfoDTO
+	 * @param messageId
+	 * @return
+	 */
+	public OtherCenterResDTO<String> updateTimitedInfoSalesVolumeRedis(
+			TimelimitedInfoDTO timelimitedInfoDTO, String messageId);
 }

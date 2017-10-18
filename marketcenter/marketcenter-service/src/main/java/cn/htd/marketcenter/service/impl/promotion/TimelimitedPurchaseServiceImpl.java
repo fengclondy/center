@@ -148,7 +148,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
             throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT, " 该商品存在未结束的限时购活动!");
          } 
        }
-
 	@Override
 	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
 			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedInfoDTO> page) {
@@ -156,25 +155,25 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		DataGrid<TimelimitedInfoDTO> dataGrid = new DataGrid<TimelimitedInfoDTO>();
 		List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
 		TimelimitedInfoDTO searchConditionDTO = new TimelimitedInfoDTO();
-		long count = 0;
+		// long count = 0;
 		try {
 			searchConditionDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-					DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
+					DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
 			searchConditionDTO.setSkuCode(conditionDTO.getSkuCode());
 			searchConditionDTO.setSkuName(conditionDTO.getSkuName());
 			searchConditionDTO.setShowStatus(conditionDTO.getStatus());
-			searchConditionDTO.setPromotionProviderSellerCode(conditionDTO.getSelleCode());
+			searchConditionDTO.setSellerCode(conditionDTO.getSelleCode());
 			searchConditionDTO.setDeleteStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 					DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
 			searchConditionDTO.setStartTime(conditionDTO.getStartTime());
 			searchConditionDTO.setEndTime(conditionDTO.getEndTime());
-			count = timelimitedInfoDAO.queryTimelimitedInfoListCount(searchConditionDTO);
-			if (count > 0) {
+			// count = timelimitedInfoDAO.queryTimelimitedInfoListCount(searchConditionDTO);
+			// if (count > 0) {
 				// 。queryTimelimitedInfoList(conditionDTO,page);
-				timelimitedInfoList = timelimitedInfoDAO.queryTimelimitedInfoList(searchConditionDTO, page);
-				dataGrid.setRows(timelimitedInfoList);
-			}
-			dataGrid.setTotal(count);
+			timelimitedInfoList = timelimitedInfoDAO.queryTimelimitedInfoList(searchConditionDTO, page);
+			dataGrid.setRows(timelimitedInfoList);
+			// }
+			// dataGrid.setTotal(count);
 			result.setResult(dataGrid);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

@@ -13,6 +13,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.Item;
+import cn.htd.goodscenter.domain.ItemPicture;
 import cn.htd.goodscenter.dto.ItemAdDTO;
 import cn.htd.goodscenter.dto.ItemDBDTO;
 import cn.htd.goodscenter.dto.ItemDTO;
@@ -331,4 +332,12 @@ public interface ItemExportService {
 	 * @time 2017-10-09
 	 */
 	public List<ItemQueryOutDTO> querySellerCenterItemList(ItemQueryInDTO itemInDTO);
+	
+	
+	/**
+	 * 限时购 - 新增活动 - 查询商品主图
+	 * @author li.jun
+	 * @time 2017-10-09
+	 */
+	public ItemPicture queryItemPicsFirst(Long itemId);
 }

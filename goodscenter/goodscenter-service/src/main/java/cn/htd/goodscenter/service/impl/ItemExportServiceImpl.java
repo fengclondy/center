@@ -3558,4 +3558,10 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return itemOutDto;
 	}
 
+	@Override
+	public ItemPicture queryItemPicsFirst(Long itemId) {
+		ItemPicture itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+		return itemPicture;
+	}
+
 }

@@ -21,6 +21,7 @@ import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
 import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityService;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
+import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
@@ -44,6 +45,8 @@ public class VoteActivityServiceImpl implements VoteActivityService{
     private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
     @Resource
     private VoteActivityFansForwardDAO voteActivityFansForwardDAO;
+    @Resource
+    private GeneratorUtils generatorUtils;
 
 	@Override
 	public ExecuteResult<String> saveVoteActivity(VoteActivityResDTO voteActivityResDTO) {
@@ -256,6 +259,12 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			result.setErrorMessages(Lists.newArrayList("参数为空"));
 			return result;
 		}
+		
+		if(list.size()>1000){
+			result.setErrorMessages(Lists.newArrayList("导入记录数过多"));
+			return result;
+		}
+		
 		List<VoteActivityMemReqDTO> tempList=Lists.newArrayList();
 		for(VoteActivityMemReqDTO v:list){
 			ValidateResult va1lidateResult=DTOValidateUtil.validate(v);
@@ -265,7 +274,14 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			}
 			tempList.add(v);
 		}
+		ImportVoteActivityMemResDTO importVoteActivityMemResDTO=new ImportVoteActivityMemResDTO();
 		voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+		//TODO: 查询库，得到成功记录，比对入参，得到失败记录，放到返回结果中
+//		importVoteActivityMemResDTO.setFailCount(failCount);
+//		importVoteActivityMemResDTO.setSuccessCount(successCount);
+//		importVoteActivityMemResDTO.setFaillist(faillist);
+		importVoteActivityMemResDTO.setUniqueId(generatorUtils.generatePromotionId("6"));
+		result.setResult(importVoteActivityMemResDTO);
 		return result;
 	}
 }

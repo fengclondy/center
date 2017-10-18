@@ -374,6 +374,15 @@
 	  limit #{start},#{pageSize}
  </select>
  
+ <select id="querySignUpMemberInfoList" parameterType="Long" resultType="java.lang.String">
+ 	SELECT
+		member_code
+	FROM
+		vote_activity_member member
+	WHERE
+		member.vote_id = #{voteId}
+ </select>
+ 
  <select id="queryTotalSignupMemberInfo" resultType="Long" 
  	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
 	 select 

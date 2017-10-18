@@ -9,7 +9,11 @@ import cn.htd.promotion.cpc.biz.service.VoteActivityMemberService;
 import cn.htd.promotion.cpc.biz.service.VoteActivityService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.NUtils;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
+import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 import org.slf4j.Logger;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,6 +59,12 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
     public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus) {
         return voteActivityService.queryVoteActivityList(page,voteActName,actStatus);
     }
+    
+    @Override
+	public ExecuteResult<DataGrid<VoteActivityMemListResDTO>> queryVoteActivityMemberList(Pager page,
+			VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
+		return voteActivityService.queryPagedVoteActivityMemberList(page, voteActivityMemListReqDTO);
+	}
 
     /***
      * 查询当前活动
@@ -146,4 +157,11 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
         }
         return result;
     }
+
+
+	@Override
+	public ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(List<VoteActivityMemReqDTO> list) {
+		return voteActivityService.importVoteActivityMember(list);
+	}
+
 }

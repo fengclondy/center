@@ -33,7 +33,6 @@ import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
-import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
@@ -88,9 +87,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     
     @Resource
     private KeyGeneratorUtils keyGeneratorUtils;
-    
-    @Resource
-    private PromotionCenterRedisDB promotionCenterRedisDB;
     
 
     @Override
@@ -381,7 +377,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	        try {
 
-	            if (null == promotionId) {
+	            if (null == promotionId || promotionId.length() == 0) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
 	            }
 
@@ -410,7 +406,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	        try {
 
-	            if (null == promotionId) {
+	            if (null == promotionId || promotionId.length() == 0) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
 	            }
 	            
@@ -459,9 +455,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         try {
         	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
          	// 真实参团人数
-         	Integer realActorCount = promotionCenterRedisDB.incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
+         	Integer realActorCount = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
         	// 获取团购活动其他信息
-        	Map<String, String> resultMap = promotionCenterRedisDB.getHashOperations(groupbuyingResultKey);
+        	Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHashOperations(groupbuyingResultKey);
         	
         	// 阶梯价格
         	String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
@@ -487,7 +483,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         		}
         	}
         	// redis设置真实拼团价
-        	promotionCenterRedisDB.setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
+        	promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
 
         	// 修改团购活动信息
         	GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();

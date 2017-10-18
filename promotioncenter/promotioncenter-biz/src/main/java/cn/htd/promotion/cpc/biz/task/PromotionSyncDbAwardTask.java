@@ -259,7 +259,7 @@ public class PromotionSyncDbAwardTask implements IScheduleTaskDealMulti<BuyerWin
 		formparams.add(new BasicNameValuePair("gold", promotionAwardDTO.getAwardValue()));
 		formparams.add(new BasicNameValuePair("promotionId", promotionAwardDTO.getPromotionId()));
 		formparams.add(new BasicNameValuePair("id", promotionAwardDTO.getId()+""));
-		formparams.add(new BasicNameValuePair("describe", dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE, promotionAwardDTO.getRewardType()) + "活动加金币"));
+		formparams.add(new BasicNameValuePair("describe", dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_TYPE, promotionAwardDTO.getPromotionType()) + "活动加金币"));
 		
 		UrlEncodedFormEntity uefEntity;
 		try {

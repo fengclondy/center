@@ -142,7 +142,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             e.printStackTrace();
             logger.error("VoteActivityAPI方法saveVoteActivityMember调用出错，信息{}",e.getMessage());
 
-            result.setCode(ResultCodeEnum.ERROR.getMsg());
+            result.setCode(ResultCodeEnum.ERROR.getCode());
         }
         return result;
     }

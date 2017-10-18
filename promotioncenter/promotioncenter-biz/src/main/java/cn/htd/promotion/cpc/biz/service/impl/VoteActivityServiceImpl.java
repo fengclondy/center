@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
@@ -30,8 +33,6 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
-
-import com.google.common.collect.Lists;
 
 
 @Service("voteActivityService")
@@ -266,20 +267,42 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		}
 		
 		List<VoteActivityMemReqDTO> tempList=Lists.newArrayList();
+		Long voteId = null;
 		for(VoteActivityMemReqDTO v:list){
 			ValidateResult va1lidateResult=DTOValidateUtil.validate(v);
 			
 			if(!va1lidateResult.isPass()){
 				continue;
 			}
+			voteId = v.getVoteId();
 			tempList.add(v);
 		}
 		ImportVoteActivityMemResDTO importVoteActivityMemResDTO=new ImportVoteActivityMemResDTO();
 		voteActivityMemberDAO.batchInsertVoteActMember(tempList);
 		//TODO: 查询库，得到成功记录，比对入参，得到失败记录，放到返回结果中
-//		importVoteActivityMemResDTO.setFailCount(failCount);
-//		importVoteActivityMemResDTO.setSuccessCount(successCount);
-//		importVoteActivityMemResDTO.setFaillist(faillist);
+		
+		List<String> memberCodeList = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
+		int failCount = 0;
+		int successCount = 0;
+		int checkCount = 0;
+		List<VoteActivityMemReqDTO> faillist = new ArrayList<VoteActivityMemReqDTO>();
+		for (VoteActivityMemReqDTO memberCodeImport:tempList) {
+			String memberCode = memberCodeImport.getMemberCode();
+			for (String memberCodeCheck : memberCodeList) {
+				if (memberCodeCheck.equals(memberCode)) {
+					successCount ++;
+				}
+			}
+			if (successCount > checkCount) {
+				checkCount ++;
+			} else {
+				faillist.add(memberCodeImport);
+			}
+		}
+		failCount = tempList.size() - successCount;
+		importVoteActivityMemResDTO.setFailCount(failCount);
+		importVoteActivityMemResDTO.setSuccessCount(successCount);
+		importVoteActivityMemResDTO.setFaillist(faillist);
 		importVoteActivityMemResDTO.setUniqueId(generatorUtils.generatePromotionId("6"));
 		result.setResult(importVoteActivityMemResDTO);
 		return result;

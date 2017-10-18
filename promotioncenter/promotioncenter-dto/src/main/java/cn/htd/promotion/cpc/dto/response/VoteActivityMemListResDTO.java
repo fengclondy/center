@@ -19,9 +19,9 @@ public class VoteActivityMemListResDTO implements Serializable{
 	private String contactName;
 	//手机号
 	private String phone;
-	//报名状态
+	//报名状态； 0：未报名 1：已报名
 	private Integer signupStatus;
-	//审核状态
+	//审核状态；0：待审核；1：已审核；2：已驳回
 	private Integer auditStatus;
 	//报名时间
 	private Date signupTime;

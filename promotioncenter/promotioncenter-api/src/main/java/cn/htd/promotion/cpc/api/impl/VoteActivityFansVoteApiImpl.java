@@ -5,6 +5,7 @@ import cn.htd.promotion.cpc.biz.service.VoteActivityFansVoteService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,6 @@ public class VoteActivityFansVoteApiImpl implements VoteActivityFansVoteApi {
         logger.info("粉丝投票服务, 投票活动ID:{}, 粉丝ID:{}，会员店编码：{}", voteActivityId, fansId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
         try {
-            Date date = new Date();
-            executeResult = voteActivityFansVoteService.validateFansVoteStoreNumByDay(voteActivityId, fansId, date);
-            if (!executeResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
-                return executeResult;
-            }
-            executeResult = voteActivityFansVoteService.validateFansVoteNumByDayAndStore(voteActivityId, fansId, memberCode, date);
-            if (!executeResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
-                return executeResult;
-            }
             // 投票
             executeResult = voteActivityFansVoteService.voteByFans(voteActivityId, fansId, memberCode);
         } catch (Exception e) {

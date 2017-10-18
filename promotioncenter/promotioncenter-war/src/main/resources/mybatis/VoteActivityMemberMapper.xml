@@ -323,7 +323,7 @@
 	and vam.vote_id=#{voteId}
   </select>
   
-  <select id="querySignupMemberCount" parameterType="Long" resultType="list">
+  <select id="querySignupMemberCount" parameterType="Long" resultType="map">
 	  select sign_status,count(1) as c from 
 	vote_activity_member
 	where vote_id=#{voteId}

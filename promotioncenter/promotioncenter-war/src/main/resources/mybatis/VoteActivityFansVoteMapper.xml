@@ -147,4 +147,10 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where vote_fans_id = #{voteFansId,jdbcType=BIGINT}
   </update>
+  <select id="selectVoteCountByActivityId" parameterType="long" resultType="long">
+  select count(1) from vote_activity_fans_vote  vaf
+   left join vote_activity_member vam
+	  on vaf.vote_member_id=vam.vote_member_id
+	  where vam.vote_id=#{voteId}
+  </select>
 </mapper>

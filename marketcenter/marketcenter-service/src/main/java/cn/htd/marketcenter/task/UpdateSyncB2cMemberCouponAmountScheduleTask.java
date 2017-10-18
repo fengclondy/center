@@ -296,12 +296,11 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 			logger.warn("根据参数:{}没有查到相关促销数据",JSONObject.toJSONString(promotionInfoDTO));
 		    return flag = true;
 		}
-		Date effectiveTime = PromotionInfoDaoRes.getEffectiveTime();
 		Date invalidTime = PromotionInfoDaoRes.getInvalidTime();
 		Date creteTime = b2cCouponUseLogSyncDMO.getCreateTime();
-		if(creteTime.before(effectiveTime) || creteTime.after(invalidTime)){
+		if(creteTime.after(invalidTime)){
 			B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
-			String dealFailReason = "用券或者取消券不在活动有效期之内";
+			String dealFailReason = "活动已过期";
 			record.setDealFailReason(dealFailReason);
 			record.setDealFlag(2);
 			record.setUseType(b2cCouponUseLogSyncDMO.getUseType());

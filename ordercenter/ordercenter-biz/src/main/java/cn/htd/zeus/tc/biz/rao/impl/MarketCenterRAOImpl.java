@@ -376,8 +376,60 @@ public class MarketCenterRAOImpl implements MarketCenterRAO {
 				otherCenterResDTO.setOtherCenterResponseCode(resCode);
 			}
 		} catch (Exception e) {
-
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} 调用方法MarketCenterRAOImpl.getTimelimitedInfo出现异常{}",
+					messageId, w.toString());
+			otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
+			otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
 		}
 		return otherCenterResDTO;
+	}
+	
+	/**
+	 * 促销中心统计限时购销量
+	 * @param timelimitedInfoDTO
+	 * @param messageId
+	 * @return
+	 */
+	public OtherCenterResDTO<String> updateTimitedInfoSalesVolumeRedis(
+			TimelimitedInfoDTO timelimitedInfoDTO, String messageId) {
+		OtherCenterResDTO<String> otherCenterResDTO = new OtherCenterResDTO<String>();
+		try {
+			Long startTime = System.currentTimeMillis();
+			LOGGER.info(
+					"调用促销中心(updateTimitedInfoSalesVolumeRedis统计限时购销量)--组装查询参数开始:MessageId:{},timelimitedInfoDTO:{}",
+					messageId, JSONObject.toJSONString(timelimitedInfoDTO));
+			ExecuteResult<String> updateRaoRes = timelimitedPurchaseService.updateTimitedInfoSalesVolumeRedis(timelimitedInfoDTO);
+			Long endTime = System.currentTimeMillis();
+			LOGGER.info(
+					"MessageId:{}调用促销中心(updateTimitedInfoSalesVolumeRedis统计限时购销量)--返回结果:{}",
+					messageId, JSONObject.toJSONString(updateRaoRes)
+							+ " 耗时:" + (endTime - startTime));
+			String resCode = updateRaoRes.getCode();
+			if (ResultCodeEnum.SUCCESS.getCode().equals(resCode)) {
+				otherCenterResDTO.setOtherCenterResponseCode(resCode);
+			}else {
+				String errorMsg = "更新统计限时购销量失败:参数"+JSONObject.toJSONString(timelimitedInfoDTO);
+				if (null != updateRaoRes && null != updateRaoRes.getErrorMessages()) {
+					List<String> errorMessages = updateRaoRes.getErrorMessages();
+					errorMsg = JSONObject.toJSONString(errorMessages);
+				}
+				otherCenterResDTO.setOtherCenterResponseMsg(errorMsg);
+				otherCenterResDTO.setOtherCenterResponseCode(resCode);
+			}
+		} catch (Exception e) {
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error(
+					"MessageId:{} 调用方法MarketCenterRAOImpl.updateTimitedInfoSalesVolumeRedis出现异常{}",
+					messageId, w.toString());
+			otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR
+					.getMsg());
+			otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR
+					.getCode());
+		}
+		return otherCenterResDTO;
+
 	}
 }

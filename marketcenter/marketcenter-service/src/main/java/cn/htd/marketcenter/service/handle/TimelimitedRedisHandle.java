@@ -6,12 +6,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
@@ -36,14 +42,6 @@ import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 
 @Service("timelimitedRedisHandle")
 public class TimelimitedRedisHandle {
@@ -958,9 +956,12 @@ public class TimelimitedRedisHandle {
 					promotionIdList = Arrays.asList(promotionIds.split(","));
 				}
 			}else{
-				promotionIdList = getRedisTimelimitedIndex("0", null, null, false, 
+				List<String> newList = getRedisTimelimitedIndex("0", null, null, false, 
 						dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
 						DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
+				Set<String> set = new  HashSet<String>(); 
+		        set.addAll(newList);
+		        promotionIdList.addAll(set);
 			}
 			if (!promotionIdList.isEmpty()) {
 				for (int i = 0; i < promotionIdList.size(); i++) {

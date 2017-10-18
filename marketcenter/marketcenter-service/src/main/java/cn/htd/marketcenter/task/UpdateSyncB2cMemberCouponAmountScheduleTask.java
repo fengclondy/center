@@ -274,7 +274,7 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 		return updateResult;
 	}
 	/**
-	 * 校验是否在活用有效期内用券或者取消券
+	 * 校验是否在商城活动已经开始之前用券或者取消券
 	 * @param b2cCouponUseLogSyncDMO
 	 * @return
 	 */
@@ -297,11 +297,10 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 		    return flag = true;
 		}
 		Date effectiveTime = PromotionInfoDaoRes.getEffectiveTime();
-		Date invalidTime = PromotionInfoDaoRes.getInvalidTime();
 		Date creteTime = b2cCouponUseLogSyncDMO.getCreateTime();
-		if(creteTime.before(effectiveTime) || creteTime.after(invalidTime)){
+		if(creteTime.after(effectiveTime)){
 			B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
-			String dealFailReason = "用券或者取消券不在活动有效期之内";
+			String dealFailReason = "商城活动已经开始,不支持用券和取消券";
 			record.setDealFailReason(dealFailReason);
 			record.setDealFlag(2);
 			record.setUseType(b2cCouponUseLogSyncDMO.getUseType());

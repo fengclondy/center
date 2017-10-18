@@ -7,10 +7,8 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import com.alibaba.fastjson.JSON;
 
@@ -18,12 +16,6 @@ import com.alibaba.fastjson.JSON;
 public class PromotionGroupbuyingRedisHandle {
 
     protected static transient Logger logger = LoggerFactory.getLogger(PromotionGroupbuyingRedisHandle.class);
-
-    @Resource
-    private DictionaryUtils dictionary;
-
-    @Resource
-    private PromotionRedisDB promotionRedisDB;
     
     @Resource
     private PromotionCenterRedisDB promotionCenterRedisDB;
@@ -79,8 +71,15 @@ public class PromotionGroupbuyingRedisHandle {
             promotionCenterRedisDB.setHash(groupbuyingResultKey, resultMap);
         }
     }
+
+
+    
+    
     
 
+	public PromotionCenterRedisDB getPromotionCenterRedisDB() {
+		return promotionCenterRedisDB;
+	}
 
 
 }

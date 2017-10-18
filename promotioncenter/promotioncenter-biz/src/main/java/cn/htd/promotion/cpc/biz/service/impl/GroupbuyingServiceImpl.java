@@ -7,12 +7,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -28,6 +31,7 @@ import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
@@ -45,6 +49,7 @@ import cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
+import cn.htd.promotion.cpc.dto.response.SinglePromotionInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -268,7 +273,103 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
     }
     
-    
+
+	@Override
+	public String updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO,String messageId) {
+    	// 0.成功,1.参数为空,2.活动编码为空,3.上下架为空,4.上下架状态不正确,5.活动不存在,6.活动已经上架,11.活动已经处于下架状态
+    	//-1 系统异常
+    	String status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_SUCCESS;//0.成功
+    	
+    	try {
+    		
+  		if (null == singlePromotionInfoReqDTO) {
+  			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_1;//1.参数为空
+		}
+		
+  		String promotionId = singlePromotionInfoReqDTO.getPromotionId();
+    	String showStatus = singlePromotionInfoReqDTO.getShowStatus();
+    	
+		if (null == promotionId || promotionId.length() == 0) {
+			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_2;//2.活动编码为空
+		}
+		
+		if (null == showStatus || showStatus.length() == 0) {
+			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_3;//3.上下架为空
+		}
+		
+		boolean isShowStatus= showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key()) || showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.INVALID.key());
+		if(!isShowStatus){
+			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_4; //4.上下架状态不正确
+		}
+    	
+		SinglePromotionInfoResDTO singlePromotionInfoResDTO = singlePromotionInfoDAO.selectByPromotionId(promotionId);
+    	if(null == singlePromotionInfoResDTO){
+    		return TimelimitedConstants.UPDOWN_SHELVES_STATUS_5; //5.活动不存在
+    	}
+    	
+    	if(showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key())){//上架
+    		if(singlePromotionInfoResDTO.getShowStatus().equals(showStatus)){//活动已经处于上架状态
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_6; // 6.活动已经上架
+    		}
+    		
+    	}else{//下架
+    		if(singlePromotionInfoResDTO.getShowStatus().equals(showStatus)){//活动已经处于下架状态
+    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_11; //11.活动已经处于下架状态
+    		}
+    	}
+    	
+		
+        // 当前时间
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+    	
+    	// 活动上下架
+    	singlePromotionInfoReqDTO.setModifyTime(currentTime);
+    	int singlePromotionInfoRet = singlePromotionInfoDAO.upDownShelvesPromotionInfo(singlePromotionInfoReqDTO);
+    	if(1 != singlePromotionInfoRet){
+    		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "活动上下架失败！");
+    	}
+		
+		// 更新redis里的上下架状态
+//		promotionTimelimitedRedisHandle.updateTimelimitedValidStatus2Redis(promotionId, showStatus);
+//		
+         } catch (Exception e) {
+        	 status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_ERROR;//-1 系统异常
+             logger.error("messageId{}:执行方法【updateShowStatusByPromotionId】报错：{}", messageId, e.toString());
+             throw new RuntimeException(e);
+         }
+    	
+    	return status;
+	}
+	
+	@Override
+	public void deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+
+		try {
+
+			if (null == groupbuyingInfoReqDTO) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),"团购促销活动参团参数不能为空！");
+			}
+
+			if (null == groupbuyingInfoReqDTO.getPromotionId() || groupbuyingInfoReqDTO.getPromotionId().length() == 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动编码不能为空！");
+			}
+
+			// 当前时间
+			Calendar calendar = Calendar.getInstance();
+			Date currentTime = calendar.getTime();
+			groupbuyingInfoReqDTO.setModifyTime(currentTime);
+			int statusRet = groupbuyingInfoDAO.deleteByPromotionId(groupbuyingInfoReqDTO);
+			if (1 != statusRet) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "活动删除失败！");
+			}
+
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【deleteGroupbuyingInfoByPromotionId】报错：{}",messageId, e.toString());
+			throw new RuntimeException(e);
+		}
+
+	}
     
 
     /**
@@ -545,8 +646,20 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         }
         return dataGrid;
 	}
-    
-    
-    
 
+	@Override
+	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		DataGrid<GroupbuyingInfoCmplResDTO> dataGrid = null;
+		try {
+			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
+			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfo4MobileForPage(page, groupbuyingInfoReqDTO);
+			int count = groupbuyingInfoDAO.getGroupbuyingInfo4MobileCount(groupbuyingInfoReqDTO);
+			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+			dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【getGroupbuyingInfo4MobileForPage】报错：{}", messageId, e.toString());
+			throw new RuntimeException(e);
+		}
+		return dataGrid;
+	}
 }

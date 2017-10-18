@@ -55,14 +55,6 @@ public interface GroupbuyingAPI {
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
 	/**
-	 * http接口添加参团记录
-	 * @param dto
-	 * @param messageId
-	 * @return
-	 */
-	ExecuteResult<?> addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto,String messageId);
-	
-	/**
 	 * 根据条件获取单条参团记录
 	 * @param groupbuyingRecordReqDTO
 	 * @param messageId
@@ -79,6 +71,23 @@ public interface GroupbuyingAPI {
 	 */
 	public ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page,
 			GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
+	
+	
+	/**
+	 * 添加参团记录-http接口使用
+	 * @param dto
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<?> addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto,String messageId);
+	
+	/**
+	 * 根据promotionId获取的团购活动信息-http接口使用
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmpl2HttpINTFC(String promotionId,String messageId);
 	
 
 }

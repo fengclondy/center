@@ -23,6 +23,8 @@ import cn.htd.promotion.cpc.biz.service.VoteActivityService;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
+import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
@@ -40,7 +42,6 @@ public class VoteActivityServiceImpl implements VoteActivityService{
     private VoteActivityMemberDAO voteActivityMemberDAO;
     @Resource
     private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
-    
     @Resource
     private VoteActivityFansForwardDAO voteActivityFansForwardDAO;
 
@@ -243,5 +244,28 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		VoteActivityMemResDTO voteActivityMemResDTO=voteActivityMemberDAO.querySignupMemberDetailInfo(voteMemberId);
 		resut.setResult(voteActivityMemResDTO);
 		return resut;
+	}
+
+
+	@Override
+	public ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(
+			List<VoteActivityMemReqDTO> list) {
+		ExecuteResult<ImportVoteActivityMemResDTO> result=new ExecuteResult<ImportVoteActivityMemResDTO>();
+		
+		if(CollectionUtils.isEmpty(list)){
+			result.setErrorMessages(Lists.newArrayList("参数为空"));
+			return result;
+		}
+		List<VoteActivityMemReqDTO> tempList=Lists.newArrayList();
+		for(VoteActivityMemReqDTO v:list){
+			ValidateResult va1lidateResult=DTOValidateUtil.validate(v);
+			
+			if(!va1lidateResult.isPass()){
+				continue;
+			}
+			tempList.add(v);
+		}
+		voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+		return result;
 	}
 }

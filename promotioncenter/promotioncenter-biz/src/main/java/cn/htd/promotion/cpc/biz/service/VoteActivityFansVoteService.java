@@ -11,25 +11,6 @@ import java.util.Date;
  * @date 2017-10-12
  */
 public interface VoteActivityFansVoteService {
-//    /**
-//     * 校验粉丝当日投此门店票数是否超过活动设定
-//     * @param voteActivityId 投票活动ID
-//     * @param fansId
-//     * @param memberCode
-//     * @param date
-//     * @return 投此门店票数
-//     */
-//    ExecuteResult<String> validateFansVoteNumByDayAndStore(Long voteActivityId, Long fansId, String memberCode, Date date);
-//
-//    /**
-//     * 校验粉丝当日投门店数量是否超过活动设定
-//     * @param voteActivityId 投票活动ID
-//     * @param fansId
-//     * @param date
-//     * @return 粉丝当天投票门店数
-//     */
-//    ExecuteResult<String> validateFansVoteStoreNumByDay(Long voteActivityId, Long fansId, Date date);
-
     /**
      * 粉丝投票
      * @param voteActivityId 投票活动ID

@@ -5,6 +5,7 @@ import cn.htd.promotion.cpc.biz.service.VoteActivityFansVoteService;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberVoteDetailDTO;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -381,7 +381,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	        try {
 
-	            if (null == promotionId) {
+	            if (null == promotionId || promotionId.length() == 0) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
 	            }
 
@@ -410,7 +410,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	        try {
 
-	            if (null == promotionId) {
+	            if (null == promotionId || promotionId.length() == 0) {
 	                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
 	            }
 	            

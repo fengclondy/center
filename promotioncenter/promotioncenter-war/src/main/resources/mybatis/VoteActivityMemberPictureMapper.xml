@@ -150,6 +150,6 @@
     select
     <include refid="Base_Column_List" />
     from vote_activity_member_picture
-    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT} and delete_flag = 0
   </select>
 </mapper>

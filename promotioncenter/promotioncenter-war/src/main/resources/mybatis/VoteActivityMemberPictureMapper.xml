@@ -28,21 +28,18 @@
     where picture_id = #{pictureId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberPictureResDTO" >
-    insert into vote_activity_member_picture (picture_id, vote_member_id, picture_url, 
+    insert into vote_activity_member_picture (vote_member_id, picture_url,
       delete_flag, create_id, create_name, 
       create_time, modify_id, modify_name, 
       modify_time)
-    values (#{pictureId,jdbcType=BIGINT}, #{voteMemberId,jdbcType=BIGINT}, #{pictureUrl,jdbcType=VARCHAR}, 
+    values ( #{voteMemberId,jdbcType=BIGINT}, #{pictureUrl,jdbcType=VARCHAR},
       #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
-      SYSDATE, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR},
-      SYSDATE
+      NOW(), #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR},
+      NOW())
   </insert>
   <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberPictureResDTO" >
     insert into vote_activity_member_picture
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="pictureId != null" >
-        picture_id,
-      </if>
       <if test="voteMemberId != null" >
         vote_member_id,
       </if>
@@ -131,7 +128,7 @@
       <if test="modifyName != null" >
         modify_name = #{modifyName,jdbcType=VARCHAR},
       </if>
-      modify_time = SYSDATE
+      modify_time = NOW()
     </set>
     where picture_id = #{pictureId,jdbcType=BIGINT}
   </update>

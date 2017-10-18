@@ -5,18 +5,14 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
@@ -366,7 +362,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         promotionInfoDMO.setPromotionId(groupbuyingInfoCmplResDTO.getPromotionId());
         try {
         	// 保存团购活动信息到redis
-        	setGroupbuyingInfoCmpl2Redis(groupbuyingInfoCmplResDTO);
+        	promotionGroupbuyingRedisHandle.setGroupbuyingInfoCmpl2Redis(groupbuyingInfoCmplResDTO);
             promotionInfoDMO.setDealFlag(YesNoEnum.NO.getValue());
         } catch (Exception e) {
             promotionInfoDMO.setDealFlag(YesNoEnum.YES.getValue());
@@ -452,54 +448,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		
 	}
 	
-	/**
-	 * 保存团购活动信息到redis
-	 * @param groupbuyingInfoCmplResDTO
-	 * @throws Exception
-	 */
-    public void setGroupbuyingInfoCmpl2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) throws Exception {
-        if (groupbuyingInfoCmplResDTO != null) {
-        	
-            String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
-            String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
-            
-            String groupbuyingPriceSettingStr = JSON.toJSONString(groupbuyingInfoCmplResDTO.getGroupbuyingPriceSettingResDTOList());
-            
-            Map<String, String> resultMap = new HashMap<String, String>();
-            String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
-            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
-            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
-            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING, groupbuyingPriceSettingStr);
-            
-            // 设置团购活动
-            promotionCenterRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
-            // 设置团购活动其他信息
-            promotionCenterRedisDB.setHash(groupbuyingResultKey, resultMap);
-            
-            // 设置团购活动具体数量
-//          this.addGroupbuyingInfoResult2Redis(groupbuyingInfoCmplResDTO);
-        }
-    }
-
-    /**
-     * 保存团购活动信息进Redis
-     *
-     * @param groupbuyingInfoCmplResDTO
-     */
-//    private void addGroupbuyingInfoResult2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) {
-//        Map<String, String> resultMap = new HashMap<String, String>();
-//        String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
-//        String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
-//        String groupbuyingResultStr = promotionRedisDB.get(groupbuyingResultKey);
-//        if (StringUtils.isNotBlank(groupbuyingResultStr)) {
-//            promotionRedisDB.del(groupbuyingResultKey);
-//        }
-//        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,
-//                String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
-//        resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,
-//                String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
-//        promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
-//    }
 
     @Override
     public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
@@ -512,16 +460,12 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
          	// 真实参团人数
          	Integer realActorCount = promotionCenterRedisDB.incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
-        	 // 获取团购活动其他信息
-        	 Map<String, String> resultMap = promotionCenterRedisDB.getHashOperations(groupbuyingResultKey);
-//        	 Integer realActorCount22 = Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT));
-        	// 真实拼团价
-//        	BigDecimal realGroupbuyingPrice = new BigDecimal(String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE)));
+        	// 获取团购活动其他信息
+        	Map<String, String> resultMap = promotionCenterRedisDB.getHashOperations(groupbuyingResultKey);
         	
         	// 阶梯价格
         	String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
         	List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = JSONObject.parseArray(groupbuyingPriceSettingStr,GroupbuyingPriceSettingResDTO.class);
-
         	// 团购价格设置降序排序(sortNum)
         	Collections.sort(groupbuyingPriceSettingResDTOList, new Comparator<GroupbuyingPriceSettingResDTO>(){
 				@Override

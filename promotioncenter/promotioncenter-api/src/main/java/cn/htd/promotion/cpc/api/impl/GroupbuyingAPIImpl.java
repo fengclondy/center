@@ -250,7 +250,7 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
             if (null == page) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品页码不能为空！");
             }
-            DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingListCmplForPage(page,groupbuyingInfoReqDTO, messageId);
+            DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingInfo4MobileForPage(page,groupbuyingInfoReqDTO, messageId);
             result.setResult(groupbuyingInfoCmplResDTOData);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());

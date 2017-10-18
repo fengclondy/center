@@ -112,11 +112,11 @@ public interface GroupbuyingService {
     public void initGroupbuyingInfoRedisInfo(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO);
 
 	/**
-	 * 根据orgId 查询店铺所有的团购商品
+	 * 根据orgId 查询店铺所有的团购商品(供移动端使用)
 	 * @param page
 	 * @param groupbuyingInfoReqDTO
 	 * @param messageId
 	 * @return
 	 */
-	DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingListCmplForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
+	DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 }

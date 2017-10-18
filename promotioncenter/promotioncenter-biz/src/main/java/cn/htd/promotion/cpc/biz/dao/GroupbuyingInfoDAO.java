@@ -48,6 +48,21 @@ public interface GroupbuyingInfoDAO {
 	 * @return
 	 */
 	GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId);
+	
+	/**
+	 * 根据条件查询团购活动总数(供移动端使用)
+	 * @param record
+	 * @return
+	 */
+	int getGroupbuyingInfo4MobileCount( @Param("dto")GroupbuyingInfoReqDTO record);
+	
+	/**
+	 * 分页查询团购活动(供移动端使用)
+	 * @param page
+	 * @param record
+	 * @return
+	 */
+	List<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(@Param("page")Pager<GroupbuyingInfoReqDTO> page, @Param("dto")GroupbuyingInfoReqDTO record);
 
 
 }

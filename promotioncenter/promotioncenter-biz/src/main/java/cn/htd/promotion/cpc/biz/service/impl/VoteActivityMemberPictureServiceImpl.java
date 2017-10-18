@@ -40,24 +40,28 @@ public class VoteActivityMemberPictureServiceImpl implements VoteActivityMemberP
         // 创建人和创建ID
         Long createId = NUtils.convertToLong(params.get("createId"));
         String createName = NUtils.convertToStr(params.get("createName"));
-        // 图片地址集合
-        String[] imgNames = (String[])params.get("imgNames");
-        // 循环保存
-        for(String imgName:imgNames){
-            memberPictureResDTO = new VoteActivityMemberPictureResDTO();
-            memberPictureResDTO.setVoteMemberId(voteMemberId);
-            memberPictureResDTO.setPictureUrl(imgName);
-            memberPictureResDTO.setDeleteFlag(Byte.decode("0"));
-            memberPictureResDTO.setCreateId(createId);
-            memberPictureResDTO.setCreateName(createName);
-            memberPictureResDTO.setModifyId(createId);
-            memberPictureResDTO.setModifyName(createName);
-            voteActivityMemberPictureDAO.insert(memberPictureResDTO);
+
+        // 判断是否有图片地址集合
+        if(!NUtils.isEmpty(params.get("imgNames"))) {
+            // 图片地址集合
+            String[] imgNames = (String[])params.get("imgNames");
+            // 循环保存
+            for (String imgName : imgNames) {
+                memberPictureResDTO = new VoteActivityMemberPictureResDTO();
+                memberPictureResDTO.setVoteMemberId(voteMemberId);
+                memberPictureResDTO.setPictureUrl(imgName);
+                memberPictureResDTO.setDeleteFlag(Byte.decode("0"));
+                memberPictureResDTO.setCreateId(createId);
+                memberPictureResDTO.setCreateName(createName);
+                memberPictureResDTO.setModifyId(createId);
+                memberPictureResDTO.setModifyName(createName);
+                voteActivityMemberPictureDAO.insert(memberPictureResDTO);
+            }
         }
         // 判断是否有删除图片集合
         if(!NUtils.isEmpty(params.get("delImgIds"))){
             // 删除集合
-            String[] delImgIds = (String[]) params.get("delImgIds");
+            String[] delImgIds = NUtils.convertToStr(params.get("delImgIds")).split(",");
             // 循环删除
             for(String id:delImgIds) {
                 memberPictureResDTO = new VoteActivityMemberPictureResDTO();

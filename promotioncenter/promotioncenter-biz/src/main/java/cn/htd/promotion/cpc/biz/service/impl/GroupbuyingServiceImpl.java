@@ -490,6 +490,8 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	groupbuyingInfoReqDTO.setPromotionId(groupbuyingRecordReqDTO.getPromotionId());
         	groupbuyingInfoReqDTO.setRealActorCount(realActorCount);// 真实参团人数
         	groupbuyingInfoReqDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);// 真实拼团价
+        	groupbuyingInfoReqDTO.setModifyId(groupbuyingRecordReqDTO.getModifyId());
+        	groupbuyingInfoReqDTO.setModifyName(groupbuyingRecordReqDTO.getModifyName());
         	groupbuyingInfoReqDTO.setModifyTime(currentTime);
         	groupbuyingInfoDAO.updateGroupbuyingInfo(groupbuyingInfoReqDTO);
         	

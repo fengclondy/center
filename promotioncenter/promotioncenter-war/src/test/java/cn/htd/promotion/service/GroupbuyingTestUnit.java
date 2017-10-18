@@ -443,12 +443,12 @@ public class GroupbuyingTestUnit {
     		Long userId = 10001L;
     		String userName = "admin";
     		
-    		String promotionId = "25171601240015";
+    		String promotionId = "25171430390018";
             
             GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
             
             groupbuyingRecordReqDTO.setPromotionId(promotionId);// 促销活动编码
-        	groupbuyingRecordReqDTO.setSellerCode("1001");// 商家编码
+        	groupbuyingRecordReqDTO.setSellerCode("801781");// 商家编码
         	groupbuyingRecordReqDTO.setBuyerCode("2002");// 参团人账号
         	groupbuyingRecordReqDTO.setBuyerName("林寻");// 参团人姓名
         	groupbuyingRecordReqDTO.setBuyerContact("18801011008");// 参团人联系方式

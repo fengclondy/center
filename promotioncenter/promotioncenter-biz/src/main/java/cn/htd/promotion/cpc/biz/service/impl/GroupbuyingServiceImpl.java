@@ -647,10 +647,19 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         return dataGrid;
 	}
 
-
-
-    
-    
-    
-
+	@Override
+	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingListCmplForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		DataGrid<GroupbuyingInfoCmplResDTO> dataGrid = null;
+		try {
+			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
+			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingListCmplForPage(page, groupbuyingInfoReqDTO);
+			int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
+			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+			dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【getGroupbuyingInfoCmplForPage】报错：{}", messageId, e.toString());
+			throw new RuntimeException(e);
+		}
+		return dataGrid;
+	}
 }

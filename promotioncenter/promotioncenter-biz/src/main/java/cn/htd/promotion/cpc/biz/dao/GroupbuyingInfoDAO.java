@@ -48,7 +48,6 @@ public interface GroupbuyingInfoDAO {
 	 * @return
 	 */
 	GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId);
-	
-	
-    
+
+
 }

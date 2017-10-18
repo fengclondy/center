@@ -88,6 +88,13 @@ public interface GroupbuyingAPI {
 	 * @return
 	 */
 	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmpl2HttpINTFC(String promotionId,String messageId);
-	
 
+	/**
+	 * 根据orgid获取该店铺所有团购商品-http接口使用
+	 * @param pager
+	 * @param dto
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO dto, String messageId);
 }

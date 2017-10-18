@@ -77,7 +77,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
     }
 
     /***
-     * 根据活动ID和会员编码查询投票活动
+     * 根据活动ID和会员编码查询会员店投票活动报名编码
      * @param voteId
      * @param memberCode
      * @return
@@ -130,6 +130,9 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             memberResDTO.setSignUpTime(new Date());
             // 活动宣言
             memberResDTO.setMemberActivityDec(NUtils.convertToStr(params.get("desinfo")));
+            // 创建人和创建ID
+            memberResDTO.setModifyId(NUtils.convertToLong(params.get("createId")));
+            memberResDTO.setModifyName(NUtils.convertToStr(params.get("createName")));
             // 更新报名信息
             voteActivityMemberService.updateByPrimaryKeySelective(memberResDTO);
             // 保存图片

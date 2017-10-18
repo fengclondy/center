@@ -473,7 +473,7 @@ public class GroupbuyingTestUnit {
     public void getGroupbuyingInfoCmpl2HttpINTFCTest(){
     	
         String messageId = "342453251349";
-        String promotionId = "25171601240015";
+        String promotionId = "25171430390018";
         try {
         	ExecuteResult<GroupbuyingInfoCmplResDTO> executeResult = groupbuyingAPI.getGroupbuyingInfoCmpl2HttpINTFC(promotionId, messageId);
         	System.out.println("===>executeResult:" + executeResult);

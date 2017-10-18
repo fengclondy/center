@@ -112,6 +112,17 @@
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
   </delete>
   
+  <update id="deleteByPromotionId" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
+    update groupbuying_info 
+    <set >
+        delete_flag = 1,
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+    </set>
+    where  promotion_id = #{promotionId,jdbcType=VARCHAR}  
+  </update>
+  
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
     insert into groupbuying_info (groupbuying_id, promotion_id, seller_code, 
       item_id, sku_code, sku_name, 

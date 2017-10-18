@@ -230,9 +230,7 @@
       <if test="modifyName != null" >
         modify_name = #{modifyName,jdbcType=VARCHAR},
       </if>
-      <if test="modifyTime != null" >
-        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
+      modify_time = NOW()
     </set>
     where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
   </update>
@@ -374,6 +372,15 @@
 	  ) temp 
 	  order by voteCount desc,member_vote_last_time asc
 	  limit #{start},#{pageSize}
+ </select>
+ 
+ <select id="querySignUpMemberInfoList" parameterType="Long" resultType="java.lang.String">
+ 	SELECT
+		member_code
+	FROM
+		vote_activity_member member
+	WHERE
+		member.vote_id = #{voteId}
  </select>
  
  <select id="queryTotalSignupMemberInfo" resultType="Long" 

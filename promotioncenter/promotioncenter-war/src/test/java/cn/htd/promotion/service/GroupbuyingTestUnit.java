@@ -238,10 +238,10 @@ public class GroupbuyingTestUnit {
     		BigDecimal skuCostPrice = new BigDecimal("50");
     		groupbuyingInfoCmplReqDTO.setSkuCostPrice(skuCostPrice);
     		// 真实参团人数
-    		Integer realActorCount = 20;
+    		Integer realActorCount = 27;
     		groupbuyingInfoCmplReqDTO.setRealActorCount(realActorCount);
     		// 真实拼团价
-    		BigDecimal realGroupbuyingPrice = new BigDecimal("80");
+    		BigDecimal realGroupbuyingPrice = new BigDecimal("87");
     		groupbuyingInfoCmplReqDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
     		
     		
@@ -383,42 +383,6 @@ public class GroupbuyingTestUnit {
     
     
     /**
-     * 添加团购记录（参团测试）-测试用例
-     */
-	@Test
-	@Rollback(false) 
-    public void addGroupbuyingRecord2HttpINTFCTest(){
-		
-    	try {
-    		
-    		String messageId = keyGeneratorUtils.generateMessageId();
-    		Long userId = 10001L;
-    		String userName = "admin";
-    		
-    		String promotionId = "25171601240015";
-            
-            GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
-            
-            groupbuyingRecordReqDTO.setPromotionId(promotionId);// 促销活动编码
-        	groupbuyingRecordReqDTO.setSellerCode("1001");// 商家编码
-        	groupbuyingRecordReqDTO.setBuyerCode("2002");// 参团人账号
-        	groupbuyingRecordReqDTO.setBuyerName("林寻");// 参团人姓名
-        	groupbuyingRecordReqDTO.setBuyerContact("18801011008");// 参团人联系方式
-
-        	groupbuyingRecordReqDTO.setCreateId(userId);
-        	groupbuyingRecordReqDTO.setCreateName(userName);
-        	groupbuyingRecordReqDTO.setModifyId(userId);
-        	groupbuyingRecordReqDTO.setModifyName(userName);
-    		
-    		groupbuyingAPI.addGroupbuyingRecord2HttpINTFC(groupbuyingRecordReqDTO, messageId);
-            
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-    }
-    
-    /**
      * 根据条件获取单条参团记录-测试用例
      */
     @Test
@@ -463,6 +427,62 @@ public class GroupbuyingTestUnit {
         }
 
     }
+    
+    
+    
+    /**
+     * 添加团购记录（参团测试）-测试用例
+     */
+	@Test
+	@Rollback(false) 
+    public void addGroupbuyingRecord2HttpINTFCTest(){
+		
+    	try {
+    		
+    		String messageId = keyGeneratorUtils.generateMessageId();
+    		Long userId = 10001L;
+    		String userName = "admin";
+    		
+    		String promotionId = "25171430390018";
+            
+            GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+            
+            groupbuyingRecordReqDTO.setPromotionId(promotionId);// 促销活动编码
+        	groupbuyingRecordReqDTO.setSellerCode("801781");// 商家编码
+        	groupbuyingRecordReqDTO.setBuyerCode("2002");// 参团人账号
+        	groupbuyingRecordReqDTO.setBuyerName("林寻");// 参团人姓名
+        	groupbuyingRecordReqDTO.setBuyerContact("18801011008");// 参团人联系方式
+
+        	groupbuyingRecordReqDTO.setCreateId(userId);
+        	groupbuyingRecordReqDTO.setCreateName(userName);
+        	groupbuyingRecordReqDTO.setModifyId(userId);
+        	groupbuyingRecordReqDTO.setModifyName(userName);
+    		
+    		groupbuyingAPI.addGroupbuyingRecord2HttpINTFC(groupbuyingRecordReqDTO, messageId);
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+    }
+	
+	/**
+	 * 根据promotionId获取的团购活动信息(http接口使用)-测试用例
+	 */
+    @Test
+    public void getGroupbuyingInfoCmpl2HttpINTFCTest(){
+    	
+        String messageId = "342453251349";
+        String promotionId = "25171430390018";
+        try {
+        	ExecuteResult<GroupbuyingInfoCmplResDTO> executeResult = groupbuyingAPI.getGroupbuyingInfoCmpl2HttpINTFC(promotionId, messageId);
+        	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+	
 	
     
 

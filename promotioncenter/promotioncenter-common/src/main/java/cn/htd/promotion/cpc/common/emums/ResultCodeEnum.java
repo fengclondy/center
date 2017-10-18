@@ -68,7 +68,8 @@ public enum ResultCodeEnum {
     OTE_ACTIVITY_MEMBER_NOT_SIGN_UP("26304", "会员店未报名"),
     OTE_ACTIVITY_MEMBER_NOT_AUDIT_PASSED("26305", "会员店未审核通过"),
     OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM("26306", "您今天已经达到每日可投票门店数上限，明天再来吧！"),
-    OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE("26307", "您今天已经投过我了，谢谢您！")
+    OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE("26307", "您今天已经投过我了，谢谢您！"),
+    OTE_ACTIVITY_INPUT_PARAM_IS_NULL("26308", "必填参数为空")
     ;
 
     private ResultCodeEnum(String code, String msg) {

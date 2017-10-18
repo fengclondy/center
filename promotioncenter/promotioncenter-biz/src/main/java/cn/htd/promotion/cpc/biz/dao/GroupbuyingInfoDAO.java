@@ -10,6 +10,8 @@ import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 public interface GroupbuyingInfoDAO {
 	
     int deleteByPrimaryKey(Long groupbuyingId);
+    
+    int deleteByPromotionId(GroupbuyingInfoReqDTO record);
 
     int insert(GroupbuyingInfoReqDTO record);
 

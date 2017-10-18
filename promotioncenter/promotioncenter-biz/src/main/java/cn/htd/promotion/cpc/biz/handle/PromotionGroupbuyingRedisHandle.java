@@ -1,120 +1,119 @@
 package cn.htd.promotion.cpc.biz.handle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import cn.htd.common.DataGrid;
-import cn.htd.common.Pager;
-import cn.htd.common.constant.DictionaryConst;
-import cn.htd.common.util.DictionaryUtils;
-import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
-import cn.htd.promotion.cpc.common.constants.RedisConst;
-import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
-import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
-import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
-import cn.htd.promotion.cpc.dto.response.TimelimitedResultDTO;
-
-import com.alibaba.fastjson.JSON;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+
+import com.alibaba.fastjson.JSON;
 
 @Service("promotionGroupbuyingRedisHandle")
 public class PromotionGroupbuyingRedisHandle {
 
     protected static transient Logger logger = LoggerFactory.getLogger(PromotionGroupbuyingRedisHandle.class);
-
+    
     @Resource
-    private DictionaryUtils dictionary;
-
-    @Resource
-    private PromotionRedisDB promotionRedisDB;
-    
-    public TimelimitedInfoResDTO getTimelitedInfoByPromotionId(String promotionId){
-    	String timelimitedJsonStr = "";
-    	 TimelimitedInfoResDTO timelimitedInfoDTO = null;
-		timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-		timelimitedInfoDTO = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
-		if(null !=timelimitedInfoDTO){
-			return timelimitedInfoDTO;
-		}
-		return null;
-    }
-    
-
-    /**
-     * 秒杀 - 保存秒杀活动的启用状态
-     * 
-     * @param skuCodeList 商品编码集合
-     * @return
-     */
-    public void saveTimelimitedValidStatus2Redis(TimelimitedInfoResDTO timelimitedInfoResDTO) {
-    	  String jsonObj = JSON.toJSONString(timelimitedInfoResDTO);
-    	  promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, timelimitedInfoResDTO.getPromotionId(), jsonObj);
-    }
-    
+    private PromotionCenterRedisDB promotionCenterRedisDB;
     
     /**
-     * 秒杀 - 根据促销活动id修改秒杀活动的启用状态
-     * 
-     * @param skuCodeList 商品编码集合
-     * @return
-     */
-    public void updateTimelimitedValidStatus2Redis(String promotionId,String showStatus) {
-    	 TimelimitedInfoResDTO timelimitedInfoDTO = null;
-	     String timelimitedJsonStr = "";
-	     if(StringUtils.isNotBlank(promotionId) && StringUtils.isNotBlank(showStatus)){
-			 timelimitedJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, promotionId);
-			 timelimitedInfoDTO = JSON.parseObject(timelimitedJsonStr, TimelimitedInfoResDTO.class);
-			 timelimitedInfoDTO.getPromotionExtendInfoDTO().setShowStatus(showStatus);
-	    	 String jsonObj = JSON.toJSONString(timelimitedInfoDTO);
-	    	 promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_TIMELIMITED, timelimitedInfoDTO.getPromotionId(), jsonObj);
-	     }
-    }
-
-
-    /**
-     * 秒杀 - 查询Redis秒杀活动展示结果信息
-     *
+     * 获取redis里的团购活动信息
      * @param promotionId
      * @return
      */
-    public TimelimitedResultDTO getRedisTimelimitedResult(String promotionId) throws PromotionCenterBusinessException {
-        Map<String, String> resultMap = null;
-        TimelimitedResultDTO resultDTO = null;
-        String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-        resultMap = promotionRedisDB.getHashOperations(timelimitedResultKey);
-        if (resultMap == null || resultMap.isEmpty()) {
-            throw new PromotionCenterBusinessException(PromotionCenterConst.TIMELIMITED_RESULT_NOT_EXIST,
-                    "该秒杀活动的结果数据不存在!");
+    public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId){
+    	
+    	String groupbuyingInfoJsonStr = promotionCenterRedisDB.getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId);
+    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+		if(null == groupbuyingInfoCmplResDTO) return null;
+		
+		 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+		 // 真实参团人数
+		 String realActorCountStr = promotionCenterRedisDB.getHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT);
+		 Integer realActorCount = Integer.valueOf(realActorCountStr);
+   	     // 真实拼团价
+		 String realGroupbuyingPriceStr = promotionCenterRedisDB.getHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE);
+   	     BigDecimal realGroupbuyingPrice = new BigDecimal(realGroupbuyingPriceStr);
+   	     
+   		// 开团开始时间
+   		Date effectiveTime = groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().getEffectiveTime();
+   		// 开团结束时间
+   		Date invalidTime = groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().getInvalidTime();
+   		// 下单开始时间
+   		Date startTime = groupbuyingInfoCmplResDTO.getStartTime();
+   		// 下单结束时间
+   		Date endTime = groupbuyingInfoCmplResDTO.getEndTime();
+        // 当前时间
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+        // 活动状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束,-1.无效活动]
+        String activeState = null;
+        
+        if(currentTime.getTime() < effectiveTime.getTime()){ //(当前时间 < 开团开始时间)  1.未开始
+        	activeState = "1";
+        }else if(currentTime.getTime() > endTime.getTime()){ //(当前时间 > 下单结束时间)  5.已结束
+        	activeState = "5";
+        }else if(currentTime.getTime() >= effectiveTime.getTime() && currentTime.getTime() <= invalidTime.getTime()){ //(当前时间 >= 开团开始时间 && 当前时间 <= 开团结束时间)  2.开团进行中
+        	activeState = "2";
+        }else if(currentTime.getTime() > invalidTime.getTime() && currentTime.getTime() < startTime.getTime()){ //(当前时间 > 开团结束时间 && 当前时间 < 下单开始时间)  3.下单未开始
+        	activeState = "3";
+        }else if(currentTime.getTime() >= startTime.getTime() && currentTime.getTime() <= endTime.getTime()){ //(当前时间 >= 下单开始时间 && 当前时间 <= 下单结束时间)  4.下单进行中
+        	activeState = "4";
+        }else{ // -1.无效活动
+        	activeState = "-1";
         }
-        resultDTO = new TimelimitedResultDTO();
-        resultDTO.setPromotionId(promotionId);
-        resultDTO.setTotalSkuCount(Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_TOTAL_COUNT)));
-        resultDTO.setShowRemainSkuCount(Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT)));
-        resultDTO.setShowTimelimitedActorCount(
-                Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_ACTOR_COUNT)));
-        resultDTO.setRealRemainSkuCount(Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_REMAIN_COUNT)));
-        resultDTO.setRealTimelimitedActorCount(
-                Integer.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_TIMELIMITED_REAL_ACTOR_COUNT)));
-        return resultDTO;
+   	     
+   	     groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
+   	     groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+   	     groupbuyingInfoCmplResDTO.setActiveState(activeState);
+		
+		return groupbuyingInfoCmplResDTO;
     }
+    
+    
+	/**
+	 * 保存团购活动信息到redis
+	 * @param groupbuyingInfoCmplResDTO
+	 */
+    public void setGroupbuyingInfoCmpl2Redis(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO) {
+        if (groupbuyingInfoCmplResDTO != null) {
+        	
+            String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
+            String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+            
+            String groupbuyingPriceSettingStr = JSON.toJSONString(groupbuyingInfoCmplResDTO.getGroupbuyingPriceSettingResDTOList());
+            
+            Map<String, String> resultMap = new HashMap<String, String>();
+            String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT,String.valueOf(groupbuyingInfoCmplResDTO.getRealActorCount()));
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE,String.valueOf(groupbuyingInfoCmplResDTO.getRealGroupbuyingPrice()));
+            resultMap.put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING, groupbuyingPriceSettingStr);
+            
+            // 设置团购活动
+            promotionCenterRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+            // 设置团购活动其他信息
+            promotionCenterRedisDB.setHash(groupbuyingResultKey, resultMap);
+        }
+    }
+
+
+    
+    
+    
+
+	public PromotionCenterRedisDB getPromotionCenterRedisDB() {
+		return promotionCenterRedisDB;
+	}
 
 
 }

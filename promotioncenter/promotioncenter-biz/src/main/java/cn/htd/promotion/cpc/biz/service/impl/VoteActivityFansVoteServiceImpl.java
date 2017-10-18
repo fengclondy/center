@@ -7,6 +7,7 @@ import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.*;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,75 +56,65 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
 
     private Logger logger = LoggerFactory.getLogger(VoteActivityFansVoteServiceImpl.class);
 
-    @Override
-    public ExecuteResult<String> validateFansVoteNumByDayAndStore(Long voteActivityId, Long fansId, String memberCode, Date date) {
-        ExecuteResult<String> executeResult = new ExecuteResult<>();
-        VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);
-        if (voteActivityResDTO != null) {
-            Integer voteNumPAccountPDayPStoreLimit = voteActivityResDTO.getVoteNumPAccountPDayPStore(); // 粉丝当前单个门店投票数量上限
-            int voteNumByDayAndStore = this.queryFansVoteNumByDayAndStore(voteActivityId, fansId, memberCode, date);
-            // 投票前校验：当前投票数小于限制数，返回校验通过
-            if (voteNumByDayAndStore < voteNumPAccountPDayPStoreLimit) {
-                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
-                executeResult.setResultMessage("校验成功");
-                return executeResult;
-            } else {
-                executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE.getCode());
-                executeResult.setResultMessage("您今天已经投过我了，谢谢您！");
-                return executeResult;
-            }
-        } else {
-            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
-            executeResult.setResultMessage("投票活动不存在");
-            return executeResult;
-        }
-    }
-
-    @Override
-    public ExecuteResult<String> validateFansVoteStoreNumByDay(Long voteActivityId, Long fansId, Date date) {
-        ExecuteResult<String> executeResult = new ExecuteResult<>();
-        VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);
-        if (voteActivityResDTO != null) {
-            Integer voteSotreNumPAccountPDayLimit = voteActivityResDTO.getVoteSotreNumPAccountPDay(); // 粉丝投门店数量上限
-            int voteSotreNumByDay = this.queryFansVoteStoreNumByDay(voteActivityId, fansId, date);
-            // 投票前校验：当前投票数小于限制数，返回校验通过
-            if (voteSotreNumByDay < voteSotreNumPAccountPDayLimit) {
-                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
-                executeResult.setResultMessage("校验成功");
-                return executeResult;
-            } else {
-                executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM.getCode());
-                executeResult.setResultMessage("您今天已经达到每日可投票门店数上限，明天再来吧！");
-                return executeResult;
-            }
-        } else {
-            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
-            executeResult.setResultMessage("投票活动不存在");
-            return executeResult;
-        }
-    }
-
     @Transactional
     @Override
     public ExecuteResult<String> voteByFans(Long voteActivityId, Long fansId, String memberCode) {
         logger.info("开始投票, 活动ID:{},粉丝ID:{},会员店编码:{}", voteActivityId, fansId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (voteActivityId == null || voteActivityId == 0 || fansId == null || fansId == 0 || StringUtils.isEmpty(memberCode)) {
+            logger.info("必填参数为空");
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getMsg());
+            return executeResult;
+        }
         Date date = new Date();
-        // 在REIDS插入投票记录
-        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId + REDIS_SEPARATOR + SP.format(date);
-        String field = memberCode;
-        if (promotionRedisDB.exists(key) && promotionRedisDB.existsHash(key, field)) {
-            Long returnValue = promotionRedisDB.incrHash(key, field);
-            logger.info("操作【REDIS-incrHash】, key :{}, field:{}, returnValue:{}", key, field, returnValue);
-        } else {
-            promotionRedisDB.setHash(key, field, "1");
-            logger.info("操作【REDIS-setHash】, key :{}, field:{}, value:{}", key, field, 1);
+        // 校验投票限制
+        VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);
+        if (voteActivityResDTO == null) {
+            logger.info("投票活动不存在");
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
+            executeResult.setResultMessage("投票活动不存在");
+            return executeResult;
+        }
+        Integer voteNumPAccountPDayPStoreLimit = voteActivityResDTO.getVoteNumPAccountPDayPStore(); // 粉丝当前单个门店投票数量上限
+        int voteNumByDayAndStore = this.queryFansVoteNumByDayAndStore(voteActivityId, fansId, memberCode, date);
+        // 投票前校验：当前投票数小于限制数，返回校验通过
+        if (voteNumByDayAndStore >= voteNumPAccountPDayPStoreLimit) {
+            logger.info("您今天已经投过我了，谢谢您！");
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE.getCode());
+            executeResult.setResultMessage("您今天已经投过我了，谢谢您！");
+            return executeResult;
+        }
+        int voteSotreNumByDay = this.queryFansVoteStoreNumByDay(voteActivityId, fansId, date);
+        // 投票前校验：当前投票数小于限制数，返回校验通过
+        Integer voteSotreNumPAccountPDayLimit = voteActivityResDTO.getVoteSotreNumPAccountPDay(); // 粉丝投门店数量上限
+        if (voteSotreNumByDay >= voteSotreNumPAccountPDayLimit) {
+            logger.info("您今天已经达到每日可投票门店数上限，明天再来吧！");
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM.getCode());
+            executeResult.setResultMessage("您今天已经达到每日可投票门店数上限，明天再来吧！");
+            return executeResult;
         }
         // 根据voteActivityId和memberCode查询voteActivityMemberResDTO
         VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteActivityId, memberCode);
         if (voteActivityMemberResDTO == null) {
+            logger.info("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
             executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
             executeResult.setResultMessage("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
+            return executeResult;
+        }
+        // 开始投票
+        // 在REIDS插入投票记录
+        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId + REDIS_SEPARATOR + SP.format(date);
+        String field = memberCode;
+        Long returnValue = promotionRedisDB.incrHash(key, field); // 增长后的值
+        logger.info("操作【REDIS-incrHash】, key :{}, field:{}, returnValue:{}", key, field, returnValue);
+        // 【关键】并发下，多个线程会突破前面的查询校验，利用增长后的值再次做判断
+        if (returnValue > voteNumPAccountPDayPStoreLimit) {
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE.getCode());
+            executeResult.setResultMessage("您今天已经投过我了，谢谢您！");
+            // 回滚投票
+            returnValue = promotionRedisDB.decrHash(key, field); // 增长后的值
+            logger.info("操作【REDIS-incrHash】后，发现被并发，回滚投票的reids记录,, key :{}, field:{}, returnValue:{}", key, field, returnValue);
             return executeResult;
         }
         // 在数据库记录投票
@@ -144,7 +135,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberResDTOUpdate.setVoteMemberId(voteMemberId);
         voteActivityMemberResDTOUpdate.setMemberVoteLastTime(date);
         this.voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTOUpdate);
-        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+        executeResult.setResultMessage("投票成功");
         return executeResult;
     }
 
@@ -152,6 +143,12 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
     public ExecuteResult<String> forwardByFans(Long voteActivityId, String memberCode) {
         logger.info("开始转发, 活动ID:{}, 会员店编码:{}", voteActivityId, memberCode);
         ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (voteActivityId == null || voteActivityId == 0 || StringUtils.isEmpty(memberCode)) {
+            logger.info("必填参数为空");
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getMsg());
+            return executeResult;
+        }
         Date date = new Date();
         // 根据voteActivityId和memberCode查询voteActivityMemberResDTO
         VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteActivityId, memberCode);
@@ -171,13 +168,19 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         record.setModifyName("SYSYTEM");
         record.setModifyTime(date);
         this.voteActivityFansForwardDAO.insert(record);
-        executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+        executeResult.setResultMessage("转发成功");
         return executeResult;
     }
 
     @Override
     public ExecuteResult<Long> isShowVoteActivityByMemberCode(String memberCode) {
         ExecuteResult<Long> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(memberCode)) {
+            logger.info("必填参数为空");
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getMsg());
+            return executeResult;
+        }
         // 有没有所处当前时间的投票活动
         VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectCurrentActivity();
         if (voteActivityResDTO != null) {
@@ -214,6 +217,12 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
     @Override
     public ExecuteResult<VoteActivityMemberVoteDetailDTO> getMemberVoteDetail(Long voteActivityId, String memberCode) {
         ExecuteResult<VoteActivityMemberVoteDetailDTO> executeResult = new ExecuteResult<>();
+        if (voteActivityId == null || voteActivityId == 0 || StringUtils.isEmpty(memberCode)) {
+            logger.info("必填参数为空");
+            executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getMsg());
+            return executeResult;
+        }
         VoteActivityMemberVoteDetailDTO voteActivityMemberVoteDetailDTO = new VoteActivityMemberVoteDetailDTO();
         // 查询活动
         VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);

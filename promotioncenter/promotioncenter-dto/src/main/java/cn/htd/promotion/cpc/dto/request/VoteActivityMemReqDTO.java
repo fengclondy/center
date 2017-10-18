@@ -2,19 +2,27 @@ package cn.htd.promotion.cpc.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 public class VoteActivityMemReqDTO implements Serializable{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3035130844818817569L;
+	@NotNull(message="voteId不能为空")
 	private Long voteId;
+	@NotNull(message="memberCode不能为空")
 	private String memberCode;
+	@NotNull(message="memberName不能为空")
 	private String memberName;
+	@NotNull(message="vendorName不能为空")
 	private String vendorName;
 	private String contactName;
 	private String contactPhone;
+	@NotNull(message="operatorName不能为空")
 	private String operatorName;
+	@NotNull(message="operatorId不能为空")
 	private Long operatorId;
 	public Long getVoteId() {
 		return voteId;

@@ -48,6 +48,13 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   
+  <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_info  
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from promotion_info
     where id = #{id,jdbcType=BIGINT}
@@ -527,6 +534,16 @@
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  
+  <update id="upDownShelvesPromotionInfo">
+  	UPDATE promotion_info
+  	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+  	modify_id = #{dto.operatorId,jdbcType=BIGINT},
+    modify_name = #{dto.operatorName,jdbcType=VARCHAR},
+    modify_time = #{modifyTime,jdbcType=TIMESTAMP}  
+  	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
   
 </mapper>

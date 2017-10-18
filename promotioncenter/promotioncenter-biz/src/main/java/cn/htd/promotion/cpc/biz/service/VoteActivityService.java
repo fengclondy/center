@@ -1,9 +1,13 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
+import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
+import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
@@ -59,6 +63,14 @@ public interface VoteActivityService {
 	 * @return
 	 */
 	ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteMemberId);
+	
+	/**
+	 * 导入投票活动会员
+	 * 
+	 * @param memberCodeList
+	 * @return
+	 */
+	ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(List<VoteActivityMemReqDTO> list);
 	
 	
 	

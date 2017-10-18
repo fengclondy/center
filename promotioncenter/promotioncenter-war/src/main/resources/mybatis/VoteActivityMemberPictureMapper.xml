@@ -149,7 +149,10 @@
   <select id="selectByVoteMemberId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
-    from vote_activity_member_picture
-    where vote_member_id = #{voteMemberId,jdbcType=BIGINT} and delete_flag = 0
+    from
+      vote_activity_member_picture
+    where
+      vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+      and delete_flag = 0
   </select>
 </mapper>

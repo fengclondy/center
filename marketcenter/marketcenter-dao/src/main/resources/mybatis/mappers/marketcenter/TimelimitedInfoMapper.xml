@@ -255,7 +255,7 @@
 		timelimited_info.promotion_id and promotion_accumulaty.level_code =
 		timelimited_info.level_code)
 		where 1 = 1
-		 and timelimited_info.item_code =#{_parameter,jdbcType=VARCHAR}
+		 and (timelimited_info.item_code =#{_parameter,jdbcType=VARCHAR} or timelimited_info.item_id=#{_parameter,jdbcType=VARCHAR})
 	     and promotion_info.status in ('1','2') 
 	     <![CDATA[ and timelimited_info.end_time > now() ]]>
 		 and promotion_accumulaty.delete_flag = 0

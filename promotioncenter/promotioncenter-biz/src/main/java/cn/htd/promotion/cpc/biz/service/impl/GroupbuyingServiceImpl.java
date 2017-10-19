@@ -331,8 +331,8 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     	}
 		
 		// 更新redis里的上下架状态
-//		promotionTimelimitedRedisHandle.updateTimelimitedValidStatus2Redis(promotionId, showStatus);
-//		
+		promotionGroupbuyingRedisHandle.upDownShelvesPromotionInfo2Redis(promotionId, showStatus);
+		
          } catch (Exception e) {
         	 status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_ERROR;//-1 系统异常
              logger.error("messageId{}:执行方法【updateShowStatusByPromotionId】报错：{}", messageId, e.toString());

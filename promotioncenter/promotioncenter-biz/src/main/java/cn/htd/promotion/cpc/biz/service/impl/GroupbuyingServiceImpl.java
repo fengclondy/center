@@ -554,6 +554,32 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         Date currentTime = calendar.getTime();
 
         try {
+        	//[start]-----------------   参团的校验  ----------------
+           	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
+        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+            if (null == groupbuyingInfoCmplResDTO) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+            }
+       		// 开团开始时间
+       		Date effectiveTime = groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().getEffectiveTime();
+       		// 开团结束时间
+       		Date invalidTime = groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().getInvalidTime();
+       	    //(当前时间 >= 开团开始时间 && 当前时间 <= 开团结束时间)  2.开团进行中
+            boolean isGBProcessing = currentTime.getTime() >= effectiveTime.getTime() && currentTime.getTime() <= invalidTime.getTime();
+            if(!isGBProcessing){
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动状态不是开团进行中！");
+            }
+            
+            GroupbuyingRecordReqDTO groupbuyingRecordReqDTO_check = new GroupbuyingRecordReqDTO();
+            groupbuyingRecordReqDTO_check.setPromotionId(groupbuyingRecordReqDTO.getPromotionId());// 促销活动编码
+            groupbuyingRecordReqDTO_check.setBuyerCode(groupbuyingRecordReqDTO.getBuyerCode());// 参团人账号
+            GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO_check);
+            if(null != groupbuyingRecordResDTO){
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "已经参团过！");
+            }
+          //[end]-----------------   参团的校验  ----------------
+            
+    		
         	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
          	// 真实参团人数
          	Integer realActorCount = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();

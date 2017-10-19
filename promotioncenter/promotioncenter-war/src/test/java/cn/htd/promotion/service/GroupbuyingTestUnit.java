@@ -448,7 +448,7 @@ public class GroupbuyingTestUnit {
 			dto.setShowStatus("3");// 审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
 			dto.setModifyId(1L);
 			dto.setModifyName("测试");
-			ExecuteResult<String> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
+			ExecuteResult<?> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
         	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
         		System.out.println("===>executeResult:" + executeResult);
         	}else{

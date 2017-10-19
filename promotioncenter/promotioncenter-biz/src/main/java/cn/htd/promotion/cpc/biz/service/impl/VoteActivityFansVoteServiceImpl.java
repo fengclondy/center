@@ -104,12 +104,13 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         }
         // 开始投票
         // 在REIDS插入投票记录
-        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId + REDIS_SEPARATOR + SP.format(date);
+        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + SP.format(date)+ REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId;
         String field = memberCode;
-        Long returnValue = promotionRedisDB.incrHash(key, field); // 增长后的值
+        Long returnValue = promotionRedisDB.incrHash(key, field); // 增长，并且获取增长后的值
+        promotionRedisDB.expire(key,  24 * 60 * 60); // 添加KEY的过期时间
         logger.info("操作【REDIS-incrHash】, key :{}, field:{}, returnValue:{}", key, field, returnValue);
         // 【关键】并发下，多个线程会突破前面的查询校验，利用增长后的值再次做判断
-        if (returnValue > voteNumPAccountPDayPStoreLimit) {
+        if (returnValue > voteNumPAccountPDayPStoreLimit) { // 如果增长后超过了限制，做回滚
             executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE.getCode());
             executeResult.setResultMessage("您今天已经投过我了，谢谢您！");
             // 回滚投票
@@ -117,6 +118,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             logger.info("操作【REDIS-incrHash】后，发现被并发，回滚投票的reids记录,, key :{}, field:{}, returnValue:{}", key, field, returnValue);
             return executeResult;
         }
+
         // 在数据库记录投票
         Long voteMemberId = voteActivityMemberResDTO.getVoteMemberId();
         VoteActivityFansVoteResDTO record = new VoteActivityFansVoteResDTO();
@@ -217,7 +219,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
     @Override
     public ExecuteResult<VoteActivityMemberVoteDetailDTO> getMemberVoteDetail(Long voteActivityId, String memberCode) {
         ExecuteResult<VoteActivityMemberVoteDetailDTO> executeResult = new ExecuteResult<>();
-        if (voteActivityId == null || voteActivityId == 0 || StringUtils.isEmpty(memberCode)) {
+        if (voteActivityId == null || StringUtils.isEmpty(memberCode)) {
             logger.info("必填参数为空");
             executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getCode());
             executeResult.setResultMessage(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getMsg());
@@ -294,7 +296,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
      * @return
      */
     private int queryFansVoteNumByDayAndStore(Long voteActivityId, Long fansId, String memberCode, Date date) {
-        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId + REDIS_SEPARATOR + SP.format(date);
+        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + SP.format(date) + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId;
         String field = memberCode;
         int count = 0;
         if (promotionRedisDB.exists(key) && promotionRedisDB.existsHash(key, field)) {
@@ -305,7 +307,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
     }
 
     private int queryFansVoteStoreNumByDay(Long voteActivityId, Long fansId, Date date) {
-        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId + REDIS_SEPARATOR + SP.format(date);
+        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + SP.format(date) + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId;
         int count = 0;
         if (promotionRedisDB.exists(key)) {
             count = promotionRedisDB.getHLen(key);

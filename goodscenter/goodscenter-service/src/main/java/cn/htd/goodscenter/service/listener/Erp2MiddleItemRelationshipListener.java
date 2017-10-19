@@ -270,7 +270,7 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 			item.setOrigin(spu.getOrigin());
 		}
 		
-		if(spu.getTaxRate()==null){
+		if(spu.getTaxRate()!=null){
 			item.setTaxRate(spu.getTaxRate());
 		}
 		

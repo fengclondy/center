@@ -16,9 +16,13 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -164,4 +168,56 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 		return voteActivityService.importVoteActivityMember(list);
 	}
 
+
+	/**
+	 * 查询活动会员店导出数据
+	 * 5万条 以会员店报名时间desc排序
+	 */
+	@Override
+	public ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(
+			VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
+		return voteActivityService.ExportVoteActivityMember(voteActivityMemListReqDTO);
+	}
+
+
+	/**
+	 * 删除活动
+	 */
+	@Override
+	public ExecuteResult<String> deleteVoteActivity(Long voteId) {
+		return voteActivityService.deleteVoteActivity(voteId);
+	}
+
+
+	/**
+	 * 活动会员店操作 (删除  通过  驳回)
+	 */
+	@Override
+	public ExecuteResult<String> updateVoteActivityMember(Long voteMemberId, String deleteFlag, String auditStatus) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		VoteActivityMemberResDTO voteActivityMemberResDTO = new VoteActivityMemberResDTO();
+		voteActivityMemberResDTO.setVoteMemberId(voteMemberId);
+		if (StringUtils.isNotEmpty(deleteFlag) && "1".equals(deleteFlag)) {
+			voteActivityMemberResDTO.setDeleteFlag(1);
+		}
+		if (StringUtils.isNotEmpty(auditStatus)) {
+			try {
+				voteActivityMemberResDTO.setAuditStatus(Integer.parseInt(auditStatus));
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+				return result;
+			}
+		}
+		try {
+			voteActivityMemberService.updateByPrimaryKeySelective(voteActivityMemberResDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			return result;
+		}
+		
+		return result;
+	}
+	
 }

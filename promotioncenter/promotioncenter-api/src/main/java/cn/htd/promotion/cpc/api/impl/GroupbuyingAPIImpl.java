@@ -1,14 +1,11 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
-
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
-
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
@@ -23,7 +20,6 @@ import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
-import org.springframework.util.StringUtils;
 
 @Service("groupbuyingAPI")
 public class GroupbuyingAPIImpl implements GroupbuyingAPI {

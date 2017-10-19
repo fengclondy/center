@@ -38,7 +38,6 @@ public class MeetingFileUtil {
 	@Test
 	public void testGenSQL() {
 		String filedir = "D:\\会员会议0811\\";
-		String TDCode = "";
 		DateFormat format = new SimpleDateFormat("MMdd");
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -62,14 +61,14 @@ public class MeetingFileUtil {
 				}
 				try {
 					Workbook wb = WorkbookFactory.create(file2);
-					TDCode = "";
+					String TDCode = "";
 					if (wb.getSheetAt(1) != null) {
 						Sheet sheet = wb.getSheetAt(1);
 						SellerMeetingSignDTO ms = null;
 						SellerMeetingInfoDTO mi = null;
 						mi = new SellerMeetingInfoDTO();
 						ms = new SellerMeetingSignDTO();
-						System.out.println("num::::" + sheet.getPhysicalNumberOfRows());
+						//System.out.println("num::::" + sheet.getPhysicalNumberOfRows());
 						for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 							Row row = sheet.getRow(i);
 							if (row != null) {
@@ -142,7 +141,7 @@ public class MeetingFileUtil {
 											row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
 											vl = row.getCell(j).getStringCellValue().trim();
 											if (vl.equals("")) {
-												System.out.println("null cell:" + file2.getName() + ":" + i);
+												System.out.println("null cell:" + file2.getName() + ":" + (i+1));
 												skip = true;
 												break;
 											}
@@ -151,12 +150,12 @@ public class MeetingFileUtil {
 											if (rt.isSuccess()) {
 												ms.setMemberId(rt.getResult());
 												if(rt.getResult()==null) {
-													System.out.println("null getMemberIdByCode:" + file2.getName() + ":" + i);
+													System.out.println("null getMemberIdByCode:" + file2.getName() + ":" + (i+1));
 													skip = true;
 													break;
 												}
 											}else {
-												System.out.println("null getMemberIdByCode:" + file2.getName() + ":" + i);
+												System.out.println("null getMemberIdByCode:" + file2.getName() + ":" + (i+1));
 												skip = true;
 												break;
 											}

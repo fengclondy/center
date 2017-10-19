@@ -361,7 +361,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
 						timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimitedConvert);
 						timelimitPurchaseMallInfoDTO.setStartTimeSort(timelimitedConvert.getStartTime());
-						timelimitPurchaseMallInfoDTO.setSalesVolume(timelimitedConvert.getSalesVolume());
+						timelimitPurchaseMallInfoDTO.setSalesVolumeSort(timelimitedConvert.getSalesVolume());
 						timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimitedConvert.getSalesVolumePrice());
 						timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimitedConvert.getPreferentialStrength());
 						resultList.add(timelimitPurchaseMallInfoDTO);
@@ -371,9 +371,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						 */
 						TimelimitPurchaseMallInfoDTO timelimitPurchaseMallInfoDTO = new TimelimitPurchaseMallInfoDTO();
 						timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimitedConvert);
-						timelimitPurchaseMallInfoDTO.setTimelimitedInfo(timelimitedConvert);
 						timelimitPurchaseMallInfoDTO.setStartTimeSort(timelimitedConvert.getStartTime());
-						timelimitPurchaseMallInfoDTO.setSalesVolume(timelimitedConvert.getSalesVolume());
+						timelimitPurchaseMallInfoDTO.setSalesVolumeSort(timelimitedConvert.getSalesVolume());
 						timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimitedConvert.getSalesVolumePrice());
 						timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimitedConvert.getPreferentialStrength());
 						resultList.add(timelimitPurchaseMallInfoDTO);

@@ -44,6 +44,10 @@ public class TimelimitedPurchaseServiceImplTestTest {
 		TimelimitPurchaseMallInfoDTO dto = new TimelimitPurchaseMallInfoDTO();
 		dto.setPurchaseFlag(1);
 		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedInfoService.getTimelimitedInfo(dto);
+		for (TimelimitPurchaseMallInfoDTO d : result.getResult()) {
+			System.out.println(d.getPromotionId() + "==" + d.getPreferentialStrength() + "==" + d.getSalesVolume()
+					+ "==" + d.getSalesVolumePrice() + "==" + d.getStartTime().getTime());
+		}
 		System.out.println(JSONObject.toJSONString(result));
 	}
 

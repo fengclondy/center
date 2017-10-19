@@ -92,7 +92,7 @@ public class TimelimitPurchaseMallInfoDTO extends TimelimitedInfoDTO implements
 
 	@Override
 	public int compareTo(TimelimitPurchaseMallInfoDTO o) {
-		int diffSalesVolume = o.getSalesVolume() - this.salesVolumeSort;
+		int diffSalesVolume = Integer.compare(o.getSalesVolume(), this.salesVolumeSort);
 		int compareResult1 = Double.compare(o.getPreferentialStrength(),this.preferentialStrengthSort);
 		int compareResult2 = Double.compare(o.getSalesVolumePrice(),this.salesVolumePriceSort);
 		int compareResult3 = Long.compare(o.getStartTime().getTime(),this.startTimeSort.getTime());

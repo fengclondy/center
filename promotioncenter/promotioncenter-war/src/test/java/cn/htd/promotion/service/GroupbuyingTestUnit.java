@@ -457,6 +457,7 @@ public class GroupbuyingTestUnit {
      * 根据promotionId删除团购活动-测试用例
      */
 	@Test
+	@Rollback(false) 
 	public void deleteGroupbuyingInfoByPromotionIdTest(){
 		try{
 			String messageId = "342453251349";
@@ -465,9 +466,12 @@ public class GroupbuyingTestUnit {
 			dto.setPromotionId(promotionId);
 			dto.setModifyId(1L);
 			dto.setModifyName("测试");
-			dto.setModifyTime(new Date());
 			ExecuteResult<?> executeResult = groupbuyingAPI.deleteGroupbuyingInfoByPromotionId(dto,messageId);
-			System.out.println("===>executeResult:" + executeResult);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>删除团购活动失败！！！");
+        	}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

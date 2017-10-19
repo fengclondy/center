@@ -363,6 +363,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			if (1 != statusRet) {
 				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "活动删除失败！");
 			}
+			
+			// 根据promotionId移除redis里的团购活动信息
+			promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(groupbuyingInfoReqDTO.getPromotionId());
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【deleteGroupbuyingInfoByPromotionId】报错：{}",messageId, e.toString());
@@ -556,7 +559,10 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         try {
         	//[start]-----------------   参团的校验  ----------------
            	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
-        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+           	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) {
+           	    throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+           	}
+           	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
             if (null == groupbuyingInfoCmplResDTO) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
             }

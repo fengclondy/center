@@ -1401,6 +1401,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         }
     }
 
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 start -----
     public final class ValidTimelimitedDiscountTask implements Callable<String> {
 
         private String messageId;
@@ -1512,7 +1513,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 if (accuDTOList!= null && !accuDTOList.isEmpty()) {
                     for (int i = 0; i < accuDTOList.size(); i ++) {
                         tmpTimelimitedInfoDTO = (TimelimitedInfoDTO) accuDTOList.get(i);
-                        timelimitedInfoDTOMap.put(tmpTimelimitedInfoDTO.getSkuCode(), timelimitedInfoDTO);
+                        timelimitedInfoDTOMap.put(tmpTimelimitedInfoDTO.getSkuCode(), tmpTimelimitedInfoDTO);
                     }
                 }
                 for (OrderItemInfoDTO itemInfoDTO : orderItemInfoList) {
@@ -1587,8 +1588,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                                 "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 购买数量:" + goodsCount
                                         + " 库存数量:" + stockNum);
                     }
+                    itemInfoDTO.setGoodsPriceType(dictionary.getValueByCode(DictionaryConst.TYPE_SKU_PRICE_TYPE,
+                            DictionaryConst.OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT));
                 }
             }
         }
     }
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 end -----
 }

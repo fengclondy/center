@@ -5,9 +5,12 @@
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
     <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="promotion_type" jdbcType="VARCHAR" property="promotionType"/>
     <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
     <result column="seckill_lock_no" jdbcType="VARCHAR" property="seckillLockNo"/>
     <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+    <result column="order_item_no" jdbcType="VARCHAR" property="orderItemNo"/>
+    <result column="sku_code" jdbcType="VARCHAR" property="skuCode"/>
     <result column="use_type" jdbcType="VARCHAR" property="useType"/>
     <result column="used_count" jdbcType="INTEGER" property="usedCount"/>
     <result column="create_id" jdbcType="BIGINT" property="createId"/>
@@ -21,9 +24,12 @@
   	id,
   	buyer_code,
 	  promotion_id,
+	  promotion_type,
 	  level_code,
 	  seckill_lock_no,
 	  order_no,
+	  order_item_no,
+	  sku_code,
 	  use_type,
 	  used_count,
 	  create_id,
@@ -37,36 +43,25 @@
   <sql id="pagination_tail">
     limit #{page.pageOffset} , #{page.rows}
   </sql>
-  <select id="queryUseLogByLockCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog"
-          resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List"/>
-    from buyer_use_timelimited_log
-    where 1 = 1
-    and buyer_code = #{buyerCode,jdbcType=VARCHAR}
-    and promotion_id = #{promotionId,jdbcType=VARCHAR}
-    and seckill_lock_no = #{seckillLockNo,jdbcType=VARCHAR}
-  </select>
-  <select id="queryUseLogByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog"
-          resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List"/>
-    from buyer_use_timelimited_log
-    where 1 = 1
-    and buyer_code = #{buyerCode,jdbcType=VARCHAR}
-    and promotion_id = #{promotionId,jdbcType=VARCHAR}
-    and order_no = #{orderNo,jdbcType=VARCHAR}
-  </select>
   <insert id="add" useGeneratedKeys="true" keyProperty="id">
     insert into buyer_use_timelimited_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       buyer_code,
       promotion_id,
+      <if test="promotionType != null and promotionType != ''">
+        promotion_type,
+      </if>
       <if test="seckillLockNo != null and seckillLockNo != ''">
         seckill_lock_no,
       </if>
       <if test="orderNo != null and orderNo != ''">
         order_no,
+      </if>
+      <if test="orderItemNo != null and orderItemNo != ''">
+        order_item_no,
+      </if>
+      <if test="skuCode != null and skuCode != ''">
+      sku_code,
       </if>
       used_count,
       use_type,
@@ -80,11 +75,20 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       #{buyerCode,jdbcType=VARCHAR},
       #{promotionId,jdbcType=VARCHAR},
+      <if test="promotionType != null and promotionType != ''">
+        #{promotionType,jdbcType=VARCHAR},
+      </if>
       <if test="seckillLockNo != null and seckillLockNo != ''">
         #{seckillLockNo,jdbcType=VARCHAR},
       </if>
       <if test="orderNo != null and orderNo != ''">
         #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderItemNo != null and orderItemNo != ''">
+        #{orderItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null and skuCode != ''">
+        #{skuCode,jdbcType=VARCHAR},
       </if>
       #{usedCount,jdbcType=INTEGER},
       #{useType,jdbcType=VARCHAR},
@@ -96,35 +100,6 @@
       #{modifyTime,jdbcType=TIMESTAMP},
     </trim>
   </insert>
-  <update id="updateUseLogOrderNoByLockCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
-    update buyer_use_timelimited_log
-    <set>
-      <if test="orderNo != null and orderNo != ''">
-        order_no = #{orderNo,jdbcType=VARCHAR},
-      </if>
-      <if test="useType != null and useType != ''">
-        use_type = #{useType,jdbcType=VARCHAR},
-      </if>
-      modify_id = #{createId,jdbcType=BIGINT},
-      modify_name = #{createName,jdbcType=VARCHAR},
-      modify_time = now(),
-    </set>
-    where buyer_code = #{buyerCode,jdbcType=VARCHAR}
-    and promotion_id = #{promotionId,jdbcType=VARCHAR}
-    and seckill_lock_no = #{seckillLockNo,jdbcType=VARCHAR}
-  </update>
-  <update id="updateUseLogStatusByCode" parameterType="cn.htd.marketcenter.domain.BuyerUseTimelimitedLog">
-    update buyer_use_timelimited_log
-    <set>
-      use_type = #{useType,jdbcType=VARCHAR},
-      modify_id = #{createId,jdbcType=BIGINT},
-      modify_name = #{createName,jdbcType=VARCHAR},
-      modify_time = now(),
-    </set>
-    where buyer_code = #{buyerCode,jdbcType=VARCHAR}
-    and promotion_id = #{promotionId,jdbcType=VARCHAR}
-    and order_no = #{orderNo,jdbcType=VARCHAR}
-  </update>
   <select id="queryNeedReleaseTimelimitedStock4Task" resultMap="BaseResultMap">
     select
       a.id id,
@@ -147,6 +122,7 @@
     and a.order_no = ''
     <if test="entity != null">
       and a.use_type = #{entity.useType}
+      and a.promotion_type = #{entity.promotionType}
       <![CDATA[ and a.create_time <= date_sub(now(), interval #{entity.releaseStockInterval} minute) ]]>
       and mod(a.id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">

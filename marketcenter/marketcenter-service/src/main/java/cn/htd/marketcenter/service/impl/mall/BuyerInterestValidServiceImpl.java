@@ -49,6 +49,7 @@ import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
 import cn.htd.marketcenter.dto.PromotionSellerDetailDTO;
 import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
+import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 import cn.htd.marketcenter.dto.TradeInfoDTO;
 import cn.htd.marketcenter.service.BuyerInterestValidService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
@@ -1504,6 +1505,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 long goodsPrice = 0L;
                 long skuTimelimitedPrice = 0L;
                 int stockNum = 0;
+                TimelimitedResultDTO resultDTO = null;
 
                 timelimitedInfoDTO = timelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
                 accuDTOList = timelimitedInfoDTO.getPromotionAccumulatyList();
@@ -1574,9 +1576,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                                 "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 购买价格:" + itemInfoDTO
                                         .getGoodsPrice() + " 活动价格:" + tmpTimelimitedInfoDTO.getSkuTimelimitedPrice());
                     }
-                    stockNum = Integer.valueOf(marketRedisDB
-                            .getHash(RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId,
-                                    RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT + "_" + skuCode));
+                    resultDTO = tmpTimelimitedInfoDTO.getTimelimitedResult();
+                    stockNum = Integer.valueOf(resultDTO.getShowRemainSkuCount()).intValue();
                     if (goodsCount > stockNum) {
                         logger.info(
                                 "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],购买数量:[{}],库存数量:[{}] 会员购买商品超过限时购商品数量***********",

@@ -36,9 +36,6 @@
 			<properties>
 				<env>prep</env>
 			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 		</profile>
 		<!-- 生产环境 -->
 		<profile>
@@ -67,6 +64,9 @@
 			<properties>
 				<env>dev</env>
 			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 		</profile>
 	</profiles>
 	<dependencyManagement>
@@ -209,11 +209,6 @@
 				<version>1.1.1</version>
 			</dependency>
 			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.17</version>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.7.2</version>
@@ -221,7 +216,12 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-core</artifactId>
-				<version>1.0.13</version>
+				<version>1.1.7</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>

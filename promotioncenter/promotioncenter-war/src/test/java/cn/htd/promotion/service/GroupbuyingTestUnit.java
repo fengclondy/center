@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Resource;
+
+import cn.htd.promotion.cpc.dto.request.*;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -482,7 +484,42 @@ public class GroupbuyingTestUnit {
         }
 
     }
-	
+
+	/**
+	 * 活动上下架
+	 */
+    @Test
+	public void updateShowStatusByPromotionIdTest(){
+    	try{
+			String messageId = "342453251349";
+			String promotionId = "25171430390018";
+			SinglePromotionInfoReqDTO dto = new SinglePromotionInfoReqDTO();
+			dto.setPromotionId(promotionId);
+			dto.setShowStatus("2");
+			ExecuteResult<String> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
+			System.out.println("===>executeResult:" + executeResult);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test
+	public void deleteGroupbuyingInfoByPromotionIdTest(){
+		try{
+			String messageId = "342453251349";
+			String promotionId = "25171430390018";
+			GroupbuyingInfoReqDTO dto = new GroupbuyingInfoReqDTO();
+			dto.setPromotionId(promotionId);
+			dto.setModifyId(1L);
+			dto.setModifyName("测试");
+			dto.setModifyTime(new Date());
+			ExecuteResult<?> executeResult = groupbuyingAPI.deleteGroupbuyingInfoByPromotionId(dto,messageId);
+			System.out.println("===>executeResult:" + executeResult);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
     
 

@@ -122,6 +122,10 @@ public class MarketCenterCodeConst {
 
 	// 团购限制买家购买数量
 	public static final int GROUP_LIMIT_PRODUCT_NUM = 5;
+
+	// *******************************************************
+	// 限时购返回码
+	// *******************************************************
 	//限时购状态未开始
 	public static final String LIMITED_TIME_PURCHASE_NOT_BEGIN = "15400";
 	//限时购状态已结束
@@ -130,9 +134,6 @@ public class MarketCenterCodeConst {
 	public static final String LIMITED_TIME_PURCHASE_DOWN_SHELF = "15402";
 	//限时购商品不存在
 	public static final String LIMITED_TIME_PURCHASE_NULL = "15403";
-
-	//不能创建已经开始的限时购活动
-	public static final String LIMITED_TIME_PURCHASE_START = "15501";
 	//限时购活动中不包含商品
 	public static final String LIMITED_TIME_PURCHASE_NO_CONTAIN_SKU = "15404";
 	//购买商品未到限时购起订量
@@ -143,4 +144,6 @@ public class MarketCenterCodeConst {
 	public static final String LIMITED_TIME_PURCHASE_DIFF_PRICE = "15407";
 	//会员购买商品超过限时购商品数量
 	public static final String LIMITED_TIME_PURCHASE_NO_COUNT = "15408";
+	//不能创建已经开始的限时购活动
+	public static final String LIMITED_TIME_PURCHASE_START = "15501";
 }

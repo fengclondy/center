@@ -351,6 +351,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					int listSize = list.size();
 					TimelimitedInfoDTO timelimitedConvert = timilimitedConvert(list);
 					timelimitedConvert.setPurchasePriceFlag(listSize);
+					timelimitedConvert.setPurchaseSort(dto.getPurchaseSort());
 					int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, timelimitedConvert.getSkuCode());
 					timelimitedConvert.setTimelimitedSkuCount(skuTotal);
 					if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimitedInfoDTO.getEffectiveTime())

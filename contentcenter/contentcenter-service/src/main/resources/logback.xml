@@ -20,7 +20,7 @@
 		<appender-ref ref="rollinginfoFile" />
 	</logger>
 	
-	<!--mybatis -->
+	<!-- mybatis -->
 	<logger name="org.apache.ibatis" level="${loggingLevel}">
 		<appender-ref ref="rollinginfoFile" />
 	</logger>

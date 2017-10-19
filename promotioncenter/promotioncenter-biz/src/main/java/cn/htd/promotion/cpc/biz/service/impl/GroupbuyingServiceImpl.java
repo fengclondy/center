@@ -567,12 +567,15 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
        	    //(当前时间 >= 开团开始时间 && 当前时间 <= 开团结束时间)  2.开团进行中
             boolean isGBProcessing = currentTime.getTime() >= effectiveTime.getTime() && currentTime.getTime() <= invalidTime.getTime();
             if(!isGBProcessing){
-            	 throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动状态不是开团进行中！");
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动状态不是开团进行中！");
             }
             
-            GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+            GroupbuyingRecordReqDTO groupbuyingRecordReqDTO_check = new GroupbuyingRecordReqDTO();
+            groupbuyingRecordReqDTO_check.setPromotionId(groupbuyingRecordReqDTO.getPromotionId());// 促销活动编码
+            groupbuyingRecordReqDTO_check.setBuyerCode(groupbuyingRecordReqDTO.getBuyerCode());// 参团人账号
+            GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO_check);
             if(null != groupbuyingRecordResDTO){
-            	 throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "已经参团过！");
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "已经参团过！");
             }
           //[end]-----------------   参团的校验  ----------------
             

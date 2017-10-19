@@ -72,6 +72,9 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	private String activeState;
 	// 活动状态文本
 	private String activeStateText;
+	
+	// 参团人账号
+	private String buyerCode;
 
 	public Long getGroupbuyingId() {
 		return groupbuyingId;
@@ -304,6 +307,15 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	public void setActiveStateText(String activeStateText) {
 		this.activeStateText = activeStateText;
 	}
+
+	public String getBuyerCode() {
+		return buyerCode;
+	}
+
+	public void setBuyerCode(String buyerCode) {
+		this.buyerCode = buyerCode;
+	}
+	
 	
 	
 	

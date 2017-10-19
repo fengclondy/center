@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -133,7 +134,6 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
         try{
             // 正确返回
             result.setCode(ResultCodeEnum.SUCCESS.getCode());
-            // 正确返回
             result.setResult(true);
             // 实例化保存对象
             VoteActivityMemberResDTO memberResDTO = new VoteActivityMemberResDTO();
@@ -157,7 +157,83 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             e.printStackTrace();
             logger.error("VoteActivityAPI方法saveVoteActivityMember调用出错，信息{}",e.getMessage());
 
-            result.setCode(ResultCodeEnum.ERROR.getMsg());
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+        }
+        return result;
+    }
+
+    /***
+     * 查询会员店投票信息
+     * @param voteId
+     * @param memberCode
+     * @return
+     */
+    public ExecuteResult<Map<String,String>> selectMemberVotesData(Long voteId,String memberCode){
+        // 返回对象
+        ExecuteResult<Map<String,String>> result = new ExecuteResult<Map<String,String>>();
+        try{
+            // 正确返回
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
+            // 返回Map
+            Map<String,String> resultMap = new HashMap<>();
+            // 查询活动时间确定活动状态
+            ExecuteResult<VoteActivityResDTO> voteActivityRes = queryVoteActivityById(voteId);
+            if(voteActivityRes != null && voteActivityRes.getResult() != null){
+                // 活动
+                VoteActivityResDTO voteActivity = voteActivityRes.getResult();
+                // 取得时间
+                Date date = new Date();
+                // 根据时间判断状态
+                if(!NUtils.isEmpty(voteActivity.getVoteSignUpStartTime()) && !NUtils.isEmpty(voteActivity.getVoteEndTime())){
+                    if(date.before(voteActivity.getVoteSignUpStartTime())){
+                        resultMap.put("activityStatus","未开始");
+                    }else if(date.after(voteActivity.getVoteSignUpStartTime()) && date.before(voteActivity.getVoteEndTime())){
+                        resultMap.put("activityStatus","进行中");
+                    }else{
+                        resultMap.put("activityStatus","已结束");
+                    }
+                }else{
+                    resultMap.put("activityStatus","已结束");
+                }
+            }
+            // 获取当前会员店排名情况
+            Map<String, Object> rankingByMemberCode = this.voteActivityMemberService.selectMemberRankingByMemberCode(voteId, memberCode);
+            if (rankingByMemberCode != null) {
+                resultMap.put("ranking",NUtils.convertToStr(rankingByMemberCode.get("rowNum")));
+                resultMap.put("voteNum",NUtils.convertToStr(rankingByMemberCode.get("voteNum")));
+            }else{
+                resultMap.put("ranking","0");
+                resultMap.put("voteNum","0");
+            }
+
+            // 返回值
+            VoteActivityMemberResDTO memberResDTO = voteActivityMemberService.selectByVoteIdAndMemberCode(voteId,memberCode);
+            // 如果不为空则查询转发数
+            if(memberResDTO != null && !NUtils.isEmpty(memberResDTO.getVoteMemberId())){
+                // 转发数
+                String forwardNum = NUtils.convertToStr(voteActivityMemberService.selectForwordCountByVMId(memberResDTO.getVoteMemberId()));
+                resultMap.put("forwardNum",forwardNum);
+                // 判断审核状态
+                if(memberResDTO.getAuditStatus() !=null) {
+                    if (memberResDTO.getAuditStatus().intValue() == 0) {
+                        resultMap.put("auditStatus", "待审核");
+                    } else if (memberResDTO.getAuditStatus().intValue() == 1) {
+                        resultMap.put("auditStatus", "已审核");
+                    } else if (memberResDTO.getAuditStatus().intValue() == 1) {
+                        resultMap.put("auditStatus", "已驳回");
+                    }
+                }else{
+                    resultMap.put("auditStatus", "");
+                }
+            }
+            result.setResult(resultMap);
+
+        }catch (Exception e){
+            // 打印错误消息
+            e.printStackTrace();
+            logger.error("VoteActivityAPI方法selectMemberVotesData调用出错，信息{}",e.getMessage());
+
+            result.setCode(ResultCodeEnum.ERROR.getCode());
         }
         return result;
     }

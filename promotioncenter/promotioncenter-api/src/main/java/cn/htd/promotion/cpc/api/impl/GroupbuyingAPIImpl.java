@@ -1,13 +1,11 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
-
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
-
+import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
@@ -233,10 +231,73 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
 	}
-    
-	
-	
-    
-    
-    
+
+
+    @Override
+    public ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+        ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> result = new ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+            if (null == groupbuyingInfoReqDTO) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表条件参数不能为空！");
+            }
+            if (null == page) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品页码不能为空！");
+            }
+            DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingInfo4MobileForPage(page,groupbuyingInfoReqDTO, messageId);
+            result.setResult(groupbuyingInfoCmplResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGroupbuyingInfoCmplForPage出现异常{}", messageId, e.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public ExecuteResult<String> updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO, String messageId) {
+        ExecuteResult<String> result = new ExecuteResult<>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+            if (null == singlePromotionInfoReqDTO) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
+            }
+            String statusResult = groupbuyingService.updateShowStatusByPromotionId(singlePromotionInfoReqDTO,messageId);
+            result.setResult(statusResult);
+
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.updateShowStatusByPromotionId 出现异常{}", messageId, singlePromotionInfoReqDTO.getPromotionId() + ":" + e.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public ExecuteResult<?> deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+        ExecuteResult<?> result = new ExecuteResult<>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+            if (null == groupbuyingInfoReqDTO) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
+            }
+
+            groupbuyingService.deleteGroupbuyingInfoByPromotionId(groupbuyingInfoReqDTO,messageId);
+
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.deleteGroupbuyingInfoByPromotionId 出现异常{}", messageId, groupbuyingInfoReqDTO.getPromotionId() + ":" + e.toString());
+        }
+        return result;
+    }
 }

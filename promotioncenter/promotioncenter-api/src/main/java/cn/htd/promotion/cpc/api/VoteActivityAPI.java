@@ -95,7 +95,7 @@ public interface VoteActivityAPI {
 	
 	/***
 	 * 投票活动批量导入会员店
-	 * @param params
+	 * @param list
 	 * @return
 	 */
 	ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(List<VoteActivityMemReqDTO> list);
@@ -107,4 +107,12 @@ public interface VoteActivityAPI {
 	 * @return
 	 */
 	ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+
+	/***
+	 * 查询会员店投票信息
+	 * @param voteId
+	 * @param memberCode
+	 * @return
+	 */
+	ExecuteResult<Map<String,String>> selectMemberVotesData(Long voteId,String memberCode);
 }

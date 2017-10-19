@@ -128,9 +128,7 @@
     <if test="params.buyerName!=null and params.buyerName!=''">
       and bwr.buyer_name like concat('%', #{params.buyerName} ,'%')
     </if>
-    <if test="params.rewardType!=null and params.rewardType!=''">
-      and bwr.reward_type = #{params.rewardType}
-    </if>
+      and bwr.reward_type in ('1', '2')
     <if test="params.winningStartTime!=null and params.winningStartTime!=''">
       and date_format(bwr.winning_time , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
     </if>
@@ -158,20 +156,9 @@
     <if test="params.orderNo!=null and params.orderNo!=''">
       and bwr.order_no = #{params.orderNo}
     </if>
-    <if test="params.promotionType == '23'">
-      and bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')
-    </if>
-    <if test="params.promotionType == '21'">
-      and bwr.promotion_type = '21'
-    </if>
-    <if test="params.promotionType == '24'">
-      and bwr.promotion_type = '24'
-    </if>
-    <if test="params.promotionType == '25'">
-      and bwr.promotion_type = '25'
-    </if>
-    <if test="params.promotionType == '' or params.promotionType == null">
-      and (bwr.promotion_type = '21' or (bwr.promotion_type = '23' and bwr.order_status in ('2','3','4')) or bwr.promotion_type = '25' or bwr.promotion_type = '24')
+    and (bwr.order_status = '' or bwr.order_status in ('2','3','4'))
+    <if test="params.promotionType != null and params.promotionType != ''">
+      and bwr.promotion_type = #{params.promotionType}
     </if>
   </sql>
   <!-- mysql 分页 -->

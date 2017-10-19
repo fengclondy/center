@@ -327,7 +327,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     	singlePromotionInfoReqDTO.setModifyTime(currentTime);
     	int singlePromotionInfoRet = singlePromotionInfoDAO.upDownShelvesPromotionInfo(singlePromotionInfoReqDTO);
     	if(1 != singlePromotionInfoRet){
-    		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "活动上下架失败！");
+    		throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "活动上下架失败！");
     	}
 		
 		// 更新redis里的上下架状态

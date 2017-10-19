@@ -438,15 +438,22 @@ public class GroupbuyingTestUnit {
 	 * 活动上下架-测试用例
 	 */
     @Test
+    @Rollback(false) 
 	public void updateShowStatusByPromotionIdTest(){
     	try{
 			String messageId = "342453251349";
 			String promotionId = "25171430390018";
 			SinglePromotionInfoReqDTO dto = new SinglePromotionInfoReqDTO();
 			dto.setPromotionId(promotionId);
-			dto.setShowStatus("2");
+			dto.setShowStatus("3");// 审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
+			dto.setModifyId(1L);
+			dto.setModifyName("测试");
 			ExecuteResult<String> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
-			System.out.println("===>executeResult:" + executeResult);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>活动上下架失败！！！");
+        	}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

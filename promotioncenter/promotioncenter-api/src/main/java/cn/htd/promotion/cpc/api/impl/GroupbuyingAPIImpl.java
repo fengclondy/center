@@ -1,17 +1,21 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import javax.annotation.Resource;
+
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
 import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
+import cn.htd.promotion.cpc.common.constants.GroupbuyingConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -258,17 +262,18 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
     }
 
     @Override
-    public ExecuteResult<String> updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO, String messageId) {
+    public ExecuteResult<?> updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO, String messageId) {
         ExecuteResult<String> result = new ExecuteResult<>();
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            if (null == singlePromotionInfoReqDTO) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
-            }
+        	
             String statusResult = groupbuyingService.updateShowStatusByPromotionId(singlePromotionInfoReqDTO,messageId);
-            result.setResult(statusResult);
+            if(!GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key().equals(statusResult)){
+            	 result.setCode(statusResult);
+                 result.setResultMessage(GroupbuyingConstants.CommonStatusEnum.getValue(statusResult));
+            }
 
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
@@ -286,12 +291,13 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            if (null == groupbuyingInfoReqDTO) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
-            }
 
-            groupbuyingService.deleteGroupbuyingInfoByPromotionId(groupbuyingInfoReqDTO,messageId);
-
+        	String statusResult = groupbuyingService.deleteGroupbuyingInfoByPromotionId(groupbuyingInfoReqDTO,messageId);
+            if(!GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key().equals(statusResult)){
+           	 result.setCode(statusResult);
+             result.setResultMessage(GroupbuyingConstants.CommonStatusEnum.getValue(statusResult));
+           }
+            
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());

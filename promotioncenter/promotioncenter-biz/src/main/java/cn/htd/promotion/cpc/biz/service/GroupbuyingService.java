@@ -94,7 +94,7 @@ public interface GroupbuyingService {
 	 * @param messageId
 	 * @return
 	 */
-	public void deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO,String messageId) ;
+	public String deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO,String messageId) ;
 	
 	
     /**

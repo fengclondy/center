@@ -110,6 +110,11 @@
 			<groupId>cn.htd.middleware</groupId>
 			<artifactId>middleware-common</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.7</version>
+        </dependency>
 		<dependency>
 			<groupId>com.taobao.pamirs.schedule</groupId>
 			<artifactId>tbschedule</artifactId>

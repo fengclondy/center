@@ -1,3 +1,4 @@
 /target/
-/htd-membercenter/
-/bin/
+/.classpath
+/.project
+/.settings

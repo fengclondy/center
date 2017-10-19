@@ -3,7 +3,6 @@ package cn.htd.promotion.cpc.api;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
-import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
 import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
@@ -29,6 +28,19 @@ public interface VoteActivityAPI {
      */
 	ExecuteResult<String> saveVoteActivity(VoteActivityResDTO voteActivityResDTO);
 	
+	/**
+	 * 删除投票活动
+	 * @param voteActivityResDTO
+	 * @return
+     */
+	ExecuteResult<String> deleteVoteActivity(Long voteId);
+
+	/**
+	 * 会员店列表操作(通过 驳回删除)
+	 * @param 
+	 * @return
+     */
+	ExecuteResult<String> updateVoteActivityMember(Long voteMemberId, String deleteFlag, String auditStatus);
 	
 	/**
 	 * 根据主键查询投票活动
@@ -87,6 +99,14 @@ public interface VoteActivityAPI {
 	 * @return
 	 */
 	ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(List<VoteActivityMemReqDTO> list);
+	
+	/***
+	 * 投票活动批量导出会员店
+	 * @param params 
+	 * 最高5w条数据   根据报名时间排序 降序
+	 * @return
+	 */
+	ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
 
 	/***
 	 * 查询会员店投票信息

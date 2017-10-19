@@ -24,7 +24,7 @@ public interface VoteActivityDAO {
     int updateByPrimaryKey(VoteActivityResDTO record);
 
     // 查询当前时间所处的投票活动
-    VoteActivityResDTO queryVoteActivityByTime(@Param("startTime") Date startTime,@Param("endTime") Date endTime);
+    int queryVoteActivityByTime(@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 
     /***
      * 查询当前活动

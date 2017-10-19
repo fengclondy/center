@@ -29,4 +29,19 @@ public interface VoteActivityMemberService {
      * @return
      */
     int updateByPrimaryKeySelective(VoteActivityMemberResDTO voteActivityMemberResDTO);
+
+    /***
+     * 根据活动ID，会员店编码获取当前会员店的投票排情况
+     * @param voteId
+     * @param memberCode
+     * @return
+     */
+    HashMap<String, Object> selectMemberRankingByMemberCode(Long voteId,String memberCode);
+
+    /***
+     * 根据会员报名编码查询转发数
+     * @param voteMemberId
+     * @return
+     */
+    Long selectForwordCountByVMId(Long voteMemberId);
 }

@@ -1,16 +1,19 @@
 package cn.htd.marketcenter.service;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.alibaba.fastjson.JSONObject;
-
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
+
+import com.alibaba.fastjson.JSONObject;
 
 public class TimelimitedPurchaseServiceImplTestTest {
 
@@ -38,7 +41,13 @@ public class TimelimitedPurchaseServiceImplTestTest {
 	
 	@Test
 	public void testQueryTimelimitedList() {
-		ExecuteResult<TimelimitedInfoDTO> result = timelimitedInfoService.getTimelimitedInfo("1000");
+		TimelimitPurchaseMallInfoDTO dto = new TimelimitPurchaseMallInfoDTO();
+		dto.setPurchaseFlag(1);
+		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedInfoService.getTimelimitedInfo(dto);
+		for (TimelimitPurchaseMallInfoDTO d : result.getResult()) {
+			System.out.println(d.getPromotionId() + "==" + d.getPreferentialStrength() + "==" + d.getSalesVolume()
+					+ "==" + d.getSalesVolumePrice() + "==" + d.getStartTime().getTime());
+		}
 		System.out.println(JSONObject.toJSONString(result));
 	}
 

@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Resource;
+
+import cn.htd.promotion.cpc.dto.request.*;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -428,7 +430,44 @@ public class GroupbuyingTestUnit {
 
     }
     
-    
+	/**
+	 * 活动上下架-测试用例
+	 */
+    @Test
+	public void updateShowStatusByPromotionIdTest(){
+    	try{
+			String messageId = "342453251349";
+			String promotionId = "25171430390018";
+			SinglePromotionInfoReqDTO dto = new SinglePromotionInfoReqDTO();
+			dto.setPromotionId(promotionId);
+			dto.setShowStatus("2");
+			ExecuteResult<String> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
+			System.out.println("===>executeResult:" + executeResult);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+    /**
+     * 根据promotionId删除团购活动-测试用例
+     */
+	@Test
+	public void deleteGroupbuyingInfoByPromotionIdTest(){
+		try{
+			String messageId = "342453251349";
+			String promotionId = "25171430390018";
+			GroupbuyingInfoReqDTO dto = new GroupbuyingInfoReqDTO();
+			dto.setPromotionId(promotionId);
+			dto.setModifyId(1L);
+			dto.setModifyName("测试");
+			dto.setModifyTime(new Date());
+			ExecuteResult<?> executeResult = groupbuyingAPI.deleteGroupbuyingInfoByPromotionId(dto,messageId);
+			System.out.println("===>executeResult:" + executeResult);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
     /**
      * 添加团购记录（参团测试）-测试用例
@@ -482,8 +521,27 @@ public class GroupbuyingTestUnit {
         }
 
     }
-	
-	
-    
+
+
+    /**
+     * 根据orgid获取该店铺所有团购商品-http接口使用
+     */
+	@Test
+	public void getGroupbuyingList2HttpINTFCTest(){
+		String messageId = "342453251349";
+		try{
+			Pager<GroupbuyingInfoReqDTO> pager = new Pager<GroupbuyingInfoReqDTO>();
+			pager.setPageOffset(1);
+			pager.setRows(10);
+			GroupbuyingInfoReqDTO dto = new GroupbuyingInfoReqDTO();
+			dto.setSellerCode("801781");
+			dto.setBuyerCode("2002");
+			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getGroupbuyingList2HttpINTFC(pager,dto,messageId);
+			System.out.println("===>executeResult:" + executeResult);
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

@@ -2514,6 +2514,9 @@
 		     <if test="entity.itemName != null  and entity.itemName !=''">
 				<![CDATA[ and (item_.item_name like CONCAT('%',#{entity.itemName},'%'))]]>
 			</if>
+			<if test="entity.sellerId!=null">
+				<![CDATA[ and item_.seller_id = #{entity.sellerId} ]]>
+			</if>
 		</if>
 		limit 10
 	</select>

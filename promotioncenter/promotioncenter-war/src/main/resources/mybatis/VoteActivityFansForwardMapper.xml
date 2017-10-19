@@ -128,12 +128,25 @@
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
   </update>
-  
-   <select id="selectVoteActivityForwardCount" parameterType="Long" resultType="Long">
-	   select count(1) from  vote_activity_fans_forward vff
-	  left join vote_activity_member vam
-	  on vff.vote_member_id=vam.vote_member_id
-	  where vam.vote_id=#{voteId}
+
+  <select id="selectVoteActivityForwardCount" parameterType="Long" resultType="Long">
+    select
+      count(1)
+    from
+      vote_activity_fans_forward vff
+	  left join vote_activity_member vam on vff.vote_member_id=vam.vote_member_id
+	where
+	  vam.vote_id=#{voteId}
+  </select>
+
+  <!-- 根据会员报名编码查询转发数 -->
+  <select id="selectForwordCountByVMId" parameterType="Long" resultType="Long">
+    select
+      count(1)
+    from
+      vote_activity_fans_forward t
+    where
+      t.vote_member_id=#{voteMemberId}
   </select>
   
 </mapper>

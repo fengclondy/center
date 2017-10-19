@@ -285,6 +285,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 							if (timelimite.getSkuCode().equals(skuCode)) {
 								int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, skuCode);
 								timelimite.setTimelimitedSkuCount(skuTotal);
+								timelimite.setItemCode(timelimitedInfoDTO.getItemCode());
 								if(!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
 									result.setCode("00000");
 									result.setResult(timelimite);
@@ -352,6 +353,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					TimelimitedInfoDTO timelimitedConvert = timilimitedConvert(list);
 					timelimitedConvert.setPurchasePriceFlag(listSize);
 					timelimitedConvert.setPurchaseSort(dto.getPurchaseSort());
+					timelimitedConvert.setItemCode(timelimitedInfoDTO.getItemCode());
 					int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, timelimitedConvert.getSkuCode());
 					timelimitedConvert.setTimelimitedSkuCount(skuTotal);
 					if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimitedInfoDTO.getEffectiveTime())

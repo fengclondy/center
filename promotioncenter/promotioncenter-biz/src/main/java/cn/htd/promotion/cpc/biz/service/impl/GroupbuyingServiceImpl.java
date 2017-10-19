@@ -212,10 +212,12 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	}
         	
         	// 添加配置信息 (先伪删除所有活动的配置信息，然后再添加)
-        	promotionConfigureDAO.deleteByPromotionId(promotionId);
         	SinglePromotionInfoCmplReqDTO singlePromotionInfoCmplReqDTO = (SinglePromotionInfoCmplReqDTO) singlePromotionInfoReqDTO;
             List<PromotionConfigureDTO> pclist = singlePromotionInfoCmplReqDTO.getPromotionConfigureList();
             if (pclist != null && pclist.size() > 0) {
+            	// 删除所有活动的配置信息
+            	promotionConfigureDAO.deleteByPromotionId(promotionId);
+            	
                 for (PromotionConfigureDTO pcd : pclist) {
                     pcd.setPromotionId(groupbuyingInfoCmplReqDTO.getPromotionId());
                     pcd.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
@@ -235,29 +237,32 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
         	
         	// 添加团购价格设置信息  (先伪删除所有团购价格设置信息，然后再添加)
-        	GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_delete = new GroupbuyingPriceSettingReqDTO();
-        	groupbuyingPriceSettingReqDTO_delete.setPromotionId(promotionId);
-            groupbuyingPriceSettingReqDTO_delete.setDeleteFlag(Boolean.TRUE);
-            groupbuyingPriceSettingReqDTO_delete.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
-            groupbuyingPriceSettingReqDTO_delete.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
-            groupbuyingPriceSettingReqDTO_delete.setModifyTime(currentTime);
-        	groupbuyingPriceSettingDAO.pseudoDelete(groupbuyingPriceSettingReqDTO_delete);
         	List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = groupbuyingInfoCmplReqDTO.getGroupbuyingPriceSettingReqDTOList();
-        	if(null != groupbuyingPriceSettingReqDTOList && groupbuyingPriceSettingReqDTOList.size() > 0){
-            	for(GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO : groupbuyingPriceSettingReqDTOList){
-                	groupbuyingPriceSettingReqDTO.setPromotionId(promotionId);
-            		groupbuyingPriceSettingReqDTO.setItemId(groupbuyingInfoCmplReqDTO.getItemId());
-            		groupbuyingPriceSettingReqDTO.setSkuCode(groupbuyingInfoCmplReqDTO.getSkuCode());
-            		groupbuyingPriceSettingReqDTO.setDeleteFlag(Boolean.FALSE);
-            		groupbuyingPriceSettingReqDTO.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
-            		groupbuyingPriceSettingReqDTO.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());
-            		groupbuyingPriceSettingReqDTO.setCreateTime(currentTime);
-            		groupbuyingPriceSettingReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
-            		groupbuyingPriceSettingReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
-                	groupbuyingPriceSettingReqDTO.setModifyTime(currentTime);
-                	groupbuyingPriceSettingDAO.insert(groupbuyingPriceSettingReqDTO);
-            	}
+        	if(null != groupbuyingPriceSettingReqDTOList && groupbuyingPriceSettingReqDTOList.size() > 0 ){
+        		
+              	GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_delete = new GroupbuyingPriceSettingReqDTO();
+            	groupbuyingPriceSettingReqDTO_delete.setPromotionId(promotionId);
+                groupbuyingPriceSettingReqDTO_delete.setDeleteFlag(Boolean.TRUE);
+                groupbuyingPriceSettingReqDTO_delete.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+                groupbuyingPriceSettingReqDTO_delete.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+                groupbuyingPriceSettingReqDTO_delete.setModifyTime(currentTime);
+            	groupbuyingPriceSettingDAO.pseudoDelete(groupbuyingPriceSettingReqDTO_delete);
+            	
+                	for(GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO : groupbuyingPriceSettingReqDTOList){
+                    	groupbuyingPriceSettingReqDTO.setPromotionId(promotionId);
+                		groupbuyingPriceSettingReqDTO.setItemId(groupbuyingInfoCmplReqDTO.getItemId());
+                		groupbuyingPriceSettingReqDTO.setSkuCode(groupbuyingInfoCmplReqDTO.getSkuCode());
+                		groupbuyingPriceSettingReqDTO.setDeleteFlag(Boolean.FALSE);
+                		groupbuyingPriceSettingReqDTO.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
+                		groupbuyingPriceSettingReqDTO.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());
+                		groupbuyingPriceSettingReqDTO.setCreateTime(currentTime);
+                		groupbuyingPriceSettingReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+                		groupbuyingPriceSettingReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+                    	groupbuyingPriceSettingReqDTO.setModifyTime(currentTime);
+                    	groupbuyingPriceSettingDAO.insert(groupbuyingPriceSettingReqDTO);
+                	}
         	}
+  
 
         	
 

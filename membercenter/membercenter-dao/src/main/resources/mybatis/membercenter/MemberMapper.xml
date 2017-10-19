@@ -1664,7 +1664,7 @@
 	
 	<select id="queryMmeberInfoByLittleMemberComCode" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
 		select
-		    m.member_code as memberCode,
+		m.member_code as memberCode,
 			mc.company_name as companyName,
 			mc.id as companyId,
 			mc.company_code companyCode,

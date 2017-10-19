@@ -216,6 +216,14 @@ public class OrderItemInfoDTO implements Serializable {
 	private String promotionId;
 
 	/**
+	 * 适用促销活动编码
+	 */
+	private String promotionId;
+	/**
+	 * 适用促销活动类型
+	 */
+	private String promotionType;
+	/**
 	 * 订单扩展字段列表
 	 */
 	private Map<String, Object> extendMap;
@@ -630,6 +638,22 @@ public class OrderItemInfoDTO implements Serializable {
 
 	public void setOrderItemTotal(BigDecimal orderItemTotal) {
 		this.orderItemTotal = orderItemTotal;
+	}
+
+	public String getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
 	}
 
 	public void initBeforeCalculateCoupon(String sellerCode) {

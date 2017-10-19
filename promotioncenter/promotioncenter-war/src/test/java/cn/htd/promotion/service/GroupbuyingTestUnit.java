@@ -520,7 +520,23 @@ public class GroupbuyingTestUnit {
 			e.printStackTrace();
 		}
 	}
-	
-    
+
+	@Test
+	public void getGroupbuyingList2HttpINTFCTest(){
+		String messageId = "342453251349";
+		try{
+			Pager<GroupbuyingInfoReqDTO> pager = new Pager<GroupbuyingInfoReqDTO>();
+			pager.setPageOffset(1);
+			pager.setRows(10);
+			GroupbuyingInfoReqDTO dto = new GroupbuyingInfoReqDTO();
+			dto.setSellerCode("801781");
+			dto.setBuyerCode("2002");
+			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getGroupbuyingList2HttpINTFC(pager,dto,messageId);
+			System.out.println("===>executeResult:" + executeResult);
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

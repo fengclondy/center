@@ -649,7 +649,14 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	@Override
 	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
-		DataGrid<GroupbuyingInfoCmplResDTO> dataGrid = null;
+		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
+			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数orgId不能为空！");
+		}
+		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
+		}
+
+    	DataGrid<GroupbuyingInfoCmplResDTO> dataGrid = null;
 		try {
 			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
 			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfo4MobileForPage(page, groupbuyingInfoReqDTO);

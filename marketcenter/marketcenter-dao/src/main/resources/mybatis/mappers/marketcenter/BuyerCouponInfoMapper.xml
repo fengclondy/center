@@ -374,7 +374,7 @@
     and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
     and promotion_id = #{promotionId}
   </update>
-  <update id="updateB2cActivityInfo2BuyerCoupon" parameterType="cn.htd.marketcenter.dto.PromotionDiscountInfoDTO">
+  <update id="updateB2cActivityInfo2BuyerCoupon" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
     update buyer_coupon_info
     <set>
       <if test="couponName != null and couponName != ''">
@@ -385,6 +385,12 @@
       </if>
       <if test=" couponEndTime != null">
         coupon_end_time = #{couponEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test=" discountThreshold != null">
+        discount_threshold = #{discountThreshold,jdbcType=DECIMAL},
+      </if>
+      <if test=" discountPercent != null">
+        discount_percent = #{discountPercent,jdbcType=INTEGER},
       </if>
       modify_id = #{modifyId, jdbcType=BIGINT},
       modify_name = #{modifyName, jdbcType=VARCHAR},

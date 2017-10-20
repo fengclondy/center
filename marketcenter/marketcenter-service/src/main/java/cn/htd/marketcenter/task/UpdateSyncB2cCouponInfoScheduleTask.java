@@ -236,6 +236,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
         int cellCount = 0;
         List<Future<Integer>> workResultList = new ArrayList<Future<Integer>>();
         Future<Integer> workResult = null;
+        BuyerCouponInfoDTO buyerCouponInfoDTO = null;
 
         try {
             if (promotionInfoDTO == null) {
@@ -270,7 +271,15 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 workResultList.add(workResult);
                 distributedCount += cellCount;
             }
-            buyerCouponInfoDAO.updateB2cActivityInfo2BuyerCoupon(couponInfoDTO);
+            buyerCouponInfoDTO = new BuyerCouponInfoDTO();
+            buyerCouponInfoDTO.setCouponName(couponInfoDTO.getPromotionName());
+            buyerCouponInfoDTO.setCouponStartTime(couponInfoDTO.getEffectiveTime());
+            buyerCouponInfoDTO.setCouponEndTime(couponInfoDTO.getInvalidTime());
+            buyerCouponInfoDTO.setDiscountThreshold(couponInfoDTO.getDiscountThreshold());
+            buyerCouponInfoDTO.setDiscountPercent(couponInfoDTO.getDiscountPercent());
+            buyerCouponInfoDTO.setModifyId(couponInfoDTO.getModifyId());
+            buyerCouponInfoDTO.setModifyName(couponInfoDTO.getModifyName());
+            buyerCouponInfoDAO.updateB2cActivityInfo2BuyerCoupon(buyerCouponInfoDTO);
             for (Future<Integer> workRst : workResultList) {
                 logger.info("\n 方法:[{}],线程执行结果:[{}]", "UpdateSyncB2cCouponInfoScheduleTask-execute", workRst.get());
             }
@@ -493,6 +502,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                         couponDTO.setCouponDescribe(targetDiscountInfo.getPromotionDescribe());
                         couponDTO.setCouponStartTime(targetDiscountInfo.getEffectiveStartTime());
                         couponDTO.setCouponEndTime(targetDiscountInfo.getEffectiveEndTime());
+                        couponDTO.setDiscountThreshold(targetDiscountInfo.getDiscountThreshold());
                         couponDTO.setDiscountPercent(targetDiscountInfo.getDiscountPercent());
                         jedis.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode,
                                 JSON.toJSONString(couponDTO));

@@ -140,8 +140,6 @@ public class MarketCenterCodeConst {
 	public static final String LIMITED_TIME_PURCHASE_MIN_QUANTITY = "15405";
 	//购买商品超过限时购限购量
 	public static final String LIMITED_TIME_PURCHASE_MAX_QUANTITY = "15406";
-	//会员购买商品价格和限时购活动价格不一致
-	public static final String LIMITED_TIME_PURCHASE_DIFF_PRICE = "15407";
 	//会员购买商品超过限时购商品数量
 	public static final String LIMITED_TIME_PURCHASE_NO_COUNT = "15408";
 	// 会员参加限时购活动状态不正确

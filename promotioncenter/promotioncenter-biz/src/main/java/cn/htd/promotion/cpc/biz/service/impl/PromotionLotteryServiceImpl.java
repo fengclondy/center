@@ -350,6 +350,7 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setRelevanceCouponCode(relevanceCouponCode);
         winningRecordDTO.setWinningTime(new Date()); 
         winningRecordDTO.setRewardName(requestDTO.getRewardName());
+        winningRecordDTO.setRewardType("1");
         
         promotionRedisDB
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));

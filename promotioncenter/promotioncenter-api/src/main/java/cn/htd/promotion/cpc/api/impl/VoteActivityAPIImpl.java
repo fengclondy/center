@@ -299,5 +299,12 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 		
 		return result;
 	}
+
+
+	@Override
+	public ExecuteResult<String> updateVoteActivity(VoteActivityResDTO voteActivityResDTO) {
+		
+		return voteActivityService.updateVoteActivity(voteActivityResDTO);
+	}
 	
 }

@@ -106,7 +106,7 @@ public interface GroupbuyingAPI {
 	 * @param messageId
 	 * @return
 	 */
-	ExecuteResult<String> updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO, String messageId);
+	ExecuteResult<?> updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO, String messageId);
 
 	/**
 	 * 根据promotionId删除团购活动

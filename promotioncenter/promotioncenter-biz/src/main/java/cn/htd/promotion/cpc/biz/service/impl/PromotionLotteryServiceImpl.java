@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -347,6 +348,10 @@ public class PromotionLotteryServiceImpl implements PromotionLotteryService {
         winningRecordDTO.setCreateName(requestDTO.getBuyerName());
         winningRecordDTO.setOrderNo(ticket);
         winningRecordDTO.setRelevanceCouponCode(relevanceCouponCode);
+        winningRecordDTO.setWinningTime(new Date()); 
+        winningRecordDTO.setRewardName(requestDTO.getRewardName());
+        winningRecordDTO.setRewardType("1");
+        
         promotionRedisDB
                 .tailPush(RedisConst.REDIS_BUYER_WINNING_RECORD_NEED_SAVE_LIST, JSON.toJSONString(winningRecordDTO));
 //        //如果是扭蛋就删除抽奖结果key，如果是刮刮乐就不删除，等刮刮乐活动结束用定时任务删除

@@ -234,7 +234,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                             pipeline.hset(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
                                     categoryDetailDTO.getCategoryId().toString(), categoryDetailDTO.getBrandIdList());
                         }
-                        pipeline.expire(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId, seconds);
+                        pipeline.expire(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
+                                seconds);
                     }
                     if (itemDetailDTOList != null && !itemDetailDTOList.isEmpty()) {
                         for (PromotionItemDetailDTO itemDetailDTO : itemDetailDTOList) {
@@ -478,9 +479,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
             }
         }
     }
-    
-    
-    
+
+
     /**
      * 调整B2B_MIDDLE_TIMELIMITED_INDEX的key结构，详见 顶部备注6.
      *
@@ -488,29 +488,28 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
      * @throws Exception
      */
     private void flushReidsPromotionTimelimited(Jedis jedis) throws Exception {
-    	 Map<String, String> indexMap = null;
-         String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
-         String timelimitedPurchaseType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
-    	 if (jedis.exists(RedisConst.REDIS_TIMELIMITED_INDEX)) {
-    	        indexMap = jedis.hgetAll(RedisConst.REDIS_TIMELIMITED_INDEX);
-    	        for (Entry<String, String> entry : indexMap.entrySet()) {
-    	             String newKey = promotionType + "&";
-    	             String[] keyArr = null;
-    	             String key = "";
-    	             String promotionIdStr ="";
-    	             key =  entry.getKey();
-    	        	 newKey = newKey + key;
-    	        	 promotionIdStr = entry.getValue();
-    	        	 keyArr = key.split("&");
-    	        	 if(!keyArr[0].equals(timelimitedPurchaseType) && !keyArr[0].equals(promotionType)){ //没有2 和 3 开头的活动 2.秒杀 3.限时购
-    	        	  	 jedis.hset(RedisConst.REDIS_TIMELIMITED_INDEX, newKey, promotionIdStr);
-        	        	 jedis.hdel(RedisConst.REDIS_TIMELIMITED_INDEX, key); 
-    	        	 }
-    	        }
-    	 }
-    	 
-    	
-     }
-    
-    
+        Map<String, String> indexMap = null;
+        String promotionType = dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        String timelimitedPurchaseType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        if (jedis.exists(RedisConst.REDIS_TIMELIMITED_INDEX)) {
+            indexMap = jedis.hgetAll(RedisConst.REDIS_TIMELIMITED_INDEX);
+            for (Entry<String, String> entry : indexMap.entrySet()) {
+                String newKey = promotionType + "&";
+                String[] keyArr = null;
+                String key = "";
+                String promotionIdStr = "";
+                key = entry.getKey();
+                newKey = newKey + key;
+                promotionIdStr = entry.getValue();
+                keyArr = key.split("&");
+                if (!keyArr[0].equals(timelimitedPurchaseType) && !keyArr[0]
+                        .equals(promotionType)) { //没有2 和 3 开头的活动 2.秒杀 3.限时购
+                    jedis.hset(RedisConst.REDIS_TIMELIMITED_INDEX, newKey, promotionIdStr);
+                    jedis.hdel(RedisConst.REDIS_TIMELIMITED_INDEX, key);
+                }
+            }
+        }
+    }
 }

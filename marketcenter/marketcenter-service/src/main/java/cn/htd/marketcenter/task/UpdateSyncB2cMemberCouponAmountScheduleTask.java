@@ -282,7 +282,8 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 		boolean flag = false;
 		PromotionInfoDTO promotionInfoDTO = new PromotionInfoDTO();
 		promotionInfoDTO.setB2cActivityCode(b2cCouponUseLogSyncDMO.getB2cActivityCode());
-		promotionInfoDTO.setShowStatus(dictionary
+		
+		/*promotionInfoDTO.setShowStatus(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
 		List<String> statusList = new ArrayList<String>();
@@ -290,13 +291,32 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
                 DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
 		statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                 DictionaryConst.OPT_PROMOTION_STATUS_START));
-		promotionInfoDTO.setStatusList(statusList);
-		PromotionInfoDTO PromotionInfoDaoRes = promotionInfoDAO.queryPromotionInfoByParam(promotionInfoDTO);
-		if(null == PromotionInfoDaoRes){
+		promotionInfoDTO.setStatusList(statusList);*/
+		
+		PromotionInfoDTO promotionInfoDaoRes = promotionInfoDAO.queryPromotionInfoByParam(promotionInfoDTO);
+		if(null == promotionInfoDaoRes){
 			logger.warn("根据参数:{}没有查到相关促销数据",JSONObject.toJSONString(promotionInfoDTO));
-		    return flag = true;
+		    return flag;
 		}
-		Date effectiveTime = PromotionInfoDaoRes.getEffectiveTime();
+		String showStatus = promotionInfoDaoRes.getShowStatus();
+		if(StringUtils.isEmpty(showStatus) || !showStatus.equals(dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID))
+                        || !showStatus.equals(dictionary
+                                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))){
+			 logger.warn("促销活动：{}审核未通过,或者未启用",JSONObject.toJSONString(promotionInfoDaoRes));
+			 return flag;
+		}
+		/*String status = promotionInfoDaoRes.getStatus();
+		if(StringUtils.isEmpty(status) || !status.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                DictionaryConst.OPT_PROMOTION_STATUS_NO_START))
+                || !status.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                DictionaryConst.OPT_PROMOTION_STATUS_START))){
+			 logger.warn("促销活动：{}状态不是未开始或者不是进行中",JSONObject.toJSONString(promotionInfoDaoRes));
+			 return flag = false;
+		}*/
+		Date effectiveTime = promotionInfoDaoRes.getEffectiveTime();
 		Date creteTime = b2cCouponUseLogSyncDMO.getCreateTime();
 		if(creteTime.after(effectiveTime)){
 			B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
@@ -305,7 +325,6 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 			record.setDealFlag(2);
 			record.setUseType(b2cCouponUseLogSyncDMO.getUseType());
 			updateB2cCouponUseLogSyncHistory(b2cCouponUseLogSyncDMO,record);
-			flag = false;
 		}else{
 			flag = true;
 		}

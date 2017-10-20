@@ -1161,8 +1161,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				return result;
 			}
 			//更新sku表
-			if(StringUtils.isNotEmpty(venusItemSkuPublishInDTO.getSubTitle())&&
-					!StringUtils.trimToEmpty(itemSkuFromDb.getSubTitle()).equals(venusItemSkuPublishInDTO.getSubTitle())){
+			if(!StringUtils.trimToEmpty(itemSkuFromDb.getSubTitle()).equals(venusItemSkuPublishInDTO.getSubTitle())){
 				itemSkuFromDb.setSubTitle(StringUtils.trim(venusItemSkuPublishInDTO.getSubTitle()));
 				itemSkuFromDb.setModified(new Date());
 				itemSkuFromDb.setModifyId(venusItemSkuPublishInDTO.getOperatorId());

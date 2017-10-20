@@ -21,6 +21,8 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	private Integer orderQuantity;
 	// 参团状态 [0.未参团,1.已参团]
 	private String gbRecordStatus;
+	// 下单状态 [0.未下单,1.已下单]
+	private String havaAnOrder;
 
 	public List<GroupbuyingPriceSettingResDTO> getGroupbuyingPriceSettingResDTOList() {
 		return groupbuyingPriceSettingResDTOList;
@@ -95,6 +97,15 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	public void setGbRecordStatus(String gbRecordStatus) {
 		this.gbRecordStatus = gbRecordStatus;
 	}
+
+	public String getHavaAnOrder() {
+		return havaAnOrder;
+	}
+
+	public void setHavaAnOrder(String havaAnOrder) {
+		this.havaAnOrder = havaAnOrder;
+	}
+	
 	
 
 }

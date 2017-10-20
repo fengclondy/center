@@ -31,6 +31,7 @@ import cn.htd.marketcenter.dao.TimelimitedInfoDAO;
 import cn.htd.marketcenter.domain.TimelimitedCheckInfo;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
+import cn.htd.marketcenter.dto.PromotionListDTO;
 import cn.htd.marketcenter.dto.PromotionStatusHistoryDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
@@ -148,33 +149,51 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
             throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT, " 该商品存在未结束的限时购活动!");
          } 
        }
-
 	@Override
-	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
+	public ExecuteResult<DataGrid<PromotionListDTO>> queryPromotionListByCondition(
 			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedInfoDTO> page) {
-		ExecuteResult<DataGrid<TimelimitedInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedInfoDTO>>();
-		DataGrid<TimelimitedInfoDTO> dataGrid = new DataGrid<TimelimitedInfoDTO>();
-		List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
+
+		ExecuteResult<DataGrid<PromotionListDTO>> result = new ExecuteResult<DataGrid<PromotionListDTO>>();
+		DataGrid<PromotionListDTO> dataGrid = new DataGrid<PromotionListDTO>();
+		List<PromotionListDTO> promotionInfoList = new ArrayList<PromotionListDTO>();
 		TimelimitedInfoDTO searchConditionDTO = new TimelimitedInfoDTO();
 		long count = 0;
 		try {
 			searchConditionDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-					DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
+					DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
 			searchConditionDTO.setSkuCode(conditionDTO.getSkuCode());
 			searchConditionDTO.setSkuName(conditionDTO.getSkuName());
 			searchConditionDTO.setShowStatus(conditionDTO.getStatus());
-			searchConditionDTO.setPromotionProviderSellerCode(conditionDTO.getSelleCode());
+			searchConditionDTO.setSellerCode(conditionDTO.getSelleCode());
 			searchConditionDTO.setDeleteStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 					DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
 			searchConditionDTO.setStartTime(conditionDTO.getStartTime());
 			searchConditionDTO.setEndTime(conditionDTO.getEndTime());
-			count = timelimitedInfoDAO.queryTimelimitedInfoListCount(searchConditionDTO);
+			count = timelimitedInfoDAO.queryPromotionInfoListCount(searchConditionDTO);
 			if (count > 0) {
-				// 。queryTimelimitedInfoList(conditionDTO,page);
-				timelimitedInfoList = timelimitedInfoDAO.queryTimelimitedInfoList(searchConditionDTO, page);
-				dataGrid.setRows(timelimitedInfoList);
+				// 遍历promotion 查询 timelimited
+				List<TimelimitedInfoDTO> timelimitedInfoDTOList = timelimitedInfoDAO
+						.queryPromotionInfoListByCondition(searchConditionDTO, page);
+				for (TimelimitedInfoDTO promotionlist : timelimitedInfoDTOList) {
+					String promotionId = promotionlist.getPromotionId();
+					List<TimelimitedInfoDTO> timelimitedInfoList = timelimitedInfoDAO
+							.queryTimelimitedInfoByPromotionId(promotionId);
+					if (timelimitedInfoList.size() > 0) {
+						PromotionListDTO promotionInfo = new PromotionListDTO();
+						promotionInfo.setPromotionId(promotionlist.getPromotionId());
+						promotionInfo.setStatus(promotionlist.getStatus());
+						promotionInfo.setShowStatus(promotionlist.getShowStatus());
+						// promotion中加入限时购
+						promotionInfo.setTimelimitedInfoDTO(timelimitedInfoList);
+						TimelimitedInfoDTO timelimited = timelimitedInfoList.get(0);
+						promotionInfo.setItemName(timelimited.getSkuName());
+						promotionInfo.setItemCode(timelimited.getItemCode());
+						promotionInfoList.add(promotionInfo);
+					}
+				}
+				dataGrid.setRows(promotionInfoList);
+				dataGrid.setTotal(count);
 			}
-			dataGrid.setTotal(count);
 			result.setResult(dataGrid);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
@@ -185,7 +204,6 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		}
 		return result;
 	}
-
 	/**
 	 * 限时购 － 根据promotionId获取限时购结果信息
 	 */
@@ -285,6 +303,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 							if (timelimite.getSkuCode().equals(skuCode)) {
 								int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, skuCode);
 								timelimite.setTimelimitedSkuCount(skuTotal);
+								timelimite.setItemCode(timelimitedInfoDTO.getItemCode());
 								if(!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
 									result.setCode("00000");
 									result.setResult(timelimite);
@@ -351,6 +370,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					int listSize = list.size();
 					TimelimitedInfoDTO timelimitedConvert = timilimitedConvert(list);
 					timelimitedConvert.setPurchasePriceFlag(listSize);
+					timelimitedConvert.setPurchaseSort(dto.getPurchaseSort());
+					timelimitedConvert.setItemCode(timelimitedInfoDTO.getItemCode());
 					int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, timelimitedConvert.getSkuCode());
 					timelimitedConvert.setTimelimitedSkuCount(skuTotal);
 					if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimitedInfoDTO.getEffectiveTime())
@@ -475,7 +496,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
         String paramModifyTimeStr = "";
         String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
         try {
-        	checkTimelimitedDuringRepeat(timelimitedInfo);
+        	//checkTimelimitedDuringRepeat(timelimitedInfo);
             if (StringUtils.isEmpty(promotionId)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "修改限时购活动ID不能为空");
             }

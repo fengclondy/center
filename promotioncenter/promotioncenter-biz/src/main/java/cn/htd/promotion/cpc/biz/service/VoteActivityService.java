@@ -28,6 +28,21 @@ public interface VoteActivityService {
 	 */
 	ExecuteResult<String> saveVoteActivity(VoteActivityResDTO voteActivityResDTO);
 	
+	/**
+	 * 删除该投票活动
+	 * 
+	 * @param VoteActivityResDTO
+	 * @return
+	 */
+	ExecuteResult<String> deleteVoteActivity(Long voteId);
+	
+	/**
+	 * 删除该投票活动
+	 * 
+	 * @param VoteActivityResDTO
+	 * @return
+	 */
+	ExecuteResult<String> updateVoteActivity(VoteActivityResDTO voteActivityResDTO);
 	
 	/**
 	 * 根据主键查询投票活动
@@ -72,6 +87,11 @@ public interface VoteActivityService {
 	 */
 	ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(List<VoteActivityMemReqDTO> list);
 	
-	
-	
+	/**
+	 * 导入投票活动会员
+	 * 
+	 * @param memberCodeList
+	 * @return
+	 */
+	ExecuteResult<List<VoteActivityMemListResDTO>> ExportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
 }

@@ -493,6 +493,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                         couponDTO.setCouponDescribe(targetDiscountInfo.getPromotionDescribe());
                         couponDTO.setCouponStartTime(targetDiscountInfo.getEffectiveStartTime());
                         couponDTO.setCouponEndTime(targetDiscountInfo.getEffectiveEndTime());
+                        couponDTO.setDiscountPercent(targetDiscountInfo.getDiscountPercent());
                         jedis.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode,
                                 JSON.toJSONString(couponDTO));
                         updatedCount++;

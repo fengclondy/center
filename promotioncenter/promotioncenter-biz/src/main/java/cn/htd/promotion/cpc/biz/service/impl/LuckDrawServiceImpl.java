@@ -145,8 +145,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 		String promotionId = request.getPromotionId();
 		PromotionExtendInfoDTO promotionInfoDTO = null;
 		LotteryActivityPageResDTO result = new LotteryActivityPageResDTO();
-		List<PromotionPictureDTO> promotionPictureList = null;
-		List<String> pictureUrlList = new ArrayList<String>();
+		//List<String> pictureUrlList = new ArrayList<String>();
 		Map<String, String> dictMap = null;
 		DrawLotteryReqDTO checkInfoDTO = new DrawLotteryReqDTO();
 		try {
@@ -155,19 +154,19 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			dictMap = baseService.initPromotionDictMap();
 			promotionInfoDTO = promotionLotteryCommonService
 					.getRedisLotteryInfo(promotionId, dictMap);
-			promotionPictureList = promotionInfoDTO.getPromotionPictureList();
-			if (CollectionUtils.isNotEmpty(promotionPictureList)) {
+			List<PromotionPictureDTO> promotionPictureList = promotionInfoDTO.getPromotionPictureList();
+			/*if (CollectionUtils.isNotEmpty(promotionPictureList)) {
 				for (PromotionPictureDTO promotionPicture : promotionPictureList) {
 					pictureUrlList.add(promotionPicture
 							.getPromotionPictureUrl());
 				}
-			}
+			}*/
 			result.setActivityStartTime(promotionInfoDTO.getEachStartTime());
 			result.setActivityEndTime(promotionInfoDTO.getEachEndTime());
 			result.setEffectiveTime(promotionInfoDTO.getEffectiveTime());
 			result.setInvalidTime(promotionInfoDTO.getInvalidTime());
 			result.setPromotionName(promotionInfoDTO.getPromotionName());
-			result.setPictureUrl(pictureUrlList);
+			result.setPictureUrl(promotionPictureList);
 			result.setRemainingTimes(0);
 			checkInfoDTO.setPromotionId(promotionId);
 			checkInfoDTO.setBuyerCode(request.getMemberNo());

@@ -44,7 +44,7 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 	/**
 	 * 活动页图片路径
 	 */
-	List<PromotionPictureDTO> promotionPictureList;
+	List<PromotionPictureDTO> pictureUrl;
 
 	public String getPromotionName() {
 		return promotionName;
@@ -78,13 +78,12 @@ public class LotteryActivityPageResDTO extends GenricResDTO{
 		this.remainingTimes = remainingTimes;
 	}
 
-	public List<PromotionPictureDTO> getPromotionPictureList() {
-		return promotionPictureList;
+	public List<PromotionPictureDTO> getPictureUrl() {
+		return pictureUrl;
 	}
 
-	public void setPromotionPictureList(
-			List<PromotionPictureDTO> promotionPictureList) {
-		this.promotionPictureList = promotionPictureList;
+	public void setPictureUrl(List<PromotionPictureDTO> pictureUrl) {
+		this.pictureUrl = pictureUrl;
 	}
 
 	public Date getEffectiveTime() {

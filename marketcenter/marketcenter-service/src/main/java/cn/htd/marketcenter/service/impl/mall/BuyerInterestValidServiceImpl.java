@@ -1503,8 +1503,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 TimelimitedInfoDTO tmpTimelimitedInfoDTO = null;
                 Integer goodsCount = 0;
                 String skuCode = "";
-                long goodsPrice = 0L;
-                long skuTimelimitedPrice = 0L;
                 int stockNum = 0;
                 TimelimitedResultDTO resultDTO = null;
 
@@ -1564,19 +1562,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                                 "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 限购量:"
                                         + tmpTimelimitedInfoDTO.getTimelimitedThreshold() + " 购买数量:" + goodsCount);
                     }
-                    goodsPrice = CalculateUtils.multiply(itemInfoDTO.getGoodsPrice(), new BigDecimal(100)).longValue();
-                    skuTimelimitedPrice =
-                            CalculateUtils.multiply(tmpTimelimitedInfoDTO.getSkuTimelimitedPrice(), new BigDecimal(100))
-                                    .longValue();
-                    if (goodsPrice != skuTimelimitedPrice) {
-                        logger.info(
-                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],购买价格:[{}],活动价格:[{}] 会员购买商品价格和限时购活动价格不一致***********",
-                                messageId, promotionId, skuCode, itemInfoDTO.getGoodsPrice(),
-                                tmpTimelimitedInfoDTO.getSkuTimelimitedPrice());
-                        throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_DIFF_PRICE,
-                                "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 购买价格:" + itemInfoDTO
-                                        .getGoodsPrice() + " 活动价格:" + tmpTimelimitedInfoDTO.getSkuTimelimitedPrice());
-                    }
                     resultDTO = tmpTimelimitedInfoDTO.getTimelimitedResult();
                     stockNum = Integer.valueOf(resultDTO.getShowRemainSkuCount()).intValue();
                     if (goodsCount > stockNum) {
@@ -1588,8 +1573,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                                 "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 购买数量:" + goodsCount
                                         + " 库存数量:" + stockNum);
                     }
+                    itemInfoDTO.setGoodsPrice(tmpTimelimitedInfoDTO.getSkuTimelimitedPrice());
                     itemInfoDTO.setGoodsPriceType(dictionary.getValueByCode(DictionaryConst.TYPE_SKU_PRICE_TYPE,
                             DictionaryConst.OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT));
+                    itemInfoDTO.setGoodsTotal(itemInfoDTO.getGoodsPrice().multiply(new BigDecimal(goodsCount)));
+                    itemInfoDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
                 }
             }
         }

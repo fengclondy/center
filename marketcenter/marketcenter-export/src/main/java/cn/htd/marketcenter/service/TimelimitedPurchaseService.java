@@ -6,6 +6,7 @@ import java.util.Map;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
+import cn.htd.marketcenter.dto.PromotionListDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.common.Pager;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
@@ -32,7 +33,7 @@ public interface TimelimitedPurchaseService {
 	 * @param page
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<TimelimitedInfoDTO>> queryTimelimitedListByCondition(
+	public ExecuteResult<DataGrid<PromotionListDTO>> queryPromotionListByCondition(
 			TimelimitedConditionDTO conditionDTO, Pager<TimelimitedInfoDTO> page);
 
 	/**

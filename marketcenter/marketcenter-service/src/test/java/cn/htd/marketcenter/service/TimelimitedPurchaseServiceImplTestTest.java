@@ -7,8 +7,10 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.marketcenter.dto.PromotionListDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
@@ -32,11 +34,13 @@ public class TimelimitedPurchaseServiceImplTestTest {
 		String buyercode = "htd1146001";
 		String promotionId = "2171328280492";
 		String buyerGrade = "5";
-		String sellerCode = "htd1000000";
+		String sellerCode = "htd20070002";
 		Pager<TimelimitedInfoDTO> page = new Pager<TimelimitedInfoDTO>();
 		TimelimitedConditionDTO conditionDTO = new TimelimitedConditionDTO();
-		// conditionDTO.setSelleCode(sellerCode);
-		timelimitedInfoService.queryTimelimitedListByCondition(conditionDTO, page);
+		conditionDTO.setSelleCode(sellerCode);
+		ExecuteResult<DataGrid<PromotionListDTO>> result = timelimitedInfoService
+				.queryPromotionListByCondition(conditionDTO, page);
+		System.out.println(JSONObject.toJSONString(result));
 	}
 	
 	@Test

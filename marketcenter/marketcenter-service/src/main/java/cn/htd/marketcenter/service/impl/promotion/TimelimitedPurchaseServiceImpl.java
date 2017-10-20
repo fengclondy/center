@@ -443,7 +443,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		    if(priceSort != 0){
 		    	return priceSort;
 		    }
-		    return Long.compare(t1.getStartTime().getTime(), t2.getStartTime().getTime());
+		    return Long.compare(t2.getStartTime().getTime(), t1.getStartTime().getTime());
 		} 
 	} 
 

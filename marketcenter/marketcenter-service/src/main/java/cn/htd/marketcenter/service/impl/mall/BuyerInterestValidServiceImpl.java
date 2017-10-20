@@ -63,7 +63,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
     @Resource
     private MarketCenterRedisDB marketRedisDB;
-    ;
 
     @Resource
     private TimelimitedRedisHandle timelimitedRedisHandle;

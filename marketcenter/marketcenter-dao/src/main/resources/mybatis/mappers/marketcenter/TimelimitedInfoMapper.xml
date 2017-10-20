@@ -261,9 +261,10 @@
 	     <![CDATA[ and timelimited_info.end_time > now() ]]>
 		 and promotion_accumulaty.delete_flag = 0
 	   </select>
-	
-	<select id="queryTimelimitedInfoListCount" resultType="java.lang.Long" parameterType="cn.htd.marketcenter.dto.TimelimitedInfoDTO">
-		select count(1)
+
+	<select id="queryPromotionInfoListCount" resultType="java.lang.Long" parameterType="cn.htd.marketcenter.dto.TimelimitedInfoDTO">
+		select count(1) from (
+		select promotion_info.promotion_id
 		from
 		promotion_info inner join promotion_accumulaty on
 		(promotion_info.promotion_id = promotion_accumulaty.promotion_id)
@@ -278,14 +279,15 @@
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
-		<if test="entity.startTime != null and entity.startTime != '' and  entity.endTime != null and entity.endTime != '' ">
-		<if test="entity.startTime == entity.endTime">and #{entity.startTimeStr} BETWEEN date_format(timelimited_info.start_time , '%Y-%m-%d') and date_format(timelimited_info.end_time , '%Y-%m-%d')</if>
-		<if test="entity.startTime != entity.endTime">and date_format(timelimited_info.start_time , '%Y-%m-%d') &lt;= #{entity.startTimeStr} and date_format(timelimited_info.end_time , '%Y-%m-%d') &gt;= #{entity.endTimeStr}</if>
+		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
+		<if test="entity.startTimeStr == entity.endTimeStr">and #{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
+		<if test="entity.startTimeStr != entity.endTimeStr">and date_format(promotion_info.effective_time , '%Y-%m-%d') &lt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &gt;= #{entity.endTimeStr}</if>
 		</if> 
 		and promotion_accumulaty.delete_flag = 0
+		GROUP BY promotion_info.id) as tmp
 	</select>
   
-   	<select id="queryTimelimitedInfoList" resultMap="BaseResultMap" parameterType="cn.htd.marketcenter.dto.TimelimitedInfoDTO" >
+   	<select id="queryPromotionInfoListByCondition" resultMap="BaseResultMap" parameterType="cn.htd.marketcenter.dto.TimelimitedInfoDTO" >
 	    select promotion_info.promotion_id promotionId,
 		promotion_info.promotion_name promotionName,
 		promotion_info.promotion_type promotionType,
@@ -293,26 +295,7 @@
 		promotion_info.invalid_time invalidTime,
 		promotion_info.is_vip isVip,
 		promotion_info.status status,
-		promotion_info.show_status showStatus,
-		promotion_accumulaty.level_number levelNumber,
-		promotion_accumulaty.level_code levelCode,
-		timelimited_info.timelimited_id timelimitedId,
-		timelimited_info.seller_code sellerCode,
-		timelimited_info.item_id
-		itemId,
-		timelimited_info.sku_code skuCode,
-		timelimited_info.sku_name
-		skuName,
-		timelimited_info.sku_pic_url skuPicUrl,
-		timelimited_info.sku_timelimited_price skuTimelimitedPrice,
-		timelimited_info.timelimited_sku_count timelimitedSkuCount,
-		timelimited_info.timelimited_threshold timelimitedThreshold,
-		timelimited_info.timelimited_valid_interval timelimitedValidInterval,
-		timelimited_info.item_category_brand itemCategoryBrand,
-		timelimited_info.item_code itemCode,
-		timelimited_info.timelimited_threshold_min timelimitedThresholdMin,
-		timelimited_info.start_time startTime,
-		timelimited_info.end_time endTime
+		promotion_info.show_status showStatus
 		from
 		promotion_info inner join promotion_accumulaty on
 		(promotion_info.promotion_id = promotion_accumulaty.promotion_id)
@@ -327,11 +310,12 @@
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
-		<if test="entity.startTime != null and entity.startTime != '' and  entity.endTime != null and entity.endTime != '' ">
-		<if test="entity.startTime == entity.endTime">and #{entity.startTimeStr} BETWEEN date_format(timelimited_info.start_time , '%Y-%m-%d') and date_format(timelimited_info.end_time , '%Y-%m-%d')</if>
-		<if test="entity.startTime != entity.endTime">and date_format(timelimited_info.start_time , '%Y-%m-%d') &lt;= #{entity.startTimeStr} and date_format(timelimited_info.end_time , '%Y-%m-%d') &gt;= #{entity.endTimeStr}</if>
+		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
+		<if test="entity.startTimeStr == entity.endTimeStr">and #{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
+		<if test="entity.startTimeStr != entity.endTimeStr">and date_format(promotion_info.effective_time , '%Y-%m-%d') &lt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &gt;= #{entity.endTimeStr}</if>
 		</if> 
 		and promotion_accumulaty.delete_flag = 0
+		group by promotion_info.id
 		order by
 		promotion_info.modify_time desc
 		<if test="page!=null">

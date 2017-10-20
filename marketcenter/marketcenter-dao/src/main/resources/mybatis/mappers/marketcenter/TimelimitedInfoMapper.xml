@@ -279,9 +279,9 @@
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
-		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
-		<if test="entity.startTimeStr == entity.endTimeStr">and #{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
-		<if test="entity.startTimeStr != entity.endTimeStr">and date_format(promotion_info.effective_time , '%Y-%m-%d') &lt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &gt;= #{entity.endTimeStr}</if>
+		<if test="entity.startTime != null and entity.startTime != '' and  entity.endTime != null and entity.endTime != '' ">
+		<if test="entity.startTime == entity.endTime">and #{entity.startTime} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
+		<if test="entity.startTime != entity.endTime">and date_format(promotion_info.effective_time , '%Y-%m-%d') &lt;= #{entity.startTime} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &gt;= #{entity.endTime}</if>
 		</if> 
 		and promotion_accumulaty.delete_flag = 0
 		GROUP BY promotion_info.id) as tmp
@@ -310,9 +310,9 @@
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
-		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
-		<if test="entity.startTimeStr == entity.endTimeStr">and #{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
-		<if test="entity.startTimeStr != entity.endTimeStr">and date_format(promotion_info.effective_time , '%Y-%m-%d') &lt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &gt;= #{entity.endTimeStr}</if>
+		<if test="entity.startTime != null and entity.startTime != '' and  entity.endTime != null and entity.endTime != '' ">
+		<if test="entity.startTime == entity.endTime">and #{entity.startTime} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
+		<if test="entity.startTime != entity.endTime">and date_format(promotion_info.effective_time , '%Y-%m-%d') &lt;= #{entity.startTime} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &gt;= #{entity.endTime}</if>
 		</if> 
 		and promotion_accumulaty.delete_flag = 0
 		group by promotion_info.id

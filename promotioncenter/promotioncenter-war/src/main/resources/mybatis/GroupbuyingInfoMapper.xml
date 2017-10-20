@@ -634,5 +634,37 @@
 		ORDER BY gi.modify_time desc 
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
+	
+   <select id="getGroupbuyingInfo4MobileHomePage" resultMap="GroupbuyingInfoCmplResultMap">
+   SELECT 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
+    gi.modify_id, gi.modify_name, gi.modify_time,
+    if(gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR},'1','0') gbRecordStatus,
+    pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
+    pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
+    pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
+    pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
+    pi.create_id, pi.create_name, pi.create_time, 
+    pi.modify_id, pi.modify_name, pi.modify_time,  
+    <![CDATA[ 
+        (case 
+    when pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time then '2' 
+    when pi.invalid_time < sysdate() and sysdate() < gi.start_time then '3' 
+    when gi.start_time <= sysdate() and sysdate() <= gi.end_time then '4' 
+	when sysdate() < pi.effective_time then '1' 
+	when sysdate() > gi.end_time then '5' 
+	else '-1' 
+	end) ]]> activeState 
+   FROM groupbuying_info gi 
+   left join groupbuying_record gr on gr.promotion_id = gi.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gi.promotion_id  
+		WHERE  gi.delete_flag = 0 and pi.show_status = '3'  and (gr.delete_flag = 0 or gr.delete_flag is null)  
+        and gi.seller_code = #{dto.sellerCode,jdbcType=VARCHAR}   
+		ORDER BY gi.create_time desc 
+		LIMIT 0,1 
+	</select>
   
 </mapper>

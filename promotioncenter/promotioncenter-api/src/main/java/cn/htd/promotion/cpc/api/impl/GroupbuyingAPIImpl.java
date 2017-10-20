@@ -244,12 +244,6 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            if (null == groupbuyingInfoReqDTO || StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表条件参数不能为空！");
-            }
-            if (null == page) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品页码不能为空！");
-            }
             DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingInfo4MobileForPage(page,groupbuyingInfoReqDTO, messageId);
             result.setResult(groupbuyingInfoCmplResDTOData);
         } catch (Exception e) {
@@ -306,4 +300,27 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
     }
+
+
+	@Override
+	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingHomePage2HttpINTFC(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		
+        ExecuteResult<GroupbuyingInfoCmplResDTO> result = new ExecuteResult<GroupbuyingInfoCmplResDTO>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	
+        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingService.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO, messageId);
+        	result.setResult(groupbuyingInfoCmplResDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGroupbuyingHomePage2HttpINTFC出现异常{}", messageId, e.toString());
+        }
+        
+        return result;
+		
+	}
 }

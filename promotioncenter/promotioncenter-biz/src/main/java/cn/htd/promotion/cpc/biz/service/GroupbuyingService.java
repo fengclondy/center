@@ -119,4 +119,13 @@ public interface GroupbuyingService {
 	 * @return
 	 */
 	DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
+	
+	/**
+	 * 查询首页单个团购活动(供移动端使用)
+	 * @return
+	 */
+	GroupbuyingInfoCmplResDTO getGroupbuyingInfo4MobileHomePage(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
+	
+	
+	
 }

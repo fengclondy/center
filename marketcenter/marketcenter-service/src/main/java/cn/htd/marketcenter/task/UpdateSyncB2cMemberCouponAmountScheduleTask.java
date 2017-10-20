@@ -296,7 +296,7 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 		PromotionInfoDTO promotionInfoDaoRes = promotionInfoDAO.queryPromotionInfoByParam(promotionInfoDTO);
 		if(null == promotionInfoDaoRes){
 			logger.warn("根据参数:{}没有查到相关促销数据",JSONObject.toJSONString(promotionInfoDTO));
-		    return flag = false;
+		    return flag;
 		}
 		String showStatus = promotionInfoDaoRes.getShowStatus();
 		if(StringUtils.isEmpty(showStatus) || !showStatus.equals(dictionary
@@ -306,7 +306,7 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
                                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))){
 			 logger.warn("促销活动：{}审核未通过,或者未启用",JSONObject.toJSONString(promotionInfoDaoRes));
-			 return flag = false;
+			 return flag;
 		}
 		/*String status = promotionInfoDaoRes.getStatus();
 		if(StringUtils.isEmpty(status) || !status.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
@@ -325,7 +325,6 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements
 			record.setDealFlag(2);
 			record.setUseType(b2cCouponUseLogSyncDMO.getUseType());
 			updateB2cCouponUseLogSyncHistory(b2cCouponUseLogSyncDMO,record);
-			flag = false;
 		}else{
 			flag = true;
 		}

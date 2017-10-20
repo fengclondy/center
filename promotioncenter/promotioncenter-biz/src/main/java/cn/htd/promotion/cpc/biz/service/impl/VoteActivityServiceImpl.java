@@ -336,6 +336,11 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	@Override
 	public ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
 		ExecuteResult<List<VoteActivityMemListResDTO>> result = new ExecuteResult<List<VoteActivityMemListResDTO>>();
+		if(voteActivityMemListReqDTO==null){
+			result.setErrorMessages(Lists.newArrayList("voteActivityMemListReqDTO参数为null"));
+			return result;
+		}
+		
 		voteActivityMemListReqDTO.setPageSize(50000);
 		voteActivityMemListReqDTO.setStart(1);
 		List<VoteActivityMemListResDTO>  resultList = voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);

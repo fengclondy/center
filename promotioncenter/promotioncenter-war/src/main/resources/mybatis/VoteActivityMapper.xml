@@ -286,15 +286,48 @@
     limit 1
   </select>
   
-  <select id="queryVoteActivityByTime" resultMap="ResultMapWithBLOBs" >
-   select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-   from vote_activity va where 
-    <![CDATA[  va.vote_start_time <  #{startTime} ]]>
-    <![CDATA[ and va.vote_end_time > #{endTime}   ]]>
-    and va.delete_flag=0
+  <select id="queryVoteActivityByTime" resultType="int" >
+   select count(*) from (
+	   	select 
+		    <include refid="Base_Column_List" />
+		    ,
+		    <include refid="Blob_Column_List" />
+		   from vote_activity va where 
+		    <![CDATA[ va.vote_sign_up_start_time <=  #{startTime} ]]>
+		    <![CDATA[ and va.vote_end_time >  #{startTime} ]]>
+		    <![CDATA[ and va.vote_end_time >= #{endTime}   ]]>
+		    and va.delete_flag=0
+	    union
+	    select 
+		    <include refid="Base_Column_List" />
+		    ,
+		    <include refid="Blob_Column_List" />
+		   from vote_activity va where 
+		    <![CDATA[ va.vote_sign_up_start_time >=  #{startTime} ]]>
+		    <![CDATA[ and va.vote_end_time >= #{endTime}   ]]>
+		    <![CDATA[ and va.vote_sign_up_start_time < #{endTime}   ]]>
+		    and va.delete_flag=0
+	    union
+	    select 
+		    <include refid="Base_Column_List" />
+		    ,
+		    <include refid="Blob_Column_List" />
+		   from vote_activity va where 
+		    <![CDATA[ va.vote_sign_up_start_time <= #{startTime} ]]>
+		    <![CDATA[ and va.vote_end_time > #{startTime}   ]]>
+		    <![CDATA[ and va.vote_end_time <= #{endTime}   ]]>
+		    and va.delete_flag=0
+	    union
+	    select 
+		    <include refid="Base_Column_List" />
+		    ,
+		    <include refid="Blob_Column_List" />
+		   from vote_activity va where 
+		    <![CDATA[  va.vote_sign_up_start_time >=  #{startTime} ]]>
+		    <![CDATA[ and va.vote_end_time <= #{endTime}   ]]>
+		    and va.delete_flag=0
+   ) t
+   
   </select>
   
   <select id="selectPagedVoteActivity" resultMap="ResultMapWithBLOBs" >

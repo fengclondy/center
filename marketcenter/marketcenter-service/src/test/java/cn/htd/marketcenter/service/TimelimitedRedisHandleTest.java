@@ -17,7 +17,6 @@ import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 /**
  * Created by thinkpad on 2017/1/6.
@@ -119,7 +118,9 @@ public class TimelimitedRedisHandleTest {
 	
 	@Test
 	public void getTimelimitedInfo() throws Exception {
-		ExecuteResult<TimelimitedInfoDTO> result = timelimitedPurchaseService.getTimelimitedInfo("1000039612");
+		TimelimitedInfoDTO dto = new TimelimitedInfoDTO();
+		dto.setPurchaseFlag(2);
+		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedPurchaseService.getTimelimitedInfo(dto);
 		System.out.println(JSON.toJSONString(result));
 	}
 	

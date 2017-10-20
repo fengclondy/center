@@ -18,6 +18,7 @@ import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
 import cn.htd.marketcenter.service.BuyerInterestChangeService;
 import cn.htd.marketcenter.service.BuyerPromotionDeal;
 import cn.htd.marketcenter.service.handle.BuyerCouponHandle;
+import cn.htd.marketcenter.service.handle.BuyerLimitedDiscountHandle;
 import cn.htd.marketcenter.service.handle.BuyerTimelimitedHandle;
 import cn.htd.marketcenter.service.handle.PromotionRedisHandle;
 import com.alibaba.fastjson.JSON;
@@ -40,6 +41,11 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
     @Resource
     private BuyerTimelimitedHandle buyerTimelimitedHandle;
 
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+    @Resource
+    private BuyerLimitedDiscountHandle buyerLimitedDiscountHandle;
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+
     /**
      * 取得促销对象的Handle
      *
@@ -54,6 +60,11 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
                 .equals(promotionType)) {
             return buyerTimelimitedHandle;
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+        } else if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionType)) {
+            return buyerLimitedDiscountHandle;
+            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
         }
         return null;
     }
@@ -104,7 +115,6 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
         List<OrderItemPromotionDTO> itemPromotionList = new ArrayList<OrderItemPromotionDTO>();
         String lockKey = "";
         List<String> lockKeyList = new ArrayList<String>();
-        String oldPromotionType = "";
         String oldBuyerCode = "";
         String buyerCode = "";
         String reverseStatus = dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
@@ -128,24 +138,44 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                             validateResult.getErrorMsg());
                 }
-                if (couponType.equals(promotionDTO.getPromotionType())) {
-                    if (BigDecimal.ZERO.compareTo(promotionDTO.getDiscountAmount()) >= 0) {
-                        continue;
-                    }
-                    if (StringUtils.isEmpty(promotionDTO.getOrderNo())) {
-                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的订单编号为空");
-                    }
-                    if (StringUtils.isEmpty(promotionDTO.getOrderItemNo())) {
-                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的子订单编号为空");
-                    }
-                    if (StringUtils.isEmpty(promotionDTO.getCouponCode())) {
-                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的会员优惠券编号为空");
-                    }
-                    lockKey = promotionDTO.getOrderItemNo();
-                } else if (timelimitedType.equals(promotionDTO.getPromotionType())) {
+                //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+//                if (couponType.equals(promotionDTO.getPromotionType())) {
+//                    if (BigDecimal.ZERO.compareTo(promotionDTO.getDiscountAmount()) >= 0) {
+//                        continue;
+//                    }
+//                    if (StringUtils.isEmpty(promotionDTO.getOrderNo())) {
+//                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+//                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的订单编号为空");
+//                    }
+//                    if (StringUtils.isEmpty(promotionDTO.getOrderItemNo())) {
+//                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+//                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的子订单编号为空");
+//                    }
+//                    if (StringUtils.isEmpty(promotionDTO.getCouponCode())) {
+//                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+//                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的会员优惠券编号为空");
+//                    }
+//                    lockKey = promotionDTO.getOrderItemNo();
+//                } else if (timelimitedType.equals(promotionDTO.getPromotionType())) {
+//                    if (StringUtils.isEmpty(promotionDTO.getSeckillLockNo())
+//                            && StringUtils.isEmpty(promotionDTO.getOrderNo())) {
+//                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+//                                "促销活动ID:" + promotionDTO.getPromotionId() + " 的订单编号或秒杀锁定预占订单号都为空");
+//                    }
+//                    lockKey = promotionDTO.getOrderNo();
+//                    if (reverseStatus.equals(promotionDTO.getPromoitionChangeType())) {
+//                        lockKey = promotionDTO.getSeckillLockNo();
+//                    }
+//                }
+//                if (StringUtils.isEmpty(oldPromotionType)) {
+//                    oldPromotionType = promotionDTO.getPromotionType();
+//                } else {
+//                    if (!oldPromotionType.equals(promotionDTO.getPromotionType())) {
+//                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+//                                "会员促销活动处理一次只能处理一种业务（优惠惠券或秒杀）");
+//                    }
+//                }
+                 if (timelimitedType.equals(promotionDTO.getPromotionType())) {
                     if (StringUtils.isEmpty(promotionDTO.getSeckillLockNo())
                             && StringUtils.isEmpty(promotionDTO.getOrderNo())) {
                         throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
@@ -155,15 +185,30 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
                     if (reverseStatus.equals(promotionDTO.getPromoitionChangeType())) {
                         lockKey = promotionDTO.getSeckillLockNo();
                     }
-                }
-                if (StringUtils.isEmpty(oldPromotionType)) {
-                    oldPromotionType = promotionDTO.getPromotionType();
                 } else {
-                    if (!oldPromotionType.equals(promotionDTO.getPromotionType())) {
-                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-                                "会员促销活动处理一次只能处理一种业务（优惠惠券或秒杀）");
-                    }
-                }
+                     if (promotionDTO.getQuantity().intValue() <= 0) {
+                         continue;
+                     }
+                     if (StringUtils.isEmpty(promotionDTO.getOrderNo())) {
+                         throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+                                 "促销活动ID:" + promotionDTO.getPromotionId() + " 的订单编号为空");
+                     }
+                     if (StringUtils.isEmpty(promotionDTO.getOrderItemNo())) {
+                         throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+                                 "促销活动ID:" + promotionDTO.getPromotionId() + " 的子订单编号为空");
+                     }
+                     if (couponType.equals(promotionDTO.getPromotionType())) {
+                         if (BigDecimal.ZERO.compareTo(promotionDTO.getDiscountAmount()) >= 0) {
+                             continue;
+                         }
+                         if (StringUtils.isEmpty(promotionDTO.getCouponCode())) {
+                             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+                                     "促销活动ID:" + promotionDTO.getPromotionId() + " 的会员优惠券编号为空");
+                         }
+                     }
+                     lockKey = promotionDTO.getOrderItemNo();
+                 }
+                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
                 buyerCode = promotionDTO.getBuyerCode();
                 if (StringUtils.isEmpty(oldBuyerCode)) {
                     oldBuyerCode = buyerCode;

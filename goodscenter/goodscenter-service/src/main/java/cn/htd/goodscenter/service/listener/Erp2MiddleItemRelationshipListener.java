@@ -270,6 +270,10 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 			item.setOrigin(spu.getOrigin());
 		}
 		
+		if(spu.getTaxRate()!=null){
+			item.setTaxRate(spu.getTaxRate());
+		}
+		
 		item.setSellerId(sellerId);
 		
 		ExecuteResult<ShopDTO> shopResult = shopExportService.queryBySellerId(sellerId);

@@ -49,5 +49,7 @@ public interface VoteActivityMemberDAO {
     VoteActivityMemResDTO querySignupMemberDetailInfo(Long voteMemberId);
     
     void batchInsertVoteActMember(List<VoteActivityMemReqDTO> list);
+    
+    List<VoteActivityMemListResDTO> queryPagedSignupMemberInfoListOrderBySignUpTime(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
 
 }

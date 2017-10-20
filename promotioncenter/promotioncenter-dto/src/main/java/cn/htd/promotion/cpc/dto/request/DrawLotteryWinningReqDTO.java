@@ -46,7 +46,10 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
      * 活动名称（红包雨使用）
      */
     private String promotionName;
-    
+    /**
+     * 奖品名称（红包雨使用）
+     */
+    private String RewardName;
 
     public String getBuyerName() {
         return buyerName;
@@ -135,5 +138,14 @@ public class DrawLotteryWinningReqDTO extends DrawLotteryResultReqDTO {
 	public void setPromotionName(String promotionName) {
 		this.promotionName = promotionName;
 	}
+
+	public String getRewardName() {
+		return RewardName;
+	}
+
+	public void setRewardName(String rewardName) {
+		RewardName = rewardName;
+	}
+	
 	
 }

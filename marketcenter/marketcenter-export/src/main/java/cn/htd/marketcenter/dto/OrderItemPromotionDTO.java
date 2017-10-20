@@ -34,7 +34,7 @@ public class OrderItemPromotionDTO implements Serializable {
 	@NotEmpty(message = "买家编号不能为空")
 	private String buyerCode;
 	/**
-	 * 促销活动类型 1：优惠券，2:秒杀
+	 * 促销活动类型 1：优惠券，2:秒杀，3:限时购
 	 */
 	@NotEmpty(message = "促销活动类型不能为空")
 	private String promotionType;
@@ -47,6 +47,12 @@ public class OrderItemPromotionDTO implements Serializable {
 	 * 促销活动层级编码
 	 */
 	private String levelCode;
+	//----- add by jiangkun for 2017活动需求商城限时购 on 20170930 start -----
+	/**
+	 * 促销商品SKU编码
+	 */
+	private String skuCode;
+	//----- add by jiangkun for 2017活动需求商城限时购 on 20170930 end -----
 	/**
 	 * 促销活动类型为优惠券时，会员优惠券编号
 	 */
@@ -137,6 +143,14 @@ public class OrderItemPromotionDTO implements Serializable {
 
 	public void setLevelCode(String levelCode) {
 		this.levelCode = levelCode;
+	}
+
+	public String getSkuCode() {
+		return skuCode;
+	}
+
+	public void setSkuCode(String skuCode) {
+		this.skuCode = skuCode;
 	}
 
 	public String getCouponCode() {

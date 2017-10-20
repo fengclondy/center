@@ -33,6 +33,7 @@
     <resultMap id="GroupbuyingInfoCmplResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO" extends="BaseResultMap">
     
     <result column="activeState" property="activeState" jdbcType="VARCHAR" />
+    <result column="gbRecordStatus" property="gbRecordStatus" jdbcType="VARCHAR" />
     
     <association property="singlePromotionInfoCmplResDTO" javaType="cn.htd.promotion.cpc.dto.response.SinglePromotionInfoCmplResDTO">
     <id column="id" property="id" jdbcType="BIGINT" />
@@ -111,6 +112,17 @@
     delete from groupbuying_info
     where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
   </delete>
+  
+  <update id="deleteByPromotionId" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
+    update groupbuying_info 
+    <set >
+        delete_flag = 1,
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+    </set>
+    where  promotion_id = #{promotionId,jdbcType=VARCHAR}  
+  </update>
   
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
     insert into groupbuying_info (groupbuying_id, promotion_id, seller_code, 
@@ -512,7 +524,7 @@
 		select count(distinct gi.promotion_id)     FROM groupbuying_info gi 
    left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id  
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
-		WHERE gps.delete_flag = 0    
+		WHERE gi.delete_flag = 0 and gps.delete_flag = 0    
         <include refid="dynamic_fragment_groupbuyingInfo"/>
 	</select>
 
@@ -544,7 +556,7 @@
    FROM groupbuying_info gi 
    left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
-		WHERE  gps.delete_flag = 0    
+		WHERE  gi.delete_flag = 0 and gps.delete_flag = 0    
         <include refid="dynamic_fragment_groupbuyingInfo"/>
 		ORDER BY gi.modify_time desc ,gps.sort_num asc
 		LIMIT #{page.pageOffset},#{page.rows}
@@ -578,10 +590,49 @@
    FROM groupbuying_info gi 
    left join groupbuying_price_setting gps on gps.promotion_id = gi.promotion_id 
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
-		WHERE  gps.delete_flag = 0  and gi.promotion_id = #{promotionId,jdbcType=VARCHAR}  
+		WHERE  gi.delete_flag = 0 and gps.delete_flag = 0  and gi.promotion_id = #{promotionId,jdbcType=VARCHAR}  
 		ORDER BY gps.sort_num asc 
 	</select>
 
 
+	<select id="getGroupbuyingInfo4MobileCount" resultType="java.lang.Integer">
+		select count(distinct gi.promotion_id)     FROM groupbuying_info gi 
+   left join groupbuying_record gr on gr.promotion_id = gi.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gi.promotion_id  
+		WHERE gi.delete_flag = 0 and pi.show_status = '3'  and (gr.delete_flag = 0 or gr.delete_flag is null)  
+        and gi.seller_code = #{dto.sellerCode,jdbcType=VARCHAR}  
+	</select>
+
+	<select id="getGroupbuyingInfo4MobileForPage" resultMap="GroupbuyingInfoCmplResultMap">
+   SELECT 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
+    gi.modify_id, gi.modify_name, gi.modify_time,
+    if(gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR},'1','0') gbRecordStatus,
+    pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
+    pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
+    pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
+    pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
+    pi.create_id, pi.create_name, pi.create_time, 
+    pi.modify_id, pi.modify_name, pi.modify_time,  
+    <![CDATA[ 
+        (case 
+    when pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time then '2' 
+    when pi.invalid_time < sysdate() and sysdate() < gi.start_time then '3' 
+    when gi.start_time <= sysdate() and sysdate() <= gi.end_time then '4' 
+	when sysdate() < pi.effective_time then '1' 
+	when sysdate() > gi.end_time then '5' 
+	else '-1' 
+	end) ]]> activeState 
+   FROM groupbuying_info gi 
+   left join groupbuying_record gr on gr.promotion_id = gi.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gi.promotion_id  
+		WHERE  gi.delete_flag = 0 and pi.show_status = '3'  and (gr.delete_flag = 0 or gr.delete_flag is null)  
+        and gi.seller_code = #{dto.sellerCode,jdbcType=VARCHAR}   
+		ORDER BY gi.modify_time desc 
+		LIMIT #{page.pageOffset},#{page.rows}
+	</select>
   
 </mapper>

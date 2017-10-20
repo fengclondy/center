@@ -330,6 +330,8 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 		this.salesVolume = timelimitedInfo.getSalesVolume();
 		this.salesVolumePrice = timelimitedInfo.getSalesVolumePrice();
 		this.purchasePriceFlag = timelimitedInfo.getPurchasePriceFlag();
+		this.sellerName = timelimitedInfo.getSellerName();
+		this.itemCode = timelimitedInfo.getItemCode();
 	}
 
 	public HashMap<String, String> getItemStockInfo() {

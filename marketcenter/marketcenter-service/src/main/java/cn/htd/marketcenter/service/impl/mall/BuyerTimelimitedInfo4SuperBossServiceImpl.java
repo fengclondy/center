@@ -129,7 +129,7 @@ public class BuyerTimelimitedInfo4SuperBossServiceImpl implements BuyerTimelimit
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                         validateResult.getErrorMsg());
             }
-            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", null, sellerCode, false,promotionType);
+            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", null, sellerCode, false, promotionType);
             if (promotionIdList != null && !promotionIdList.isEmpty()) {
                 memberGroup = baseService.getBuyerGroupRelationship(messageId, buyerInfo);
                 buyerCheckInfo.setBuyerCode(buyerCode);

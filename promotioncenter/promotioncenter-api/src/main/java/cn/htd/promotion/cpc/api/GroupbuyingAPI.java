@@ -5,6 +5,7 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
+import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
@@ -88,6 +89,30 @@ public interface GroupbuyingAPI {
 	 * @return
 	 */
 	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmpl2HttpINTFC(String promotionId,String messageId);
-	
 
+	/**
+	 * 根据orgid获取该店铺所有团购商品-http接口使用
+	 * @param pager
+	 * @param dto
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO dto, String messageId);
+
+	/**
+	 * 活动上下架
+	 * @param promotionId
+	 * @param showStatus
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<?> updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO, String messageId);
+
+	/**
+	 * 根据promotionId删除团购活动
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<?> deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO,String messageId) ;
 }

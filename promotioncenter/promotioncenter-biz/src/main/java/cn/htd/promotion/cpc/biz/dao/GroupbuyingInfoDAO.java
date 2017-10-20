@@ -63,6 +63,12 @@ public interface GroupbuyingInfoDAO {
 	 * @return
 	 */
 	List<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(@Param("page")Pager<GroupbuyingInfoReqDTO> page, @Param("dto")GroupbuyingInfoReqDTO record);
+	
+	/**
+	 * 查询首页单个团购活动(供移动端使用)
+	 * @return
+	 */
+	GroupbuyingInfoCmplResDTO getGroupbuyingInfo4MobileHomePage(@Param("dto")GroupbuyingInfoReqDTO record);
 
 
 }

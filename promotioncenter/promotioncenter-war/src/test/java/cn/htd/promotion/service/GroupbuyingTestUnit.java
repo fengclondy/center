@@ -485,7 +485,7 @@ public class GroupbuyingTestUnit {
 	}
     
     /**
-     * 添加团购记录（参团测试）-测试用例
+     * 添加团购记录(供移动端使用)-测试用例
      */
 	@Test
 	@Rollback(false) 
@@ -526,7 +526,7 @@ public class GroupbuyingTestUnit {
     }
 	
 	/**
-	 * 根据promotionId获取的团购活动信息(http接口使用)-测试用例
+	 * 根据promotionId获取的团购活动信息(供移动端使用)-测试用例
 	 */
     @Test
     public void getGroupbuyingInfoCmpl2HttpINTFCTest(){
@@ -544,7 +544,7 @@ public class GroupbuyingTestUnit {
 
 
     /**
-     * 根据orgid获取该店铺所有团购商品-http接口使用
+     * 根据orgid获取该店铺所有团购商品(供移动端使用)
      */
 	@Test
 	public void getGroupbuyingList2HttpINTFCTest(){
@@ -557,7 +557,33 @@ public class GroupbuyingTestUnit {
 			dto.setSellerCode("801781");
 			dto.setBuyerCode("2002");
 			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getGroupbuyingList2HttpINTFC(pager,dto,messageId);
-			System.out.println("===>executeResult:" + executeResult);
+	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>根据orgid获取该店铺所有团购商品失败！！！");
+        	}
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+    /**
+     * 查询首页单个团购活动(供移动端使用)
+     */
+	@Test
+	public void getGroupbuyingHomePage2HttpINTFCTest(){
+		String messageId = "342453251349";
+		try{
+			GroupbuyingInfoReqDTO dto = new GroupbuyingInfoReqDTO();
+			dto.setSellerCode("801781");
+			dto.setBuyerCode("2002");
+			ExecuteResult<GroupbuyingInfoCmplResDTO> executeResult = groupbuyingAPI.getGroupbuyingHomePage2HttpINTFC(dto,messageId);
+	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>查询首页单个团购活动失败！！！");
+        	}
 
 		}catch (Exception e) {
 			e.printStackTrace();

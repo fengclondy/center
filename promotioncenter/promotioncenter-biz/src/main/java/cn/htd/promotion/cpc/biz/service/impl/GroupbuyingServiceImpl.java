@@ -708,4 +708,27 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		}
 		return dataGrid;
 	}
+
+	@Override
+	public GroupbuyingInfoCmplResDTO getGroupbuyingInfo4MobileHomePage(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		
+		GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = null;
+        try {
+
+    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数orgId不能为空！");
+    		}
+    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
+    		}
+
+    		groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO);
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【getGroupbuyingInfo4MobileHomePage】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+
+        return groupbuyingInfoCmplResDTO;
+	}
 }

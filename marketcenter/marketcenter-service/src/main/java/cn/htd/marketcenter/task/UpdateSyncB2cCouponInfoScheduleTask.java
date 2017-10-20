@@ -418,7 +418,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
         couponInfoDTO.setCostAllocationType(dictionary.getValueByCode(DictionaryConst.TYPE_COST_ALLOCATION_TYPE,
                 DictionaryConst.OPT_COST_ALLOCATION_TYPE_PLATFORM));
         couponInfoDTO.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));
         couponInfoDTO.setB2cActivityCode(b2cCouponInfoSyncDMO.getB2cActivityCode());
         couponInfoDTO.setRewardType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_REWARD_TYPE,
                 DictionaryConst.OPT_PROMOTION_REWARD_TYPE_VOUCHER));

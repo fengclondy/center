@@ -675,6 +675,9 @@
 	  <if test="vipSyncFlag != null" >
 		vip_sync_flag,
 	  </if>
+	  <if test="erpCode != null" >
+		erp_code,
+	  </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="itemId != null" >
@@ -859,6 +862,9 @@
 	  </if>
 	  <if test="vipSyncFlag != null" >
 		  #{vip_sync_flag, jdbcType=BIGINT},
+	  </if>
+	  <if test="erpCode != null" >
+		#{erpCode},
 	  </if>
     </trim>
 	</insert>

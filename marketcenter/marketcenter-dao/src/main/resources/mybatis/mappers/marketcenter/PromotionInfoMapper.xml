@@ -376,6 +376,8 @@
 			#{status}
 		</foreach>
 	</if>
-	and show_status = #{showStatus, jdbcType=VARCHAR}
+	<if test="showStatus != null">	
+		and show_status = #{showStatus, jdbcType=VARCHAR}
+	</if>
   </select>
 </mapper>

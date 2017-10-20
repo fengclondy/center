@@ -37,7 +37,7 @@ public interface VoteActivityService {
 	ExecuteResult<String> deleteVoteActivity(Long voteId);
 	
 	/**
-	 * 删除该投票活动
+	 * 编辑该投票活动
 	 * 
 	 * @param VoteActivityResDTO
 	 * @return
@@ -93,5 +93,5 @@ public interface VoteActivityService {
 	 * @param memberCodeList
 	 * @return
 	 */
-	ExecuteResult<List<VoteActivityMemListResDTO>> ExportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+	ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
 }

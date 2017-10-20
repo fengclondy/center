@@ -75,7 +75,7 @@ public interface GroupbuyingAPI {
 	
 	
 	/**
-	 * 添加参团记录-http接口使用
+	 * 添加参团记录(供移动端使用)
 	 * @param dto
 	 * @param messageId
 	 * @return
@@ -83,7 +83,7 @@ public interface GroupbuyingAPI {
 	ExecuteResult<?> addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO dto,String messageId);
 	
 	/**
-	 * 根据promotionId获取的团购活动信息-http接口使用
+	 * 根据promotionId获取的团购活动信息(供移动端使用)
 	 * @param promotionId
 	 * @param messageId
 	 * @return
@@ -91,13 +91,21 @@ public interface GroupbuyingAPI {
 	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingInfoCmpl2HttpINTFC(String promotionId,String messageId);
 
 	/**
-	 * 根据orgid获取该店铺所有团购商品-http接口使用
+	 * 根据orgid获取该店铺所有团购商品(供移动端使用)
 	 * @param pager
 	 * @param dto
 	 * @param messageId
 	 * @return
 	 */
 	ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO dto, String messageId);
+	
+	/**
+	 * 查询首页单个团购活动(供移动端使用)
+	 * @param groupbuyingInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingHomePage2HttpINTFC(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 
 	/**
 	 * 活动上下架

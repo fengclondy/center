@@ -688,15 +688,16 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	@Override
 	public DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
-		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
-			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数orgId不能为空！");
-		}
-		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
-			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
-		}
 
     	DataGrid<GroupbuyingInfoCmplResDTO> dataGrid = null;
 		try {
+            if (null == groupbuyingInfoReqDTO || StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表条件参数不能为空！");
+            }
+            if (null == page) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品页码不能为空！");
+            }
+            
 			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
 			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfo4MobileForPage(page, groupbuyingInfoReqDTO);
 			int count = groupbuyingInfoDAO.getGroupbuyingInfo4MobileCount(groupbuyingInfoReqDTO);
@@ -707,5 +708,28 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			throw new RuntimeException(e);
 		}
 		return dataGrid;
+	}
+
+	@Override
+	public GroupbuyingInfoCmplResDTO getGroupbuyingInfo4MobileHomePage(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+		
+		GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = null;
+        try {
+
+    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数orgId不能为空！");
+    		}
+    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
+    		}
+
+    		groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO);
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【getGroupbuyingInfo4MobileHomePage】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+
+        return groupbuyingInfoCmplResDTO;
 	}
 }

@@ -1577,6 +1577,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     itemInfoDTO.setGoodsPriceType(dictionary.getValueByCode(DictionaryConst.TYPE_SKU_PRICE_TYPE,
                             DictionaryConst.OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT));
                     itemInfoDTO.setGoodsTotal(itemInfoDTO.getGoodsPrice().multiply(new BigDecimal(goodsCount)));
+                    itemInfoDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
                 }
             }
         }

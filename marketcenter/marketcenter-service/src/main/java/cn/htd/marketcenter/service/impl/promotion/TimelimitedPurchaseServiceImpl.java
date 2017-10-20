@@ -496,7 +496,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
         String paramModifyTimeStr = "";
         String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
         try {
-        	checkTimelimitedDuringRepeat(timelimitedInfo);
+        	//checkTimelimitedDuringRepeat(timelimitedInfo);
             if (StringUtils.isEmpty(promotionId)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "修改限时购活动ID不能为空");
             }

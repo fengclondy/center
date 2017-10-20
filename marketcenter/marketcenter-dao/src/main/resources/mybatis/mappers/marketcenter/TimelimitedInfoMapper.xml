@@ -258,6 +258,7 @@
 		where 1 = 1
 		 and (timelimited_info.item_code =#{_parameter,jdbcType=VARCHAR} or timelimited_info.item_id=#{_parameter,jdbcType=VARCHAR})
 	     and promotion_info.status in ('1','2') 
+	     and promotion_info.promotion_type=3
 	     <![CDATA[ and timelimited_info.end_time > now() ]]>
 		 and promotion_accumulaty.delete_flag = 0
 	   </select>

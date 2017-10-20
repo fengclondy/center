@@ -20,6 +20,7 @@
     <result column="verifier_name" jdbcType="VARCHAR" property="verifierName"/>
     <result column="verify_time" jdbcType="TIMESTAMP" property="verifyTime"/>
     <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
+    <result column="b2c_activity_code" jdbcType="VARCHAR" property="b2cActivityCode"/>
     <result column="level_number" jdbcType="INTEGER" property="levelNumber"/>
     <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
     <result column="addup_type" jdbcType="VARCHAR" property="addupType"/>
@@ -132,6 +133,7 @@
     promotion_info.verifier_name verifierName,
     promotion_info.verify_time verifyTime,
     promotion_info.verify_remark verifyRemark,
+    promotion_info.b2c_activity_code b2cActivityCode,
     promotion_accumulaty.level_number levelNumber,
     promotion_accumulaty.level_code levelCode,
     promotion_accumulaty.addup_type addupType,

@@ -633,7 +633,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	groupbuyingInfoReqDTO.setModifyId(groupbuyingRecordReqDTO.getModifyId());
         	groupbuyingInfoReqDTO.setModifyName(groupbuyingRecordReqDTO.getModifyName());
         	groupbuyingInfoReqDTO.setModifyTime(currentTime);
-        	groupbuyingInfoDAO.updateGroupbuyingInfo(groupbuyingInfoReqDTO);
+        	groupbuyingInfoDAO.updateGBActorCountAndPrice(groupbuyingInfoReqDTO);
         	
         	// 添加参团记录
         	groupbuyingRecordReqDTO.setDeleteFlag(Boolean.FALSE);

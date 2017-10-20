@@ -445,6 +445,17 @@
     where  promotion_id = #{promotionId,jdbcType=VARCHAR}  
   </update>
   
+   <update id="updateGBActorCountAndPrice" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
+    update groupbuying_info  
+    set  
+      real_actor_count = #{realActorCount,jdbcType=INTEGER},
+      real_groupbuying_price = #{realGroupbuyingPrice,jdbcType=DECIMAL},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}  
+     where  promotion_id = #{promotionId,jdbcType=VARCHAR}  
+  </update>
+  
   <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
     update groupbuying_info
     set promotion_id = #{promotionId,jdbcType=VARCHAR},

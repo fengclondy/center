@@ -306,26 +306,30 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		//TODO: 查询库，得到成功记录，比对入参，得到失败记录，放到返回结果中
 		
 		List<String> memberCodeList = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
-		int failCount = 0;
-		int successCount = 0;
-		int checkCount = 0;
+		
 		List<VoteActivityMemReqDTO> faillist = new ArrayList<VoteActivityMemReqDTO>();
-		for (VoteActivityMemReqDTO memberCodeImport:tempList) {
-			String memberCode = memberCodeImport.getMemberCode();
+		for (VoteActivityMemReqDTO memberCodeImport:list) {
+			int checkFlag = 0;
 			for (String memberCodeCheck : memberCodeList) {
-				if (memberCodeCheck.equals(memberCode)) {
-					successCount ++;
+				
+				if(StringUtils.isEmpty(memberCodeCheck)){
+					continue;	
+				}
+				
+				if (memberCodeCheck.equals(memberCodeImport.getMemberCode())) {
+					checkFlag=1;
+					break;
 				}
 			}
-			if (successCount > checkCount) {
-				checkCount ++;
-			} else {
+			
+			if (checkFlag==0) {
 				faillist.add(memberCodeImport);
 			}
 		}
-		failCount = tempList.size() - successCount;
+		
+		int failCount = faillist.size();
 		importVoteActivityMemResDTO.setFailCount(failCount);
-		importVoteActivityMemResDTO.setSuccessCount(successCount);
+		importVoteActivityMemResDTO.setSuccessCount(list.size()-failCount);
 		importVoteActivityMemResDTO.setFaillist(faillist);
 		importVoteActivityMemResDTO.setUniqueId(generatorUtils.generatePromotionId("6"));
 		result.setResult(importVoteActivityMemResDTO);

@@ -30,7 +30,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   
-    <resultMap id="GroupbuyingInfoCmplResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO" extends="BaseResultMap">
+   <resultMap id="GroupbuyingInfoCmplSingleResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO" extends="BaseResultMap">
     
     <result column="activeState" property="activeState" jdbcType="VARCHAR" />
     <result column="gbRecordStatus" property="gbRecordStatus" jdbcType="VARCHAR" />
@@ -65,6 +65,11 @@
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     </association>
+    
+  </resultMap>
+  
+  
+    <resultMap id="GroupbuyingInfoCmplResultMap" type="cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO" extends="GroupbuyingInfoCmplSingleResultMap">
     
     <collection property="groupbuyingPriceSettingResDTOList" ofType="cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO">
     <id column="price_setting_id" property="priceSettingId" jdbcType="BIGINT" />
@@ -603,7 +608,7 @@
         and gi.seller_code = #{dto.sellerCode,jdbcType=VARCHAR}  
 	</select>
 
-	<select id="getGroupbuyingInfo4MobileForPage" resultMap="GroupbuyingInfoCmplResultMap">
+	<select id="getGroupbuyingInfo4MobileForPage" resultMap="GroupbuyingInfoCmplSingleResultMap">
    SELECT 
     gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
     gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
@@ -635,7 +640,7 @@
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
 	
-   <select id="getGroupbuyingInfo4MobileHomePage" resultMap="GroupbuyingInfoCmplResultMap">
+   <select id="getGroupbuyingInfo4MobileHomePage" resultMap="GroupbuyingInfoCmplSingleResultMap">
    SELECT 
     gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
     gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 

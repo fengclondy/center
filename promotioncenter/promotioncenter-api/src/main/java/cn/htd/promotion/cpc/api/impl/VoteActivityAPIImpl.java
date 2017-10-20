@@ -245,7 +245,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 	@Override
 	public ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(
 			VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
-		return voteActivityService.ExportVoteActivityMember(voteActivityMemListReqDTO);
+		return voteActivityService.exportVoteActivityMember(voteActivityMemListReqDTO);
 	}
 
 

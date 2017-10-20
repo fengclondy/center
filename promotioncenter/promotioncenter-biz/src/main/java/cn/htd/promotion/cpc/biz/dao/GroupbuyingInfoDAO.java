@@ -27,6 +27,8 @@ public interface GroupbuyingInfoDAO {
     
     int updateGroupbuyingInfo(GroupbuyingInfoReqDTO record);
     
+    int updateGBActorCountAndPrice(GroupbuyingInfoReqDTO record);
+    
     
 	/**
 	 * 根据条件查询团购活动总数

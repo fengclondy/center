@@ -37,6 +37,14 @@ public interface VoteActivityService {
 	ExecuteResult<String> deleteVoteActivity(Long voteId);
 	
 	/**
+	 * 删除该投票活动
+	 * 
+	 * @param VoteActivityResDTO
+	 * @return
+	 */
+	ExecuteResult<String> updateVoteActivity(VoteActivityResDTO voteActivityResDTO);
+	
+	/**
 	 * 根据主键查询投票活动
 	 * 
 	 * @param voteId

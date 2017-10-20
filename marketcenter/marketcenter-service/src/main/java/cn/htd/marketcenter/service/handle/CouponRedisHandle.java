@@ -999,7 +999,7 @@ public class CouponRedisHandle {
                                 + " 该订单已使用过此优惠券不能重复使用");
             }
             if (useLog.getCouponUsedAmount().compareTo(orderCouponDTO.getDiscountAmount()) != 0) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_DEAL_DIFF_NONEY,
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_DEAL_DIFF_MONEY,
                         "订单号:" + orderNo + " 订单行号:" + orderItemNo + " 会员编号:" + buyerCode + " 优惠券编号:" + buyerCouponCode
                                 + " 该订单已使用此优惠券但使用金额不同");
             }

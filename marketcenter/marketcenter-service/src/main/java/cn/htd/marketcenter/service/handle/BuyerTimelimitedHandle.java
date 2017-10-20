@@ -58,7 +58,9 @@ public class BuyerTimelimitedHandle extends AbstractBuyerPromotionHandle impleme
 			for (BuyerUseTimelimitedLog noSubmitOrderLog : releaseUseLogList) {
 				targetReleasePromotionDTO = new OrderItemPromotionDTO();
 				targetReleasePromotionDTO.setPromotionId(noSubmitOrderLog.getPromotionId());
+				targetReleasePromotionDTO.setPromotionType(noSubmitOrderLog.getPromotionType());
 				targetReleasePromotionDTO.setBuyerCode(noSubmitOrderLog.getBuyerCode());
+				targetReleasePromotionDTO.setSkuCode(noSubmitOrderLog.getSkuCode());
 				targetReleasePromotionDTO.setQuantity(noSubmitOrderLog.getUsedCount());
 				targetReleasePromotionDTO.setOperaterId(operaterId);
 				targetReleasePromotionDTO.setOperaterName(operaterName);

@@ -5,17 +5,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.PromotionCenterRedisDB;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
-
 import com.alibaba.fastjson.JSON;
 
 @Service("promotionGroupbuyingRedisHandle")
@@ -34,6 +30,7 @@ public class PromotionGroupbuyingRedisHandle {
     public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId){
     	
     	String groupbuyingInfoJsonStr = promotionCenterRedisDB.getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId);
+    	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) return null;
     	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
 		if(null == groupbuyingInfoCmplResDTO) return null;
 		
@@ -105,8 +102,41 @@ public class PromotionGroupbuyingRedisHandle {
             promotionCenterRedisDB.setHash(groupbuyingResultKey, resultMap);
         }
     }
+    
+    
+    /**
+     * 根据promotionId移除redis里的团购活动信息
+     * @param promotionId
+     * @return
+     */
+    public void removeGroupbuyingInfoCmpl2Redis(String promotionId){
+        String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+        // 移除团购活动
+        promotionCenterRedisDB.delHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId);
+        // 移除团购活动其他信息
+        promotionCenterRedisDB.del(groupbuyingResultKey);
+    	
+    }
 
-
+    
+    /**
+     * 根据promotionId修改活动的启用状态
+     * @param promotionId
+     * @param showStatus
+     */
+    public void upDownShelvesPromotionInfo2Redis(String promotionId,String showStatus) {
+	     
+	    	String groupbuyingInfoJsonStr = promotionCenterRedisDB.getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId);
+			if(null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0){
+				GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+				if(null != groupbuyingInfoCmplResDTO){
+					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setShowStatus(showStatus);
+					String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+					// 设置团购活动
+			        promotionCenterRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+				}
+			}
+    }
     
     
     

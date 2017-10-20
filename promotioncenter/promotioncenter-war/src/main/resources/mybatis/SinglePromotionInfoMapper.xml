@@ -540,9 +540,9 @@
   <update id="upDownShelvesPromotionInfo">
   	UPDATE promotion_info
   	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
-  	modify_id = #{dto.operatorId,jdbcType=BIGINT},
-    modify_name = #{dto.operatorName,jdbcType=VARCHAR},
-    modify_time = #{modifyTime,jdbcType=TIMESTAMP}  
+  	modify_id = #{dto.modifyId,jdbcType=BIGINT},
+    modify_name = #{dto.modifyName,jdbcType=VARCHAR},
+    modify_time = #{dto.modifyTime,jdbcType=TIMESTAMP}  
   	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
   </update>
   

@@ -223,14 +223,29 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		DataGrid<VoteActivityMemListResDTO> datagrid=new DataGrid<VoteActivityMemListResDTO>();
 		if(page==null||voteActivityMemListReqDTO==null){
 			result.setErrorMessages(Lists.newArrayList("参数为空"));
+			result.setResult(datagrid);
+			return result;
 		}
 		voteActivityMemListReqDTO.setPageSize(page.getRows());
 		voteActivityMemListReqDTO.setStart(page.getPageOffset());
+		Long totalCount = null;
+		try {
+			totalCount=voteActivityMemberDAO.queryTotalSignupMemberInfo(voteActivityMemListReqDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			result.setResult(datagrid);
+			return result;
+		}
 		
-		Long totalCount=voteActivityMemberDAO.queryTotalSignupMemberInfo(voteActivityMemListReqDTO);
 		if(totalCount!=null&&totalCount>0){
-			List<VoteActivityMemListResDTO>  resultList=voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
-			datagrid.setRows(resultList);
+			try {
+				List<VoteActivityMemListResDTO>  resultList=voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
+				datagrid.setRows(resultList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			}
 		}
 		result.setResult(datagrid);
 		return result;
@@ -336,6 +351,71 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		try {
 			voteActivityDAO.updateByPrimaryKeySelective(voteActivityResDTO);
 		} catch (Exception e) {
+			e.printStackTrace();
+			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+		}
+		return result;
+	}
+
+
+	@Override
+	public ExecuteResult<String> updateVoteActivity(VoteActivityResDTO voteActivityResDTO) {
+		ExecuteResult<String> result=new ExecuteResult<String>();
+		
+		if(voteActivityResDTO==null){
+			result.setErrorMessages(Lists.newArrayList("voteActivityResDTO为null"));
+			return result;
+		}
+		if (voteActivityResDTO.getVoteId() == null) {
+			result.setErrorMessages(Lists.newArrayList("voteId为null"));
+			return result;
+		}
+		ValidateResult va1lidateResult=DTOValidateUtil.validate(voteActivityResDTO);
+		
+		if(!va1lidateResult.isPass()){
+			result.setErrorMessages(Lists.newArrayList(StringUtils.split(va1lidateResult.getErrorMsg(),DTOValidateUtil.ERROR_MSG_SEPERATOR)));
+			return  result;
+		}
+		//校验时间先后
+		
+		if(voteActivityResDTO.getVoteEndTime().before(voteActivityResDTO.getVoteStartTime())){
+			result.setErrorMessages(Lists.newArrayList("投票开始时间不能晚于投票结束时间"));
+			return  result;
+		}
+		
+		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteSignUpStartTime())){
+			result.setErrorMessages(Lists.newArrayList("报名开始时间不能晚于报名结束时间"));
+			return  result;
+		}
+		
+		if(voteActivityResDTO.getVoteSignUpStartTime().after(voteActivityResDTO.getVoteStartTime())){
+			result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于投票开始时间"));
+			return  result;
+		}
+		
+		
+		if(voteActivityResDTO.getVoteSignUpEndTime().after(voteActivityResDTO.getVoteEndTime())){
+			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票结束时间"));
+			return  result;
+		}
+		
+		//根据voteActivityResDTO.getVoteSignUpStartTime() 和 voteActivityResDTO.getVoteSignUpEndTime()查询是否有活动
+		int voceAcitvityNum = voteActivityDAO.queryVoteActivityByTime(voteActivityResDTO.getVoteSignUpStartTime(),
+				voteActivityResDTO.getVoteEndTime());
+		
+		if(voceAcitvityNum > 0){
+			result.setErrorMessages(Lists.newArrayList("同一时间段内，不可有多个投票活动，请确认！"));
+			return  result;
+		}
+		
+		try{
+			if(voteActivityResDTO.getVoteId() != null){
+				voteActivityDAO.updateByPrimaryKeySelective(voteActivityResDTO);
+			}else{
+				voteActivityDAO.insertSelective(voteActivityResDTO);
+			}
+			
+		}catch(Exception e){
 			e.printStackTrace();
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 		}

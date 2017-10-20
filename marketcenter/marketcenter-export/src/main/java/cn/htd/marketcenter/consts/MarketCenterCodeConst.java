@@ -62,7 +62,7 @@ public class MarketCenterCodeConst {
 	// 会员优惠券为可用或锁定不能被删除
 	public static final String BUYER_COUPON_CANNOT_DELETE = "15112";
 	// 指定订单行所用优惠券已处理了不同的金额
-	public static final String BUYER_COUPON_DEAL_DIFF_NONEY = "15113";
+	public static final String BUYER_COUPON_DEAL_DIFF_MONEY = "15113";
 	// 指定订单行所用优惠券记录重复锁定
 	public static final String BUYER_COUPON_DOUBLE_REVERSE = "15114";
 	// 指定订单行所用优惠券无锁定记录
@@ -140,10 +140,14 @@ public class MarketCenterCodeConst {
 	public static final String LIMITED_TIME_PURCHASE_MIN_QUANTITY = "15405";
 	//购买商品超过限时购限购量
 	public static final String LIMITED_TIME_PURCHASE_MAX_QUANTITY = "15406";
-	//会员购买商品价格和限时购活动价格不一致
-	public static final String LIMITED_TIME_PURCHASE_DIFF_PRICE = "15407";
 	//会员购买商品超过限时购商品数量
 	public static final String LIMITED_TIME_PURCHASE_NO_COUNT = "15408";
+	// 会员参加限时购活动状态不正确
+	public static final String BUYER_LIMITED_TIME_PURCHASE_STATUS_ERROR = "15409";
+	// 指定订单行参加限时购购买数量不一致
+	public static final String BUYER_LIMITED_TIME_PURCHASE_DEAL_DIFF_COUNT = "15410";
+	// 指定订单行参加限时购活动无锁定记录
+	public static final String BUYER_LIMITED_TIME_PURCHASE_NO_REVERSE = "15411";
 	//不能创建已经开始的限时购活动
 	public static final String LIMITED_TIME_PURCHASE_START = "15501";
 }

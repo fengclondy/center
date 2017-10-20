@@ -8,6 +8,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
+import cn.htd.marketcenter.dto.PromotionListDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedListDTO;
 
@@ -36,7 +37,7 @@ public interface TimelimitedInfoDAO extends BaseDAO<TimelimitedInfoDTO> {
 	 * @param pager
 	 * @return
 	 */
-	Long queryTimelimitedInfoListCount(@Param("entity") TimelimitedInfoDTO timelimitedDTO);
+	Long queryPromotionInfoListCount(@Param("entity") TimelimitedInfoDTO timelimitedDTO);
 
 	/**
 	 * 根据条件查询秒杀活动列表
@@ -44,8 +45,8 @@ public interface TimelimitedInfoDAO extends BaseDAO<TimelimitedInfoDTO> {
 	 * @param timelimitedDTO
 	 * @return
 	 */
-	public List<TimelimitedInfoDTO> queryTimelimitedInfoList(@Param("entity") TimelimitedInfoDTO timelimitedDTO,
-			@Param("page") Pager<TimelimitedInfoDTO> pager);
+	public List<TimelimitedInfoDTO> queryPromotionInfoListByCondition(
+			@Param("entity") TimelimitedInfoDTO timelimitedDTO, @Param("page") Pager<TimelimitedInfoDTO> pager);
 	
 	/**
 	 * 根据商品编码查询该商品是否在参加限时购活动

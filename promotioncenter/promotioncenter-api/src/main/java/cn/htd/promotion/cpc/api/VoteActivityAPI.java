@@ -34,6 +34,13 @@ public interface VoteActivityAPI {
 	 * @return
      */
 	ExecuteResult<String> deleteVoteActivity(Long voteId);
+	
+	/**
+	 * 编辑投票活动
+	 * @param voteActivityResDTO
+	 * @return
+     */
+	ExecuteResult<String> updateVoteActivity(VoteActivityResDTO voteActivityResDTO);
 
 	/**
 	 * 会员店列表操作(通过 驳回删除)

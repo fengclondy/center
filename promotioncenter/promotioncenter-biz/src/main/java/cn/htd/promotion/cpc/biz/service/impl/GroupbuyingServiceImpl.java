@@ -30,6 +30,7 @@ import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
+import cn.htd.promotion.cpc.common.constants.GroupbuyingConstants;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
@@ -211,10 +212,12 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	}
         	
         	// 添加配置信息 (先伪删除所有活动的配置信息，然后再添加)
-        	promotionConfigureDAO.deleteByPromotionId(promotionId);
         	SinglePromotionInfoCmplReqDTO singlePromotionInfoCmplReqDTO = (SinglePromotionInfoCmplReqDTO) singlePromotionInfoReqDTO;
             List<PromotionConfigureDTO> pclist = singlePromotionInfoCmplReqDTO.getPromotionConfigureList();
             if (pclist != null && pclist.size() > 0) {
+            	// 删除所有活动的配置信息
+            	promotionConfigureDAO.deleteByPromotionId(promotionId);
+            	
                 for (PromotionConfigureDTO pcd : pclist) {
                     pcd.setPromotionId(groupbuyingInfoCmplReqDTO.getPromotionId());
                     pcd.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
@@ -234,29 +237,32 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
         	
         	// 添加团购价格设置信息  (先伪删除所有团购价格设置信息，然后再添加)
-        	GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_delete = new GroupbuyingPriceSettingReqDTO();
-        	groupbuyingPriceSettingReqDTO_delete.setPromotionId(promotionId);
-            groupbuyingPriceSettingReqDTO_delete.setDeleteFlag(Boolean.TRUE);
-            groupbuyingPriceSettingReqDTO_delete.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
-            groupbuyingPriceSettingReqDTO_delete.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
-            groupbuyingPriceSettingReqDTO_delete.setModifyTime(currentTime);
-        	groupbuyingPriceSettingDAO.pseudoDelete(groupbuyingPriceSettingReqDTO_delete);
         	List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = groupbuyingInfoCmplReqDTO.getGroupbuyingPriceSettingReqDTOList();
-        	if(null != groupbuyingPriceSettingReqDTOList && groupbuyingPriceSettingReqDTOList.size() > 0){
-            	for(GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO : groupbuyingPriceSettingReqDTOList){
-                	groupbuyingPriceSettingReqDTO.setPromotionId(promotionId);
-            		groupbuyingPriceSettingReqDTO.setItemId(groupbuyingInfoCmplReqDTO.getItemId());
-            		groupbuyingPriceSettingReqDTO.setSkuCode(groupbuyingInfoCmplReqDTO.getSkuCode());
-            		groupbuyingPriceSettingReqDTO.setDeleteFlag(Boolean.FALSE);
-            		groupbuyingPriceSettingReqDTO.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
-            		groupbuyingPriceSettingReqDTO.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());
-            		groupbuyingPriceSettingReqDTO.setCreateTime(currentTime);
-            		groupbuyingPriceSettingReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
-            		groupbuyingPriceSettingReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
-                	groupbuyingPriceSettingReqDTO.setModifyTime(currentTime);
-                	groupbuyingPriceSettingDAO.insert(groupbuyingPriceSettingReqDTO);
-            	}
+        	if(null != groupbuyingPriceSettingReqDTOList && groupbuyingPriceSettingReqDTOList.size() > 0 ){
+        		
+              	GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_delete = new GroupbuyingPriceSettingReqDTO();
+            	groupbuyingPriceSettingReqDTO_delete.setPromotionId(promotionId);
+                groupbuyingPriceSettingReqDTO_delete.setDeleteFlag(Boolean.TRUE);
+                groupbuyingPriceSettingReqDTO_delete.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+                groupbuyingPriceSettingReqDTO_delete.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+                groupbuyingPriceSettingReqDTO_delete.setModifyTime(currentTime);
+            	groupbuyingPriceSettingDAO.pseudoDelete(groupbuyingPriceSettingReqDTO_delete);
+            	
+                	for(GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO : groupbuyingPriceSettingReqDTOList){
+                    	groupbuyingPriceSettingReqDTO.setPromotionId(promotionId);
+                		groupbuyingPriceSettingReqDTO.setItemId(groupbuyingInfoCmplReqDTO.getItemId());
+                		groupbuyingPriceSettingReqDTO.setSkuCode(groupbuyingInfoCmplReqDTO.getSkuCode());
+                		groupbuyingPriceSettingReqDTO.setDeleteFlag(Boolean.FALSE);
+                		groupbuyingPriceSettingReqDTO.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
+                		groupbuyingPriceSettingReqDTO.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());
+                		groupbuyingPriceSettingReqDTO.setCreateTime(currentTime);
+                		groupbuyingPriceSettingReqDTO.setModifyId(groupbuyingInfoCmplReqDTO.getModifyId());
+                		groupbuyingPriceSettingReqDTO.setModifyName(groupbuyingInfoCmplReqDTO.getModifyName());
+                    	groupbuyingPriceSettingReqDTO.setModifyTime(currentTime);
+                    	groupbuyingPriceSettingDAO.insert(groupbuyingPriceSettingReqDTO);
+                	}
         	}
+  
 
         	
 
@@ -276,45 +282,44 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	@Override
 	public String updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO,String messageId) {
-    	// 0.成功,1.参数为空,2.活动编码为空,3.上下架为空,4.上下架状态不正确,5.活动不存在,6.活动已经上架,11.活动已经处于下架状态
-    	//-1 系统异常
-    	String status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_SUCCESS;//0.成功
+		
+		// 上下架操作返回状态码 [1001.参数为空,1002.活动编码为空,1003.上下架为空,1004.上下架状态不正确,1005.活动不存在,1006.活动已经上架,1007.活动已经下架]
     	
     	try {
     		
   		if (null == singlePromotionInfoReqDTO) {
-  			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_1;//1.参数为空
+  			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_1.key();//1001.参数为空
 		}
 		
   		String promotionId = singlePromotionInfoReqDTO.getPromotionId();
     	String showStatus = singlePromotionInfoReqDTO.getShowStatus();
     	
 		if (null == promotionId || promotionId.length() == 0) {
-			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_2;//2.活动编码为空
+			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_2.key();//1002.活动编码为空
 		}
 		
 		if (null == showStatus || showStatus.length() == 0) {
-			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_3;//3.上下架为空
+			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_3.key();//1003.上下架为空
 		}
 		
 		boolean isShowStatus= showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key()) || showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.INVALID.key());
 		if(!isShowStatus){
-			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_4; //4.上下架状态不正确
+			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_4.key(); //1004.上下架状态不正确
 		}
     	
 		SinglePromotionInfoResDTO singlePromotionInfoResDTO = singlePromotionInfoDAO.selectByPromotionId(promotionId);
     	if(null == singlePromotionInfoResDTO){
-    		return TimelimitedConstants.UPDOWN_SHELVES_STATUS_5; //5.活动不存在
+    		return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_5.key(); //1005.活动不存在
     	}
     	
     	if(showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key())){//上架
     		if(singlePromotionInfoResDTO.getShowStatus().equals(showStatus)){//活动已经处于上架状态
-    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_6; // 6.活动已经上架
+    			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_6.key(); // 1006.活动已经上架
     		}
     		
     	}else{//下架
     		if(singlePromotionInfoResDTO.getShowStatus().equals(showStatus)){//活动已经处于下架状态
-    			return TimelimitedConstants.UPDOWN_SHELVES_STATUS_11; //11.活动已经处于下架状态
+    			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_7.key(); //1007.活动已经下架
     		}
     	}
     	
@@ -327,32 +332,32 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     	singlePromotionInfoReqDTO.setModifyTime(currentTime);
     	int singlePromotionInfoRet = singlePromotionInfoDAO.upDownShelvesPromotionInfo(singlePromotionInfoReqDTO);
     	if(1 != singlePromotionInfoRet){
-    		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "活动上下架失败！");
+    		return GroupbuyingConstants.CommonStatusEnum.STATUS_ERROR.key(); //-1.活动上下架失败
     	}
 		
 		// 更新redis里的上下架状态
-//		promotionTimelimitedRedisHandle.updateTimelimitedValidStatus2Redis(promotionId, showStatus);
-//		
+		promotionGroupbuyingRedisHandle.upDownShelvesPromotionInfo2Redis(promotionId, showStatus);
+		
          } catch (Exception e) {
-        	 status = TimelimitedConstants.UPDOWN_SHELVES_STATUS_ERROR;//-1 系统异常
              logger.error("messageId{}:执行方法【updateShowStatusByPromotionId】报错：{}", messageId, e.toString());
              throw new RuntimeException(e);
          }
     	
-    	return status;
+    	return GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key(); //0.成功
 	}
 	
 	@Override
-	public void deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+	public String deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
 
+		// 删除操作返回状态码 [1021.参数为空,1022.活动编码为空]
 		try {
 
 			if (null == groupbuyingInfoReqDTO) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(),"团购促销活动参团参数不能为空！");
+				return GroupbuyingConstants.CommonStatusEnum.DELGROUPBUYING_PARAM_IS_NULL.key();//1021.参数为空
 			}
 
 			if (null == groupbuyingInfoReqDTO.getPromotionId() || groupbuyingInfoReqDTO.getPromotionId().length() == 0) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动编码不能为空！");
+				return GroupbuyingConstants.CommonStatusEnum.DELGROUPBUYING_PROMOTIONID_IS_NULL.key();//1022.活动编码为空
 			}
 
 			// 当前时间
@@ -361,13 +366,18 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			groupbuyingInfoReqDTO.setModifyTime(currentTime);
 			int statusRet = groupbuyingInfoDAO.deleteByPromotionId(groupbuyingInfoReqDTO);
 			if (1 != statusRet) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "活动删除失败！");
+				return GroupbuyingConstants.CommonStatusEnum.STATUS_ERROR.key(); //-1.活动删除失败
 			}
+			
+			// 根据promotionId移除redis里的团购活动信息
+			promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(groupbuyingInfoReqDTO.getPromotionId());
 
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【deleteGroupbuyingInfoByPromotionId】报错：{}",messageId, e.toString());
 			throw new RuntimeException(e);
 		}
+		
+		return GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key(); //0.成功
 
 	}
     
@@ -556,7 +566,10 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         try {
         	//[start]-----------------   参团的校验  ----------------
            	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
-        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+           	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) {
+           	    throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+           	}
+           	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
             if (null == groupbuyingInfoCmplResDTO) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
             }
@@ -567,12 +580,15 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
        	    //(当前时间 >= 开团开始时间 && 当前时间 <= 开团结束时间)  2.开团进行中
             boolean isGBProcessing = currentTime.getTime() >= effectiveTime.getTime() && currentTime.getTime() <= invalidTime.getTime();
             if(!isGBProcessing){
-            	 throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动状态不是开团进行中！");
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动状态不是开团进行中！");
             }
             
-            GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+            GroupbuyingRecordReqDTO groupbuyingRecordReqDTO_check = new GroupbuyingRecordReqDTO();
+            groupbuyingRecordReqDTO_check.setPromotionId(groupbuyingRecordReqDTO.getPromotionId());// 促销活动编码
+            groupbuyingRecordReqDTO_check.setBuyerCode(groupbuyingRecordReqDTO.getBuyerCode());// 参团人账号
+            GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO_check);
             if(null != groupbuyingRecordResDTO){
-            	 throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "已经参团过！");
+            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "已经参团过！");
             }
           //[end]-----------------   参团的校验  ----------------
             

@@ -8,9 +8,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.dto.request.*;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,10 +21,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
 import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
+import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
@@ -434,15 +438,22 @@ public class GroupbuyingTestUnit {
 	 * 活动上下架-测试用例
 	 */
     @Test
+    @Rollback(false) 
 	public void updateShowStatusByPromotionIdTest(){
     	try{
 			String messageId = "342453251349";
 			String promotionId = "25171430390018";
 			SinglePromotionInfoReqDTO dto = new SinglePromotionInfoReqDTO();
 			dto.setPromotionId(promotionId);
-			dto.setShowStatus("2");
-			ExecuteResult<String> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
-			System.out.println("===>executeResult:" + executeResult);
+			dto.setShowStatus("3");// 审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
+			dto.setModifyId(1L);
+			dto.setModifyName("测试");
+			ExecuteResult<?> executeResult = groupbuyingAPI.updateShowStatusByPromotionId(dto,messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>活动上下架失败！！！");
+        	}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -453,6 +464,7 @@ public class GroupbuyingTestUnit {
      * 根据promotionId删除团购活动-测试用例
      */
 	@Test
+	@Rollback(false) 
 	public void deleteGroupbuyingInfoByPromotionIdTest(){
 		try{
 			String messageId = "342453251349";
@@ -461,9 +473,12 @@ public class GroupbuyingTestUnit {
 			dto.setPromotionId(promotionId);
 			dto.setModifyId(1L);
 			dto.setModifyName("测试");
-			dto.setModifyTime(new Date());
 			ExecuteResult<?> executeResult = groupbuyingAPI.deleteGroupbuyingInfoByPromotionId(dto,messageId);
-			System.out.println("===>executeResult:" + executeResult);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>删除团购活动失败！！！");
+        	}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -497,7 +512,12 @@ public class GroupbuyingTestUnit {
         	groupbuyingRecordReqDTO.setModifyId(userId);
         	groupbuyingRecordReqDTO.setModifyName(userName);
     		
-    		groupbuyingAPI.addGroupbuyingRecord2HttpINTFC(groupbuyingRecordReqDTO, messageId);
+        	ExecuteResult<?> executeResult = groupbuyingAPI.addGroupbuyingRecord2HttpINTFC(groupbuyingRecordReqDTO, messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>参团失败！！！");
+        	}
             
 		} catch (Exception e) {
 			e.printStackTrace();

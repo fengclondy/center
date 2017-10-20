@@ -166,7 +166,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			result.setEffectiveTime(promotionInfoDTO.getEffectiveTime());
 			result.setInvalidTime(promotionInfoDTO.getInvalidTime());
 			result.setPromotionName(promotionInfoDTO.getPromotionName());
-			result.setPromotionPictureList(promotionPictureList);
+			result.setPictureUrl(promotionPictureList);
 			result.setRemainingTimes(0);
 			checkInfoDTO.setPromotionId(promotionId);
 			checkInfoDTO.setBuyerCode(request.getMemberNo());

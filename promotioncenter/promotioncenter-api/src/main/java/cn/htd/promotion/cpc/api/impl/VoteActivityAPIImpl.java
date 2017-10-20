@@ -271,6 +271,10 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 	@Override
 	public ExecuteResult<String> updateVoteActivityMember(Long voteMemberId, String deleteFlag, String auditStatus) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
+		if (voteMemberId == null) {
+			result.setErrorMessages(Lists.newArrayList("参数值为null"));
+			return result;
+		}
 		VoteActivityMemberResDTO voteActivityMemberResDTO = new VoteActivityMemberResDTO();
 		voteActivityMemberResDTO.setVoteMemberId(voteMemberId);
 		if (StringUtils.isNotEmpty(deleteFlag) && "1".equals(deleteFlag)) {

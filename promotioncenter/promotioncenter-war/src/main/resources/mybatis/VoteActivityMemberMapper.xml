@@ -358,10 +358,10 @@
 	  from  vote_activity_member vam
 	  where 1=1
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like contact(#{sellerName},'%')
+	 	 and vam.vendor_name like concat(#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like contact(#{memberName},'%')
+	  	 and vam.member_name like concat(#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}
@@ -390,10 +390,10 @@
 	  from  vote_activity_member vam
 	  where 1=1
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like contact(#{sellerName},'%')
+	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like contact(#{memberName},'%')
+	  	 and vam.member_name like CONCAT(#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}

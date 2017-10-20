@@ -223,14 +223,29 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		DataGrid<VoteActivityMemListResDTO> datagrid=new DataGrid<VoteActivityMemListResDTO>();
 		if(page==null||voteActivityMemListReqDTO==null){
 			result.setErrorMessages(Lists.newArrayList("参数为空"));
+			result.setResult(datagrid);
+			return result;
 		}
 		voteActivityMemListReqDTO.setPageSize(page.getRows());
 		voteActivityMemListReqDTO.setStart(page.getPageOffset());
+		Long totalCount = null;
+		try {
+			totalCount=voteActivityMemberDAO.queryTotalSignupMemberInfo(voteActivityMemListReqDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			result.setResult(datagrid);
+			return result;
+		}
 		
-		Long totalCount=voteActivityMemberDAO.queryTotalSignupMemberInfo(voteActivityMemListReqDTO);
 		if(totalCount!=null&&totalCount>0){
-			List<VoteActivityMemListResDTO>  resultList=voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
-			datagrid.setRows(resultList);
+			try {
+				List<VoteActivityMemListResDTO>  resultList=voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
+				datagrid.setRows(resultList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			}
 		}
 		result.setResult(datagrid);
 		return result;

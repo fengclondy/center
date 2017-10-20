@@ -272,6 +272,8 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 distributedCount += cellCount;
             }
             buyerCouponInfoDTO = new BuyerCouponInfoDTO();
+            buyerCouponInfoDTO.setPromotionId(couponInfoDTO.getPromotionId());
+            buyerCouponInfoDTO.setLevelCode(couponInfoDTO.getLevelCode());
             buyerCouponInfoDTO.setCouponName(couponInfoDTO.getPromotionName());
             buyerCouponInfoDTO.setCouponStartTime(couponInfoDTO.getEffectiveTime());
             buyerCouponInfoDTO.setCouponEndTime(couponInfoDTO.getInvalidTime());
@@ -361,8 +363,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
         targetCouponInfoDTO.setDiscountPercent(b2cCouponInfoSyncDMO.getDiscountPercent());
         targetCouponInfoDTO.setModifyId(b2cCouponInfoSyncDMO.getCreateId());
         targetCouponInfoDTO.setModifyName(b2cCouponInfoSyncDMO.getCreateName());
-        accuDTO = baseService.updateSingleAccumulatyPromotionInfo(targetCouponInfoDTO);
-        targetCouponInfoDTO.setPromotionAccumulaty(accuDTO);
+        baseService.updateSingleAccumulatyPromotionInfo(targetCouponInfoDTO);
         promotionDiscountInfoDAO.update(targetCouponInfoDTO);
         historyDTO.setPromotionId(targetCouponInfoDTO.getPromotionId());
         historyDTO.setPromotionStatus(targetCouponInfoDTO.getShowStatus());

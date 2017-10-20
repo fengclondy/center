@@ -29,10 +29,16 @@ public interface B2cCouponInfoSyncHistoryDAO {
     public List<B2cCouponInfoSyncDMO> queryNeedDealB2cCouponInfoByB2cActivityCode(B2cCouponInfoSyncDMO targetInfo);
 
     /**
-     * 更新会员
+     * 更新触发返券活动处理失败
      * @param targetInfo
      * @return
      */
     public Integer updateB2cCouponInfoDealFailResult(B2cCouponInfoSyncDMO targetInfo);
+
+    /**
+     * 更新触发返券活动处理成功
+     * @param targetInfo
+     * @return
+     */
     public Integer updateB2cCouponInfoDealSuccessResult(B2cCouponInfoSyncDMO targetInfo);
 }

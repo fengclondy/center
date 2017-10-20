@@ -93,5 +93,5 @@ public interface VoteActivityService {
 	 * @param memberCodeList
 	 * @return
 	 */
-	ExecuteResult<List<VoteActivityMemListResDTO>> ExportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
+	ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO);
 }

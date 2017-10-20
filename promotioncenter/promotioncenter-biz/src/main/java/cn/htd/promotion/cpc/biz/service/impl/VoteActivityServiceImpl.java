@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -35,6 +33,8 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
+
+import com.google.common.collect.Lists;
 
 
 @Service("voteActivityService")
@@ -334,7 +334,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 
 
 	@Override
-	public ExecuteResult<List<VoteActivityMemListResDTO>> ExportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
+	public ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
 		ExecuteResult<List<VoteActivityMemListResDTO>> result = new ExecuteResult<List<VoteActivityMemListResDTO>>();
 		voteActivityMemListReqDTO.setPageSize(50000);
 		voteActivityMemListReqDTO.setStart(1);

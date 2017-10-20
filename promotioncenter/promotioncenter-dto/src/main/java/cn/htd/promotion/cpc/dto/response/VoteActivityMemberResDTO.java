@@ -10,43 +10,43 @@ public class VoteActivityMemberResDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 5654998071269663340L;
-
+	//投票活动会员店报名主键ID
 	private Long voteMemberId;
-
+	//投票活动ID
     private Long voteId;
-
+    //会员店编码
     private String memberCode;
-
+    //会员店名称
     private String memberName;
-
+    //平台公司名称
     private String vendorName;
-
+    //联系人
     private String contactName;
-
+    //联系人电话
     private String contactPhone;
-
+    //报名状态； 0：未报名 1：已报名
     private Integer signStatus;
-
+    //审核状态；0：待审核；1：已审核；2：驳回
     private Integer auditStatus;
-
+    //报名时间
     private Date signUpTime;
-
+    //会员店活动宣言
     private String memberActivityDec;
-
+    //会员店最近被投票时间
     private Date memberVoteLastTime;
-
+    //0:未删除 1：已删除
     private Integer deleteFlag;
-
+    //创建人ID
     private Long createId;
-
+    //创建人名称
     private String createName;
-
+    //创建时间
     private Date createTime;
-
+    //更新人ID
     private Long modifyId;
-
+    //更新人名称
     private String modifyName;
-
+    //更新时间
     private Date modifyTime;
 
     /***

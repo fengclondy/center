@@ -285,6 +285,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 				voteActivityMemberResDTO.setAuditStatus(Integer.parseInt(auditStatus));
 			} catch (Exception e) {
 				e.printStackTrace();
+				logger.error("updateVoteActivityMember调用出错，信息{}",e.getMessage());
 				result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 				return result;
 			}
@@ -293,6 +294,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 			voteActivityMemberService.updateByPrimaryKeySelective(voteActivityMemberResDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("updateVoteActivityMember调用出错，信息{}",e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 			return result;
 		}

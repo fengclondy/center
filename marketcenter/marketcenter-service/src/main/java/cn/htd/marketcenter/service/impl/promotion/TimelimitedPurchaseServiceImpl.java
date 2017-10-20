@@ -7,12 +7,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -433,10 +437,14 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	@SuppressWarnings("rawtypes")
 	public static class PriceComparator implements Comparator { 
 	    public int compare(Object object1, Object object2) {
-		    TimelimitedInfoDTO t1 = (TimelimitedInfoDTO) object1; 
+	    	TimelimitedInfoDTO t1 = (TimelimitedInfoDTO) object1; 
 		    TimelimitedInfoDTO t2 = (TimelimitedInfoDTO) object2; 
-		    	return t1.getSkuTimelimitedPrice().compareTo(t2.getSkuTimelimitedPrice()); 
-		    } 
+		    int priceSort = t1.getSkuTimelimitedPrice().compareTo(t2.getSkuTimelimitedPrice());
+		    if(priceSort != 0){
+		    	return priceSort;
+		    }
+		    return Long.compare(t2.getStartTime().getTime(), t1.getStartTime().getTime());
+		} 
 	} 
 
 	@Override

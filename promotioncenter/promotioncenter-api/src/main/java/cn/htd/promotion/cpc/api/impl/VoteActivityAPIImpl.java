@@ -14,6 +14,7 @@ import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
 import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
@@ -98,27 +99,19 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
      * @param memberCode
      * @return
      */
-    public ExecuteResult<VoteActivityMemberResDTO> selectByVoteIdAndMemberCode(Long voteId,String memberCode){
+    public ExecuteResult<VoteActivityMemResDTO> selectByVoteIdAndMemberCode(Long voteMemberId){
         // 返回对象
-        ExecuteResult<VoteActivityMemberResDTO> result = new ExecuteResult<VoteActivityMemberResDTO>();
+        ExecuteResult<VoteActivityMemResDTO> result = new ExecuteResult<VoteActivityMemResDTO>();
         try{
             // 正确返回
             result.setCode(ResultCodeEnum.SUCCESS.getCode());
             // 返回值
-            VoteActivityMemberResDTO memberResDTO = voteActivityMemberService.selectByVoteIdAndMemberCode(voteId,memberCode);
-            // 如果不为空则查询相关图片
-            if(memberResDTO != null && !NUtils.isEmpty(memberResDTO.getVoteMemberId())){
-                // 相关图片集合
-                memberResDTO.setMemberPictureResDTOList(memberPictureService.selectByVoteMemberId(memberResDTO.getVoteMemberId()));
-            }
-
-            result.setResult(memberResDTO);
+            result = voteActivityService.queryVoteActivityMemberDetail(voteMemberId);
         }catch (Exception e){
             // 打印错误消息
             e.printStackTrace();
             logger.error("VoteActivityAPI方法selectByVoteIdAndMemberCode调用出错，信息{}",e.getMessage());
-
-            result.setCode(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessages(Lists.newArrayList("查询详情异常"));
         }
         return result;
     }

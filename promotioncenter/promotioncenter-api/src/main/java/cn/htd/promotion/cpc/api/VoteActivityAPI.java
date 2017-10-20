@@ -8,6 +8,7 @@ import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
 import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
+import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
@@ -91,7 +92,7 @@ public interface VoteActivityAPI {
 	 * @param memberCode
 	 * @return
 	 */
-	ExecuteResult<VoteActivityMemberResDTO> selectByVoteIdAndMemberCode(Long voteId, String memberCode);
+	ExecuteResult<VoteActivityMemResDTO> selectByVoteIdAndMemberCode(Long voteMemberId);
 
 	/***
 	 * 保存会员店投票活动报名信息

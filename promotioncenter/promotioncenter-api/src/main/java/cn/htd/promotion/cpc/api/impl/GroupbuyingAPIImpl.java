@@ -244,7 +244,7 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            if (null == groupbuyingInfoReqDTO) {
+            if (null == groupbuyingInfoReqDTO || StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表条件参数不能为空！");
             }
             if (null == page) {

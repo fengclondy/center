@@ -89,7 +89,6 @@ public class TimelimitPurchaseMallInfoDTO extends TimelimitedInfoDTO implements
 	}
 
 
-
 	@Override
 	public int compareTo(TimelimitPurchaseMallInfoDTO o) {
 		int diffSalesVolume = Integer.compare(o.getSalesVolume(), this.salesVolumeSort);
@@ -98,13 +97,27 @@ public class TimelimitPurchaseMallInfoDTO extends TimelimitedInfoDTO implements
 		int compareResult3 = Long.compare(o.getStartTime().getTime(),this.startTimeSort.getTime());
 		if(o.getPurchaseSort() != 0){
 			if(o.getPurchaseSort() == 1){
-				return diffSalesVolume;
+				if(diffSalesVolume != 0){
+					return diffSalesVolume;
+				}else{
+					return compareResult3;
+				}
 			}else if(o.getPurchaseSort() == 2){
 				return compareResult3;
 			}else if(o.getPurchaseSort() == 3){
-				return o.getSkuTimelimitedPrice().compareTo(this.skuTimelimitedPriceSort);
+				int priceResult1 = o.getSkuTimelimitedPrice().compareTo(this.skuTimelimitedPriceSort);
+				if(priceResult1 != 0){
+					return priceResult1;
+				}else{
+					return compareResult3;
+				}
 			}else if(o.getPurchaseSort() == 4){
-				return this.skuTimelimitedPriceSort.compareTo(o.getSkuTimelimitedPrice());
+				int priceResult2 = this.skuTimelimitedPriceSort.compareTo(o.getSkuTimelimitedPrice());
+				if(priceResult2 != 0){
+					return priceResult2;
+				}else{
+					return compareResult3;
+				}
 			}
 		}
 		if (compareResult1 != 0) {

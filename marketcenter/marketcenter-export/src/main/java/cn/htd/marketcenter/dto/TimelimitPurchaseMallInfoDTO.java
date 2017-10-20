@@ -94,7 +94,7 @@ public class TimelimitPurchaseMallInfoDTO extends TimelimitedInfoDTO implements
 		int diffSalesVolume = Integer.compare(o.getSalesVolume(), this.salesVolumeSort);
 		int compareResult1 = Double.compare(o.getPreferentialStrength(),this.preferentialStrengthSort);
 		int compareResult2 = Double.compare(o.getSalesVolumePrice(),this.salesVolumePriceSort);
-		int compareResult3 = Long.compare(o.getStartTime().getTime(),this.startTimeSort.getTime());
+		int compareResult3 = Long.compare(this.startTimeSort.getTime(),o.getStartTime().getTime());
 		if(o.getPurchaseSort() != 0){
 			if(o.getPurchaseSort() == 1){
 				if(diffSalesVolume != 0){

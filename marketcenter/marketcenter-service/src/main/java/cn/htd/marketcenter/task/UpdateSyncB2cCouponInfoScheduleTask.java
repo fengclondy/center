@@ -248,7 +248,9 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 return;
             }
             promotionId = couponInfoDTO.getPromotionId();
-            marketRedisDB.setHash(RedisConst.REDIS_COUPON_VALID, promotionId, couponInfoDTO.getShowStatus());
+            marketRedisDB.setHash(RedisConst.REDIS_COUPON_VALID, promotionId, dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
             marketRedisDB.setHash(RedisConst.REDIS_COUPON_TRIGGER, couponInfoDTO.getB2cActivityCode(),
                     JSON.toJSONString(couponInfoDTO));
             targetCouponListSize =

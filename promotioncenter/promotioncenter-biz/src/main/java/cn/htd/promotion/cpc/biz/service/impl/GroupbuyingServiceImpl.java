@@ -250,8 +250,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             	
                 	for(GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO : groupbuyingPriceSettingReqDTOList){
                     	groupbuyingPriceSettingReqDTO.setPromotionId(promotionId);
-                		groupbuyingPriceSettingReqDTO.setItemId(groupbuyingInfoCmplReqDTO.getItemId());
-                		groupbuyingPriceSettingReqDTO.setSkuCode(groupbuyingInfoCmplReqDTO.getSkuCode());
                 		groupbuyingPriceSettingReqDTO.setDeleteFlag(Boolean.FALSE);
                 		groupbuyingPriceSettingReqDTO.setCreateId(groupbuyingInfoCmplReqDTO.getModifyId());
                 		groupbuyingPriceSettingReqDTO.setCreateName(groupbuyingInfoCmplReqDTO.getModifyName());

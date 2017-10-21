@@ -17,6 +17,10 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 	private String promotionId;
 	// 商家编码
 	private String sellerCode;
+	// 商家名称
+	private String sellerName;
+	// 商家别名
+	private String sellerAliasName;
 	// 商品ITEMID
 	private Long itemId;
 	// 商品SKU编码
@@ -314,6 +318,22 @@ public class GroupbuyingInfoReqDTO implements Serializable {
 
 	public void setBuyerCode(String buyerCode) {
 		this.buyerCode = buyerCode;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public String getSellerAliasName() {
+		return sellerAliasName;
+	}
+
+	public void setSellerAliasName(String sellerAliasName) {
+		this.sellerAliasName = sellerAliasName;
 	}
 	
 	

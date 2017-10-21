@@ -236,6 +236,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
         int cellCount = 0;
         List<Future<Integer>> workResultList = new ArrayList<Future<Integer>>();
         Future<Integer> workResult = null;
+        BuyerCouponInfoDTO buyerCouponInfoDTO = null;
 
         try {
             if (promotionInfoDTO == null) {
@@ -270,7 +271,17 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                 workResultList.add(workResult);
                 distributedCount += cellCount;
             }
-            buyerCouponInfoDAO.updateB2cActivityInfo2BuyerCoupon(couponInfoDTO);
+            buyerCouponInfoDTO = new BuyerCouponInfoDTO();
+            buyerCouponInfoDTO.setPromotionId(couponInfoDTO.getPromotionId());
+            buyerCouponInfoDTO.setLevelCode(couponInfoDTO.getLevelCode());
+            buyerCouponInfoDTO.setCouponName(couponInfoDTO.getPromotionName());
+            buyerCouponInfoDTO.setCouponStartTime(couponInfoDTO.getEffectiveTime());
+            buyerCouponInfoDTO.setCouponEndTime(couponInfoDTO.getInvalidTime());
+            buyerCouponInfoDTO.setDiscountThreshold(couponInfoDTO.getDiscountThreshold());
+            buyerCouponInfoDTO.setDiscountPercent(couponInfoDTO.getDiscountPercent());
+            buyerCouponInfoDTO.setModifyId(couponInfoDTO.getModifyId());
+            buyerCouponInfoDTO.setModifyName(couponInfoDTO.getModifyName());
+            buyerCouponInfoDAO.updateB2cActivityInfo2BuyerCoupon(buyerCouponInfoDTO);
             for (Future<Integer> workRst : workResultList) {
                 logger.info("\n 方法:[{}],线程执行结果:[{}]", "UpdateSyncB2cCouponInfoScheduleTask-execute", workRst.get());
             }
@@ -321,45 +332,46 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
     private PromotionDiscountInfoDTO updateB2cCouponPromotionInfo(B2cCouponInfoSyncDMO b2cCouponInfoSyncDMO,
             PromotionInfoDTO promotionInfoDTO) throws Exception {
 
-        PromotionDiscountInfoDTO targeCouponInfoDTO = null;
+        PromotionDiscountInfoDTO targetCouponInfoDTO = null;
         PromotionAccumulatyDTO accuDTO = null;
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
 
         accuDTO = baseService.querySingleAccumulatyPromotionInfo(promotionInfoDTO.getPromotionId());
         // 获取优惠券活动信息
-        targeCouponInfoDTO = promotionDiscountInfoDAO.queryDiscountInfoById(accuDTO);
-        if (targeCouponInfoDTO == null) {
+        targetCouponInfoDTO = promotionDiscountInfoDAO.queryDiscountInfoById(accuDTO);
+        if (targetCouponInfoDTO == null) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该促销活动不存在!");
         }
-        targeCouponInfoDTO.setPromotionAccumulaty(accuDTO);
-        if (!targeCouponInfoDTO.getCouponKind().equals(b2cCouponInfoSyncDMO.getCouponType())) {
+        targetCouponInfoDTO.setPromotionAccumulaty(accuDTO);
+        if (!targetCouponInfoDTO.getCouponKind().equals(b2cCouponInfoSyncDMO.getCouponType())) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_KIND_HAS_CHANGED, "同步的优惠券活动的券类型发生变化");
         }
-        if (!targeCouponInfoDTO.getCouponProvideType().equals(b2cCouponInfoSyncDMO.getCouponProvideType())) {
+        if (!targetCouponInfoDTO.getCouponProvideType().equals(b2cCouponInfoSyncDMO.getCouponProvideType())) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_PROVIDER_TYPE_HAS_CHANGED,
                     "同步的优惠券活动的券发送方式发生变化");
         }
-        if (!checkHasChangeCouponInfo(b2cCouponInfoSyncDMO, targeCouponInfoDTO)) {
+        if (!checkHasChangeCouponInfo(b2cCouponInfoSyncDMO, targetCouponInfoDTO)) {
             return null;
         }
-        targeCouponInfoDTO.setPromotionName(b2cCouponInfoSyncDMO.getCouponName());
-        targeCouponInfoDTO.setPromotionDescribe(b2cCouponInfoSyncDMO.getCouponDescribe());
-        targeCouponInfoDTO.setEffectiveTime(b2cCouponInfoSyncDMO.getCouponStartTime());
-        targeCouponInfoDTO.setInvalidTime(b2cCouponInfoSyncDMO.getCouponEndTime());
-        targeCouponInfoDTO.setEffectiveStartTime(b2cCouponInfoSyncDMO.getCouponStartTime());
-        targeCouponInfoDTO.setEffectiveEndTime(b2cCouponInfoSyncDMO.getCouponEndTime());
-        targeCouponInfoDTO.setModifyId(b2cCouponInfoSyncDMO.getCreateId());
-        targeCouponInfoDTO.setModifyName(b2cCouponInfoSyncDMO.getCreateName());
-        accuDTO = baseService.updateSingleAccumulatyPromotionInfo(targeCouponInfoDTO);
-        targeCouponInfoDTO.setPromotionAccumulaty(accuDTO);
-        promotionDiscountInfoDAO.update(targeCouponInfoDTO);
-        historyDTO.setPromotionId(targeCouponInfoDTO.getPromotionId());
-        historyDTO.setPromotionStatus(targeCouponInfoDTO.getShowStatus());
+        targetCouponInfoDTO.setPromotionName(b2cCouponInfoSyncDMO.getCouponName());
+        targetCouponInfoDTO.setPromotionDescribe(b2cCouponInfoSyncDMO.getCouponDescribe());
+        targetCouponInfoDTO.setEffectiveTime(b2cCouponInfoSyncDMO.getCouponStartTime());
+        targetCouponInfoDTO.setInvalidTime(b2cCouponInfoSyncDMO.getCouponEndTime());
+        targetCouponInfoDTO.setEffectiveStartTime(b2cCouponInfoSyncDMO.getCouponStartTime());
+        targetCouponInfoDTO.setEffectiveEndTime(b2cCouponInfoSyncDMO.getCouponEndTime());
+        targetCouponInfoDTO.setDiscountThreshold(b2cCouponInfoSyncDMO.getDiscountThreshold());
+        targetCouponInfoDTO.setDiscountPercent(b2cCouponInfoSyncDMO.getDiscountPercent());
+        targetCouponInfoDTO.setModifyId(b2cCouponInfoSyncDMO.getCreateId());
+        targetCouponInfoDTO.setModifyName(b2cCouponInfoSyncDMO.getCreateName());
+        baseService.updateSingleAccumulatyPromotionInfo(targetCouponInfoDTO);
+        promotionDiscountInfoDAO.update(targetCouponInfoDTO);
+        historyDTO.setPromotionId(targetCouponInfoDTO.getPromotionId());
+        historyDTO.setPromotionStatus(targetCouponInfoDTO.getShowStatus());
         historyDTO.setPromotionStatusText("修改优惠券活动信息");
-        historyDTO.setCreateId(targeCouponInfoDTO.getCreateId());
-        historyDTO.setCreateName(targeCouponInfoDTO.getCreateName());
+        historyDTO.setCreateId(targetCouponInfoDTO.getCreateId());
+        historyDTO.setCreateName(targetCouponInfoDTO.getCreateName());
         promotionStatusHistoryDAO.add(historyDTO);
-        return targeCouponInfoDTO;
+        return targetCouponInfoDTO;
     }
 
     /**
@@ -493,6 +505,8 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                         couponDTO.setCouponDescribe(targetDiscountInfo.getPromotionDescribe());
                         couponDTO.setCouponStartTime(targetDiscountInfo.getEffectiveStartTime());
                         couponDTO.setCouponEndTime(targetDiscountInfo.getEffectiveEndTime());
+                        couponDTO.setDiscountThreshold(targetDiscountInfo.getDiscountThreshold());
+                        couponDTO.setDiscountPercent(targetDiscountInfo.getDiscountPercent());
                         jedis.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode,
                                 JSON.toJSONString(couponDTO));
                         updatedCount++;

@@ -127,8 +127,8 @@ public interface BuyerCouponInfoDAO extends BaseDAO<BuyerCouponInfoDTO> {
 
     /**
      * 根据同步B2C活动信息更新会员优惠券的
-     * @param discountInfoDTO
+     * @param buyerCouponInfoDTO
      * @return
      */
-    public Long updateB2cActivityInfo2BuyerCoupon(PromotionDiscountInfoDTO discountInfoDTO);
+    public Long updateB2cActivityInfo2BuyerCoupon(BuyerCouponInfoDTO buyerCouponInfoDTO);
 }

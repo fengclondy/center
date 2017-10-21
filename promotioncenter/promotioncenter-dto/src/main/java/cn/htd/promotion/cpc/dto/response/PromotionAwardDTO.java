@@ -29,6 +29,8 @@ public class PromotionAwardDTO implements Serializable{
     private String buyerTelephone;//会员电话号码
 
     private String sellerCode;//归属会员店编号
+    
+    private String sellerName;//归属会员店名称
 
     private String sellerAddress;//会员店地址
 
@@ -352,6 +354,14 @@ public class PromotionAwardDTO implements Serializable{
 
 	public void setIsUsed(String isUsed) {
 		this.isUsed = isUsed;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
 	}
 	
 	

@@ -97,7 +97,15 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	 */
 	private Date endTime;
 	/**
-	 * 限时购聚合页标识  1:今日特惠 2:开售预告
+	 * 限时购开始时间
+	 */
+	private String startTimeStr;
+	/**
+	 * 限时购结束时间
+	 */
+	private String endTimeStr;
+	/**
+	 * 限时购聚合页标识 1:今日特惠 2:开售预告
 	 */
 	private int purchaseFlag;
 	/**
@@ -195,6 +203,22 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getStartTimeStr() {
+		return startTimeStr;
+	}
+
+	public void setStartTimeStr(String startTimeStr) {
+		this.startTimeStr = startTimeStr;
+	}
+
+	public String getEndTimeStr() {
+		return endTimeStr;
+	}
+
+	public void setEndTimeStr(String endTimeStr) {
+		this.endTimeStr = endTimeStr;
 	}
 
 	public Long getTimelimitedId() {

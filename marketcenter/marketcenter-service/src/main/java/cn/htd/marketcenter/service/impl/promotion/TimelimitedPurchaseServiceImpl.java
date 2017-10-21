@@ -171,8 +171,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 			searchConditionDTO.setSellerCode(conditionDTO.getSelleCode());
 			searchConditionDTO.setDeleteStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 					DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
-			searchConditionDTO.setStartTime(conditionDTO.getStartTime());
-			searchConditionDTO.setEndTime(conditionDTO.getEndTime());
+			searchConditionDTO.setStartTimeStr(conditionDTO.getStartTimeStr());
+			searchConditionDTO.setEndTimeStr(conditionDTO.getEndTimeStr());
 			count = timelimitedInfoDAO.queryPromotionInfoListCount(searchConditionDTO);
 			if (count > 0) {
 				// 遍历promotion 查询 timelimited
@@ -185,7 +185,12 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					if (timelimitedInfoList.size() > 0) {
 						PromotionListDTO promotionInfo = new PromotionListDTO();
 						promotionInfo.setPromotionId(promotionlist.getPromotionId());
-						promotionInfo.setStatus(promotionlist.getStatus());
+						String status = promotionlist.getStatus();
+						if ((new Date()).before(promotionlist.getInvalidTime())
+								&& (new Date()).after(promotionlist.getEffectiveTime())) {
+							status = "2";
+						}
+						promotionInfo.setStatus(status);
 						promotionInfo.setShowStatus(promotionlist.getShowStatus());
 						// promotion中加入限时购
 						promotionInfo.setTimelimitedInfoDTO(timelimitedInfoList);

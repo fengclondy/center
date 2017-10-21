@@ -367,6 +367,7 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
         marketRedisDB.incrHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCouponReceiveKey);
         marketRedisDB
                 .tailPush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, buyerCode + "&" + buyerCouponCode);
+        marketRedisDB.incrHash(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId);
     }
 
     /**

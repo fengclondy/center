@@ -71,6 +71,22 @@ public interface GroupbuyingInfoDAO {
 	 * @return
 	 */
 	GroupbuyingInfoCmplResDTO getGroupbuyingInfo4MobileHomePage(@Param("dto")GroupbuyingInfoReqDTO record);
+	
+	
+	/**
+	 * 查询我的团购总数(供移动端使用)
+	 * @param record
+	 * @return
+	 */
+	int getMyGroupbuying4MobileCount( @Param("dto")GroupbuyingInfoReqDTO record);
+	
+	/**
+	 * 分页查询我的团购列表(供移动端使用)
+	 * @param page
+	 * @param record
+	 * @return
+	 */
+	List<GroupbuyingInfoCmplResDTO> getMyGroupbuying4MobileForPage(@Param("page")Pager<GroupbuyingInfoReqDTO> page, @Param("dto")GroupbuyingInfoReqDTO record);
 
 
 }

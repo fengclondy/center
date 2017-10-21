@@ -126,6 +126,15 @@ public interface GroupbuyingService {
 	 */
 	GroupbuyingInfoCmplResDTO getGroupbuyingInfo4MobileHomePage(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
+	/**
+	 * 分页查询我的团购列表(供移动端使用)
+	 * @param page
+	 * @param groupbuyingInfoReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	DataGrid<GroupbuyingInfoCmplResDTO> getMyGroupbuying4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
+	
 	
 	
 }

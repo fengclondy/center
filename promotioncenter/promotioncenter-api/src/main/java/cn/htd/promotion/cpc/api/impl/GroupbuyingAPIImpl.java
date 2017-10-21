@@ -238,13 +238,13 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
 
 
     @Override
-    public ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+    public ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
         ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> result = new ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>>();
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingInfo4MobileForPage(page,groupbuyingInfoReqDTO, messageId);
+            DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getGroupbuyingInfo4MobileForPage(pager,groupbuyingInfoReqDTO, messageId);
             result.setResult(groupbuyingInfoCmplResDTOData);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());
@@ -322,5 +322,24 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         
         return result;
 		
+	}
+
+
+	@Override
+	public ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getMyGroupbuyingForPage2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
+        ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> result = new ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+            DataGrid<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOData = groupbuyingService.getMyGroupbuying4MobileForPage(pager,groupbuyingInfoReqDTO, messageId);
+            result.setResult(groupbuyingInfoCmplResDTOData);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getMyGroupbuyingForPage2HttpINTFC出现异常{}", messageId, e.toString());
+        }
+        return result;
 	}
 }

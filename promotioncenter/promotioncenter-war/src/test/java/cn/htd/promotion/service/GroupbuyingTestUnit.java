@@ -554,7 +554,7 @@ public class GroupbuyingTestUnit {
 
 
     /**
-     * 根据orgid获取该店铺所有团购商品(供移动端使用)
+     * 根据orgid获取该店铺所有团购商品(供移动端使用)-测试用例
      */
 	@Test
 	public void getGroupbuyingList2HttpINTFCTest(){
@@ -579,7 +579,7 @@ public class GroupbuyingTestUnit {
 	}
 	
     /**
-     * 查询首页单个团购活动(供移动端使用)
+     * 查询首页单个团购活动(供移动端使用)-测试用例
      */
 	@Test
 	public void getGroupbuyingHomePage2HttpINTFCTest(){
@@ -593,6 +593,30 @@ public class GroupbuyingTestUnit {
         		System.out.println("===>executeResult:" + executeResult);
         	}else{
         		System.out.println("===>查询首页单个团购活动失败！！！");
+        	}
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+    /**
+     * 分页查询我的团购列表(供移动端使用)-测试用例
+     */
+	@Test
+	public void getMyGroupbuyingForPage2HttpINTFCTest(){
+		String messageId = "342453251349";
+		try{
+			Pager<GroupbuyingInfoReqDTO> pager = new Pager<GroupbuyingInfoReqDTO>();
+			pager.setPageOffset(1);
+			pager.setRows(10);
+			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
+			groupbuyingInfoReqDTO.setBuyerCode("2002");
+			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getMyGroupbuyingForPage2HttpINTFC(pager,groupbuyingInfoReqDTO,messageId);
+	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>分页查询我的团购列表失败！！！");
         	}
 
 		}catch (Exception e) {

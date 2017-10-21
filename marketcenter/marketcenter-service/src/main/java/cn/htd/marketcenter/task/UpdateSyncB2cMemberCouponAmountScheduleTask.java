@@ -272,9 +272,9 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
             return flag;
         }
         String showStatus = promotionInfoDaoRes.getShowStatus();
-        if (StringUtils.isEmpty(showStatus) || !showStatus.equals(dictionary
+        if (!showStatus.equals(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)) || !showStatus.equals(dictionary
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)) && !showStatus.equals(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))) {
             logger.warn("促销活动：{}审核未通过,或者未启用", JSONObject.toJSONString(promotionInfoDaoRes));

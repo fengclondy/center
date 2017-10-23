@@ -6,6 +6,8 @@
     <id column="groupbuying_id" property="groupbuyingId" jdbcType="BIGINT" />
     <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
     <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+    <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+    <result column="seller_alias_name" property="sellerAliasName" jdbcType="VARCHAR" />
     <result column="item_id" property="itemId" jdbcType="BIGINT" />
     <result column="sku_code" property="skuCode" jdbcType="VARCHAR" />
     <result column="sku_name" property="skuName" jdbcType="VARCHAR" />
@@ -34,6 +36,7 @@
     
     <result column="activeState" property="activeState" jdbcType="VARCHAR" />
     <result column="gbRecordStatus" property="gbRecordStatus" jdbcType="VARCHAR" />
+    <result column="gbRecordTime" property="gbRecordTime" jdbcType="TIMESTAMP" />
     
     <association property="singlePromotionInfoCmplResDTO" javaType="cn.htd.promotion.cpc.dto.response.SinglePromotionInfoCmplResDTO">
     <id column="id" property="id" jdbcType="BIGINT" />
@@ -92,7 +95,7 @@
   
   
   <sql id="Base_Column_List" >
-    groupbuying_id, promotion_id, seller_code, item_id, sku_code, sku_name, sku_label, 
+    groupbuying_id, promotion_id, seller_code,seller_name,seller_alias_name, item_id, sku_code, sku_name, sku_label, 
     sku_pic_url, sku_cost_price, real_actor_count, real_groupbuying_price, start_time, 
     end_time, sales_area_code, sales_area_name, groupbuying_sku_count, groupbuying_threshold, 
     groupbuying_valid_interval, delete_flag, create_id, create_name, create_time, modify_id, 
@@ -130,7 +133,7 @@
   </update>
   
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
-    insert into groupbuying_info (groupbuying_id, promotion_id, seller_code, 
+    insert into groupbuying_info (groupbuying_id, promotion_id, seller_code, seller_name,seller_alias_name,
       item_id, sku_code, sku_name, 
       sku_label, sku_pic_url, sku_cost_price, 
       real_actor_count, real_groupbuying_price, start_time, 
@@ -139,7 +142,7 @@
       groupbuying_valid_interval, delete_flag, create_id, 
       create_name, create_time, modify_id, 
       modify_name, modify_time)
-    values (#{groupbuyingId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{sellerCode,jdbcType=VARCHAR}, 
+    values (#{groupbuyingId,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{sellerCode,jdbcType=VARCHAR}, #{sellerName,jdbcType=VARCHAR}, #{sellerAliasName,jdbcType=VARCHAR}, 
       #{itemId,jdbcType=BIGINT}, #{skuCode,jdbcType=VARCHAR}, #{skuName,jdbcType=VARCHAR}, 
       #{skuLabel,jdbcType=VARCHAR}, #{skuPicUrl,jdbcType=VARCHAR}, #{skuCostPrice,jdbcType=DECIMAL}, 
       #{realActorCount,jdbcType=INTEGER}, #{realGroupbuyingPrice,jdbcType=DECIMAL}, #{startTime,jdbcType=TIMESTAMP}, 
@@ -161,6 +164,12 @@
       </if>
       <if test="sellerCode != null" >
         seller_code,
+      </if>
+      <if test="sellerName != null" >
+        seller_name,
+      </if>
+      <if test="sellerAliasName != null" >
+        seller_alias_name,
       </if>
       <if test="itemId != null" >
         item_id,
@@ -238,6 +247,12 @@
       </if>
       <if test="sellerCode != null" >
         #{sellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerName != null" >
+        #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerAliasName != null" >
+        #{sellerAliasName,jdbcType=VARCHAR},
       </if>
       <if test="itemId != null" >
         #{itemId,jdbcType=BIGINT},
@@ -317,6 +332,12 @@
       <if test="sellerCode != null" >
         seller_code = #{sellerCode,jdbcType=VARCHAR},
       </if>
+      <if test="sellerName != null" >
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerAliasName != null" >
+        seller_alias_name = #{sellerAliasName,jdbcType=VARCHAR},
+      </if>
       <if test="itemId != null" >
         item_id = #{itemId,jdbcType=BIGINT},
       </if>
@@ -393,6 +414,12 @@
       <if test="sellerCode != null" >
         seller_code = #{sellerCode,jdbcType=VARCHAR},
       </if>
+      <if test="sellerName != null" >
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerAliasName != null" >
+        seller_alias_name = #{sellerAliasName,jdbcType=VARCHAR},
+      </if>
       <if test="itemId != null" >
         item_id = #{itemId,jdbcType=BIGINT},
       </if>
@@ -460,6 +487,8 @@
     update groupbuying_info
     set promotion_id = #{promotionId,jdbcType=VARCHAR},
       seller_code = #{sellerCode,jdbcType=VARCHAR},
+      seller_name = #{sellerName,jdbcType=VARCHAR},
+      seller_alias_name = #{sellerAliasName,jdbcType=VARCHAR},
       item_id = #{itemId,jdbcType=BIGINT},
       sku_code = #{skuCode,jdbcType=VARCHAR},
       sku_name = #{skuName,jdbcType=VARCHAR},
@@ -546,7 +575,7 @@
 
 	<select id="getGroupbuyingInfoCmplForPage" resultMap="GroupbuyingInfoCmplResultMap">
    SELECT 
-    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
     gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
@@ -580,7 +609,7 @@
 
 	<select id="getGroupbuyingInfoCmplByPromotionId" resultMap="GroupbuyingInfoCmplResultMap">
    SELECT 
-    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
     gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
@@ -621,7 +650,7 @@
 
 	<select id="getGroupbuyingInfo4MobileForPage" resultMap="GroupbuyingInfoCmplSingleResultMap">
    SELECT 
-    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
     gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
@@ -647,13 +676,13 @@
    left join promotion_info pi on pi.promotion_id = gi.promotion_id  
 		WHERE  gi.delete_flag = 0 and pi.show_status = '3'  and (gr.delete_flag = 0 or gr.delete_flag is null)  
         and gi.seller_code = #{dto.sellerCode,jdbcType=VARCHAR}   
-		ORDER BY gi.modify_time desc 
+		ORDER BY gi.create_time desc 
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
 	
    <select id="getGroupbuyingInfo4MobileHomePage" resultMap="GroupbuyingInfoCmplSingleResultMap">
    SELECT 
-    gi.groupbuying_id, gi.promotion_id, gi.seller_code, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
     gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
@@ -682,5 +711,52 @@
 		ORDER BY gi.create_time desc 
 		LIMIT 0,1 
 	</select>
+	
+	
+   <select id="getMyGroupbuying4MobileCount" resultType="java.lang.Integer">
+	   SELECT count(distinct gr.record_id)  
+   FROM groupbuying_record gr 
+   left join groupbuying_info gi on gi.promotion_id = gr.promotion_id 
+   left join groupbuying_price_setting gps on gps.promotion_id = gr.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gr.promotion_id  
+		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and gps.delete_flag = 0   
+         and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
+	</select>
+	
+   <select id="getMyGroupbuying4MobileForPage" resultMap="GroupbuyingInfoCmplResultMap">
+   SELECT gr.create_time gbRecordTime,
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
+    gi.modify_id, gi.modify_name, gi.modify_time,
+    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, gps.sort_num,
+    gps.delete_flag, gps.create_id, gps.create_name, gps.create_time, 
+    gps.modify_id, gps.modify_name, gps.modify_time,
+    pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
+    pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
+    pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
+    pi.verify_remark, pi.modify_promotion_id, pi.has_redis_clean, pi.deal_flag, pi.has_up_flag, 
+    pi.create_id, pi.create_name, pi.create_time, 
+    pi.modify_id, pi.modify_name, pi.modify_time,  
+    <![CDATA[ 
+        (case 
+    when pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time then '2' 
+    when pi.invalid_time < sysdate() and sysdate() < gi.start_time then '3' 
+    when gi.start_time <= sysdate() and sysdate() <= gi.end_time then '4' 
+	when sysdate() < pi.effective_time then '1' 
+	when sysdate() > gi.end_time then '5' 
+	else '-1' 
+	end) ]]> activeState 
+   FROM groupbuying_record gr 
+   left join groupbuying_info gi on gi.promotion_id = gr.promotion_id 
+   left join groupbuying_price_setting gps on gps.promotion_id = gr.promotion_id 
+   left join promotion_info pi on pi.promotion_id = gr.promotion_id  
+		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and gps.delete_flag = 0   
+        and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
+		ORDER BY gr.create_time desc ,gps.sort_num asc  
+		LIMIT #{page.pageOffset},#{page.rows}
+	</select>
+	
   
 </mapper>

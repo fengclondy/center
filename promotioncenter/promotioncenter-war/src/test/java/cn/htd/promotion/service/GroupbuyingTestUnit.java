@@ -80,6 +80,8 @@ public class GroupbuyingTestUnit {
         	//团购商品信息
             GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO = new GroupbuyingInfoCmplReqDTO();
             groupbuyingInfoCmplReqDTO.setSellerCode("1001");
+            groupbuyingInfoCmplReqDTO.setSellerName("测试店铺");
+            groupbuyingInfoCmplReqDTO.setSellerAliasName("测试店铺-1");
             groupbuyingInfoCmplReqDTO.setItemId(itemId);
             groupbuyingInfoCmplReqDTO.setSkuCode(skuCode);
             groupbuyingInfoCmplReqDTO.setSkuName("测试商品");
@@ -218,7 +220,7 @@ public class GroupbuyingTestUnit {
     		Long userId = 10001L;
     		String userName = "admin";
     		
-    		String promotionId = "25171430390018";
+    		String promotionId = "25171138110019";
     		
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
@@ -231,8 +233,10 @@ public class GroupbuyingTestUnit {
         	//团购商品信息
             GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO = new GroupbuyingInfoCmplReqDTO();
 //            groupbuyingInfoCmplReqDTO.setSellerCode("1001");
-            groupbuyingInfoCmplReqDTO.setItemId(itemId);
-            groupbuyingInfoCmplReqDTO.setSkuCode(skuCode);
+//            groupbuyingInfoCmplReqDTO.setSellerName("测试店铺");
+            groupbuyingInfoCmplReqDTO.setSellerAliasName("测试店铺-3");
+//            groupbuyingInfoCmplReqDTO.setItemId(itemId);
+//            groupbuyingInfoCmplReqDTO.setSkuCode(skuCode);
 //            groupbuyingInfoCmplReqDTO.setSkuName("测试商品");
 //            groupbuyingInfoCmplReqDTO.setSkuLabel("测试商品标签");
     		//设置主图
@@ -290,17 +294,23 @@ public class GroupbuyingTestUnit {
     		// 设置团购价格
     		List<GroupbuyingPriceSettingReqDTO> groupbuyingPriceSettingReqDTOList = new ArrayList<GroupbuyingPriceSettingReqDTO>();
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO.setItemId(itemId);
+    		groupbuyingPriceSettingReqDTO.setSkuCode(skuCode);
     		groupbuyingPriceSettingReqDTO.setSortNum(1);
     		groupbuyingPriceSettingReqDTO.setActorCount(1);// 参团人数
     		BigDecimal groupbuyingPrice = new BigDecimal("100");// 拼团价
     		groupbuyingPriceSettingReqDTO.setGroupbuyingPrice(groupbuyingPrice);
     		
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_2 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_2.setItemId(itemId);
+    		groupbuyingPriceSettingReqDTO_2.setSkuCode(skuCode);
     		groupbuyingPriceSettingReqDTO_2.setSortNum(2);
     		groupbuyingPriceSettingReqDTO_2.setActorCount(50);
     		groupbuyingPriceSettingReqDTO_2.setGroupbuyingPrice(new BigDecimal("90"));
     		
     		GroupbuyingPriceSettingReqDTO groupbuyingPriceSettingReqDTO_3 = new GroupbuyingPriceSettingReqDTO();
+    		groupbuyingPriceSettingReqDTO_3.setItemId(itemId);
+    		groupbuyingPriceSettingReqDTO_3.setSkuCode(skuCode);
     		groupbuyingPriceSettingReqDTO_3.setSortNum(3);
     		groupbuyingPriceSettingReqDTO_3.setActorCount(100);
     		groupbuyingPriceSettingReqDTO_3.setGroupbuyingPrice(new BigDecimal("70"));
@@ -326,7 +336,7 @@ public class GroupbuyingTestUnit {
     public void getGroupbuyingInfoCmplByPromotionIdTest(){
     	
         String messageId = "342453251349";
-        String promotionId = "25171601240015";
+        String promotionId = "25171138110019";
         try {
         	ExecuteResult<GroupbuyingInfoCmplResDTO> executeResult = groupbuyingAPI.getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
         	System.out.println("===>executeResult:" + executeResult);
@@ -544,7 +554,7 @@ public class GroupbuyingTestUnit {
 
 
     /**
-     * 根据orgid获取该店铺所有团购商品(供移动端使用)
+     * 根据orgid获取该店铺所有团购商品(供移动端使用)-测试用例
      */
 	@Test
 	public void getGroupbuyingList2HttpINTFCTest(){
@@ -569,7 +579,7 @@ public class GroupbuyingTestUnit {
 	}
 	
     /**
-     * 查询首页单个团购活动(供移动端使用)
+     * 查询首页单个团购活动(供移动端使用)-测试用例
      */
 	@Test
 	public void getGroupbuyingHomePage2HttpINTFCTest(){
@@ -583,6 +593,30 @@ public class GroupbuyingTestUnit {
         		System.out.println("===>executeResult:" + executeResult);
         	}else{
         		System.out.println("===>查询首页单个团购活动失败！！！");
+        	}
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+    /**
+     * 分页查询我的团购列表(供移动端使用)-测试用例
+     */
+	@Test
+	public void getMyGroupbuyingForPage2HttpINTFCTest(){
+		String messageId = "342453251349";
+		try{
+			Pager<GroupbuyingInfoReqDTO> pager = new Pager<GroupbuyingInfoReqDTO>();
+			pager.setPageOffset(1);
+			pager.setRows(10);
+			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
+			groupbuyingInfoReqDTO.setBuyerCode("2002");
+			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getMyGroupbuyingForPage2HttpINTFC(pager,groupbuyingInfoReqDTO,messageId);
+	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>分页查询我的团购列表失败！！！");
         	}
 
 		}catch (Exception e) {

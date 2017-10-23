@@ -76,7 +76,7 @@ public interface GroupbuyingAPI {
 	
 	/**
 	 * 添加参团记录(供移动端使用)
-	 * @param dto
+	 * @param groupbuyingInfoReqDTO
 	 * @param messageId
 	 * @return
 	 */
@@ -97,7 +97,7 @@ public interface GroupbuyingAPI {
 	 * @param messageId
 	 * @return
 	 */
-	ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO dto, String messageId);
+	ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getGroupbuyingList2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
 	/**
 	 * 查询首页单个团购活动(供移动端使用)
@@ -106,6 +106,15 @@ public interface GroupbuyingAPI {
 	 * @return
 	 */
 	public ExecuteResult<GroupbuyingInfoCmplResDTO> getGroupbuyingHomePage2HttpINTFC(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
+	
+	/**
+	 * 分页查询我的团购列表(供移动端使用)
+	 * @param pager
+	 * @param dto
+	 * @param messageId
+	 * @return
+	 */
+	ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> getMyGroupbuyingForPage2HttpINTFC(Pager<GroupbuyingInfoReqDTO> pager, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 
 	/**
 	 * 活动上下架
@@ -123,4 +132,6 @@ public interface GroupbuyingAPI {
 	 * @return
 	 */
 	ExecuteResult<?> deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO,String messageId) ;
+	
+	
 }

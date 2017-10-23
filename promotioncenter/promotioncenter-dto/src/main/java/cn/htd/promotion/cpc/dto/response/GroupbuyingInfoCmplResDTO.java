@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.dto.response;
 
+import java.util.Date;
 import java.util.List;
 
 public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
@@ -21,6 +22,8 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	private Integer orderQuantity;
 	// 参团状态 [0.未参团,1.已参团]
 	private String gbRecordStatus;
+	// 参团时间
+	private Date gbRecordTime;
 	// 下单状态 [0.未下单,1.已下单]
 	private String havaAnOrder;
 
@@ -105,6 +108,16 @@ public class GroupbuyingInfoCmplResDTO extends GroupbuyingInfoResDTO {
 	public void setHavaAnOrder(String havaAnOrder) {
 		this.havaAnOrder = havaAnOrder;
 	}
+
+	public Date getGbRecordTime() {
+		return gbRecordTime;
+	}
+
+	public void setGbRecordTime(Date gbRecordTime) {
+		this.gbRecordTime = gbRecordTime;
+	}
+	
+	
 	
 	
 

@@ -91,7 +91,7 @@
             <if test="entity.shopId != null">
                 <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
             </if>
-            <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
+            <if test="entity.orderStatuss !=null">
                 <![CDATA[ and trade_orders_.order_status IN ]]>
                 <foreach collection="entity.orderStatuss" item="item" index="index" open="("
                          separator="," close=")">
@@ -149,6 +149,13 @@
             </if>
             <if test="entity.payStatus != null and entity.payStatus !=''">
                 <![CDATA[ and trade_orders_.pay_status = #{entity.payStatus} ]]>
+            </if>
+            <if test="entity.orderStatuss !=null">
+                <![CDATA[ and trade_orders_.order_status IN ]]>
+                <foreach collection="entity.orderStatuss" item="item" index="index" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
             <if test="entity.orderStatus != null and entity.orderStatus !=''">
                 <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>

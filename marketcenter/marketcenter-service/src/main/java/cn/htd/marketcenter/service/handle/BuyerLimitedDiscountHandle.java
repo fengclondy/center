@@ -95,7 +95,7 @@ public class BuyerLimitedDiscountHandle extends AbstractBuyerPromotionHandle imp
 		if (buyerPromotionDTOList.isEmpty()) {
 			return;
 		}
-		timelimitedRedisHandle.updateRedisUseTimelimitedLog(useLogList);
+		timelimitedRedisHandle.updateRedisUseLimitedDiscountLog(useLogList);
 	}
 
 	@Override

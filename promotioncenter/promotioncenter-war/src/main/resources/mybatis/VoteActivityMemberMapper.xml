@@ -473,8 +473,8 @@ select
       0, #{item.createId,jdbcType=BIGINT}, #{item.createName,jdbcType=VARCHAR}, 
       NOW(), #{item.modifyId,jdbcType=BIGINT}, #{item.modifyName,jdbcType=VARCHAR}, 
       NOW())
-      on duplicate key update modify_time =now()
     </foreach>
+     on duplicate key update modify_time =now()
   </insert>
   
   <select id="queryPagedSignupMemberInfoListOrderBySignUpTime" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 

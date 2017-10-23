@@ -451,13 +451,16 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	@Override
 	public void initGroupbuyingInfoRedisInfoWithThread(final String promotionId) {
-        new Thread() {
-            public void run() {
-                String messageId = keyGeneratorUtils.generateMessageId();
-            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
-            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
-            }
-        }.start();
+//        new Thread() {
+//            public void run() {
+//                String messageId = keyGeneratorUtils.generateMessageId();
+//            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+//            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
+//            }
+//        }.start();
+        
+    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, null);
+    	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
 	}
 
 	@Override

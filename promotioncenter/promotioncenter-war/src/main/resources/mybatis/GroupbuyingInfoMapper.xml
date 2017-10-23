@@ -655,7 +655,10 @@
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
     gi.modify_id, gi.modify_name, gi.modify_time,
-    if(gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR},'1','0') gbRecordStatus,
+    <choose>
+    <when test="dto.buyerCode != null and dto.buyerCode != ''">if(gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR},'1','0') gbRecordStatus,</when>
+    <otherwise>'0' gbRecordStatus,</otherwise>
+    </choose>
     pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
     pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
     pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
@@ -687,7 +690,10 @@
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
     gi.modify_id, gi.modify_name, gi.modify_time,
-    if(gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR},'1','0') gbRecordStatus,
+    <choose>
+    <when test="dto.buyerCode != null and dto.buyerCode != ''">if(gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR},'1','0') gbRecordStatus,</when>
+    <otherwise>'0' gbRecordStatus,</otherwise>
+    </choose>
     pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
     pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
     pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 

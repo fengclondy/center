@@ -210,7 +210,7 @@
     WHERE order_no=#{orderNo}
   </update>
   <sql id="pagination_tail">
-    limit #{page.pageOffset} , #{page.rows}
-  </sql>
+        limit #{page.pageOffset} , #{page.rows}
+    </sql>
   <!--卖家中心查询结束end-->
 </mapper>

@@ -272,9 +272,9 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
             return flag;
         }
         String showStatus = promotionInfoDaoRes.getShowStatus();
-        if (StringUtils.isEmpty(showStatus) || !showStatus.equals(dictionary
+        if (!showStatus.equals(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)) || !showStatus.equals(dictionary
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)) && !showStatus.equals(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                         DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))) {
             logger.warn("促销活动：{}审核未通过,或者未启用", JSONObject.toJSONString(promotionInfoDaoRes));
@@ -367,6 +367,7 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
         marketRedisDB.incrHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCouponReceiveKey);
         marketRedisDB
                 .tailPush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, buyerCode + "&" + buyerCouponCode);
+        marketRedisDB.incrHash(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId);
     }
 
     /**

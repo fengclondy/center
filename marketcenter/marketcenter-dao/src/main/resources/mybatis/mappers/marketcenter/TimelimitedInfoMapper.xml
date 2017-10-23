@@ -256,7 +256,7 @@
 		timelimited_info.promotion_id and promotion_accumulaty.level_code =
 		timelimited_info.level_code)
 		where 1 = 1
-		 and (timelimited_info.item_code =#{_parameter,jdbcType=VARCHAR} or timelimited_info.item_id=#{_parameter,jdbcType=VARCHAR} or timelimited_info.sku_name=#{_parameter,jdbcType=VARCHAR})
+		 and (timelimited_info.item_code =#{entity.itemCode} or timelimited_info.item_id=#{entity.itemId} or timelimited_info.sku_name=#{entity.itemName})
 	     and promotion_info.status in ('1','2') 
 	     and promotion_info.promotion_type=3
 	     <![CDATA[ and timelimited_info.end_time > now() ]]>

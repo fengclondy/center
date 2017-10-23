@@ -187,9 +187,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						PromotionListDTO promotionInfo = new PromotionListDTO();
 						promotionInfo.setPromotionId(promotionlist.getPromotionId());
 						String status = promotionlist.getStatus();
-						if ((new Date()).before(promotionlist.getInvalidTime())
-								&& (new Date()).after(promotionlist.getEffectiveTime())) {
-							status = "2";
+						if ((new Date()).after(promotionlist.getInvalidTime())
+								|| (new Date()).before(promotionlist.getEffectiveTime())) {
+							status = "2";// 正在进行
+						} else if ((new Date()).after(promotionlist.getEffectiveTime())) {
+							status = "3";// 已结束
 						}
 						promotionInfo.setStatus(status);
 						promotionInfo.setShowStatus(promotionlist.getShowStatus());

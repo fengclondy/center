@@ -76,6 +76,20 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             executeResult.setResultMessage("投票活动不存在");
             return executeResult;
         }
+        Date voteSignUpStartTime = voteActivityResDTO.getVoteSignUpStartTime();
+        Date voteEndTime = voteActivityResDTO.getVoteEndTime();
+        if (voteSignUpStartTime.after(date)) { // 当前时间不在活动时间内
+            logger.info("当前投票活动未开始, voteActivityId:{}", voteActivityId);
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
+            executeResult.setResultMessage("投票活动未开始");
+            return executeResult;
+        }
+        if(voteEndTime.before(date)) {
+            logger.info("当前投票活动已结束, voteActivityId:{}", voteActivityId);
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
+            executeResult.setResultMessage("投票活动已结束");
+            return executeResult;
+        }
         Integer voteNumPAccountPDayPStoreLimit = voteActivityResDTO.getVoteNumPAccountPDayPStore(); // 粉丝当前单个门店投票数量上限
         int voteNumByDayAndStore = this.queryFansVoteNumByDayAndStore(voteActivityId, fansId, memberCode, date);
         // 投票前校验：当前投票数小于限制数，返回校验通过
@@ -100,6 +114,18 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             logger.info("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
             executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
             executeResult.setResultMessage("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
+            return executeResult;
+        }
+        if (voteActivityMemberResDTO.getSignStatus() != 1) {
+            logger.info("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "会员店未报名");
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
+            executeResult.setResultMessage("会员店:" + memberCode + "未报名");
+            return executeResult;
+        }
+        if (voteActivityMemberResDTO.getAuditStatus() != 1) {
+            logger.info("根据活动ID:" + voteActivityId+ "和memberCode:" + memberCode + "会员店未审核通过");
+            executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
+            executeResult.setResultMessage("会员店:" + memberCode + "未审核通过");
             return executeResult;
         }
         // 开始投票
@@ -255,7 +281,11 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberVoteDetailDTO.setMemberActivityDec(voteActivityMemberResDTO.getMemberActivityDec());
         // 获取图片
         List<VoteActivityMemberPictureResDTO> voteActivityMemberPictureResDTOList = this.voteActivityMemberPictureDAO.selectByVoteMemberId(voteActivityMemberResDTO.getVoteMemberId());
-        voteActivityMemberVoteDetailDTO.setVoteActivityMemberPictureResDTOList(voteActivityMemberPictureResDTOList);
+        List<String> picList = new ArrayList<>();
+        for (VoteActivityMemberPictureResDTO voteActivityMemberPictureResDTO : voteActivityMemberPictureResDTOList) {
+            picList.add(voteActivityMemberPictureResDTO.getPictureUrl());
+        }
+        voteActivityMemberVoteDetailDTO.setVoteActivityMemberPictureResDTOList(picList);
         // 获取投票排名top10
         List<VoteActivityMemberRankingDTO> voteActivityMemberRankingDTOList = new ArrayList<>();
         List<HashMap<String, Object>> rankingList = this.voteActivityMemberDAO.selectMemberRankingTop10(voteActivityId);

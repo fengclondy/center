@@ -507,7 +507,7 @@ public class GroupbuyingTestUnit {
     		Long userId = 10001L;
     		String userName = "admin";
     		
-    		String promotionId = "25171430390018";
+    		String promotionId = "25171633190008";
             
             GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
             

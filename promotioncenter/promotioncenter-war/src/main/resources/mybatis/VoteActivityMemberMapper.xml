@@ -357,6 +357,7 @@
 	  vam.member_vote_last_time
 	  from  vote_activity_member vam
 	  where vam.delete_flag = 0
+	  	and vam.vote_id = #{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
 	 	 and vam.vendor_name like concat(#{sellerName},'%')
 	  </if> 

@@ -8,6 +8,7 @@ public class VoteActivityMemListReqDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -6018186252615751034L;
+	private String voteId;
 	//平台公司名称
 	private String sellerName;
 	//会员店名称
@@ -56,6 +57,12 @@ public class VoteActivityMemListReqDTO implements Serializable{
 	}
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
+	}
+	public String getVoteId() {
+		return voteId;
+	}
+	public void setVoteId(String voteId) {
+		this.voteId = voteId;
 	}
 	
 	

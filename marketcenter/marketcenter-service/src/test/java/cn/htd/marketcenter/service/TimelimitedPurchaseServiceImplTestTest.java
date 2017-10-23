@@ -43,13 +43,16 @@ public class TimelimitedPurchaseServiceImplTestTest {
 	
 	@Test
 	public void testQueryTimelimitedList() {
-		TimelimitPurchaseMallInfoDTO dto = new TimelimitPurchaseMallInfoDTO();
-		dto.setPurchaseFlag(1);
-		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedInfoService.getTimelimitedInfo(dto);
-		for (TimelimitPurchaseMallInfoDTO d : result.getResult()) {
-			System.out.println(d.getPromotionId() + "==" + d.getPreferentialStrength() + "==" + d.getSalesVolume()
-					+ "==" + d.getSalesVolumePrice() + "==" + d.getStartTime().getTime());
-		}
+//		TimelimitPurchaseMallInfoDTO dto = new TimelimitPurchaseMallInfoDTO();
+//		dto.setPurchaseFlag(1);
+//		dto.setPurchaseSort(1);
+//		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedInfoService.getTimelimitedInfo(dto);
+//		for (TimelimitPurchaseMallInfoDTO d : result.getResult()) {
+//			System.out.println(d.getPromotionId() + "==" + d.getPreferentialStrength() + "==" + d.getSalesVolume()
+//					+ "==" + d.getSalesVolumePrice() + "==" + d.getStartTime().getTime());
+//		}
+//		System.out.println(JSONObject.toJSONString(result));
+		ExecuteResult<TimelimitedInfoDTO> result = timelimitedInfoService.getTimelimitedInfo("1000039614");
 		System.out.println(JSONObject.toJSONString(result));
 	}
 }

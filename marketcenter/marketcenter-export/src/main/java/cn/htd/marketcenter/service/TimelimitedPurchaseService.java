@@ -7,6 +7,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionListDTO;
+import cn.htd.marketcenter.dto.TimelimitPurchaseItemInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.common.Pager;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
@@ -42,7 +43,7 @@ public interface TimelimitedPurchaseService {
 	 * @param promotionId
 	 * @return
 	 */
-	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(String itemCode);
+	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(TimelimitPurchaseItemInfoDTO itemInfoDTO);
 	
 	/**
 	 * 限时购 - 根据促销活动id查询促销活动

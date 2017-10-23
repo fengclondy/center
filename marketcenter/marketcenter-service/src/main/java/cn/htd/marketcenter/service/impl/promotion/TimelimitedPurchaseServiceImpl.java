@@ -37,6 +37,7 @@ import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionListDTO;
 import cn.htd.marketcenter.dto.PromotionStatusHistoryDTO;
+import cn.htd.marketcenter.dto.TimelimitPurchaseItemInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
@@ -217,12 +218,12 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	 * 限时购 － 根据promotionId获取限时购结果信息
 	 */
 	@Override
-	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(String itemCode) {
+	public ExecuteResult<List<TimelimitedInfoDTO>> queryPromotionInfoByItemCode(TimelimitPurchaseItemInfoDTO itemInfoDTO) {
 		ExecuteResult<List<TimelimitedInfoDTO>> result = new ExecuteResult<List<TimelimitedInfoDTO>>();
 		List<TimelimitedInfoDTO>  timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
-			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemCode);
+			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemInfoDTO);
 			if (timelimitedListDTO == null) {
 				throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_EXIST, "该商品没有正在参加限时购活动!");
 			}
@@ -320,7 +321,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 								} else if (nowDt.before(timelimite.getStartTime())) {
 									result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN);
 									result.setResult(timelimite);
-									return result;
+									continue;
+								}else {
+									result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER);
+									result.setResult(timelimite);
+									continue;
 								}
 							}
 						}
@@ -328,10 +333,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 							throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
 									"该商品限时活动不存在");
 						}
+					}else{
+						throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
+								"该商品限时活动不存在");
 					}
 				}
-				result.setCode("00000");
-				result.setResult(timelimite);
 			}
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

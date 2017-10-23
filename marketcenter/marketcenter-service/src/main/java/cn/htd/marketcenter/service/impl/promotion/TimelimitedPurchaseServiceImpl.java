@@ -315,7 +315,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 								} else if (nowDt.before(timelimite.getStartTime())) {
 									result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN);
 									result.setResult(timelimite);
-									return result;
+									continue;
+								}else {
+									result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER);
+									result.setResult(timelimite);
+									continue;
 								}
 							}
 						}
@@ -323,10 +327,11 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 							throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
 									"该商品限时活动不存在");
 						}
+					}else{
+						throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL,
+								"该商品限时活动不存在");
 					}
 				}
-				result.setCode("00000");
-				result.setResult(timelimite);
 			}
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

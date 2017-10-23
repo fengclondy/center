@@ -507,7 +507,7 @@ public class GroupbuyingTestUnit {
     		Long userId = 10001L;
     		String userName = "admin";
     		
-    		String promotionId = "25171633190008";
+    		String promotionId = "25171640260010";
             
             GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
             
@@ -565,7 +565,7 @@ public class GroupbuyingTestUnit {
 			pager.setRows(10);
 			GroupbuyingInfoReqDTO dto = new GroupbuyingInfoReqDTO();
 			dto.setSellerCode("801781");
-			dto.setBuyerCode("2002");
+//			dto.setBuyerCode("2002");
 			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getGroupbuyingList2HttpINTFC(pager,dto,messageId);
 	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
         		System.out.println("===>executeResult:" + executeResult);

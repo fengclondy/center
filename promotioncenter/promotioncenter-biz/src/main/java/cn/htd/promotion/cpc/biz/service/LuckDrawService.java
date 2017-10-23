@@ -12,6 +12,7 @@ import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.ParticipateActivitySellerInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
@@ -75,7 +76,7 @@ public interface LuckDrawService {
 	 * 参与有效活动的所有卖家信息
 	 * @return
 	 */
-	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId);
+	public ParticipateActivitySellerInfoDTO participateActivitySellerInfo(String messageId);
 
 	public PromotionExtendInfoDTO viewDrawLotteryInfo(String promotionInfoId);
 

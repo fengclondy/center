@@ -854,10 +854,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     rightList.add(targetBuyerCouponList.get(i));
                 }
             }
-            leftTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, leftList, validMap, hasTargetCouponFlag, orderInfoMap,
-                    allProductsList);
-            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, validMap, hasTargetCouponFlag, orderInfoMap,
-                    allProductsList);
+            leftTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, leftList, validMap, hasTargetCouponFlag,
+                    orderInfoMap, allProductsList);
+            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, validMap, hasTargetCouponFlag,
+                    orderInfoMap, allProductsList);
             invokeAll(leftTask, rightTask);
             leftTaskRst = leftTask.join();
             rightTaskRst = rightTask.join();

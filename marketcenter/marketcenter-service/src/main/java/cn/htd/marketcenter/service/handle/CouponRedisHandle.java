@@ -645,13 +645,12 @@ public class CouponRedisHandle {
                     .setCouponLeftAmount(CalculateUtils.divide(new BigDecimal(afterDealAmount), new BigDecimal(100)));
             buyerCouponInfo.setModifyId(orderCouponInfo.getOperaterId());
             buyerCouponInfo.setModifyName(orderCouponInfo.getOperaterName());
+            marketRedisDB.setHash(buyerCouponRedisKey, couponCode, JSON.toJSONString(buyerCouponInfo));
         } catch (MarketCenterBusinessException bcbe) {
             if (MarketCenterCodeConst.BUYER_COUPON_BALANCE_DEFICIENCY.equals(bcbe.getCode())) {
                 marketRedisDB.incrHashBy(RedisConst.REDIS_BUYER_COUPON_AMOUNT, amountKey, amount * -1);
             }
             throw bcbe;
-        } finally {
-            marketRedisDB.setHash(buyerCouponRedisKey, couponCode, JSON.toJSONString(buyerCouponInfo));
         }
         return buyerCouponInfo;
     }

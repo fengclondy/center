@@ -166,7 +166,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		try {
 			searchConditionDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
 					DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
-			searchConditionDTO.setSkuCode(conditionDTO.getSkuCode());
+			searchConditionDTO.setItemCode(conditionDTO.getSkuCode());
 			searchConditionDTO.setSkuName(conditionDTO.getSkuName());
 			searchConditionDTO.setShowStatus(conditionDTO.getStatus());
 			searchConditionDTO.setSellerCode(conditionDTO.getSelleCode());
@@ -187,8 +187,8 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						PromotionListDTO promotionInfo = new PromotionListDTO();
 						promotionInfo.setPromotionId(promotionlist.getPromotionId());
 						String status = promotionlist.getStatus();
-						if ((new Date()).after(promotionlist.getInvalidTime())
-								&& (new Date()).before(promotionlist.getEffectiveTime())) {
+						if ((new Date()).after(promotionlist.getEffectiveTime())
+								&& (new Date()).before(promotionlist.getInvalidTime())) {
 							status = "2";// 正在进行
 						} else if ((new Date()).after(promotionlist.getInvalidTime())) {
 							status = "3";// 已结束

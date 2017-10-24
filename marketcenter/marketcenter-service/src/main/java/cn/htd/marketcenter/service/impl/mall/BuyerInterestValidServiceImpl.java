@@ -354,13 +354,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!couponInfoList.isEmpty()) {
-                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
-//                taskResult = forkJoinPool.submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, couponInfoList,
-//                        orderInfoMap, allProductList));
                 taskResult = forkJoinPool
-                        .submit(new ValidBuyerAvaliableCouponTask(messageId, jedis, dictMap, couponInfoList,
-                                orderInfoMap, allProductList));
-                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+                        .submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, couponInfoList, orderInfoMap,
+                                allProductList));
                 allCouponList = taskResult.get();
                 long endTime1 = System.currentTimeMillis();
                 logger.info("***********校验会员优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
@@ -866,9 +862,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         private static final long serialVersionUID = 3119130710855802652L;
 
         private String messageId;
-        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-        private Jedis jedis;
-        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
+
         private Map<String, String> dictMap;
 
         private Map<String, OrderInfoDTO> orderInfoMap;
@@ -877,16 +871,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
         private List<BuyerCouponInfoDTO> targetBuyerCouponList;
 
-        //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//        public ValidBuyerAvaliableCouponTask(String messageId, Map<String, String> dictMap,
-        public ValidBuyerAvaliableCouponTask(String messageId, Jedis jedis, Map<String, String> dictMap,
-                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
+        public ValidBuyerAvaliableCouponTask(String messageId, Map<String, String> dictMap,
                 List<BuyerCouponInfoDTO> buyerCouponInfoList, Map<String, OrderInfoDTO> orderInfoMap,
                 List<OrderItemInfoDTO> allProductsList) {
             this.messageId = messageId;
-            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-            this.jedis = jedis;
-            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
             this.dictMap = dictMap;
             this.targetBuyerCouponList = buyerCouponInfoList;
             this.orderInfoMap = orderInfoMap;
@@ -924,10 +912,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //                    allProductsList);
 //            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, orderInfoMap,
 //                    allProductsList);
-            leftTask = new ValidBuyerAvaliableCouponTask(messageId, jedis, dictMap, leftList, orderInfoMap,
-                    allProductsList);
-            rightTask = new ValidBuyerAvaliableCouponTask(messageId, jedis, dictMap, rightList, orderInfoMap,
-                    allProductsList);
+            leftTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, leftList, orderInfoMap, allProductsList);
+            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, orderInfoMap, allProductsList);
             //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
             leftTask.fork();
             rightTask.fork();
@@ -1078,10 +1064,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //						return true;
 //					}
 //				}
-                if (!jedis.exists(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId)) {
+                if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId)) {
                     return true;
                 }
-                if (jedis.sismember(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId,
+                if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId,
                         productInfo.getSellerCode())) {
                     return true;
                 }
@@ -1123,11 +1109,12 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //						}
 //					}
 //				}
-                if (!jedis.exists(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId)) {
+                if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId)) {
                     return true;
                 }
-                brandIdStr = jedis.hget(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
-                        productInfo.getCategoryId().toString());
+                brandIdStr = marketRedisDB
+                        .getHash(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
+                                productInfo.getCategoryId().toString());
                 if (StringUtils.isEmpty(brandIdStr)) {
                     return true;
                 }
@@ -1144,7 +1131,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //				if (itemDetailList == null || itemDetailList.isEmpty()) {
 //					return true;
 //				}
-                if (!jedis.exists(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId)) {
+                if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId)) {
                     return true;
                 }
                 if (dictMap.get(DictionaryConst.TYPE_PROMOTION_ITEM_TYPE + "&"
@@ -1154,7 +1141,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //							return true;
 //						}
 //					}
-                    if (jedis.sismember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
+                    if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
                             productInfo.getSkuCode())) {
                         return true;
                     }
@@ -1166,7 +1153,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //							return false;
 //						}
 //					}
-                    if (jedis.sismember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
+                    if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
                             productInfo.getSkuCode())) {
                         return false;
                     }

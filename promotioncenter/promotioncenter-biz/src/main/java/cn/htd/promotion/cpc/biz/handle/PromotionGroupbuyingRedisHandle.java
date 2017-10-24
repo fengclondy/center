@@ -5,16 +5,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
+
 import cn.htd.promotion.cpc.common.constants.RedisConst;
+import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+
 import com.alibaba.fastjson.JSON;
 
 @Service("promotionGroupbuyingRedisHandle")
@@ -184,6 +189,31 @@ public class PromotionGroupbuyingRedisHandle {
 		}
     }
     
+    
+    /**
+     * 回滚修改活动的启用状态
+     * @param promotionId
+     * @param showStatus
+     */
+	public void rollbackUpDownShelvesPromotionInfo2Redis(String promotionId,String showStatus) {
+		// 还原上一个上下架状态
+		if (showStatus.equals(TimelimitedConstants.PromotionShowStatusEnum.VALID.key())) {
+			showStatus = TimelimitedConstants.PromotionShowStatusEnum.INVALID.key();
+		} else {
+			showStatus = TimelimitedConstants.PromotionShowStatusEnum.VALID.key();
+		}
+
+		String groupbuyingInfoJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId);
+		if (null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0) {
+			GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr,GroupbuyingInfoCmplResDTO.class);
+			if (null != groupbuyingInfoCmplResDTO) {
+				groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setShowStatus(showStatus);
+				String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+				// 设置团购活动
+				promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO,promotionId, jsonObj);
+			}
+		}
+	}
     
     
 	public boolean testHash(final String key, final Map<String, String> value) {

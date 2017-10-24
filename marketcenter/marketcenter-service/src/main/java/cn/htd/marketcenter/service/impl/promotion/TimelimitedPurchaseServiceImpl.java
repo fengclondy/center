@@ -190,7 +190,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						if ((new Date()).after(promotionlist.getInvalidTime())
 								&& (new Date()).before(promotionlist.getEffectiveTime())) {
 							status = "2";// 正在进行
-						} else if ((new Date()).after(promotionlist.getEffectiveTime())) {
+						} else if ((new Date()).after(promotionlist.getInvalidTime())) {
 							status = "3";// 已结束
 						}
 						promotionInfo.setStatus(status);

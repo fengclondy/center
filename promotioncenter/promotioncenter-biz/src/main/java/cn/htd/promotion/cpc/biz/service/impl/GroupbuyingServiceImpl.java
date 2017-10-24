@@ -281,16 +281,18 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	@Override
 	public String updateShowStatusByPromotionId(SinglePromotionInfoReqDTO singlePromotionInfoReqDTO,String messageId) {
 		
-		// 上下架操作返回状态码 [1001.参数为空,1002.活动编码为空,1003.上下架为空,1004.上下架状态不正确,1005.活动不存在,1006.活动已经上架,1007.活动已经下架]
+		// 上下架操作返回状态码 [1001.参数为空,1002.活动编码为空,1003.上下架为空,1004.上下架状态不正确,1005.活动不存在,1006.活动已经上架,1007.活动已经下架,1008.redis上下架失败]
     	
+		String promotionId = null;
+		String showStatus = null;
     	try {
     		
   		if (null == singlePromotionInfoReqDTO) {
   			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_1.key();//1001.参数为空
 		}
 		
-  		String promotionId = singlePromotionInfoReqDTO.getPromotionId();
-    	String showStatus = singlePromotionInfoReqDTO.getShowStatus();
+  		promotionId = singlePromotionInfoReqDTO.getPromotionId();
+    	showStatus = singlePromotionInfoReqDTO.getShowStatus();
     	
 		if (null == promotionId || promotionId.length() == 0) {
 			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_2.key();//1002.活动编码为空
@@ -321,6 +323,12 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     		}
     	}
     	
+		// 更新redis里的上下架状态
+		boolean upDownShelvesFlag = promotionGroupbuyingRedisHandle.upDownShelvesPromotionInfo2Redis(promotionId, showStatus);
+		if(!upDownShelvesFlag){
+			return GroupbuyingConstants.CommonStatusEnum.UPDOWN_SHELVES_STATUS_8.key(); //1008.redis上下架失败
+		}
+		
 		
         // 当前时间
         Calendar calendar = Calendar.getInstance();
@@ -330,13 +338,16 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     	singlePromotionInfoReqDTO.setModifyTime(currentTime);
     	int singlePromotionInfoRet = singlePromotionInfoDAO.upDownShelvesPromotionInfo(singlePromotionInfoReqDTO);
     	if(1 != singlePromotionInfoRet){
+    		//回滚redis里的上下架状态
+    		promotionGroupbuyingRedisHandle.rollbackUpDownShelvesPromotionInfo2Redis(promotionId, showStatus);
+    		
     		return GroupbuyingConstants.CommonStatusEnum.STATUS_ERROR.key(); //-1.活动上下架失败
     	}
 		
-		// 更新redis里的上下架状态
-		promotionGroupbuyingRedisHandle.upDownShelvesPromotionInfo2Redis(promotionId, showStatus);
-		
          } catch (Exception e) {
+     		 //回滚redis里的上下架状态
+     		 promotionGroupbuyingRedisHandle.rollbackUpDownShelvesPromotionInfo2Redis(promotionId, showStatus);
+     		
              logger.error("messageId{}:执行方法【updateShowStatusByPromotionId】报错：{}", messageId, e.toString());
              throw new RuntimeException(e);
          }

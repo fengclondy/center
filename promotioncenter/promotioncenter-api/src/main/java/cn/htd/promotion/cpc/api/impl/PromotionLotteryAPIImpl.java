@@ -431,6 +431,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	@Override
 	public String editDrawLotteryInfo(String promotionInfoEditReqDTO) {
 		PromotionExtendInfoDTO rt = null;
+		PromotionExtendInfoDTO rts = null;
 		try {
 			PromotionExtendInfoDTO promotionExtendInfoDTO = JSON.parseObject(
 					promotionInfoEditReqDTO, PromotionExtendInfoDTO.class);
@@ -455,14 +456,14 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 						validateResult.getErrorMsg());
 			}
 			rt = luckDrawService.editDrawLotteryInfo(promotionExtendInfoDTO);
-			rt.setMessageId(promotionExtendInfoDTO.getMessageId());
-			rt.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			rts.setMessageId(promotionExtendInfoDTO.getMessageId());
+			rts.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (PromotionCenterBusinessException bcbe) {
-			rt.setResponseCode(bcbe.getCode());
-			rt.setResponseMsg(bcbe.getMessage());
+			rts.setResponseCode(bcbe.getCode());
+			rts.setResponseMsg(bcbe.getMessage());
 		} catch (Exception e) {
-			rt.setResponseCode(ResultCodeEnum.ERROR.getCode());
-			rt.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+			rts.setResponseCode(ResultCodeEnum.ERROR.getCode());
+			rts.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return JSON.toJSONString(rt);
 	}

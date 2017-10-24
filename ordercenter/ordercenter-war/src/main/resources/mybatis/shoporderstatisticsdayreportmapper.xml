@@ -28,7 +28,7 @@
      <if test="endTime!=null and endTime!=''">  
            <![CDATA[and  SALES_TIME<=#{endTime} ]]>  
      </if>
-     <if test="start !=null and start!=''">
+     <if test="start !=null and rows !=null">
      	ORDER BY SALES_TIME DESC
 	 	LIMIT #{start},#{rows} 
      </if> 

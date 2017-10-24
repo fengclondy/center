@@ -302,7 +302,19 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			tempList.add(v);
 		}
 		ImportVoteActivityMemResDTO importVoteActivityMemResDTO=new ImportVoteActivityMemResDTO();
-		voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+		if (tempList.isEmpty() || tempList.size() == 0) {
+			result.setErrorMessages(Lists.newArrayList("导入数据均不符合规则"));
+			return result;
+		}
+		try {
+			voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("importVoteActivityMember 方法异常 异常信息" + e.getMessage());
+			result.setErrorMessages(Lists.newArrayList("导入数据失败"));
+			return result;
+		}
+		
 		//TODO: 查询库，得到成功记录，比对入参，得到失败记录，放到返回结果中
 		
 		List<String> memberCodeList = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
@@ -340,16 +352,16 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	@Override
 	public ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
 		ExecuteResult<List<VoteActivityMemListResDTO>> result = new ExecuteResult<List<VoteActivityMemListResDTO>>();
-		if(voteActivityMemListReqDTO==null){
-			result.setErrorMessages(Lists.newArrayList("voteActivityMemListReqDTO参数为null"));
+		if(voteActivityMemListReqDTO==null || voteActivityMemListReqDTO.getVoteId() == null){
+			result.setErrorMessages(Lists.newArrayList("voteActivityMemListReqDTO参数为null或活动ID为null"));
 			return result;
 		}
 		
 		voteActivityMemListReqDTO.setPageSize(50000);
-		voteActivityMemListReqDTO.setStart(1);
+		voteActivityMemListReqDTO.setStart(0);
 		List<VoteActivityMemListResDTO>  resultList = new ArrayList<VoteActivityMemListResDTO>();
 		try {
-			resultList = voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
+			resultList = voteActivityMemberDAO.queryPagedSignupMemberInfoListOrderBySignUpTime(voteActivityMemListReqDTO);
 		} catch (Exception e) {
 			logger.error("exportVoteActivityMember方法异常 异常信息" + e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));

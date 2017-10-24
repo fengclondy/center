@@ -14,6 +14,7 @@
     <result column="coupon_provider_type" property="couponProviderType" jdbcType="VARCHAR" />
     <result column="coupon_type" property="couponType" jdbcType="VARCHAR" />
     <result column="coupon_discount" property="couponDiscount" jdbcType="DECIMAL" />
+    <result column="promotion_type" property="promotionType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id,

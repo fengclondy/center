@@ -301,11 +301,11 @@
       <if test="isOrderAmountLimit != null and isOrderAmountLimit != ''">
       	is_order_amount_limit = #{isOrderAmountLimit,jdbcType=TINYINT},
       </if>
-      <if test="orderAmountThreshold != null and orderAmountThreshold != ''">
-      	order_amount_threshold = #{orderAmountThreshold,jdbcType=TINYINT},
+      <if test="orderAmountThreshold != null and orderAmountThreshold != '' or orderAmountThreshold == 0">
+      	order_amount_threshold = #{orderAmountThreshold,jdbcType=DECIMAL},
       </if>
       <if test="isDailyWinningLimit != null">
-      	is_daily_winning_limit = #{isDailyWinningLimit,jdbcType=DECIMAL},
+      	is_daily_winning_limit = #{isDailyWinningLimit,jdbcType=TINYINT},
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

@@ -278,7 +278,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             }
             valueMap = jedis.hgetAll(buyerCouponRedisKey);
             validMap = jedis.hgetAll(RedisConst.REDIS_COUPON_VALID);
-            forkJoinPool = new ForkJoinPool();
             for (Entry<String, String> entry : valueMap.entrySet()) {
                 buyerCouponCode = entry.getKey();
                 buyerCouponValue = entry.getValue();
@@ -354,6 +353,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!couponInfoList.isEmpty()) {
+                forkJoinPool = new ForkJoinPool();
                 taskResult = forkJoinPool
                         .submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, couponInfoList, orderInfoMap,
                                 allProductList));

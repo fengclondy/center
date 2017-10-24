@@ -2,6 +2,8 @@ package cn.htd.marketcenter.service.impl.mall;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -289,6 +291,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 logger.info("***********校验会员优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                         (endTime1 - endTime0));
                 if (allCouponList != null && !allCouponList.isEmpty()) {
+                    Collections.sort(allCouponList, new Comparator<BuyerCouponInfoDTO>() {
+                        public int compare(BuyerCouponInfoDTO o1, BuyerCouponInfoDTO o2) {
+                            return o2.getGetCouponTime().compareTo(o1.getGetCouponTime());
+                        }
+                    });
                     for (OrderItemCouponDTO tmpItemCouponDTO : allCouponList) {
                         if (StringUtils.isEmpty(tmpItemCouponDTO.getErrorMsg())) {
                             avaliableCouponList.add(tmpItemCouponDTO);
@@ -925,18 +932,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     || BigDecimal.ZERO.compareTo(couponInfo.getDiscountThreshold()) >= 0) {
                 return null;
             }
-
-            buyerCouponLeftAmount =
-                    marketRedisDB.getHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, couponInfo.getBuyerCode()+ "&" + couponInfo.getBuyerCouponCode());
-            if (StringUtils.isEmpty(buyerCouponLeftAmount)) {
-                if (hasTargetCouponFlag) {
-                    return exchange2OrderItemCoupon(couponInfo, null,
-                            "优惠券余额不足 优惠券编号:" + couponInfo.getBuyerCouponCode());
-                }
-                return null;
-            }
-            couponInfo.setCouponLeftAmount(
-                    CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
             if (dictMap.get(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE + "&"
                     + DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP).equals(couponProviderType)) {
                 if (!orderInfoMap.containsKey(couponProviderCode)) {

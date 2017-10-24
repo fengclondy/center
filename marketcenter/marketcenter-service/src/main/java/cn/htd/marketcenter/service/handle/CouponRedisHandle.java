@@ -358,6 +358,9 @@ public class CouponRedisHandle {
                 }
                 buyerCouponInfo = updateRedisExpiredBuyerCouponStatus(buyerCouponInfo, couponStatusMap);
                 buyerCouponStatus = buyerCouponInfo.getStatus();
+                if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID).equals(buyerCouponInfo.getStatus())) {
+                    continue;
+                }
                 if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_LOCKED).equals(buyerCouponInfo.getStatus())) {
                     buyerCouponStatus = couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_USED);
                 }

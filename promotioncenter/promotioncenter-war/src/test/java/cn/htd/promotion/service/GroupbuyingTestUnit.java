@@ -6,12 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
-
-import cn.htd.promotion.cpc.dto.request.*;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
+import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -34,6 +35,7 @@ import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoCmplReqDTO;
+import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
@@ -51,6 +53,8 @@ public class GroupbuyingTestUnit {
 	private GroupbuyingAPI groupbuyingAPI;
 	@Resource
     private KeyGeneratorUtils keyGeneratorUtils;
+    @Resource
+	private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
     
 	
     @Before
@@ -620,6 +624,28 @@ public class GroupbuyingTestUnit {
         	}
 
 		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * redis测试-测试用例
+	 */
+	@Test
+	public void RedisTest() {
+		try {
+			String key = "test-zzf-key";
+
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("name", "林寻");
+			map.put("age", "28");
+			map.put("sex", "nam-12");
+
+			boolean flag = promotionGroupbuyingRedisHandle.testHash(key, map);
+			System.out.println(flag);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

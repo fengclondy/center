@@ -566,7 +566,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
         try {
         	//[start]-----------------   参团的校验  ----------------
-           	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
+           	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
            	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) {
            	    throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
            	}
@@ -596,9 +596,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     		
         	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
          	// 真实参团人数
-         	Integer realActorCount = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
+         	Integer realActorCount = promotionGroupbuyingRedisHandle.getPromotionRedisDB().incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
         	// 获取团购活动其他信息
-        	Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHashOperations(groupbuyingResultKey);
+        	Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHashOperations(groupbuyingResultKey);
         	
         	// 阶梯价格
         	String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
@@ -624,7 +624,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         		}
         	}
         	// redis设置真实拼团价
-        	promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
+        	promotionGroupbuyingRedisHandle.getPromotionRedisDB().setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
 
         	// 修改团购活动信息
         	GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();

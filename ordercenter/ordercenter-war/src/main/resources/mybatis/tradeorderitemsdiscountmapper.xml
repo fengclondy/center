@@ -113,7 +113,7 @@
         #{couponDiscount,jdbcType=DECIMAL},
       </if>
       <if test="promotionType != null">
-        #{promotion_type,jdbcType=VARCHAR},
+        #{promotionType,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

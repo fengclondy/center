@@ -32,9 +32,10 @@ public final class GroupbuyingConstants {
 		UPDOWN_SHELVES_STATUS_7("1007", "活动已经下架"),
 		UPDOWN_SHELVES_STATUS_8("1008", "redis上下架失败"),
 		
-		// 删除操作返回状态码 [1021.参数为空,1022.活动编码为空]
+		// 删除操作返回状态码 [1021.参数为空,1022.活动编码为空,1023.redis活动删除失败]
 		DELGROUPBUYING_PARAM_IS_NULL("1021", "参数为空"),
 		DELGROUPBUYING_PROMOTIONID_IS_NULL("1022", "活动编码为空"),
+		DELGROUPBUYING_REDIS_REMOVE_ERROR("1023", "redis活动删除失败"),
 		
 		
 		

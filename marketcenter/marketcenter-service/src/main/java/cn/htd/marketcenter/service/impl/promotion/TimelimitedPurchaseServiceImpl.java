@@ -190,7 +190,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						if ((new Date()).after(promotionlist.getInvalidTime())
 								&& (new Date()).before(promotionlist.getEffectiveTime())) {
 							status = "2";// 正在进行
-						} else if ((new Date()).after(promotionlist.getEffectiveTime())) {
+						} else if ((new Date()).after(promotionlist.getInvalidTime())) {
 							status = "3";// 已结束
 						}
 						promotionInfo.setStatus(status);
@@ -313,7 +313,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						for (int i = 0; i < list.size(); i++) {
 							timelimite = JSONObject.toJavaObject((JSONObject) list.get(i),TimelimitedInfoDTO.class);
 							if (timelimite.getSkuCode().equals(skuCode)) {
-								int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, skuCode);
+								int skuTotal = timelimitedRedisHandle.getShowRemainCount(promotionId, skuCode);
 								timelimite.setTimelimitedSkuCount(skuTotal);
 								timelimite.setItemCode(timelimitedInfoDTO.getItemCode());
 								if(!nowDt.before(timelimite.getStartTime()) && !nowDt.after(timelimite.getEndTime())) {
@@ -389,7 +389,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 					timelimitedConvert.setPurchasePriceFlag(listSize);
 					timelimitedConvert.setPurchaseSort(dto.getPurchaseSort());
 					timelimitedConvert.setItemCode(timelimitedInfoDTO.getItemCode());
-					int skuTotal = timelimitedRedisHandle.getRealRemainCount(promotionId, timelimitedConvert.getSkuCode());
+					int skuTotal = timelimitedRedisHandle.getShowRemainCount(promotionId, timelimitedConvert.getSkuCode());
 					timelimitedConvert.setTimelimitedSkuCount(skuTotal);
 					if (dto.getPurchaseFlag() == 1 && !nowDt.before(timelimitedInfoDTO.getEffectiveTime())
 							&& !nowDt.after(timelimitedInfoDTO.getInvalidTime())) {

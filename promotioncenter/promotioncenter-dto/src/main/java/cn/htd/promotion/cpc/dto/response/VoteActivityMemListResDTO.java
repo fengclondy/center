@@ -9,6 +9,8 @@ public class VoteActivityMemListResDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -1332179944149075388L;
+	//会员店编码
+	private String memberCode;
 	//排序号
 	private Integer sortNum;
 	//平台名称
@@ -97,5 +99,10 @@ public class VoteActivityMemListResDTO implements Serializable{
 	public void setVoteMemberId(Long voteMemberId) {
 		this.voteMemberId = voteMemberId;
 	}
-
+	public String getMemberCode() {
+		return memberCode;
+	}
+	public void setMemberCode(String memberCode) {
+		this.memberCode = memberCode;
+	}
 }

@@ -46,7 +46,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
  */
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationContext_test.xml","classpath:mybatis/sqlconfig/sqlMapConfig.xml"})
+@ContextConfiguration(locations={"classpath:applicationContext_test.xml"})
 public class GroupbuyingTestUnit {
 
 	@Resource

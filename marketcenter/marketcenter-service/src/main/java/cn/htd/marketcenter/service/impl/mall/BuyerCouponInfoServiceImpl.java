@@ -217,7 +217,6 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 					throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY,
 							"会员没有领该券权限");
 				}
-				baseService.deletePromotionUselessInfo(collectCoupon);
 				couponRedisHandle.sendBuyerCoupon2Redis(collectCoupon);
 			}
 		} catch (MarketCenterBusinessException bcbe) {

@@ -232,6 +232,7 @@ public class CouponRedisHandle {
         buyerCouponDTO.setCouponLeftAmount(buyerCouponDTO.getCouponAmount());
         buyerCouponDTO.setStatus(dictionary
                 .getValueByCode(DictionaryConst.TYPE_COUPON_STATUS, DictionaryConst.OPT_COUPON_STATUS_UNUSED));
+        buyerCouponDTO.setBuyerRuleDTO(null);
         couponJsonStr = JSON.toJSONString(buyerCouponDTO);
         marketRedisDB.tailPush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponJsonStr);
         marketRedisDB.setHash(buyerCouponRedisKey, buyerCouponCode, couponJsonStr);

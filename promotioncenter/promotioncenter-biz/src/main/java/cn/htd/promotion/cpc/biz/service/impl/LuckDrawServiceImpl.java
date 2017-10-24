@@ -509,6 +509,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
     @Override
     public PromotionExtendInfoDTO editDrawLotteryInfo(PromotionExtendInfoDTO promotionInfoEditReqDTO) {
         PromotionExtendInfoDTO result = new PromotionExtendInfoDTO();
+        PromotionExtendInfoDTO resultrp = new PromotionExtendInfoDTO();
         try {
             if (promotionInfoEditReqDTO == null) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "促销活动参数不能为空");
@@ -594,17 +595,16 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 			}
             promotionLotteryCommonService.initPromotionLotteryRedisInfoWithThread(result);
             //result = viewDrawLotteryInfo(promotionInfoEditReqDTO.getPromotionId());
-            result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
-            result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
+            resultrp.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+            resultrp.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
         } catch (PromotionCenterBusinessException e) {
-            result.setResponseCode(e.getCode());
-            result.setResponseMsg(e.getMessage());
+        	resultrp.setResponseCode(e.getCode());
+        	resultrp.setResponseMsg(e.getMessage());
         } catch (Exception e) {
-            result.setResponseCode(ResultCodeEnum.ERROR.getCode());
-            result.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+        	resultrp.setResponseCode(ResultCodeEnum.ERROR.getCode());
+        	resultrp.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
         }
-
-        return result;
+        return resultrp;
     }
 
 	@Override

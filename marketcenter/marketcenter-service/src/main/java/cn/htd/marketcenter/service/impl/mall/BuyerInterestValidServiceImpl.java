@@ -278,7 +278,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             }
             valueMap = jedis.hgetAll(buyerCouponRedisKey);
             validMap = jedis.hgetAll(RedisConst.REDIS_COUPON_VALID);
-            forkJoinPool = new ForkJoinPool();
             for (Entry<String, String> entry : valueMap.entrySet()) {
                 buyerCouponCode = entry.getKey();
                 buyerCouponValue = entry.getValue();
@@ -354,6 +353,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!couponInfoList.isEmpty()) {
+                forkJoinPool = new ForkJoinPool();
                 taskResult = forkJoinPool
                         .submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, couponInfoList, orderInfoMap,
                                 allProductList));
@@ -907,14 +907,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     rightList.add(targetBuyerCouponList.get(i));
                 }
             }
-            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
-//            leftTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, leftList, orderInfoMap,
-//                    allProductsList);
-//            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, orderInfoMap,
-//                    allProductsList);
-            leftTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, leftList, orderInfoMap, allProductsList);
-            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, orderInfoMap, allProductsList);
-            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+            leftTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, leftList, orderInfoMap,
+                    allProductsList);
+            rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, orderInfoMap,
+                    allProductsList);
             leftTask.fork();
             rightTask.fork();
             leftTaskRst = leftTask.join();
@@ -1012,6 +1008,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             PromotionSellerRuleDTO ruleDTO = targetBuyerCoupon.getSellerRuleDTO();
             String sellerType = "";
             List<PromotionSellerDetailDTO> detailList = null;
+            List<String> sellerCodeList = null;
             String channelCode = "";
             String promotionId = targetBuyerCoupon.getPromotionId();
 
@@ -1055,21 +1052,22 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_SELLER_RULE + "&"
                     + DictionaryConst.OPT_PROMOTION_SELLER_RULE_PART).equals(ruleDTO.getRuleTargetType())) {
                 //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//				detailList = ruleDTO.getSellerDetailList();
-//				if (detailList == null || detailList.isEmpty()) {
-//					return true;
-//				}
-//				for (PromotionSellerDetailDTO detailDTO : detailList) {
-//					if (detailDTO.getSellerCode().equals(productInfo.getSellerCode())) {
-//						return true;
-//					}
-//				}
-                if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId)) {
-                    return true;
+				detailList = ruleDTO.getSellerDetailList();
+                sellerCodeList = ruleDTO.getTargetSellerCodeList();
+				if ((detailList == null || detailList.isEmpty()) && (sellerCodeList == null || sellerCodeList.isEmpty())) {
+					return true;
+				}
+                if (detailList != null && !detailList.isEmpty()) {
+                    for (PromotionSellerDetailDTO detailDTO : detailList) {
+                        if (detailDTO.getSellerCode().equals(productInfo.getSellerCode())) {
+                            return true;
+                        }
+                    }
                 }
-                if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId,
-                        productInfo.getSellerCode())) {
-                    return true;
+                if (sellerCodeList != null && !sellerCodeList.isEmpty()) {
+                    if (sellerCodeList.contains(productInfo.getSellerCode())) {
+                        return true;
+                    }
                 }
                 //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
                 return false;
@@ -1082,6 +1080,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             PromotionCategoryItemRuleDTO ruleDTO = targetBuyerCoupon.getCategoryItemRuleDTO();
             List<PromotionCategoryDetailDTO> categoryDetailList = null;
             List<PromotionItemDetailDTO> itemDetailList = null;
+            Map<String, String> categoryCodeMap = null;
+            List<String> skuCodeList = null;
             String itemLimit = "";
             String promotionId = targetBuyerCoupon.getPromotionId();
             String brandIdStr = "";
@@ -1093,33 +1093,35 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             if (dictMap.get(DictionaryConst.TYPE_PROMOTION_ITEM_CATEGORY_TYPE + "&"
                     + DictionaryConst.OPT_PROMOTION_ITEM_CATEGORY_TYPE_CATEGORY).equals(ruleDTO.getRuleTargetType())) {
                 //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//				categoryDetailList = ruleDTO.getCategoryDetailList();
-//				if (categoryDetailList == null || categoryDetailList.isEmpty()) {
-//					return true;
-//				}
-//				for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailList) {
-//					if (categoryDetailDTO.getCategoryId().longValue() == productInfo.getCategoryId().longValue()) {
-//						if (categoryDetailDTO.getBids() == null || categoryDetailDTO.getBids().isEmpty()) {
-//							return true;
-//						}
-//						for (Long brandId : categoryDetailDTO.getBids()) {
-//							if (brandId.longValue() == productInfo.getBrandId().longValue()) {
-//								return true;
-//							}
-//						}
-//					}
-//				}
-                if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId)) {
-                    return true;
+				categoryDetailList = ruleDTO.getCategoryDetailList();
+                categoryCodeMap = ruleDTO.getTargetCategoryCodeMap();
+				if ((categoryDetailList == null || categoryDetailList.isEmpty()) && (categoryCodeMap == null || categoryCodeMap.isEmpty())) {
+					return true;
+				}
+				if (categoryDetailList != null && !categoryDetailList.isEmpty()) {
+                    for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailList) {
+                        if (categoryDetailDTO.getCategoryId().longValue() == productInfo.getCategoryId().longValue()) {
+                            if (categoryDetailDTO.getBids() == null || categoryDetailDTO.getBids().isEmpty()) {
+                                return true;
+                            }
+                            for (Long brandId : categoryDetailDTO.getBids()) {
+                                if (brandId.longValue() == productInfo.getBrandId().longValue()) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                 }
-                brandIdStr = marketRedisDB
-                        .getHash(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
-                                productInfo.getCategoryId().toString());
-                if (StringUtils.isEmpty(brandIdStr)) {
-                    return true;
-                }
-                if (("," + productInfo.getBrandId().toString() + ",").indexOf("," + brandIdStr + ",") >= 0) {
-                    return true;
+                if (categoryCodeMap != null && !categoryCodeMap.isEmpty()) {
+				    if (categoryCodeMap.containsKey(productInfo.getCategoryId().toString())) {
+                        brandIdStr = categoryCodeMap.get(productInfo.getCategoryId().toString());
+                        if (StringUtils.isEmpty(brandIdStr)) {
+                            return true;
+                        }
+                        if (("," + productInfo.getBrandId().toString() + ",").indexOf("," + brandIdStr + ",") >= 0) {
+                            return true;
+                        }
+                    }
                 }
                 //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
                 return false;
@@ -1127,35 +1129,39 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     + DictionaryConst.OPT_PROMOTION_ITEM_CATEGORY_TYPE_ITEM).equals(ruleDTO.getRuleTargetType())) {
                 itemLimit = ruleDTO.getTargetItemLimit();
                 //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//				itemDetailList = ruleDTO.getItemDetailList();
-//				if (itemDetailList == null || itemDetailList.isEmpty()) {
-//					return true;
-//				}
-                if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId)) {
-                    return true;
-                }
+				itemDetailList = ruleDTO.getItemDetailList();
+                skuCodeList = ruleDTO.getTargetItemCodeList();
+				if ((itemDetailList == null || itemDetailList.isEmpty()) && (skuCodeList == null || skuCodeList.isEmpty())) {
+					return true;
+				}
                 if (dictMap.get(DictionaryConst.TYPE_PROMOTION_ITEM_TYPE + "&"
                         + DictionaryConst.OPT_PROMOTION_ITEM_TYPE_SUIT).equals(itemLimit)) {
-//					for (PromotionItemDetailDTO itemDetailDTO : itemDetailList) {
-//						if (itemDetailDTO.getSkuCode().equals(productInfo.getSkuCode())) {
-//							return true;
-//						}
-//					}
-                    if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
-                            productInfo.getSkuCode())) {
-                        return true;
+                    if (itemDetailList != null && !itemDetailList.isEmpty()) {
+                        for (PromotionItemDetailDTO itemDetailDTO : itemDetailList) {
+                            if (itemDetailDTO.getSkuCode().equals(productInfo.getSkuCode())) {
+                                return true;
+                            }
+                        }
+                    }
+                    if (skuCodeList != null && !skuCodeList.isEmpty()) {
+                        if (skuCodeList.contains(productInfo.getSkuCode())) {
+                            return true;
+                        }
                     }
                     return false;
                 } else if (dictMap.get(DictionaryConst.TYPE_PROMOTION_ITEM_TYPE + "&"
                         + DictionaryConst.OPT_PROMOTION_ITEM_TYPE_UNSUIT).equals(itemLimit)) {
-//					for (PromotionItemDetailDTO itemDetailDTO : itemDetailList) {
-//						if (itemDetailDTO.getSkuCode().equals(productInfo.getSkuCode())) {
-//							return false;
-//						}
-//					}
-                    if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
-                            productInfo.getSkuCode())) {
-                        return false;
+                    if (itemDetailList != null && !itemDetailList.isEmpty()) {
+                        for (PromotionItemDetailDTO itemDetailDTO : itemDetailList) {
+                            if (itemDetailDTO.getSkuCode().equals(productInfo.getSkuCode())) {
+                                return false;
+                            }
+                        }
+                    }
+                    if (skuCodeList != null && !skuCodeList.isEmpty()) {
+                        if (skuCodeList.contains(productInfo.getSkuCode())) {
+                            return false;
+                        }
                     }
                     return true;
                 }

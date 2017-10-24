@@ -299,12 +299,10 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
      */
     private void updateAutoPresentCoupon(ThreadPoolExecutor threadPoolExecutor, Jedis jedis,
             List<Future<Integer>> workResultList, PromotionDiscountInfoDTO dealTargetInfo) throws Exception {
-        String promotionId = dealTargetInfo.getPromotionId();
         PromotionBuyerRuleDTO buyerRule = null;
         List<String> targetBuyerLevelList = new ArrayList<String>();
         ExecuteResult<List<MemberGradeDTO>> targetMemberResult = null;
         List<MemberGradeDTO> targetMemberList = null;
-        Map<String, String> buyerDetailMap = null;
         List<PromotionBuyerDetailDTO> buyerDetailList = new ArrayList<PromotionBuyerDetailDTO>();
         PromotionBuyerDetailDTO buyerDTO = null;
         int provideCount = 0;
@@ -382,18 +380,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     }
                 }
             } else {
-                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-//                buyerDetailList = buyerRule.getBuyerDetailList();
-                buyerDetailMap = jedis.hgetAll(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId);
-                if (buyerDetailMap != null && !buyerDetailMap.isEmpty()) {
-                    for (Map.Entry<String, String> buyerDetailEntry : buyerDetailMap.entrySet()) {
-                        buyerDTO = new PromotionBuyerDetailDTO();
-                        buyerDTO.setBuyerCode(buyerDetailEntry.getKey());
-                        buyerDTO.setBuyerName(buyerDetailEntry.getValue());
-                        buyerDetailList.add(buyerDTO);
-                    }
-                }
-                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
+                buyerDetailList = buyerRule.getBuyerDetailList();
             }
             if (buyerDetailList == null || buyerDetailList.isEmpty()) {
                 return;
@@ -567,6 +554,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 couponDTO.setCreateName("sys");
                 couponDTO.setCouponLeftAmount(couponDTO.getCouponAmount());
                 couponDTO.setStatus("1");
+                couponDTO.setBuyerRuleDTO(null);
                 couponAmountStr = String.valueOf(
                         CalculateUtils.multiply(couponDTO.getCouponAmount(), new BigDecimal(100)).longValue());
                 jedis = marketRedisDB.getResource();
@@ -724,6 +712,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 couponDTO.setCreateName("sys");
                 couponDTO.setCouponLeftAmount(couponDTO.getCouponAmount());
                 couponDTO.setStatus("1");
+                couponDTO.setBuyerRuleDTO(null);
                 couponAmountStr = String.valueOf(
                         CalculateUtils.multiply(couponDTO.getCouponAmount(), new BigDecimal(100)).longValue());
                 jedis = marketRedisDB.getResource();

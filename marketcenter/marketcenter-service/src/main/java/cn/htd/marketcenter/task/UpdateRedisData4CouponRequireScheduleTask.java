@@ -25,15 +25,8 @@ import cn.htd.marketcenter.dao.PromotionDiscountInfoDAO;
 import cn.htd.marketcenter.dao.PromotionInfoDAO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
-import cn.htd.marketcenter.dto.PromotionBuyerDetailDTO;
-import cn.htd.marketcenter.dto.PromotionBuyerRuleDTO;
-import cn.htd.marketcenter.dto.PromotionCategoryDetailDTO;
-import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
-import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
-import cn.htd.marketcenter.dto.PromotionSellerDetailDTO;
-import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -60,7 +53,6 @@ import redis.clients.jedis.Pipeline;
  * 4.对于优惠券的领取数量的RedisKey进行刷新
  * B2B_MIDDLE_COUPON_RECEIVE_COUNT的Key [promotionId]&[levelCode] -> [promotionId]
  * B2B_MIDDLE_BUYER_COUPON_RECEIVE_COUNT的Key [buyerCode]&[promotionId]&[levelCode] -> [buyerCode]&[promotionId]
- * 5.对于所有促销活动将促销活动的会员，卖家，商品的详细规则刷新进Redis中
  */
 public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskDealSingle<String> {
 
@@ -96,7 +88,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
     }
 
     @Override
-    public List<String> selectTasks(String s, String s1, int i, List<TaskItemDefine> list, int i1) throws Exception {
+    public List<String> selectTasks(String s, String s1, int i, List<TaskItemDefine> list, int i1)
+            throws Exception {
         List<String> resultList = new ArrayList<String>();
         String flushedFlag = "";
 
@@ -140,10 +133,6 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                 flushRedisCouponCount(jedis);
                 runedStr += ",4";
             }
-            if (flushFlag.indexOf(",5") < 0) {
-                flushReidsPromotionRuleDetail(jedis);
-                runedStr += ",5";
-            }
         } catch (Exception e) {
             result = false;
             logger.error("\n 方法:[{}],异常:[{}]", "UpdateRedisData4CouponRequireScheduleTask-execute",
@@ -157,98 +146,6 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
         return result;
     }
 
-
-    /**
-     * 刷新Redis中的促销活动规则信息
-     *
-     * @param jedis
-     */
-    private void flushReidsPromotionRuleDetail(Jedis jedis) throws Exception {
-        PromotionInfoDTO promotionCondition = new PromotionInfoDTO();
-        promotionCondition.setDeleteStatus(dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
-        List<PromotionInfoDTO> promotionInfoDTOList = null;
-        String promotionId = "";
-        PromotionInfoDTO tmpPromotionInfnDTO = null;
-        PromotionBuyerRuleDTO buyerRuleDTO = null;
-        PromotionSellerRuleDTO sellerRuleDTO = null;
-        PromotionCategoryItemRuleDTO categoryItemRuleDTO = null;
-        List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
-        List<String> buyerGroupList = null;
-        List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
-        List<PromotionCategoryDetailDTO> categoryDetailDTOList = null;
-        List<PromotionItemDetailDTO> itemDetailDTOList = null;
-        long diffTime = 0L;
-        int seconds = 0;
-        Pipeline pipeline = null;
-
-        promotionInfoDTOList = promotionInfoDAO.queryFlushRuleTargetPromotionList(promotionCondition);
-        if (promotionInfoDTOList != null && !promotionInfoDTOList.isEmpty()) {
-            pipeline = jedis.pipelined();
-            for (PromotionInfoDTO promotionInfoDTO : promotionInfoDTOList) {
-                diffTime = promotionInfoDTO.getInvalidTime().getTime() - new Date().getTime();
-                seconds = (int) (diffTime / 1000);
-                promotionId = promotionInfoDTO.getPromotionId();
-                tmpPromotionInfnDTO = baseService.queryPromotionInfo(promotionId);
-                buyerRuleDTO = tmpPromotionInfnDTO.getBuyerRuleDTO();
-                sellerRuleDTO = tmpPromotionInfnDTO.getSellerRuleDTO();
-                categoryItemRuleDTO = tmpPromotionInfnDTO.getCategoryItemRuleDTO();
-                if (buyerRuleDTO != null) {
-                    buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
-                    buyerGroupList = buyerRuleDTO.getTargetBuyerGroupList();
-                    if (buyerGroupList != null && !buyerGroupList.isEmpty()) {
-                        pipeline.del(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId);
-                        for (String buyerGroupId : buyerGroupList) {
-                            pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
-                                    buyerGroupId);
-                        }
-                        pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, seconds);
-                    }
-                    if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
-                        pipeline.del(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId);
-                        for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
-                            pipeline.hset(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
-                                    buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
-                        }
-                        pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId, seconds);
-                    }
-                }
-                if (sellerRuleDTO != null) {
-                    sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
-                    if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
-                        pipeline.del(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId);
-                        for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
-                            pipeline.sadd(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId,
-                                    sellerDetailDTO.getSellerCode());
-                        }
-                        pipeline.expire(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId, seconds);
-                    }
-                }
-                if (categoryItemRuleDTO != null) {
-                    categoryDetailDTOList = categoryItemRuleDTO.getCategoryDetailList();
-                    itemDetailDTOList = categoryItemRuleDTO.getItemDetailList();
-                    if (categoryDetailDTOList != null && !categoryDetailDTOList.isEmpty()) {
-                        pipeline.del(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId);
-                        for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailDTOList) {
-                            pipeline.hset(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
-                                    categoryDetailDTO.getCategoryId().toString(), categoryDetailDTO.getBrandIdList());
-                        }
-                        pipeline.expire(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId, seconds);
-                    }
-                    if (itemDetailDTOList != null && !itemDetailDTOList.isEmpty()) {
-                        pipeline.del(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId);
-                        for (PromotionItemDetailDTO itemDetailDTO : itemDetailDTOList) {
-                            pipeline.sadd(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId,
-                                    itemDetailDTO.getSkuCode());
-                        }
-                        pipeline.expire(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId, seconds);
-                    }
-                }
-            }
-            pipeline.sync();
-        }
-    }
-
     /**
      * 自助领券的活动对于领券期间内的RedisKey调整
      *
@@ -257,8 +154,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
      */
     private void flushReidsMemberCollectCouponInfo(Jedis jedis) throws Exception {
         List<PromotionDiscountInfoDTO> targetCouponInfoList = null;
-        String collectType = dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
-                DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT);
+        String collectType = dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE, DictionaryConst
+                .OPT_COUPON_PROVIDE_MEMBER_COLLECT);
         String promotionId = "";
         String levelCode = "";
         PromotionAccumulatyDTO accuDTO = null;
@@ -322,8 +219,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                 }
                 result = pipeline.syncAndReturnAll();
                 for (int i = 0; i < result.size(); i++) {
-                    logger.info("\n 方法:[{}],发送数量:[{}], 发送结果:[{}]", "flushReidsMemberCollectCouponInfo-work", i,
-                            result.get(i).toString());
+                    logger.info("\n 方法:[{}],发送数量:[{}], 发送结果:[{}]", "flushReidsMemberCollectCouponInfo-work",
+                            i, result.get(i).toString());
                 }
                 diffTime = couponInfo.getPrepEndTime().getTime() - new Date().getTime();
                 seconds = (int) (diffTime / 1000);
@@ -360,8 +257,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
         if (targetCouponInfoList == null || targetCouponInfoList.isEmpty()) {
             return;
         }
-        logger.info("\n 方法:[{}],待处理Coupon_Send_List的数量:[{}]", "flushRedisCouponSendedInfo-work",
-                targetCouponInfoList.size());
+        logger.info("\n 方法:[{}],待处理Coupon_Send_List的数量:[{}]", "flushRedisCouponSendedInfo-work", targetCouponInfoList
+                .size());
         Pipeline pipeline = jedis.pipelined();
         for (PromotionDiscountInfoDTO couponInfo : targetCouponInfoList) {
             promotionId = couponInfo.getPromotionId();
@@ -370,9 +267,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
             if (totalBuyerCouponCnt == 0) {
                 continue;
             }
-            totalPageNum = CalculateUtils
-                    .divide(new BigDecimal(totalBuyerCouponCnt), new BigDecimal(5000), 0, RoundingMode.CEILING)
-                    .intValue();
+            totalPageNum = CalculateUtils.divide(new BigDecimal(totalBuyerCouponCnt), new BigDecimal(5000), 0,
+                    RoundingMode.CEILING).intValue();
             for (int p = 0; p < totalPageNum; p++) {
                 page.setStartPageIndex(p + 1);
                 page.setRows(5000);
@@ -385,8 +281,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                     }
                     result = pipeline.syncAndReturnAll();
                     for (int i = 0; i < result.size(); i++) {
-                        logger.info("\n 方法:[{}],发送数量:[{}], 发送结果:[{}]", "flushRedisCouponSendedInfo-work", p * 5000 + i,
-                                result.get(i).toString());
+                        logger.info("\n 方法:[{}],发送数量:[{}], 发送结果:[{}]", "flushRedisCouponSendedInfo-work",
+                                p * 5000 + i, result.get(i).toString());
                     }
                 }
             }
@@ -407,17 +303,18 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
         String key = "";
         String value = "";
         PromotionInfoDTO condition = new PromotionInfoDTO();
-        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
-        condition.setPromotionType(dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_COUPON));
-        condition.setDeleteStatus(dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
+        String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
+                .OPT_PROMOTION_VERIFY_STATUS_VALID);
+        condition.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst
+                .OPT_PROMOTION_TYPE_COUPON));
+        condition.setDeleteStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst
+                .OPT_PROMOTION_STATUS_DELETE));
         targetCouponInfoList = promotionInfoDAO.queryPromotionListByType(condition);
         if (targetCouponInfoList == null || targetCouponInfoList.isEmpty()) {
             return;
         }
-        logger.info("\n 方法:[{}],待处理Coupon_Valid的数量:[{}]", "flushRedisCouponValid-work", targetCouponInfoList.size());
+        logger.info("\n 方法:[{}],待处理Coupon_Valid的数量:[{}]", "flushRedisCouponValid-work", targetCouponInfoList
+                .size());
         for (PromotionInfoDTO promotionInfo : targetCouponInfoList) {
             validMap.put(promotionInfo.getPromotionId(), validStatus);
         }
@@ -440,11 +337,11 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
      * @throws Exception
      */
     private void flushRedisCouponCount(Jedis jedis) throws Exception {
-        Set<String> couponRecieveCountKey = null;
+        Set<String>  couponRecieveCountKey = null;
         Set<String> buyerCouponReceiveCountKey = null;
         String value = "";
         String newKey = "";
-        String[] strArr = null;
+        String[] strArr= null;
 
         if (jedis.exists(RedisConst.REDIS_COUPON_RECEIVE_COUNT)) {
             couponRecieveCountKey = jedis.hkeys(RedisConst.REDIS_COUPON_RECEIVE_COUNT);

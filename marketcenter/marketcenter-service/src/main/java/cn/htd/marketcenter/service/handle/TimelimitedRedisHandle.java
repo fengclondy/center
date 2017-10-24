@@ -1317,13 +1317,13 @@ public class TimelimitedRedisHandle {
         return resultList;
 	}
 	
-	public int getRealRemainCount(String promotionId, String skuCode){
+	public int getShowRemainCount(String promotionId, String skuCode){
 		Map<String, String> resultMap = null;
         String timelimitedResultKey = RedisConst.REDIS_TIMELIMITED_RESULT + "_" + promotionId;
 		int realRemainCount = 0;
         resultMap = marketRedisDB.getHashOperations(timelimitedResultKey);
         if (resultMap != null) {
-        	String resultCount = resultMap.get(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT + "_" + skuCode);
+        	String resultCount = resultMap.get(RedisConst.REDIS_TIMELIMITED_SHOW_REMAIN_COUNT + "_" + skuCode);
         	if(StringUtils.isNotEmpty(resultCount)){
                 realRemainCount = Integer.valueOf(resultCount);
         	}

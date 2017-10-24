@@ -41,6 +41,7 @@ import cn.htd.promotion.cpc.dto.response.DrawLotteryResDTO;
 import cn.htd.promotion.cpc.dto.response.GenricResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.ParticipateActivitySellerInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
@@ -471,7 +472,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 	 */
 	@Override
 	public String participateActivitySellerInfo(String messageId) {
-		PromotionSellerRuleDTO result = new PromotionSellerRuleDTO();
+		ParticipateActivitySellerInfoDTO result = new ParticipateActivitySellerInfoDTO();
 		try {
 			result = luckDrawService.participateActivitySellerInfo(messageId);
 		} catch (Exception e) {

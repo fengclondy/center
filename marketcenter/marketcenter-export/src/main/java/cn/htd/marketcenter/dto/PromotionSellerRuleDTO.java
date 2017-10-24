@@ -65,6 +65,12 @@ public class PromotionSellerRuleDTO implements Serializable {
 	 * 指定卖家信息
 	 */
 	private List<PromotionSellerDetailDTO> sellerDetailList;
+	//----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+	/**
+	 * 指定卖家列表
+	 */
+	private List<String> targetSellerCodeList;
+	//----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 
 	public Long getId() {
 		return id;
@@ -176,5 +182,13 @@ public class PromotionSellerRuleDTO implements Serializable {
 
 	public void setSellerDetailList(List<PromotionSellerDetailDTO> sellerDetailList) {
 		this.sellerDetailList = sellerDetailList;
+	}
+
+	public List<String> getTargetSellerCodeList() {
+		return targetSellerCodeList;
+	}
+
+	public void setTargetSellerCodeList(List<String> targetSellerCodeList) {
+		this.targetSellerCodeList = targetSellerCodeList;
 	}
 }

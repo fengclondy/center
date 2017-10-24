@@ -11,12 +11,10 @@ import javax.annotation.Resource;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.enums.YesNoEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.common.utils.GeneratorUtils;
-import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.consts.MarketCenterCodeConst;
 import cn.htd.marketcenter.dao.PromotionAccumulatyDAO;
 import cn.htd.marketcenter.dao.PromotionBuyerDetailDAO;
@@ -68,9 +66,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
     @Resource
     private GeneratorUtils noGenerator;
-
-    @Resource
-    private MarketCenterRedisDB marketRedisDB;
 
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
@@ -952,10 +947,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @return
      */
     public boolean checkPromotionBuyerRule(PromotionInfoDTO promotionInfoDTO, BuyerCheckInfo buyerInfo) {
-        String promotionId = promotionInfoDTO.getPromotionId();
         PromotionBuyerRuleDTO ruleDTO = promotionInfoDTO.getBuyerRuleDTO();
         List<String> levelList = null;
         List<String> groupList = null;
+        List<String> buyerCodeList = null;
         List<PromotionBuyerDetailDTO> detailList = null;
         if (ruleDTO == null) {
             return true;
@@ -972,45 +967,36 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             return false;
         } else if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
                 DictionaryConst.OPT_PROMOTION_BUYER_RULE_GROUP).equals(ruleDTO.getRuleTargetType())) {
-            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
-//            groupList = ruleDTO.getTargetBuyerGroupList();
-//            if (groupList == null || groupList.isEmpty()) {
-//                return false;
-//            }
-//            if (groupList.contains("0")) {
-//                return true;
-//            }
-//            if (!StringUtils.isEmpty(buyerInfo.getBuyerGroupId()) && groupList.contains(buyerInfo.getBuyerGroupId())) {
-//                return true;
-//            }
-            if (marketRedisDB.isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, "0")) {
+            groupList = ruleDTO.getTargetBuyerGroupList();
+            if (groupList == null || groupList.isEmpty()) {
+                return false;
+            }
+            if (groupList.contains("0")) {
                 return true;
             }
-            if (!StringUtils.isEmpty(buyerInfo.getBuyerGroupId()) && marketRedisDB
-                    .isSetMember(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
-                            buyerInfo.getBuyerGroupId())) {
+            if (!StringUtils.isEmpty(buyerInfo.getBuyerGroupId()) && groupList.contains(buyerInfo.getBuyerGroupId())) {
                 return true;
             }
-            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
             return false;
         } else if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
                 DictionaryConst.OPT_PROMOTION_BUYER_RULE_APPIONT).equals(ruleDTO.getRuleTargetType())) {
             //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
-//            detailList = ruleDTO.getBuyerDetailList();
-//            if (detailList == null || detailList.isEmpty()) {
-//                return true;
-//            }
-//            for (PromotionBuyerDetailDTO detailDTO : detailList) {
-//                if (detailDTO.getBuyerCode().equals(buyerInfo.getBuyerCode())) {
-//                    return true;
-//                }
-//            }
-            if (!marketRedisDB.exists(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId)) {
+            detailList = ruleDTO.getBuyerDetailList();
+            buyerCodeList = ruleDTO.getTargetBuyerCodeList();
+            if ((detailList == null || detailList.isEmpty()) && (buyerCodeList == null || buyerCodeList.isEmpty())) {
                 return true;
             }
-            if (marketRedisDB.existsHash(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
-                    buyerInfo.getBuyerCode())) {
-                return true;
+            if (detailList != null && !detailList.isEmpty()) {
+                for (PromotionBuyerDetailDTO detailDTO : detailList) {
+                    if (detailDTO.getBuyerCode().equals(buyerInfo.getBuyerCode())) {
+                        return true;
+                    }
+                }
+            }
+            if (buyerCodeList != null && !buyerCodeList.isEmpty()) {
+                if (buyerCodeList.contains(buyerInfo.getBuyerCode())) {
+                    return true;
+                }
             }
             //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
             return false;
@@ -1103,4 +1089,133 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         }
         return memberGroup;
     }
+
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+    /**
+     * 删除促销活动中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deletePromotionUselessInfo(PromotionInfoDTO promotionInfo) {
+
+        promotionInfo.setVerifierId(null);
+        promotionInfo.setVerifierName(null);
+        promotionInfo.setVerifyTime(null);
+        promotionInfo.setVerifyRemark(null);
+        promotionInfo.setCreateId(null);
+        promotionInfo.setCreateName(null);
+        promotionInfo.setCreateTime(null);
+        promotionInfo.setModifyId(null);
+        promotionInfo.setModifyName(null);
+        promotionInfo.setModifyTime(null);
+        promotionInfo.setBuyerRuleId(null);
+        promotionInfo.setSellerRuleId(null);
+        promotionInfo.setCategoryItemRuleId(null);
+        promotionInfo.setPromotionStatusHistoryList(null);
+    }
+    /**
+     * 删除促销卖家规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteBuyerUselessInfo(PromotionInfoDTO promotionInfo) {
+        PromotionBuyerRuleDTO buyerRuleDTO = promotionInfo.getBuyerRuleDTO();
+        List<String> buyerCodeList = null;
+        List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
+
+        if (buyerRuleDTO != null) {
+            buyerRuleDTO.setRuleId(null);
+            buyerRuleDTO.setRuleName(null);
+            buyerRuleDTO.setCreateId(null);
+            buyerRuleDTO.setCreateName(null);
+            buyerRuleDTO.setCreateTime(null);
+            buyerRuleDTO.setModifyId(null);
+            buyerRuleDTO.setModifyName(null);
+            buyerRuleDTO.setModifyTime(null);
+            buyerRuleDTO.setTargetBuyerGroup(null);
+            buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
+            if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
+                buyerCodeList = new ArrayList<String>();
+                for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
+                    buyerCodeList.add(buyerDetailDTO.getBuyerCode());
+                }
+                buyerRuleDTO.setTargetBuyerCodeList(buyerCodeList);
+                buyerRuleDTO.setBuyerDetailList(null);
+            }
+        }
+    }
+
+    /**
+     * 删除促销卖家规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteSellerUselessInfo(PromotionInfoDTO promotionInfo) {
+        PromotionSellerRuleDTO sellerRuleDTO = promotionInfo.getSellerRuleDTO();
+        List<String> sellerCodeList = null;
+        List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
+
+        if (sellerRuleDTO != null) {
+            sellerRuleDTO.setRuleId(null);
+            sellerRuleDTO.setRuleName(null);
+            sellerRuleDTO.setCreateId(null);
+            sellerRuleDTO.setCreateName(null);
+            sellerRuleDTO.setCreateTime(null);
+            sellerRuleDTO.setModifyId(null);
+            sellerRuleDTO.setModifyName(null);
+            sellerRuleDTO.setModifyTime(null);
+            sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
+            if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                sellerCodeList = new ArrayList<String>();
+                for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
+                    sellerCodeList.add(sellerDetailDTO.getSellerCode());
+                }
+                sellerRuleDTO.setTargetSellerCodeList(sellerCodeList);
+                sellerRuleDTO.setSellerDetailList(null);
+            }
+        }
+    }
+
+    /**
+     * 删除促销商品规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteCategoryUselessInfo(PromotionInfoDTO promotionInfo) {
+        PromotionCategoryItemRuleDTO categoryItemRuleDTO = promotionInfo.getCategoryItemRuleDTO();
+        Map<String, String> categoryCodeMap = null;
+        List<String> skuCodeList = null;
+        List<PromotionCategoryDetailDTO> categoryDetailDTOList = null;
+        List<PromotionItemDetailDTO> itemDetailDTOList = null;
+
+        if (categoryItemRuleDTO != null) {
+            categoryItemRuleDTO.setRuleId(null);
+            categoryItemRuleDTO.setRuleName(null);
+            categoryItemRuleDTO.setCreateId(null);
+            categoryItemRuleDTO.setCreateName(null);
+            categoryItemRuleDTO.setCreateTime(null);
+            categoryItemRuleDTO.setModifyId(null);
+            categoryItemRuleDTO.setModifyName(null);
+            categoryItemRuleDTO.setModifyTime(null);
+            categoryDetailDTOList = categoryItemRuleDTO.getCategoryDetailList();
+            itemDetailDTOList = categoryItemRuleDTO.getItemDetailList();
+            if (categoryDetailDTOList != null && !categoryDetailDTOList.isEmpty()) {
+                categoryCodeMap = new HashMap<String, String>();
+                for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailDTOList) {
+                    categoryCodeMap.put(categoryDetailDTO.getCategoryId().toString(), categoryDetailDTO.getBrandIdList());
+                }
+                categoryItemRuleDTO.setTargetCategoryCodeMap(categoryCodeMap);
+                categoryItemRuleDTO.setCategoryDetailList(null);
+            }
+            if (itemDetailDTOList != null && !itemDetailDTOList.isEmpty()) {
+                skuCodeList = new ArrayList<String>();
+                for (PromotionItemDetailDTO itemDetailDTO : itemDetailDTOList) {
+                    skuCodeList.add(itemDetailDTO.getSkuCode());
+                }
+                categoryItemRuleDTO.setTargetItemCodeList(skuCodeList);
+                categoryItemRuleDTO.setItemDetailList(null);
+            }
+        }
+    }
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 }

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import redis.clients.jedis.JedisShardInfo;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
@@ -51,6 +52,7 @@ import cn.htd.promotion.cpc.dto.request.WinningRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityPageResDTO;
 import cn.htd.promotion.cpc.dto.response.LotteryActivityRulePageResDTO;
+import cn.htd.promotion.cpc.dto.response.ParticipateActivitySellerInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
@@ -743,6 +745,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 	
 	public static void main(String[] args) {
+		Set<String> sellerDetailListRedisValue = new HashSet();
+		sellerDetailListRedisValue.add("58409");
+		List<PromotionSellerDetailDTO> sellerDetailListRedisList = JSON.parseObject(JSON.toJSONString(sellerDetailListRedisValue), ArrayList.class);
+		
+		System.out.println("fadsfasdfa");
 		Date nowDate = new Date();
 		Long time = new Long("1517406643033");
 		Date startTime = new Date(time);
@@ -754,8 +761,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 	}
 
 	@Override
-	public PromotionSellerRuleDTO participateActivitySellerInfo(String messageId) {
-		PromotionSellerRuleDTO result = new PromotionSellerRuleDTO();
+	public ParticipateActivitySellerInfoDTO participateActivitySellerInfo(String messageId) {
+		ParticipateActivitySellerInfoDTO result = new ParticipateActivitySellerInfoDTO();
 		try {
 			List<String> promotionIdList = queryAllEffectivePromotion();
 			if (CollectionUtils.isEmpty(promotionIdList)) {
@@ -765,7 +772,6 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 						.getMsg());
 				return result;
 			}
-			List<PromotionSellerDetailDTO> promotionSellerDetailDTOList = new ArrayList<PromotionSellerDetailDTO>();
 			for(String promotionId : promotionIdList){
 				Map<String, String> dictMap = null;
 				PromotionExtendInfoDTO promotionInfoDTO = null;
@@ -775,10 +781,15 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				if (null == promotionInfoDTO) {
 					continue;
 				}
-				if (null != promotionInfoDTO.getSellerRuleDTO() && !CollectionUtils.isEmpty(promotionInfoDTO.getSellerRuleDTO().getSellerDetailList())) {
+				String sellerDetailListRedisKey = RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId;
+				Set<String> sellerDetailListRedisValue = promotionRedisDB
+						.smembers(sellerDetailListRedisKey);
+				if (null != promotionInfoDTO.getSellerRuleDTO()
+						&& null != sellerDetailListRedisValue
+						&& !sellerDetailListRedisValue.isEmpty()) {
 					result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 					result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-					promotionSellerDetailDTOList.addAll(promotionInfoDTO.getSellerRuleDTO().getSellerDetailList());
+					result.setSellerDetailSet(sellerDetailListRedisValue);
 				}else{
 					result.setResponseCode(ResultCodeEnum.LOTTERY_ALL_ORG_HAS_AUTHIORITY
 							.getCode());
@@ -788,19 +799,13 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 				}
 			}
 			
-			if(ResultCodeEnum.SUCCESS.getCode().equals(result.getResponseCode())){
-				Set<PromotionSellerDetailDTO> promotionSellerDetailDTOSet = new HashSet<PromotionSellerDetailDTO>();
-				promotionSellerDetailDTOSet.addAll(promotionSellerDetailDTOList);
-				promotionSellerDetailDTOList.clear();
-				promotionSellerDetailDTOList.addAll(promotionSellerDetailDTOSet);
-				result.setSellerDetailList(promotionSellerDetailDTOList);
-			}else{
+			/*if(!ResultCodeEnum.SUCCESS.getCode().equals(result.getResponseCode())){
 				result.setResponseCode(ResultCodeEnum.LOTTERY_NOT_HAS_PROMOTION_INFO
 						.getCode());
 				result.setResponseMsg(ResultCodeEnum.LOTTERY_NOT_HAS_PROMOTION_INFO
 						.getMsg());
 				return result;
-			}
+			}*/
 			
 			/*Map<String, String> dictMap = null;
 			PromotionExtendInfoDTO promotionInfoDTO = null;

@@ -238,30 +238,16 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         Jedis jedis = null;
         List<String> valueList = null;
         Map<String, String> validMap = null;
-        BuyerCouponInfoDTO couponInfo = null;
         List<OrderInfoDTO> orderList = cart.getOrderList();
         Map<String, OrderInfoDTO> orderInfoMap = new HashMap<String, OrderInfoDTO>();
         List<OrderItemCouponDTO> allCouponList = new ArrayList<OrderItemCouponDTO>();
         List<OrderItemCouponDTO> avaliableCouponList = new ArrayList<OrderItemCouponDTO>();
         List<OrderItemCouponDTO> unavaliableCouponList = new ArrayList<OrderItemCouponDTO>();
         List<OrderItemInfoDTO> allProductList = new ArrayList<OrderItemInfoDTO>();
-        OrderItemCouponDTO tmpOrderCoupon = null;
-        String couponValidStatus = "";
         String sellerCode = "";
         String buyerCode = cart.getBuyerCode();
         String buyerCouponRedisKey = RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode;
-        String unusedStatus =
-                dictMap.get(DictionaryConst.TYPE_COUPON_STATUS + "&" + DictionaryConst.OPT_COUPON_STATUS_UNUSED);
-        String expirdStatus =
-                dictMap.get(DictionaryConst.TYPE_COUPON_STATUS + "&" + DictionaryConst.OPT_COUPON_STATUS_EXPIRE);
-        String invalidStatus =
-                dictMap.get(DictionaryConst.TYPE_COUPON_STATUS + "&" + DictionaryConst.OPT_COUPON_STATUS_INVALID);
-        String invalidPromotionStatus = dictMap.get(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS + "&"
-                + DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
-        String buyerCouponCode = "";
         String buyerCouponValue = "";
-        String buyerCouponLeftAmount = "";
-        List<BuyerCouponInfoDTO> couponInfoList = new ArrayList<BuyerCouponInfoDTO>();
         ForkJoinPool forkJoinPool = null;
         Future<List<OrderItemCouponDTO>> taskResult = null;
         boolean hasTargetCouponFlag = false;
@@ -290,85 +276,14 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 valueList = jedis.hvals(buyerCouponRedisKey);
                 validMap = jedis.hgetAll(RedisConst.REDIS_COUPON_VALID);
             }
-//            for (Entry<String, String> entry : valueMap.entrySet()) {
-//                buyerCouponCode = entry.getKey();
-//                buyerCouponValue = entry.getValue();
-//                couponInfo = JSON.parseObject(buyerCouponValue, BuyerCouponInfoDTO.class);
-//                if (couponInfo == null) {
-//                    continue;
-//                }
-//                if (hasTargetCouponFlag && !targetCouponCodeList.contains(buyerCouponCode)) {
-//                    continue;
-//                }
-//                if (new Date().before(couponInfo.getCouponStartTime())) {
-//                    if (hasTargetCouponFlag) {
-//                        tmpOrderCoupon = new OrderItemCouponDTO();
-//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
-//                        tmpOrderCoupon.setErrorMsg("优惠券未到使用开始期限不能使用 优惠券编号:" + couponInfo.getBuyerCouponCode());
-//                        unavaliableCouponList.add(tmpOrderCoupon);
-//                    }
-//                    continue;
-//
-//                }
-//                if (!unusedStatus.equals(couponInfo.getStatus())) {
-//                    if (hasTargetCouponFlag) {
-//                        tmpOrderCoupon = new OrderItemCouponDTO();
-//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
-//                        tmpOrderCoupon.setErrorMsg("优惠券已被使用 优惠券编号:" + couponInfo.getBuyerCouponCode());
-//                        unavaliableCouponList.add(tmpOrderCoupon);
-//                    }
-//                    continue;
-//                }
-//                if (new Date().after(couponInfo.getCouponEndTime())) {
-//                    couponInfo.setStatus(expirdStatus);
-//                    updateExpireInvalidRedisCouponInfo(jedis, couponInfo);
-//                    if (hasTargetCouponFlag) {
-//                        tmpOrderCoupon = new OrderItemCouponDTO();
-//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
-//                        tmpOrderCoupon.setErrorMsg("优惠券已过期 优惠券编号:" + couponInfo.getBuyerCouponCode());
-//                        unavaliableCouponList.add(tmpOrderCoupon);
-//                    }
-//                    continue;
-//                }
-//                couponValidStatus = validMap.get(couponInfo.getPromotionId());
-//                if (invalidPromotionStatus.equals(couponValidStatus)) {
-//                    couponInfo.setStatus(invalidStatus);
-//                    updateExpireInvalidRedisCouponInfo(jedis, couponInfo);
-//                    if (hasTargetCouponFlag) {
-//                        tmpOrderCoupon = new OrderItemCouponDTO();
-//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
-//                        tmpOrderCoupon.setErrorMsg("优惠券已失效 优惠券编号:" + couponInfo.getBuyerCouponCode());
-//                        unavaliableCouponList.add(tmpOrderCoupon);
-//                    }
-//                    continue;
-//                }
-//                if (couponInfo.getDiscountThreshold() == null
-//                        || BigDecimal.ZERO.compareTo(couponInfo.getDiscountThreshold()) >= 0) {
-//                    continue;
-//                }
-//                buyerCouponLeftAmount =
-//                        jedis.hget(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode);
-//                if (StringUtils.isEmpty(buyerCouponLeftAmount) || "nil".equals(buyerCouponLeftAmount)) {
-//                    if (hasTargetCouponFlag) {
-//                        tmpOrderCoupon = new OrderItemCouponDTO();
-//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
-//                        tmpOrderCoupon.setErrorMsg("优惠券余额不足 优惠券编号:" + couponInfo.getBuyerCouponCode());
-//                        unavaliableCouponList.add(tmpOrderCoupon);
-//                    }
-//                    continue;
-//                }
-//                couponInfo.setCouponLeftAmount(
-//                        CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
-//                couponInfoList.add(couponInfo);
-//            }
             long endTime0 = System.currentTimeMillis();
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!valueList.isEmpty()) {
                 forkJoinPool = new ForkJoinPool();
                 taskResult = forkJoinPool
-                        .submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, valueList, validMap, hasTargetCouponFlag, orderInfoMap,
-                                allProductList));
+                        .submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, valueList, validMap,
+                                hasTargetCouponFlag, orderInfoMap, allProductList));
                 allCouponList = taskResult.get();
                 long endTime1 = System.currentTimeMillis();
                 logger.info("***********校验会员优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
@@ -773,6 +688,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             Map<String, String> dictMap) {
         BigDecimal payTotal = BigDecimal.ZERO;
         String couponKind = "";
+        String buyerCouponLeftAmount = "";
         BigDecimal discountTotal = BigDecimal.ZERO;
         BigDecimal leftDiscountAmount = BigDecimal.ZERO;
         BigDecimal discountPercent = BigDecimal.ZERO;
@@ -790,14 +706,23 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                         couponInfo.getBuyerCouponCode(), discountTotal);
             } else if (dictMap.get(DictionaryConst.TYPE_COUPON_KIND + "&" + DictionaryConst.OPT_COUPON_KIND_DISCOUNT)
                     .equals(couponKind)) {
+                buyerCouponLeftAmount =
+                        marketRedisDB.getHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, couponInfo.getBuyerCode()+ "&" + couponInfo.getBuyerCouponCode());
+                if (StringUtils.isEmpty(buyerCouponLeftAmount)) {
+                    couponInfo.setCouponLeftAmount(BigDecimal.ZERO);
+                } else {
+                    couponInfo.setCouponLeftAmount(CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
+                }
                 leftDiscountAmount = couponInfo.getCouponLeftAmount();
-                discountPercent =
-                        CalculateUtils.divide(new BigDecimal(couponInfo.getDiscountPercent()), new BigDecimal(100));
-                discountTotal = CalculateUtils.multiply(payTotal, discountPercent);
-                discountTotal = leftDiscountAmount.compareTo(discountTotal) > 0 ? discountTotal : leftDiscountAmount;
-                discountTotal = payTotal.compareTo(discountTotal) >= 0 ? discountTotal : payTotal;
+                if (BigDecimal.ZERO.compareTo(leftDiscountAmount) < 0) {
+                    discountPercent = CalculateUtils.divide(new BigDecimal(couponInfo.getDiscountPercent()), new BigDecimal(100));
+                    discountTotal = CalculateUtils.multiply(payTotal, discountPercent);
+                    discountTotal = leftDiscountAmount.compareTo(discountTotal) > 0 ? discountTotal : leftDiscountAmount;
+                    discountTotal = payTotal.compareTo(discountTotal) >= 0 ? discountTotal : payTotal;
+                }
                 logger.info("***********计算可用优惠券优惠总金额 messageId:[{}],优惠券编码:[{}],折扣比例:[{}],优惠总金额:[{}]***********",
                         messageId, couponInfo.getBuyerCouponCode(), discountPercent, discountTotal);
+
             }
             if (BigDecimal.ZERO.compareTo(discountTotal) < 0) {
                 couponInfo.setTotalDiscountAmount(discountTotal);
@@ -887,8 +812,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
         private boolean hasTargetCouponFlag;
 
-        public ValidBuyerAvaliableCouponTask(String messageId, Map<String, String> dictMap,
-                List<String> couponList, Map<String, String> validMap, boolean hasTargetCouponFlag, Map<String, OrderInfoDTO> orderInfoMap,
+        public ValidBuyerAvaliableCouponTask(String messageId, Map<String, String> dictMap, List<String> couponList,
+                Map<String, String> validMap, boolean hasTargetCouponFlag, Map<String, OrderInfoDTO> orderInfoMap,
                 List<OrderItemInfoDTO> allProductsList) {
             this.messageId = messageId;
             this.dictMap = dictMap;
@@ -958,11 +883,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             if (couponInfo == null) {
                 return null;
             }
-             sellerCode = couponInfo.getPromotionProviderSellerCode();
-             promotionId = couponInfo.getPromotionId();
-             levelCode = couponInfo.getLevelCode();
-             couponProviderType = couponInfo.getPromotionProviderType();
-             couponProviderCode = couponInfo.getPromotionProviderSellerCode();
+            sellerCode = couponInfo.getPromotionProviderSellerCode();
+            promotionId = couponInfo.getPromotionId();
+            levelCode = couponInfo.getLevelCode();
+            couponProviderType = couponInfo.getPromotionProviderType();
+            couponProviderCode = couponInfo.getPromotionProviderSellerCode();
             if (new Date().before(couponInfo.getCouponStartTime())) {
                 if (hasTargetCouponFlag) {
                     return exchange2OrderItemCoupon(couponInfo, null,
@@ -1048,11 +973,15 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
         private OrderItemCouponDTO exchange2OrderItemCoupon(BuyerCouponInfoDTO targetBuyerCoupon,
                 List<OrderItemInfoDTO> avaliableProductList, String... errorMsg) {
+            BigDecimal discountTotal = BigDecimal.ZERO;
             OrderItemCouponDTO orderCoupon = new OrderItemCouponDTO();
             orderCoupon.setBuyerCouponInfo(targetBuyerCoupon);
             if (avaliableProductList != null && !avaliableProductList.isEmpty()) {
                 orderCoupon.setProductList(avaliableProductList);
-                calculateCouponTotalDiscountAmount(messageId, orderCoupon, dictMap);
+                discountTotal = calculateCouponTotalDiscountAmount(messageId, orderCoupon, dictMap);
+                if (BigDecimal.ZERO.compareTo(discountTotal) >= 0) {
+                    return null;
+                }
             }
             if (errorMsg != null && errorMsg.length > 0) {
                 orderCoupon.setErrorMsg(errorMsg[0]);

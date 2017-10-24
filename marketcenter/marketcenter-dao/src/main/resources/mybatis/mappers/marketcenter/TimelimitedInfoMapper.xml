@@ -277,6 +277,9 @@
 		<if test="entity.showStatus != null and entity.showStatus != ''">
         	<![CDATA[ and promotion_info.show_status = #{entity.showStatus}]]>
 		</if>
+		<if test="entity.itemCode != null and entity.itemCode != ''">
+        	<![CDATA[ and timelimited_info.item_code = #{entity.itemCode}]]>
+		</if>
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
@@ -309,6 +312,9 @@
 		<include refid="where_fragement" />
 		<if test="entity.showStatus != null and entity.showStatus != ''">
         	<![CDATA[ and promotion_info.show_status = #{entity.showStatus}]]>
+		</if>
+		<if test="entity.itemCode != null and entity.itemCode != ''">
+        	<![CDATA[ and timelimited_info.item_code = #{entity.itemCode}]]>
 		</if>
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>

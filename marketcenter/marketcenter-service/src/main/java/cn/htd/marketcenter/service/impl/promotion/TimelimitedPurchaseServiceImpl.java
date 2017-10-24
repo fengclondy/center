@@ -166,7 +166,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		try {
 			searchConditionDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
 					DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT));
-			searchConditionDTO.setSkuCode(conditionDTO.getSkuCode());
+			searchConditionDTO.setItemCode(conditionDTO.getSkuCode());
 			searchConditionDTO.setSkuName(conditionDTO.getSkuName());
 			searchConditionDTO.setShowStatus(conditionDTO.getStatus());
 			searchConditionDTO.setSellerCode(conditionDTO.getSelleCode());

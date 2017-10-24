@@ -202,6 +202,7 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                     buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
                     buyerGroupList = buyerRuleDTO.getTargetBuyerGroupList();
                     if (buyerGroupList != null && !buyerGroupList.isEmpty()) {
+                        pipeline.del(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId);
                         for (String buyerGroupId : buyerGroupList) {
                             pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
                                     buyerGroupId);
@@ -209,6 +210,7 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                         pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, seconds);
                     }
                     if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
+                        pipeline.del(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId);
                         for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
                             pipeline.hset(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
                                     buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
@@ -219,6 +221,7 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                 if (sellerRuleDTO != null) {
                     sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
                     if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                        pipeline.del(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId);
                         for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
                             pipeline.sadd(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId,
                                     sellerDetailDTO.getSellerCode());
@@ -230,6 +233,7 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                     categoryDetailDTOList = categoryItemRuleDTO.getCategoryDetailList();
                     itemDetailDTOList = categoryItemRuleDTO.getItemDetailList();
                     if (categoryDetailDTOList != null && !categoryDetailDTOList.isEmpty()) {
+                        pipeline.del(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId);
                         for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailDTOList) {
                             pipeline.hset(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
                                     categoryDetailDTO.getCategoryId().toString(), categoryDetailDTO.getBrandIdList());
@@ -238,6 +242,7 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                                 seconds);
                     }
                     if (itemDetailDTOList != null && !itemDetailDTOList.isEmpty()) {
+                        pipeline.del(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId);
                         for (PromotionItemDetailDTO itemDetailDTO : itemDetailDTOList) {
                             pipeline.sadd(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId,
                                     itemDetailDTO.getSkuCode());
@@ -245,8 +250,8 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                         pipeline.expire(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId, seconds);
                     }
                 }
-                pipeline.sync();
             }
+            pipeline.sync();
         }
     }
 

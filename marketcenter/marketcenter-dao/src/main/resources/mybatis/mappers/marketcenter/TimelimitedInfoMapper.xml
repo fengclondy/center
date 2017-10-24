@@ -256,7 +256,7 @@
 		timelimited_info.promotion_id and promotion_accumulaty.level_code =
 		timelimited_info.level_code)
 		where 1 = 1
-		 and (timelimited_info.item_code =#{_parameter,jdbcType=VARCHAR} or timelimited_info.item_id=#{_parameter,jdbcType=VARCHAR} or timelimited_info.sku_name=#{_parameter,jdbcType=VARCHAR})
+		 and (timelimited_info.item_code =#{entity.itemCode} or timelimited_info.item_id=#{entity.itemId} or timelimited_info.sku_name=#{entity.itemName})
 	     and promotion_info.status in ('1','2') 
 	     and promotion_info.promotion_type=3
 	     <![CDATA[ and timelimited_info.end_time > now() ]]>
@@ -282,7 +282,9 @@
 		</if>
 		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
 		<if test="entity.startTimeStr == entity.endTimeStr">and #{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
-		<if test="entity.startTimeStr != entity.endTimeStr">and date_format(promotion_info.effective_time , '%Y-%m-%d') &gt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &lt;= #{entity.endTimeStr}</if>
+		<if test="entity.startTimeStr != entity.endTimeStr">and (date_format(promotion_info.effective_time , '%Y-%m-%d') &gt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &lt;= #{entity.endTimeStr}
+		or (#{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time,'%Y-%m-%d') AND date_format(promotion_info.invalid_time,'%Y-%m-%d'))
+		or (#{entity.endTimeStr} BETWEEN date_format(promotion_info.effective_time,'%Y-%m-%d') AND date_format(promotion_info.invalid_time,'%Y-%m-%d')))</if>
 		</if> 
 		and promotion_accumulaty.delete_flag = 0
 		GROUP BY promotion_info.id) as tmp
@@ -313,7 +315,9 @@
 		</if>
 		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
 		<if test="entity.startTimeStr == entity.endTimeStr">and #{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time , '%Y-%m-%d') and date_format(promotion_info.invalid_time , '%Y-%m-%d')</if>
-		<if test="entity.startTimeStr != entity.endTimeStr">and date_format(promotion_info.effective_time , '%Y-%m-%d') &gt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &lt;= #{entity.endTimeStr}</if>
+		<if test="entity.startTimeStr != entity.endTimeStr">and (date_format(promotion_info.effective_time , '%Y-%m-%d') &gt;= #{entity.startTimeStr} and date_format(promotion_info.invalid_time , '%Y-%m-%d') &lt;= #{entity.endTimeStr}
+		or (#{entity.startTimeStr} BETWEEN date_format(promotion_info.effective_time,'%Y-%m-%d') AND date_format(promotion_info.invalid_time,'%Y-%m-%d'))
+		or (#{entity.endTimeStr} BETWEEN date_format(promotion_info.effective_time,'%Y-%m-%d') AND date_format(promotion_info.invalid_time,'%Y-%m-%d')))</if>
 		</if> 
 		and promotion_accumulaty.delete_flag = 0
 		group by promotion_info.id
@@ -323,7 +327,7 @@
 			<include refid="pagination_tail" />
 		</if>
  	</select>
-	
+		
 	<insert id="add" useGeneratedKeys="true" keyProperty="timelimitedId">
 		insert into timelimited_info
 		<trim prefix="(" suffix=")" suffixOverrides=",">

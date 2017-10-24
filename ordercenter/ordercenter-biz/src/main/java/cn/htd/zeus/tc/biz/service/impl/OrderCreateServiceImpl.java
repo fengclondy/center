@@ -1206,6 +1206,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		orderItemPromotionDTO.setOperaterName(buyerInfoDTO.getCompanyName());
 		orderItemPromotionDTO.setDiscountAmount(orderItemTemp.getTotalDiscountAmount());
 		orderItemPromotionDTO.setSeckillLockNo(orderCreateInfoReqDTO.getSeckillLockNo());
+		orderItemPromotionDTO.setSkuCode(orderItemTemp.getSkuCode());
 		int isLimitedTimePurchase = orderItemTemp.getIsLimitedTimePurchase();
 		if (orderItemTemp.isHasTimelimitedFlag()
 				|| isLimitedTimePurchase==Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {

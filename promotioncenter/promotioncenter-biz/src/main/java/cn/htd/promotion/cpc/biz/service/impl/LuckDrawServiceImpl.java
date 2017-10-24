@@ -419,22 +419,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
             }
             if (StringUtils.isEmpty(promotionInfoEditReqDTO.getPromotionType())) {
             	throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NO_TYPE.getCode(), "促销活动类型不能为空");
-            }else{
-	        	//---xuwei---
-	        	if(promotionInfoEditReqDTO.getPromotionType().equals("21")){
-	        		//扭蛋机
-//	        		promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-//	        				DictionaryConst.OPT_PROMOTION_TYPE_GASHAPON));
-	        		promotionInfoEditReqDTO.setIsDailyWinningLimit(1);
-	        		promotionInfoEditReqDTO.setIsDailyTimesLimit(1);
-	        		
-	        	}else if(promotionInfoEditReqDTO.getPromotionType().equals("24")){
-	        		//刮刮乐
-//	        		promotionInfoEditReqDTO.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-//	        				DictionaryConst.OPT_PROMOTION_TYPE_SCRATCH_CARD));
-	        	}
             }
-        	//---xuwei---
             if (StringUtils.isEmpty(promotionInfoEditReqDTO.getStatus())) {
                 promotionInfoEditReqDTO.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                         DictionaryConst.OPT_PROMOTION_STATUS_NO_START));

@@ -451,13 +451,16 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	@Override
 	public void initGroupbuyingInfoRedisInfoWithThread(final String promotionId) {
-        new Thread() {
-            public void run() {
-                String messageId = keyGeneratorUtils.generateMessageId();
-            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
-            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
-            }
-        }.start();
+//        new Thread() {
+//            public void run() {
+//                String messageId = keyGeneratorUtils.generateMessageId();
+//            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+//            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
+//            }
+//        }.start();
+        
+    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, null);
+    	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
 	}
 
 	@Override
@@ -695,9 +698,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表商家编码不能为空！");
             }
-            if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表参团人账号不能为空！");
-            }
+//            if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+//                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表参团人账号不能为空！");
+//            }
             if (null == page) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品页码不能为空！");
             }
@@ -723,9 +726,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
     			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数orgId不能为空！");
     		}
-    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
-    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
-    		}
+//    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+//    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
+//    		}
 
     		groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO);
 

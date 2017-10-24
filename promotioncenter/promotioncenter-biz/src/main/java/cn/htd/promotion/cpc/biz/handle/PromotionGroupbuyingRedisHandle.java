@@ -113,14 +113,14 @@ public class PromotionGroupbuyingRedisHandle {
      * @return
      */
     public boolean removeGroupbuyingInfoCmpl2Redis(final String promotionId){
-        
-        boolean result = promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
+    	
+    	try {
+    		return promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
         	
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
             public Boolean execute(RedisOperations operations) throws DataAccessException {
-            	
-            	try {
+
             		operations.multi();
             		
                     String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
@@ -130,17 +130,16 @@ public class PromotionGroupbuyingRedisHandle {
                     operations.delete(groupbuyingResultKey);
             		
                 	operations.exec();
-				} catch (Exception e) {
-					logger.error("messageId{}:执行方法【upDownShelvesPromotionInfo2Redis】报错：{}", e.toString());
-					return false;  
-				}
-              
-                return true;  
+
+                return true;
+                
             }
-        	
         });  
         
-        return result;  
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【removeGroupbuyingInfoCmpl2Redis】报错：{}", e.toString());
+			return false;  
+		}
     	
     }
 
@@ -151,14 +150,14 @@ public class PromotionGroupbuyingRedisHandle {
      * @param showStatus
      */
     public boolean upDownShelvesPromotionInfo2Redis(final String promotionId,final String showStatus) {
-
-	        boolean result = promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
+    	
+    	try {
+    		return promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
 	        	
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				@Override
 	            public Boolean execute(RedisOperations operations) throws DataAccessException {
-	            	
-	            	try {
+	            
 	            		operations.multi();
 	            		
 	            		String groupbuyingInfoJsonStr = String.valueOf(operations.opsForHash().get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId));
@@ -173,65 +172,66 @@ public class PromotionGroupbuyingRedisHandle {
 	        			}
 	            		
 	                	operations.exec();
-					} catch (Exception e) {
-						logger.error("messageId{}:执行方法【upDownShelvesPromotionInfo2Redis】报错：{}", e.toString());
-						return false;  
-					}
 	              
-	                return true;  
+	               return true;  
 	            }
 	        	
 	        });  
 	        
-	        return result;  
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【upDownShelvesPromotionInfo2Redis】报错：{}", e.toString());
+			return false;  
+		}
     }
     
     
     
-    public boolean testHash(final String key, final Map<String,String> value) {
-        boolean result = promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
-        	
-			@SuppressWarnings({ "rawtypes", "unchecked" })
-			@Override
-            public Boolean execute(RedisOperations operations) throws DataAccessException {  
-            	
-            	try {
-            		  operations.multi();  
-            		  
-//                      String key = "user-zzf";  
-//                      BoundValueOperations<String, String> oper = operations.boundValueOps(key);  
-//                      oper.set("zzf-6666");  
-//                      int i = 1;i=i/0;
-//                      String key2 = "user-zzf-2";  
-//                      BoundValueOperations<String, String> oper2 = operations.boundValueOps(key2);  
-//                      oper2.set("zzf2-6666");  
-                      
-//                      operations.exec();  
-                      
-//                	operations.opsForValue().set("user-zzf","zzfaa6666"); int i = 1;i=i/0;
-//                	operations.opsForValue().set("user-zzf-2","zzf2aa");
-                	
-                	
-                	operations.opsForHash().putAll(key, value);
-                	Map<String, String> redisMap = operations.opsForHash().entries(key);
-                	System.out.println("===>redisMap:" + redisMap);
-                	
-                	
-                	Object val=operations.exec();
-                	System.out.println("===>val:" + val);
-                	
-				} catch (Exception e) {
-					e.printStackTrace();
-					return false;  
-				}
-              
-                return true;  
-            }
-        	
-        });  
-        
-        return result;  
-    }  
+	public boolean testHash(final String key, final Map<String, String> value) {
+
+		try {
+			return promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>() {
+
+						@SuppressWarnings({ "rawtypes", "unchecked" })
+						@Override
+						public Boolean execute(RedisOperations operations) throws DataAccessException {
+
+							operations.multi();
+
+							// String key = "user-zzf";
+							// BoundValueOperations<String, String> oper =
+							// operations.boundValueOps(key);
+							// oper.set("zzf-6666");
+							// int i = 1;i=i/0;
+							// String key2 = "user-zzf-2";
+							// BoundValueOperations<String, String> oper2 =
+							// operations.boundValueOps(key2);
+							// oper2.set("zzf2-6666");
+
+							// operations.exec();
+
+							// operations.opsForValue().set("user-zzf","zzfaa6666");
+							// int i = 1;i=i/0;
+							// operations.opsForValue().set("user-zzf-2","zzf2aa");
+
+							operations.opsForValue().set("test-zzf-2", "zzfaa6666");
+//							int i = 1; i = i / 0;
+							operations.opsForHash().putAll(key, value);
+
+							Object val = operations.exec();
+							System.out.println("===>val:" + val);
+
+							Map<String, String> redisMap = operations.opsForHash().entries(key);
+							System.out.println("===>redisMap:" + redisMap);
+
+							return true;
+						}
+
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
     
     

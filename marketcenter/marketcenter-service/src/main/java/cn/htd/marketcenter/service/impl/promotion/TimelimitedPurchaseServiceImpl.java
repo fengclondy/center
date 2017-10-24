@@ -463,7 +463,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 	@Override
 	public ExecuteResult<String> updateTimitedInfoSalesVolumeRedis(TimelimitedInfoDTO timelimitedInfoDTO) {
 		 ExecuteResult<String> result = new ExecuteResult<String>();
-		 List<TimelimitedInfoDTO> TimelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
+		 List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
 		 TimelimitedInfoDTO timelimitedInfo = null;
 		 String timelimitedJsonStr = "";
 		 String promotionId = timelimitedInfoDTO.getPromotionId();
@@ -492,10 +492,10 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 		    		 timelimite.setSalesVolume(salesVolumeResult);
 		    		 timelimite.setSalesVolumePrice(salesVolumePriceResult.doubleValue());
 		    	 }
-		    	 TimelimitedInfoList.add(timelimite);
+		    	 timelimitedInfoList.add(timelimite);
 			 }
-		     timelimitedInfo.setPromotionAccumulatyList(TimelimitedInfoList);
-		     timelimitedRedisHandle.addTimelimitedInfo2Redis(timelimitedInfo);
+		     timelimitedInfo.setPromotionAccumulatyList(timelimitedInfoList);
+		     marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
 		     result.setCode("00000");
 		     result.setResult("SUCCESS");
 		} catch (Exception e) {

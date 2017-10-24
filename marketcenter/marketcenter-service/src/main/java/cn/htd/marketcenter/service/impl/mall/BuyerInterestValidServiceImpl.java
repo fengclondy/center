@@ -1150,15 +1150,13 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     allProductsList);
             rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, validMap, hasTargetCouponFlag, orderInfoMap,
                     allProductsList);
-<<<<<<< HEAD
+
             //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
 //            leftTask.fork();
 //            rightTask.fork();
             invokeAll(leftTask, rightTask);
             //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
-=======
-            invokeAll(leftTask, rightTask);
->>>>>>> develop
+
             leftTaskRst = leftTask.join();
             rightTaskRst = rightTask.join();
             if (leftTaskRst != null && !leftTaskRst.isEmpty()) {

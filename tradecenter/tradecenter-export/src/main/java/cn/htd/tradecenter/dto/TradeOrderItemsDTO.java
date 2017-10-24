@@ -162,6 +162,8 @@ public class TradeOrderItemsDTO extends TradeOrdersShowDTO implements Serializab
 	private List<TradeOrderItemsStatusHistoryDTO> itemStatusHistoryDTOList;
 
 	private String dealFlag = "";
+	private String promotionType; //促销活动类型 1：优惠券，2：秒杀，3：限时购
+
 	
 	public String getOrderItemNo() {
 		return orderItemNo;
@@ -762,6 +764,14 @@ public class TradeOrderItemsDTO extends TradeOrdersShowDTO implements Serializab
 
 	public void setDealFlag(String dealFlag) {
 		this.dealFlag = dealFlag;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
 	}
 
 	public void setTradeOrderItemInfo(TradeOrderItemsDTO itemDTO) {

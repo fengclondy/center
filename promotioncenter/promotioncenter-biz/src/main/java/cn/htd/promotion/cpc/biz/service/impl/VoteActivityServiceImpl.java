@@ -312,7 +312,6 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			e.printStackTrace();
 			logger.error("importVoteActivityMember 方法异常 异常信息" + e.getMessage());
 			result.setErrorMessages(Lists.newArrayList("导入数据失败"));
-			return result;
 		}
 		
 		//TODO: 查询库，得到成功记录，比对入参，得到失败记录，放到返回结果中

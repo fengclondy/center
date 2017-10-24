@@ -456,7 +456,7 @@ public class PromotionLotteryAPIImpl implements PromotionLotteryAPI {
 			}
 			rt = luckDrawService.editDrawLotteryInfo(promotionExtendInfoDTO);
 			rt.setMessageId(promotionExtendInfoDTO.getMessageId());
-//			rt.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
+			rt.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (PromotionCenterBusinessException bcbe) {
 			rt.setResponseCode(bcbe.getCode());
 			rt.setResponseMsg(bcbe.getMessage());

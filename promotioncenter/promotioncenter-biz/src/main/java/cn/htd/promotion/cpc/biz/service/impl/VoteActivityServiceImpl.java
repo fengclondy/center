@@ -226,7 +226,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			Pager page, VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
 		ExecuteResult<DataGrid<VoteActivityMemListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityMemListResDTO>>();
 		DataGrid<VoteActivityMemListResDTO> datagrid=new DataGrid<VoteActivityMemListResDTO>();
-		if(page==null||voteActivityMemListReqDTO==null){
+		if(page==null||voteActivityMemListReqDTO==null || voteActivityMemListReqDTO.getVoteId() == null){
 			result.setErrorMessages(Lists.newArrayList("参数为空"));
 			result.setResult(datagrid);
 			return result;
@@ -347,7 +347,13 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		
 		voteActivityMemListReqDTO.setPageSize(50000);
 		voteActivityMemListReqDTO.setStart(1);
-		List<VoteActivityMemListResDTO>  resultList = voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
+		List<VoteActivityMemListResDTO>  resultList = new ArrayList<VoteActivityMemListResDTO>();
+		try {
+			resultList = voteActivityMemberDAO.queryPagedSignupMemberInfoList(voteActivityMemListReqDTO);
+		} catch (Exception e) {
+			logger.error("exportVoteActivityMember方法异常 异常信息" + e.getMessage());
+			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+		}
 		result.setResult(resultList);
 		return result;
 	}

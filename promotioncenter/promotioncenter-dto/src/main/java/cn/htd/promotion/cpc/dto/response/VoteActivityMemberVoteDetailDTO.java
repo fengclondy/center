@@ -66,7 +66,7 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
     /**
      * 图片集合
      */
-    private List<VoteActivityMemberPictureResDTO> voteActivityMemberPictureResDTOList;
+    private List<String> voteActivityMemberPictureResDTOList;
     /**
      * 排名列表
      */
@@ -176,11 +176,11 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
         this.voteNum = voteNum;
     }
 
-    public List<VoteActivityMemberPictureResDTO> getVoteActivityMemberPictureResDTOList() {
+    public List<String> getVoteActivityMemberPictureResDTOList() {
         return voteActivityMemberPictureResDTOList;
     }
 
-    public void setVoteActivityMemberPictureResDTOList(List<VoteActivityMemberPictureResDTO> voteActivityMemberPictureResDTOList) {
+    public void setVoteActivityMemberPictureResDTOList(List<String> voteActivityMemberPictureResDTOList) {
         this.voteActivityMemberPictureResDTOList = voteActivityMemberPictureResDTOList;
     }
 

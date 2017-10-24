@@ -9,6 +9,7 @@ import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionListDTO;
+import cn.htd.marketcenter.dto.TimelimitPurchaseItemInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedListDTO;
 
@@ -54,5 +55,5 @@ public interface TimelimitedInfoDAO extends BaseDAO<TimelimitedInfoDTO> {
 	 * @param promotionId
 	 * @return
 	 */
-	public List<TimelimitedInfoDTO> queryPromotionInfoByItemCode(String itemCode);
+	public List<TimelimitedInfoDTO> queryPromotionInfoByItemCode(@Param("entity")TimelimitPurchaseItemInfoDTO itemInfoDTO);
 }

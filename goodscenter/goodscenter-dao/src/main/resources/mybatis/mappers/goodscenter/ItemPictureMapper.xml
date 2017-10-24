@@ -221,7 +221,7 @@
    <select id="queryItemPicsFirst" resultMap="itemPictureMapper">
 		select *
 		from 
-		item_picture t 
+		item_sku_picture t 
 		where t.item_id=#{itemId} AND picture_status = 1   and is_first=1 and delete_flag=0
 	</select>
 </mapper>

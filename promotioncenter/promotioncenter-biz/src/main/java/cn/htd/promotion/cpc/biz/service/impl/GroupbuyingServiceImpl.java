@@ -451,13 +451,16 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
 	@Override
 	public void initGroupbuyingInfoRedisInfoWithThread(final String promotionId) {
-        new Thread() {
-            public void run() {
-                String messageId = keyGeneratorUtils.generateMessageId();
-            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
-            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
-            }
-        }.start();
+//        new Thread() {
+//            public void run() {
+//                String messageId = keyGeneratorUtils.generateMessageId();
+//            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
+//            	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
+//            }
+//        }.start();
+        
+    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, null);
+    	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
 	}
 
 	@Override
@@ -563,7 +566,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
         try {
         	//[start]-----------------   参团的校验  ----------------
-           	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
+           	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
            	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) {
            	    throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
            	}
@@ -593,9 +596,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     		
         	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
          	// 真实参团人数
-         	Integer realActorCount = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
+         	Integer realActorCount = promotionGroupbuyingRedisHandle.getPromotionRedisDB().incrHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT).intValue();
         	// 获取团购活动其他信息
-        	Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().getHashOperations(groupbuyingResultKey);
+        	Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHashOperations(groupbuyingResultKey);
         	
         	// 阶梯价格
         	String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
@@ -621,7 +624,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         		}
         	}
         	// redis设置真实拼团价
-        	promotionGroupbuyingRedisHandle.getPromotionCenterRedisDB().setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
+        	promotionGroupbuyingRedisHandle.getPromotionRedisDB().setHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice.toString());
 
         	// 修改团购活动信息
         	GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
@@ -695,9 +698,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表商家编码不能为空！");
             }
-            if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表参团人账号不能为空！");
-            }
+//            if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+//                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品列表参团人账号不能为空！");
+//            }
             if (null == page) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "查询团购商品页码不能为空！");
             }
@@ -723,9 +726,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getSellerCode())) {
     			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数orgId不能为空！");
     		}
-    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
-    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
-    		}
+//    		if (StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())) {
+//    			throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参数buyerCode不能为空！");
+//    		}
 
     		groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO);
 

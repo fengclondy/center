@@ -832,7 +832,7 @@ public class TimelimitedRedisHandle {
                 timelimitedList = entry.getValue();
                 if (DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE.equals(dealType)) {
                     validStatus = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED_VALID, promotionId);
-                    if (!StringUtils.isEmpty(validStatus) && !dictionary
+                    if (StringUtils.isEmpty(validStatus) || !dictionary
                             .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validStatus)) {
                         throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_VALID,
@@ -856,6 +856,10 @@ public class TimelimitedRedisHandle {
                 for (OrderItemPromotionDTO orderItemDTO : timelimitedList) {
                     if (DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE.equals(dealType)) {
                         skuCode = orderItemDTO.getSkuCode();
+                        if (!timelimitedInfoDTOMap.containsKey(skuCode)) {
+                            throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NO_CONTAIN_SKU,
+                                    "活动ID:" + promotionId + " SKU编码:" + skuCode + " 限时购活动中不包含购买商品");
+                        }
                         tmpTimelimitedInfoDTO = timelimitedInfoDTOMap.get(skuCode);
                         dealRedisReverseBuyerLimitedDiscountInfo(tmpTimelimitedInfoDTO, orderItemDTO);
                         rollbackTimelimitedList.add(orderItemDTO);

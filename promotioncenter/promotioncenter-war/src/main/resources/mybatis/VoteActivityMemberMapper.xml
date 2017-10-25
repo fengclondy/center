@@ -391,7 +391,7 @@
 	 select 
 		count(1)
 	  from  vote_activity_member vam
-	  where 1=1
+	  where delete_flag!=1 and vote_id=#{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
 	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
 	  </if> 

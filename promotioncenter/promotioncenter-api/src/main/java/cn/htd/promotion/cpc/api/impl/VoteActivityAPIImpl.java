@@ -94,6 +94,37 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
     }
 
     /***
+     * 根据活动ID和会员编码查询会员店投票活动报名编码
+     * @param voteId
+     * @param memberCode
+     * @return
+     */
+    public ExecuteResult<VoteActivityMemberResDTO> selectByVoteIdAndMemberCode(Long voteId,String memberCode){
+        // 返回对象
+        ExecuteResult<VoteActivityMemberResDTO> result = new ExecuteResult<VoteActivityMemberResDTO>();
+        try{
+            // 正确返回
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
+            // 返回值
+            VoteActivityMemberResDTO memberResDTO = voteActivityMemberService.selectByVoteIdAndMemberCode(voteId,memberCode);
+            // 如果不为空则查询相关图片
+            if(memberResDTO != null && !NUtils.isEmpty(memberResDTO.getVoteMemberId())){
+                // 相关图片集合
+                memberResDTO.setMemberPictureResDTOList(memberPictureService.selectByVoteMemberId(memberResDTO.getVoteMemberId()));
+            }
+
+            result.setResult(memberResDTO);
+        }catch (Exception e){
+            // 打印错误消息
+            e.printStackTrace();
+            logger.error("VoteActivityAPI方法selectByVoteIdAndMemberCode调用出错，信息{}",e.getMessage());
+
+            result.setCode(ResultCodeEnum.ERROR.getMsg());
+        }
+        return result;
+    }
+
+    /***
      * 根据活动会员店id
      * @param voteMemberId
      * @return

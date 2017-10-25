@@ -358,6 +358,9 @@ public class CouponRedisHandle {
                 }
                 buyerCouponInfo = updateRedisExpiredBuyerCouponStatus(buyerCouponInfo, couponStatusMap);
                 buyerCouponStatus = buyerCouponInfo.getStatus();
+                if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID).equals(buyerCouponInfo.getStatus())) {
+                    continue;
+                }
                 if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_LOCKED).equals(buyerCouponInfo.getStatus())) {
                     buyerCouponStatus = couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_USED);
                 }
@@ -418,7 +421,8 @@ public class CouponRedisHandle {
             offset = pager.getPageOffset();
             rows = pager.getRows();
         }
-        String[] redisAmountKeyArr = new String[rows];
+        String[] redisAmountKeyArr = null;
+        List<String> redisAmountKeyList = new ArrayList<String>();
         List<String> couponAmountList = null;
         for (DictionaryInfo dictionaryInfo : couponStatusList) {
             couponStatusMap.put(dictionaryInfo.getCode(), dictionaryInfo.getValue());
@@ -442,6 +446,9 @@ public class CouponRedisHandle {
                 }
                 buyerCouponInfo = updateRedisExpiredBuyerCouponStatus(buyerCouponInfo, couponStatusMap);
                 buyerCouponStatus = buyerCouponInfo.getStatus();
+                if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID).equals(buyerCouponInfo.getStatus())) {
+                    continue;
+                }
                 if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_LOCKED).equals(buyerCouponInfo.getStatus())) {
                     buyerCouponStatus = couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_USED);
                 }
@@ -467,9 +474,13 @@ public class CouponRedisHandle {
                     if (index > offset && couponResult.size() < rows) {
                         buyerCouponCode = tmpCouponInfo.getBuyerCouponCode();
                         couponResult.add(tmpCouponInfo);
-                        redisAmountKeyArr[index - offset - 1] = buyerCode + "&" + buyerCouponCode;
+                        redisAmountKeyList.add(buyerCode + "&" + buyerCouponCode);
+                    }
+                    if (couponResult.size() > rows) {
+                        break;
                     }
                 }
+                redisAmountKeyArr = (String[])redisAmountKeyList.toArray(new String[redisAmountKeyList.size()]);
                 couponAmountList = marketRedisDB.getMHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, redisAmountKeyArr);
                 for (int i = 0; i < couponResult.size(); i ++) {
                     buyerCouponInfo = couponResult.get(i);

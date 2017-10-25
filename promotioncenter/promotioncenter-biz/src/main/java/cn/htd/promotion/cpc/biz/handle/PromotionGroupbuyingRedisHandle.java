@@ -147,6 +147,20 @@ public class PromotionGroupbuyingRedisHandle {
 		}
     	
     }
+    
+    /**
+     * 回滚修移除redis里的团购活动信息
+     * @param promotionId
+     * @param jsonObj
+     * @param resultMap
+     */
+	public void rollbackRemoveGroupbuyingInfoCmpl2Redis(String promotionId,String groupbuyingResultKey,String jsonObj,Map<String, String> resultMap) {
+        
+        // 设置团购活动
+        promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+        // 设置团购活动其他信息
+        promotionRedisDB.setHash(groupbuyingResultKey, resultMap);
+	}
 
     
     /**

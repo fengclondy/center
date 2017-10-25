@@ -63,6 +63,12 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
      * 投票数
      */
     private Integer voteNum;
+
+    /**
+     * 活动主题图片
+     */
+    private String voteTopicPic;
+
     /**
      * 图片集合
      */
@@ -190,5 +196,13 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
 
     public void setVoteActivityMemberRankingDTOList(List<VoteActivityMemberRankingDTO> voteActivityMemberRankingDTOList) {
         this.voteActivityMemberRankingDTOList = voteActivityMemberRankingDTOList;
+    }
+
+    public String getVoteTopicPic() {
+        return voteTopicPic;
+    }
+
+    public void setVoteTopicPic(String voteTopicPic) {
+        this.voteTopicPic = voteTopicPic;
     }
 }

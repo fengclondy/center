@@ -355,19 +355,37 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     	return GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key(); //0.成功
 	}
 	
+	
 	@Override
 	public String deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId) {
 
-		// 删除操作返回状态码 [1021.参数为空,1022.活动编码为空]
+		// 删除操作返回状态码 [1021.参数为空,1022.活动编码为空,1023.redis活动删除失败]
+		
+		String promotionId = null;
+		String groupbuyingResultKey = null;
+		String jsonObj = null;
+		Map<String, String> resultMap = null;
+		
 		try {
 
 			if (null == groupbuyingInfoReqDTO) {
 				return GroupbuyingConstants.CommonStatusEnum.DELGROUPBUYING_PARAM_IS_NULL.key();//1021.参数为空
 			}
 
-			if (null == groupbuyingInfoReqDTO.getPromotionId() || groupbuyingInfoReqDTO.getPromotionId().length() == 0) {
+			promotionId = groupbuyingInfoReqDTO.getPromotionId();
+			if (null == promotionId || promotionId.length() == 0) {
 				return GroupbuyingConstants.CommonStatusEnum.DELGROUPBUYING_PROMOTIONID_IS_NULL.key();//1022.活动编码为空
 			}
+			
+	    	jsonObj = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId);
+	    	groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+	    	resultMap = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHashOperations(groupbuyingResultKey);
+			 
+	    	// 根据promotionId移除redis里的团购活动信息
+	    	boolean removeGroupbuyingFlag = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(groupbuyingInfoReqDTO.getPromotionId());
+	    	if(!removeGroupbuyingFlag){
+	    		return GroupbuyingConstants.CommonStatusEnum.DELGROUPBUYING_REDIS_REMOVE_ERROR.key(); //1023.redis活动删除失败
+	    	}
 
 			// 当前时间
 			Calendar calendar = Calendar.getInstance();
@@ -375,13 +393,15 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			groupbuyingInfoReqDTO.setModifyTime(currentTime);
 			int statusRet = groupbuyingInfoDAO.deleteByPromotionId(groupbuyingInfoReqDTO);
 			if (1 != statusRet) {
+				// 回滚修移除redis里的团购活动信息
+				promotionGroupbuyingRedisHandle.rollbackRemoveGroupbuyingInfoCmpl2Redis(promotionId, groupbuyingResultKey, jsonObj, resultMap);
 				return GroupbuyingConstants.CommonStatusEnum.STATUS_ERROR.key(); //-1.活动删除失败
 			}
 			
-			// 根据promotionId移除redis里的团购活动信息
-			promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(groupbuyingInfoReqDTO.getPromotionId());
 
 		} catch (Exception e) {
+			// 回滚修移除redis里的团购活动信息
+			promotionGroupbuyingRedisHandle.rollbackRemoveGroupbuyingInfoCmpl2Redis(promotionId, groupbuyingResultKey, jsonObj, resultMap);
 			logger.error("messageId{}:执行方法【deleteGroupbuyingInfoByPromotionId】报错：{}",messageId, e.toString());
 			throw new RuntimeException(e);
 		}

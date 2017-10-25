@@ -236,6 +236,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		Long totalCount = null;
 		try {
 			totalCount=voteActivityMemberDAO.queryTotalSignupMemberInfo(voteActivityMemListReqDTO);
+			datagrid.setTotal(totalCount);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("queryPagedVoteActivityMemberList方法异常 异常信息=", e.getMessage());
@@ -307,6 +308,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			return result;
 		}
 		try {
+			//throw new Exception("故意为之 测试导出错误数据时使用的");
 			voteActivityMemberDAO.batchInsertVoteActMember(tempList);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -434,8 +436,17 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		}
 		
 		//根据voteActivityResDTO.getVoteSignUpStartTime() 和 voteActivityResDTO.getVoteSignUpEndTime()查询是否有活动
-		int voceAcitvityNum = voteActivityDAO.queryVoteActivityByTime(voteActivityResDTO.getVoteSignUpStartTime(),
-				voteActivityResDTO.getVoteEndTime(), voteActivityResDTO.getVoteId());
+		int voceAcitvityNum = 0;
+		try {
+			voceAcitvityNum = voteActivityDAO.queryVoteActivityByTime(voteActivityResDTO.getVoteSignUpStartTime(),
+					voteActivityResDTO.getVoteEndTime(), voteActivityResDTO.getVoteId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("updateVoteActivity方法异常 异常信息=", e.getMessage());
+			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			return result;
+		}
+			
 		
 		if(voceAcitvityNum > 0){
 			result.setErrorMessages(Lists.newArrayList("同一时间段内，不可有多个投票活动，请确认！"));

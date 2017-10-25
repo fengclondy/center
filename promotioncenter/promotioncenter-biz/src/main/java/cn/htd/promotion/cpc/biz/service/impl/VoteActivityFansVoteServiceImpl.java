@@ -279,6 +279,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberVoteDetailDTO.setVoteEndTime(voteActivityResDTO.getVoteEndTime());
         voteActivityMemberVoteDetailDTO.setSystemTime(systemTime);
         voteActivityMemberVoteDetailDTO.setMemberActivityDec(voteActivityMemberResDTO.getMemberActivityDec());
+        voteActivityMemberVoteDetailDTO.setVoteTopicPic(voteActivityResDTO.getVoteTopicPic());
         // 获取图片
         List<VoteActivityMemberPictureResDTO> voteActivityMemberPictureResDTOList = this.voteActivityMemberPictureDAO.selectByVoteMemberId(voteActivityMemberResDTO.getVoteMemberId());
         List<String> picList = new ArrayList<>();

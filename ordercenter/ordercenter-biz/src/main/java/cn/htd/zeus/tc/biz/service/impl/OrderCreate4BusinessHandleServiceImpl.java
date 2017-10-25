@@ -38,6 +38,8 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 				.getOrderList();
 		String messageId = orderCreateInfoReqDTO.getMessageId();
 		String buyerCode = orderCreateInfoReqDTO.getBuyerCode();
+		int itemCount = 0;//商品行总数量
+		int limitedTimePurchaseCount = 0;//限时购商品行总数量
 		for (OrderCreateListInfoReqDTO orderTemp : orderList) {
 			List<OrderCreateItemListInfoReqDTO> orderItemList = orderTemp
 					.getOrderItemList();
@@ -54,6 +56,7 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 			// 2-如果是外部供应商，则根据skuCode校验是否参与限时购，如果参与限时购，校验库存是否足够
 			for (OrderCreateItemListInfoReqDTO orderItemTemp : orderItemList) {
 				String channelCode = orderItemTemp.getChannelCode();
+				itemCount++;
 				if (GoodCenterEnum.EXTERNAL_SUPPLIER.getCode().equals(
 						channelCode)) {
 					String skuCode = orderItemTemp.getSkuCode();
@@ -120,9 +123,18 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 								.setIsHasLimitedTimePurchase(Integer
 										.valueOf(OrderStatusEnum.HAS_LIMITED_TIME_PURCHASE
 												.getCode()));
+						limitedTimePurchaseCount++;
 					}
 				}
 			}
+		}
+		if(limitedTimePurchaseCount == itemCount){
+			throw new OrderCenterBusinessException(
+					ResultCodeEnum.ORDERCENTER_VALIDATE_LIMITED_TIME_PURCHASE_CAN_NOT_USE_COUPON
+							.getCode(),
+					"提交订单时"
+							+ ResultCodeEnum.ORDERCENTER_VALIDATE_LIMITED_TIME_PURCHASE_CAN_NOT_USE_COUPON
+									.getMsg());
 		}
 	}
 

@@ -277,6 +277,9 @@
 		<if test="entity.showStatus != null and entity.showStatus != ''">
         	<![CDATA[ and promotion_info.show_status = #{entity.showStatus}]]>
 		</if>
+		<if test="entity.itemCode != null and entity.itemCode != ''">
+        	<![CDATA[ and timelimited_info.item_code = #{entity.itemCode}]]>
+		</if>
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
@@ -310,6 +313,9 @@
 		<if test="entity.showStatus != null and entity.showStatus != ''">
         	<![CDATA[ and promotion_info.show_status = #{entity.showStatus}]]>
 		</if>
+		<if test="entity.itemCode != null and entity.itemCode != ''">
+        	<![CDATA[ and timelimited_info.item_code = #{entity.itemCode}]]>
+		</if>
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
@@ -322,7 +328,7 @@
 		and promotion_accumulaty.delete_flag = 0
 		group by promotion_info.id
 		order by
-		promotion_info.modify_time desc
+		promotion_info.create_time desc
 		<if test="page!=null">
 			<include refid="pagination_tail" />
 		</if>

@@ -46,7 +46,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
  */
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationContext_test.xml","classpath:mybatis/sqlconfig/sqlMapConfig.xml"})
+@ContextConfiguration(locations={"classpath:applicationContext_test.xml"})
 public class GroupbuyingTestUnit {
 
 	@Resource
@@ -639,8 +639,8 @@ public class GroupbuyingTestUnit {
 
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("name", "林寻");
-			map.put("age", "28");
-			map.put("sex", "nam-12");
+			map.put("age", "18");
+			map.put("sex", "nam");
 
 			boolean flag = promotionGroupbuyingRedisHandle.testHash(key, map);
 			System.out.println(flag);

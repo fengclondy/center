@@ -33,7 +33,7 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
     /**
      * 清除过期优惠券的过期天数
      */
-    private static final String EXPIRE_PROMOTION_INTERVAL = "remove.redis.promotion.interval";
+    private static final String EXPIRE_PROMOTION_PURCHASE_INTERVAL = "remove.redis.promotion.purchase.interval";
 
     @Resource
     private DictionaryUtils dictionary;
@@ -117,7 +117,7 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
         logger.info("\n 方法:[{}],入参:[{}][{}]", "CleanExpiredPromotionScheduleTask-execute",
                 JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
         boolean result = true;
-        int expirePromotionInterval = Integer.parseInt(SysProperties.getProperty(EXPIRE_PROMOTION_INTERVAL));
+        int expirePromotionInterval = Integer.parseInt(SysProperties.getProperty(EXPIRE_PROMOTION_PURCHASE_INTERVAL));
         Date expireDt = DateUtils.getSpecifiedDay(new Date(), -1 * expirePromotionInterval);
         String promotionId = "";
         String promotionType = "";

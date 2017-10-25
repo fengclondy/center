@@ -91,6 +91,14 @@ public class TradeOrderExportServiceImpl implements TradeOrderExportService {
 			if(null!=orderItemDiscountDTOList&&orderItemDiscountDTOList.size()>0){
 				for(TradeOrderItemsDiscountDTO tradeOrderItemsDiscountDTO:orderItemDiscountDTOList){
 					promotionId+=tradeOrderItemsDiscountDTO.getPromotionId()+" ";
+					//add by lijun for 限时购
+					for(TradeOrderItemsDTO tradeOrderItems :list1){
+						if(tradeOrderItemsDiscountDTO.getOrderItemNo().equals(tradeOrderItems.getOrderItemNo())){
+							tradeOrderItems.setPromotionType(tradeOrderItemsDiscountDTO.getPromotionType());
+							break;
+						}
+					}
+					//add by lijun for 限时购
 				}
 			}
 
@@ -164,6 +172,19 @@ public class TradeOrderExportServiceImpl implements TradeOrderExportService {
 			itemDto.setOrderNo(orderNo);
 			List<TradeOrderItemsDTO> list = tradeOrderItemsDAO.queryTradeOrderItemsByOrderNo(itemDto);
 			if(null!=list) {
+				//add by lijun for 限时购
+				List<TradeOrderItemsDiscountDTO> orderItemDiscountDTOList = tradeOrderItemsDiscountDAO.queryItemDiscountByOrderNo(orderNo);
+				if(null!=orderItemDiscountDTOList&&orderItemDiscountDTOList.size()>0){
+					for(TradeOrderItemsDiscountDTO tradeOrderItemsDiscountDTO:orderItemDiscountDTOList){
+						for(TradeOrderItemsDTO tradeOrderItems :list){
+							if(tradeOrderItemsDiscountDTO.getOrderItemNo().equals(tradeOrderItems.getOrderItemNo())){
+								tradeOrderItems.setPromotionType(tradeOrderItemsDiscountDTO.getPromotionType());
+								break;
+							}
+						}
+					}
+				}
+				//add by lijun for 限时购
 				dto.setOrderItemList(list);
 			}
 			result.setResult(dto);

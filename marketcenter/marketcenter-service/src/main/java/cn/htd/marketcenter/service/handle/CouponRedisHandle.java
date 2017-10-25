@@ -40,6 +40,7 @@ import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
 import cn.htd.marketcenter.dto.PromotionSellerDetailDTO;
 import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
+import cn.htd.marketcenter.service.PromotionBaseService;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -62,6 +63,9 @@ public class CouponRedisHandle {
     @Resource
     private MarketCenterRedisDB marketRedisDB;
 
+    @Resource
+    private PromotionBaseService baseService;
+
     /**
      * 保存优惠券活动的启用状态
      *
@@ -81,116 +85,27 @@ public class CouponRedisHandle {
         String couponProvideType = couponInfo.getCouponProvideType();
         String couponJsonStr = "";
         String couponRedisKey = "";
-        String promotionId = couponInfo.getPromotionId();
-        PromotionBuyerRuleDTO buyerRuleDTO = couponInfo.getBuyerRuleDTO();
-        PromotionSellerRuleDTO sellerRuleDTO = couponInfo.getSellerRuleDTO();
-        PromotionCategoryItemRuleDTO categoryItemRuleDTO = couponInfo.getCategoryItemRuleDTO();
-        List<String> buyerGroupList = null;
-        List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
-        List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
-        List<PromotionCategoryDetailDTO> categoryDetailDTOList = null;
-        List<PromotionItemDetailDTO> itemDetailDTOList = null;
-        Jedis jedis = null;
-        Pipeline pipeline = null;
-        long diffTime = 0L;
-        int seconds = 0;
 
         //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
-        couponInfo.setVerifierId(null);
-        couponInfo.setVerifierName(null);
-        couponInfo.setVerifyTime(null);
-        couponInfo.setVerifyRemark(null);
-        couponInfo.setCreateId(null);
-        couponInfo.setCreateName(null);
-        couponInfo.setCreateTime(null);
-        couponInfo.setModifyId(null);
-        couponInfo.setModifyName(null);
-        couponInfo.setModifyTime(null);
-        couponInfo.setBuyerRuleId(null);
-        couponInfo.setSellerRuleId(null);
-        couponInfo.setCategoryItemRuleId(null);
-        couponInfo.setPromotionStatusHistoryList(null);
-        diffTime = couponInfo.getInvalidTime().getTime() - new Date().getTime();
-        seconds = (int) (diffTime / 1000);
-        try {
-            jedis = marketRedisDB.getResource();
-            pipeline = jedis.pipelined();
-            if (buyerRuleDTO != null) {
-                buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
-                buyerGroupList = buyerRuleDTO.getTargetBuyerGroupList();
-                if (buyerGroupList != null && !buyerGroupList.isEmpty()) {
-                    for (String buyerGroupId : buyerGroupList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId,
-                                buyerGroupId);
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_GROUP_SET + "_" + promotionId, seconds);
-                    buyerRuleDTO.setTargetBuyerGroupList(null);
-                    buyerRuleDTO.setTargetBuyerGroup(null);
-                }
-                if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
-                    for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
-                        pipeline.hset(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId,
-                                buyerDetailDTO.getBuyerCode(), buyerDetailDTO.getBuyerName());
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_BUYER_RULE_DETAIL_HASH + "_" + promotionId, seconds);
-                    buyerRuleDTO.setBuyerDetailList(null);
-                }
-            }
-            if (sellerRuleDTO != null) {
-                sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
-                if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
-                    for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId,
-                                sellerDetailDTO.getSellerCode());
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_SELLER_RULE_DETAIL_SET + "_" + promotionId, seconds);
-                    sellerRuleDTO.setSellerDetailList(null);
-                }
-            }
-            if (categoryItemRuleDTO != null) {
-                categoryDetailDTOList = categoryItemRuleDTO.getCategoryDetailList();
-                itemDetailDTOList = categoryItemRuleDTO.getItemDetailList();
-                if (categoryDetailDTOList != null && !categoryDetailDTOList.isEmpty()) {
-                    for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailDTOList) {
-                        pipeline.hset(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId,
-                                categoryDetailDTO.getCategoryId().toString(), categoryDetailDTO.getBrandIdList());
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_CATEGORY_RULE_DETAIL_HASH + "_" + promotionId, seconds);
-                    categoryItemRuleDTO.setCategoryDetailList(null);
-                }
-                if (itemDetailDTOList != null && !itemDetailDTOList.isEmpty()) {
-                    for (PromotionItemDetailDTO itemDetailDTO : itemDetailDTOList) {
-                        pipeline.sadd(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId,
-                                itemDetailDTO.getSkuCode());
-                    }
-                    pipeline.expire(RedisConst.REDIS_PROMOTION_ITEM_RULE_DETAIL_SET + "_" + promotionId, seconds);
-                    categoryItemRuleDTO.setItemDetailList(null);
-                }
-            }
-            couponJsonStr = JSON.toJSONString(couponInfo);
-            pipeline.rpush(RedisConst.REDIS_COUPON_NEED_DEAL_LIST, couponJsonStr);
-            pipeline.hset(RedisConst.REDIS_COUPON_VALID, promotionId, dictionary
-                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
-//            marketRedisDB.setHash(RedisConst.REDIS_COUPON_VALID, couponInfo.getPromotionId(), dictionary.getValueByCode
-//                    (DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+        marketRedisDB.setHash(RedisConst.REDIS_COUPON_VALID, couponInfo.getPromotionId(), dictionary.getValueByCode
+                (DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
 //        if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
 //                DictionaryConst.OPT_COUPON_PROVIDE_TRIGGER_SEND).equals(couponProvideType)) {
 //            marketRedisDB.setHash(RedisConst.REDIS_COUPON_TRIGGER, couponInfo.getPromotionId(), couponJsonStr);
 //        } else {
-            if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
-                    DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProvideType)) {
-                couponRedisKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + promotionId;
-                pipeline.set(couponRedisKey, couponJsonStr);
-                pipeline.expire(couponRedisKey, seconds);
-//                marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
-            }
-//            marketRedisDB.tailPush(RedisConst.REDIS_COUPON_NEED_DEAL_LIST, couponJsonStr);
-//        }
-            pipeline.sync();
-        } finally {
-            marketRedisDB.releaseResource(jedis);
+        baseService.deletePromotionUselessInfo(couponInfo);
+        baseService.deleteSellerUselessInfo(couponInfo);
+        baseService.deleteCategoryUselessInfo(couponInfo);
+        couponJsonStr = JSON.toJSONString(couponInfo);
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
+            DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProvideType)) {
+            couponRedisKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + couponInfo.getPromotionId();
+            baseService.deleteBuyerUselessInfo(couponInfo);
+            couponJsonStr = JSON.toJSONString(couponInfo);
+            marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
         }
+        marketRedisDB.tailPush(RedisConst.REDIS_COUPON_NEED_DEAL_LIST, couponJsonStr);
+//        }
         //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
     }
 
@@ -227,11 +142,6 @@ public class CouponRedisHandle {
         String popedJsonStr = "";
         String validStatus = "";
         BuyerCouponInfoDTO popedCoupon = null;
-        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-        PromotionBuyerRuleDTO buyerRuleDTO = null;
-        PromotionSellerRuleDTO sellerRuleDTO = null;
-        PromotionCategoryItemRuleDTO categoryItemRuleDTO = null;
-        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         List<DictionaryInfo> promotionStatusList =
                 dictionary.getDictionaryOptList(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS);
         Map<String, String> promotionStatusMap = new HashMap<String, String>();
@@ -256,23 +166,6 @@ public class CouponRedisHandle {
             popedCoupon.setBuyerName(receiveDTO.getBuyerName());
             popedCoupon.setCreateId(receiveDTO.getOperatorId());
             popedCoupon.setCreateName(receiveDTO.getOperatorName());
-            //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
-            buyerRuleDTO = popedCoupon.getBuyerRuleDTO();
-            if (buyerRuleDTO != null) {
-                buyerRuleDTO.setTargetBuyerGroupList(null);
-                buyerRuleDTO.setTargetBuyerGroup(null);
-                buyerRuleDTO.setBuyerDetailList(null);
-            }
-            sellerRuleDTO = popedCoupon.getSellerRuleDTO();
-            if (sellerRuleDTO != null) {
-                sellerRuleDTO.setSellerDetailList(null);
-            }
-            categoryItemRuleDTO = popedCoupon.getCategoryItemRuleDTO();
-            if (categoryItemRuleDTO != null) {
-                categoryItemRuleDTO.setCategoryDetailList(null);
-                categoryItemRuleDTO.setItemDetailList(null);
-            }
-            //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         } catch (MarketCenterBusinessException mcbe) {
             if (popedCoupon != null) {
                 marketRedisDB.tailPush(couponRedisKey, popedJsonStr);
@@ -339,6 +232,7 @@ public class CouponRedisHandle {
         buyerCouponDTO.setCouponLeftAmount(buyerCouponDTO.getCouponAmount());
         buyerCouponDTO.setStatus(dictionary
                 .getValueByCode(DictionaryConst.TYPE_COUPON_STATUS, DictionaryConst.OPT_COUPON_STATUS_UNUSED));
+        buyerCouponDTO.setBuyerRuleDTO(null);
         couponJsonStr = JSON.toJSONString(buyerCouponDTO);
         marketRedisDB.tailPush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponJsonStr);
         marketRedisDB.setHash(buyerCouponRedisKey, buyerCouponCode, couponJsonStr);
@@ -464,6 +358,9 @@ public class CouponRedisHandle {
                 }
                 buyerCouponInfo = updateRedisExpiredBuyerCouponStatus(buyerCouponInfo, couponStatusMap);
                 buyerCouponStatus = buyerCouponInfo.getStatus();
+                if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID).equals(buyerCouponInfo.getStatus())) {
+                    continue;
+                }
                 if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_LOCKED).equals(buyerCouponInfo.getStatus())) {
                     buyerCouponStatus = couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_USED);
                 }
@@ -500,6 +397,7 @@ public class CouponRedisHandle {
     public DataGrid<BuyerCouponInfoDTO> getRedisBuyerCouponList(BuyerCouponConditionDTO condition,
             Pager<BuyerCouponInfoDTO> pager) {
         DataGrid<BuyerCouponInfoDTO> dataGrid = new DataGrid<BuyerCouponInfoDTO>();
+        List<BuyerCouponInfoDTO> tmpCouponList = new ArrayList<BuyerCouponInfoDTO>();
         List<BuyerCouponInfoDTO> couponResult = new ArrayList<BuyerCouponInfoDTO>();
         String buyerCode = condition.getBuyerCode();
         String type = condition.getCouponType();
@@ -517,11 +415,15 @@ public class CouponRedisHandle {
         Map<String, String> couponStatusMap = new HashMap<String, String>();
         long total = 0;
         int offset = 0;
+        int index = 0;
         int rows = Integer.MAX_VALUE;
         if (pager != null) {
             offset = pager.getPageOffset();
             rows = pager.getRows();
         }
+        String[] redisAmountKeyArr = null;
+        List<String> redisAmountKeyList = new ArrayList<String>();
+        List<String> couponAmountList = null;
         for (DictionaryInfo dictionaryInfo : couponStatusList) {
             couponStatusMap.put(dictionaryInfo.getCode(), dictionaryInfo.getValue());
         }
@@ -544,6 +446,9 @@ public class CouponRedisHandle {
                 }
                 buyerCouponInfo = updateRedisExpiredBuyerCouponStatus(buyerCouponInfo, couponStatusMap);
                 buyerCouponStatus = buyerCouponInfo.getStatus();
+                if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_INVALID).equals(buyerCouponInfo.getStatus())) {
+                    continue;
+                }
                 if (couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_LOCKED).equals(buyerCouponInfo.getStatus())) {
                     buyerCouponStatus = couponStatusMap.get(DictionaryConst.OPT_COUPON_STATUS_USED);
                 }
@@ -555,15 +460,36 @@ public class CouponRedisHandle {
                 }
                 if (tmpStatus.equals(buyerCouponStatus)) {
                     total++;
-                    if (total > offset && couponResult.size() < rows) {
-                        buyerCouponLeftAmount = marketRedisDB
-                                .getHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode);
-                        buyerCouponLeftAmount =
-                                StringUtils.isEmpty(buyerCouponLeftAmount) ? "0" : buyerCouponLeftAmount;
-                        buyerCouponInfo.setCouponLeftAmount(
-                                CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
-                        couponResult.add(buyerCouponInfo);
+                    tmpCouponList.add(buyerCouponInfo);
+                }
+            }
+            if (!tmpCouponList.isEmpty()) {
+                Collections.sort(tmpCouponList, new Comparator<BuyerCouponInfoDTO>() {
+                    public int compare(BuyerCouponInfoDTO o1, BuyerCouponInfoDTO o2) {
+                        return o2.getGetCouponTime().compareTo(o1.getGetCouponTime());
                     }
+                });
+                for (BuyerCouponInfoDTO tmpCouponInfo : tmpCouponList) {
+                    index ++;
+                    if (index > offset && couponResult.size() < rows) {
+                        buyerCouponCode = tmpCouponInfo.getBuyerCouponCode();
+                        couponResult.add(tmpCouponInfo);
+                        redisAmountKeyList.add(buyerCode + "&" + buyerCouponCode);
+                    }
+                    if (couponResult.size() > rows) {
+                        break;
+                    }
+                }
+                redisAmountKeyArr = (String[])redisAmountKeyList.toArray(new String[redisAmountKeyList.size()]);
+                couponAmountList = marketRedisDB.getMHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, redisAmountKeyArr);
+                for (int i = 0; i < couponResult.size(); i ++) {
+                    buyerCouponInfo = couponResult.get(i);
+                    buyerCouponLeftAmount = couponAmountList.get(i);
+                    if (StringUtils.isEmpty(couponAmountList.get(i)) || "nil".equals(couponAmountList.get(i))) {
+                        buyerCouponLeftAmount = "0";
+                    }
+                    buyerCouponInfo.setCouponLeftAmount(
+                            CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
                 }
             }
         }

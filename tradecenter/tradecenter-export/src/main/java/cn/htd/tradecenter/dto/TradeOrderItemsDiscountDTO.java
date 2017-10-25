@@ -30,6 +30,8 @@ public class TradeOrderItemsDiscountDTO implements Serializable {
 	private String couponType;
 
 	private BigDecimal couponDiscount;
+	
+	private String promotionType; //促销活动类型 1：优惠券，2：秒杀，3：限时购
 
 	public Long getId() {
 		return id;
@@ -126,4 +128,13 @@ public class TradeOrderItemsDiscountDTO implements Serializable {
 	public void setCouponDiscount(BigDecimal couponDiscount) {
 		this.couponDiscount = couponDiscount;
 	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
+	}
+	
 }

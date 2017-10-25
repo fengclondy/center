@@ -332,6 +332,7 @@
  	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
 	  select 
 		@rownum:=@rownum+1 as  sortNum,
+		temp.member_code as memberCode,
 		temp.vendor_name as sellerName,
 	    temp.member_name as memberName,
 		temp.contact_name as contactName,
@@ -344,6 +345,7 @@
 		temp.forwardCount
 	 from ( select 
 	 @rownum:=0,
+	  vam.member_code,
 	  vam.vendor_name,
 	  vam.member_name,
 	  vam.contact_name,
@@ -389,7 +391,7 @@
 	 select 
 		count(1)
 	  from  vote_activity_member vam
-	  where 1=1
+	  where delete_flag!=1 and vote_id=#{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
 	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
 	  </if> 
@@ -471,8 +473,8 @@ select
     ( #{item.voteId,jdbcType=BIGINT}, #{item.memberCode,jdbcType=VARCHAR}, 
       #{item.memberName,jdbcType=VARCHAR}, #{item.vendorName,jdbcType=VARCHAR}, #{item.contactName,jdbcType=VARCHAR}, 
       #{item.contactPhone,jdbcType=VARCHAR},0, 0, 
-      0, #{item.createId,jdbcType=BIGINT}, #{item.createName,jdbcType=VARCHAR}, 
-      NOW(), #{item.modifyId,jdbcType=BIGINT}, #{item.modifyName,jdbcType=VARCHAR}, 
+      0, #{item.operatorId,jdbcType=BIGINT}, #{item.operatorName,jdbcType=VARCHAR}, 
+      NOW(), #{item.operatorId,jdbcType=BIGINT}, #{item.operatorName,jdbcType=VARCHAR}, 
       NOW())
     </foreach>
      on duplicate key update modify_time =now()
@@ -482,6 +484,7 @@ select
  	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
 	  select 
 		@rownum:=@rownum+1 as  sortNum,
+		temp.member_code as memberCode,
 		temp.vendor_name as sellerName,
 	    temp.member_name as memberName,
 		temp.contact_name as contactName,
@@ -494,6 +497,7 @@ select
 		temp.forwardCount
 	 from ( select 
 	 @rownum:=0,
+	  vam.member_code,
 	  vam.vendor_name,
 	  vam.member_name,
 	  vam.contact_name,
@@ -506,7 +510,8 @@ select
 	  (select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
 	  vam.member_vote_last_time
 	  from  vote_activity_member vam
-	  where 1=1
+	  where vam.delete_flag = 0
+	  	and vam.vote_id = #{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
 	 	 and vam.vendor_name like contact(#{sellerName},'%')
 	  </if> 

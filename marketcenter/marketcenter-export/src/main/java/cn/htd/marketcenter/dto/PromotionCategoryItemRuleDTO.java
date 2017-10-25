@@ -3,6 +3,7 @@ package cn.htd.marketcenter.dto;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 促销活动品类商品规则
@@ -70,6 +71,16 @@ public class PromotionCategoryItemRuleDTO implements Serializable {
 	 * 促销活动商品明细
 	 */
 	private List<PromotionItemDetailDTO> itemDetailList;
+	//----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+	/**
+	 * 指定促销活动品类列表
+	 */
+	private Map<String, String> targetCategoryCodeMap;
+	/**
+	 * 指定促销活动商品列表
+	 */
+	private List<String> targetItemCodeList;
+	//----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 
 	public Long getId() {
 		return id;
@@ -191,4 +202,19 @@ public class PromotionCategoryItemRuleDTO implements Serializable {
 		this.itemDetailList = itemDetailList;
 	}
 
+	public Map<String, String> getTargetCategoryCodeMap() {
+		return targetCategoryCodeMap;
+	}
+
+	public void setTargetCategoryCodeMap(Map<String, String> targetCategoryCodeMap) {
+		this.targetCategoryCodeMap = targetCategoryCodeMap;
+	}
+
+	public List<String> getTargetItemCodeList() {
+		return targetItemCodeList;
+	}
+
+	public void setTargetItemCodeList(List<String> targetItemCodeList) {
+		this.targetItemCodeList = targetItemCodeList;
+	}
 }

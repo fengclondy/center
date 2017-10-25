@@ -307,7 +307,8 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			return result;
 		}
 		try {
-			voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+			throw new Exception("故意为之");
+			//voteActivityMemberDAO.batchInsertVoteActMember(tempList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("importVoteActivityMember 方法异常 异常信息" + e.getMessage());

@@ -94,12 +94,11 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
     }
 
     /***
-     * 根据活动ID和会员编码查询会员店投票活动报名编码
-     * @param voteId
-     * @param memberCode
+     * 根据活动会员店id
+     * @param voteMemberId
      * @return
      */
-    public ExecuteResult<VoteActivityMemResDTO> selectByVoteIdAndMemberCode(Long voteMemberId){
+    public ExecuteResult<VoteActivityMemResDTO> selectByVoteMemberCode(Long voteMemberId){
         // 返回对象
         ExecuteResult<VoteActivityMemResDTO> result = new ExecuteResult<VoteActivityMemResDTO>();
         try{

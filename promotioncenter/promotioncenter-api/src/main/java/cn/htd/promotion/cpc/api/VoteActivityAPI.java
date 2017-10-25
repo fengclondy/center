@@ -87,12 +87,11 @@ public interface VoteActivityAPI {
 	ExecuteResult<VoteActivityResDTO> selectCurrentActivity();
 
 	/***
-	 * 根据活动ID和会员编码查询投票活动
-	 * @param voteId
-	 * @param memberCode
+	 * 根据活动会员id查询投票活动
+	 * @param voteMemberId
 	 * @return
 	 */
-	ExecuteResult<VoteActivityMemResDTO> selectByVoteIdAndMemberCode(Long voteMemberId);
+	ExecuteResult<VoteActivityMemResDTO> selectByVoteMemberCode(Long voteMemberId);
 
 	/***
 	 * 保存会员店投票活动报名信息

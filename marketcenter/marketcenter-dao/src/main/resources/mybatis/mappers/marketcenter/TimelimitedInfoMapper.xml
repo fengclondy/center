@@ -328,7 +328,7 @@
 		and promotion_accumulaty.delete_flag = 0
 		group by promotion_info.id
 		order by
-		promotion_info.modify_time desc
+		promotion_info.create_time desc
 		<if test="page!=null">
 			<include refid="pagination_tail" />
 		</if>

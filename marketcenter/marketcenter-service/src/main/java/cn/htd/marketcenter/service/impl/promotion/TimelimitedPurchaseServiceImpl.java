@@ -401,6 +401,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						timelimitPurchaseMallInfoDTO.setStartTimeSort(timelimitedConvert.getStartTime());
 						timelimitPurchaseMallInfoDTO.setSalesVolumeSort(timelimitedConvert.getSalesVolume());
 						timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimitedConvert.getSalesVolumePrice());
+						timelimitPurchaseMallInfoDTO.setSkuTimelimitedPriceSort(timelimitedConvert.getSkuTimelimitedPrice());
 						timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimitedConvert.getPreferentialStrength());
 						resultList.add(timelimitPurchaseMallInfoDTO);
 					} else if (dto.getPurchaseFlag() == 2 && nowDt.before(timelimitedInfoDTO.getEffectiveTime())) {
@@ -412,6 +413,7 @@ public class TimelimitedPurchaseServiceImpl implements TimelimitedPurchaseServic
 						timelimitPurchaseMallInfoDTO.setStartTimeSort(timelimitedConvert.getStartTime());
 						timelimitPurchaseMallInfoDTO.setSalesVolumeSort(timelimitedConvert.getSalesVolume());
 						timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimitedConvert.getSalesVolumePrice());
+						timelimitPurchaseMallInfoDTO.setSkuTimelimitedPriceSort(timelimitedConvert.getSkuTimelimitedPrice());
 						timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimitedConvert.getPreferentialStrength());
 						resultList.add(timelimitPurchaseMallInfoDTO);
 					}

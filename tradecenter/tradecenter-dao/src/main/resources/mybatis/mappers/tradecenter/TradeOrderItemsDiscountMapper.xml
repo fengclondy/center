@@ -28,7 +28,8 @@
 	buyer_coupon_code,
 	coupon_provider_type,
 	coupon_type,
-	coupon_discount
+	coupon_discount,
+	promotion_type
   </sql>
   <select id="queryItemDiscountByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 

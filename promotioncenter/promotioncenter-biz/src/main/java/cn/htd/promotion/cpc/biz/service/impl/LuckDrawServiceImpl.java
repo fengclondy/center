@@ -772,6 +772,7 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 						.getMsg());
 				return result;
 			}
+			Set<String> allSellerCodeSet = new HashSet<String>();
 			for(String promotionId : promotionIdList){
 				Map<String, String> dictMap = null;
 				PromotionExtendInfoDTO promotionInfoDTO = null;
@@ -789,7 +790,8 @@ public class LuckDrawServiceImpl implements LuckDrawService {
 						&& !sellerDetailListRedisValue.isEmpty()) {
 					result.setResponseCode(ResultCodeEnum.SUCCESS.getCode());
 					result.setResponseMsg(ResultCodeEnum.SUCCESS.getMsg());
-					result.setSellerDetailSet(sellerDetailListRedisValue);
+					allSellerCodeSet.addAll(sellerDetailListRedisValue);
+					result.setSellerDetailSet(allSellerCodeSet);
 				}else{
 					result.setResponseCode(ResultCodeEnum.LOTTERY_ALL_ORG_HAS_AUTHIORITY
 							.getCode());

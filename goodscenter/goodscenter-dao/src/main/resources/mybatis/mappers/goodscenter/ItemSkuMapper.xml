@@ -1240,4 +1240,21 @@
 	on t.item_id = sku.item_id
 	where t.item_code=#{itemCode} and t.product_channel_code != '3010'
   </select>
+  
+  	<select id="selectItemSkuByItemId" resultMap="itemSkuItemMapper">
+		select
+			sku_id,
+			sku_code,
+			sub_title,
+			sku_type,
+			ad,
+			attributes,
+			sku_erp_code,
+			ean_code
+			from item_sku
+			WHERE
+			item_id = #{itemId} 
+			AND sku_status=1
+	</select>
+  
 </mapper>

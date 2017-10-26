@@ -36,4 +36,10 @@ public interface VoteActivityDAO {
     
     List<VoteActivityResDTO> selectPagedVoteActivity(@Param("start") int start,@Param("pageSize") int pageSize, @Param("voteActName")
     		String voteActName,@Param("actStatus") String actStatus);
+
+    /***
+     * 查询当前投票已经开始的投票活动
+     * @return
+     */
+    VoteActivityResDTO selectCurrentVoteStartActivity();
 }

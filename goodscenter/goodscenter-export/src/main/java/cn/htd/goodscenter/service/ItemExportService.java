@@ -31,6 +31,7 @@ import cn.htd.goodscenter.dto.indto.SyncItemStockInDTO;
 import cn.htd.goodscenter.dto.indto.SyncItemStockSearchInDTO;
 import cn.htd.goodscenter.dto.outdto.ItemToDoCountDTO;
 import cn.htd.goodscenter.dto.outdto.SyncItemStockSearchOutDTO;
+import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuOutDTO;
 
 /**
  * 
@@ -340,4 +341,19 @@ public interface ItemExportService {
 	 * @time 2017-10-09
 	 */
 	public ItemPicture queryItemPicsFirst(Long itemId);
+	
+	/**
+	 * 限时购 - 根据itemCode 查询sku属性相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	public ExecuteResult<List<VenusItemSkuOutDTO>> getItemSkuList(String itemCode); 
+	
+	/**
+	 * 限时购 - 根据skuCode 查询库存和阶梯价等相关信息相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode); 
+
 }

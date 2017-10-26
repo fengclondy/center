@@ -263,6 +263,7 @@
     from vote_activity_member
     where vote_id = #{voteId,jdbcType=BIGINT}
     AND member_code = #{memberCode,jdbcType=VARCHAR}
+    AND delete_flag = 0
     limit 1
   </select>
 

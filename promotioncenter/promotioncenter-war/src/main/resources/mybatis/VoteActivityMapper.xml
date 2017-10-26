@@ -283,8 +283,21 @@
     where
     <![CDATA[  vote_sign_up_start_time <= NOW()]]>
     and vote_end_time >= NOW()
+    and delete_flag = 0
     limit 1
   </select>
+
+  <select id="selectCurrentVoteStartActivity" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from vote_activity
+    where
+    <![CDATA[  vote_start_time <= NOW()]]>
+    and vote_end_time >= NOW()
+    and delete_flag = 0
+    limit 1
+  </select>
+
   
   <select id="queryVoteActivityByTime" resultType="int" >
    select count(*) from (

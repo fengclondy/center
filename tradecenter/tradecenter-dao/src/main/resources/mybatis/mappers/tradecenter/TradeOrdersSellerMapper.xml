@@ -138,17 +138,8 @@
     </if>
     WHERE 1=1
     <if test="entity!=null">
-      <if test="entity.goodsName !=null and entity.goodsName !=''">
-        AND trade_orders_.order_no = trade_order_items_.order_no
-      </if>
       <if test="entity.shopId != null">
         <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
-      </if>
-      <if test="entity.orderNo != null and entity.orderNo !=''">
-        <![CDATA[ and trade_orders_.order_no = #{entity.orderNo} ]]>
-      </if>
-      <if test="entity.payStatus != null and entity.payStatus !=''">
-        <![CDATA[ and trade_orders_.pay_status = #{entity.payStatus} ]]>
       </if>
       <if test="entity.orderStatuss !=null">
         <![CDATA[ and trade_orders_.order_status IN ]]>
@@ -156,6 +147,12 @@
                  separator="," close=")">
           #{item}
         </foreach>
+      </if>
+      <if test="entity.isCancelOrder != null">
+        <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
+      </if>
+      <if test="entity.orderNo != null and entity.orderNo !=''">
+        <![CDATA[ and trade_orders_.order_no = #{entity.orderNo} ]]>
       </if>
       <if test="entity.orderStatus != null and entity.orderStatus !=''">
         <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
@@ -178,6 +175,7 @@
       </if>
 
     </if>
+
   </select>
   <select id="queryStatusCountsForSeller" resultType="long">
     SELECT count(*) from trade_orders trade_orders_ WHERE trade_orders_.shop_id = #{entity.shopId}

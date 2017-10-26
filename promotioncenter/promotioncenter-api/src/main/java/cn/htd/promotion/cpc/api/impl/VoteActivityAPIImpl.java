@@ -129,14 +129,16 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
      * @param voteMemberId
      * @return
      */
-    public ExecuteResult<VoteActivityMemResDTO> selectByVoteMemberCode(Long voteMemberId){
+    public ExecuteResult<VoteActivityMemResDTO> selectByVoteMemberCode(Long voteId, Long voteMemberId){
         // 返回对象
         ExecuteResult<VoteActivityMemResDTO> result = new ExecuteResult<VoteActivityMemResDTO>();
+        if (voteId == null || voteMemberId == null) {
+        	result.setErrorMessages(Lists.newArrayList("参数未空 请检查参数"));
+        	return result;
+        }
         try{
-            // 正确返回
-            result.setCode(ResultCodeEnum.SUCCESS.getCode());
             // 返回值
-            result = voteActivityService.queryVoteActivityMemberDetail(voteMemberId);
+            result = voteActivityService.queryVoteActivityMemberDetail(voteId, voteMemberId);
         }catch (Exception e){
             // 打印错误消息
             e.printStackTrace();

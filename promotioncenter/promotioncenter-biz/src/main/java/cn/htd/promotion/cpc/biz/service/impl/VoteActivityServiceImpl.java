@@ -147,20 +147,18 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 					}catch(Exception e){
 						e.printStackTrace();
 					}
-					
+					int authShopCount = 0;
 					List<HashMap<String, Object>> resultMapList=voteActivityMemberDAO.querySignupMemberCount(voteActResDTO.getVoteId());
 					if(CollectionUtils.isNotEmpty(resultMapList)){
 						for(Map resultMap:resultMapList){
 							if(resultMap!=null&&MapUtils.isNotEmpty(resultMap)&&resultMap.get("sign_status")!=null){
 								if("0".equals(resultMap.get("sign_status")+"")){
-									int authShopCount=resultMap.get("c")==null?0:Integer.valueOf(resultMap.get("c")+"");
-									voteActivityListResDTO.setAuthShopCount(authShopCount);
-									continue;
+									authShopCount += resultMap.get("c")==null?0:Integer.valueOf(resultMap.get("c")+"");
 								}
-								
 								if("1".equals(resultMap.get("sign_status")+"")){
 									int signupShopCount=resultMap.get("c")==null?0:Integer.valueOf(resultMap.get("c")+"");
 									voteActivityListResDTO.setSignupShopCount(signupShopCount);
+									authShopCount += resultMap.get("c")==null?0:Integer.valueOf(resultMap.get("c")+"");
 									continue;
 								}
 							}
@@ -168,6 +166,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 						}
 						
 					}
+					voteActivityListResDTO.setAuthShopCount(authShopCount);
 					Long forwardCount=voteActivityFansForwardDAO.selectVoteActivityForwardCount(voteActResDTO.getVoteId());
 					voteActivityListResDTO.setForwardCount(forwardCount);
 					voteActivityListResDTO.setVoteId(voteActResDTO.getVoteId());
@@ -261,7 +260,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 
 
 	@Override
-	public ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(
+	public ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteId,
 			Long voteMemberId) {
 		ExecuteResult<VoteActivityMemResDTO> resut=new ExecuteResult<VoteActivityMemResDTO>();
 		
@@ -270,7 +269,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			return resut;
 		}
 		
-		VoteActivityMemResDTO voteActivityMemResDTO=voteActivityMemberDAO.querySignupMemberDetailInfo(voteMemberId);
+		VoteActivityMemResDTO voteActivityMemResDTO=voteActivityMemberDAO.querySignupMemberDetailInfo(voteId,voteMemberId);
 		resut.setResult(voteActivityMemResDTO);
 		return resut;
 	}

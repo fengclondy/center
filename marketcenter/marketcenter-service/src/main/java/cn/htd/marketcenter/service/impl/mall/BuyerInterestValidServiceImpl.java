@@ -251,7 +251,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         String buyerCouponRedisKey = RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode;
         String buyerCouponValue = "";
         ForkJoinPool forkJoinPool = null;
-        Future<List<OrderItemCouponDTO>> taskResult = null;
         boolean hasTargetCouponFlag = false;
 
         if (targetCouponCodeList != null && !targetCouponCodeList.isEmpty()) {
@@ -282,11 +281,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!valueList.isEmpty()) {
-                forkJoinPool = new ForkJoinPool();
-                taskResult = forkJoinPool
-                        .submit(new ValidBuyerAvaliableCouponTask(messageId, dictMap, valueList, validMap,
+                forkJoinPool = new ForkJoinPool(4);
+                allCouponList = forkJoinPool
+                        .invoke(new ValidBuyerAvaliableCouponTask(messageId, dictMap, valueList, validMap,
                                 hasTargetCouponFlag, orderInfoMap, allProductList));
-                allCouponList = taskResult.get();
                 long endTime1 = System.currentTimeMillis();
                 logger.info("***********校验会员优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                         (endTime1 - endTime0));
@@ -310,12 +308,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             }
             cart.setAvaliableCouponList(avaliableCouponList);
             cart.setUnavaliableCouponList(unavaliableCouponList);
-        } catch (InterruptedException ie) {
+        } catch (Exception e) {
             logger.error("***********校验会员可用优惠券 messageId:[{}],错误信息:[{}] ***********", messageId,
-                    ExceptionUtils.getStackTraceAsString(ie));
-        } catch (ExecutionException ee) {
-            logger.error("***********校验会员可用优惠券 messageId:[{}],错误信息:[{}] ***********", messageId,
-                    ExceptionUtils.getStackTraceAsString(ee));
+                    ExceptionUtils.getStackTraceAsString(e));
         } finally {
             if (forkJoinPool != null) {
                 forkJoinPool.shutdown();
@@ -838,18 +833,18 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             List<String> rightList = new ArrayList<String>();
             ValidBuyerAvaliableCouponTask leftTask = null;
             ValidBuyerAvaliableCouponTask rightTask = null;
-            List<OrderItemCouponDTO> leftTaskRst = null;
-            List<OrderItemCouponDTO> rightTaskRst = null;
             OrderItemCouponDTO tmpItemCouponDTO = null;
             int listSize = targetBuyerCouponList.size();
             int halfSize = 0;
             if (listSize == 0) {
                 return null;
             }
-            if (listSize == 1) {
-                tmpItemCouponDTO = checkBuyerCouponInfo(targetBuyerCouponList.get(0));
-                if (tmpItemCouponDTO != null) {
-                    resultList.add(tmpItemCouponDTO);
+            if (listSize < 5) {
+                for (String couponInfoStr : targetBuyerCouponList) {
+                    tmpItemCouponDTO = checkBuyerCouponInfo(couponInfoStr);
+                    if (tmpItemCouponDTO != null) {
+                        resultList.add(tmpItemCouponDTO);
+                    }
                 }
                 return resultList;
             }
@@ -866,14 +861,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, validMap, hasTargetCouponFlag,
                     orderInfoMap, allProductsList);
             invokeAll(leftTask, rightTask);
-            leftTaskRst = leftTask.join();
-            rightTaskRst = rightTask.join();
-            if (leftTaskRst != null && !leftTaskRst.isEmpty()) {
-                resultList.addAll(leftTaskRst);
-            }
-            if (rightTaskRst != null && !rightTaskRst.isEmpty()) {
-                resultList.addAll(rightTaskRst);
-            }
+            resultList.addAll(leftTask.join());
+            resultList.addAll(rightTask.join());
             return resultList;
         }
 

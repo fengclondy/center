@@ -340,6 +340,7 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
         String status =
                 dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_STATUS, DictionaryConst.OPT_COUPON_STATUS_UNUSED);
         couponInfo.setStatus(status);
+        couponInfo.setCouponDescribe(promotionDiscountInfoDTO.getPromotionDescribe());
         couponInfo.setCreateId(0L);
         couponInfo.setCreateName("sys");
         int insertResult = buyerCouponInfoDAO.addBuyerCouponInfo(couponInfo);

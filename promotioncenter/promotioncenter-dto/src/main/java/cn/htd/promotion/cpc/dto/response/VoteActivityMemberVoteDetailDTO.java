@@ -46,11 +46,11 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
     /**
      * 投票结束时间{计算倒计时}
      */
-    private Date voteEndTime;
+    private Long voteEndTime;
     /**
      * 服务器时间{计算倒计时}
      */
-    private Date systemTime;
+    private Long systemTime;
     /**
      * 门店宣言
      */
@@ -142,19 +142,19 @@ public class VoteActivityMemberVoteDetailDTO implements Serializable {
         this.auditStatus = auditStatus;
     }
 
-    public Date getVoteEndTime() {
+    public Long getVoteEndTime() {
         return voteEndTime;
     }
 
-    public void setVoteEndTime(Date voteEndTime) {
+    public void setVoteEndTime(Long voteEndTime) {
         this.voteEndTime = voteEndTime;
     }
 
-    public Date getSystemTime() {
+    public Long getSystemTime() {
         return systemTime;
     }
 
-    public void setSystemTime(Date systemTime) {
+    public void setSystemTime(Long systemTime) {
         this.systemTime = systemTime;
     }
 

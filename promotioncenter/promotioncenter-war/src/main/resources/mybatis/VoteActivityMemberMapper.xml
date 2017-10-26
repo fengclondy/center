@@ -285,6 +285,9 @@
 			vote_activity_member a
 		WHERE
 			vote_id = #{voteId}
+			and sign_status = 1
+			and audit_status = 1
+			and delete_flag = 0
 		ORDER BY
 			voteNum DESC,
 			member_vote_last_time ASC

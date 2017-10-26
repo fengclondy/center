@@ -16,6 +16,7 @@ import cn.htd.goodscenter.dto.stock.Order4StockEntryDTO;
 import cn.htd.goodscenter.dto.stock.StockTypeEnum;
 import cn.htd.goodscenter.service.impl.stock.exception.StockInParamIllegalException;
 import cn.htd.goodscenter.service.impl.stock.exception.StockPublishInfoIsNullException;
+import cn.htd.goodscenter.service.impl.stock.exception.StockSystemBusyException;
 import net.sf.json.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * SKU可见库存变动抽象类
@@ -133,7 +135,11 @@ public abstract class AbstractSkuStockChangeHandler implements StockChangeAble {
             RedissonClient redissonClient = redissonClientUtil.getInstance();
             rLock = redissonClient.getLock(lockKey);
             /** 上锁 **/
-            rLock.lock();
+//            rLock.lock(); TODO : 修改成tryLock，超过时间则返回系统繁忙
+            boolean isGetLock = rLock.tryLock(4, TimeUnit.SECONDS);
+            if (!isGetLock) { // 1s内
+                throw new StockSystemBusyException("系统繁忙，请重试");
+            }
             // 做业务
             this.doChange(order4StockEntryDTO, stockId);
             // 更新时间戳

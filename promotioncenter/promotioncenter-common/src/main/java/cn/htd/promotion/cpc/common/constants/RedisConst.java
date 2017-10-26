@@ -116,6 +116,8 @@ public class RedisConst {
 	public static final String PROMOTION_REDIS_GROUPBUYINGINFO = "B2C_MIDDLE_GROUPBUYINGINFO";
 	// Redis团购活动结果数据
 	public static final String PROMOTION_REDIS_GROUPBUYINGINFO_RESULT = "B2C_MIDDLE_GROUPBUYINGINFO_RESULT";
+	// Redis团购活动锁
+    public static final String PROMOTION_REDIS_GROUPBUYINGINFO_LOCK= "B2C_MIDDLE_GROUPBUYINGINFO_LOCK";
 	// Redis真实参团人数
 	public static final String PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT = "PROMOTION_B2C_REAL_ACTOR_COUNT";
 	// Redis真实拼团价

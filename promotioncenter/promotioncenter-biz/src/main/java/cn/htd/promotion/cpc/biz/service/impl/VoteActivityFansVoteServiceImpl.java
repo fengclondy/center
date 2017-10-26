@@ -276,8 +276,8 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         voteActivityMemberVoteDetailDTO.setMemberName(voteActivityMemberResDTO.getMemberName());
         voteActivityMemberVoteDetailDTO.setSignStatus(voteActivityMemberResDTO.getSignStatus());
         voteActivityMemberVoteDetailDTO.setAuditStatus(voteActivityMemberResDTO.getAuditStatus());
-        voteActivityMemberVoteDetailDTO.setVoteEndTime(voteActivityResDTO.getVoteEndTime());
-        voteActivityMemberVoteDetailDTO.setSystemTime(systemTime);
+        voteActivityMemberVoteDetailDTO.setVoteEndTime(voteActivityResDTO.getVoteEndTime().getTime());
+        voteActivityMemberVoteDetailDTO.setSystemTime(systemTime.getTime());
         voteActivityMemberVoteDetailDTO.setMemberActivityDec(voteActivityMemberResDTO.getMemberActivityDec());
         voteActivityMemberVoteDetailDTO.setVoteTopicPic(voteActivityResDTO.getVoteTopicPic());
         // 获取图片

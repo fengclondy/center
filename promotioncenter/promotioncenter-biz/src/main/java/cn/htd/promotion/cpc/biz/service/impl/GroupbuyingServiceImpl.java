@@ -29,6 +29,7 @@ import cn.htd.promotion.cpc.biz.dao.PromotionStatusHistoryDAO;
 import cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionInfoDMO;
 import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
+import cn.htd.promotion.cpc.biz.handle.PromotionRedisLockHandler;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.common.constants.GroupbuyingConstants;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
@@ -87,6 +88,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
     
     @Resource
 	private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
+    
+    @Resource
+	private PromotionRedisLockHandler promotionRedisLockHandler;
     
     @Resource
     private PromotionInfoDAO promotionInfoDAO;
@@ -596,6 +600,13 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         Date currentTime = calendar.getTime();
 
         try {
+        	// 参团加锁，防止并发
+        	String lockKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_LOCK + "_" + groupbuyingRecordReqDTO.getPromotionId() + "_" + groupbuyingRecordReqDTO.getBuyerCode();
+        	boolean isLocked = promotionRedisLockHandler.tryLock(lockKey, 300);
+        	if(!isLocked){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "参团太火爆啦,请稍后重试！");
+        	}
+        	
         	//[start]-----------------   参团的校验  ----------------
            	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
            	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) {
@@ -672,6 +683,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	groupbuyingRecordReqDTO.setCreateTime(currentTime);
         	groupbuyingRecordReqDTO.setModifyTime(currentTime);
         	groupbuyingRecordDAO.addGroupbuyingRecord(groupbuyingRecordReqDTO);
+        	
+        	// 参团释放锁
+        	promotionRedisLockHandler.unLock(lockKey);
         	
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【addGroupbuyingRecord2HttpINTFC】报错：{}", messageId, e.toString());

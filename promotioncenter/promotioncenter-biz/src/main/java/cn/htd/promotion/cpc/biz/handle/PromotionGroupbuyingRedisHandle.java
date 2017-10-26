@@ -142,7 +142,7 @@ public class PromotionGroupbuyingRedisHandle {
         });  
         
 		} catch (Exception e) {
-			logger.error("messageId{}:执行方法【removeGroupbuyingInfoCmpl2Redis】报错：{}", e.toString());
+			logger.error("执行方法【removeGroupbuyingInfoCmpl2Redis】报错：{}", e.toString());
 			return false;  
 		}
     	
@@ -198,7 +198,7 @@ public class PromotionGroupbuyingRedisHandle {
 	        });  
 	        
 		} catch (Exception e) {
-			logger.error("messageId{}:执行方法【upDownShelvesPromotionInfo2Redis】报错：{}", e.toString());
+			logger.error("执行方法【upDownShelvesPromotionInfo2Redis】报错：{}", e.toString());
 			return false;  
 		}
     }
@@ -229,6 +229,7 @@ public class PromotionGroupbuyingRedisHandle {
 		}
 	}
     
+	
     
 	public boolean testHash(final String key, final Map<String, String> value) {
 

@@ -136,7 +136,7 @@
       vote_activity_fans_forward vff
 	  left join vote_activity_member vam on vff.vote_member_id=vam.vote_member_id
 	where
-	  vam.vote_id=#{voteId}
+	  vam.vote_id=#{voteId} and vam.delete_flag=0
   </select>
 
   <!-- 根据会员报名编码查询转发数 -->

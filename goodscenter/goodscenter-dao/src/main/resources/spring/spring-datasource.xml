@@ -19,6 +19,9 @@
 		<property name="password">
 			<value>${jdbc.password}</value>
 		</property>
+		<property name="initialSize">
+			<value>${jdbc.initialSize}</value>
+		</property>
 		<property name="maxActive">
 			<value>${jdbc.maxActive}</value>
 		</property>

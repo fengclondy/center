@@ -218,7 +218,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             // 状态是否是已审核和已报名
             if (voteActivityMemberResDTO == null) {
                 executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
-                executeResult.setResultMessage("根据活动ID:" + voteId+ "和memberCode:" + memberCode + "查询不到会员店报名信息");
+                executeResult.setResultMessage("当前活动下没有该会员店的信息, 活动ID：" + voteId + ", 会员店编码:" + memberCode);
                 return executeResult;
             } else if (voteActivityMemberResDTO.getSignStatus() != 1) {
                 executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_MEMBER_NOT_SIGN_UP.getCode());
@@ -256,14 +256,14 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
         VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectByPrimaryKey(voteActivityId);
         if (voteActivityResDTO == null) {
             executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST.getCode());
-            executeResult.setResultMessage("查询不到该活动，voteActivityId：" + voteActivityId);
+            executeResult.setResultMessage("查询不到活动信息，活动ID：" + voteActivityId);
             return executeResult;
         }
         // 查询报名信息
         VoteActivityMemberResDTO voteActivityMemberResDTO = this.voteActivityMemberDAO.selectByVoteIdAndMemberCode(voteActivityId, memberCode);
         if (voteActivityMemberResDTO == null) {
             executeResult.setCode(ResultCodeEnum.VOTE_ACTIVITY_NOT_EXIST_MEMBER.getCode());
-            executeResult.setResultMessage("查询不到该会员店的报名信息，voteActivityId：" + voteActivityId + ",memberCode:" + memberCode);
+            executeResult.setResultMessage("当前活动下没有该会员店的信息, 活动ID：" + voteActivityId + ", 会员店编码:" + memberCode);
             return executeResult;
         }
         // 组装结果集

@@ -46,7 +46,7 @@ public interface VoteActivityMemberDAO {
     //根据活动id查询导入的会员店编号
     List<String> querySignUpMemberInfoList(Long voteId);
     
-    VoteActivityMemResDTO querySignupMemberDetailInfo(Long voteMemberId);
+    VoteActivityMemResDTO querySignupMemberDetailInfo(Long voteId, Long voteMemberId);
     
     void batchInsertVoteActMember(List<VoteActivityMemReqDTO> list);
     

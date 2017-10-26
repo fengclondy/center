@@ -99,7 +99,7 @@ public interface VoteActivityAPI {
 	 * @param voteMemberId
 	 * @return
 	 */
-	ExecuteResult<VoteActivityMemResDTO> selectByVoteMemberCode(Long voteMemberId);
+	ExecuteResult<VoteActivityMemResDTO> selectByVoteMemberCode(Long voteId, Long voteMemberId);
 
 	/***
 	 * 保存会员店投票活动报名信息

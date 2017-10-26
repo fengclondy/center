@@ -77,7 +77,7 @@ public interface VoteActivityService {
 	 * @param voteMemberId
 	 * @return
 	 */
-	ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteMemberId);
+	ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long VoteId, Long voteMemberId);
 	
 	/**
 	 * 导入投票活动会员

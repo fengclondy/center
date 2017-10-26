@@ -3564,4 +3564,66 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return itemPicture;
 	}
 
+	/**
+	 * 限时购 - 根据itemCode 查询sku属性相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	@Override
+	public ExecuteResult<List<VenusItemSkuOutDTO>> getItemSkuList(String itemCode) {
+		ExecuteResult<List<VenusItemSkuOutDTO>> result = new ExecuteResult<List<VenusItemSkuOutDTO>>();
+		try{
+			Item item = itemMybatisDAO.queryItemByItemCode(itemCode);
+			if(null !=item){
+				List<VenusItemSkuOutDTO> venusItemSkuOutDTOs = itemSkuDAO.selectItemSkuByItemId(item.getItemId());
+				if (null != venusItemSkuOutDTOs && venusItemSkuOutDTOs.size() > 0) {
+					for (VenusItemSkuOutDTO skuOut : venusItemSkuOutDTOs) {
+						// 根据sku的销售属性keyId:valueId查询商品属性
+						ExecuteResult<List<ItemAttrDTO>> itemAttr = itemCategoryService.queryCatAttrByKeyVals(skuOut.getAttributes());
+						skuOut.setItemAttr(itemAttr.getResult());
+					}
+				}
+				result.setResult(venusItemSkuOutDTOs);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+
+
+	/**
+	 * 限时购 - 根据skuCode 查询库存和阶梯价等相关信息相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	@Override
+	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode) {
+		ExecuteResult<VenusItemSkuOutDTO> result = new ExecuteResult<VenusItemSkuOutDTO>();
+		VenusItemSkuOutDTO skuOut = new VenusItemSkuOutDTO();
+		try{
+			ItemSku itemSku = itemSkuDAO.selectItemSkuBySkuCode(skuCode);
+			if(null != itemSku){
+				skuOut.setSkuCode(skuCode);
+				//根据skuID查询对应sku下面的显示库存
+				List<ItemSkuPublishInfo> itemSkuPublishInfo = itemSkuPublishInfoMapper.queryBySkuId(itemSku.getSkuId());
+				if(null != itemSkuPublishInfo && itemSkuPublishInfo.size()>0){
+					skuOut.setDisplayQuantity(itemSkuPublishInfo.get(0).getDisplayQuantity());
+				}
+				//根据skuID 和sellerId查询对应的阶梯价
+				DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService.queryLadderPriceBySellerIdAndSkuId(itemSku.getSellerId(),itemSku.getSkuId());
+				if (ladderList.getRows() != null&& ladderList.getRows().size() > 0) {
+					skuOut.setItemSkuLadderPrices(ladderList.getRows());
+				}
+				result.setResult(skuOut);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+
+	
 }

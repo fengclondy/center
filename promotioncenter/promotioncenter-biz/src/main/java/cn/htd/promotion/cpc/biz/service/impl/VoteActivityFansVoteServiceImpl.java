@@ -209,8 +209,8 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             executeResult.setResultMessage(ResultCodeEnum.OTE_ACTIVITY_INPUT_PARAM_IS_NULL.getMsg());
             return executeResult;
         }
-        // 有没有所处当前时间的投票活动
-        VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectCurrentActivity();
+        // 有没有所处当前时间的投票活动(投票开始的)
+        VoteActivityResDTO voteActivityResDTO = this.voteActivityDAO.selectCurrentVoteStartActivity();
         if (voteActivityResDTO != null) {
             Long voteId = voteActivityResDTO.getVoteId();
             // 校验会员店报名情况，是否审核通过
@@ -236,7 +236,7 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             }
         } else {
             executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_HAVA_NO_VOTE_ACTIVITY.getCode());
-            executeResult.setResultMessage("当前没有投票活动");
+            executeResult.setResultMessage("当前没有开始的投票活动");
             return executeResult;
         }
     }

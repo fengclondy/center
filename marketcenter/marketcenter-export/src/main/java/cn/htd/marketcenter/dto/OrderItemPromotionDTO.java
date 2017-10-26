@@ -3,6 +3,7 @@ package cn.htd.marketcenter.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -14,7 +15,6 @@ public class OrderItemPromotionDTO implements Serializable {
 	/**
 	 * 促销活动变动类型
 	 */
-	@NotEmpty(message = "会员促销活动处理类型为空")
 	private String promoitionChangeType;
 	/**
 	 * 秒杀时的预占订单号
@@ -60,6 +60,7 @@ public class OrderItemPromotionDTO implements Serializable {
 	/**
 	 * 商品购买数量
 	 */
+	@Min(value = 1, message = "商品购买数量必须大于0")
 	private Integer quantity = new Integer(1);
 	/**
 	 * 商品行优惠金额

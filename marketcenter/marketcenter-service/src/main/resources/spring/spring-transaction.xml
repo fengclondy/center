@@ -41,7 +41,7 @@
 	</tx:advice>
 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="interceptorPointCuts"
-									expression="(execution(* cn.htd..promotion.*ServiceImpl.*(..))) or (execution(* cn.htd..*Task.*(..)))" />
+									expression="(execution(* cn.htd..promotion..*ServiceImpl.*(..))) or (execution(* cn.htd..*Task.*(..)))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="interceptorPointCuts" />
 	</aop:config>
 </beans>

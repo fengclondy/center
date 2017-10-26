@@ -128,7 +128,10 @@ public class OrderCreate4BusinessHandleServiceImpl implements
 				}
 			}
 		}
-		if(limitedTimePurchaseCount == itemCount){
+		String promotionType = orderCreateInfoReqDTO.getPromotionType();
+		if (OrderStatusEnum.PROMOTION_TYPE_COUPON.getCode().equals(
+				promotionType)
+				&& limitedTimePurchaseCount == itemCount) {
 			throw new OrderCenterBusinessException(
 					ResultCodeEnum.ORDERCENTER_VALIDATE_LIMITED_TIME_PURCHASE_CAN_NOT_USE_COUPON
 							.getCode(),

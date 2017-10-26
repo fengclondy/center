@@ -839,7 +839,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             if (listSize == 0) {
                 return null;
             }
-            if (listSize <= 5) {
+            if (listSize < 5) {
                 for (String couponInfoStr : targetBuyerCouponList) {
                     tmpItemCouponDTO = checkBuyerCouponInfo(couponInfoStr);
                     if (tmpItemCouponDTO != null) {
@@ -861,8 +861,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, validMap, hasTargetCouponFlag,
                     orderInfoMap, allProductsList);
             invokeAll(leftTask, rightTask);
-                resultList.addAll(leftTask.join());
-                resultList.addAll(rightTask.join());
+            resultList.addAll(leftTask.join());
+            resultList.addAll(rightTask.join());
             return resultList;
         }
 

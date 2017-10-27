@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.TimeUnit;
 
@@ -1131,7 +1132,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             if (listSize == 0) {
                 return null;
             }
-            if (listSize <= 5) {
+            if (listSize < 5) {
                 for (String couponInfoStr : targetBuyerCouponList) {
                     tmpItemCouponDTO = checkBuyerCouponInfo(couponInfoStr);
                     if (tmpItemCouponDTO != null) {
@@ -1158,9 +1159,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 //            rightTask.fork();
             invokeAll(leftTask, rightTask);
             //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
-
-                resultList.addAll(leftTask.join());
-                resultList.addAll(rightTask.join());
+            resultList.addAll(leftTask.join());
+            resultList.addAll(rightTask.join());
             return resultList;
         }
 

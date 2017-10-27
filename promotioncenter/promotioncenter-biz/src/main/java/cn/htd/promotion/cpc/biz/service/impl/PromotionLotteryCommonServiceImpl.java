@@ -525,6 +525,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             stringRedisConnection.expire(redisKey, seconds);
                         }
                         if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                            stringRedisConnection.del(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId);
                             for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
                                 stringRedisConnection
                                         .sAdd(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId,

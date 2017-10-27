@@ -41,4 +41,6 @@ public interface B2cCouponInfoSyncHistoryDAO {
      * @return
      */
     public Integer updateB2cCouponInfoDealSuccessResult(B2cCouponInfoSyncDMO targetInfo);
+
+    public  Integer updateB2cCouponInfo4Test();
 }

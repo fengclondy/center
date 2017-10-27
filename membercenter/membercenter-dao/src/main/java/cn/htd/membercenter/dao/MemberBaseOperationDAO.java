@@ -282,4 +282,6 @@ public interface MemberBaseOperationDAO {
 	public List<MemberBaseDTO> queryMemberComCodeListByMemberId(List<String> list);
 	
 	public List<MemberBaseInfoDTO> queryMmeberInfoByLittleMemberComCode(List<String> list);
+	
+	public List<MemberBaseInfoDTO> queryMemberInfoByMemCodeList(List<String> list);
  }

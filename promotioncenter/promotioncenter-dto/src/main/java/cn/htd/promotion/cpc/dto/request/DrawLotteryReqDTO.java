@@ -14,6 +14,11 @@ import org.hibernate.validator.constraints.Range;
 public class DrawLotteryReqDTO extends GenricReqDTO {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6889503625008266495L;
+	
+	/**
      * 抽奖活动卖家编码
      */
     @NotEmpty(message = "卖家编码不能为空")
@@ -34,6 +39,14 @@ public class DrawLotteryReqDTO extends GenricReqDTO {
      */
     @NotEmpty(message = "活动编码不能为空")
     private String promotionId;
+    
+    //是否使用同步，默认使用异步
+    private boolean useSync = false;
+    
+	/**
+	 * 订单号
+	 */
+	private String orderNo;
 
     public String getSellerCode() {
         return sellerCode;
@@ -66,5 +79,21 @@ public class DrawLotteryReqDTO extends GenricReqDTO {
     public void setPromotionId(String promotionId) {
         this.promotionId = promotionId;
     }
+
+	public boolean isUseSync() {
+		return useSync;
+	}
+
+	public void setUseSync(boolean useSync) {
+		this.useSync = useSync;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
 
 }

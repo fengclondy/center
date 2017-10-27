@@ -95,7 +95,8 @@ public enum PromotionConfigureEnum {
 		
 		BALANCE_ACCOUNT_PAYMENT("1", "余额帐支付"), 
 		PLATFORM_ACCOUNT_PAYMENT("2", "平台账户支付"), 
-		ONLINE_PAYMENT("3", "在线支付");
+		ONLINE_PAYMENT("3", "在线支付"),
+		CASH_ON_DELIVERY("4","货到付款");
 
 		private final String key;
 		private final String value;

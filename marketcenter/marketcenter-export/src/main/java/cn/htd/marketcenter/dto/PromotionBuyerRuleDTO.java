@@ -70,16 +70,20 @@ public class PromotionBuyerRuleDTO implements Serializable {
 	 * 对象会员级别列表
 	 */
 	private List<String> targetBuyerLevelList;
-	
 	/**
 	 * 会员分组
 	 */
 	private String targetBuyerGroup;
-	
 	/**
 	 * 会员分组列表
 	 */
 	private List<String> targetBuyerGroupList;
+	//----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+	/**
+	 * 指定买家列表
+	 */
+	private List<String> targetBuyerCodeList;
+	//----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 
 	public Long getId() {
 		return id;
@@ -216,7 +220,12 @@ public class PromotionBuyerRuleDTO implements Serializable {
 	public void setTargetBuyerGroupList(List<String> targetBuyerGroupList) {
 		this.targetBuyerGroupList = targetBuyerGroupList;
 	}
-	
-	
 
+	public List<String> getTargetBuyerCodeList() {
+		return targetBuyerCodeList;
+	}
+
+	public void setTargetBuyerCodeList(List<String> targetBuyerCodeList) {
+		this.targetBuyerCodeList = targetBuyerCodeList;
+	}
 }

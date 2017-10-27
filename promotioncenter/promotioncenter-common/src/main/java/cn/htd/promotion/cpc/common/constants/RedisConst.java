@@ -39,6 +39,8 @@ public class RedisConst {
 	public static final String REDIS_LOTTERY_VALID = "B2C_MIDDLE_LOTTERY_VALID";
 	// Redis抽奖活动信息
 	public static final String REDIS_LOTTERY_INFO = "B2C_MIDDLE_LOTTERY_INFO";
+	// Redis抽奖活动对象会员店Set
+	public static final String REIDS_LOTTERY_SELLER_RULE_DETAIL_SET = "B2C_MIDDLE_LOTTERY_SELLER_RULE_DETAIL_SET";
 	// Redis抽奖次数信息
 	public static final String REDIS_LOTTERY_TIMES_INFO = "B2C_MIDDLE_LOTTERY_TIMES_INFO";
 	// Redis抽奖活动奖品中奖概率
@@ -104,4 +106,6 @@ public class RedisConst {
 	public static final String PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE = "PROMOTION_B2C_TIMELIMITED_QUEUE";
 
 	public static final String PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH = "PROMOTION_B2C_TIMELIMITED_RESERVE_HASH";
+	//刮刮乐订单相关信息
+	public static final String REDIS_LOTTERY_B2C_MIDDLE_LOTTERY_ORDER_INFO = "B2C_MIDDLE_LOTTERY_ORDER_INFO";
 }

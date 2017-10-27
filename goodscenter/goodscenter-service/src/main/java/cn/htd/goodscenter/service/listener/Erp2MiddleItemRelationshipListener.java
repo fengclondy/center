@@ -21,6 +21,7 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import cn.htd.basecenter.enums.ErpStatusEnum;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.middleware.MiddlewareInterfaceConstant;
 import cn.htd.common.middleware.MiddlewareInterfaceUtil;
@@ -268,6 +269,15 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 		
 		if(StringUtils.isNotEmpty(spu.getOrigin())){
 			item.setOrigin(spu.getOrigin());
+		}
+		
+		if(spu.getTaxRate()!=null){
+			item.setTaxRate(spu.getTaxRate());
+		}
+		
+		if(StringUtils.isNotEmpty(spu.getErpCode())){
+			item.setErpCode(spu.getErpCode());
+			item.setErpStatus(ErpStatusEnum.SUCCESS.getValue());
 		}
 		
 		item.setSellerId(sellerId);

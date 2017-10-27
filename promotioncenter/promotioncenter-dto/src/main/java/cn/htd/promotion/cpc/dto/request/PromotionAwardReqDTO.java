@@ -30,6 +30,8 @@ public class PromotionAwardReqDTO implements Serializable{
 
     private String sellerCode;//归属会员店编号
 
+    private String sellerName;//归属会员店名称
+
     private String sellerAddress;//会员店地址
 
     private String belongSuperiorName;//归属上级公司名称
@@ -87,7 +89,9 @@ public class PromotionAwardReqDTO implements Serializable{
     //用于区分来源
     private String source;
 
-
+    //关联优惠券编号
+    private String relevanceCouponCode;
+    
     public Long getId() {
         return id;
     }
@@ -367,4 +371,22 @@ public class PromotionAwardReqDTO implements Serializable{
     public void setSource(String source) {
         this.source = source;
     }
+
+	public String getRelevanceCouponCode() {
+		return relevanceCouponCode;
+	}
+
+	public void setRelevanceCouponCode(String relevanceCouponCode) {
+		this.relevanceCouponCode = relevanceCouponCode;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+    
+    
 }

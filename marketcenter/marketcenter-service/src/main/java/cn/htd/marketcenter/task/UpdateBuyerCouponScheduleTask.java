@@ -112,6 +112,14 @@ public class UpdateBuyerCouponScheduleTask implements IScheduleTaskDealMulti<Buy
 						continue;
 					}
 					try {
+						if (dealTargetInfo.getCreateId() == null) {
+							dealTargetInfo.setCreateId(0L);
+							dealTargetInfo.setCouponName("sys");
+						}
+						if (dealTargetInfo.getModifyId() == null) {
+							dealTargetInfo.setModifyId(0L);
+							dealTargetInfo.setModifyName("sys");
+						}
 						updateNum = buyerCouponInfoDAO.updateBuyerCouponUseInfo(dealTargetInfo);
 						if (updateNum == 0) {
 							buyerCouponInfoDAO.addBuyerCouponInfo(dealTargetInfo);

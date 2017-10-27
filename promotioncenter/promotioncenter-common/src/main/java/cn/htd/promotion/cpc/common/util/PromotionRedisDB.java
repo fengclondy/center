@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -643,6 +645,27 @@ public class PromotionRedisDB {
     }
 
     /**
+     * 获取Value是否是redis的set中的元素
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean isSetMember(String key, String value) {
+        logger.debug("\n 方法:[{}]，入参:[{}]", "promotionRedisDB-isSetMember", "key=" + key);
+        Boolean isMember = false;
+
+        try {
+            isMember = stringRedisTemplate.opsForSet().isMember(key, value);
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-isSetMember", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-isSetMember", "returnValue=" + isMember);
+        }
+        return isMember.booleanValue();
+    }
+
+    /**
      * 添加一个或多个值到列表
      *
      * @param key
@@ -678,5 +701,25 @@ public class PromotionRedisDB {
             logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-lpop", "returnValue=" + returnValue);
         }
         return returnValue;
+    }
+    
+    /**
+     * 获取set中的key对应的所有元素
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public Set<String> smembers(String key) {
+        logger.debug("\n 方法:[{}]，入参:[{}]", "promotionRedisDB-smembers", "key=" + key);
+        Set<String> smembers = null;
+        try {
+        	smembers = stringRedisTemplate.opsForSet().members(key);
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-smembers", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-smembers", "returnValue=" + JSONObject.toJSONString(smembers));
+        }
+        return smembers;
     }
 }

@@ -133,12 +133,12 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
 		try {
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfoDTO : tasks) {
-					if(TimelimitedConstants.PromotionTypeEnum.DRAW_LOTTERY.key().equals(promotionInfoDTO.getPromotionType())){//扭蛋机
-						PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo(promotionInfoDTO.getPromotionId());
-						promotionLotteryCommonService.initPromotionLotteryRedisInfo(dbo);
-					}else if(TimelimitedConstants.PromotionTypeEnum.TIMELIMITED.key().equals(promotionInfoDTO.getPromotionType())){//总部秒杀
+					if(TimelimitedConstants.PromotionTypeEnum.TIMELIMITED.key().equals(promotionInfoDTO.getPromotionType())){//总部秒杀
 			        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionInfoDTO.getPromotionId(),TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT, null);
 			        	timelimitedInfoService.initTimelimitedInfoRedisInfo(timelimitedInfoResDTO);
+					}else{
+						PromotionExtendInfoDTO dbo = luckDrawService.viewDrawLotteryInfo(promotionInfoDTO.getPromotionId());
+						promotionLotteryCommonService.initPromotionLotteryRedisInfo(dbo);
 					}
 					
 				}

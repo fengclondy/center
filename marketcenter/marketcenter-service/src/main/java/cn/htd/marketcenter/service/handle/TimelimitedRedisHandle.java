@@ -23,15 +23,20 @@ import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.consts.MarketCenterCodeConst;
 import cn.htd.marketcenter.domain.BuyerUseTimelimitedLog;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
+import cn.htd.marketcenter.dto.PromotionBuyerDetailDTO;
+import cn.htd.marketcenter.dto.PromotionBuyerRuleDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedResultDTO;
+import cn.htd.marketcenter.service.PromotionBaseService;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
 @Service("timelimitedRedisHandle")
 public class TimelimitedRedisHandle {
@@ -43,6 +48,9 @@ public class TimelimitedRedisHandle {
 
     @Resource
     private MarketCenterRedisDB marketRedisDB;
+
+    @Resource
+    private PromotionBaseService baseService;
 
     /**
      * 保存秒杀活动的启用状态
@@ -139,6 +147,10 @@ public class TimelimitedRedisHandle {
         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_REMAIN_COUNT,
                 String.valueOf(timelimitedInfo.getTimelimitedSkuCount()));
         resultMap.put(RedisConst.REDIS_TIMELIMITED_REAL_ACTOR_COUNT, "0");
+        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 start -----
+        baseService.deletePromotionUselessInfo(timelimitedInfo);
+        baseService.deleteBuyerUselessInfo(timelimitedInfo);
+        //----- add by jiangkun for 2017活动需求商城无敌券 on 20171009 end -----
         marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId, JSON.toJSONString(timelimitedInfo));
         marketRedisDB.setHash(timelimitedResultKey, resultMap);
         saveTimelimitedIndex2Redis(timelimitedInfo);

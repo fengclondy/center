@@ -1,46 +1,46 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.htd.marketcenter.dao.BuyerCouponInfoDAO">
-    <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
-        <result column="buyer_name" jdbcType="VARCHAR" property="buyerName"/>
-        <result column="buyer_coupon_code" jdbcType="VARCHAR" property="buyerCouponCode"/>
-        <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
-        <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
-        <result column="promotion_describe" jdbcType="VARCHAR" property="couponDescribe"/>
-        <result column="promotion_provider_type" jdbcType="VARCHAR" property="promotionProviderType"/>
-        <result column="promotion_provider_seller_code" jdbcType="VARCHAR" property="promotionProviderSellerCode"/>
-        <result column="promotion_provider_shop_id" jdbcType="BIGINT" property="promotionProviderShopId"/>
-        <result column="coupon_name" jdbcType="VARCHAR" property="couponName"/>
-        <result column="coupon_type" jdbcType="VARCHAR" property="couponType"/>
-        <result column="get_coupon_time" jdbcType="TIMESTAMP" property="getCouponTime"/>
-        <result column="coupon_start_time" jdbcType="TIMESTAMP" property="couponStartTime"/>
-        <result column="coupon_end_time" jdbcType="TIMESTAMP" property="couponEndTime"/>
-        <result column="discount_threshold" jdbcType="DECIMAL" property="discountThreshold"/>
-        <result column="coupon_amount" jdbcType="DECIMAL" property="couponAmount"/>
-        <result column="discount_percent" jdbcType="INTEGER" property="discountPercent"/>
-        <result column="coupon_left_amount" jdbcType="DECIMAL" property="couponLeftAmount"/>
-        <result column="status" jdbcType="VARCHAR" property="status"/>
-        <result column="has_redis_clean" jdbcType="TINYINT" property="hasRedisClean"/>
-        <result column="create_id" jdbcType="BIGINT" property="createId"/>
-        <result column="create_name" jdbcType="VARCHAR" property="createName"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
-        <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
-        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
-    </resultMap>
-    <resultMap id="ReceiveCountMap" type="cn.htd.marketcenter.dto.BuyerCouponCountDTO">
-        <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
-        <result column="buyer_name" jdbcType="VARCHAR" property="buyerName"/>
-        <result column="status" jdbcType="VARCHAR" property="status"/>
-        <result column="coupon_type" jdbcType="VARCHAR" property="couponType"/>
-        <result column="receive_count" jdbcType="INTEGER" property="receiveCount"/>
-    </resultMap>
-    <sql id="pagination_tail">
+  <resultMap id="BaseResultMap" type="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
+    <result column="buyer_name" jdbcType="VARCHAR" property="buyerName"/>
+    <result column="buyer_coupon_code" jdbcType="VARCHAR" property="buyerCouponCode"/>
+    <result column="promotion_id" jdbcType="VARCHAR" property="promotionId"/>
+    <result column="level_code" jdbcType="VARCHAR" property="levelCode"/>
+    <result column="promotion_describe" jdbcType="VARCHAR" property="couponDescribe"/>
+    <result column="promotion_provider_type" jdbcType="VARCHAR" property="promotionProviderType"/>
+    <result column="promotion_provider_seller_code" jdbcType="VARCHAR" property="promotionProviderSellerCode"/>
+    <result column="promotion_provider_shop_id" jdbcType="BIGINT" property="promotionProviderShopId"/>
+    <result column="coupon_name" jdbcType="VARCHAR" property="couponName"/>
+    <result column="coupon_type" jdbcType="VARCHAR" property="couponType"/>
+    <result column="get_coupon_time" jdbcType="TIMESTAMP" property="getCouponTime"/>
+    <result column="coupon_start_time" jdbcType="TIMESTAMP" property="couponStartTime"/>
+    <result column="coupon_end_time" jdbcType="TIMESTAMP" property="couponEndTime"/>
+    <result column="discount_threshold" jdbcType="DECIMAL" property="discountThreshold"/>
+    <result column="coupon_amount" jdbcType="DECIMAL" property="couponAmount"/>
+    <result column="discount_percent" jdbcType="INTEGER" property="discountPercent"/>
+    <result column="coupon_left_amount" jdbcType="DECIMAL" property="couponLeftAmount"/>
+    <result column="status" jdbcType="VARCHAR" property="status"/>
+    <result column="has_redis_clean" jdbcType="TINYINT" property="hasRedisClean"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+  </resultMap>
+  <resultMap id="ReceiveCountMap" type="cn.htd.marketcenter.dto.BuyerCouponCountDTO">
+    <result column="buyer_code" jdbcType="VARCHAR" property="buyerCode"/>
+    <result column="buyer_name" jdbcType="VARCHAR" property="buyerName"/>
+    <result column="status" jdbcType="VARCHAR" property="status"/>
+    <result column="coupon_type" jdbcType="VARCHAR" property="couponType"/>
+    <result column="receive_count" jdbcType="INTEGER" property="receiveCount"/>
+  </resultMap>
+  <sql id="pagination_tail">
         limit #{page.pageOffset} , #{page.rows}
     </sql>
-    <sql id="Base_Column_List">
+  <sql id="Base_Column_List">
 		id,
 		buyer_code,
 		buyer_name,
@@ -68,287 +68,335 @@
 		modify_name,
 		modify_time
     </sql>
-    <sql id="where_fragement">
-        <if test="entity!=null">
-            <if test="entity.buyerCode != null and entity.buyerCode !=''">
-                <![CDATA[ and buyer_coupon_info.buyer_code = #{entity.buyerCode} ]]>
-            </if>
-            <if test="entity.buyerName != null and entity.buyerName !=''">
-                <![CDATA[ and buyer_coupon_info.buyer_name like concat('%',#{entity.buyerName},'%') ]]>
-            </if>
-            <if test="entity.couponType != null and entity.couponType !=''">
-                <![CDATA[ and buyer_coupon_info.coupon_type = #{entity.couponType} ]]>
-            </if>
-            <if test="entity.couponName != null and entity.couponName !=''">
-                <![CDATA[ and buyer_coupon_info.coupon_name like concat('%',#{entity.couponName},'%') ]]>
-            </if>
-            <if test="entity.deleteStatus != null and entity.deleteStatus !=''">
-                <![CDATA[ and buyer_coupon_info.status <> #{entity.deleteStatus} ]]>
-            </if>
-            <if test="entity.status != null and entity.status != ''">
-                and buyer_coupon_info.status = #{status}
-            </if>
-            <if test="entity.couponCodeList != null and entity.couponCodeList.size != 0">
-                and buyer_coupon_info.buyer_coupon_code in
-                <foreach item="couponCode" index="index" collection="entity.couponCodeList" open="(" separator=","
-                         close=")">
-                    #{couponCode}
-                </foreach>
-            </if>
-        </if>
-    </sql>
-    <select id="queryBuyerCoupon4Task" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from buyer_coupon_info
-        where 1 = 1
-        <if test="entity != null">
-            and status = #{entity.status}
-            and <![CDATA[ coupon_end_time <= now() ]]>
-            and mod(id, #{entity.taskQueueNum}) in
-            <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
-                #{taskId}
-            </foreach>
-        </if>
-        <if test="page!=null">
-            <include refid="pagination_tail"/>
-        </if>
-    </select>
-    <select id="queryNeedCleanRedisBuyerCoupon4Task" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from buyer_coupon_info
-        where 1 = 1
-        and has_redis_clean = 0
-        <if test="entity != null">
-            and <![CDATA[ coupon_end_time <= date_sub(now(),interval #{entity.cleanRedisInterval} month) ]]>
-            and mod(id, #{entity.taskQueueNum}) in
-            <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
-                #{taskId}
-            </foreach>
-        </if>
-        <if test="page!=null">
-            <include refid="pagination_tail"/>
-        </if>
-    </select>
-    <update id="updateBuyerCouponCleanRedisStatus" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
-        update buyer_coupon_info
-        <set>
-            has_redis_clean = 1,
-        </set>
-        where buyer_code = #{buyerCode, jdbcType=VARCHAR}
-        and promotion_id = #{promotionId, jdbcType=VARCHAR}
-        and level_code = #{levelCode, jdbcType=VARCHAR}
-        and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
-    </update>
-    <select id="queryBuyerCouponCount" parameterType="cn.htd.marketcenter.dto.BuyerCouponConditionDTO"
-            resultType="java.lang.Long">
-        select count(1)
-        from buyer_coupon_info
-        where 1 = 1
-        <include refid="where_fragement"/>
-    </select>
-    <select id="queryBuyerCouponList" resultMap="BaseResultMap"
-            parameterType="cn.htd.marketcenter.dto.BuyerCouponConditionDTO">
-        select
-        buyer_coupon_info.id id,
-        buyer_coupon_info.buyer_code buyerCode,
-        buyer_coupon_info.buyer_name buyerName,
-        buyer_coupon_info.buyer_coupon_code buyerCouponCode,
-        buyer_coupon_info.promotion_id promotionId,
-        buyer_coupon_info.level_code levelCode,
-        buyer_coupon_info.coupon_name couponName,
-        buyer_coupon_info.promotion_provider_type promotionProviderType,
-        buyer_coupon_info.promotion_provider_seller_code promotionProviderSellerCode,
-        buyer_coupon_info.promotion_provider_shop_id promotionProviderShopId,
-        buyer_coupon_info.coupon_type couponType,
-        buyer_coupon_info.get_coupon_time getCouponTime,
-        buyer_coupon_info.coupon_start_time couponStartTime,
-        buyer_coupon_info.coupon_end_time couponEndTime,
-        buyer_coupon_info.discount_threshold discountThreshold,
-        buyer_coupon_info.coupon_amount couponAmount,
-        buyer_coupon_info.discount_percent discountPercent,
-        buyer_coupon_info.coupon_left_amount couponLeftAmount,
-        buyer_coupon_info.status status,
-        promotion_info.promotion_describe couponDescribe,
-        buyer_coupon_info.create_id createId,
-        buyer_coupon_info.create_name createName,
-        buyer_coupon_info.create_time createTime,
-        buyer_coupon_info.modify_id modifyId,
-        buyer_coupon_info.modify_name modifyName,
-        buyer_coupon_info.modify_time modifyTime
-        from buyer_coupon_info inner join promotion_info on(promotion_info.promotion_id =
-        buyer_coupon_info.promotion_id)
-        where 1 = 1
-        <include refid="where_fragement"/>
-        order by buyer_coupon_info.coupon_end_time, buyer_coupon_info.coupon_type asc
-        <if test="page!=null">
-            <include refid="pagination_tail"/>
-        </if>
-    </select>
-    <select id="queryBuyerReceiveCouponCount" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO"
-            resultType="java.lang.Long">
-        select count(1)
-        from (
-        select buyer_code
-        from buyer_coupon_info
-        where promotion_id = #{entity.promotionId}
-        and level_code = #{entity.levelCode}
-        <if test="entity.buyerCode != null and entity.buyerCode !=''">
-            and buyer_code = #{entity.buyerCode}
-        </if>
-        <if test="entity.buyerName != null and entity.buyerName !=''">
-            and buyer_name like concat('%',#{entity.buyerName},'%')
-        </if>
-        group by buyer_code
-        ) a
-    </select>
-    <select id="queryBuyerReceiveCouponList" resultMap="ReceiveCountMap"
-            parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
-        select buyer_code buyerCode,
-        buyer_name buyerName,
-        count(id) receiveCount
-        from buyer_coupon_info
-        where promotion_id = #{entity.promotionId}
-        and level_code = #{entity.levelCode}
-        <if test="entity.buyerCode != null and entity.buyerCode !=''">
-            and buyer_code = #{entity.buyerCode}
-        </if>
-        <if test="entity.buyerName != null and entity.buyerName !=''">
-            and buyer_name like concat('%',#{entity.buyerName},'%')
-        </if>
-        group by buyer_code, buyer_name
-        order by buyer_code
-        <if test="page!=null">
-            <include refid="pagination_tail"/>
-        </if>
-    </select>
-    <select id="queryCouponInfoByCode" resultMap="BaseResultMap"
-            parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
-        select
-        <include refid="Base_Column_List"/>
-        from buyer_coupon_info
-        where buyer_code = #{buyerCode, jdbcType=VARCHAR}
-        and promotion_id = #{promotionId, jdbcType=VARCHAR}
-        and level_code = #{levelCode, jdbcType=VARCHAR}
-        and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
-    </select>
-    <select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long">
-        select
-        <include refid="Base_Column_List"/>
-        from buyer_coupon_info
-        where id = #{id, jdbcType=BIGINT}
-    </select>
-    <update id="updateBuyerCouponUseInfo" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
-        update buyer_coupon_info
-        <set>
-            <if test="couponLeftAmount != null">
-                coupon_left_amount = #{couponLeftAmount, jdbcType=DECIMAL},
-            </if>
-            status = #{status, jdbcType=VARCHAR},
-            modify_id = #{modifyId, jdbcType=BIGINT},
-            modify_name = #{modifyName, jdbcType=VARCHAR},
-            modify_time = now(),
-        </set>
-        where buyer_code = #{buyerCode, jdbcType=VARCHAR}
-        and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
-    </update>
-    <insert id="addBuyerCouponInfo" useGeneratedKeys="true" keyProperty="id">
-        insert into buyer_coupon_info
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            buyer_code,
-            <if test="buyerName != null and buyerName != ''">
-                buyer_name,
-            </if>
-            buyer_coupon_code,
-            promotion_id,
-            level_code,
-            <if test="couponName != null and couponName != ''">
-                coupon_name,
-            </if>
-            promotion_provider_type,
-            <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
-                promotion_provider_seller_code,
-            </if>
-            <if test="promotionProviderShopId != null and promotionProviderShopId != ''">
-                promotion_provider_shop_id,
-            </if>
-            coupon_type,
-            get_coupon_time,
-            coupon_start_time,
-            coupon_end_time,
-            <if test="discountThreshold != null">
-                discount_threshold,
-            </if>
-            coupon_amount,
-            <if test="discountPercent != null">
-                discount_percent,
-            </if>
-            coupon_left_amount,
-            status,
-            has_redis_clean,
-            create_id,
-            create_name,
-            create_time,
-            modify_id,
-            modify_name,
-            modify_time,
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            #{buyerCode,jdbcType=VARCHAR},
-            <if test="buyerName != null and buyerName != ''">
-                #{buyerName,jdbcType=VARCHAR},
-            </if>
-            #{buyerCouponCode,jdbcType=VARCHAR},
-            #{promotionId,jdbcType=VARCHAR},
-            #{levelCode,jdbcType=VARCHAR},
-            <if test="couponName != null and couponName != ''">
-                #{couponName,jdbcType=VARCHAR},
-            </if>
-            #{promotionProviderType,jdbcType=VARCHAR},
-            <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
-                #{promotionProviderSellerCode,jdbcType=VARCHAR},
-            </if>
-            <if test="promotionProviderShopId != null and promotionProviderShopId != ''">
-                #{promotionProviderShopId,jdbcType=BIGINT},
-            </if>
-            #{couponType,jdbcType=VARCHAR},
-            #{getCouponTime,jdbcType=TIMESTAMP},
-            #{couponStartTime,jdbcType=TIMESTAMP},
-            #{couponEndTime,jdbcType=TIMESTAMP},
-            <if test="discountThreshold != null">
-                #{discountThreshold,jdbcType=DECIMAL},
-            </if>
-            #{couponAmount,jdbcType=DECIMAL},
-            <if test="discountPercent != null">
-                #{discountPercent,jdbcType=INTEGER},
-            </if>
-            #{couponLeftAmount,jdbcType=DECIMAL},
-            #{status,jdbcType=VARCHAR},
-            0,
-            #{createId,jdbcType=BIGINT},
-            #{createName,jdbcType=VARCHAR},
-            now(),
-            #{createId,jdbcType=BIGINT},
-            #{createName,jdbcType=VARCHAR},
-            now(),
-        </trim>
-    </insert>
-    <select id="queryBuyerCouponCountByDiscountInfo" parameterType="cn.htd.marketcenter.dto.PromotionDiscountInfoDTO"
-            resultType="java.lang.Long">
+  <sql id="where_fragement">
+    <if test="entity!=null">
+      <if test="entity.buyerCode != null and entity.buyerCode !=''">
+        <![CDATA[ and buyer_coupon_info.buyer_code = #{entity.buyerCode} ]]>
+      </if>
+      <if test="entity.buyerName != null and entity.buyerName !=''">
+        <![CDATA[ and buyer_coupon_info.buyer_name like concat('%',#{entity.buyerName},'%') ]]>
+      </if>
+      <if test="entity.couponType != null and entity.couponType !=''">
+        <![CDATA[ and buyer_coupon_info.coupon_type = #{entity.couponType} ]]>
+      </if>
+      <if test="entity.couponName != null and entity.couponName !=''">
+        <![CDATA[ and buyer_coupon_info.coupon_name like concat('%',#{entity.couponName},'%') ]]>
+      </if>
+      <if test="entity.deleteStatus != null and entity.deleteStatus !=''">
+        <![CDATA[ and buyer_coupon_info.status <> #{entity.deleteStatus} ]]>
+      </if>
+      <if test="entity.status != null and entity.status != ''">
+        and buyer_coupon_info.status = #{status}
+      </if>
+      <if test="entity.couponCodeList != null and entity.couponCodeList.size != 0">
+        and buyer_coupon_info.buyer_coupon_code in
+        <foreach item="couponCode" index="index" collection="entity.couponCodeList" open="(" separator=","
+                 close=")">
+          #{couponCode}
+        </foreach>
+      </if>
+    </if>
+  </sql>
+  <select id="queryBuyerCoupon4Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_coupon_info
+    where 1 = 1
+    <if test="entity != null">
+      and status = #{entity.status}
+      and <![CDATA[ coupon_end_time <= now() ]]>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <select id="queryNeedCleanRedisBuyerCoupon4Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_coupon_info
+    where 1 = 1
+    and has_redis_clean = 0
+    <if test="entity != null">
+      and <![CDATA[ coupon_end_time <= date_sub(now(),interval #{entity.cleanRedisInterval} month) ]]>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <update id="updateBuyerCouponCleanRedisStatus" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    update buyer_coupon_info
+    <set>
+      has_redis_clean = 1,
+    </set>
+    where buyer_code = #{buyerCode, jdbcType=VARCHAR}
+    and promotion_id = #{promotionId, jdbcType=VARCHAR}
+    and level_code = #{levelCode, jdbcType=VARCHAR}
+    and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
+  </update>
+  <select id="queryBuyerCouponCount" parameterType="cn.htd.marketcenter.dto.BuyerCouponConditionDTO"
+          resultType="java.lang.Long">
+    select count(1)
+    from buyer_coupon_info
+    where 1 = 1
+    <include refid="where_fragement"/>
+  </select>
+  <select id="queryBuyerCouponList" resultMap="BaseResultMap"
+          parameterType="cn.htd.marketcenter.dto.BuyerCouponConditionDTO">
+    select
+    buyer_coupon_info.id id,
+    buyer_coupon_info.buyer_code buyerCode,
+    buyer_coupon_info.buyer_name buyerName,
+    buyer_coupon_info.buyer_coupon_code buyerCouponCode,
+    buyer_coupon_info.promotion_id promotionId,
+    buyer_coupon_info.level_code levelCode,
+    buyer_coupon_info.coupon_name couponName,
+    buyer_coupon_info.promotion_provider_type promotionProviderType,
+    buyer_coupon_info.promotion_provider_seller_code promotionProviderSellerCode,
+    buyer_coupon_info.promotion_provider_shop_id promotionProviderShopId,
+    buyer_coupon_info.coupon_type couponType,
+    buyer_coupon_info.get_coupon_time getCouponTime,
+    buyer_coupon_info.coupon_start_time couponStartTime,
+    buyer_coupon_info.coupon_end_time couponEndTime,
+    buyer_coupon_info.discount_threshold discountThreshold,
+    buyer_coupon_info.coupon_amount couponAmount,
+    buyer_coupon_info.discount_percent discountPercent,
+    buyer_coupon_info.coupon_left_amount couponLeftAmount,
+    buyer_coupon_info.status status,
+    promotion_info.promotion_describe couponDescribe,
+    buyer_coupon_info.create_id createId,
+    buyer_coupon_info.create_name createName,
+    buyer_coupon_info.create_time createTime,
+    buyer_coupon_info.modify_id modifyId,
+    buyer_coupon_info.modify_name modifyName,
+    buyer_coupon_info.modify_time modifyTime
+    from buyer_coupon_info inner join promotion_info on(promotion_info.promotion_id =
+    buyer_coupon_info.promotion_id)
+    where 1 = 1
+    <include refid="where_fragement"/>
+    order by buyer_coupon_info.coupon_end_time, buyer_coupon_info.coupon_type asc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <select id="queryBuyerReceiveCouponCount" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO"
+          resultType="java.lang.Long">
+    select count(1)
+    from (
+    select buyer_code
+    from buyer_coupon_info
+    where promotion_id = #{entity.promotionId}
+    and level_code = #{entity.levelCode}
+    <if test="entity.buyerCode != null and entity.buyerCode !=''">
+      and buyer_code = #{entity.buyerCode}
+    </if>
+    <if test="entity.buyerName != null and entity.buyerName !=''">
+      and buyer_name like concat('%',#{entity.buyerName},'%')
+    </if>
+    group by buyer_code
+    ) a
+  </select>
+  <select id="queryBuyerReceiveCouponList" resultMap="ReceiveCountMap"
+          parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    select buyer_code buyerCode,
+    buyer_name buyerName,
+    count(id) receiveCount
+    from buyer_coupon_info
+    where promotion_id = #{entity.promotionId}
+    and level_code = #{entity.levelCode}
+    <if test="entity.buyerCode != null and entity.buyerCode !=''">
+      and buyer_code = #{entity.buyerCode}
+    </if>
+    <if test="entity.buyerName != null and entity.buyerName !=''">
+      and buyer_name like concat('%',#{entity.buyerName},'%')
+    </if>
+    group by buyer_code, buyer_name
+    order by buyer_code
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <select id="queryCouponInfoByCode" resultMap="BaseResultMap"
+          parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_coupon_info
+    where buyer_code = #{buyerCode, jdbcType=VARCHAR}
+    and promotion_id = #{promotionId, jdbcType=VARCHAR}
+    and level_code = #{levelCode, jdbcType=VARCHAR}
+    and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
+  </select>
+  <select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_coupon_info
+    where id = #{id, jdbcType=BIGINT}
+  </select>
+  <update id="updateBuyerCouponUseInfo" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    update buyer_coupon_info
+    <set>
+      <if test="couponLeftAmount != null">
+        coupon_left_amount = #{couponLeftAmount, jdbcType=DECIMAL},
+      </if>
+      status = #{status, jdbcType=VARCHAR},
+      modify_id = #{modifyId, jdbcType=BIGINT},
+      modify_name = #{modifyName, jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where buyer_code = #{buyerCode, jdbcType=VARCHAR}
+    and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
+  </update>
+  <insert id="addBuyerCouponInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into buyer_coupon_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      buyer_code,
+      <if test="buyerName != null and buyerName != ''">
+        buyer_name,
+      </if>
+      buyer_coupon_code,
+      promotion_id,
+      level_code,
+      <if test="couponName != null and couponName != ''">
+        coupon_name,
+      </if>
+      promotion_provider_type,
+      <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
+        promotion_provider_seller_code,
+      </if>
+      <if test="promotionProviderShopId != null and promotionProviderShopId != ''">
+        promotion_provider_shop_id,
+      </if>
+      coupon_type,
+      get_coupon_time,
+      coupon_start_time,
+      coupon_end_time,
+      <if test="discountThreshold != null">
+        discount_threshold,
+      </if>
+      coupon_amount,
+      <if test="discountPercent != null">
+        discount_percent,
+      </if>
+      coupon_left_amount,
+      status,
+      has_redis_clean,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{buyerCode,jdbcType=VARCHAR},
+      <if test="buyerName != null and buyerName != ''">
+        #{buyerName,jdbcType=VARCHAR},
+      </if>
+      #{buyerCouponCode,jdbcType=VARCHAR},
+      #{promotionId,jdbcType=VARCHAR},
+      #{levelCode,jdbcType=VARCHAR},
+      <if test="couponName != null and couponName != ''">
+        #{couponName,jdbcType=VARCHAR},
+      </if>
+      #{promotionProviderType,jdbcType=VARCHAR},
+      <if test="promotionProviderSellerCode != null and promotionProviderSellerCode != ''">
+        #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderShopId != null and promotionProviderShopId != ''">
+        #{promotionProviderShopId,jdbcType=BIGINT},
+      </if>
+      #{couponType,jdbcType=VARCHAR},
+      #{getCouponTime,jdbcType=TIMESTAMP},
+      #{couponStartTime,jdbcType=TIMESTAMP},
+      #{couponEndTime,jdbcType=TIMESTAMP},
+      <if test="discountThreshold != null">
+        #{discountThreshold,jdbcType=DECIMAL},
+      </if>
+      #{couponAmount,jdbcType=DECIMAL},
+      <if test="discountPercent != null">
+        #{discountPercent,jdbcType=INTEGER},
+      </if>
+      #{couponLeftAmount,jdbcType=DECIMAL},
+      #{status,jdbcType=VARCHAR},
+      0,
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <select id="queryBuyerCouponCountByDiscountInfo" parameterType="cn.htd.marketcenter.dto.PromotionDiscountInfoDTO"
+          resultType="java.lang.Long">
 		select count(1)
 		from buyer_coupon_info
 		where promotion_id = #{promotionId,jdbcType=VARCHAR}
 		and level_code = #{levelCode,jdbcType=VARCHAR}
 	</select>
-    <select id="queryBuyerCouponListByDiscountInfo" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from buyer_coupon_info
-        where promotion_id = #{entity.promotionId}
-        and level_code = #{entity.levelCode}
-        <if test="page!=null">
-            <include refid="pagination_tail"/>
-        </if>
+  <select id="queryBuyerCouponListByDiscountInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from buyer_coupon_info
+    where promotion_id = #{entity.promotionId}
+    and level_code = #{entity.levelCode}
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <select id="queryBuyerCouponByBuyerCodeAndPomotionId" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO"
+          resultMap="BaseResultMap">
+    	select 
+    	 <include refid="Base_Column_List"/> 
+    	from buyer_coupon_info
+    	where 1=1 
+    	and buyer_code = #{buyerCode}
+    	and promotion_id = #{promotionId}
+    	limit 1
     </select>
+  <update id="updateBuyerCouponByBuyerCodeCouponCodeAndPomotionId"
+          parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    update buyer_coupon_info
+    <set>
+      coupon_left_amount = coupon_left_amount + #{couponLeftAmount, jdbcType=DECIMAL},
+      modify_id = #{modifyId, jdbcType=BIGINT},
+      modify_name = #{modifyName, jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where buyer_code = #{buyerCode, jdbcType=VARCHAR}
+    and buyer_coupon_code = #{buyerCouponCode, jdbcType=VARCHAR}
+    and promotion_id = #{promotionId}
+  </update>
+  <update id="updateB2cActivityInfo2BuyerCoupon" parameterType="cn.htd.marketcenter.dto.BuyerCouponInfoDTO">
+    update buyer_coupon_info
+    <set>
+      <if test="couponName != null and couponName != ''">
+        coupon_name = #{couponName, jdbcType=VARCHAR},
+      </if>
+      <if test=" couponStartTime != null">
+        coupon_start_time = #{couponStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test=" couponEndTime != null">
+        coupon_end_time = #{couponEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test=" discountThreshold != null">
+        discount_threshold = #{discountThreshold,jdbcType=DECIMAL},
+      </if>
+      <if test=" discountPercent != null">
+        discount_percent = #{discountPercent,jdbcType=INTEGER},
+      </if>
+      modify_id = #{modifyId, jdbcType=BIGINT},
+      modify_name = #{modifyName, jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and level_code = #{levelCode,jdbcType=VARCHAR}
+  </update>
 </mapper>

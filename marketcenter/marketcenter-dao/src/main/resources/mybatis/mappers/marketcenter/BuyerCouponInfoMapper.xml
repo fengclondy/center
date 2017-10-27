@@ -359,6 +359,7 @@
     	where 1=1 
     	and buyer_code = #{buyerCode}
     	and promotion_id = #{promotionId}
+    	order by id desc
     	limit 1
     </select>
   <update id="updateBuyerCouponByBuyerCodeCouponCodeAndPomotionId"

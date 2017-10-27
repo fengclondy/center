@@ -189,14 +189,16 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
 
                     String buyerCode = b2cCouponUseLogSyncDMO.getB2cSellerCode();
                     // 查询该会员获取优惠券数量,如果为空就做券，如果不为空就加金额
-                    String count = marketRedisDB
-                            .getHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCode + "&" + promotionId);
+                    long count = marketRedisDB
+                            .incrHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCode + "&" + promotionId);
                     BigDecimal couponAmount = b2cCouponUseLogSyncDMO.getB2cCouponUsedAmount();
-                    if (StringUtils.isEmpty(count)) {
+                    if (count == 1) {
                         // 做券
                         doCoupon(useType, promotionDiscountInfoDTO, buyerCode, b2cCouponUseLogSyncDMO, promotionId,
                                 couponAmount);
                     } else {
+                        marketRedisDB
+                                .incrHashBy(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCode + "&" + promotionId, -1);
                         // 增加或者扣减金额
                         BuyerCouponInfoDTO couponInfo = new BuyerCouponInfoDTO();
                         couponInfo.setBuyerCode(buyerCode);
@@ -364,8 +366,6 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
         long redisAmount = CalculateUtils.multiply(couponInfo.getCouponLeftAmount(), new BigDecimal(100)).longValue();
         marketRedisDB.setHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
                 String.valueOf(redisAmount));
-        String buyerCouponReceiveKey = buyerCode + "&" + promotionId;
-        marketRedisDB.incrHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCouponReceiveKey);
         marketRedisDB
                 .tailPush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, buyerCode + "&" + buyerCouponCode);
         marketRedisDB.incrHash(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId);

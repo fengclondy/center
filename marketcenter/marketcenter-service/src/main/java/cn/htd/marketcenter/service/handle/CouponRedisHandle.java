@@ -30,15 +30,8 @@ import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
-import cn.htd.marketcenter.dto.PromotionBuyerDetailDTO;
-import cn.htd.marketcenter.dto.PromotionBuyerRuleDTO;
-import cn.htd.marketcenter.dto.PromotionCategoryDetailDTO;
-import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
-import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
-import cn.htd.marketcenter.dto.PromotionSellerDetailDTO;
-import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import com.alibaba.fastjson.JSON;
@@ -46,8 +39,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 
 @Service("couponRedisHandle")
 public class CouponRedisHandle {

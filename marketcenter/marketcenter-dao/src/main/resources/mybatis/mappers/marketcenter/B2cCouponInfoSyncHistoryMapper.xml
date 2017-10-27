@@ -149,4 +149,15 @@
     where <![CDATA[ id <= #{id,jdbcType=BIGINT} ]]>
     and b2c_activity_code = #{b2cActivityCode,jdbcType=VARCHAR}
   </update>
+
+
+  <update id="updateB2cCouponInfo4Test">
+    update b2c_coupon_info_sync_history
+    <set>
+      coupon_start_time = str_to_date('2017-10-28 00:00:00','%Y-%m-%d %H:%i:%s'),
+      coupon_end_time = str_to_date('2017-10-28 12:59:59','%Y-%m-%d %H:%i:%s'),
+      deal_flag = 0,
+    </set>
+    where <![CDATA[ id = 1]]>
+  </update>
 </mapper>

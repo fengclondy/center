@@ -20,6 +20,7 @@ import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
 import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
+import cn.htd.marketcenter.dao.B2cCouponInfoSyncHistoryDAO;
 import cn.htd.marketcenter.dao.BuyerCouponInfoDAO;
 import cn.htd.marketcenter.dao.PromotionDiscountInfoDAO;
 import cn.htd.marketcenter.dao.PromotionInfoDAO;
@@ -75,6 +76,9 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
 
     @Resource
     private BuyerCouponInfoDAO buyerCouponInfoDAO;
+
+    @Resource
+    private B2cCouponInfoSyncHistoryDAO b2cCouponInfoSyncHistoryDAO;
 
     private static final String REDIS_DATA_FLUSHED_FLAG = "B2B_MIDDLE_REDIS_DATA_FLUSHED_FLAG";
 
@@ -133,6 +137,10 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                 flushRedisCouponCount(jedis);
                 runedStr += ",4";
             }
+            if (flushFlag.indexOf(",5") < 0) {
+                flushDBCouponStatus(jedis);
+                runedStr += ",5";
+            }
         } catch (Exception e) {
             result = false;
             logger.error("\n 方法:[{}],异常:[{}]", "UpdateRedisData4CouponRequireScheduleTask-execute",
@@ -144,6 +152,11 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                     JSON.toJSONString(runedStr));
         }
         return result;
+    }
+
+    private void flushDBCouponStatus(Jedis jedis) {
+        b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfo4Test();
+        jedis.sadd(RedisConst.REDIS_SYNC_B2C_COUPON_SET, "28");
     }
 
     /**

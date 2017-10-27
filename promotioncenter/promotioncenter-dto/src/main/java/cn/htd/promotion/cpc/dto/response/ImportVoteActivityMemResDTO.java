@@ -20,6 +20,7 @@ public class ImportVoteActivityMemResDTO implements Serializable{
 	private String uniqueId;
 	
 	private List<VoteActivityMemReqDTO> faillist;
+	private List<VoteActivityMemReqDTO> alreadyExistsList;
 	public Integer getSuccessCount() {
 		return successCount;
 	}
@@ -43,5 +44,11 @@ public class ImportVoteActivityMemResDTO implements Serializable{
 	}
 	public void setFaillist(List<VoteActivityMemReqDTO> faillist) {
 		this.faillist = faillist;
+	}
+	public List<VoteActivityMemReqDTO> getAlreadyExistsList() {
+		return alreadyExistsList;
+	}
+	public void setAlreadyExistsList(List<VoteActivityMemReqDTO> alreadyExistsList) {
+		this.alreadyExistsList = alreadyExistsList;
 	}
 }

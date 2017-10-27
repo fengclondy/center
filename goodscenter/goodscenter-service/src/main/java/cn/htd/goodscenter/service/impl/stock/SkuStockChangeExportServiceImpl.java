@@ -375,12 +375,7 @@ public class SkuStockChangeExportServiceImpl implements SkuStockChangeExportServ
             resultCode = ResultCodeEnum.STOCK_NO_REDUCE_REOCRD.getCode();
             resultMessage = ResultCodeEnum.STOCK_NO_REDUCE_REOCRD.getMessage();
             executeResult.addErrorMessage(e.getMessage());
-        } else if (e instanceof StockSystemBusyException) {
-            resultCode = ResultCodeEnum.STOCK_NO_SYSTEM_BUSY.getCode();
-            resultMessage = ResultCodeEnum.STOCK_NO_SYSTEM_BUSY.getMessage();
-            executeResult.addErrorMessage(e.getMessage());
-        }
-        else {
+        } else {
             resultCode = ResultCodeEnum.ERROR.getCode();
             resultMessage = ResultCodeEnum.ERROR.getMessage();
             executeResult.addErrorMessage(e.getMessage());

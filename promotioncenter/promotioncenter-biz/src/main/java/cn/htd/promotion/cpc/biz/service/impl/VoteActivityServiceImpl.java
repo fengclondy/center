@@ -306,23 +306,47 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			result.setErrorMessages(Lists.newArrayList("导入数据均不符合规则"));
 			return result;
 		}
+		List<String> memberCodeList = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
+		
+		List<VoteActivityMemReqDTO> alreadyExistsList = new ArrayList<VoteActivityMemReqDTO>();
+		for (VoteActivityMemReqDTO memberCodeImport:list) {
+			int checkFlag = 0;
+			for (String memberCodeCheck : memberCodeList) {
+				
+				if(StringUtils.isEmpty(memberCodeCheck)){
+					continue;	
+				}
+				
+				if (memberCodeCheck.equals(memberCodeImport.getMemberCode())) {
+					checkFlag=1;
+					break;
+				}
+			}
+			
+			if (checkFlag==1) {
+				alreadyExistsList.add(memberCodeImport);
+			}
+		}
+		if (!alreadyExistsList.isEmpty()) {
+			result.addErrorMessage("存在已经导入的会员店");
+		}
+		importVoteActivityMemResDTO.setAlreadyExistsList(alreadyExistsList);
 		try {
 			//throw new Exception("故意为之 测试导出错误数据时使用的");
 			voteActivityMemberDAO.batchInsertVoteActMember(tempList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("importVoteActivityMember 方法异常 异常信息" + e.getMessage());
-			result.setErrorMessages(Lists.newArrayList("导入数据失败"));
+			result.addErrorMessage("方法异常");
 		}
 		
 		//TODO: 查询库，得到成功记录，比对入参，得到失败记录，放到返回结果中
 		
-		List<String> memberCodeList = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
-		
+		List<String> memberCodeList2 = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
 		List<VoteActivityMemReqDTO> faillist = new ArrayList<VoteActivityMemReqDTO>();
 		for (VoteActivityMemReqDTO memberCodeImport:list) {
 			int checkFlag = 0;
-			for (String memberCodeCheck : memberCodeList) {
+			for (String memberCodeCheck : memberCodeList2) {
 				
 				if(StringUtils.isEmpty(memberCodeCheck)){
 					continue;	

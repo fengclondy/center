@@ -144,8 +144,8 @@
 		limit #{startLine},#{endLine}
   </select>
   <select id="queryB2cCouponUseLogSyncHistoryUseCouponCount" parameterType="cn.htd.marketcenter.dmo.B2cCouponUseLogSyncDMO" 
-          resultType="java.lang.Long">
-  		SELECT count(1)
+          resultMap="BaseResultMap">
+  		SELECT deal_flag
   		FROM
   		b2c_coupon_use_log_sync_history
   		where 1=1

@@ -27,7 +27,7 @@ public interface B2cCouponUseLogSyncHistoryDAO {
      * @param record
      * @return
      */
-    Long queryB2cCouponUseLogSyncHistoryUseCouponCount(B2cCouponUseLogSyncDMO record);
+    List<B2cCouponUseLogSyncDMO> queryB2cCouponUseLogSyncHistoryUseCouponCount(B2cCouponUseLogSyncDMO record);
     
     /**
      * 更新b2c_coupon_use_log_sync_history表

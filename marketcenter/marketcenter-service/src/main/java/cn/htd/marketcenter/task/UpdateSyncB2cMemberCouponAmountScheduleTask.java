@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -155,9 +157,9 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
 					 * 如果不存在，将该条记录记为deal_flag=2(处理失败)
 					 */
                     if (useType.equals(ON_LINE_SURE_CANCLE_ORDER)) {
-                        Long useCouponCount = b2cCouponUseLogSyncHistoryDAO
+                    	List<B2cCouponUseLogSyncDMO>  b2cCouponUseLogSyncList = b2cCouponUseLogSyncHistoryDAO
                                 .queryB2cCouponUseLogSyncHistoryUseCouponCount(b2cCouponUseLogSyncDMO);
-                        if (null == useCouponCount || useCouponCount.intValue() == 0) {
+                        if (null == b2cCouponUseLogSyncList || b2cCouponUseLogSyncList.size()==0) {
                             B2cCouponUseLogSyncDMO record = new B2cCouponUseLogSyncDMO();
                             String dealFailReason = "该条数据非法--会员店的优惠券金额并未做过累加";
                             record.setDealFailReason(dealFailReason);
@@ -167,6 +169,12 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
                             logger.warn(dealFailReason + "参数:{},跟新数据库结果{}",
                                     JSONObject.toJSONString(b2cCouponUseLogSyncDMO), updateResult);
                             continue;
+                        }else{
+                        	B2cCouponUseLogSyncDMO b2cCouponUseLogSyncInfo = b2cCouponUseLogSyncList.get(0);
+                        	int dealFlag = b2cCouponUseLogSyncInfo.getDealFlag();
+                        	if(dealFlag == 0){
+                        		continue;
+                        	}
                         }
                     }
                     //判断是否在活动期间，查不到数据continue

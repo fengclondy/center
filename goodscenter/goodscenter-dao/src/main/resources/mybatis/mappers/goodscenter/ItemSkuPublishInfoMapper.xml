@@ -781,4 +781,10 @@
     AND b.is_box_flag = #{param.isBoxFlag}
     AND a.item_code =  #{param.itemCode}
   </select>
+  
+  <select id="queryMobileExternalPublishInfoBySkuId" resultMap="BaseResultMap">
+  	SELECT min(mim_quantity) as mim_quantity,
+		   max(max_purchase_quantity) as max_purchase_quantity 
+	FROM item_sku_publish_info WHERE sku_id in (#{skuIds})
+  </select>
 </mapper>

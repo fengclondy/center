@@ -481,9 +481,12 @@ public class TimelimitedPurchaseServiceImpl implements
 				}
 			}
 			if(!resultList.isEmpty()){
-//				System.out.println(JSONObject.toJSONString(resultList));
-				Collections.sort(resultList);
-				
+				if(dto.getPurchaseFlag() == 1){
+					Collections.sort(resultList);
+				}else{
+					System.out.println(222);
+					Collections.sort(resultList, new PriceComparator());
+				}
 			}
 			result.setCode("00000");
 			result.setResult(resultList);
@@ -498,6 +501,19 @@ public class TimelimitedPurchaseServiceImpl implements
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public static class PriceComparator implements Comparator { 
+	    public int compare(Object object1, Object object2) {
+	    	TimelimitPurchaseMallInfoDTO t1 = (TimelimitPurchaseMallInfoDTO) object1; 
+	    	TimelimitPurchaseMallInfoDTO t2 = (TimelimitPurchaseMallInfoDTO) object2; 
+		    int priceSort = Double.compare(t2.getPreferentialStrength(),t1.getPreferentialStrength());
+		    if(priceSort != 0){
+		    	return priceSort;
+		    }
+		    return Long.compare(t1.getStartTime().getTime(), t2.getStartTime().getTime());
+		} 
+	} 
 
 	@Override
 	public ExecuteResult<String> updateTimitedInfoSalesVolumeRedis(

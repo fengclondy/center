@@ -173,7 +173,6 @@ public class UpdateSyncB2cMemberCouponAmountScheduleTask implements IScheduleTas
                         	B2cCouponUseLogSyncDMO b2cCouponUseLogSyncInfo = b2cCouponUseLogSyncList.get(0);
                         	int dealFlag = b2cCouponUseLogSyncInfo.getDealFlag();
                         	if(dealFlag == 0){
-                        		logger.info("取消优惠券时候-该会员店还未做券,参数:{}"+JSONObject.toJSONString(b2cCouponUseLogSyncDMO));
                         		continue;
                         	}
                         }

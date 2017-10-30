@@ -413,6 +413,24 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		return GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key(); //0.成功
 
 	}
+	
+	
+	@Override
+	public Boolean hasProductIsBeingUsedByPromotion(String skuCode, String messageId) {
+		try {
+            if (null == skuCode || skuCode.length() == 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "skuCode参数不能为空！");
+            }
+            
+    		int count = groupbuyingInfoDAO.getPromotionCountsBySkuCode(skuCode);
+    		return (count < 1 ? false:true);
+    		
+		} catch (Exception e) {
+			logger.error("messageId{}:执行方法【hasProductIsBeingUsedByPromotion】报错：{}",messageId, e.toString());
+			throw new RuntimeException(e);
+		}
+
+	}
     
 
     /**
@@ -812,4 +830,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		}
 		return dataGrid;
 	}
+
+
 }

@@ -497,6 +497,29 @@ public class GroupbuyingTestUnit {
 			e.printStackTrace();
 		}
 	}
+	
+    /**
+     * 商品是否被活动正在使用-测试用例
+     */
+	@Test
+	public void hasProductIsBeingUsedByPromotionTest(){
+		try{
+			String messageId = "342453251349";
+			String skuCode = "1731665017";
+			ExecuteResult<Boolean> executeResult = groupbuyingAPI.hasProductIsBeingUsedByPromotion(skuCode,messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		if(Boolean.FALSE == executeResult.getResult()){ //商品没有被活动正在使用
+        			System.out.println(skuCode + "商品没有被活动正在使用");
+        		}else{
+        			System.out.println(skuCode + "商品被活动正在使用");
+        		}
+        	}else{
+        		System.out.println("===>检测失败！！！");
+        	}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
     /**
      * 添加团购记录(供移动端使用)-测试用例

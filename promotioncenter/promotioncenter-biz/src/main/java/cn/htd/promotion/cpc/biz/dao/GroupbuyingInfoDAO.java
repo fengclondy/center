@@ -52,6 +52,13 @@ public interface GroupbuyingInfoDAO {
 	GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId(String promotionId);
 	
 	/**
+	 * 根据商品skuCode查询活动个数
+	 * @param skuCode
+	 * @return
+	 */
+	int getPromotionCountsBySkuCode(String skuCode);
+	
+	/**
 	 * 根据条件查询团购活动总数(供移动端使用)
 	 * @param record
 	 * @return

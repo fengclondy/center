@@ -300,6 +300,25 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
     }
+    
+	@Override
+	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode, String messageId) {
+        ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+
+        	Boolean flag = groupbuyingService.hasProductIsBeingUsedByPromotion(skuCode,messageId);
+        	result.setResult(flag);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.hasProductIsBeingUsedByPromotion 出现异常{}", messageId, skuCode + ":" + e.toString());
+        }
+        return result;
+	}
 
 
 	@Override
@@ -342,4 +361,5 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
 	}
+
 }

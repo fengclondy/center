@@ -12,18 +12,15 @@ import org.slf4j.LoggerFactory;
  */
 public class Md5Utils {
     private static final Logger log = LoggerFactory.getLogger(Md5Utils.class);
-    private static MessageDigest md5 = null;
-
-    static {
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
 
     public static String getMd5(String str) {
-        byte[] bs = md5.digest(str.getBytes());
+        byte[] bs = null;
+        try {
+            bs = MessageDigest.getInstance("MD5").digest(str.getBytes());
+        } catch (Exception e) {
+            log.error("MD5解密出错", e);
+            bs = str.getBytes();
+        }
         StringBuilder sb = new StringBuilder(40);
         for (byte x : bs) {
             if ((x & 0xff) >> 4 == 0) {

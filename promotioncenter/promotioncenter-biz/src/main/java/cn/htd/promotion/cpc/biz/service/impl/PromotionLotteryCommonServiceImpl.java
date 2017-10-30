@@ -29,7 +29,6 @@ import cn.htd.promotion.cpc.dto.request.ValidateScratchCardReqDTO;
 import cn.htd.promotion.cpc.dto.response.BuyerWinningRecordDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
@@ -339,6 +338,10 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
             winningRecordDTO.setSellerCode(sellerCode);
             winningRecordDTO.setWinningTime(new Date());
         } catch (PromotionCenterBusinessException pcbe) {
+            if (!ResultCodeEnum.LOTTERY_AWARD_NOT_CORRECT.getCode().equals(pcbe.getCode())) {
+                promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
+                        RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT);
+            }
             if (winningRecordDTO == null) {
                 winningRecordDTO = errorWinningRecord;
             }
@@ -366,8 +369,6 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
 
         if (promotionRedisDB.decrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
                 RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT).longValue() < 0) {
-            promotionRedisDB.incrHash(RedisConst.REDIS_LOTTERY_TIMES_INFO + "_" + promotionId,
-                    RedisConst.REDIS_LOTTERY_AWARD_TOTAL_COUNT);
             logger.info("MessageId{}调用方法PromotionLotteryCommonServiceImpl.drawLotteryAward结果为抽奖活动目前奖品数量不足",
                     requestDTO.getMessageId());
             throw new PromotionCenterBusinessException(ResultCodeEnum.LOTTERY_NO_MORE_AWARD_NUM.getCode(),
@@ -525,6 +526,7 @@ public class PromotionLotteryCommonServiceImpl implements PromotionLotteryCommon
                             stringRedisConnection.expire(redisKey, seconds);
                         }
                         if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                            stringRedisConnection.del(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId);
                             for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
                                 stringRedisConnection
                                         .sAdd(RedisConst.REIDS_LOTTERY_SELLER_RULE_DETAIL_SET + "_" + promotionId,

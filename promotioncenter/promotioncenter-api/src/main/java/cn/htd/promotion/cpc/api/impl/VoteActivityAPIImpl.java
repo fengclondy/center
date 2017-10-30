@@ -238,6 +238,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
                 // 转发数
                 String forwardNum = NUtils.convertToStr(voteActivityMemberService.selectForwordCountByVMId(memberResDTO.getVoteMemberId()));
                 resultMap.put("forwardNum",forwardNum);
+                resultMap.put("vendorName",memberResDTO.getVendorName());
                 // 判断审核状态
                 if(memberResDTO.getAuditStatus() !=null) {
                     if (memberResDTO.getAuditStatus().intValue() == 0) {

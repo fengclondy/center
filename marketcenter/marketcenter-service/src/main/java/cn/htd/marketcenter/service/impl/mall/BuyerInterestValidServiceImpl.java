@@ -680,6 +680,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     if (!StringUtils.isEmpty(productDTO.getPromotionId()) && !dictMap
                             .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&"
                                     + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+                            .equals(productDTO.getPromotionType()) && !StringUtils.isEmpty(productDTO.getPromotionId())
+                            && !dictMap
+                            .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
                             .equals(productDTO.getPromotionType())) {
                         if (targetPromotionMap.containsKey(productDTO.getPromotionType())) {
                             targetPromotionIdMap = targetPromotionMap.get(productDTO.getPromotionType());

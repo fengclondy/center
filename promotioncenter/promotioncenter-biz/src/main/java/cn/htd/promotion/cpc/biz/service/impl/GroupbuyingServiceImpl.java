@@ -598,9 +598,19 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
             dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
             List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfoCmplForPage(page, groupbuyingInfoReqDTO);
-            int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
-            dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
-            dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+			if(null != groupbuyingInfoCmplResDTOList && groupbuyingInfoCmplResDTOList.size() > 0){
+				int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
+				// 团购价格设置
+				for(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO : groupbuyingInfoCmplResDTOList){
+					String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
+					List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingDAO.selectByPromotionId(promotionId);
+					groupbuyingInfoCmplResDTO.setGroupbuyingPriceSettingResDTOList(groupbuyingPriceSettingResDTOList);
+				}
+				
+				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+				dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+			}
+			
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getGroupbuyingInfoCmplForPage】报错：{}", messageId, e.toString());
             throw new RuntimeException(e);

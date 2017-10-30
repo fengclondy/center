@@ -738,6 +738,17 @@
    left join promotion_info pi on pi.promotion_id = gr.promotion_id  
 		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and gps.delete_flag = 0   
          and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
+        <if test="dto.activeState != null and dto.activeState != '' ">
+		<choose>
+		<when test="dto.activeState=='2'">
+		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
+		</when>
+		<when test="dto.activeState=='3'">
+		  <![CDATA[ and sysdate() > gi.end_time ]]>
+		</when>
+		<otherwise></otherwise>
+		</choose>
+		</if>
 	</select>
 	
    <select id="getMyGroupbuying4MobileForPage" resultMap="GroupbuyingInfoCmplResultMap">
@@ -771,6 +782,17 @@
    left join promotion_info pi on pi.promotion_id = gr.promotion_id  
 		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and gps.delete_flag = 0   
         and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
+        <if test="dto.activeState != null and dto.activeState != '' ">
+		<choose>
+		<when test="dto.activeState=='2'">
+		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
+		</when>
+		<when test="dto.activeState=='3'">
+		  <![CDATA[ and sysdate() > gi.end_time ]]>
+		</when>
+		<otherwise></otherwise>
+		</choose>
+		</if>
 		ORDER BY gr.create_time desc ,gps.sort_num asc  
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>

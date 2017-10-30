@@ -639,6 +639,8 @@ public class GroupbuyingTestUnit {
 			pager.setRows(10);
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
 			groupbuyingInfoReqDTO.setBuyerCode("2002");
+//			groupbuyingInfoReqDTO.setActiveState("1");// 活动状态，PC端状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
+			groupbuyingInfoReqDTO.setActiveState("1");// 活动状态，仅供移动端使用 [1.全部,2.进行中,3.已结束]
 			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getMyGroupbuyingForPage2HttpINTFC(pager,groupbuyingInfoReqDTO,messageId);
 	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
         		System.out.println("===>executeResult:" + executeResult);

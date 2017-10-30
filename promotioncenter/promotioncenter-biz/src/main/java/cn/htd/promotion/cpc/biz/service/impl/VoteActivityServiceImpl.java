@@ -80,6 +80,11 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			return  result;
 		}
 		
+		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteStartTime())){
+			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票开始时间"));
+			return  result;
+		}
+		
 		if(voteActivityResDTO.getVoteSignUpStartTime().after(voteActivityResDTO.getVoteStartTime())){
 			result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于投票开始时间"));
 			return  result;
@@ -444,6 +449,11 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		
 		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteSignUpStartTime())){
 			result.setErrorMessages(Lists.newArrayList("报名开始时间不能晚于报名结束时间"));
+			return  result;
+		}
+		
+		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteStartTime())){
+			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票开始时间"));
 			return  result;
 		}
 		

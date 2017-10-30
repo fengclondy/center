@@ -598,9 +598,19 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
             dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
             List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfoCmplForPage(page, groupbuyingInfoReqDTO);
-            int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
-            dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
-            dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+			if(null != groupbuyingInfoCmplResDTOList && groupbuyingInfoCmplResDTOList.size() > 0){
+				int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
+				// 团购价格设置
+				for(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO : groupbuyingInfoCmplResDTOList){
+					String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
+					List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingDAO.selectByPromotionId(promotionId);
+					groupbuyingInfoCmplResDTO.setGroupbuyingPriceSettingResDTOList(groupbuyingPriceSettingResDTOList);
+				}
+				
+				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+				dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+			}
+			
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getGroupbuyingInfoCmplForPage】报错：{}", messageId, e.toString());
             throw new RuntimeException(e);
@@ -770,9 +780,29 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             
 			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
 			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfo4MobileForPage(page, groupbuyingInfoReqDTO);
-			int count = groupbuyingInfoDAO.getGroupbuyingInfo4MobileCount(groupbuyingInfoReqDTO);
-			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
-			dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+			if(null != groupbuyingInfoCmplResDTOList && groupbuyingInfoCmplResDTOList.size() > 0){
+				int count = groupbuyingInfoDAO.getGroupbuyingInfo4MobileCount(groupbuyingInfoReqDTO);
+				// 设置参团状态
+				for(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO : groupbuyingInfoCmplResDTOList){
+		  			if(StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())){
+	    				groupbuyingInfoCmplResDTO.setGbRecordStatus("0");// 参团状态 [0.未参团,1.已参团]
+	    			}else{
+	                	GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+	                    groupbuyingRecordReqDTO.setPromotionId(groupbuyingInfoCmplResDTO.getPromotionId());// 促销活动编码
+	                	groupbuyingRecordReqDTO.setBuyerCode(groupbuyingInfoReqDTO.getBuyerCode());// 参团人账号
+	            		GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+	            		groupbuyingInfoCmplResDTO.setGbRecordStatus("0");// 参团状态 [0.未参团,1.已参团]
+	            		if(null != groupbuyingRecordResDTO){
+	            			groupbuyingInfoCmplResDTO.setGbRecordStatus("1");// 参团状态 [0.未参团,1.已参团]
+	            		}
+	    			}
+				}
+				
+				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+				dataGrid.setRows(groupbuyingInfoCmplResDTOList);
+				
+			}
+
 		} catch (Exception e) {
 			logger.error("messageId{}:执行方法【getGroupbuyingInfo4MobileForPage】报错：{}", messageId, e.toString());
 			throw new RuntimeException(e);
@@ -794,6 +824,22 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 //    		}
 
     		groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO);
+    		if(null != groupbuyingInfoCmplResDTO){
+    			if(StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())){
+    				groupbuyingInfoCmplResDTO.setGbRecordStatus("0");// 参团状态 [0.未参团,1.已参团]
+    			}else{
+                	GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+                    groupbuyingRecordReqDTO.setPromotionId(groupbuyingInfoCmplResDTO.getPromotionId());// 促销活动编码
+                	groupbuyingRecordReqDTO.setBuyerCode(groupbuyingInfoReqDTO.getBuyerCode());// 参团人账号
+            		GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+            		groupbuyingInfoCmplResDTO.setGbRecordStatus("0");// 参团状态 [0.未参团,1.已参团]
+            		if(null != groupbuyingRecordResDTO){
+            			groupbuyingInfoCmplResDTO.setGbRecordStatus("1");// 参团状态 [0.未参团,1.已参团]
+            		}
+    			}
+
+    		}
+    		
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getGroupbuyingInfo4MobileHomePage】报错：{}", messageId, e.toString());

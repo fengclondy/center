@@ -734,9 +734,8 @@
 	   SELECT count(distinct gr.record_id)  
    FROM groupbuying_record gr 
    left join groupbuying_info gi on gi.promotion_id = gr.promotion_id 
-   left join groupbuying_price_setting gps on gps.promotion_id = gr.promotion_id 
    left join promotion_info pi on pi.promotion_id = gr.promotion_id  
-		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and gps.delete_flag = 0   
+		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0  and pi.show_status = '3'    
          and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
@@ -758,9 +757,6 @@
     gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
     gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, 
     gi.modify_id, gi.modify_name, gi.modify_time,
-    gps.price_setting_id, gps.promotion_id, gps.item_id, gps.sku_code, gps.actor_count, gps.groupbuying_price, gps.sort_num,
-    gps.delete_flag, gps.create_id, gps.create_name, gps.create_time, 
-    gps.modify_id, gps.modify_name, gps.modify_time,
     pi.id, pi.promotion_id, pi.promotion_name, pi.promotion_describe, pi.promotion_provider_type, pi.promotion_provider_seller_code, 
     pi.promotion_provider_shop_id, pi.cost_allocation_type, pi.promotion_type, pi.effective_time, 
     pi.invalid_time, pi.is_vip, pi.status, pi.show_status, pi.verifier_id, pi.verifier_name, pi.verify_time, 
@@ -778,9 +774,8 @@
 	end) ]]> activeState 
    FROM groupbuying_record gr 
    left join groupbuying_info gi on gi.promotion_id = gr.promotion_id 
-   left join groupbuying_price_setting gps on gps.promotion_id = gr.promotion_id 
    left join promotion_info pi on pi.promotion_id = gr.promotion_id  
-		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and gps.delete_flag = 0   
+		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and pi.show_status = '3'    
         and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
@@ -793,7 +788,7 @@
 		<otherwise></otherwise>
 		</choose>
 		</if>
-		ORDER BY gr.create_time desc ,gps.sort_num asc  
+		ORDER BY gr.create_time desc 
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
 	

@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.List;
+
 import cn.htd.promotion.cpc.dto.request.GroupbuyingPriceSettingReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingPriceSettingResDTO;
 
@@ -12,6 +14,8 @@ public interface GroupbuyingPriceSettingDAO {
     int insertSelective(GroupbuyingPriceSettingReqDTO record);
 
     GroupbuyingPriceSettingResDTO selectByPrimaryKey(Long priceSettingId);
+    
+    List<GroupbuyingPriceSettingResDTO> selectByPromotionId(String promotionId);
 
     int updateByPrimaryKeySelective(GroupbuyingPriceSettingReqDTO record);
 

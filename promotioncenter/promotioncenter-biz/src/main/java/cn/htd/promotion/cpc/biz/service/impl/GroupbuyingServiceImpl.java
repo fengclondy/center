@@ -794,6 +794,22 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 //    		}
 
     		groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfo4MobileHomePage(groupbuyingInfoReqDTO);
+    		if(null != groupbuyingInfoCmplResDTO){
+    			if(StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())){
+    				groupbuyingInfoCmplResDTO.setGbRecordStatus("0");// 参团状态 [0.未参团,1.已参团]
+    			}else{
+                	GroupbuyingRecordReqDTO groupbuyingRecordReqDTO = new GroupbuyingRecordReqDTO();
+                    groupbuyingRecordReqDTO.setPromotionId(groupbuyingInfoCmplResDTO.getPromotionId());// 促销活动编码
+                	groupbuyingRecordReqDTO.setBuyerCode(groupbuyingInfoReqDTO.getBuyerCode());// 参团人账号
+            		GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO);
+            		groupbuyingInfoCmplResDTO.setGbRecordStatus("0");// 参团状态 [0.未参团,1.已参团]
+            		if(null != groupbuyingRecordResDTO){
+            			groupbuyingInfoCmplResDTO.setGbRecordStatus("1");// 参团状态 [0.未参团,1.已参团]
+            		}
+    			}
+
+    		}
+    		
 
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getGroupbuyingInfo4MobileHomePage】报错：{}", messageId, e.toString());

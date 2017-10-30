@@ -497,6 +497,29 @@ public class GroupbuyingTestUnit {
 			e.printStackTrace();
 		}
 	}
+	
+    /**
+     * 商品是否被活动正在使用-测试用例
+     */
+	@Test
+	public void hasProductIsBeingUsedByPromotionTest(){
+		try{
+			String messageId = "342453251349";
+			String skuCode = "1731665017";
+			ExecuteResult<Boolean> executeResult = groupbuyingAPI.hasProductIsBeingUsedByPromotion(skuCode,messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		if(Boolean.FALSE == executeResult.getResult()){ //商品没有被活动正在使用
+        			System.out.println(skuCode + "商品没有被活动正在使用");
+        		}else{
+        			System.out.println(skuCode + "商品被活动正在使用");
+        		}
+        	}else{
+        		System.out.println("===>检测失败！！！");
+        	}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
     /**
      * 添加团购记录(供移动端使用)-测试用例
@@ -615,7 +638,9 @@ public class GroupbuyingTestUnit {
 			pager.setPageOffset(1);
 			pager.setRows(10);
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
-			groupbuyingInfoReqDTO.setBuyerCode("2002");
+			groupbuyingInfoReqDTO.setBuyerCode("534382");
+//			groupbuyingInfoReqDTO.setActiveState("1");// 活动状态，PC端状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
+			groupbuyingInfoReqDTO.setActiveState("1");// 活动状态，仅供移动端使用 [1.全部,2.进行中,3.已结束]
 			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getMyGroupbuyingForPage2HttpINTFC(pager,groupbuyingInfoReqDTO,messageId);
 	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
         		System.out.println("===>executeResult:" + executeResult);

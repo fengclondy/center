@@ -133,5 +133,13 @@ public interface GroupbuyingAPI {
 	 */
 	ExecuteResult<?> deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO,String messageId) ;
 	
+	/**
+	 * 商品是否被活动正在使用
+	 * @param skuCode
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode, String messageId);
+	
 	
 }

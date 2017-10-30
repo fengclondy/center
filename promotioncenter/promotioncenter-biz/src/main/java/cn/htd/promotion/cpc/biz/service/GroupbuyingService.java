@@ -96,6 +96,14 @@ public interface GroupbuyingService {
 	 */
 	public String deleteGroupbuyingInfoByPromotionId(GroupbuyingInfoReqDTO groupbuyingInfoReqDTO,String messageId) ;
 	
+	/**
+	 * 商品是否被活动正在使用
+	 * @param skuCode
+	 * @param messageId
+	 * @return
+	 */
+	public Boolean hasProductIsBeingUsedByPromotion(String skuCode, String messageId);
+	
 	
     /**
      * 异步初始化团购活动的Redis数据

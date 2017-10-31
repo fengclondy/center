@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.api;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -9,6 +11,7 @@ import cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 
 public interface GroupbuyingAPI {
@@ -72,6 +75,14 @@ public interface GroupbuyingAPI {
 	 */
 	public ExecuteResult<DataGrid<GroupbuyingRecordResDTO>> geGroupbuyingRecordForPage(Pager<GroupbuyingRecordReqDTO> page,
 			GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
+	
+	/**
+	 * 根据promotionId查询活动配置信息
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<List<PromotionConfigureDTO>> getGBPromotionConfiguresByPromotionId(String promotionId,String messageId);
 	
 	
 	/**

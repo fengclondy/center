@@ -1,5 +1,7 @@
 package cn.htd.promotion.cpc.api.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
@@ -24,6 +26,7 @@ import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 
 @Service("groupbuyingAPI")
 public class GroupbuyingAPIImpl implements GroupbuyingAPI {
@@ -184,6 +187,29 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
             logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.geGroupbuyingRecordForPage出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+	
+	
+	@Override
+	public ExecuteResult<List<PromotionConfigureDTO>> getGBPromotionConfiguresByPromotionId(String promotionId, String messageId) {
+		ExecuteResult<List<PromotionConfigureDTO>> result = new ExecuteResult<List<PromotionConfigureDTO>>(); 
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+			if (null == promotionId || promotionId.length() == 0) {
+				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动编码不能为空！");
+			}
+			
+        	List<PromotionConfigureDTO> promotionConfigureDTOlist = groupbuyingService.getGBPromotionConfiguresByPromotionId(promotionId, messageId);
+        	result.setResult(promotionConfigureDTOlist);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGBPromotionConfiguresByPromotionId出现异常{}", messageId, e.toString());
         }
         return result;
 	}
@@ -361,5 +387,7 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         }
         return result;
 	}
+
+
 
 }

@@ -619,6 +619,24 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		
 	}
 	
+	@Override
+	public List<PromotionConfigureDTO> getGBPromotionConfiguresByPromotionId(String promotionId, String messageId) {
+		
+		List<PromotionConfigureDTO> promotionConfigureDTOlist = null;
+
+        try {
+
+        	promotionConfigureDTOlist = promotionConfigureDAO.getPromotionConfiguresByPromotionId(promotionId);
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【getGBPromotionConfiguresByPromotionId】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+
+        return promotionConfigureDTOlist;
+	}
+
+	
 
     @Override
     public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
@@ -886,6 +904,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		}
 		return dataGrid;
 	}
+
 
 
 }

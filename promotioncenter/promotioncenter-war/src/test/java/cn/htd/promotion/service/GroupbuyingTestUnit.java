@@ -520,6 +520,28 @@ public class GroupbuyingTestUnit {
 			e.printStackTrace();
 		}
 	}
+	
+	
+    /**
+     * 根据promotionId查询活动配置信息-测试用例
+     */
+    @Test
+    public void getGBPromotionConfiguresByPromotionIdTest(){
+    	String messageId = keyGeneratorUtils.generateMessageId();
+//    	 String messageId = "342453251349";
+        String promotionId = "25171622110022";
+        try {
+        	ExecuteResult<List<PromotionConfigureDTO>> executeResult = groupbuyingAPI.getGBPromotionConfiguresByPromotionId(promotionId, messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>查询失败！！！");
+        	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     
     /**
      * 添加团购记录(供移动端使用)-测试用例

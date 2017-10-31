@@ -76,7 +76,7 @@ public class LoadBelongRelationInRedisTask implements IScheduleTaskDealMulti<Sel
 				lasttime = format.parse(lasttimeStr);
 				Calendar ca = Calendar.getInstance();
 				ca.setTime(lasttime);
-				ca.add(Calendar.MINUTE, -30);
+				ca.add(Calendar.MINUTE, -60);
 				lasttime = ca.getTime();
 			} catch (Exception e) {
 			}
@@ -84,7 +84,7 @@ public class LoadBelongRelationInRedisTask implements IScheduleTaskDealMulti<Sel
 
 		MemberDownCondition condition = new MemberDownCondition();
 		List<SellerBelongRelationDTO> brList = new ArrayList<SellerBelongRelationDTO>();
-		List<String> taskIdList = new ArrayList<String>();
+		// List<String> taskIdList = new ArrayList<String>();
 
 		@SuppressWarnings("rawtypes")
 		Pager pager = null;
@@ -94,36 +94,34 @@ public class LoadBelongRelationInRedisTask implements IScheduleTaskDealMulti<Sel
 			pager.setRows(eachFetchDataNum);
 		}
 		try {
-			if (taskItemList != null && taskItemList.size() > 0) {
-				for (TaskItemDefine taskItem : taskItemList) {
-					taskIdList.add(taskItem.getTaskItemId());
-				}
-				condition.setLastDate(lasttime);
-				condition.setTaskQueueNum(taskQueueNum);
-				condition.setTaskIdList(taskIdList);
-				brList = belongRelationshipDao.queryBelongRelation4Task(condition, pager);
-			}
+			// if (taskItemList != null && taskItemList.size() > 0) {
+			// for (TaskItemDefine taskItem : taskItemList) {
+			// taskIdList.add(taskItem.getTaskItemId());
+			// }
+			condition.setLastDate(lasttime);
+			// condition.setTaskQueueNum(taskQueueNum);
+			// condition.setTaskIdList(taskIdList);
+			brList = belongRelationshipDao.queryBelongRelation4Task(condition, pager);
+			// }
 			if (brList == null || brList.size() == 0) {
-				redisDB.setHash(GlobalConstant.BELONG_RELATION_INFO, "LASTTIME", format.format(new Date()));
+			} else {
+				for (SellerBelongRelationDTO sellerBelongRelationDTO : brList) {
+					redisDB.setHash(GlobalConstant.BELONG_RELATION_INFO, sellerBelongRelationDTO.getMemberCode(),
+							JSON.toJSONString(sellerBelongRelationDTO));
+				}
 			}
+			redisDB.setHash(GlobalConstant.BELONG_RELATION_INFO, "LASTTIME", format.format(new Date()));
 		} catch (Exception e) {
 			logger.error("\n 方法[{}]，异常：[{}]", "LoadBelongRelationInRedisTask-selectTasks", e);
 		} finally {
-			logger.info("\n 方法[{}]，出参：[{}]", "LoadBelongRelationInRedisTask-selectTasks",
-					JSONObject.toJSONString(brList));
+			logger.info("\n 方法[{}]，出参：[{}]", "LoadBelongRelationInRedisTask-selectTasks");
 		}
 		return brList;
 	}
 
 	@Override
 	public boolean execute(SellerBelongRelationDTO[] tasks, String ownSign) throws Exception {
-		int len = tasks.length;
-		SellerBelongRelationDTO sellerBelongRelationDTO = null;
-		for (int i = 0; i < len; i++) {
-			sellerBelongRelationDTO = tasks[i];
-			redisDB.setHash(GlobalConstant.BELONG_RELATION_INFO, sellerBelongRelationDTO.getMemberCode(),
-					JSON.toJSONString(sellerBelongRelationDTO));
-		}
+
 		return true;
 	}
 

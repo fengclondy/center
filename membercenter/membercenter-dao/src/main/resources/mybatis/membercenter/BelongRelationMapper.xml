@@ -224,11 +224,6 @@
 		<if test="condition.lastDate != null and condition.lastDate != ''">
       	and m.modify_time  between #{condition.lastDate} and now()
       </if>
-		and mod(m.id,#{condition.taskQueueNum}) in 
-		 <foreach collection="condition.taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
-            #{taskId} 
-          </foreach> 
-		limit #{pager.pageOffset},#{pager.rows}
 	</select>
 	
 	

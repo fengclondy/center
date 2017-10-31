@@ -1097,7 +1097,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @param promotionInfo
      */
     public void deletePromotionUselessInfo(PromotionInfoDTO promotionInfo) {
-
         promotionInfo.setVerifierId(null);
         promotionInfo.setVerifierName(null);
         promotionInfo.setVerifyTime(null);
@@ -1111,6 +1110,9 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setBuyerRuleId(null);
         promotionInfo.setSellerRuleId(null);
         promotionInfo.setCategoryItemRuleId(null);
+        promotionInfo.setBuyerRuleDesc(null);
+        promotionInfo.setSellerRuleDesc(null);
+        promotionInfo.setCategoryItemRuleDesc(null);
         promotionInfo.setPromotionStatusHistoryList(null);
     }
     /**

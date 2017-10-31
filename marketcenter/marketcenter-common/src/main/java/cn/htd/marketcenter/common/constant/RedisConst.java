@@ -73,4 +73,9 @@ public class RedisConst {
     // Redis处理中B2C触发返券活动Hash
     public static final String REDIS_DEAL_B2C_COUPON_HASH = "B2B_MIDDLE_DEAL_B2C_COUPON_HASH";
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
+
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    // Redis会员弹框提醒信息Hash
+    public static final String REDIS_POPUP_NOTICE_INFO_HASH = "B2B_MIDDLE_POPUP_NOTICE_INFO_HASH";
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 }

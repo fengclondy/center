@@ -29,6 +29,16 @@ public class PromotionBuyerDetailDTO implements Serializable {
 	 * 会员名称
 	 */
 	private String buyerName;
+	//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+	/**
+	 * 归属平台公司编码
+	 */
+	private String belognSellerCode;
+	/**
+	 * 归属平台公司名称
+	 */
+	private String belongSellerName;
+	//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 	/**
 	 * 删除标记
 	 */
@@ -96,6 +106,22 @@ public class PromotionBuyerDetailDTO implements Serializable {
 
 	public void setBuyerName(String buyerName) {
 		this.buyerName = buyerName;
+	}
+
+	public String getBelognSellerCode() {
+		return belognSellerCode;
+	}
+
+	public void setBelognSellerCode(String belognSellerCode) {
+		this.belognSellerCode = belognSellerCode;
+	}
+
+	public String getBelongSellerName() {
+		return belongSellerName;
+	}
+
+	public void setBelongSellerName(String belongSellerName) {
+		this.belongSellerName = belongSellerName;
 	}
 
 	public int getDeleteFlag() {

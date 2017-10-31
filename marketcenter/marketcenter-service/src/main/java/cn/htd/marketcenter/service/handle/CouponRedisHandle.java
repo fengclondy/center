@@ -19,6 +19,8 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
+import cn.htd.marketcenter.common.enums.NoticeTypeEnum;
+import cn.htd.marketcenter.common.enums.YesNoEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
 import cn.htd.marketcenter.common.utils.GeneratorUtils;
@@ -91,7 +93,11 @@ public class CouponRedisHandle {
         if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
             DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProvideType)) {
             couponRedisKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + couponInfo.getPromotionId();
-            baseService.deleteBuyerUselessInfo(couponInfo);
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            if (NoticeTypeEnum.NO.getValue() == couponInfo.getIsNeedRemind()) {
+                baseService.deleteBuyerUselessInfo(couponInfo);
+            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             couponJsonStr = JSON.toJSONString(couponInfo);
             marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
         }

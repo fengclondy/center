@@ -132,5 +132,4 @@ public class OrderSettleMentReqDTO implements Serializable {
 	public void setPromotionId(String promotionId) {
 		this.promotionId = promotionId;
 	}
-
 }

@@ -1,4 +1,3 @@
-
 package cn.htd.marketcenter.task;
 
 import java.util.ArrayList;
@@ -24,9 +23,9 @@ import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.Jedis;
 
 /**
  * 对于过期7天的优惠券活动，清除Redis中过期优惠券活动相关信息
@@ -139,6 +138,12 @@ public class CleanExpiredPromotionScheduleTask implements IScheduleTaskDealMulti
                             marketRedisDB.del(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId);
                             marketRedisDB.delHash(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId);
                             marketRedisDB.delHash(RedisConst.REDIS_COUPON_VALID, promotionId);
+                            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170929 start -----
+                            if (!StringUtils.isEmpty(promotionInfoDTO.getB2cActivityCode())) {
+                                marketRedisDB.delHash(RedisConst.REDIS_COUPON_TRIGGER,
+                                        promotionInfoDTO.getB2cActivityCode());
+                            }
+                            //----- add by jiangkun for 2017活动需求商城无敌券 on 20170929 end -----
                         }
                         promotionInfoDAO.updateCleanedRedisPromotionStatus(promotionInfoDTO);
                     }

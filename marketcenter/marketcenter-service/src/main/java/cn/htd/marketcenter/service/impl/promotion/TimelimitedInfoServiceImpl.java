@@ -1,8 +1,6 @@
 package cn.htd.marketcenter.service.impl.promotion;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -70,9 +68,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
-            datagrid = timelimitedRedisHandle.getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.NO.getValue()), "",
-                    page);
+            datagrid = timelimitedRedisHandle
+                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.NO.getValue()), "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -89,9 +88,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
-            datagrid = timelimitedRedisHandle.getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.YES.getValue()), "",
-                    page);
+            datagrid = timelimitedRedisHandle
+                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.YES.getValue()), "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -108,12 +108,19 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
         List<TimelimitedInfoDTO> tmpTimelimitedDTOList = null;
         List<String> skuCodeList = new ArrayList<String>();
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         try {
             if (StringUtils.isEmpty(skuCode)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            tmpTimelimitedDTOList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start ----
+//            tmpTimelimitedDTOList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
+            tmpTimelimitedDTOList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList, promotionType);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
             if (tmpTimelimitedDTOList == null || tmpTimelimitedDTOList.isEmpty()) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.SKU_NO_TIMELIMITED, "该商品没有参加秒杀活动");
             }
@@ -135,12 +142,14 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         List<String> promotionIdList = null;
         TimelimitedInfoDTO timelimitedInfoDTO = null;
         int allCount = 0;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+
         try {
             if (StringUtils.isEmpty(skuCode)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true);
+            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true, promotionType);
             if (promotionIdList != null && !promotionIdList.isEmpty()) {
                 for (String promotionId : promotionIdList) {
                     try {
@@ -284,9 +293,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
             timelimitedInfoDTO.setPromotionAccumulaty(accuDTO);
             // 获取秒杀活动结果信息
-            timelimitedResultDTO = timelimitedRedisHandle
-                    .getRedisTimelimitedResult(timelimitedInfoDTO.getPromotionId());
-            timelimitedInfoDTO.setTimelimitedResult(timelimitedResultDTO);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            timelimitedResultDTO =
+//                    timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO.getPromotionId());
+//            timelimitedInfoDTO.setTimelimitedResult(timelimitedResultDTO);
+            timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
             timelimitedInfoDTO.setPromotionStatusHistoryList(historyList);
             result.setResult(timelimitedInfoDTO);
@@ -301,7 +313,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     }
 
     @Override
-    public ExecuteResult<TimelimitedInfoDTO> addTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) { 
+    public ExecuteResult<TimelimitedInfoDTO> addTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) {
         ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
         PromotionAccumulatyDTO accuDTO = null;
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
@@ -318,13 +330,15 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
             checkTimelimitedDuringRepeat(timelimitedInfo);
             timelimitedInfo.setSkuTimelimitedPrice(CalculateUtils.setScale(timelimitedInfo.getSkuTimelimitedPrice()));
+            timelimitedInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
             accuDTO = baseService.insertSingleAccumulatyPromotionInfo(timelimitedInfo);
             timelimitedInfo.setPromotionAccumulaty(accuDTO);
             timelimitedInfoDAO.add(timelimitedInfo);
             historyDTO.setPromotionId(timelimitedInfo.getPromotionId());
             historyDTO.setPromotionStatus(timelimitedInfo.getShowStatus());
-            historyDTO.setPromotionStatusText(dictionary.getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    timelimitedInfo.getShowStatus()));
+            historyDTO.setPromotionStatusText(dictionary
+                    .getNameByValue(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, timelimitedInfo.getShowStatus()));
             historyDTO.setCreateId(timelimitedInfo.getCreateId());
             historyDTO.setCreateName(timelimitedInfo.getCreateName());
             promotionStatusHistoryDAO.add(historyDTO);
@@ -356,11 +370,14 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         TimelimitedCheckInfo condition = new TimelimitedCheckInfo();
         PromotionInfoDTO promotionInfo = null;
         String errorMsg = "";
-
-        condition.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-                DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
-        condition.setDeleteStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-                DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
+        List<String> promotionTypeList = new ArrayList<String>();
+        String  promotionTypePurchase= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        String  promotionTypeTimelited= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        promotionTypeList.add(promotionTypePurchase);
+        promotionTypeList.add(promotionTypeTimelited);
+        condition.setPromotionTypeList(promotionTypeList);
+        condition.setDeleteStatus(dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
         condition.setSkuCode(timelimitedInfo.getSkuCode());
         condition.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                 DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
@@ -371,15 +388,16 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT,
                     "和 " + errorMsg + " 秒杀活动的商品重复");
         } else {
-        	if(StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())){
-                promotionList = promotionInfoDAO.queryTimelimitedListBySku(condition,timelimitedInfo.getPromotionProviderSellerCode());
+            if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
+                promotionList = promotionInfoDAO
+                        .queryTimelimitedListBySku(condition, timelimitedInfo.getPromotionProviderSellerCode());
                 if (promotionList != null && !promotionList.isEmpty()) { //针对VMS 秒杀更新活动已经结束，但状态为启用的促销活动
-                	for(PromotionInfoDTO promotion :promotionList){
-                		promotionIdList.add(promotion.getPromotionId());
-                	}
-                    promotionInfoDAO.updateTimelimitedListBySku(promotionIdList,timelimitedInfo);
+                    for (PromotionInfoDTO promotion : promotionList) {
+                        promotionIdList.add(promotion.getPromotionId());
+                    }
+                    promotionInfoDAO.updateTimelimitedListBySku(promotionIdList, timelimitedInfo);
                 }
-        	}
+            }
         }
     }
 
@@ -399,11 +417,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                         validateResult.getErrorMsg());
             }
             if (!dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validDTO.getShowStatus())
-                    && !dictionary
+                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validDTO.getShowStatus()) && !dictionary
                     .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID)
-                    .equals(validDTO.getShowStatus())) {
+                            DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID).equals(validDTO.getShowStatus())) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动启用状态不正确");
             }
             // 根据活动ID获取活动信息
@@ -417,19 +433,19 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validDTO.getShowStatus())) {
-                if (dictionary
-                        .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-                                DictionaryConst.OPT_PROMOTION_STATUS_NO_START)
-                        .equals(promotionInfo.getStatus()) && !(new Date()).before(promotionInfo.getEffectiveTime())
-                        && !(new Date()).after(promotionInfo.getInvalidTime())) {
+                if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                        DictionaryConst.OPT_PROMOTION_STATUS_NO_START).equals(promotionInfo.getStatus())
+                        && !(new Date()).before(promotionInfo.getEffectiveTime()) && !(new Date())
+                        .after(promotionInfo.getInvalidTime())) {
                     promotionInfo.setStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                             DictionaryConst.OPT_PROMOTION_STATUS_START));
                     startHistoryDTO = new PromotionStatusHistoryDTO();
                     startHistoryDTO.setPromotionId(promotionInfo.getPromotionId());
                     startHistoryDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                             DictionaryConst.OPT_PROMOTION_STATUS_START));
-                    startHistoryDTO.setPromotionStatusText(dictionary.getNameByValue(
-                            DictionaryConst.TYPE_PROMOTION_STATUS, startHistoryDTO.getPromotionStatus()));
+                    startHistoryDTO.setPromotionStatusText(dictionary
+                            .getNameByValue(DictionaryConst.TYPE_PROMOTION_STATUS,
+                                    startHistoryDTO.getPromotionStatus()));
                     startHistoryDTO.setCreateId(validDTO.getOperatorId());
                     startHistoryDTO.setCreateName(validDTO.getOperatorName());
                 }
@@ -534,8 +550,8 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         String promotionId = timelimitedInfo.getPromotionId();
         String modifyTimeStr = "";
         String paramModifyTimeStr = "";
-        String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_INVALID);
+        String status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
         // 输入DTO的验证
         ValidateResult validateResult = ValidationUtils.validateEntity(timelimitedInfo);
         // 有错误信息时返回错误信息
@@ -564,6 +580,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_HAS_MODIFIED,
                         "VMS秒杀活动:" + promotionId + " 已被修改请重新确认");
             }
+            timelimitedInfo.setShowStatus(status);
             accuDTO = baseService.updateSingleAccumulatyPromotionInfo(timelimitedInfo);
             timelimitedInfo.setPromotionAccumulaty(accuDTO);
             timelimitedInfoDAO.update(timelimitedInfo);

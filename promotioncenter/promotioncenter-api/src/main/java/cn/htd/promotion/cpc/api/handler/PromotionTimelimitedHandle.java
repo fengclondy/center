@@ -3,21 +3,24 @@ package cn.htd.promotion.cpc.api.handler;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.annotation.Resource;
-import cn.htd.common.constant.DictionaryConst;
-import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
-import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
-import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
-import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
-import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
-import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-@Service("promotionTimelimitedHandle")
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.promotion.cpc.biz.dmo.BuyerUseTimelimitedLogDMO;
+import cn.htd.promotion.cpc.biz.handle.PromotionTimelimitedRedisHandle;
+import cn.htd.promotion.cpc.common.constants.PromotionCenterConst;
+import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
+import cn.htd.promotion.cpc.dto.response.PromotionOrderItemDTO;
+
+import com.alibaba.fastjson.JSON;
+
+@Service("cpcPromotionTimelimitedHandle")
 public class PromotionTimelimitedHandle {
 
 	private static final Logger logger = LoggerFactory.getLogger(PromotionTimelimitedHandle.class);

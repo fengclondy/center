@@ -25,6 +25,7 @@ import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
 import cn.htd.pricecenter.service.common.CommonTest;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 
 public class ItemSkuPriceServiceTest extends CommonTest{
@@ -173,6 +174,12 @@ public class ItemSkuPriceServiceTest extends CommonTest{
 		hzgPriceInDTO.setShopId(46L);
 		hzgPriceInDTO.setSkuId(2L);
 		itemSkuPriceService.saveHzgTerminalPrice(hzgPriceInDTO);
+	}
+	
+	@Test
+	public void testPrice(){
+		 List<ItemSkuLadderPrice> list = itemSkuPriceService.queryMobileExternalLadderPriceBySkuId("218845");
+		 System.out.println(JSON.toJSONString(list));
 	}
 
 	

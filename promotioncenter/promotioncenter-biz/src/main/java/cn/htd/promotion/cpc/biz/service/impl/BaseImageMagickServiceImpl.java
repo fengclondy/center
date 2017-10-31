@@ -99,8 +99,11 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 					}
 					logger.info("subimg:" + subimg);
 					op.addImage(subimg);
-					op.geometry((int) (baseImageSubDTO.getWidth() * wb), (int) (baseImageSubDTO.getHeight() * hb),
-							(int) (baseImageSubDTO.getLeft() * wb), (int) (baseImageSubDTO.getTop() * hb));
+//					op.geometry((int) (baseImageSubDTO.getWidth() * wb), (int) (baseImageSubDTO.getHeight() * hb),
+//							(int) (baseImageSubDTO.getLeft() * wb), (int) (baseImageSubDTO.getTop() * hb));
+					op.addRawArgs(
+							"-geometry",""+(int) (baseImageSubDTO.getWidth() * wb) + "x" + (int) (baseImageSubDTO.getHeight() * hb)
+									+ "!+" + (int) (baseImageSubDTO.getLeft() * wb) + "+" + (int) (baseImageSubDTO.getTop()));
 					op.composite();
 				}
 			} else {
@@ -129,7 +132,7 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		// cc.setSearchPath("c:\\Program Files\\ImageMagick-6.9.9-Q16");
 		logger.info("newpicName:" + newpicName);
 		try {
-			cc.setAsyncMode(true);
+			cc.setAsyncMode(false);
 			cc.run(op);
 			logger.info("op:" + op.toString());
 		} catch (IOException e) {
@@ -140,22 +143,19 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 			e.printStackTrace();
 		}
 		File file = new File(rootpath + newpicName);
+		String ossimg = "";
 		if(file.exists()) {
 			OssUploadUtils ossUploadUtils = new OssUploadUtils(BUCJET_NAME, ENDPOINT, ACCESS_KEYID, ACCESS_KEYSECRET);
 			FileInputStream newfile = null;
 			try {
 				newfile = new FileInputStream(rootpath + newpicName);
-			} catch (FileNotFoundException e) {
+				ossimg = ossUploadUtils.upload("/materieldown", newfile, imgext, file.length());
+				logger.info("ossimg:" + ossimg);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			String ossimg = ossUploadUtils.upload("/materieldown", newfile, imgext, file.length());
-			logger.info("ossimg:" + ossimg);
-			return ossimg;
-		}else {
-			return "";
 		}
-
-
+		return ossimg;
 	}
 
 	private static String getFontPath(String fontName) {
@@ -356,7 +356,7 @@ public class BaseImageMagickServiceImpl implements BaseImageMagickService {
 		 cc.setSearchPath("c:\\Program Files\\ImageMagick-6.9.9-Q16");
 		logger.info("newpicName:" + newpicName);
 		try {
-			cc.setAsyncMode(true);
+			cc.setAsyncMode(false);
 			cc.run(op);
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -1,6 +1,7 @@
 package cn.htd.common.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,58 @@ public class DictionaryUtils {
 	// Redis字典类型数据
 	private static final String REDIS_DICTIONARY_TYPE = "B2B_MIDDLE_DICTIONARY_TYPE";
 
+	//----- add by jiangkun for 性能优化 on 20171011 start -----
+	private static Map<String, String> DICTIONARY_TYPE_MAP = new HashMap<String, String>();
+	private static Map<String, Map<String, String>> DICTIONARY_VALUE_MAP  = new HashMap<String, Map<String, String>>();
+	//----- add by jiangkun for 性能优化 on 20171011 end -----
 	@Resource
 	private RedisDB redisDB;
+
+	//----- add by jiangkun for 性能优化 on 20171011 start -----
+	/**
+	 * 初始化字典静态变量
+     *
+	 * @throws Exception
+	 */
+	public void init() throws Exception {
+		String key = "";
+		String value = "";
+		String dictionaryValKey = "";
+		Map<String, String> dictValueMap = null;
+		Map<String, String> dictTypeMap = redisDB.getHashOperations(REDIS_DICTIONARY_TYPE);
+
+		if (dictTypeMap != null && !dictTypeMap.isEmpty() ) {
+			for (Map.Entry<String, String> entry : dictTypeMap.entrySet()) {
+				key = entry.getKey();
+				value = entry.getValue();
+				DICTIONARY_TYPE_MAP.put(key, value);
+				dictionaryValKey = REDIS_DICTIONARY + "_" + key;
+				dictValueMap = redisDB.getHashOperations(dictionaryValKey);
+				if (dictValueMap != null && !dictValueMap.isEmpty()) {
+					DICTIONARY_VALUE_MAP.put(key, dictValueMap);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 取得字典信息
+	 *
+	 * @param typeCode
+	 * @return
+	 */
+	private Map<String, String> getDictAllValueMap(String typeCode) {
+		Map<String, String> dictValueMap = null;
+		if (DICTIONARY_VALUE_MAP.containsKey(typeCode)) {
+			return DICTIONARY_VALUE_MAP.get(typeCode);
+		}
+		dictValueMap = redisDB.getHashOperations(REDIS_DICTIONARY + "_" + typeCode);
+		if (dictValueMap != null && !dictValueMap.isEmpty()) {
+			DICTIONARY_VALUE_MAP.put(typeCode, dictValueMap);
+		}
+		return dictValueMap;
+	}
+	//----- add by jiangkun for 性能优化 on 20171011 end -----
 
 	/**
 	 * 根据字典类型和字典值取得字典名称-字典备考
@@ -134,7 +185,10 @@ public class DictionaryUtils {
 		if (StringUtils.isBlank(typeCode)) {
 			return resultList;
 		}
-		vopMap = redisDB.getHashOperations(REDIS_DICTIONARY + "_" + typeCode);
+		//----- modify by jiangkun for 性能优化 on 20171011 start -----
+//		vopMap = redisDB.getHashOperations(REDIS_DICTIONARY + "_" + typeCode);
+		vopMap = getDictAllValueMap(typeCode);
+		//----- modify by jiangkun for 性能优化 on 20171011 end -----
 		if (vopMap != null && vopMap.size() > 0) {
 			key = vopMap.keySet().iterator();
 			while (key.hasNext()) {
@@ -192,7 +246,7 @@ public class DictionaryUtils {
 	 * 根据字典类型和字典值取得字典编码
 	 * 
 	 * @param typeCode
-	 * @param value
+	 * @param code
 	 * @return
 	 */
 	public String getValueByCode(String typeCode, String code) {
@@ -236,10 +290,27 @@ public class DictionaryUtils {
 		if (StringUtils.isBlank(typeCode)) {
 			return null;
 		}
-		dictTypeStr = redisDB.getHash(REDIS_DICTIONARY_TYPE, typeCode);
-		if (StringUtils.isBlank(dictTypeStr)) {
+		//----- modify by jiangkun for 性能优化 on 20171011 start -----
+//		dictTypeStr = redisDB.getHash(REDIS_DICTIONARY_TYPE, typeCode);
+//		if (StringUtils.isBlank(dictTypeStr)) {
+//			return null;
+//		}
+		Map<String, String> dictValueMap = null;
+		boolean hasUpdDictValMapFlg = false;
+		if (DICTIONARY_TYPE_MAP.containsKey(typeCode)) {
+			dictTypeStr = DICTIONARY_TYPE_MAP.get(typeCode);
+		} else {
+			dictTypeStr = redisDB.getHash(REDIS_DICTIONARY_TYPE, typeCode);
+			if (StringUtils.isBlank(dictTypeStr)) {
+				return null;
+			}
+			DICTIONARY_TYPE_MAP.put(typeCode, dictTypeStr);
+		}
+		dictValueMap = getDictAllValueMap(typeCode);
+		if (dictValueMap == null || dictValueMap.isEmpty()) {
 			return null;
 		}
+		//----- modify by jiangkun for 性能优化 on 20171011 end -----
 		dictTypeArr = dictTypeStr.split(",");
 		if (dictTypeArr != null && dictTypeArr.length > 0) {
 			for (String codeValue : dictTypeArr) {
@@ -247,7 +318,19 @@ public class DictionaryUtils {
 				codeValueArr = codeValue.split("&");
 				code = codeValueArr[0];
 				value = codeValueArr[1];
-				name = redisDB.getHash(REDIS_DICTIONARY + "_" + typeCode, codeValue);
+				//----- modify by jiangkun for 性能优化 on 20171011 start -----
+//				name = redisDB.getHash(REDIS_DICTIONARY + "_" + typeCode, codeValue);
+                if (dictValueMap.containsKey(codeValue)) {
+                	name = dictValueMap.get(codeValue);
+				} else {
+					name = redisDB.getHash(REDIS_DICTIONARY + "_" + typeCode, codeValue);
+					if (StringUtils.isEmpty(name)) {
+						name = "";
+					}
+					hasUpdDictValMapFlg = true;
+					dictValueMap.put(codeValue, name);
+				}
+				//----- modify by jiangkun for 性能优化 on 20171011 end -----
 				if (name.indexOf("&") >= 0) {
 					codeNameArr = name.split("&");
 					name = codeNameArr[0];
@@ -262,6 +345,11 @@ public class DictionaryUtils {
 				dict.setComment(comment);
 				resultList.add(dict);
 			}
+			//----- add by jiangkun for 性能优化 on 20171011 start -----
+			if (hasUpdDictValMapFlg) {
+				DICTIONARY_VALUE_MAP.put(typeCode, dictValueMap);
+			}
+			//----- add by jiangkun for 性能优化 on 20171011 start -----
 		}
 		return resultList;
 	}

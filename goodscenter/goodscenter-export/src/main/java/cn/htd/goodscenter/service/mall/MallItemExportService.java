@@ -31,7 +31,14 @@ public interface MallItemExportService {
      * @return
      */
     ExecuteResult<MallSkuOutDTO> queryMallItemDetailPage(MallSkuInDTO mallSkuInDTO);
-
+    
+    /**
+     * 商城手机端 ：商品详情页(价格，起订量)
+     * @param mallSkuInDTO
+     * @return
+     */
+    ExecuteResult<MallMobileItemOutDTO> queryMobileItemDetail(String itemCode);
+    
     /**
      * 订单：商品详情
      * @param mallSkuInDTO

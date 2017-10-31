@@ -32,5 +32,12 @@
 	<dubbo:service interface="cn.htd.marketcenter.service.PromotionInfoService" ref="promotionInfoService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 	
 	<dubbo:service interface="cn.htd.marketcenter.service.PromotionGroupService" ref="promotionGroupService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.TimelimitedPurchaseService" ref="timelimitedPurchaseService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+	<dubbo:service interface="cn.htd.marketcenter.service.B2cCouponInfoSyncService" ref="b2cCouponInfoSyncService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+	<!-- 粉丝用券同步券到促销中心 -->
+	<dubbo:service interface="cn.htd.marketcenter.service.B2cCouponUseLogSyncService" ref="b2cCouponUseLogSyncService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
 	
 </beans>

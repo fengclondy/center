@@ -124,9 +124,40 @@ public interface PromotionBaseService {
 
     /**
      * 校验会员是否在指定卖家的分组内,存在时获取分组ID
+     *
      * @param messageId
      * @param buyerInfo
      * @return
      */
     public MemberGroupDTO getBuyerGroupRelationship(String messageId, BuyerInfoDTO buyerInfo);
+
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+    /**
+     * 删除促销活动中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deletePromotionUselessInfo(PromotionInfoDTO promotionInfo);
+
+    /**
+     * 删除促销买家规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteBuyerUselessInfo(PromotionInfoDTO promotionInfo);
+
+    /**
+     * 删除促销卖家规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteSellerUselessInfo(PromotionInfoDTO promotionInfo);
+
+    /**
+     * 删除促销商品规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteCategoryUselessInfo(PromotionInfoDTO promotionInfo);
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 }

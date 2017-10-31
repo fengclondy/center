@@ -43,7 +43,7 @@
 	</if>
   </select>
   
-  <select id="selectMaterielDownloadMemberCount" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectMaterielDownloadMemberCount" resultType="java.lang.Long"  parameterType="java.lang.String" >
     select  count(*)
     from activity_picture_member_detail
     where picture_id = #{pictureID,jdbcType=VARCHAR} and delete_flag=0

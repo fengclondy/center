@@ -66,6 +66,13 @@ public interface PromotionLotteryAPI {
 	 * @return
 	 */
 	public String beginDrawLottery(String drawLotteryParam);
+	
+	/**
+	 * 开始抽奖处理4刮刮卡
+	 * @param drawLotteryParam
+	 * @return
+	 */
+	public String beginDrawLotteryScratchCard(String drawLotteryParam);
 
 	/**
 	 * 查询抽奖结果
@@ -81,6 +88,13 @@ public interface PromotionLotteryAPI {
 	 */
 	public String saveDrawLotteryWinningInfo(String winningInfoParam);
 
+	/**
+	 * 保存红包雨信息
+	 * @param winningInfoParam
+	 * @return
+	 */
+	public String saveRedRainWinningInfo(String winningInfoParam);
+	
 	/**
 	 * 新建扭蛋
 	 * @param json
@@ -111,4 +125,18 @@ public interface PromotionLotteryAPI {
 
 	public void updateLotteryResultState(Map<String, Object> map);
 
+	/**
+	 * 校验刮刮乐图标是否显示
+	 * @param validateScratchCardReqDTOJson
+	 * @return
+	 */
+	public String validateScratchCard(String validateScratchCardReqDTOJson);
+	
+	/**
+	 * 刮刮乐活动页
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public String scratchCardActivityPage(String scratchCardActivityPageReqDTOJson);
 }

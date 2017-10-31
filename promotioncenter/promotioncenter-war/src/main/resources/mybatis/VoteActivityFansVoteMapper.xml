@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
+    <id column="vote_fans_id" property="voteFansId" jdbcType="BIGINT" />
+    <result column="vote_member_id" property="voteMemberId" jdbcType="BIGINT" />
+    <result column="fans_id" property="fansId" jdbcType="BIGINT" />
+    <result column="fans_sign_up_time" property="fansSignUpTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    vote_fans_id, vote_member_id, fans_id, fans_sign_up_time, create_id, create_name, 
+    create_time, modify_id, modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from vote_activity_fans_vote
+    where vote_fans_id = #{voteFansId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vote_activity_fans_vote
+    where vote_fans_id = #{voteFansId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
+    insert into vote_activity_fans_vote (vote_member_id, fans_id,
+      fans_sign_up_time, create_id, create_name, create_time, modify_id, modify_name, modify_time)
+    values (#{voteMemberId,jdbcType=BIGINT}, #{fansId,jdbcType=BIGINT},
+      #{fansSignUpTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT},#{modifyName,jdbcType=VARCHAR},#{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
+    insert into vote_activity_fans_vote
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="voteFansId != null" >
+        vote_fans_id,
+      </if>
+      <if test="voteMemberId != null" >
+        vote_member_id,
+      </if>
+      <if test="fansId != null" >
+        fans_id,
+      </if>
+      <if test="fansSignUpTime != null" >
+        fans_sign_up_time,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="voteFansId != null" >
+        #{voteFansId,jdbcType=BIGINT},
+      </if>
+      <if test="voteMemberId != null" >
+        #{voteMemberId,jdbcType=BIGINT},
+      </if>
+      <if test="fansId != null" >
+        #{fansId,jdbcType=BIGINT},
+      </if>
+      <if test="fansSignUpTime != null" >
+        #{fansSignUpTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
+    update vote_activity_fans_vote
+    <set >
+      <if test="voteMemberId != null" >
+        vote_member_id = #{voteMemberId,jdbcType=BIGINT},
+      </if>
+      <if test="fansId != null" >
+        fans_id = #{fansId,jdbcType=BIGINT},
+      </if>
+      <if test="fansSignUpTime != null" >
+        fans_sign_up_time = #{fansSignUpTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where vote_fans_id = #{voteFansId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
+    update vote_activity_fans_vote
+    set vote_member_id = #{voteMemberId,jdbcType=BIGINT},
+      fans_id = #{fansId,jdbcType=BIGINT},
+      fans_sign_up_time = #{fansSignUpTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where vote_fans_id = #{voteFansId,jdbcType=BIGINT}
+  </update>
+  <select id="selectVoteCountByActivityId" parameterType="long" resultType="long">
+  select count(1) from vote_activity_fans_vote  vaf
+   left join vote_activity_member vam
+	  on vaf.vote_member_id=vam.vote_member_id
+	  where vam.vote_id=#{voteId} and vam.delete_flag=0
+  </select>
+</mapper>

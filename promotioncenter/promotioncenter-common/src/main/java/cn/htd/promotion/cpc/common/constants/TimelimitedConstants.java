@@ -90,7 +90,7 @@ public final class TimelimitedConstants {
 	
 	
 	/**
-	 * 活动类型 1：优惠券，2：秒杀，21：扭蛋机，22：砍价，23：总部秒杀
+	 * 活动类型 1：优惠券，2：秒杀，3：限时购，21：扭蛋机，22：砍价，23：总部秒杀，24：刮刮乐，25：阶梯团
 	 */
 	public enum PromotionTypeEnum
 	{
@@ -98,7 +98,9 @@ public final class TimelimitedConstants {
 		SECKILL("2", "秒杀"),
 		DRAW_LOTTERY("21", "扭蛋机"),
 		BARGAIN("22", "砍价"),
-		TIMELIMITED("23", "总部秒杀");
+		TIMELIMITED("23", "总部秒杀"),
+		SCRATCH_CARD("24", "刮刮乐"),
+		GROUPBUYING("25", "阶梯团");
 
 		private final String key;
 		private final String value;

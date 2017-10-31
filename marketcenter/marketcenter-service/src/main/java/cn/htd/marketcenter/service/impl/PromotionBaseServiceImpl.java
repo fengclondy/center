@@ -169,8 +169,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE).equals(buyerRule.getRuleTargetType())) {
             buyerLevelList = buyerRule.getTargetBuyerLevelList();
             if (buyerLevelList != null && !buyerLevelList.isEmpty() && buyerLevelList.size() == 1) {
-                if (dictionary
-                        .getValueByCode(DictionaryConst.TYPE_MEMBER_GRADE, DictionaryConst.OPT_MEMBER_GRADE_VIP)
+                if (dictionary.getValueByCode(DictionaryConst.TYPE_MEMBER_GRADE, DictionaryConst.OPT_MEMBER_GRADE_VIP)
                         .equals(buyerLevelList.get(0))) {
                     returnFlg = YesNoEnum.YES.getValue();
                 }
@@ -191,7 +190,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throws MarketCenterBusinessException, Exception {
         String promotionType = "";
         String promotionId = "";
-        List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
+        List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         int vipFlg = -1;
         if (promotionInfo == null) {
@@ -204,17 +203,19 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
         }
         promotionInfo.setPromotionId(promotionId);
-        if (dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                .equals(promotionType)) {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-        } else {
-            if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
-                promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-            }
-        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+//        if (dictionary
+//                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+//                .equals(promotionType)) {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+//        } else {
+//            if (StringUtils.isEmpty(promotionInfo.getShowStatus())) {
+//                promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//            }
+//        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
         setPromotionStatusInfo(promotionInfo);
         for (int i = 0; i < promotionAccumulatyList.size(); i++) {
             accumulatyDTO = promotionAccumulatyList.get(i);
@@ -287,10 +288,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
                 }
                 promotionBuyerRule.setBuyerDetailList(buyerDetailList);
             }
-            if (dictionary
-                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
-                            DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE)
-                    .equals(promotionBuyerRule.getRuleTargetType())) {
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
+                    DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE).equals(promotionBuyerRule.getRuleTargetType())) {
                 buyerLevelStr = promotionBuyerRule.getTargetBuyerLevel();
                 if (!StringUtils.isEmpty(buyerLevelStr)) {
                     buyerLevelArr = buyerLevelStr.split(",");
@@ -304,10 +303,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             promotionInfoDTO.setBuyerRuleDTO(promotionBuyerRule);
         } else if (promotionInfoDTO.getBuyerRuleDTO() != null) {
             promotionBuyerRule = promotionInfoDTO.getBuyerRuleDTO();
-            if (dictionary
-                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
-                            DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE)
-                    .equals(promotionBuyerRule.getRuleTargetType())) {
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
+                    DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE).equals(promotionBuyerRule.getRuleTargetType())) {
                 buyerLevelStr = StringUtils.join(promotionBuyerRule.getTargetBuyerLevelList(), ",");
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
@@ -432,8 +429,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         String[] brandIdArr = null;
         List<Long> bids = new ArrayList<Long>();
         if (ruleId != null && ruleId != 0) {
-            categoryItemRuleDefineResult = promotionCategoryItemRuleDefineService
-                    .queryPromotionCategoryItemRule(ruleId);
+            categoryItemRuleDefineResult =
+                    promotionCategoryItemRuleDefineService.queryPromotionCategoryItemRule(ruleId);
             if (!categoryItemRuleDefineResult.isSuccess()) {
                 throw new MarketCenterBusinessException(categoryItemRuleDefineResult.getCode(),
                         JSON.toJSONString(categoryItemRuleDefineResult.getErrorMessages()));
@@ -668,10 +665,8 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         if (ruleDTO == null) {
             return;
         }
-        if (dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_ITEM_CATEGORY_TYPE,
-                        DictionaryConst.OPT_PROMOTION_ITEM_CATEGORY_TYPE_CATEGORY)
-                .equals(ruleDTO.getRuleTargetType())) {
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_ITEM_CATEGORY_TYPE,
+                DictionaryConst.OPT_PROMOTION_ITEM_CATEGORY_TYPE_CATEGORY).equals(ruleDTO.getRuleTargetType())) {
             categoryDetailList = promotionCategoryDetailDAO.queryByPromotionInfo(ruleDTO);
             if (categoryDetailList != null && !categoryDetailList.isEmpty()) {
                 for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailList) {
@@ -709,7 +704,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throws MarketCenterBusinessException, Exception {
         String promotionType = "";
         String promotionId = "";
-        List<PromotionAccumulatyDTO> promotionAccumulatyList = null;
+        List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
         List<PromotionAccumulatyDTO> accumulatyDTOList = null;
         Map<String, PromotionAccumulatyDTO> oldAccumulatyMap = new HashMap<String, PromotionAccumulatyDTO>();
@@ -724,15 +719,17 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
         }
-        if (dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                .equals(promotionType)) {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
-        } else {
-            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
-        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
+//        if (dictionary
+//                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+//                .equals(promotionType)) {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID));
+//        } else {
+//            promotionInfo.setShowStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+//                    DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PENDING));
+//        }
+        //----- delete by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
         setPromotionStatusInfo(promotionInfo);
         accumulatyDTOList = promotionAccumulatyDAO.queryAccumulatyListByPromotionId(promotionId, null);
         if (accumulatyDTOList != null && !accumulatyDTOList.isEmpty()) {
@@ -861,7 +858,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @return
      */
     public PromotionAccumulatyDTO convertSingleAccumulatyPromotion2Info(PromotionInfoDTO promotionInfo) {
-        List<PromotionAccumulatyDTO> accumulatyList = promotionInfo.getPromotionAccumulatyList();
+        List<? extends PromotionAccumulatyDTO> accumulatyList = promotionInfo.getPromotionAccumulatyList();
         PromotionAccumulatyDTO accumulatyLevelDTO = null;
         PromotionAccumulatyDTO accumulatyDTO = new PromotionAccumulatyDTO();
         if (accumulatyList.size() == 1) {
@@ -953,6 +950,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         PromotionBuyerRuleDTO ruleDTO = promotionInfoDTO.getBuyerRuleDTO();
         List<String> levelList = null;
         List<String> groupList = null;
+        List<String> buyerCodeList = null;
         List<PromotionBuyerDetailDTO> detailList = null;
         if (ruleDTO == null) {
             return true;
@@ -982,15 +980,25 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             return false;
         } else if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
                 DictionaryConst.OPT_PROMOTION_BUYER_RULE_APPIONT).equals(ruleDTO.getRuleTargetType())) {
+            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
             detailList = ruleDTO.getBuyerDetailList();
-            if (detailList == null || detailList.isEmpty()) {
+            buyerCodeList = ruleDTO.getTargetBuyerCodeList();
+            if ((detailList == null || detailList.isEmpty()) && (buyerCodeList == null || buyerCodeList.isEmpty())) {
                 return true;
             }
-            for (PromotionBuyerDetailDTO detailDTO : detailList) {
-                if (detailDTO.getBuyerCode().equals(buyerInfo.getBuyerCode())) {
+            if (detailList != null && !detailList.isEmpty()) {
+                for (PromotionBuyerDetailDTO detailDTO : detailList) {
+                    if (detailDTO.getBuyerCode().equals(buyerInfo.getBuyerCode())) {
+                        return true;
+                    }
+                }
+            }
+            if (buyerCodeList != null && !buyerCodeList.isEmpty()) {
+                if (buyerCodeList.contains(buyerInfo.getBuyerCode())) {
                     return true;
                 }
             }
+            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
             return false;
         }
         return true;
@@ -1007,18 +1015,20 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         Date nowDt = new Date();
         String status = promotionInfo.getStatus();
         String showStatus = promotionInfo.getShowStatus();
-        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-                DictionaryConst.OPT_PROMOTION_STATUS_DELETE).equals(status)) {
+        if (dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE)
+                .equals(status)) {
             return status;
         }
-        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst
-                .OPT_PROMOTION_VERIFY_STATUS_VALID).equals(showStatus) || dictionary.getValueByCode(DictionaryConst
-                .TYPE_PROMOTION_VERIFY_STATUS, DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS).equals(showStatus)) {
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(showStatus) || dictionary
+                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS).equals(showStatus)) {
             if (nowDt.before(promotionInfo.getEffectiveTime())) {
-                status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst
-                        .OPT_PROMOTION_STATUS_NO_START);
-            } else if (!nowDt.before(promotionInfo.getEffectiveTime())
-                    && !nowDt.after(promotionInfo.getInvalidTime())) {
+                status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+                        DictionaryConst.OPT_PROMOTION_STATUS_NO_START);
+            } else if (!nowDt.before(promotionInfo.getEffectiveTime()) && !nowDt
+                    .after(promotionInfo.getInvalidTime())) {
                 status = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                         DictionaryConst.OPT_PROMOTION_STATUS_START);
             } else {
@@ -1052,35 +1062,160 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         try {
             buyerResult = memberBaseInfoService.getMemberIdByCode(buyerCode);
             if (!buyerResult.isSuccess()) {
-                throw new MarketCenterBusinessException(
-                        MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "会员信息不存在");
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "会员信息不存在");
             }
             buyerId = buyerResult.getResult();
             if (buyerId.intValue() == 0) {
-                throw new MarketCenterBusinessException(
-                        MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "会员信息不存在");
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "会员信息不存在");
             }
             sellerResult = memberBaseInfoService.getMemberIdByCode(sellerCode);
             if (!sellerResult.isSuccess()) {
-                throw new MarketCenterBusinessException(
-                        MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "供应商信息不存在");
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "供应商信息不存在");
             }
             sellerId = sellerResult.getResult();
             if (sellerId.intValue() == 0) {
-                throw new MarketCenterBusinessException(
-                        MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "会员信息不存在");
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.MEMBER_INFO_NOT_EXIST, "会员信息不存在");
             }
             memberGroupResult = memberGroupService.queryGroupInfoBySellerBuyerId(buyerId, sellerId);
             if (memberGroupResult.isSuccess()) {
                 memberGroup = memberGroupResult.getResult();
             }
         } catch (MarketCenterBusinessException mcbe) {
-            logger.info("***********校验会员是否在指定卖家的分组内 messageId:[{}],校验对象信息:[{}],校验结果信息:[{}]***********",
-                    messageId, JSON.toJSONString(buyerInfo), JSON.toJSONString(mcbe));
+            logger.info("***********校验会员是否在指定卖家的分组内 messageId:[{}],校验对象信息:[{}],校验结果信息:[{}]***********", messageId,
+                    JSON.toJSONString(buyerInfo), JSON.toJSONString(mcbe));
         } catch (Exception e) {
-            logger.error("***********校验会员是否在指定卖家的分组内 messageId:[{}],校验对象信息:[{}],错误信息:[{}]***********",
-                    messageId, JSON.toJSONString(buyerInfo), ExceptionUtils.getStackTraceAsString(e));
+            logger.error("***********校验会员是否在指定卖家的分组内 messageId:[{}],校验对象信息:[{}],错误信息:[{}]***********", messageId,
+                    JSON.toJSONString(buyerInfo), ExceptionUtils.getStackTraceAsString(e));
         }
         return memberGroup;
     }
+
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+    /**
+     * 删除促销活动中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deletePromotionUselessInfo(PromotionInfoDTO promotionInfo) {
+
+        promotionInfo.setVerifierId(null);
+        promotionInfo.setVerifierName(null);
+        promotionInfo.setVerifyTime(null);
+        promotionInfo.setVerifyRemark(null);
+        promotionInfo.setCreateId(null);
+        promotionInfo.setCreateName(null);
+        promotionInfo.setCreateTime(null);
+        promotionInfo.setModifyId(null);
+        promotionInfo.setModifyName(null);
+        promotionInfo.setModifyTime(null);
+        promotionInfo.setBuyerRuleId(null);
+        promotionInfo.setSellerRuleId(null);
+        promotionInfo.setCategoryItemRuleId(null);
+        promotionInfo.setPromotionStatusHistoryList(null);
+    }
+    /**
+     * 删除促销卖家规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteBuyerUselessInfo(PromotionInfoDTO promotionInfo) {
+        PromotionBuyerRuleDTO buyerRuleDTO = promotionInfo.getBuyerRuleDTO();
+        List<String> buyerCodeList = null;
+        List<PromotionBuyerDetailDTO> buyerDetailDTOList = null;
+
+        if (buyerRuleDTO != null) {
+            buyerRuleDTO.setRuleId(null);
+            buyerRuleDTO.setRuleName(null);
+            buyerRuleDTO.setCreateId(null);
+            buyerRuleDTO.setCreateName(null);
+            buyerRuleDTO.setCreateTime(null);
+            buyerRuleDTO.setModifyId(null);
+            buyerRuleDTO.setModifyName(null);
+            buyerRuleDTO.setModifyTime(null);
+            buyerRuleDTO.setTargetBuyerGroup(null);
+            buyerDetailDTOList = buyerRuleDTO.getBuyerDetailList();
+            if (buyerDetailDTOList != null && !buyerDetailDTOList.isEmpty()) {
+                buyerCodeList = new ArrayList<String>();
+                for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailDTOList) {
+                    buyerCodeList.add(buyerDetailDTO.getBuyerCode());
+                }
+                buyerRuleDTO.setTargetBuyerCodeList(buyerCodeList);
+                buyerRuleDTO.setBuyerDetailList(null);
+            }
+        }
+    }
+
+    /**
+     * 删除促销卖家规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteSellerUselessInfo(PromotionInfoDTO promotionInfo) {
+        PromotionSellerRuleDTO sellerRuleDTO = promotionInfo.getSellerRuleDTO();
+        List<String> sellerCodeList = null;
+        List<PromotionSellerDetailDTO> sellerDetailDTOList = null;
+
+        if (sellerRuleDTO != null) {
+            sellerRuleDTO.setRuleId(null);
+            sellerRuleDTO.setRuleName(null);
+            sellerRuleDTO.setCreateId(null);
+            sellerRuleDTO.setCreateName(null);
+            sellerRuleDTO.setCreateTime(null);
+            sellerRuleDTO.setModifyId(null);
+            sellerRuleDTO.setModifyName(null);
+            sellerRuleDTO.setModifyTime(null);
+            sellerDetailDTOList = sellerRuleDTO.getSellerDetailList();
+            if (sellerDetailDTOList != null && !sellerDetailDTOList.isEmpty()) {
+                sellerCodeList = new ArrayList<String>();
+                for (PromotionSellerDetailDTO sellerDetailDTO : sellerDetailDTOList) {
+                    sellerCodeList.add(sellerDetailDTO.getSellerCode());
+                }
+                sellerRuleDTO.setTargetSellerCodeList(sellerCodeList);
+                sellerRuleDTO.setSellerDetailList(null);
+            }
+        }
+    }
+
+    /**
+     * 删除促销商品规则中无效的数据
+     *
+     * @param promotionInfo
+     */
+    public void deleteCategoryUselessInfo(PromotionInfoDTO promotionInfo) {
+        PromotionCategoryItemRuleDTO categoryItemRuleDTO = promotionInfo.getCategoryItemRuleDTO();
+        Map<String, String> categoryCodeMap = null;
+        List<String> skuCodeList = null;
+        List<PromotionCategoryDetailDTO> categoryDetailDTOList = null;
+        List<PromotionItemDetailDTO> itemDetailDTOList = null;
+
+        if (categoryItemRuleDTO != null) {
+            categoryItemRuleDTO.setRuleId(null);
+            categoryItemRuleDTO.setRuleName(null);
+            categoryItemRuleDTO.setCreateId(null);
+            categoryItemRuleDTO.setCreateName(null);
+            categoryItemRuleDTO.setCreateTime(null);
+            categoryItemRuleDTO.setModifyId(null);
+            categoryItemRuleDTO.setModifyName(null);
+            categoryItemRuleDTO.setModifyTime(null);
+            categoryDetailDTOList = categoryItemRuleDTO.getCategoryDetailList();
+            itemDetailDTOList = categoryItemRuleDTO.getItemDetailList();
+            if (categoryDetailDTOList != null && !categoryDetailDTOList.isEmpty()) {
+                categoryCodeMap = new HashMap<String, String>();
+                for (PromotionCategoryDetailDTO categoryDetailDTO : categoryDetailDTOList) {
+                    categoryCodeMap.put(categoryDetailDTO.getCategoryId().toString(), categoryDetailDTO.getBrandIdList());
+                }
+                categoryItemRuleDTO.setTargetCategoryCodeMap(categoryCodeMap);
+                categoryItemRuleDTO.setCategoryDetailList(null);
+            }
+            if (itemDetailDTOList != null && !itemDetailDTOList.isEmpty()) {
+                skuCodeList = new ArrayList<String>();
+                for (PromotionItemDetailDTO itemDetailDTO : itemDetailDTOList) {
+                    skuCodeList.add(itemDetailDTO.getSkuCode());
+                }
+                categoryItemRuleDTO.setTargetItemCodeList(skuCodeList);
+                categoryItemRuleDTO.setItemDetailList(null);
+            }
+        }
+    }
+    //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 }

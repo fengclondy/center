@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -42,5 +43,11 @@ public interface ActivityPictureInfoDAO extends BaseDAO<ActivityPictureInfoReqDT
 	 */
 	List<ActivityPictureInfoResDTO> selectMaterielDownloadByMemberCode(@Param("pictureType") String pictureID,
 			@Param("memberCode") String memberCode, @Param("pager") Pager<ActivityPictureInfoResDTO> pager);
+
+	Integer checkActivityName(@Param("pictureId") String pictureId, @Param("pictureName") String pictureName,
+			@Param("pictureType") String pictureType);
+
+	Integer checkActivityTime(@Param("pictureId") String pictureId, @Param("effectiveTime") Date effectiveTime,
+			@Param("invalidTime") Date invalidTime, @Param("pictureType") String pictureType);
 
 }

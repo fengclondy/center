@@ -857,5 +857,13 @@ public class DictionaryConst {
     public static final String OPT_PAY_TYPE_CASH_ON_DELIVERY = "PAY_TYPE_CASH_ON_DELIVERY";
     //字典信息-促销活动图片类型-活动底图
     public static final String OPT_PROMOTION_PRICTURE_TYPE_BACKGROUD = "PROMOTION_PRICTURE_TYPE_BACKGROUD";
+    //字典信息-促销活动类型-红包雨
+    public static final String OPT_PROMOTION_TYPE_RED_ENVELOPER_RAIN = "PROMOTION_TYPE_RED_ENVELOPER_RAIN";
+    //字典信息-商品价格类型-限时价
+    public static final String OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT = "SKU_PRICE_TYPE_LIMITED_DISCOUNT";
+    //字典信息-指定供应商类型-归属平台可用
+    public static final String OPT_PROMOTION_SELLER_TYPE_HTD_BELONG = "PROMOTION_SELLER_TYPE_HTD_BELONG";
+    //字典信息-短信模版类型-会员领取优惠券短信提醒
+    public static final String OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE = "SMS_MEMBER_RECEIVE_COUPON_NOTICE";
     //******************* add by jiangkun on 20170917 for PromotionCenter End *********************
 }

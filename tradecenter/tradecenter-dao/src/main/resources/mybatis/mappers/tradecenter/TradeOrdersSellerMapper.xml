@@ -1,209 +1,214 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.htd.tradecenter.dao.TradeOrdersSellerDAO">
-    <resultMap id="sellerCenterTradeOrder" type="cn.htd.tradecenter.dto.TradeOrderQueryOutForSellerDTO">
-        <result property="orderNo" column="order_no"/>
-        <result property="shopName" column="shop_name"/>
-        <result property="totalGoodsAmount" column="total_goods_amount"/>
-        <result property="totalFreight" column="total_freight"/>
-        <result property="orderStatus" column="order_status"/>
-        <result property="createOrderTime" column="create_order_time"/>
-        <result property="buyerName" column="buyer_name"/>
-        <result property="consigneeName" column="consignee_name"/>
-        <result property="consigneeAddress" column="consignee_address"/>
-        <result property="consigneePhoneNum" column="consignee_phone_num"/>
-        <result property="shopId" column="shop_id"/>
+  <resultMap id="sellerCenterTradeOrder" type="cn.htd.tradecenter.dto.TradeOrderQueryOutForSellerDTO">
+    <result property="orderNo" column="order_no"/>
+    <result property="shopName" column="shop_name"/>
+    <result property="totalGoodsAmount" column="total_goods_amount"/>
+    <result property="totalFreight" column="total_freight"/>
+    <result property="orderStatus" column="order_status"/>
+    <result property="createOrderTime" column="create_order_time"/>
+    <result property="buyerName" column="buyer_name"/>
+    <result property="consigneeName" column="consignee_name"/>
+    <result property="consigneeAddress" column="consignee_address"/>
+    <result property="consigneePhoneNum" column="consignee_phone_num"/>
+    <result property="shopId" column="shop_id"/>
 
-        <result property="invoiceType" column="invoice_type"/>
-        <result property="deliveryType" column="delivery_type"/>
-        <result property="invoiceNotify" column="invoice_notify"/>
-        <result property="taxManId" column="tax_man_id"/>
-        <result property="invoiceAddress" column="invoice_address"/>
-        <result property="contactPhone" column="contact_phone"/>
-        <result property="bankName" column="bank_name"/>
-        <result property="bankAccount" column="bank_account"/>
-        <result property="orderRemarks" column="order_remarks"/>
-        <result property="buyerRemarks" column="buyer_remarks"/>
-        <result property="payType" column="pay_type"/>
-        <result property="logisticsCompany" column="logistics_company"/>
-        <result property="logisticsNo" column="logistics_no"/>
-        <result property="promotionId" column="promotion_id"/>
-        <result property="isChangePrice" column="is_change_price"/>
-        <result property="totalDiscountAmount" column="total_discount_amount"/>
-        <result property="platformDiscountAmount" column="platform_discount_amount"/>
-        <result property="shopDiscountAmount" column="shop_discount_amount"/>
-        <result property="bargainingOrderAmount" column="bargaining_order_amount"/>
-        <result property="bargainingOrderFreight" column="bargaining_order_freight"/>
-        <result property="totalGoodsCount" column="total_goods_count"/>
-        <result property="orderPayAmount" column="order_pay_amount"/>
-        <result property="orderTotalAmount" column="order_total_amount"/>
-        <result property="isCancelOrder" column="is_cancel_order"/>
-        <result property="isExpressDelivery" column="is_express_delivery"/>
-    </resultMap>
-    <!--卖家中心订单以及订单行信息查询或者导出start-->
-    <select id="queryOrderForSeller" resultMap="sellerCenterTradeOrder">
-        SELECT DISTINCT
-        trade_orders_.order_no,
-        trade_orders_.shop_name,
-        trade_orders_.total_goods_amount,
-        trade_orders_.total_freight,
-        trade_orders_.order_status,
-        trade_orders_.create_order_time,
-        trade_orders_.buyer_name,
-        trade_orders_.consignee_name,
-        trade_orders_.consignee_address,
-        trade_orders_.consignee_phone_num,
-        trade_orders_.shop_id,
-        trade_orders_.invoice_notify,
-        trade_orders_.delivery_type,
-        trade_orders_.invoice_type,
-        trade_orders_.tax_man_id,
-        trade_orders_.invoice_address,
-        trade_orders_.contact_phone,
-        trade_orders_.bank_name,
-        trade_orders_.bank_account,
-        trade_orders_.order_remarks,
-        trade_orders_.buyer_remarks,
-        trade_orders_.pay_type,
-        trade_orders_.logistics_company,
-        trade_orders_.logistics_no,
-        trade_orders_.promotion_id,
-        trade_orders_.total_discount_amount,
-        trade_orders_.shop_discount_amount,
-        trade_orders_.platform_discount_amount,
-        trade_orders_.bargaining_order_freight,
-        trade_orders_.bargaining_order_amount,
-        trade_orders_.is_change_price,
-        trade_orders_.total_goods_count,
-        trade_orders_.order_pay_amount,
-        trade_orders_.order_total_amount,
-        trade_orders_.is_cancel_order,
-        trade_orders_.is_express_delivery
-        FROM trade_orders trade_orders_
-        <if test="entity.goodsName !=null and entity.goodsName !=''">
-            ,trade_order_items trade_order_items_
-        </if>
-        WHERE 1=1
-        <if test="entity.goodsName !=null and entity.goodsName !=''">
-        AND trade_orders_.order_no = trade_order_items_.order_no
-        </if>
-        <if test="entity!=null">
-            <if test="entity.shopId != null">
-                <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
-            </if>
-            <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
-                <![CDATA[ and trade_orders_.order_status IN ]]>
-                <foreach collection="entity.orderStatuss" item="item" index="index" open="("
-                         separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="entity.isCancelOrder != null">
-                <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
-            </if>
-            <if test="entity.orderNo != null and entity.orderNo !=''">
-                <![CDATA[ and trade_orders_.order_no = #{entity.orderNo} ]]>
-            </if>
-            <if test="entity.orderStatus != null and entity.orderStatus !=''">
-                <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
-            </if>
-            <if test="entity.buyerName !=null and entity.buyerName !=''">
-                <![CDATA[ and trade_orders_.buyer_name LIKE concat('%',#{entity.buyerName},'%') ]]>
-            </if>
-            <if test="entity.goodsName !=null and entity.goodsName !=''">
-                <![CDATA[ and trade_order_items_.goods_name LIKE concat('%',#{entity.goodsName},'%') ]]>
-            </if>
-            <if test="entity.createStart != null and entity.createStart != ''">
-                <![CDATA[
+    <result property="invoiceType" column="invoice_type"/>
+    <result property="deliveryType" column="delivery_type"/>
+    <result property="invoiceNotify" column="invoice_notify"/>
+    <result property="taxManId" column="tax_man_id"/>
+    <result property="invoiceAddress" column="invoice_address"/>
+    <result property="contactPhone" column="contact_phone"/>
+    <result property="bankName" column="bank_name"/>
+    <result property="bankAccount" column="bank_account"/>
+    <result property="orderRemarks" column="order_remarks"/>
+    <result property="buyerRemarks" column="buyer_remarks"/>
+    <result property="payType" column="pay_type"/>
+    <result property="logisticsCompany" column="logistics_company"/>
+    <result property="logisticsNo" column="logistics_no"/>
+    <result property="promotionId" column="promotion_id"/>
+    <result property="isChangePrice" column="is_change_price"/>
+    <result property="totalDiscountAmount" column="total_discount_amount"/>
+    <result property="platformDiscountAmount" column="platform_discount_amount"/>
+    <result property="shopDiscountAmount" column="shop_discount_amount"/>
+    <result property="bargainingOrderAmount" column="bargaining_order_amount"/>
+    <result property="bargainingOrderFreight" column="bargaining_order_freight"/>
+    <result property="totalGoodsCount" column="total_goods_count"/>
+    <result property="orderPayAmount" column="order_pay_amount"/>
+    <result property="orderTotalAmount" column="order_total_amount"/>
+    <result property="isCancelOrder" column="is_cancel_order"/>
+    <result property="isExpressDelivery" column="is_express_delivery"/>
+  </resultMap>
+  <!--卖家中心订单以及订单行信息查询或者导出start-->
+  <select id="queryOrderForSeller" resultMap="sellerCenterTradeOrder">
+    SELECT DISTINCT
+    trade_orders_.order_no,
+    trade_orders_.shop_name,
+    trade_orders_.total_goods_amount,
+    trade_orders_.total_freight,
+    trade_orders_.order_status,
+    trade_orders_.create_order_time,
+    trade_orders_.buyer_name,
+    trade_orders_.consignee_name,
+    trade_orders_.consignee_address,
+    trade_orders_.consignee_phone_num,
+    trade_orders_.shop_id,
+    trade_orders_.invoice_notify,
+    trade_orders_.delivery_type,
+    trade_orders_.invoice_type,
+    trade_orders_.tax_man_id,
+    trade_orders_.invoice_address,
+    trade_orders_.contact_phone,
+    trade_orders_.bank_name,
+    trade_orders_.bank_account,
+    trade_orders_.order_remarks,
+    trade_orders_.buyer_remarks,
+    trade_orders_.pay_type,
+    trade_orders_.logistics_company,
+    trade_orders_.logistics_no,
+    trade_orders_.promotion_id,
+    trade_orders_.total_discount_amount,
+    trade_orders_.shop_discount_amount,
+    trade_orders_.platform_discount_amount,
+    trade_orders_.bargaining_order_freight,
+    trade_orders_.bargaining_order_amount,
+    trade_orders_.is_change_price,
+    trade_orders_.total_goods_count,
+    trade_orders_.order_pay_amount,
+    trade_orders_.order_total_amount,
+    trade_orders_.is_cancel_order,
+    trade_orders_.is_express_delivery
+    FROM trade_orders trade_orders_
+    <if test="entity.goodsName !=null and entity.goodsName !=''">
+      ,trade_order_items trade_order_items_
+    </if>
+    WHERE 1=1
+    <if test="entity.goodsName !=null and entity.goodsName !=''">
+      AND trade_orders_.order_no = trade_order_items_.order_no
+    </if>
+    <if test="entity!=null">
+      <if test="entity.shopId != null">
+        <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
+      </if>
+      <if test="entity.orderStatuss !=null">
+        <![CDATA[ and trade_orders_.order_status IN ]]>
+        <foreach collection="entity.orderStatuss" item="item" index="index" open="("
+                 separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="entity.isCancelOrder != null">
+        <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
+      </if>
+      <if test="entity.orderNo != null and entity.orderNo !=''">
+        <![CDATA[ and trade_orders_.order_no = #{entity.orderNo} ]]>
+      </if>
+      <if test="entity.orderStatus != null and entity.orderStatus !=''">
+        <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
+      </if>
+      <if test="entity.buyerName !=null and entity.buyerName !=''">
+        <![CDATA[ and trade_orders_.buyer_name LIKE concat('%',#{entity.buyerName},'%') ]]>
+      </if>
+      <if test="entity.goodsName !=null and entity.goodsName !=''">
+        <![CDATA[ and trade_order_items_.goods_name LIKE concat('%',#{entity.goodsName},'%') ]]>
+      </if>
+      <if test="entity.createStart != null and entity.createStart != ''">
+        <![CDATA[
                         and DATE_FORMAT(trade_orders_.create_order_time, '%Y-%m-%d') >=  DATE_FORMAT(#{entity.createStart}, '%Y-%m-%d')
                         ]]>
-            </if>
-            <if test="entity.createEnd != null and entity.createEnd != ''">
-                <![CDATA[
+      </if>
+      <if test="entity.createEnd != null and entity.createEnd != ''">
+        <![CDATA[
                         and date_format(trade_orders_.create_order_time,'%Y-%m-%d')  <= date_format(#{entity.createEnd},'%Y-%m-%d')
                         ]]>
-            </if>
+      </if>
 
-        </if>
-        order by trade_orders_.create_order_time desc
-        <if test="page!=null">
-            <include refid="pagination_tail" />
-        </if>
-    </select>
-    <select id="queryOrderCountsForSeller" resultType="long">
-        select count(*)
-        FROM trade_orders trade_orders_
-        <if test="entity.goodsName !=null and entity.goodsName !=''">
-            ,trade_order_items trade_order_items_
-        </if>
-        WHERE 1=1
-        <if test="entity!=null">
-            <if test="entity.goodsName !=null and entity.goodsName !=''">
-                AND trade_orders_.order_no = trade_order_items_.order_no
-            </if>
-            <if test="entity.shopId != null">
-                <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
-            </if>
-            <if test="entity.orderNo != null and entity.orderNo !=''">
-                <![CDATA[ and trade_orders_.order_no = #{entity.orderNo} ]]>
-            </if>
-            <if test="entity.payStatus != null and entity.payStatus !=''">
-                <![CDATA[ and trade_orders_.pay_status = #{entity.payStatus} ]]>
-            </if>
-            <if test="entity.orderStatus != null and entity.orderStatus !=''">
-                <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
-            </if>
-            <if test="entity.buyerName !=null and entity.buyerName !=''">
-                <![CDATA[ and trade_orders_.buyer_name LIKE concat('%',#{entity.buyerName},'%') ]]>
-            </if>
-            <if test="entity.goodsName !=null and entity.goodsName !=''">
-                <![CDATA[ and trade_order_items_.goods_name LIKE concat('%',#{entity.goodsName},'%') ]]>
-            </if>
-            <if test="entity.createStart != null and entity.createStart != ''">
-                <![CDATA[
+    </if>
+    order by trade_orders_.create_order_time desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <select id="queryOrderCountsForSeller" resultType="long">
+    select count(*)
+    FROM trade_orders trade_orders_
+    <if test="entity.goodsName !=null and entity.goodsName !=''">
+      ,trade_order_items trade_order_items_
+    </if>
+    WHERE 1=1
+    <if test="entity!=null">
+      <if test="entity.shopId != null">
+        <![CDATA[ and trade_orders_.shop_id = #{entity.shopId} ]]>
+      </if>
+      <if test="entity.orderStatuss !=null">
+        <![CDATA[ and trade_orders_.order_status IN ]]>
+        <foreach collection="entity.orderStatuss" item="item" index="index" open="("
+                 separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="entity.isCancelOrder != null">
+        <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
+      </if>
+      <if test="entity.orderNo != null and entity.orderNo !=''">
+        <![CDATA[ and trade_orders_.order_no = #{entity.orderNo} ]]>
+      </if>
+      <if test="entity.orderStatus != null and entity.orderStatus !=''">
+        <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
+      </if>
+      <if test="entity.buyerName !=null and entity.buyerName !=''">
+        <![CDATA[ and trade_orders_.buyer_name LIKE concat('%',#{entity.buyerName},'%') ]]>
+      </if>
+      <if test="entity.goodsName !=null and entity.goodsName !=''">
+        <![CDATA[ and trade_order_items_.goods_name LIKE concat('%',#{entity.goodsName},'%') ]]>
+      </if>
+      <if test="entity.createStart != null and entity.createStart != ''">
+        <![CDATA[
                         and DATE_FORMAT(trade_orders_.create_order_time, '%Y-%m-%d') >=  DATE_FORMAT(#{entity.createStart}, '%Y-%m-%d')
                         ]]>
-            </if>
-            <if test="entity.createEnd != null and entity.createEnd != ''">
-                <![CDATA[
+      </if>
+      <if test="entity.createEnd != null and entity.createEnd != ''">
+        <![CDATA[
                         and date_format(trade_orders_.create_order_time,'%Y-%m-%d')  <= date_format(#{entity.createEnd},'%Y-%m-%d')
                         ]]>
-            </if>
+      </if>
 
-        </if>
-    </select>
-    <select id="queryStatusCountsForSeller" resultType="long">
-        SELECT count(*) from trade_orders trade_orders_ WHERE trade_orders_.shop_id = #{entity.shopId}
-        <if test="entity!=null">
-        <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
-            <![CDATA[ and trade_orders_.order_status IN ]]>
-            <foreach collection="entity.orderStatuss" item="item" index="index" open="("
-                     separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-        <if test="entity.orderStatus != null and entity.orderStatus !=''">
-            <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
-        </if>
-            <if test="entity.payStatus != null and entity.payStatus !=''">
-                <![CDATA[ and trade_orders_.pay_status = #{entity.payStatus} ]]>
-            </if>
-            <if test="entity.isCancelOrder != null">
-                <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
-            </if>
-        </if>
+    </if>
 
-    </select>
-    <update id="updateOrderStatus" >
-        UPDATE trade_orders
-        SET modify_time=now()
-        <if test="orderStatus!=null and orderStatus!=''">
-            ,order_status = #{orderStatus}
-        </if>
-        WHERE order_no=#{orderNo}
-    </update>
-    <sql id="pagination_tail">
+  </select>
+  <select id="queryStatusCountsForSeller" resultType="long">
+    SELECT count(*) from trade_orders trade_orders_ WHERE trade_orders_.shop_id = #{entity.shopId}
+    <if test="entity!=null">
+      <if test="entity.orderStatuss !=null and entity.orderStatuss !=''">
+        <![CDATA[ and trade_orders_.order_status IN ]]>
+        <foreach collection="entity.orderStatuss" item="item" index="index" open="("
+                 separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="entity.orderStatus != null and entity.orderStatus !=''">
+        <![CDATA[ and trade_orders_.order_status = #{entity.orderStatus} ]]>
+      </if>
+      <if test="entity.payStatus != null and entity.payStatus !=''">
+        <![CDATA[ and trade_orders_.pay_status = #{entity.payStatus} ]]>
+      </if>
+      <if test="entity.isCancelOrder != null">
+        <![CDATA[ and trade_orders_.is_cancel_order = #{entity.isCancelOrder} ]]>
+      </if>
+    </if>
+
+  </select>
+  <update id="updateOrderStatus">
+    UPDATE trade_orders
+    SET modify_time=now()
+    <if test="orderStatus!=null and orderStatus!=''">
+      ,order_status = #{orderStatus}
+    </if>
+    WHERE order_no=#{orderNo}
+  </update>
+  <sql id="pagination_tail">
         limit #{page.pageOffset} , #{page.rows}
     </sql>
-    <!--卖家中心查询结束end-->
+  <!--卖家中心查询结束end-->
 </mapper>

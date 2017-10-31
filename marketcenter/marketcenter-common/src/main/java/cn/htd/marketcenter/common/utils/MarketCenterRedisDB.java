@@ -3,6 +3,7 @@ package cn.htd.marketcenter.common.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,7 +66,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public boolean exists(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-exists", "key=" + key);
 		boolean isExists = false;
 		Jedis jedis = null;
 		try {
@@ -75,7 +75,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-exists", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-exists", "isExist=" + isExists);
 		}
 		return isExists;
 	}
@@ -87,7 +86,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public String get(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-get", "key=" + key);
 		String value = "";
 		Jedis jedis = null;
 		try {
@@ -97,7 +95,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-get", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-get", "value=" + value);
 		}
 		return value;
 	}
@@ -109,7 +106,6 @@ public class MarketCenterRedisDB {
 	 * @param value
 	 */
 	public void set(String key, String value) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-set", "key=" + key, "value=" + value);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -118,7 +114,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-set", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-set", "无");
 		}
 	}
 
@@ -128,7 +123,6 @@ public class MarketCenterRedisDB {
 	 * @param key
 	 */
 	public void del(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-del", "key=" + key);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -137,7 +131,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-del", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-del", "无");
 		}
 	}
 
@@ -149,8 +142,6 @@ public class MarketCenterRedisDB {
 	 * @param endTime
 	 */
 	public void setAndExpire(String key, String value, Date endTime) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "marketRedisDB-setAndExpire", "key=" + key, "value=" + value,
-				"endTime=" + endTime);
 		long diffTime = endTime.getTime() - new Date().getTime();
 		int seconds = (int) (diffTime / 1000);
 		setAndExpire(key, value, seconds);
@@ -164,8 +155,6 @@ public class MarketCenterRedisDB {
 	 * @param seconds
 	 */
 	public void setAndExpire(String key, String value, int seconds) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "marketRedisDB-setAndExpire", "key=" + key, "value=" + value,
-				"seconds=" + seconds);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -175,7 +164,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setAndExpire", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-setAndExpire", "无");
 		}
 	}
 
@@ -186,7 +174,6 @@ public class MarketCenterRedisDB {
 	 * @param seconds
 	 */
 	public void expire(String key, int seconds) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-expire", "key=" + key, "seconds=" + seconds);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -195,7 +182,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-expire", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-expire", "无");
 		}
 	}
 
@@ -206,8 +192,6 @@ public class MarketCenterRedisDB {
 	 * @param hValue
 	 */
 	public void setHash(String key, Map<String, String> hValue) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-setHash", "key=" + key,
-				"value=" + JSON.toJSONString(hValue));
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -216,7 +200,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-setHash", "无");
 		}
 	}
 
@@ -228,8 +211,6 @@ public class MarketCenterRedisDB {
 	 * @param value
 	 */
 	public void setHash(String key, String field, String value) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "marketRedisDB-setHash", "key=" + key, "field=" + field,
-				"value=" + value);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -238,8 +219,29 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-setHash", "无");
 		}
+	}
+
+	/**
+	 * 向Redis中设定hash对象
+	 *
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	public Long setHashNx(String key, String field, String value) {
+		Jedis jedis = null;
+		Long ret = 0L;
+		try {
+			jedis = getResource();
+			ret = jedis.hsetnx(key, field, value);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+		}
+		return ret;
 	}
 
 	/**
@@ -250,7 +252,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public String getHash(String key, String field) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-getHash", "key=" + key, "field=" + field);
 		String value = null;
 		Jedis jedis = null;
 		try {
@@ -262,11 +263,32 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getHash", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-getHash", "value=" + value);
 		}
 		return value;
 	}
 
+	/**
+	 * 从Redis中设定hash对象
+	 *
+	 * @param key
+	 * @param fields
+	 * @return
+	 */
+	public List<String> getMHash(String key, String[] fields) {
+		List<String> valueList = null;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			if (jedis.exists(key)) {
+				valueList = jedis.hmget(key, fields);
+			}
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getMHash", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+		}
+		return valueList;
+	}
 	/**
 	 * 从Redis中设定hash对象
 	 * 
@@ -275,7 +297,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public void delHash(String key, String field) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-delHash", "key=" + key, "field=" + field);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -284,7 +305,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-delHash", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，处理结束", "marketRedisDB-delHash");
 		}
 	}
 
@@ -296,7 +316,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public boolean existsHash(String key, String field) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-existsHash", "key=" + key, "field=" + field);
 		boolean isExists = false;
 		Jedis jedis = null;
 		try {
@@ -306,7 +325,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-existsHash", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-existsHash", "value=" + isExists);
 		}
 		return isExists;
 	}
@@ -318,7 +336,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Map<String, String> getHashOperations(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-getHashOperations", "key=" + key);
 		Map<String, String> valueMap = null;
 		Jedis jedis = null;
 		try {
@@ -330,8 +347,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getHashOperations", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-getHashOperations",
-					"value=" + JSON.toJSONString(valueMap));
 		}
 		return valueMap;
 	}
@@ -343,7 +358,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Set<String> getHashFields(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-getHashFields", "key=" + key);
 		Set<String> fieldSet = null;
 		Jedis jedis = null;
 		try {
@@ -355,8 +369,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getHashFields", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-getHashFields",
-					"fields=" + JSON.toJSONString(fieldSet));
 		}
 		return fieldSet;
 	}
@@ -368,7 +380,6 @@ public class MarketCenterRedisDB {
 	 * @param endTime
 	 */
 	public void setExpire(String key, Date endTime) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-setExpire", "key=" + key, "endTime=" + endTime);
 		long diffTime = endTime.getTime() - new Date().getTime();
 		int seconds = (int) (diffTime / 1000);
 		expire(key, seconds);
@@ -381,7 +392,6 @@ public class MarketCenterRedisDB {
 	 * @param value
 	 */
 	public void tailPush(String key, String value) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-tailPush", "key=" + key, "value=" + value);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -390,7 +400,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-tailPush", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-tailPush", "无");
 		}
 	}
 
@@ -401,7 +410,6 @@ public class MarketCenterRedisDB {
 	 * @param value
 	 */
 	public void headPush(String key, String value) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-headPush", "key=" + key, "value=" + value);
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
@@ -410,7 +418,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-headPush", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-headPush", "无");
 		}
 	}
 
@@ -421,7 +428,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public String tailPop(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-tailPop", "key=" + key);
 		String value = null;
 		Jedis jedis = null;
 		try {
@@ -436,7 +442,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-tailPop", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-tailPop", "value=" + value);
 		}
 		return value;
 	}
@@ -448,7 +453,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public String headPop(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-headPop", "key=" + key);
 		String value = null;
 		Jedis jedis = null;
 		try {
@@ -463,7 +467,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-headPop", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-headPop", "value=" + value);
 		}
 		return value;
 	}
@@ -472,7 +475,6 @@ public class MarketCenterRedisDB {
 	 * 取得redis消息队列长度
 	 */
 	public Long getLlen(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-getLlen", "key=" + key);
 		Long length = 0L;
 		Jedis jedis = null;
 		try {
@@ -482,7 +484,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getLlen", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-getLlen", "length=" + length);
 		}
 		return length;
 	}
@@ -494,7 +495,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long incr(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-incr", "key=" + key);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -504,7 +504,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-incr", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-incr", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -516,7 +515,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long decr(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-decr", "key=" + key);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -526,7 +524,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-decr", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-decr", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -539,7 +536,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long incrBy(String key, long increment) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-incrBy", "key=" + key, "increment=" + increment);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -549,7 +545,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-incrBy", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-incrBy", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -562,7 +557,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long decrBy(String key, long increment) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-decrBy", "key=" + key, "increment=" + increment);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -572,7 +566,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-decrBy", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-decrBy", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -585,7 +578,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long incrHash(String key, String field) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-incrHash", "key=" + key, "field=" + field);
 		return incrHashBy(key, field, 1);
 	}
 
@@ -598,8 +590,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long incrHashBy(String key, String field, long increment) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "marketRedisDB-incrHashBy", "key=" + key, "field=" + field,
-				"increment=" + increment);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -609,7 +599,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-incrHashBy", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-incrHashBy", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -622,7 +611,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long addSet(String key, String value) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-addSet", "key=" + key, "value=" + value);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -632,7 +620,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-addSet", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-addSet", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -643,7 +630,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public String popSet(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-popSet", "key=" + key);
 		String returnValue = "";
 		Jedis jedis = null;
 		try {
@@ -655,7 +641,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-popSet", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-popSet", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -666,7 +651,6 @@ public class MarketCenterRedisDB {
 	 * @param value
 	 */
 	public Long removeSet(String key, String value) {
-		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "marketRedisDB-removeSet", "key=" + key, "value="+ value);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -676,7 +660,6 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-removeSet", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-removeSet", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}
@@ -687,7 +670,6 @@ public class MarketCenterRedisDB {
 	 * @return
 	 */
 	public Long getSetLen(String key) {
-		logger.debug("\n 方法:[{}]，入参:[{}]", "marketRedisDB-getSetLen", "key=" + key);
 		Long returnValue = 0L;
 		Jedis jedis = null;
 		try {
@@ -697,8 +679,28 @@ public class MarketCenterRedisDB {
 			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getSetLen", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
-			logger.debug("\n 方法:[{}]，出参:[{}]", "marketRedisDB-getSetLen", "returnValue=" + returnValue);
 		}
 		return returnValue;
+	}
+
+	/**
+	 * 获取Value是否是redis的set中的元素
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public boolean isSetMember(String key, String value) {
+		Boolean isMember = false;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			isMember = jedis.sismember(key, value);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-isSetMember", ExceptionUtils.getStackTraceAsString(e));
+		} finally {
+		    releaseResource(jedis);
+		}
+		return isMember.booleanValue();
 	}
 }

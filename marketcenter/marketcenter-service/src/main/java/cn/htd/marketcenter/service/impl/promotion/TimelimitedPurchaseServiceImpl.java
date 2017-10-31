@@ -602,11 +602,11 @@ public class TimelimitedPurchaseServiceImpl implements
 				throw new MarketCenterBusinessException(
 						MarketCenterCodeConst.PROMOTION_NOT_EXIST, "限时购活动不存在");
 			}
-//			if (!status.equals(promotionInfoDTO.getShowStatus())) {
-//				throw new MarketCenterBusinessException(
-//						MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
-//						"限时购活动:" + promotionId + " 只有在未启用状态时才能修改");
-//			}
+			if (!status.equals(promotionInfoDTO.getShowStatus())) {
+				throw new MarketCenterBusinessException(
+						MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
+						"限时购活动:" + promotionId + " 只有在下架状态时才能修改");
+			}
 			if (!(new Date()).before(promotionInfoDTO.getEffectiveTime())) {
 				throw new MarketCenterBusinessException(
 						MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
@@ -619,8 +619,7 @@ public class TimelimitedPurchaseServiceImpl implements
 						MarketCenterCodeConst.PROMOTION_HAS_MODIFIED, "限时购活动:"
 								+ promotionId + " 已被修改请重新确认");
 			}
-			//timelimitedInfo.setShowStatus(status);
-			timelimitedInfo.setShowStatus(promotionInfoDTO.getShowStatus());
+			timelimitedInfo.setShowStatus(status);
 			promotionInfoDTO = baseService.updatePromotionInfo(timelimitedInfo);
 			timelimitedInfo.setPromoionInfo(promotionInfoDTO);
 			List<? extends PromotionAccumulatyDTO> accumulatyList = timelimitedInfo

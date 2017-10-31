@@ -531,19 +531,19 @@
 		</if> -->
 		<if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
-		<when test="dto.activeState=='1'">
+		<when test="dto.activeState=='1'.toString()">
 		  <![CDATA[ and sysdate() < pi.effective_time ]]>
 		</when>
-		<when test="dto.activeState=='2'">
+		<when test="dto.activeState=='2'.toString()">
 		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= pi.invalid_time ]]>
 		</when>
-		<when test="dto.activeState=='3'">
+		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() < gi.start_time ]]>
 		</when>
-		<when test="dto.activeState=='4'">
+		<when test="dto.activeState=='4'.toString()">
 		  <![CDATA[ and gi.start_time <= sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
-		<when test="dto.activeState=='5'">
+		<when test="dto.activeState=='5'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>
 		</when>
 		<otherwise></otherwise>
@@ -723,10 +723,10 @@
          and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
-		<when test="dto.activeState=='2'">
+		<when test="dto.activeState=='2'.toString()">
 		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
-		<when test="dto.activeState=='3'">
+		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>
 		</when>
 		<otherwise></otherwise>
@@ -763,10 +763,10 @@
         and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
-		<when test="dto.activeState=='2'">
+		<when test="dto.activeState=='2'.toString()">
 		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
-		<when test="dto.activeState=='3'">
+		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>
 		</when>
 		<otherwise></otherwise>

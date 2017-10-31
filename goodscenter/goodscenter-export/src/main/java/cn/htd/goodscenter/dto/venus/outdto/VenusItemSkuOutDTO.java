@@ -31,8 +31,7 @@ public class VenusItemSkuOutDTO implements Serializable {
     private Integer maxPurchaseQuantity;
     List<ItemSkuLadderPrice> itemSkuLadderPrices;
     List<ItemAttrDTO> itemAttr;
-
-
+    private Integer reserveQuantity;
 
 
     public Long getItemId() {
@@ -178,4 +177,13 @@ public class VenusItemSkuOutDTO implements Serializable {
     public void setItemAttr(List<ItemAttrDTO> itemAttr) {
         this.itemAttr = itemAttr;
     }
+
+	public Integer getReserveQuantity() {
+		return reserveQuantity;
+	}
+
+	public void setReserveQuantity(Integer reserveQuantity) {
+		this.reserveQuantity = reserveQuantity;
+	}
+    
 }

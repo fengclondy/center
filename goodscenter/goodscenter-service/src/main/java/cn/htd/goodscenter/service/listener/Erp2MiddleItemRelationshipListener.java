@@ -21,7 +21,6 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import cn.htd.basecenter.enums.ErpStatusEnum;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.middleware.MiddlewareInterfaceConstant;
 import cn.htd.common.middleware.MiddlewareInterfaceUtil;
@@ -142,13 +141,13 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 			
 			sellerId=member.getResult();
 			
-			//数据库校验是否已经存�?
+			//数据库校验是否已经存在
 			Long count=0L;
 			if(StringUtils.isNotEmpty(itemAndSellerRelationship.getSupplierCode())){
 				count=itemMybatisDAO.queryItemCountBySpuIdAndSellerId(spu.getSpuId(), sellerId);
 			}
 			if(count==null||count<=0L){
-				logger.error("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand 数据库中没有该商品关�?);
+				logger.error("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand  数据库中没有该商品关系");
 				//新建一个item 
 				Item item = doAddNewItem(itemAndSellerRelationship, spu,sellerId);
 				
@@ -177,19 +176,19 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 			sendCallBackReq(prodRelationCallbackDTO);
 		}catch(Exception e){
 			e.printStackTrace();
-			logger.error("Erp2MiddleItemRelationshipListener::onMessage:上行商品关系回调失败，错误码�? ,e);
+			logger.error("Erp2MiddleItemRelationshipListener::onMessage:上行商品关系回调失败，错误码：" ,e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 
 	}
 
 	/**
-	 * 发送回调请�?
+	 * 发送回调请求
 	 * @param prodRelationCallbackDTO
 	 */
 	private void sendCallBackReq(InsertProdRelationCallbackDTO prodRelationCallbackDTO) {
 		try {
-			//发送回调请�?
+			//发送回调请求
 			String param="?productCode="+prodRelationCallbackDTO.getProductCode()+"&supplierCode="+prodRelationCallbackDTO.getSupplierCode()
 					+"&flag=true&token="+prodRelationCallbackDTO.getToken();
 
@@ -204,10 +203,10 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 
 			if(MapUtils.isEmpty(mapResult) ||mapResult.get("code")==null || !"1".equals(mapResult.get("code")+"")){
 				//try again
-				logger.error("Erp2MiddleItemRelationshipListener::onMessage:上行商品关系回调失败，错误码�? + mapResult.get("code"));
+				logger.error("Erp2MiddleItemRelationshipListener::onMessage:上行商品关系回调失败，错误码：" + mapResult.get("code"));
 			}
 		} catch (Exception e) {
-			logger.error("Erp2MiddleItemRelationshipListener::onMessage:上行商品关系回调失败，错误码�? ,e);
+			logger.error("Erp2MiddleItemRelationshipListener::onMessage:上行商品关系回调失败，错误码：" ,e);
 		}
 	}
 
@@ -273,11 +272,6 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 		
 		if(spu.getTaxRate()!=null){
 			item.setTaxRate(spu.getTaxRate());
-		}
-		
-		if(StringUtils.isNotEmpty(spu.getErpCode())){
-			item.setErpCode(spu.getErpCode());
-			item.setErpStatus(ErpStatusEnum.SUCCESS.getValue());
 		}
 		
 		item.setSellerId(sellerId);
@@ -364,7 +358,7 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 	  /**
      * 解析文本
      * @param message 文本
-     * @return 结果�?
+     * @return 结果集
      */
     private ItemAndSellerRelationshipDTO parseMessage(String message) {
     	ItemAndSellerRelationshipDTO itemAndSellerRelationshipDTO = null;
@@ -397,7 +391,7 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
             logger.info("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand:{}",JSON.toJSON(addOrQueryResult));
             
         }
-            // 新增商品成功后添加店铺品�?
+            // 新增商品成功后添加店铺品牌
 	        ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
 	        shopBrandDTO.setBrandId(brandId);
 	        shopBrandDTO.setCreateId(0L);

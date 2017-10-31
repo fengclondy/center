@@ -3606,10 +3606,14 @@ public class ItemExportServiceImpl implements ItemExportService {
 			ItemSku itemSku = itemSkuDAO.selectItemSkuBySkuCode(skuCode);
 			if(null != itemSku){
 				skuOut.setSkuCode(skuCode);
-				//根据skuID查询对应sku下面的显示库存
+				//根据skuID查询对应sku下面的库存
 				List<ItemSkuPublishInfo> itemSkuPublishInfo = itemSkuPublishInfoMapper.queryBySkuId(itemSku.getSkuId());
 				if(null != itemSkuPublishInfo && itemSkuPublishInfo.size()>0){
-					skuOut.setDisplayQuantity(itemSkuPublishInfo.get(0).getDisplayQuantity());
+					ItemSkuPublishInfo  publishInfo = itemSkuPublishInfo.get(0);
+					//skuOut.setDisplayQuantity(publishInfo.getDisplayQuantity());
+					skuOut.setMimQuantity(publishInfo.getMimQuantity());
+					skuOut.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+					skuOut.setReserveQuantity(publishInfo.getReserveQuantity());
 				}
 				//根据skuID 和sellerId查询对应的阶梯价
 				DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService.queryLadderPriceBySellerIdAndSkuId(itemSku.getSellerId(),itemSku.getSkuId());

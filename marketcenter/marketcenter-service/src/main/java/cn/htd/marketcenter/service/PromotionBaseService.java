@@ -5,6 +5,7 @@ import cn.htd.marketcenter.domain.BuyerCheckInfo;
 import cn.htd.marketcenter.dto.BuyerInfoDTO;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
+import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.PromotionValidDTO;
 import cn.htd.membercenter.dto.MemberGroupDTO;
 
@@ -160,4 +161,14 @@ public interface PromotionBaseService {
      */
     public void deleteCategoryUselessInfo(PromotionInfoDTO promotionInfo);
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 校验卖家规则是否是取得归属平台信息
+     *
+     * @param sellerRule
+     * @return
+     */
+    public boolean isBelongSellerRule(PromotionSellerRuleDTO sellerRule);
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+
 }

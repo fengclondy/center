@@ -82,5 +82,13 @@ public interface BuyerCouponInfoService {
 	 */
 	public ExecuteResult<String> deleteUsedExpiredBuyerCoupon(String messageId,
 			UsedExpiredBuyerCouponDTO targetCouponDTO);
-
+	
+	/**
+	 * 查询会员未领取的优惠券列表
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	public ExecuteResult<List<BuyerCouponInfoDTO>> getBuyerNotReceivedCouponList(
+			String messageId, String buyerCode);
 }

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO" >
+    <id column="vote_member_id" property="voteMemberId" jdbcType="BIGINT" />
+    <result column="vote_id" property="voteId" jdbcType="BIGINT" />
+    <result column="member_code" property="memberCode" jdbcType="VARCHAR" />
+    <result column="member_name" property="memberName" jdbcType="VARCHAR" />
+    <result column="vendor_name" property="vendorName" jdbcType="VARCHAR" />
+    <result column="contact_name" property="contactName" jdbcType="VARCHAR" />
+    <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+    <result column="sign_status" property="signStatus" jdbcType="TINYINT" />
+    <result column="audit_status" property="auditStatus" jdbcType="TINYINT" />
+    <result column="sign_up_time" property="signUpTime" jdbcType="TIMESTAMP" />
+    <result column="member_activity_dec" property="memberActivityDec" jdbcType="VARCHAR" />
+    <result column="member_vote_last_time" property="memberVoteLastTime" jdbcType="TIMESTAMP" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    vote_member_id, vote_id, member_code, member_name, vendor_name, contact_name, contact_phone, 
+    sign_status, audit_status, sign_up_time, member_activity_dec, member_vote_last_time, 
+    delete_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from vote_activity_member
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vote_activity_member
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO" >
+    insert into vote_activity_member (vote_member_id, vote_id, member_code, 
+      member_name, vendor_name, contact_name, 
+      contact_phone, sign_status, audit_status, 
+      sign_up_time, member_activity_dec, member_vote_last_time, 
+      delete_flag, create_id, create_name, 
+      create_time, modify_id, modify_name, 
+      modify_time)
+    values (#{voteMemberId,jdbcType=BIGINT}, #{voteId,jdbcType=BIGINT}, #{memberCode,jdbcType=VARCHAR}, 
+      #{memberName,jdbcType=VARCHAR}, #{vendorName,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, 
+      #{contactPhone,jdbcType=VARCHAR}, #{signStatus,jdbcType=TINYINT}, #{auditStatus,jdbcType=TINYINT}, 
+      #{signUpTime,jdbcType=TIMESTAMP}, #{memberActivityDec,jdbcType=VARCHAR}, #{memberVoteLastTime,jdbcType=TIMESTAMP}, 
+      #{deleteFlag,jdbcType=TINYINT}, #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, 
+      #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO" >
+    insert into vote_activity_member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="voteMemberId != null" >
+        vote_member_id,
+      </if>
+      <if test="voteId != null" >
+        vote_id,
+      </if>
+      <if test="memberCode != null" >
+        member_code,
+      </if>
+      <if test="memberName != null" >
+        member_name,
+      </if>
+      <if test="vendorName != null" >
+        vendor_name,
+      </if>
+      <if test="contactName != null" >
+        contact_name,
+      </if>
+      <if test="contactPhone != null" >
+        contact_phone,
+      </if>
+      <if test="signStatus != null" >
+        sign_status,
+      </if>
+      <if test="auditStatus != null" >
+        audit_status,
+      </if>
+      <if test="signUpTime != null" >
+        sign_up_time,
+      </if>
+      <if test="memberActivityDec != null" >
+        member_activity_dec,
+      </if>
+      <if test="memberVoteLastTime != null" >
+        member_vote_last_time,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="voteMemberId != null" >
+        #{voteMemberId,jdbcType=BIGINT},
+      </if>
+      <if test="voteId != null" >
+        #{voteId,jdbcType=BIGINT},
+      </if>
+      <if test="memberCode != null" >
+        #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="vendorName != null" >
+        #{vendorName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactName != null" >
+        #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPhone != null" >
+        #{contactPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="signStatus != null" >
+        #{signStatus,jdbcType=TINYINT},
+      </if>
+      <if test="auditStatus != null" >
+        #{auditStatus,jdbcType=TINYINT},
+      </if>
+      <if test="signUpTime != null" >
+        #{signUpTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memberActivityDec != null" >
+        #{memberActivityDec,jdbcType=VARCHAR},
+      </if>
+      <if test="memberVoteLastTime != null" >
+        #{memberVoteLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO" >
+    update vote_activity_member
+    <set >
+      <if test="voteId != null" >
+        vote_id = #{voteId,jdbcType=BIGINT},
+      </if>
+      <if test="memberCode != null" >
+        member_code = #{memberCode,jdbcType=VARCHAR},
+      </if>
+      <if test="memberName != null" >
+        member_name = #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="vendorName != null" >
+        vendor_name = #{vendorName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactName != null" >
+        contact_name = #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPhone != null" >
+        contact_phone = #{contactPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="signStatus != null" >
+        sign_status = #{signStatus,jdbcType=TINYINT},
+      </if>
+      <if test="auditStatus != null" >
+        audit_status = #{auditStatus,jdbcType=TINYINT},
+      </if>
+      <if test="signUpTime != null" >
+        sign_up_time = #{signUpTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memberActivityDec != null" >
+        member_activity_dec = #{memberActivityDec,jdbcType=VARCHAR},
+      </if>
+      <if test="memberVoteLastTime != null" >
+        member_vote_last_time = #{memberVoteLastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      modify_time = NOW()
+    </set>
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO" >
+    update vote_activity_member
+    set vote_id = #{voteId,jdbcType=BIGINT},
+      member_code = #{memberCode,jdbcType=VARCHAR},
+      member_name = #{memberName,jdbcType=VARCHAR},
+      vendor_name = #{vendorName,jdbcType=VARCHAR},
+      contact_name = #{contactName,jdbcType=VARCHAR},
+      contact_phone = #{contactPhone,jdbcType=VARCHAR},
+      sign_status = #{signStatus,jdbcType=TINYINT},
+      audit_status = #{auditStatus,jdbcType=TINYINT},
+      sign_up_time = #{signUpTime,jdbcType=TIMESTAMP},
+      member_activity_dec = #{memberActivityDec,jdbcType=VARCHAR},
+      member_vote_last_time = #{memberVoteLastTime,jdbcType=TIMESTAMP},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByVoteIdAndMemberCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from vote_activity_member
+    where vote_id = #{voteId,jdbcType=BIGINT}
+    AND member_code = #{memberCode,jdbcType=VARCHAR}
+    AND delete_flag = 0
+    limit 1
+  </select>
+
+  <!-- 投票排名 -->
+  <sql id="vote_ranking">
+    SELECT
+			a.vote_id,
+			a.member_code,
+			a.member_name,
+			(
+				SELECT
+					count(1)
+				FROM
+					vote_activity_fans_vote b
+				WHERE
+					a.vote_member_id = b.vote_member_id
+			) AS voteNum,
+			a.member_vote_last_time
+		FROM
+			vote_activity_member a
+		WHERE
+			vote_id = #{voteId}
+			and sign_status = 1
+			and audit_status = 1
+			and delete_flag = 0
+		ORDER BY
+			voteNum DESC,
+			member_vote_last_time ASC
+  </sql>
+
+  <select id="selectMemberRankingTop10" resultType="map">
+    SELECT
+	  c.*, cast((@rownum :=@rownum + 1) as signed) AS rowNum
+    FROM
+	( <include refid="vote_ranking" /> )c,
+    (SELECT @rownum := 0) r
+    LIMIT 10
+  </select>
+
+  <select id="selectMemberRankingByMemberCode" resultType="map">
+    SELECT * FROM
+    (
+      SELECT
+      c.*, cast((@rownum :=@rownum + 1) as signed) AS rowNum
+      FROM
+      ( <include refid="vote_ranking" /> )c,
+      (SELECT @rownum := 0) r
+    ) d
+    where member_code = #{memberCode}
+    limit 1
+  </select>
+  
+   <select id="selectVoteCountByActivityId" parameterType="Long" resultType="Long">
+	  	select count(1) from
+	vote_activity_fans_vote vaf
+	left join 
+	vote_activity_member vam on vaf.vote_member_id=vam.vote_member_id
+	where vam.delete_flag=0 
+	and vam.vote_id=#{voteId}
+  </select>
+  
+  <select id="querySignupMemberCount" parameterType="Long" resultType="map">
+	  select sign_status,count(1) as c from 
+	vote_activity_member
+	where vote_id=#{voteId}
+		and delete_flag=0
+	  group by sign_status
+ </select>
+ 
+ <select id="queryPagedSignupMemberInfoList" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 
+ 	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
+	  select 
+		@rownum:=@rownum+1 as  sortNum,
+		temp.member_code as memberCode,
+		temp.vendor_name as sellerName,
+	    temp.member_name as memberName,
+		temp.contact_name as contactName,
+		temp.contact_phone as phone,
+		temp.sign_status as signupStatus,
+		temp.audit_status as auditStatus,
+		temp.sign_up_time as signupTime,
+		temp.vote_member_id as voteMemberId,
+		temp.voteCount,
+		temp.forwardCount
+	 from ( select 
+	 @rownum:=0,
+	  vam.member_code,
+	  vam.vendor_name,
+	  vam.member_name,
+	  vam.contact_name,
+	  vam.contact_phone,
+	  vam.sign_status,
+	  vam.audit_status,
+	  vam.sign_up_time,
+	  vam.vote_member_id,
+	  (select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
+	  (select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
+	  vam.member_vote_last_time
+	  from  vote_activity_member vam
+	  where vam.delete_flag = 0
+	  	and vam.vote_id = #{voteId}
+	  <if test="sellerName !=null and sellerName != '' ">
+	 	 and vam.vendor_name like concat(#{sellerName},'%')
+	  </if> 
+	  <if test="memberName != null and memberName != '' ">
+	  	 and vam.member_name like concat(#{memberName},'%')
+	  </if>
+	  <if test="auditStatus !=null">
+	  	and vam.audit_status=#{auditStatus}
+	  </if>
+	  <if test="signUpStatus !=null">
+	  	and vam.sign_status=#{signUpStatus}
+	  </if>
+	  ) temp 
+	  order by voteCount desc,member_vote_last_time asc
+	  limit #{start},#{pageSize}
+ </select>
+ 
+ <select id="querySignUpMemberInfoList" parameterType="Long" resultType="java.lang.String">
+ 	SELECT
+		member_code
+	FROM
+		vote_activity_member member
+	WHERE
+		member.vote_id = #{voteId}
+ </select>
+ 
+ <select id="queryTotalSignupMemberInfo" resultType="Long" 
+ 	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
+	 select 
+		count(1)
+	  from  vote_activity_member vam
+	  where delete_flag!=1 and vote_id=#{voteId}
+	  <if test="sellerName !=null and sellerName != '' ">
+	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
+	  </if> 
+	  <if test="memberName != null and memberName != '' ">
+	  	 and vam.member_name like CONCAT(#{memberName},'%')
+	  </if>
+	  <if test="auditStatus !=null">
+	  	and vam.audit_status=#{auditStatus}
+	  </if>
+	  <if test="signUpStatus !=null">
+	  	and vam.sign_status=#{signUpStatus}
+	  </if>
+ </select>
+  
+  <select id="querySignupMemberDetailInfo" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO">
+	 	select temp3.* from 
+			(select @rownum:=@rownum+1 as  sortNum,
+				temp2.vendor_name as sellerName,
+			  	temp2.member_name as memberName,
+			  	temp2.contact_name  as contactName,
+			  	temp2.contact_phone as contactPhone,
+			  	temp2.sign_status as signStatus,
+				temp2.audit_status  as auditStatus,
+				temp2.sign_up_time as signupTime,
+			    temp2.vote_start_time as voteStartTime,
+			    temp2.vote_sign_up_start_time  as voteSignupStartTime,
+			    temp2.vote_sign_up_end_time as voteSignupEndTime,
+			    temp2.vote_end_time as voteEndTime,
+			    temp2.member_activity_dec as memberActivityDec,
+			    temp2.vote_name as voteName,
+			    temp2.vote_topic_pic as voteTopicPic,
+			    temp2.vote_sample_pic  as voteSamplePic,
+			    temp2.voteCount,
+			    temp2.forwardCount,
+			    temp2.vote_member_id as voteMemberId,
+			    temp2.member_vote_last_time as memberVoteLastTime
+		 	from (
+			 	select 
+			 		@rownum := 0,
+			 		temp.* 
+			 	from (
+			 		select 
+				     vam.vote_member_id ,
+					 vam.vendor_name,
+					 vam.member_name,
+					 vam.contact_name,
+					 vam.contact_phone,
+					 vam.sign_status,
+					 vam.audit_status,
+					 vam.sign_up_time,
+				     va.vote_start_time,
+				     va.vote_sign_up_start_time,
+				     va.vote_sign_up_end_time,
+				     va.vote_end_time,
+				     vam.member_activity_dec,
+				     va.vote_name,
+				     va.vote_topic_pic,
+				     va.vote_sample_pic,
+					(select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
+					(select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
+					vam.member_vote_last_time
+					from  vote_activity_member vam
+				    join vote_activity va on vam.vote_id=va.vote_id
+					where 1=1
+				    and vam.delete_flag=0
+				    and vam.vote_id = #{0}
+				) temp order by voteCount DESC,member_vote_last_time ASC    
+			) temp2 
+		)temp3 where temp3.voteMemberId = #{1}
+  </select>
+  
+  <insert id="batchInsertVoteActMember">
+    insert into vote_activity_member ( vote_id, member_code, 
+      member_name, vendor_name, contact_name, 
+      contact_phone, sign_status, audit_status,  
+      delete_flag, create_id, create_name, 
+      create_time, modify_id, modify_name, 
+      modify_time)
+    values 
+    <foreach collection="list" item="item"  separator=",">
+    ( #{item.voteId,jdbcType=BIGINT}, #{item.memberCode,jdbcType=VARCHAR}, 
+      #{item.memberName,jdbcType=VARCHAR}, #{item.vendorName,jdbcType=VARCHAR}, #{item.contactName,jdbcType=VARCHAR}, 
+      #{item.contactPhone,jdbcType=VARCHAR},0, 0, 
+      0, #{item.operatorId,jdbcType=BIGINT}, #{item.operatorName,jdbcType=VARCHAR}, 
+      NOW(), #{item.operatorId,jdbcType=BIGINT}, #{item.operatorName,jdbcType=VARCHAR}, 
+      NOW())
+    </foreach>
+     on duplicate key update modify_time =now()
+  </insert>
+  
+  <select id="queryPagedSignupMemberInfoListOrderBySignUpTime" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 
+ 	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
+	  select 
+		@rownum:=@rownum+1 as  sortNum,
+		temp.member_code as memberCode,
+		temp.vendor_name as sellerName,
+	    temp.member_name as memberName,
+		temp.contact_name as contactName,
+		temp.contact_phone as phone,
+		temp.sign_status as signupStatus,
+		temp.audit_status as auditStatus,
+		temp.sign_up_time as signupTime,
+		temp.vote_member_id as voteMemberId,
+		temp.voteCount,
+		temp.forwardCount
+	 from ( select 
+	 @rownum:=0,
+	  vam.member_code,
+	  vam.vendor_name,
+	  vam.member_name,
+	  vam.contact_name,
+	  vam.contact_phone,
+	  vam.sign_status,
+	  vam.audit_status,
+	  vam.sign_up_time,
+	  vam.vote_member_id,
+	  (select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
+	  (select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
+	  vam.member_vote_last_time
+	  from  vote_activity_member vam
+	  where vam.delete_flag = 0
+	  	and vam.vote_id = #{voteId}
+	  <if test="sellerName !=null and sellerName != '' ">
+	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
+	  </if> 
+	  <if test="memberName != null and memberName != '' ">
+	  	 and vam.member_name like CONCAT(#{memberName},'%')
+	  </if>
+	  <if test="auditStatus !=null">
+	  	and vam.audit_status=#{auditStatus}
+	  </if>
+	  <if test="signUpStatus !=null">
+	  	and vam.sign_status=#{signUpStatus}
+	  </if>
+	  ) temp 
+	  order by temp.sign_up_time desc,member_vote_last_time asc
+	  limit #{start},#{pageSize}
+ </select>
+  
+</mapper>

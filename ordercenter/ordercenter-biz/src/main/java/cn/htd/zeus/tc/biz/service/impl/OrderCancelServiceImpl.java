@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -720,17 +721,20 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		// 订单状态有311 和 312的 所以必须截取后判断订单状态
 		String orderstatus = tradeOrdersDMO.getOrderStatus().substring(0, 2);
+		//如果有促销就进入下面的逻辑(因为限时购的标志位在trade_order_items_discount表里)
+		List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountDMOList = new ArrayList<TradeOrderItemsDiscountDMO>();
+		if (Constant.ORDER_TYPE_PARENT.equals(orderType)) {
+			tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
+					.selectBuyerCouponCodeByOrderNo(orderNo);
+		} else if (Constant.ORDER_TYPE_SUB.equals(orderType)) {
+			tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
+					.selectBuyerCouponCodeByOrderItemNo(orderNo);
+		}
+		
 		if ((isTimeLimitedOrder == Constant.IS_TIMELIMITED_ORDER
-				|| hasUsedCoupon == Constant.HAS_USED_COUPON)
+				|| hasUsedCoupon == Constant.HAS_USED_COUPON || CollectionUtils.isNotEmpty(tradeOrderItemsDiscountDMOList))
 				&& Integer.valueOf(orderstatus) < 30) {
-			List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountDMOList = new ArrayList<TradeOrderItemsDiscountDMO>();
-			if (Constant.ORDER_TYPE_PARENT.equals(orderType)) {
-				tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
-						.selectBuyerCouponCodeByOrderNo(orderNo);
-			} else if (Constant.ORDER_TYPE_SUB.equals(orderType)) {
-				tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
-						.selectBuyerCouponCodeByOrderItemNo(orderNo);
-			}
+			
 			List<OrderItemPromotionDTO> orderItemPromotionDTOList = new ArrayList<OrderItemPromotionDTO>();
 			for (TradeOrderItemsDiscountDMO tradeOrderItemsDiscountDMO : tradeOrderItemsDiscountDMOList) {
 				OrderItemPromotionDTO orderItemPromotionDTO = new OrderItemPromotionDTO();
@@ -740,11 +744,9 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				String buyerCode = tradeOrderItemsDiscountDMO.getBuyerCode();
 				orderItemPromotionDTO.setBuyerCode(buyerCode);
 				if (isTimeLimitedOrder == Constant.IS_TIMELIMITED_ORDER) {
-					orderItemPromotionDTO.setPromotionType(Constant.PROMOTION_TYPE_TIMELIMITED);
 					orderItemPromotionDTO.setQuantity(1);
 				}
 				if (hasUsedCoupon == Constant.HAS_USED_COUPON) {
-					orderItemPromotionDTO.setPromotionType(Constant.PROMOTION_TYPE_COUPON);
 					String couponCode = tradeOrderItemsDiscountDMO.getBuyerCouponCode();
 					orderItemPromotionDTO.setCouponCode(couponCode);
 					BigDecimal discountAmount = tradeOrderItemsDiscountDMO.getCouponDiscount();
@@ -752,6 +754,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				}
 				String promotionId = tradeOrderItemsDiscountDMO.getPromotionId();
 				orderItemPromotionDTO.setPromotionId(promotionId);
+				String promotionType = tradeOrderItemsDiscountDMO.getPromotionType();
+				orderItemPromotionDTO.setPromotionType(promotionType);
 				String levelCode = tradeOrderItemsDiscountDMO.getLevelCode();
 				orderItemPromotionDTO.setLevelCode(levelCode);
 				orderItemPromotionDTO.setOperaterId(Long.valueOf(memberID));
@@ -803,7 +807,23 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.RELEASE);
 				int isBoxFlag = tradeOrderItemsDMO.getIsBoxFlag();
 				order4StockEntryDTO.setIsBoxFlag(isBoxFlag);
-				order4StockEntryDTOList.add(order4StockEntryDTO);
+				//如果没有从优惠表里查到数据，说明可以锁定商品中心库存，如果查到数据且活动类型不是3(限时购)，也可以锁定商品中心库存
+				List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountPurchaseList = tradeOrderItemsDiscountDAO
+						.selectBuyerCouponCodeByOrderItemNo(tradeOrderItemsDMO.getOrderItemNo());
+				if (null == tradeOrderItemsDiscountPurchaseList
+						|| tradeOrderItemsDiscountPurchaseList.size() == 0) {
+					order4StockEntryDTOList.add(order4StockEntryDTO);
+				}else{
+					TradeOrderItemsDiscountDMO tradeOrderItemsDiscountDMO = tradeOrderItemsDiscountPurchaseList
+							.get(0);
+					if (!OrderStatusEnum.PROMOTION_TYPE_LIMITED_TIME_PURCHASE
+							.getCode().equals(
+									tradeOrderItemsDiscountDMO
+											.getPromotionType())) {
+						order4StockEntryDTOList.add(order4StockEntryDTO);
+					}
+				}
+				
 			}
 			if (order4StockEntryDTOList != null && order4StockEntryDTOList.size() != 0) {
 				order4StockChangeDTO.setOrderNo(tradeOrdersDMO.getOrderNo());

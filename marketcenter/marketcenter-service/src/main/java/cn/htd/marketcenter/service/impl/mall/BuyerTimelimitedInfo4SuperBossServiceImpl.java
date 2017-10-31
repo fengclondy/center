@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.enums.TimelimitedStatusEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.DateUtils;
@@ -42,6 +44,9 @@ public class BuyerTimelimitedInfo4SuperBossServiceImpl implements BuyerTimelimit
 
     @Resource
     private PromotionBaseService baseService;
+    
+    @Resource
+    private DictionaryUtils dictionary;
 
     @Override
     public ExecuteResult<BuyerTimelimitedInfo4SuperBossDTO> getBuyerTimelimitedInfo(String messageId, String buyerCode,
@@ -77,8 +82,9 @@ public class BuyerTimelimitedInfo4SuperBossServiceImpl implements BuyerTimelimit
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
-            datagrid = timelimitedRedisHandle.getRedisTimelimitedInfoList("", "", page);
+            datagrid = timelimitedRedisHandle.getRedisTimelimitedInfoList("", "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -110,6 +116,7 @@ public class BuyerTimelimitedInfo4SuperBossServiceImpl implements BuyerTimelimit
         int rows = Integer.MAX_VALUE;
         String buyerCode = buyerInfo.getBuyerCode();
         String sellerCode = buyerInfo.getSellerCode();
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
             if (page != null) {
                 offset = page.getPageOffset();
@@ -122,7 +129,7 @@ public class BuyerTimelimitedInfo4SuperBossServiceImpl implements BuyerTimelimit
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                         validateResult.getErrorMsg());
             }
-            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", null, sellerCode, false);
+            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", null, sellerCode, false, promotionType);
             if (promotionIdList != null && !promotionIdList.isEmpty()) {
                 memberGroup = baseService.getBuyerGroupRelationship(messageId, buyerInfo);
                 buyerCheckInfo.setBuyerCode(buyerCode);

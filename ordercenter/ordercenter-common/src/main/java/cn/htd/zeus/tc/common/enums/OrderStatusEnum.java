@@ -58,7 +58,7 @@ public enum OrderStatusEnum {
 	//促销活动类型 1：优惠券，2:秒杀
 	PROMOTION_TYPE_COUPON("1","优惠券"),
 	PROMOTION_TYPE_SECKILL("2","秒杀"),
-	PROMOTION_TYPE_GROUP_PURCHASE("3","团购"),
+	PROMOTION_TYPE_LIMITED_TIME_PURCHASE("3","限时购"),
 
 	//是否为秒杀订单
 	IS_TIMELIMITED_ORDER("1","是秒杀订单"),
@@ -110,8 +110,10 @@ public enum OrderStatusEnum {
 	ORDER_ERROR_STATUS_JD_FAIL("908","商品+订单确失败"),
 	
 	ORDER_DELIVERY_TYPE_SINCE("2","自提"),
-	COUPON_TYPE_SKILL("3","秒杀");
+	COUPON_TYPE_SKILL("3","秒杀"),
 	
+	IS_LIMITED_TIME_PURCHASE("1","是限时购商品"),
+	HAS_LIMITED_TIME_PURCHASE("1","含有限时购商品");
 	
     // 成员变量
     private String code;

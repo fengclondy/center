@@ -1202,4 +1202,9 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 		terminalPrice.setShopId(shopId);
 		return terminalPrice;
 	}
+
+	@Override
+	public List<ItemSkuLadderPrice> queryMobileExternalLadderPriceBySkuId(String skuIds) {
+		return itemSkuLadderPriceMapper.getSkuLadderPriceMobile(skuIds);
+	}
 }

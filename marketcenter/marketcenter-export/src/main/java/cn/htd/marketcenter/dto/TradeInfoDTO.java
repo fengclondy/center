@@ -170,7 +170,7 @@ public class TradeInfoDTO implements Serializable {
 	 * 参加优惠活动类型 1:优惠券，2:秒杀
 	 */
 	private String promotionType;
-
+	
 	/**
 	 * 使用优惠券时设定优惠券编码列表
 	 */

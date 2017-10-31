@@ -18,10 +18,20 @@ public class BuyerUseTimelimitedLog implements Serializable {
 
     private String levelCode;
 
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 add -----
+    private String promotionType;
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 end -----
+
     private String seckillLockNo;
 
     private String orderNo;
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 add -----
+    private String orderItemNo;
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 end -----
 
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 add -----
+    private String skuCode;
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 end -----
     private String useType;
 
     private Integer usedCount;
@@ -184,5 +194,29 @@ public class BuyerUseTimelimitedLog implements Serializable {
 
     public void setReleaseStockInterval(String releaseStockInterval) {
         this.releaseStockInterval = releaseStockInterval;
+    }
+
+    public String getPromotionType() {
+        return promotionType;
+    }
+
+    public void setPromotionType(String promotionType) {
+        this.promotionType = promotionType;
+    }
+
+    public String getOrderItemNo() {
+        return orderItemNo;
+    }
+
+    public void setOrderItemNo(String orderItemNo) {
+        this.orderItemNo = orderItemNo;
+    }
+
+    public String getSkuCode() {
+        return skuCode;
+    }
+
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode;
     }
 }

@@ -563,12 +563,12 @@
   </update>
   
   <select id="queryInitRedisPromotion4Task" resultMap="BaseResultMap">
-    select
+    select  
     <include refid="Base_Column_List"/>
-    from promotion_info
+    from promotion_info  
     where deal_flag = '1'  
     <if test="entity != null">
-      and ( promotion_type = '21' or promotion_type = '23')   
+      and promotion_type in ('21','23','25')       
       and mod(id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId}

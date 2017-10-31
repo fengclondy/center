@@ -106,7 +106,10 @@
     select
     <include refid="Base_Column_List"/>
     from promotion_info
-    where promotion_type = #{promotionType, jdbcType=VARCHAR}
+    where 1=1 and promotion_type in
+      <foreach collection="promotionTypeList" index="index" item="promotionType" open="(" separator="," close=")">
+        #{promotionType}
+      </foreach>
     <![CDATA[ and status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
     <![CDATA[ and now() <= invalid_time]]>
     and exists (select 1

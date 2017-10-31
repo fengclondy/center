@@ -38,6 +38,7 @@ import cn.htd.marketcenter.dto.PromotionBuyerDetailDTO;
 import cn.htd.marketcenter.dto.PromotionBuyerRuleDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
+import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberGradeDTO;
 import cn.htd.membercenter.dto.SellerBelongRelationDTO;
@@ -64,6 +65,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
 
     @Resource
     private DictionaryUtils dictionary;
+
+    @Resource
+    private PromotionBaseService baseService;
 
     @Resource
     private SendSmsEmailService sendSmsEmailService;
@@ -761,7 +765,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                 }
                 //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-                needGetBelongSellerFlg = isBelongSellerRule(sellerRuleDTO);
+                needGetBelongSellerFlg = baseService.isBelongSellerRule(sellerRuleDTO);
                 if (needGetBelongSellerFlg) {
                     belongRelationResult = belongRelationshipService.queryBelongRelationListByMemberCodeList(buyerCodeList);
                     if (!belongRelationResult.isSuccess()) {
@@ -980,31 +984,6 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             buyerDetailList = buyerRule.getBuyerDetailList();
         }
         return buyerDetailList;
-    }
-
-    /**
-     * 校验卖家规则是否是取得归属平台信息
-     *
-     * @param sellerRule
-     * @return
-     */
-    private boolean isBelongSellerRule(PromotionSellerRuleDTO sellerRule) {
-        String sellerType = "";
-        if (sellerRule == null) {
-            return false;
-        }
-        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
-                DictionaryConst.OPT_PROMOTION_SELLER_RULE_APPIONT).equals(sellerRule.getRuleTargetType())) {
-            sellerType = sellerRule.getTargetSellerType();
-            if (StringUtils.isEmpty(sellerType)) {
-                return false;
-            }
-            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_TYPE,
-                    DictionaryConst.OPT_PROMOTION_SELLER_TYPE_HTD_BELONG).equals(sellerType)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

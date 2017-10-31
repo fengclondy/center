@@ -1219,5 +1219,30 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             }
         }
     }
+
+    /**
+     * 校验卖家规则是否是取得归属平台信息
+     *
+     * @param sellerRule
+     * @return
+     */
+    public boolean isBelongSellerRule(PromotionSellerRuleDTO sellerRule) {
+        String sellerType = "";
+        if (sellerRule == null) {
+            return false;
+        }
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
+                DictionaryConst.OPT_PROMOTION_SELLER_RULE_APPIONT).equals(sellerRule.getRuleTargetType())) {
+            sellerType = sellerRule.getTargetSellerType();
+            if (StringUtils.isEmpty(sellerType)) {
+                return false;
+            }
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_TYPE,
+                    DictionaryConst.OPT_PROMOTION_SELLER_TYPE_HTD_BELONG).equals(sellerType)) {
+                return true;
+            }
+        }
+        return false;
+    }
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
 }

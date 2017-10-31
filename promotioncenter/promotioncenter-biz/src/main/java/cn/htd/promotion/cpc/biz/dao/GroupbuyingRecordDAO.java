@@ -1,7 +1,9 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
+
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingRecordReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingRecordResDTO;
@@ -42,6 +44,13 @@ public interface GroupbuyingRecordDAO {
 	 * @return
 	 */
 	List<GroupbuyingRecordResDTO> getGroupbuyingRecordForPage(@Param("page")Pager<GroupbuyingRecordReqDTO> page, @Param("dto")GroupbuyingRecordReqDTO record);
+	
+	/**
+	 * 根据活动编号查询参团总数
+	 * @param promotionId
+	 * @return
+	 */
+	int getGBRecordCountsByPromotionId(String promotionId);
 	
 	
 }

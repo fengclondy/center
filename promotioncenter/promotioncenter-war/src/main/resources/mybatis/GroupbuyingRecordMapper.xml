@@ -249,5 +249,10 @@
 		ORDER BY modify_time desc 
 		LIMIT #{page.pageOffset},#{page.rows}
 	</select>
+	
+	<select id="getGBRecordCountsByPromotionId" resultType="java.lang.Integer">
+	  select count(1)   from groupbuying_record  
+      where delete_flag = 0  and  promotion_id = #{promotionId,jdbcType=VARCHAR} 
+	</select>
   
 </mapper>

@@ -221,7 +221,7 @@
   	select
     <include refid="Base_Column_List" />
     from item_sku_ladder_price
-    where sku_id in (#{skuId,jdbcType=BIGINT}) and delete_flag=0
+    where sku_id in (#{skuIds,jdbcType=BIGINT}) and delete_flag=0
   </select>
   <!--根据ItemId更新删除标记-->
   <update id="updateDeleteFlagByItemId" parameterType="cn.htd.pricecenter.domain.ItemSkuLadderPrice" >

@@ -31,4 +31,14 @@
    <!--物料下载接口-->
    <dubbo:service interface="cn.htd.promotion.cpc.api.MaterielDownloadAPI" ref="materielDownloadAPI"
                  version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+  <!-- 团购-->
+  <dubbo:service interface="cn.htd.promotion.cpc.api.GroupbuyingAPI" ref="groupbuyingAPI"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+
+  <!-- 投票活动 -->
+  <dubbo:service interface="cn.htd.promotion.cpc.api.VoteActivityAPI" ref="voteActivityAPI"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+
+  <dubbo:service interface="cn.htd.promotion.cpc.api.VoteActivityFansVoteApi" ref="voteActivityFansVoteApi"
+                 version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 </beans>

@@ -10,38 +10,6 @@ import org.apache.ibatis.annotations.Param;
 public interface BuyerUseTimelimitedLogDAO extends BaseDAO<BuyerUseTimelimitedLog> {
 
     /**
-     * 根据条件更新会员秒杀活动参加履历
-     *
-     * @param buyerUseTimelimitedLog
-     * @return
-     */
-    public Integer updateUseLogStatusByCode(BuyerUseTimelimitedLog buyerUseTimelimitedLog);
-
-    /**
-     * 根据条件更新会员秒杀活动的订单号
-     *
-     * @param buyerUseTimelimitedLog
-     * @return
-     */
-    public Integer updateUseLogOrderNoByLockCode(BuyerUseTimelimitedLog buyerUseTimelimitedLog);
-
-    /**
-     * 根据条件检索秒杀活动参加履历表
-     *
-     * @param condition
-     * @return
-     */
-    public BuyerUseTimelimitedLog queryUseLogByLockCode(BuyerUseTimelimitedLog condition);
-
-    /**
-     * 根据条件检索秒杀活动参加履历表
-     *
-     * @param condition
-     * @return
-     */
-    public BuyerUseTimelimitedLog queryUseLogByCode(BuyerUseTimelimitedLog condition);
-
-    /**
      * @param condition
      * @param pager
      * @return

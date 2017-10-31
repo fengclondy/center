@@ -107,6 +107,12 @@ public class PromotionInfoDTO implements Serializable {
      */
     private String b2cActivityCode;
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 是否有活动提醒
+     */
+    private int isNeedRemind;
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
     /**
      * 创建人ID
      */
@@ -402,6 +408,14 @@ public class PromotionInfoDTO implements Serializable {
         this.b2cActivityCode = b2cActivityCode;
     }
 
+    public int getIsNeedRemind() {
+        return isNeedRemind;
+    }
+
+    public void setIsNeedRemind(int isNeedRemind) {
+        this.isNeedRemind = isNeedRemind;
+    }
+
     public Long getCreateId() {
         return createId;
     }
@@ -583,6 +597,7 @@ public class PromotionInfoDTO implements Serializable {
         this.verifyRemark = promotionInfoDTO.getVerifyRemark();
         this.modifyPromotionId = promotionInfoDTO.getModifyPromotionId();
         this.b2cActivityCode = promotionInfoDTO.getB2cActivityCode();
+        this.isNeedRemind = promotionInfoDTO.getIsNeedRemind();
         this.createId = promotionInfoDTO.getCreateId();
         this.createName = promotionInfoDTO.getCreateName();
         this.createTime = promotionInfoDTO.getCreateTime();

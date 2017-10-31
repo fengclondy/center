@@ -19,6 +19,8 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
+import cn.htd.marketcenter.common.enums.NoticeTypeEnum;
+import cn.htd.marketcenter.common.enums.YesNoEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
 import cn.htd.marketcenter.common.utils.GeneratorUtils;
@@ -30,15 +32,8 @@ import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
 import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
-import cn.htd.marketcenter.dto.PromotionBuyerDetailDTO;
-import cn.htd.marketcenter.dto.PromotionBuyerRuleDTO;
-import cn.htd.marketcenter.dto.PromotionCategoryDetailDTO;
-import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
-import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
-import cn.htd.marketcenter.dto.PromotionSellerDetailDTO;
-import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import com.alibaba.fastjson.JSON;
@@ -46,8 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 
 @Service("couponRedisHandle")
 public class CouponRedisHandle {
@@ -100,7 +93,11 @@ public class CouponRedisHandle {
         if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
             DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProvideType)) {
             couponRedisKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + couponInfo.getPromotionId();
-            baseService.deleteBuyerUselessInfo(couponInfo);
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            if (NoticeTypeEnum.NO.getValue() == couponInfo.getIsNeedRemind()) {
+                baseService.deleteBuyerUselessInfo(couponInfo);
+            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             couponJsonStr = JSON.toJSONString(couponInfo);
             marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
         }
@@ -677,12 +674,13 @@ public class CouponRedisHandle {
                     .setCouponLeftAmount(CalculateUtils.divide(new BigDecimal(afterDealAmount), new BigDecimal(100)));
             buyerCouponInfo.setModifyId(orderCouponInfo.getOperaterId());
             buyerCouponInfo.setModifyName(orderCouponInfo.getOperaterName());
-            marketRedisDB.setHash(buyerCouponRedisKey, couponCode, JSON.toJSONString(buyerCouponInfo));
         } catch (MarketCenterBusinessException bcbe) {
             if (MarketCenterCodeConst.BUYER_COUPON_BALANCE_DEFICIENCY.equals(bcbe.getCode())) {
                 marketRedisDB.incrHashBy(RedisConst.REDIS_BUYER_COUPON_AMOUNT, amountKey, amount * -1);
             }
             throw bcbe;
+        } finally {
+            marketRedisDB.setHash(buyerCouponRedisKey, couponCode, JSON.toJSONString(buyerCouponInfo));
         }
         return buyerCouponInfo;
     }
@@ -924,7 +922,7 @@ public class CouponRedisHandle {
                                 + " 该订单已使用过此优惠券不能重复使用");
             }
             if (useLog.getCouponUsedAmount().compareTo(orderCouponDTO.getDiscountAmount()) != 0) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_DEAL_DIFF_NONEY,
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_DEAL_DIFF_MONEY,
                         "订单号:" + orderNo + " 订单行号:" + orderItemNo + " 会员编号:" + buyerCode + " 优惠券编号:" + buyerCouponCode
                                 + " 该订单已使用此优惠券但使用金额不同");
             }

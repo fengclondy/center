@@ -8,10 +8,15 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.domain.BuyerUseTimelimitedLog;
+import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * Created by thinkpad on 2017/1/6.
@@ -21,11 +26,13 @@ public class TimelimitedRedisHandleTest {
 	ApplicationContext act = null;
 	private TimelimitedRedisHandle timelimitedRedisHandle;
 	private DictionaryUtils dictionary;
+	private TimelimitedPurchaseService timelimitedPurchaseService;
 
 	@Before
 	public void setUp() throws Exception {
 		act = new ClassPathXmlApplicationContext("test.xml");
 		timelimitedRedisHandle = (TimelimitedRedisHandle) act.getBean("timelimitedRedisHandle");
+		timelimitedPurchaseService = (TimelimitedPurchaseService) act.getBean("timelimitedPurchaseService");
 		dictionary = (DictionaryUtils) act.getBean("dictionaryUtils");
 	}
 
@@ -108,4 +115,22 @@ public class TimelimitedRedisHandleTest {
 	//
 	// buyerCouponHandle.releaseBuyerPromotion(buyerPromotionList);
 	// }
+	
+	@Test
+	public void getTimelimitedInfo() throws Exception {
+		TimelimitedInfoDTO dto = new TimelimitedInfoDTO();
+		dto.setPurchaseFlag(2);
+		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedPurchaseService.getTimelimitedInfo(dto);
+		System.out.println(JSON.toJSONString(result));
+	}
+	
+	@Test
+	public void updateTimelimitedInfo() throws Exception {
+		TimelimitedInfoDTO dto = new TimelimitedInfoDTO();
+		dto.setPromotionId("3171516342224");
+		dto.setSkuCode("1000039612");
+		dto.setSalesVolume(1);
+		ExecuteResult<String> result = timelimitedPurchaseService.updateTimitedInfoSalesVolumeRedis(dto);
+		System.out.println(JSON.toJSONString(result));
+	}
 }

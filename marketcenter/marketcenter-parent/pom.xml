@@ -51,6 +51,7 @@
 			<properties>
 				<env>test</env>
 			</properties>
+
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -96,8 +97,18 @@
 	            </exclusions>
 			</dependency>
 			<dependency>
+				<groupId>cn.htd.basecenter</groupId>
+				<artifactId>basecenter-export</artifactId>
+				<version>${project.release.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>cn.htd.membercenter</groupId>
 				<artifactId>membercenter-export</artifactId>
+				<version>${project.release.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.htd.goodscenter</groupId>
+				<artifactId>goodscenter-export</artifactId>
 				<version>${project.release.version}</version>
 			</dependency>
 			<dependency>

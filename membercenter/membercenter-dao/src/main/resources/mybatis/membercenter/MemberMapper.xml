@@ -1664,7 +1664,7 @@
 	
 	<select id="queryMmeberInfoByLittleMemberComCode" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
 		select
-		m.member_code as memberCode,
+		    m.member_code as memberCode,
 			mc.company_name as companyName,
 			mc.id as companyId,
 			mc.company_code companyCode,
@@ -1717,5 +1717,59 @@
 			 	#{item}
 			 </foreach>
 			 )
+	</select>
+	
+	<select id="queryMemberCompanyInfo" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO"
+			parameterType="Object">
+		select
+			m.id as id,
+			m.recommender_code as recommenderCode,
+			mc.id as companyId,
+			m.cur_belong_seller_id as curBelongSellerId,
+			m.belong_seller_id as belongSellerId,
+			m.seller_type as sellerType,
+			m.is_seller as isSeller,
+			m.business_Type as businessType,
+			m.promotion_person as promotionPerson,
+			m.regist_from as registFrom,
+			m.create_time as createTime,
+			m.upgrade_center_store_time as upgradeCenterStoreTime,
+			m.contact_mobile as contactMobile,
+			m.contact_name as contactName,
+			m.contact_email as contactEmail,
+			m.member_code as memberCode,
+			mc.account_no as accountNo,
+			mc.real_name_status as realNameStatus,
+			m.is_phone_authenticated as isPhoneAuthenticated,
+			mc.company_code as companyCode,
+			mc.artificial_person_name as artificialPersonName,
+			mc.artificial_person_mobile as artificialPersonMobile,
+			mc.company_name as companyName,
+			m.account_type as accountType,
+			m.is_buyer as isBuyer,
+			m.can_mall_login as canMallLogin,
+			m.has_guarantee_license as hasGuaranteeLicense,
+			m.has_business_license as hasBusinessLicense,
+			m.industry_category as industryCategory,
+			m.belong_manager_id as belongManagerId,
+			m.cur_belong_manager_id as curBelongManagerId,
+			m.regist_time as registTime,
+			m.status as status,
+			mc.location_province as locationProvince,
+			mc.location_city as locationCity,
+			mc.location_county as locationCounty,
+			mc.location_town as locationTown,
+			mc.location_detail as locationDetail,
+			mc.location_addr as locationAddr,
+			m.is_center_store as isCenterStore,
+			mc.artificial_person_idcard as artificialPersonIdcard,
+			mc.artificial_person_pic_src as artificialPersonPicSrc,
+			mc.artificial_person_idcard_pic_src as artificialPersonIdcardPicSrc,
+			mc.artificial_person_pic_back_src as artificialPersonPicBackSrc,
+			m.is_diff_industry as isDiffIndustry
+		from member_company_info mc, member_base_info m
+		where
+		m.id = mc.member_id  AND
+	 mc.buyer_seller_type='1' AND m.member_code = #{memberCode}
 	</select>
 </mapper>

@@ -24,8 +24,16 @@
 		</dependency>
 		<!-- test end -->
 		<dependency>
+			<groupId>cn.htd.basecenter</groupId>
+			<artifactId>basecenter-export</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>cn.htd.membercenter</groupId>
 			<artifactId>membercenter-export</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>cn.htd.goodscenter</groupId>
+				<artifactId>goodscenter-export</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>cn.htd.marketcenter</groupId>

@@ -22,6 +22,7 @@
     <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
     <result column="modify_promotion_id" jdbcType="VARCHAR" property="modifyPromotionId"/>
     <result column="b2c_activity_code" jdbcType="VARCHAR" property="b2cActivityCode"/>
+    <result column="is_need_remind" jdbcType="TINYINT" property="isNeedRemind"/>
     <result column="create_id" jdbcType="BIGINT" property="createId"/>
     <result column="create_name" jdbcType="VARCHAR" property="createName"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -50,6 +51,7 @@
 		verify_remark,
 		modify_promotion_id,
 		b2c_activity_code,
+		is_need_remind,
 		create_id,
 		create_name,
 		create_time,
@@ -106,7 +108,10 @@
     select
     <include refid="Base_Column_List"/>
     from promotion_info
-    where promotion_type = #{promotionType, jdbcType=VARCHAR}
+    where 1=1 and promotion_type in
+      <foreach collection="promotionTypeList" index="index" item="promotionType" open="(" separator="," close=")">
+        #{promotionType}
+      </foreach>
     <![CDATA[ and status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
     <![CDATA[ and now() <= invalid_time]]>
     and exists (select 1
@@ -157,6 +162,9 @@
       <if test="b2cActivityCode != null and b2cActivityCode != ''">
         b2c_activity_code,
       </if>
+      <if test="isNeedRemind != null ">
+        is_need_remind,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -204,6 +212,9 @@
       <if test="b2cActivityCode != null and b2cActivityCode != ''">
         #{b2cActivityCode,jdbcType=VARCHAR},
       </if>
+      <if test="isNeedRemind != null ">
+        #{isNeedRemind,jdbcType=TINYINT},
+      </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -231,6 +242,9 @@
       invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
       <if test="isVip != null">
         is_vip = #{isVip,jdbcType=TINYINT},
+      </if>
+      <if test="isNeedRemind != null">
+        is_need_remind = #{isNeedRemind,jdbcType=TINYINT},
       </if>
       status = #{status,jdbcType=VARCHAR},
       show_status = #{showStatus,jdbcType=VARCHAR},

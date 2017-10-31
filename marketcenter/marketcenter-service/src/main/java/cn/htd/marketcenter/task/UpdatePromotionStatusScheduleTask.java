@@ -1,26 +1,31 @@
 package cn.htd.marketcenter.task;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.goodscenter.dto.stock.PromotionStockChangeDTO;
+import cn.htd.goodscenter.service.promotionstock.PromotionSkuStockChangeExportService;
 import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.dao.PromotionInfoDAO;
 import cn.htd.marketcenter.dao.PromotionStatusHistoryDAO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionStatusHistoryDTO;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 根据系统时间、促销活动开始时间、结束时间和促销活动状态修改促销活动状态
@@ -40,6 +45,9 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 
 	@Resource
 	private PromotionStatusHistoryDAO promotionStatusHistoryDAO;
+	
+	@Resource
+	private PromotionSkuStockChangeExportService promotionSkuStockChangeExportService;
 
 	@Override
 	public Comparator<PromotionInfoDTO> getComparator() {
@@ -131,6 +139,7 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 		boolean result = true;
 		Date nowDt = new Date();
 		List<PromotionInfoDTO> promotionInfoList = new ArrayList<PromotionInfoDTO>();
+		List<PromotionStockChangeDTO> stockChangeList = null;
 		String status = "";
 		String timeStatus = "";
 		String noStartStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
@@ -157,9 +166,9 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 					}
 					promotionInfo.setStatus(timeStatus);
 					promotionInfoList.add(promotionInfo);
-					if (dictionary
+					if (!dictionary
 							.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
-									DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+									DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
 							.equals(promotionInfo.getPromotionType())) {
 						timelimitedRedisHandle.updateRedisTimeilimitedStatus(promotionInfo);
 					}

@@ -20,5 +20,7 @@
 	<dubbo:reference id="timelimitedInfoService"
 		interface="cn.htd.marketcenter.service.TimelimitedInfoService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 
+	<dubbo:reference id="timelimitedPurchaseService"
+		interface="cn.htd.marketcenter.service.TimelimitedPurchaseService" retries="0" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 
 </beans>

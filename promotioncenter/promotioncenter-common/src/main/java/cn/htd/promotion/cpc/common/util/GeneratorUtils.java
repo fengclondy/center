@@ -35,6 +35,8 @@ public class GeneratorUtils {
 	private static final String REDIS_BARGAIN_LAUNCH_KEY = "B2C_MIDDLE_BARGAIN_LAUNCH_PSB_SEQ";
 	// Redis预占秒杀号编码数据
 	private static final String REDIS_SECKILL_LOCKNO_KEY = "B2C_MIDDLE_SECKILL_LOCKNO_SEQ";
+	// Redis促销团购活动编码数据
+	private static final String REDIS_GROUPBUYING_PROMOTION_ID_KEY = "B2C_MIDDLE_GROUPBUYING_PSB_SEQ";
 
 	private static Map<String, String> map = new HashMap<String, String>();
 
@@ -70,6 +72,24 @@ public class GeneratorUtils {
 	 */
 	public String generatePromotionGargainId(String platCode) {
 		String promotionId = getCacheSeq(REDIS_BARGAIN_ID_KEY, 10000L);
+		String yy = DateUtils.getCurrentDate("yyHHmmss");
+		if (StringUtils.isEmpty(platCode)) {
+			platCode = "0";
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(platCode);
+		stringBuilder.append(yy);
+		stringBuilder.append(promotionId);
+		return stringBuilder.toString();
+	}
+	
+	/**
+	 * 促销团购活动编码生成方法
+	 * @param platCode 促销活动类型 1：优惠券，2：秒杀，3：限时购，21：扭蛋机，22：砍价，23：总部秒杀，24：刮刮乐，25：阶梯团
+	 * @return
+	 */
+	public String generateGroupbuyingPromotionId(String platCode) {
+		String promotionId = getCacheSeq(REDIS_GROUPBUYING_PROMOTION_ID_KEY, 10000L);
 		String yy = DateUtils.getCurrentDate("yyHHmmss");
 		if (StringUtils.isEmpty(platCode)) {
 			platCode = "0";

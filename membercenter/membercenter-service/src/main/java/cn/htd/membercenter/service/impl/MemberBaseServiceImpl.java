@@ -460,7 +460,7 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 		result.setResult(resultList);
 		return result;
 	}
-	
+
 	@Override
 	public ExecuteResult<List<MemberBaseInfoDTO>> queryMemberInfoByMemCodeList(
 			List<String> memberCodeList) {

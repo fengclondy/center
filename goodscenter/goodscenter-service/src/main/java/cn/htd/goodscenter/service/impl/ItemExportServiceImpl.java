@@ -3500,4 +3500,130 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return executeResult;
 	}
 
+	/**
+	 * 限时购 - 新增活动 - 查询商品接口
+	 * @author li.jun
+	 * @time 2017-10-09
+	 */
+	@Override
+	public ItemQueryOutDTO querySellerCenterItem(ItemQueryInDTO itemInDTO) {
+			ItemQueryOutDTO itemOutDto= new ItemQueryOutDTO();
+			try {
+				itemOutDto = itemMybatisDAO.querySellerCenterItem(itemInDTO);
+				if(null != itemOutDto){
+					// 销售属性
+					String attrSale = itemOutDto.getAttrSale();
+					List<ItemAttrDTO> attrSales = null;
+					if (StringUtils.isNotEmpty(attrSale)) {
+						attrSales = this.getItemAttrList(attrSale);
+						itemOutDto.setAttrSales(attrSales);
+					}
+					// 非销售属性
+					String attrStr = itemOutDto.getAttributes();
+					List<ItemAttrDTO> attrs = null;
+					if (StringUtils.isNotEmpty(attrStr)) {
+						attrs = this.getItemAttrList(attrStr);
+						itemOutDto.setAttributess(attrs);
+					}
+					// 根据cid查询类目属性
+					ExecuteResult<List<ItemCatCascadeDTO>> er = itemCategoryService.queryParentCategoryList(3,Long.valueOf(itemOutDto.getCid()));
+					itemOutDto.setItemCatCascadeDTO(er.getResult());
+					List<VenusItemSkuOutDTO> venusItemSkuOutDTOs = itemSkuDAO.selectByItemIdAndSellerId(itemOutDto.getItemId(),Long.valueOf(itemOutDto.getSellerId()));
+					if (venusItemSkuOutDTOs != null && venusItemSkuOutDTOs.size() > 0) {
+						for (VenusItemSkuOutDTO skuOut : venusItemSkuOutDTOs) {
+							// 根据sku的销售属性keyId:valueId查询商品属性
+							ExecuteResult<List<ItemAttrDTO>> itemAttr = itemCategoryService.queryCatAttrByKeyVals(skuOut.getAttributes());
+							// 根据skuID查询对应ｓｋｕ下面的显示库存
+							skuOut.setDisplayQuantity(itemSkuPublishInfoMapper.queryBySkuId(skuOut.getSkuId()).get(0).getDisplayQuantity());
+							skuOut.setItemAttr(itemAttr.getResult());
+							DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService.queryLadderPriceBySellerIdAndSkuId(itemInDTO.getSellerId(),skuOut.getSkuId());
+							if (ladderList.getRows() != null&& ladderList.getRows().size() > 0) {
+								 skuOut.setItemSkuLadderPrices(ladderList.getRows());
+							}
+						}
+					}
+					itemOutDto.setVenusItemSkuOutDTOs(venusItemSkuOutDTOs);
+			  }   
+			} catch (Exception e) {
+				e.printStackTrace();
+				LOGGER.error(e.getMessage());
+			}
+			return itemOutDto;
+	}
+
+	@Override
+	public List<ItemQueryOutDTO> querySellerCenterItemList(ItemQueryInDTO itemInDTO) {
+		List<ItemQueryOutDTO> itemOutDto= new ArrayList<ItemQueryOutDTO>();
+		itemOutDto = itemMybatisDAO.querySellerCenterItemList(itemInDTO);
+		return itemOutDto;
+	}
+
+	@Override
+	public ItemPicture queryItemPicsFirst(Long itemId) {
+		ItemPicture itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+		return itemPicture;
+	}
+
+	/**
+	 * 限时购 - 根据itemCode 查询sku属性相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	@Override
+	public ExecuteResult<List<VenusItemSkuOutDTO>> getItemSkuList(String itemCode) {
+		ExecuteResult<List<VenusItemSkuOutDTO>> result = new ExecuteResult<List<VenusItemSkuOutDTO>>();
+		try{
+			Item item = itemMybatisDAO.queryItemByItemCode(itemCode);
+			if(null !=item){
+				List<VenusItemSkuOutDTO> venusItemSkuOutDTOs = itemSkuDAO.selectItemSkuByItemId(item.getItemId());
+				if (null != venusItemSkuOutDTOs && venusItemSkuOutDTOs.size() > 0) {
+					for (VenusItemSkuOutDTO skuOut : venusItemSkuOutDTOs) {
+						// 根据sku的销售属性keyId:valueId查询商品属性
+						ExecuteResult<List<ItemAttrDTO>> itemAttr = itemCategoryService.queryCatAttrByKeyVals(skuOut.getAttributes());
+						skuOut.setItemAttr(itemAttr.getResult());
+					}
+				}
+				result.setResult(venusItemSkuOutDTOs);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+
+
+	/**
+	 * 限时购 - 根据skuCode 查询库存和阶梯价等相关信息相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	@Override
+	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode) {
+		ExecuteResult<VenusItemSkuOutDTO> result = new ExecuteResult<VenusItemSkuOutDTO>();
+		VenusItemSkuOutDTO skuOut = new VenusItemSkuOutDTO();
+		try{
+			ItemSku itemSku = itemSkuDAO.selectItemSkuBySkuCode(skuCode);
+			if(null != itemSku){
+				skuOut.setSkuCode(skuCode);
+				//根据skuID查询对应sku下面的显示库存
+				List<ItemSkuPublishInfo> itemSkuPublishInfo = itemSkuPublishInfoMapper.queryBySkuId(itemSku.getSkuId());
+				if(null != itemSkuPublishInfo && itemSkuPublishInfo.size()>0){
+					skuOut.setDisplayQuantity(itemSkuPublishInfo.get(0).getDisplayQuantity());
+				}
+				//根据skuID 和sellerId查询对应的阶梯价
+				DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService.queryLadderPriceBySellerIdAndSkuId(itemSku.getSellerId(),itemSku.getSkuId());
+				if (ladderList.getRows() != null&& ladderList.getRows().size() > 0) {
+					skuOut.setItemSkuLadderPrices(ladderList.getRows());
+				}
+				result.setResult(skuOut);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+
+	
 }

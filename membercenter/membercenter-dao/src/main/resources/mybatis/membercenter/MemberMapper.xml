@@ -1693,9 +1693,9 @@
 	<select id="queryMemberInfoByMemCodeList" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
 		select
 		m.member_code as memberCode,
-		   m.contact_name as contactName,
-			mc.artificial_person_name as contactName,
-			mc.artificial_person_mobile as contactMobile,
+		mc.artificial_person_name as contactName,
+		mc.artificial_person_mobile as contactMobile,
+			mc.company_name as companyName,
 			mc.id as companyId,
 			mc.company_code companyCode,
 			m.cur_belong_seller_id as curBelongSellerId,

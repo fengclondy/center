@@ -61,9 +61,6 @@ public class RedisConst {
     public static final String REDIS_BUYER_TIMELIMITED_NEED_SAVE_USELOG =
             "B2B_MIDDLE_BUYER_TIMELIMITED_NEED_SAVE_USELOG";
 
-	//刮刮乐订单相关信息
-	public static final String REDIS_LOTTERY_B2C_MIDDLE_LOTTERY_ORDER_INFO = "B2C_MIDDLE_LOTTERY_ORDER_INFO";
-            
     // Redis 限时购 活动数据
     public static final String REDIS_TIMELIMITED_PURCHASE_INDEX = "B2B_MIDDLE_TIMELIMITED_PURCHASE_INDEX";
 
@@ -73,4 +70,9 @@ public class RedisConst {
     // Redis处理中B2C触发返券活动Hash
     public static final String REDIS_DEAL_B2C_COUPON_HASH = "B2B_MIDDLE_DEAL_B2C_COUPON_HASH";
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
+
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    // Redis会员弹框提醒信息Hash
+    public static final String REDIS_POPUP_NOTICE_INFO_HASH = "B2B_MIDDLE_POPUP_NOTICE_INFO_HASH";
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 }

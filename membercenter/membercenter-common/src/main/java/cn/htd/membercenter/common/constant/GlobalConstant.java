@@ -154,4 +154,10 @@ public class GlobalConstant {
 	public static final int MAX_LOGIN_FAILED_COUNT = 5;
 
 	public static final String VMSPERM = "0201,0202,0203,0204,0301,0302,0303,0304,0401,0402,0403,0404,0405,0501,0601,0901,0902,0903,1001,1002,1003,1004,1005,9901,9902,9903,9904";
+
+	/**
+	 * redis的归属关系key
+	 */
+	public static final String  BELONG_RELATION_INFO = "BELONG_RELATION_INFO";
+
 }

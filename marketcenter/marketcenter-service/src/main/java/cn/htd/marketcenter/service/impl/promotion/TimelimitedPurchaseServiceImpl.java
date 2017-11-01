@@ -605,7 +605,7 @@ public class TimelimitedPurchaseServiceImpl implements
 			if (!status.equals(promotionInfoDTO.getShowStatus())) {
 				throw new MarketCenterBusinessException(
 						MarketCenterCodeConst.PROMOTION_STATUS_NOT_CORRECT,
-						"限时购活动:" + promotionId + " 只有在未启用状态时才能修改");
+						"限时购活动:" + promotionId + " 只有在下架状态时才能修改");
 			}
 			if (!(new Date()).before(promotionInfoDTO.getEffectiveTime())) {
 				throw new MarketCenterBusinessException(

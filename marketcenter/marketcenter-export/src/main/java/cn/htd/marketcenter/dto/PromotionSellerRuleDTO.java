@@ -30,7 +30,7 @@ public class PromotionSellerRuleDTO implements Serializable {
 	 */
 	private String ruleTargetType;
 	/**
-	 * 卖家规则对象种类为1时使用 0：全部通用 1（平台公司），2（商品+），3（外部供应商）
+	 * 卖家规则对象种类为1时使用 0：全部通用，1（归属平台可用） ；10（平台公司），20（商品+），30（外部供应商）
 	 */
 	private String targetSellerType;
 	/**

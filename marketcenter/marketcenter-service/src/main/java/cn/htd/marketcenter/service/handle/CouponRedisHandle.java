@@ -19,6 +19,8 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
+import cn.htd.marketcenter.common.enums.NoticeTypeEnum;
+import cn.htd.marketcenter.common.enums.YesNoEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
 import cn.htd.marketcenter.common.utils.GeneratorUtils;
@@ -34,7 +36,9 @@ import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
+
 import com.alibaba.fastjson.JSON;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +95,11 @@ public class CouponRedisHandle {
         if (dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
             DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(couponProvideType)) {
             couponRedisKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + couponInfo.getPromotionId();
-            baseService.deleteBuyerUselessInfo(couponInfo);
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            if (NoticeTypeEnum.NO.getValue() == couponInfo.getIsNeedRemind()) {
+                baseService.deleteBuyerUselessInfo(couponInfo);
+            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             couponJsonStr = JSON.toJSONString(couponInfo);
             marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
         }
@@ -376,6 +384,24 @@ public class CouponRedisHandle {
             }
         }
         return countResult;
+    }
+    
+    /**
+     * 查询会员未领取的优惠券列表
+     * @param buyerCode
+     * @return
+     */
+    public List<BuyerCouponInfoDTO> getBuyerNotReceivedCouponList(String buyerCode){
+    	List<BuyerCouponInfoDTO> resultList = new ArrayList<BuyerCouponInfoDTO>();
+    	//根据buyerCode获取对应的促销活动id的集合
+    	Set<String> promotionIdFields = marketRedisDB.getHashFields(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_" + buyerCode);
+    	if(null == promotionIdFields || promotionIdFields.isEmpty()){
+    		throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY, "会员没有未领取的优惠券");
+    	}
+    	for(String field : promotionIdFields){
+    		
+    	}
+    	return resultList;
     }
 
     /**

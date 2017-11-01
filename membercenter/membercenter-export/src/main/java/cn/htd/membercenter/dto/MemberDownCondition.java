@@ -1,6 +1,7 @@
 package cn.htd.membercenter.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class MemberDownCondition implements Serializable {
@@ -10,8 +11,16 @@ public class MemberDownCondition implements Serializable {
 	 */
 	private static final long serialVersionUID = 7255465891478854894L;
 	private Integer taskQueueNum;
-
+	private Date lastDate;
 	private List<String> taskIdList;
+
+	public Date getLastDate() {
+		return lastDate;
+	}
+
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
+	}
 
 	/**
 	 * @return the taskQueueNum

@@ -1,9 +1,12 @@
 package cn.htd.membercenter.service;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
 
 /**
  * 归属关系
@@ -51,4 +54,14 @@ public interface BelongRelationshipService {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> selectIsBelongRelation(Long buyerId,Long sellerId);
+	
+	/**
+	 * 根据会员编码查询会员归属关系信息
+	 * 
+	 * @param memberCodeList
+	 * @return
+	 */
+
+	public ExecuteResult<List<SellerBelongRelationDTO>> queryBelongRelationListByMemberCodeList(
+			List<String> memberCodeList);
 }

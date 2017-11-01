@@ -3242,4 +3242,18 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 			return rs;
 		}
 
+		@Override
+		public ExecuteResult<MemberBaseInfoDTO> queryMemberCompanyInfo(String memberCode) {
+			ExecuteResult<MemberBaseInfoDTO> result = new ExecuteResult<MemberBaseInfoDTO>();
+			try {
+				MemberBaseInfoDTO dto = memberBaseOperationDAO.queryMemberCompanyInfo(memberCode);
+				result.setResult(dto);
+				result.setResultMessage("success");
+			} catch (Exception e) {
+				result.addErrorMessage("查询失败");
+				result.setResultMessage("fail");
+			}
+			return result;
+		}
+
 }

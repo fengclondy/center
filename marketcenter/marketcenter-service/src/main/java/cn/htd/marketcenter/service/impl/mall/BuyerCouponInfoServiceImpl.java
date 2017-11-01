@@ -27,7 +27,9 @@ import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.BuyerCouponInfoService;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.handle.CouponRedisHandle;
+
 import com.github.pagehelper.StringUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -248,6 +250,32 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());
+		}
+		return result;
+	}
+	
+	/**
+	 * 查询会员未领取的优惠券列表
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	public ExecuteResult<List<BuyerCouponInfoDTO>> getBuyerNotReceivedCouponList(
+			String messageId, String buyerCode) {
+		ExecuteResult<List<BuyerCouponInfoDTO>> result = new ExecuteResult<List<BuyerCouponInfoDTO>>();
+		List<BuyerCouponInfoDTO> couponCountList = null;
+		try {
+			if (StringUtils.isEmpty(buyerCode)) {
+				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "会员编码不能为空");
+			}
+			couponCountList = couponRedisHandle.getBuyerNotReceivedCouponList(buyerCode);
+			result.setResult(couponCountList);
+		} catch (MarketCenterBusinessException bcbe) {
+			result.setCode(bcbe.getCode());
+			result.addErrorMessage(bcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
 	}

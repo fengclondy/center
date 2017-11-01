@@ -3559,9 +3559,16 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ItemPicture queryItemPicsFirst(Long itemId) {
-		ItemPicture itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
-		return itemPicture;
+	public VenusItemSkuOutDTO queryItemPicsFirst(Long itemId) {
+		VenusItemSkuOutDTO itemSKU = new VenusItemSkuOutDTO();
+		List<ItemSkuPicture> itemSkuPicture = itemSkuDAO.queryItemSKUPicsFirst(itemId);
+		if(null != itemSkuPicture && itemSkuPicture.size() > 0){
+			itemSKU.setItemSkuPictureList(itemSkuPicture);
+		}else{
+			List<ItemPicture> itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+			itemSKU.setItemPictureList(itemPicture);
+		}
+		return itemSKU;
 	}
 
 	/**

@@ -366,10 +366,10 @@
 	  where vam.delete_flag = 0
 	  	and vam.vote_id = #{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like concat(#{sellerName},'%')
+	 	 and vam.vendor_name like concat('%',#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like concat(#{memberName},'%')
+	  	 and vam.member_name like concat('%',#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}
@@ -398,10 +398,10 @@
 	  from  vote_activity_member vam
 	  where delete_flag!=1 and vote_id=#{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
+	 	 and vam.vendor_name like CONCAT('%',#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like CONCAT(#{memberName},'%')
+	  	 and vam.member_name like CONCAT('%',#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}
@@ -520,10 +520,10 @@
 	  where vam.delete_flag = 0
 	  	and vam.vote_id = #{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
+	 	 and vam.vendor_name like CONCAT('%',#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like CONCAT(#{memberName},'%')
+	  	 and vam.member_name like CONCAT('%',#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}

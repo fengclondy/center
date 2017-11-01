@@ -35,6 +35,7 @@ public class VenusItemSkuOutDTO implements Serializable {
     List<ItemAttrDTO> itemAttr;
     private Integer reserveQuantity;
     
+    private String itemPictureUrl;// item主图 列表页展示
     private List<ItemPicture> itemPictureList;
 	private List<ItemSkuPicture> itemSkuPictureList; // 商品详情页sku图片 【外部供应商商品sku图片】
 
@@ -191,6 +192,13 @@ public class VenusItemSkuOutDTO implements Serializable {
 	}
 
 
+	public String getItemPictureUrl() {
+		return itemPictureUrl;
+	}
+
+	public void setItemPictureUrl(String itemPictureUrl) {
+		this.itemPictureUrl = itemPictureUrl;
+	}
 
 	public List<ItemPicture> getItemPictureList() {
 		return itemPictureList;

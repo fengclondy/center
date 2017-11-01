@@ -402,6 +402,26 @@ public class MarketCenterRedisDB {
 			releaseResource(jedis);
 		}
 	}
+    /**
+     * 从redis对列里查询指定数量的数组
+     * @param key
+     * @param start
+     * @param end
+     */
+	public List<String> lrange(String key, long start, long end) {
+		Jedis jedis = null;
+		List<String> value = null;
+		try {
+			jedis = getResource();
+			value = jedis.lrange(key, start, end);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-lrange",
+					getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+		}
+		return value;
+	}
 
 	/**
 	 * 在redis消息队列对头插入数据

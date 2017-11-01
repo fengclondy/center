@@ -172,5 +172,5 @@ public interface ItemSkuDAO extends BaseDAO<ItemSku> {
 	 */
 	List<VenusItemSkuOutDTO> selectItemSkuByItemId(@Param("itemId") Long itemId);
 
-
+    List<ItemSkuPicture> queryItemSKUPicsFirst(@Param("itemId") Long itemId);
 }

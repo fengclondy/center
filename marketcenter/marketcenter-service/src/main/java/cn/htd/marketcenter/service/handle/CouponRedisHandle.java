@@ -212,6 +212,7 @@ public class CouponRedisHandle {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_RECEIVE_LIMITED,
                         "优惠券活动编码:" + promotionId + " 会员编号:" + buyerCode + " 已达优惠券领取上限");
             }
+            setSellerCode2BelongSeller(buyerCouponDTO,promotionId);
             saveBuyerCoupon2Redis(buyerCouponDTO);
         } catch (MarketCenterBusinessException bcbe) {
             marketRedisDB.incrHashBy(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, buyerCouponReceiveKey, -1);
@@ -220,6 +221,50 @@ public class CouponRedisHandle {
         return sendedCount;
     }
 
+    /**
+     * 如果供应商使用规则是归属平台可用,给promotionProviderSellerCode赋值
+     * @param buyerCouponDTO
+     * @param promotionId
+     */
+    public void setSellerCode2BelongSeller(BuyerCouponInfoDTO buyerCouponDTO,String promotionId){
+    	String couponInfoKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_"
+				+ promotionId;
+		String promotionInfoValue = marketRedisDB.get(couponInfoKey);
+		if (org.apache.commons.lang.StringUtils.isEmpty(promotionInfoValue)) {
+			return;
+		}
+		PromotionInfoDTO promotionInfo = JSON.parseObject(
+				promotionInfoValue, PromotionInfoDTO.class);
+				PromotionSellerRuleDTO sellerRuleDTO = promotionInfo
+				.getSellerRuleDTO();
+		boolean needGetBelongSellerFlg = baseService
+				.isBelongSellerRule(sellerRuleDTO);
+		if (needGetBelongSellerFlg) {
+			List<String> buyerCodeList = new ArrayList<String>();
+			String buyerCode = buyerCouponDTO.getBuyerCode();
+			buyerCodeList.add(buyerCode);
+			ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = belongRelationshipService
+					.queryBelongRelationListByMemberCodeList(buyerCodeList);
+			if (!belongRelationResult.isSuccess()) {
+				throw new MarketCenterBusinessException(
+						MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+						StringUtils
+								.join(belongRelationResult
+										.getErrorMessages(), ","));
+			}
+			List<SellerBelongRelationDTO> belongRelationList = belongRelationResult.getResult();
+			if (belongRelationList != null && !belongRelationList.isEmpty()) {
+				for (SellerBelongRelationDTO belongRelationDTO : belongRelationList) {
+					buyerCouponDTO.setPromotionProviderSellerCode(belongRelationDTO.getCurBelongSellerCode());
+					continue;
+				}
+			}
+			//TODO 删除去已经领取的优惠券-redis,如果一个促销下有多张券，直接删除是否有问题
+			marketRedisDB.delHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
+					+ buyerCode, promotionId);
+		}
+    }
+    
     /**
      * 将优惠券发送到会员帐户中并添加进Redis中
      *
@@ -473,6 +518,7 @@ public class CouponRedisHandle {
 				if (belongRelationList != null && !belongRelationList.isEmpty()) {
 					for (SellerBelongRelationDTO belongRelationDTO : belongRelationList) {
 						couponDTO.setCouponUseRang("限"+belongRelationDTO.getCurBelongSellerName()+"使用");
+						continue;
 					}
 				}
 			}

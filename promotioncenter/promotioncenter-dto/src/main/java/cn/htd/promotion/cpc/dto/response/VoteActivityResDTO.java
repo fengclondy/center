@@ -64,7 +64,6 @@ public class VoteActivityResDTO implements Serializable{
     private Date modifyTime;
     //报名规则
     @NotNull(message="报名规则未维护")
-    @Length(max=1000,message="报名规则不能超过1000个字符")
     private String voteRule;
 
     public Long getVoteId() {

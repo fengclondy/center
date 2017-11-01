@@ -398,8 +398,30 @@ public class CouponRedisHandle {
     	if(null == promotionIdFields || promotionIdFields.isEmpty()){
     		throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY, "会员没有未领取的优惠券");
     	}
-    	for(String field : promotionIdFields){
-    		
+    	for(String promotionId : promotionIdFields){
+    		String couponInfoKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + promotionId;
+    		String promotionInfoValue = marketRedisDB.get(couponInfoKey);
+    		if (org.apache.commons.lang.StringUtils.isEmpty(promotionInfoValue)) {
+                continue;
+            }
+    		PromotionInfoDTO promotionInfo = JSON.parseObject(promotionInfoValue, PromotionInfoDTO.class);
+    		String showStatus = promotionInfo.getShowStatus();
+    		 if (!showStatus.equals(dictionary
+    	                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+    	                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)) && !showStatus.equals(dictionary
+    	                .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+    	                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))) {
+    			 //审核未通过,或者未启用
+    			 continue;
+    		 }
+    		 Date effectiveTime = promotionInfo.getEffectiveTime();
+    		 Date invalidTime = promotionInfo.getInvalidTime();
+    		 Date currentTime = new Date();
+    		 if(currentTime.before(effectiveTime) || currentTime.after(invalidTime)){
+    			 //当前时间不在促销活动开始和结束之间
+    			 continue;
+    		 }
+    		 //TODO 从哪个key里查到会员待领取的优惠券信息，页面上的张数，是否从REDIS_POPUP_NOTICE_INFO_HASH这取
     	}
     	return resultList;
     }

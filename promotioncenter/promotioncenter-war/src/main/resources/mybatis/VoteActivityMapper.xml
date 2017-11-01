@@ -355,7 +355,7 @@
     from vote_activity
     where delete_flag = 0
     <if test="voteActName !=null and voteActName != '' ">
-    	AND vote_name like CONCAT(#{voteActName},'%')
+    	AND vote_name like CONCAT('%',#{voteActName},'%')
     </if>
     <if test="actStatus !=null and actStatus != '' ">
     	<!-- 1 进行中、2 未开始、3 已结束 -->
@@ -379,7 +379,7 @@
     from vote_activity
     where delete_flag = 0
      <if test="voteActName !=null and voteActName != '' ">
-    	AND vote_name like CONCAT(#{voteActName},'%')
+    	AND vote_name like CONCAT('%',#{voteActName},'%')
     </if>
     <if test="actStatus !=null and actStatus != '' ">
     	<!-- 1 进行中、2 未开始、3 已结束 -->

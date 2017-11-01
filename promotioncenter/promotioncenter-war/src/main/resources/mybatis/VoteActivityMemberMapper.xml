@@ -335,51 +335,81 @@
  
  <select id="queryPagedSignupMemberInfoList" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 
  	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
-	  select 
-		@rownum:=@rownum+1 as  sortNum,
-		temp.member_code as memberCode,
-		temp.vendor_name as sellerName,
-	    temp.member_name as memberName,
-		temp.contact_name as contactName,
-		temp.contact_phone as phone,
-		temp.sign_status as signupStatus,
-		temp.audit_status as auditStatus,
-		temp.sign_up_time as signupTime,
-		temp.vote_member_id as voteMemberId,
-		temp.voteCount,
-		temp.forwardCount
-	 from ( select 
-	 @rownum:=0,
-	  vam.member_code,
-	  vam.vendor_name,
-	  vam.member_name,
-	  vam.contact_name,
-	  vam.contact_phone,
-	  vam.sign_status,
-	  vam.audit_status,
-	  vam.sign_up_time,
-	  vam.vote_member_id,
-	  (select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
-	  (select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
-	  vam.member_vote_last_time
-	  from  vote_activity_member vam
-	  where vam.delete_flag = 0
-	  	and vam.vote_id = #{voteId}
-	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like concat(#{sellerName},'%')
-	  </if> 
-	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like concat(#{memberName},'%')
-	  </if>
-	  <if test="auditStatus !=null">
-	  	and vam.audit_status=#{auditStatus}
-	  </if>
-	  <if test="signUpStatus !=null">
-	  	and vam.sign_status=#{signUpStatus}
-	  </if>
-	  ) temp 
-	  order by voteCount desc,member_vote_last_time asc
-	  limit #{start},#{pageSize}
+	  SELECT
+			temp3.*
+		FROM
+			(
+				SELECT
+					@rownum :=@rownum + 1 AS sortNum,
+					temp2.member_code AS memberCode,
+					temp2.vendor_name AS sellerName,
+					temp2.member_name AS memberName,
+					temp2.contact_name AS contactName,
+					temp2.contact_phone AS phone,
+					temp2.sign_status AS signupStatus,
+					temp2.audit_status AS auditStatus,
+					temp2.sign_up_time AS signupTime,
+					temp2.vote_member_id AS voteMemberId,
+					temp2.voteCount,
+					temp2.forwardCount
+				FROM
+					(
+						SELECT
+							@rownum := 0,
+							temp.*
+						FROM
+							(
+								SELECT
+									vam.member_code,
+									vam.vendor_name,
+									vam.member_name,
+									vam.contact_name,
+									vam.contact_phone,
+									vam.sign_status,
+									vam.audit_status,
+									vam.sign_up_time,
+									vam.vote_member_id,
+									(
+										SELECT
+											count(1)
+										FROM
+											vote_activity_fans_vote
+										WHERE
+											vote_member_id = vam.vote_member_id
+									) AS voteCount,
+									(
+										SELECT
+											count(1)
+										FROM
+											vote_activity_fans_forward
+										WHERE
+											vote_member_id = vam.vote_member_id
+									) AS forwardCount,
+									vam.member_vote_last_time
+								FROM
+									vote_activity_member vam
+								WHERE
+									vam.delete_flag = 0
+								AND vam.vote_id = #{voteId}
+									<if test="sellerName !=null and sellerName != '' ">
+									 and vam.vendor_name like concat('%',#{sellerName},'%')
+									</if> 
+									<if test="memberName != null and memberName != '' ">
+										 and vam.member_name like concat('%',#{memberName},'%')
+									</if>
+									<if test="auditStatus !=null">
+										and vam.audit_status=#{auditStatus}
+									</if>
+									<if test="signUpStatus !=null">
+										and vam.sign_status=#{signUpStatus}
+									</if>
+									) temp
+						ORDER BY
+							temp.voteCount DESC,
+							temp.member_vote_last_time ASC
+					) temp2
+			) temp3
+		LIMIT #{start},#{pageSize}
  </select>
  
  <select id="querySignUpMemberInfoList" parameterType="Long" resultType="java.lang.String">
@@ -398,10 +428,10 @@
 	  from  vote_activity_member vam
 	  where delete_flag!=1 and vote_id=#{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
+	 	 and vam.vendor_name like CONCAT('%',#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like CONCAT(#{memberName},'%')
+	  	 and vam.member_name like CONCAT('%',#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}
@@ -520,10 +550,10 @@
 	  where vam.delete_flag = 0
 	  	and vam.vote_id = #{voteId}
 	  <if test="sellerName !=null and sellerName != '' ">
-	 	 and vam.vendor_name like CONCAT(#{sellerName},'%')
+	 	 and vam.vendor_name like CONCAT('%',#{sellerName},'%')
 	  </if> 
 	  <if test="memberName != null and memberName != '' ">
-	  	 and vam.member_name like CONCAT(#{memberName},'%')
+	  	 and vam.member_name like CONCAT('%',#{memberName},'%')
 	  </if>
 	  <if test="auditStatus !=null">
 	  	and vam.audit_status=#{auditStatus}

@@ -3620,6 +3620,14 @@ public class ItemExportServiceImpl implements ItemExportService {
 				if (ladderList.getRows() != null&& ladderList.getRows().size() > 0) {
 					skuOut.setItemSkuLadderPrices(ladderList.getRows());
 				}
+				//查询商品图片信息，如果skupicture存在,则取skupicture 否则取itempicture
+				List<ItemSkuPicture> skuPictureList = itemSkuDAO.selectSkuPictureBySkuId(itemSku.getSkuId());
+				if(null !=skuPictureList && skuPictureList.size()>0){
+					skuOut.setItemSkuPictureList(skuPictureList);
+				}else{
+				    List<ItemPicture> pictureList = itemPictureDAO.queryItemPicsById(itemSku.getItemId());
+				    skuOut.setItemPictureList(pictureList);
+				}
 				result.setResult(skuOut);
 			}
 		} catch (Exception e) {

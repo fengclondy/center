@@ -340,7 +340,7 @@ public interface ItemExportService {
 	 * @author li.jun
 	 * @time 2017-10-09
 	 */
-	public ItemPicture queryItemPicsFirst(Long itemId);
+	public VenusItemSkuOutDTO queryItemPicsFirst(Long itemId);
 	
 	/**
 	 * 限时购 - 根据itemCode 查询sku属性相关信息

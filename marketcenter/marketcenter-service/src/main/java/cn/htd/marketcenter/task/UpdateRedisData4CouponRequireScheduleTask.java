@@ -138,10 +138,6 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                 flushRedisCouponCount(jedis);
                 runedStr += ",4";
             }
-            if (flushFlag.indexOf(",5") < 0) {
-                flushDBCouponStatus(jedis);
-                runedStr += ",5";
-            }
             if (flushFlag.indexOf(",6") < 0) {
                 flushReidsPromotionTimelimited(jedis);
                 runedStr += ",6";
@@ -157,11 +153,6 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
                     JSON.toJSONString(runedStr));
         }
         return result;
-    }
-
-    private void flushDBCouponStatus(Jedis jedis) {
-        b2cCouponInfoSyncHistoryDAO.updateB2cCouponInfo4Test();
-        jedis.sadd(RedisConst.REDIS_SYNC_B2C_COUPON_SET, "28");
     }
 
     /**

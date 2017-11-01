@@ -147,7 +147,7 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 				count=itemMybatisDAO.queryItemCountBySpuIdAndSellerId(spu.getSpuId(), sellerId);
 			}
 			if(count==null||count<=0L){
-				logger.error("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand 数据库中没有该商品关系");
+				logger.error("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand  数据库中没有该商品关系");
 				//新建一个item 
 				Item item = doAddNewItem(itemAndSellerRelationship, spu,sellerId);
 				

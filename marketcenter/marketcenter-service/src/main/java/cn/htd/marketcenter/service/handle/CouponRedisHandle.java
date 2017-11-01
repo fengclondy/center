@@ -241,7 +241,8 @@ public class CouponRedisHandle {
 				.isBelongSellerRule(sellerRuleDTO);
 		if (needGetBelongSellerFlg) {
 			List<String> buyerCodeList = new ArrayList<String>();
-			buyerCodeList.add(buyerCouponDTO.getBuyerCode());
+			String buyerCode = buyerCouponDTO.getBuyerCode();
+			buyerCodeList.add(buyerCode);
 			ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = belongRelationshipService
 					.queryBelongRelationListByMemberCodeList(buyerCodeList);
 			if (!belongRelationResult.isSuccess()) {
@@ -258,6 +259,9 @@ public class CouponRedisHandle {
 					continue;
 				}
 			}
+			//TODO 删除去已经领取的优惠券-redis,如果一个促销下有多张券，直接删除是否有问题
+			marketRedisDB.delHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
+					+ buyerCode, promotionId);
 		}
     }
     

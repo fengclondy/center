@@ -111,7 +111,6 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			}else{
 				voteActivityDAO.insertSelective(voteActivityResDTO);
 			}
-			
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("saveVoteActivity方法异常 异常信息=", e.getMessage());
@@ -286,11 +285,13 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		ExecuteResult<ImportVoteActivityMemResDTO> result=new ExecuteResult<ImportVoteActivityMemResDTO>();
 		
 		if(CollectionUtils.isEmpty(list)){
+			result.setCode("1001");
 			result.setErrorMessages(Lists.newArrayList("参数为空"));
 			return result;
 		}
 		
 		if(list.size()>1000){
+			result.setCode("1002");
 			result.setErrorMessages(Lists.newArrayList("导入记录数过多"));
 			return result;
 		}
@@ -308,6 +309,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		}
 		ImportVoteActivityMemResDTO importVoteActivityMemResDTO=new ImportVoteActivityMemResDTO();
 		if (tempList.isEmpty() || tempList.size() == 0) {
+			result.setCode("1003");
 			result.setErrorMessages(Lists.newArrayList("导入数据均不符合规则"));
 			return result;
 		}

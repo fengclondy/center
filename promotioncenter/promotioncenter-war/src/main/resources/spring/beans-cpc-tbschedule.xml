@@ -39,5 +39,7 @@
   <bean id="updateTimelimitedStatus4invalidScheduleTask" class="cn.htd.promotion.cpc.biz.task.UpdateTimelimitedStatus4invalidScheduleTask"/>
   <!-- 活动过期后删除相关的key -->
   <bean id="promotionExpireDeleteKeysTask" class="cn.htd.promotion.cpc.biz.task.PromotionExpireDeleteKeysTask"/>
+  <!-- 清除团购结束redis信息 -->
+  <bean id="cleanGroupBuyingTask" class="cn.htd.promotion.cpc.biz.task.CleanGroupBuyingTask"/>
   
 </beans>

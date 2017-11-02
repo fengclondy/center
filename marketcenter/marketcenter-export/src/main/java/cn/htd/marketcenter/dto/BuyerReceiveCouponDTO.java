@@ -44,6 +44,10 @@ public class BuyerReceiveCouponDTO implements Serializable {
 	 */
 	@NotBlank(message = "领券人名称不能为空")
 	private String operatorName;
+	
+	//add by 张丁 开始
+	private Integer receiveLimit;// 每人最大领取次数（前台页面传入的领取的次数）
+	//add by 张丁 结束
 
 	public String getBuyerCode() {
 		return buyerCode;
@@ -99,6 +103,14 @@ public class BuyerReceiveCouponDTO implements Serializable {
 
 	public void setOperatorName(String operatorName) {
 		this.operatorName = operatorName;
+	}
+
+	public Integer getReceiveLimit() {
+		return receiveLimit;
+	}
+
+	public void setReceiveLimit(Integer receiveLimit) {
+		this.receiveLimit = receiveLimit;
 	}
 
 }

@@ -233,6 +233,53 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		}
 		return result;
 	}
+	
+	@Override
+	public ExecuteResult<String> saveBuyerReceiveManyCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		BuyerCouponInfoDTO collectCoupon = null;
+		BuyerCheckInfo buyerCheckInfo = new BuyerCheckInfo();
+		boolean buyerChkResult = false;
+		try {
+			// 输入DTO的验证
+			ValidateResult validateResult = ValidationUtils.validateEntity(receiveDTO);
+			// 有错误信息时返回错误信息
+			Integer receiveLimit = receiveDTO.getReceiveLimit();
+			if (validateResult.isHasErrors() || null == receiveLimit) {
+				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
+						validateResult.getErrorMsg());
+			}
+			for(int i=0;i<receiveLimit.intValue();i++){				
+				collectCoupon = couponRedisHandle.receiveMemberCollectCoupon2Redis(receiveDTO);
+				if (collectCoupon != null) {
+					if(i==0){					
+						buyerCheckInfo.setBuyerCode(receiveDTO.getBuyerCode());
+						buyerCheckInfo.setBuyerGrade(receiveDTO.getBuyerGrade());
+						buyerChkResult = baseService.checkPromotionBuyerRule(collectCoupon, buyerCheckInfo);
+						if (!buyerChkResult) {
+							throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY,
+									"会员没有领该券权限");
+						}
+					}
+					couponRedisHandle.sendBuyerCoupon2Redis(collectCoupon);
+				}
+			}
+		} catch (MarketCenterBusinessException bcbe) {
+		    if (collectCoupon != null) {
+				couponRedisHandle.restoreMemberCollectCouponBack2Redis(collectCoupon);
+			}
+		    //会员已到优惠券领取上限数量,返回成功
+		    if(MarketCenterCodeConst.COUPON_RECEIVE_LIMITED.equals(bcbe.getCode())){
+		    	return result;
+		    }
+			result.setCode(bcbe.getCode());
+			result.addErrorMessage(bcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
 
 	@Override
 	public ExecuteResult<String> deleteUsedExpiredBuyerCoupon(String messageId,

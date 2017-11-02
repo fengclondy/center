@@ -1104,10 +1104,10 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setVerifyRemark(null);
         promotionInfo.setCreateId(null);
         promotionInfo.setCreateName(null);
-        promotionInfo.setCreateTime(null);
+//        promotionInfo.setCreateTime(null);
         promotionInfo.setModifyId(null);
         promotionInfo.setModifyName(null);
-        promotionInfo.setModifyTime(null);
+//        promotionInfo.setModifyTime(null);
         promotionInfo.setBuyerRuleId(null);
         promotionInfo.setSellerRuleId(null);
         promotionInfo.setCategoryItemRuleId(null);

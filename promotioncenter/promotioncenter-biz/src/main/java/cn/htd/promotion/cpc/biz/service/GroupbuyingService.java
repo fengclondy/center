@@ -141,6 +141,14 @@ public interface GroupbuyingService {
 	DataGrid<GroupbuyingInfoCmplResDTO> getGroupbuyingInfo4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
 	/**
+	 * 根据promotionId获取的团购活动信息(供移动端使用)
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	public GroupbuyingInfoCmplResDTO getGroupbuyingInfoCmplByPromotionId4Mobile(String promotionId,String messageId) ;
+	
+	/**
 	 * 查询首页单个团购活动(供移动端使用)
 	 * @return
 	 */

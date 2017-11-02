@@ -10,6 +10,7 @@ import cn.htd.marketcenter.dto.BuyerCouponConditionDTO;
 import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
+import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 
 public interface BuyerCouponInfoService {
@@ -82,5 +83,13 @@ public interface BuyerCouponInfoService {
 	 */
 	public ExecuteResult<String> deleteUsedExpiredBuyerCoupon(String messageId,
 			UsedExpiredBuyerCouponDTO targetCouponDTO);
-
+	
+	/**
+	 * 查询会员未领取的优惠券列表
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
+			String messageId, String buyerCode);
 }

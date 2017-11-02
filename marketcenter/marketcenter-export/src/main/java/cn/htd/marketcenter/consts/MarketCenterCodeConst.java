@@ -71,8 +71,8 @@ public class MarketCenterCodeConst {
 	public static final String COUPON_AUTO_PRESENT_NO_MEMBER = "15116";
 	// 没有对应的触发返券的促销活动
 	public static final String COUPON_NO_TRIGGER_SEND = "15117";
-	// 会员优惠券数据异常
-	public static final String BUYER_COUPON_DATA_ERROR = "15118";
+	// 会员优惠券获取归属平台公司异常
+	public static final String COUPON_GET_BELONG_SELLER_ERROR = "15118";
 	// 会员优惠券使用记录状态异常
 	public static final String BUYER_COUPON_STATUS_ERROR = "15119";
 	// 会员没有参加领券活动的权限

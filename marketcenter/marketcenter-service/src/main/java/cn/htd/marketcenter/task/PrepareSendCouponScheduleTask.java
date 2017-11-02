@@ -17,12 +17,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Resource;
 
+import cn.htd.basecenter.dto.SendSmsDTO;
+import cn.htd.basecenter.service.SendSmsEmailService;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DateUtils;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
+import cn.htd.marketcenter.common.enums.NoticeTypeEnum;
 import cn.htd.marketcenter.common.enums.YesNoEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
@@ -34,7 +37,13 @@ import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.PromotionBuyerDetailDTO;
 import cn.htd.marketcenter.dto.PromotionBuyerRuleDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
+import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
+import cn.htd.marketcenter.service.PromotionBaseService;
+import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberGradeDTO;
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
+import cn.htd.membercenter.service.BelongRelationshipService;
+import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberGradeService;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
@@ -58,7 +67,19 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
     private DictionaryUtils dictionary;
 
     @Resource
+    private PromotionBaseService baseService;
+
+    @Resource
+    private SendSmsEmailService sendSmsEmailService;
+
+    @Resource
     private MemberGradeService memberGradeService;
+
+    @Resource
+    private MemberBaseInfoService memberBaseInfoService;
+
+    @Resource
+    private BelongRelationshipService belongRelationshipService;
 
     @Resource
     private PromotionDiscountInfoDAO promotionDiscountInfoDAO;
@@ -70,7 +91,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
 
     private int threadPoolSize = Runtime.getRuntime().availableProcessors();
 
-    private volatile AtomicInteger sendedCount = new AtomicInteger();
+    private volatile AtomicInteger collectedCount = new AtomicInteger();
 
     @Override
     public Comparator<PromotionDiscountInfoDTO> getComparator() {
@@ -215,7 +236,12 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         int distributedCount = 0;
         int cellCount = 0;
         Future<Integer> workResult = null;
-
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+        int isNeedRemind = dealTargetInfo.getIsNeedRemind();
+        PromotionBuyerRuleDTO buyerRuleDTO = dealTargetInfo.getBuyerRuleDTO();
+        List<PromotionBuyerDetailDTO> buyerDetailList = null;
+        int receiveLimit = dealTargetInfo.getReceiveLimit();
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         try {
             if (!(new Date()).before(dealTargetInfo.getPrepEndTime())) {
                 logger.info("\n 方法:[{}],取消发券:[{}],发券名称:[{}],发券结束时间:[{}]",
@@ -225,6 +251,16 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 return;
             }
             provideCount = dealTargetInfo.getProvideCount();
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            if (NoticeTypeEnum.NO.getValue() != isNeedRemind) {
+                buyerDetailList = getTargetBuyerDetailList(buyerRuleDTO);
+                if (buyerDetailList != null && !buyerDetailList.isEmpty()) {
+                    provideCount = buyerDetailList.size() * receiveLimit;
+                } else {
+                    provideCount = 0;
+                }
+            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             if (StringUtils.isEmpty(dealTargetInfo.getModifyPromotionId())) {
                 tmpPromotionId = promotionId;
             } else {
@@ -241,12 +277,21 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 }
             }
             needProvideAllCount = provideCount - receivedCount;
-            if (jedis.exists(couponRedisListKey)) {
-                sendedCount = new AtomicInteger(jedis.llen(couponRedisListKey).intValue());
-            } else {
-                sendedCount = new AtomicInteger();
-            }
+            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//            if (jedis.exists(couponRedisListKey)) {
+//                collectedCount = new AtomicInteger(jedis.llen(couponRedisListKey).intValue());
+//            } else {
+//                collectedCount = new AtomicInteger();
+//            }
+            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             if (needProvideAllCount > 0) {
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                if (jedis.exists(couponRedisListKey)) {
+                    collectedCount = new AtomicInteger(jedis.llen(couponRedisListKey).intValue());
+                } else {
+                    collectedCount = new AtomicInteger();
+                }
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                 for (int i = 0; i < threadPoolSize; i++) {
                     workResult = threadPoolExecutor
                             .submit(new InitMemberCollectCoupon(i, needProvideAllCount, dealTargetInfo));
@@ -300,11 +345,15 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
     private void updateAutoPresentCoupon(ThreadPoolExecutor threadPoolExecutor, Jedis jedis,
             List<Future<Integer>> workResultList, PromotionDiscountInfoDTO dealTargetInfo) throws Exception {
         PromotionBuyerRuleDTO buyerRule = null;
-        List<String> targetBuyerLevelList = new ArrayList<String>();
-        ExecuteResult<List<MemberGradeDTO>> targetMemberResult = null;
-        List<MemberGradeDTO> targetMemberList = null;
+        //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//        List<String> targetBuyerLevelList = new ArrayList<String>();
+//        ExecuteResult<List<MemberGradeDTO>> targetMemberResult = null;
+//        List<MemberGradeDTO> targetMemberList = null;
+        //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         List<PromotionBuyerDetailDTO> buyerDetailList = new ArrayList<PromotionBuyerDetailDTO>();
-        PromotionBuyerDetailDTO buyerDTO = null;
+        //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//        PromotionBuyerDetailDTO buyerDTO = null;
+        //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         int provideCount = 0;
         int taskProvideCount = 0;
         int distributedCount = 0;
@@ -355,33 +404,36 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             if (buyerRule == null) {
                 return;
             }
-            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
-                    DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE).equals(buyerRule.getRuleTargetType())) {
-                targetBuyerLevelList = buyerRule.getTargetBuyerLevelList();
-                if (targetBuyerLevelList != null && !targetBuyerLevelList.isEmpty()) {
-                    for (String level : targetBuyerLevelList) {
-                        targetMemberResult = memberGradeService.selectMemberByGrade(level);
-                        if (!targetMemberResult.isSuccess()) {
-                            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_AUTO_PRESENT_NO_MEMBER,
-                                    StringUtils.join(targetMemberResult.getErrorMessages(), ","));
-                        }
-                        targetMemberList = targetMemberResult.getResult();
-                        if (targetMemberList != null && !targetMemberList.isEmpty()) {
-                            for (MemberGradeDTO memberDTO : targetMemberList) {
-                                if (StringUtils.isEmpty(memberDTO.getMemberCode())) {
-                                    continue;
-                                }
-                                buyerDTO = new PromotionBuyerDetailDTO();
-                                buyerDTO.setBuyerCode(memberDTO.getMemberCode());
-                                buyerDTO.setBuyerName(memberDTO.getCompanyName());
-                                buyerDetailList.add(buyerDTO);
-                            }
-                        }
-                    }
-                }
-            } else {
-                buyerDetailList = buyerRule.getBuyerDetailList();
-            }
+            //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
+//                    DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE).equals(buyerRule.getRuleTargetType())) {
+//                targetBuyerLevelList = buyerRule.getTargetBuyerLevelList();
+//                if (targetBuyerLevelList != null && !targetBuyerLevelList.isEmpty()) {
+//                    for (String level : targetBuyerLevelList) {
+//                        targetMemberResult = memberGradeService.selectMemberByGrade(level);
+//                        if (!targetMemberResult.isSuccess()) {
+//                            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_AUTO_PRESENT_NO_MEMBER,
+//                                    StringUtils.join(targetMemberResult.getErrorMessages(), ","));
+//                        }
+//                        targetMemberList = targetMemberResult.getResult();
+//                        if (targetMemberList != null && !targetMemberList.isEmpty()) {
+//                            for (MemberGradeDTO memberDTO : targetMemberList) {
+//                                if (StringUtils.isEmpty(memberDTO.getMemberCode())) {
+//                                    continue;
+//                                }
+//                                buyerDTO = new PromotionBuyerDetailDTO();
+//                                buyerDTO.setBuyerCode(memberDTO.getMemberCode());
+//                                buyerDTO.setBuyerName(memberDTO.getCompanyName());
+//                                buyerDetailList.add(buyerDTO);
+//                            }
+//                        }
+//                    }
+//                }
+//            } else {
+//                buyerDetailList = buyerRule.getBuyerDetailList();
+//            }
+            buyerDetailList = getTargetBuyerDetailList(buyerRule);
+            //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             if (buyerDetailList == null || buyerDetailList.isEmpty()) {
                 return;
             }
@@ -466,7 +518,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 couponInfoDTOStr = JSON.toJSONString(couponDTO);
                 jedis = marketRedisDB.getResource();
                 pipeline = jedis.pipelined();
-                while (sendedCount.getAndIncrement() < needSendCount) {
+                while (collectedCount.getAndIncrement() < needSendCount) {
                     localCount++;
                     pipeline.rpush(couponRedisListKey, couponInfoDTOStr);
                 }
@@ -477,7 +529,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 }
             } catch (Exception e) {
                 logger.error("\n 线程名称:[{}],方法:[{}],总发送数量:[{}],错误内容:[{}]", threadName, "initMemberCollectCoupon-end",
-                        sendedCount, ExceptionUtils.getStackTraceAsString(e));
+                        collectedCount, ExceptionUtils.getStackTraceAsString(e));
                 throw e;
             } finally {
                 marketRedisDB.releaseResource(jedis);
@@ -670,7 +722,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             Jedis jedis = null;
             Pipeline pipeline = null;
             List<Object> result = Lists.newArrayList();
-            Transaction multi = null;
+            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//            Transaction multi = null;
+            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             List<PromotionBuyerDetailDTO> targetBuyerDetailList = new ArrayList<PromotionBuyerDetailDTO>();
             List<PromotionBuyerDetailDTO> sendBuyerDetailList = null;
             List<PromotionBuyerDetailDTO> needsendNextBuyerDetailList = null;
@@ -681,6 +735,18 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             String buyerCouponCode = "";
             String couponStr = "";
             List<Object> mutilRst = null;
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            int isNeedRemind = targetDiscountInfo.getIsNeedRemind();
+            boolean needGetBelongSellerFlg = false;
+            PromotionSellerRuleDTO sellerRuleDTO = targetDiscountInfo.getSellerRuleDTO();
+            PromotionBuyerDetailDTO tmpDetailDTO = null;
+            List<String> buyerCodeList = new ArrayList<String>();
+            Map<String, PromotionBuyerDetailDTO> buyerInfoMap = new HashMap<String, PromotionBuyerDetailDTO>();
+            ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = null;
+            List<SellerBelongRelationDTO> belongRelationList = null;
+            String tmpMemberCode = "";
+            Map<String, Integer> remindTargetBuyerMap = new HashMap<String, Integer>();
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
             logger.info("\n 线程名称:[{}],方法:[{}],开始时间:[{}]", threadName, "autoPresentBuyerCoupon-work",
@@ -690,8 +756,35 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             }
             try {
                 for (int i = startIdx; i < endIdx; i++) {
-                    targetBuyerDetailList.add(buyerDetailList.get(i));
+                    //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//                    targetBuyerDetailList.add(buyerDetailList.get(i));
+                    tmpDetailDTO = buyerDetailList.get(i);
+                    targetBuyerDetailList.add(tmpDetailDTO);
+                    buyerCodeList.add(tmpDetailDTO.getBuyerCode());
+                    buyerInfoMap.put(tmpDetailDTO.getBuyerCode(), tmpDetailDTO);
+                    //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                 }
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                needGetBelongSellerFlg = baseService.isBelongSellerRule(sellerRuleDTO);
+                if (needGetBelongSellerFlg) {
+                    belongRelationResult = belongRelationshipService.queryBelongRelationListByMemberCodeList(buyerCodeList);
+                    if (!belongRelationResult.isSuccess()) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                                StringUtils.join(belongRelationResult.getErrorMessages(), ","));
+                    }
+                    belongRelationList = belongRelationResult.getResult();
+                    if (belongRelationList != null && !belongRelationList.isEmpty()) {
+                        for (SellerBelongRelationDTO belongRelationDTO : belongRelationList) {
+                            tmpMemberCode = belongRelationDTO.getMemberCode();
+                            tmpDetailDTO = buyerInfoMap.get(tmpMemberCode);
+                            if (tmpDetailDTO != null) {
+                                tmpDetailDTO.setBelognSellerCode(belongRelationDTO.getCurBelongSellerCode());
+                                tmpDetailDTO.setBelongSellerName(belongRelationDTO.getCurBelongSellerName());
+                            }
+                        }
+                    }
+                }
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                 couponDTO = new BuyerCouponInfoDTO();
                 couponDTO.setPromotionAccumulaty(targetDiscountInfo);
                 couponDTO.setCouponName(targetDiscountInfo.getPromotionName());
@@ -757,25 +850,58 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         couponDTO.setBuyerName(tmpDTO.getBuyerName());
                         buyerCouponCode = generateCouponCode(jedis, couponDTO.getCouponType());
                         couponDTO.setBuyerCouponCode(buyerCouponCode);
+                        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                        if (needGetBelongSellerFlg) {
+                            if (StringUtils.isEmpty(tmpDTO.getBelognSellerCode())) {
+                                logger.warn("\n 线程名称:[{}],方法:[{}],警告:[{}],会员编号:[{}],会员名称:[{}]", threadName,
+                                        "autoPresentBuyerCoupon-work", "没有会员归属平台公司信息", buyerCode,
+                                        tmpDTO.getBuyerName());
+                                continue;
+                            }
+                            couponDTO.setPromotionProviderSellerCode(tmpDTO.getBelognSellerCode());
+                        }
+                        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                         couponDTO.setGetCouponTime(new Date());
                         couponStr = JSON.toJSONString(couponDTO);
-                        multi = jedis.multi();
-                        multi.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, couponStr);
-                        multi.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
+                        //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//                        multi = jedis.multi();
+//                        multi.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, couponStr);
+//                        multi.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
+//                                couponAmountStr);
+//                        multi.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
+//                        multi.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
+//                        multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
+//                                buyerCode + "&" + buyerCouponCode);
+//                        mutilRst = multi.exec();
+//                        if (mutilRst == null || mutilRst.isEmpty()) {
+//                            logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",
+//                                    JSON.toJSONString(mutilRst));
+//                        }
+                        pipeline.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, couponStr);
+                        pipeline.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
                                 couponAmountStr);
-                        multi.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
-                        multi.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
-                        multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
+                        pipeline.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
+                        pipeline.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
+                        pipeline.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
                                 buyerCode + "&" + buyerCouponCode);
-                        mutilRst = multi.exec();
-                        if (mutilRst == null || mutilRst.isEmpty()) {
-                            logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",
-                                    JSON.toJSONString(mutilRst));
-                        }
+                        //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+                        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                        remindTargetBuyerMap.put(buyerCode, receiveLimit);
+                        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                         sendedCount++;
                     }
+                    pipeline.sync();
                     targetBuyerDetailList = needsendNextBuyerDetailList;
                 }
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                if (remindTargetBuyerMap != null && !remindTargetBuyerMap.isEmpty()) {
+                    if (isNeedRemind == NoticeTypeEnum.SMS.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS
+                            .getValue()) {
+                        new Thread(new SendMemberSMSNoticeThread(targetDiscountInfo.getPromotionName(),
+                                remindTargetBuyerMap)).start();
+                    }
+                }
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             } catch (Exception e) {
                 logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",
                         ExceptionUtils.getStackTraceAsString(e));
@@ -815,4 +941,119 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         stringBuilder.append(zeroString);
         return stringBuilder.toString();
     }
+
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 根据会员规则取得发送优惠券的对象会员列表
+     *
+     * @param buyerRule
+     * @return
+     */
+    private List<PromotionBuyerDetailDTO> getTargetBuyerDetailList(PromotionBuyerRuleDTO buyerRule) {
+        List<String> targetBuyerLevelList = new ArrayList<String>();
+        ExecuteResult<List<MemberGradeDTO>> targetMemberResult = null;
+        List<MemberGradeDTO> targetMemberList = null;
+        List<PromotionBuyerDetailDTO> buyerDetailList = new ArrayList<PromotionBuyerDetailDTO>();
+        PromotionBuyerDetailDTO buyerDTO = null;
+
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_BUYER_RULE,
+                DictionaryConst.OPT_PROMOTION_BUYER_RULE_GRADE).equals(buyerRule.getRuleTargetType())) {
+            targetBuyerLevelList = buyerRule.getTargetBuyerLevelList();
+            if (targetBuyerLevelList != null && !targetBuyerLevelList.isEmpty()) {
+                for (String level : targetBuyerLevelList) {
+                    targetMemberResult = memberGradeService.selectMemberByGrade(level);
+                    if (!targetMemberResult.isSuccess()) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_AUTO_PRESENT_NO_MEMBER,
+                                StringUtils.join(targetMemberResult.getErrorMessages(), ","));
+                    }
+                    targetMemberList = targetMemberResult.getResult();
+                    if (targetMemberList != null && !targetMemberList.isEmpty()) {
+                        for (MemberGradeDTO memberDTO : targetMemberList) {
+                            if (StringUtils.isEmpty(memberDTO.getMemberCode())) {
+                                continue;
+                            }
+                            buyerDTO = new PromotionBuyerDetailDTO();
+                            buyerDTO.setBuyerCode(memberDTO.getMemberCode());
+                            buyerDTO.setBuyerName(memberDTO.getCompanyName());
+                            buyerDetailList.add(buyerDTO);
+                        }
+                    }
+                }
+            }
+        } else {
+            buyerDetailList = buyerRule.getBuyerDetailList();
+        }
+        return buyerDetailList;
+    }
+
+    /**
+     * 对于发券会员提醒通知Task
+     */
+    private final class SendMemberSMSNoticeThread implements Runnable {
+
+        private String threadName;
+
+        private Map<String, Integer> remindTargetBuyerMap;
+
+        public SendMemberSMSNoticeThread(String promotionName, Map<String, Integer> remindTargetBuyerMap) {
+            this.threadName =
+                    String.valueOf(Thread.currentThread().getId()) + "-" + promotionName + "-" + "短信通知发券会员";
+            this.remindTargetBuyerMap = remindTargetBuyerMap;
+        }
+
+        @Override
+        public void run() {
+            String buyerCode = "";
+            ExecuteResult<MemberBaseInfoDTO> memberBaseInfoResult = null;
+            MemberBaseInfoDTO memberBaseInfoDTO = null;
+            String phoneNum = "";
+            SendSmsDTO sendSmsDTO = null;
+            for (Map.Entry<String, Integer> entry : remindTargetBuyerMap.entrySet()) {
+                buyerCode = entry.getKey();
+                memberBaseInfoResult = memberBaseInfoService.queryMemberCompanyInfo(buyerCode);
+                if (!memberBaseInfoResult.isSuccess()) {
+                    logger.warn("\n 线程名称:[{}],方法:[{}],警告:[{}],会员编号:[{}]", threadName, "SendMemberSMSNoticeThread-run",
+                            "没有会员法人手机号", buyerCode);
+                    continue;
+                }
+                memberBaseInfoDTO = memberBaseInfoResult.getResult();
+                if (memberBaseInfoDTO == null) {
+                    logger.warn("\n 线程名称:[{}],方法:[{}],警告:[{}],会员编号:[{}]", threadName, "SendMemberSMSNoticeThread-run",
+                            "没有会员法人手机号", buyerCode);
+                    continue;
+                }
+                phoneNum = memberBaseInfoDTO.getArtificialPersonMobile();
+                if (StringUtils.isEmpty(phoneNum)) {
+                    logger.warn("\n 线程名称:[{}],方法:[{}],警告:[{}],会员编号:[{}]", threadName, "SendMemberSMSNoticeThread-run",
+                            "没有会员法人手机号", buyerCode);
+                    continue;
+                }
+                sendSmsDTO = new SendSmsDTO();
+                sendSmsDTO.setPhone(phoneNum);
+                sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE, DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE));
+                sendSmsEmailService.sendSms(sendSmsDTO);
+            }
+        }
+    }
+
+    /**
+     * 设置弹框提醒的Redis信息
+     *
+     * @param pipeline
+     * @param targetDiscountInfo
+     * @param remindTargetBuyerMap
+     */
+    private void initMemberPopupNotice2Redis(Pipeline pipeline, PromotionDiscountInfoDTO targetDiscountInfo,
+            Map<String, Integer> remindTargetBuyerMap) {
+        String promotionId = targetDiscountInfo.getPromotionId();
+        Integer receiveLimit = 0;
+        String buyerCode = "";
+        for (Map.Entry<String, Integer> entry : remindTargetBuyerMap.entrySet()) {
+            buyerCode = entry.getKey();
+            receiveLimit = entry.getValue();
+            pipeline.hset(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_" + buyerCode, promotionId, receiveLimit.toString());
+        }
+        pipeline.sync();
+    }
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 }

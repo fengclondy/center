@@ -2,20 +2,25 @@ package cn.htd.membercenter.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.encrypt.KeygenGenerator;
 import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
@@ -26,6 +31,7 @@ import cn.htd.membercenter.domain.BelongRelationship;
 import cn.htd.membercenter.domain.MemberStatusInfo;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
 import cn.htd.membercenter.service.BelongRelationshipService;
 
 @Service("belongRelationshipService")
@@ -40,7 +46,9 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 
 	@Resource
 	private MemberBaseOperationDAO memberBaseOperationDAO;
-
+	@Resource
+	private RedisDB redisDB;
+	
 	@Override
 	public ExecuteResult<DataGrid<BelongRelationshipDTO>> selectBelongRelationList(Pager page, String companyName,
 			String contactMobile, String belongCompanyName) {
@@ -197,5 +205,43 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 		memberBaseOperationDAO.deleteMemberStatus(statusInfo);
 		memberBaseOperationDAO.insertMemberStatus(statusInfo);
 		return true;
+	}
+
+	@Override
+	public ExecuteResult<List<SellerBelongRelationDTO>> queryBelongRelationListByMemberCodeList(
+			List<String> memberCodeList) {
+		ExecuteResult<List<SellerBelongRelationDTO>> rs = new ExecuteResult<List<SellerBelongRelationDTO>>();
+		try {
+			SellerBelongRelationDTO belongRelationDto = null;
+			List<SellerBelongRelationDTO> brlist = new ArrayList<SellerBelongRelationDTO>();
+			if (memberCodeList == null || memberCodeList.size() < 1) {
+				rs.addErrorMessage("请输入要查询的会员编码！！！");
+			} else {
+				for (String memberCode : memberCodeList) {
+					if (!StringUtils.isEmpty(memberCode)) {
+						if (redisDB.existsHash(GlobalConstant.BELONG_RELATION_INFO, memberCode)) {
+							String obj = redisDB.getHash(GlobalConstant.BELONG_RELATION_INFO, memberCode);
+							try {
+								brlist.add(JSON.parseObject(obj, SellerBelongRelationDTO.class));
+							} catch (Exception e) {
+							}
+						} else {
+							belongRelationDto = belongRelationshipDao.queryBelongRelationInfoByMemberCode(memberCode);
+							if (belongRelationDto != null) {
+								brlist.add(belongRelationDto);
+								redisDB.setHash(GlobalConstant.BELONG_RELATION_INFO, memberCode, JSON.toJSONString(belongRelationDto));
+							}
+						}
+					}
+				}
+				rs.setResult(brlist);
+				rs.setResultMessage("success");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("BelongRelationshipServiceImpl----->queryBelongRelationInfoByMemberCode=" + e);
+			rs.addErrorMessage("error");
+		}
+		return rs;
 	}
 }

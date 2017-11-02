@@ -6,12 +6,14 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
-import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.common.utils.ValidateResult;
@@ -23,13 +25,13 @@ import cn.htd.marketcenter.dto.BuyerCouponConditionDTO;
 import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
+import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.BuyerCouponInfoService;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.handle.CouponRedisHandle;
+
 import com.github.pagehelper.StringUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service("buyerCouponInfoService")
 public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
@@ -248,6 +250,32 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());
+		}
+		return result;
+	}
+	
+	/**
+	 * 查询会员未领取的优惠券列表
+	 * @param messageId
+	 * @param buyerCode
+	 * @return
+	 */
+	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
+			String messageId, String buyerCode) {
+		ExecuteResult<List<PromotionDiscountInfoDTO>> result = new ExecuteResult<List<PromotionDiscountInfoDTO>>();
+		List<PromotionDiscountInfoDTO> couponCountList = null;
+		try {
+			if (StringUtils.isEmpty(buyerCode)) {
+				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "会员编码不能为空");
+			}
+			couponCountList = couponRedisHandle.getBuyerNotReceivedCouponList(buyerCode);
+			result.setResult(couponCountList);
+		} catch (MarketCenterBusinessException bcbe) {
+			result.setCode(bcbe.getCode());
+			result.addErrorMessage(bcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
+			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
 	}

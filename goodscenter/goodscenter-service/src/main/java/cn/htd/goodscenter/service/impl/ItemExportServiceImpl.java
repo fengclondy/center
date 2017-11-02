@@ -3559,9 +3559,16 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ItemPicture queryItemPicsFirst(Long itemId) {
-		ItemPicture itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
-		return itemPicture;
+	public VenusItemSkuOutDTO queryItemPicsFirst(Long itemId) {
+		VenusItemSkuOutDTO itemSKU = new VenusItemSkuOutDTO();
+		List<ItemSkuPicture> itemSkuPicture = itemSkuDAO.queryItemSKUPicsFirst(itemId);
+		if(null != itemSkuPicture && itemSkuPicture.size() > 0){
+			itemSKU.setItemSkuPictureList(itemSkuPicture);
+		}else{
+			List<ItemPicture> itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+			itemSKU.setItemPictureList(itemPicture);
+		}
+		return itemSKU;
 	}
 
 	/**
@@ -3606,15 +3613,27 @@ public class ItemExportServiceImpl implements ItemExportService {
 			ItemSku itemSku = itemSkuDAO.selectItemSkuBySkuCode(skuCode);
 			if(null != itemSku){
 				skuOut.setSkuCode(skuCode);
-				//根据skuID查询对应sku下面的显示库存
+				//根据skuID查询对应sku下面的库存
 				List<ItemSkuPublishInfo> itemSkuPublishInfo = itemSkuPublishInfoMapper.queryBySkuId(itemSku.getSkuId());
 				if(null != itemSkuPublishInfo && itemSkuPublishInfo.size()>0){
-					skuOut.setDisplayQuantity(itemSkuPublishInfo.get(0).getDisplayQuantity());
+					ItemSkuPublishInfo  publishInfo = itemSkuPublishInfo.get(0);
+					//skuOut.setDisplayQuantity(publishInfo.getDisplayQuantity());
+					skuOut.setMimQuantity(publishInfo.getMimQuantity());
+					skuOut.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+					skuOut.setReserveQuantity(publishInfo.getReserveQuantity());
 				}
 				//根据skuID 和sellerId查询对应的阶梯价
 				DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService.queryLadderPriceBySellerIdAndSkuId(itemSku.getSellerId(),itemSku.getSkuId());
 				if (ladderList.getRows() != null&& ladderList.getRows().size() > 0) {
 					skuOut.setItemSkuLadderPrices(ladderList.getRows());
+				}
+				//查询商品图片信息，如果skupicture存在,则取skupicture 否则取itempicture
+				List<ItemSkuPicture> skuPictureList = itemSkuDAO.selectSkuPictureBySkuId(itemSku.getSkuId());
+				if(null !=skuPictureList && skuPictureList.size()>0){
+					skuOut.setItemSkuPictureList(skuPictureList);
+				}else{
+				    List<ItemPicture> pictureList = itemPictureDAO.queryItemPicsById(itemSku.getItemId());
+				    skuOut.setItemPictureList(pictureList);
 				}
 				result.setResult(skuOut);
 			}

@@ -1,6 +1,8 @@
 package cn.htd.goodscenter.dto.venus.outdto;
 
 
+import cn.htd.goodscenter.domain.ItemPicture;
+import cn.htd.goodscenter.domain.ItemSkuPicture;
 import cn.htd.goodscenter.dto.ItemAttrDTO;
 import cn.htd.pricecenter.domain.ItemSkuLadderPrice;
 
@@ -31,9 +33,11 @@ public class VenusItemSkuOutDTO implements Serializable {
     private Integer maxPurchaseQuantity;
     List<ItemSkuLadderPrice> itemSkuLadderPrices;
     List<ItemAttrDTO> itemAttr;
-
-
-
+    private Integer reserveQuantity;
+    
+    private String itemPictureUrl;// item主图 列表页展示
+    private List<ItemPicture> itemPictureList;
+	private List<ItemSkuPicture> itemSkuPictureList; // 商品详情页sku图片 【外部供应商商品sku图片】
 
     public Long getItemId() {
         return itemId;
@@ -178,4 +182,38 @@ public class VenusItemSkuOutDTO implements Serializable {
     public void setItemAttr(List<ItemAttrDTO> itemAttr) {
         this.itemAttr = itemAttr;
     }
+
+	public Integer getReserveQuantity() {
+		return reserveQuantity;
+	}
+
+	public void setReserveQuantity(Integer reserveQuantity) {
+		this.reserveQuantity = reserveQuantity;
+	}
+
+
+	public String getItemPictureUrl() {
+		return itemPictureUrl;
+	}
+
+	public void setItemPictureUrl(String itemPictureUrl) {
+		this.itemPictureUrl = itemPictureUrl;
+	}
+
+	public List<ItemPicture> getItemPictureList() {
+		return itemPictureList;
+	}
+
+	public void setItemPictureList(List<ItemPicture> itemPictureList) {
+		this.itemPictureList = itemPictureList;
+	}
+
+	public List<ItemSkuPicture> getItemSkuPictureList() {
+		return itemSkuPictureList;
+	}
+
+	public void setItemSkuPictureList(List<ItemSkuPicture> itemSkuPictureList) {
+		this.itemSkuPictureList = itemSkuPictureList;
+	}
+    
 }

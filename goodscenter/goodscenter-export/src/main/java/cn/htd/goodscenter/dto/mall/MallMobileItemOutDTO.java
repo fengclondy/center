@@ -9,6 +9,15 @@ public class MallMobileItemOutDTO implements Serializable {
 	private int maxPurchaseQuantity; // 最大限购数
 	private BigDecimal ladderMinPrice; //阶梯价最小金额
 	private BigDecimal ladderMaxPrice; //阶梯价最大金额
+	private int isPurchaseLimit;
+	
+	public int getIsPurchaseLimit() {
+		return isPurchaseLimit;
+	}
+
+	public void setIsPurchaseLimit(int isPurchaseLimit) {
+		this.isPurchaseLimit = isPurchaseLimit;
+	}
 
 	public int getMimQuantity() {
 		return mimQuantity;

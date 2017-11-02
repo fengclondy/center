@@ -376,7 +376,7 @@ public class GroupbuyingTestUnit {
         String messageId = "342453251349";
         
         String startTimeString = "2017-10-01 16:20:02";
-        String endTimeString = "2017-10-21 16:20:02";
+        String endTimeString = "2017-10-31 16:20:02";
         		
         try {
         	DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -415,6 +415,27 @@ public class GroupbuyingTestUnit {
         	groupbuyingRecordReqDTO.setBuyerCode("2002");// 参团人账号
         	ExecuteResult<GroupbuyingRecordResDTO> executeResult = groupbuyingAPI.getSingleGroupbuyingRecord(groupbuyingRecordReqDTO, messageId);
         	System.out.println("===>executeResult:" + executeResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    
+    /**
+     * 根据活动编号时时查询团购真实人数和价格-测试用例
+     */
+    @Test
+    public void getGBActorCountAndPriceByPromotionIdTest(){
+        String messageId = keyGeneratorUtils.generateMessageId();
+        String promotionId = "25171601240015";
+        try {
+        	ExecuteResult<Map<String, String>> executeResult = groupbuyingAPI.getGBActorCountAndPriceByPromotionId(promotionId, messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult.getResult());
+        	}else{
+        		System.out.println("===>根据活动编号时时查询团购真实人数和价格失败！！！");
+        	}
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -662,9 +683,9 @@ public class GroupbuyingTestUnit {
 			GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
 			groupbuyingInfoReqDTO.setBuyerCode("534382");
 //			groupbuyingInfoReqDTO.setActiveState("1");// 活动状态，PC端状态 [1.未开始,2.开团进行中,3.下单未开始,4.下单进行中,5.已结束]
-			groupbuyingInfoReqDTO.setActiveState("1");// 活动状态，仅供移动端使用 [1.全部,2.进行中,3.已结束]
+			groupbuyingInfoReqDTO.setActiveState("2");// 活动状态，仅供移动端使用 [1.全部,2.进行中,3.已结束]
 			ExecuteResult<DataGrid<GroupbuyingInfoCmplResDTO>> executeResult = groupbuyingAPI.getMyGroupbuyingForPage2HttpINTFC(pager,groupbuyingInfoReqDTO,messageId);
-	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+	      	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){ //25171622110022 2
         		System.out.println("===>executeResult:" + executeResult);
         	}else{
         		System.out.println("===>分页查询我的团购列表失败！！！");

@@ -76,6 +76,7 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * 查询促销活动已经结束，且状态为已开启的活动信息
      *
      * @param condition
+     * @param sellerCode
      * @return
      */
     public List<PromotionInfoDTO> queryTimelimitedListBySku(@Param("entity") TimelimitedCheckInfo condition,
@@ -84,7 +85,8 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
     /**
      * 更新促销活动已经结束，且状态为已开启的活动信息
      *
-     * @param condition
+     * @param promotionIdList
+     * @param timelimitedInfoDTO
      * @return
      */
     public void updateTimelimitedListBySku(@Param("promotionIdList") List<String> promotionIdList,

@@ -10,6 +10,7 @@ import cn.htd.marketcenter.dto.BuyerCouponConditionDTO;
 import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
+import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 
 public interface BuyerCouponInfoService {
@@ -72,6 +73,14 @@ public interface BuyerCouponInfoService {
 	 * @return
 	 */
 	public ExecuteResult<String> saveBuyerReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
+	
+	/**
+	 * 保存会员领取的优惠券-支持一个活动下同时领取多张券
+	 * @param messageId
+	 * @param receiveDTO
+	 * @return
+	 */
+	public ExecuteResult<String> saveBuyerReceiveManyCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO); 
 
 	/**
 	 * 删除已用或已过期的会员优惠券
@@ -89,6 +98,6 @@ public interface BuyerCouponInfoService {
 	 * @param buyerCode
 	 * @return
 	 */
-	public ExecuteResult<List<BuyerCouponInfoDTO>> getBuyerNotReceivedCouponList(
+	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
 			String messageId, String buyerCode);
 }

@@ -801,11 +801,10 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		Map<String, String> retMap = new HashMap<String, String>();
 		
 		String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
-		// 获取团购活动其他信息
-		Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHashOperations(groupbuyingResultKey);
-
 		// 阶梯价格
-		String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
+		String groupbuyingPriceSettingStr = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING);
+		if(null == groupbuyingPriceSettingStr) return null;
+		
 		List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = JSONObject.parseArray(groupbuyingPriceSettingStr, GroupbuyingPriceSettingResDTO.class);
 		// 团购价格设置降序排序(sortNum)
 		Collections.sort(groupbuyingPriceSettingResDTOList,new Comparator<GroupbuyingPriceSettingResDTO>() {

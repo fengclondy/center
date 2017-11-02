@@ -226,17 +226,17 @@ public class CouponRedisHandle {
      * @param buyerCouponDTO
      * @param promotionId
      */
-    public void setSellerCode2BelongSeller(BuyerCouponInfoDTO buyerCouponDTO,String promotionId){
-    	String couponInfoKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_"
+	public void setSellerCode2BelongSeller(BuyerCouponInfoDTO buyerCouponDTO,
+			String promotionId) {
+		String couponInfoKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_"
 				+ promotionId;
 		String promotionInfoValue = marketRedisDB.get(couponInfoKey);
 		if (org.apache.commons.lang.StringUtils.isEmpty(promotionInfoValue)) {
 			return;
 		}
-		PromotionInfoDTO promotionInfo = JSON.parseObject(
-				promotionInfoValue, PromotionInfoDTO.class);
-				PromotionSellerRuleDTO sellerRuleDTO = promotionInfo
-				.getSellerRuleDTO();
+		PromotionInfoDTO promotionInfo = JSON.parseObject(promotionInfoValue,
+				PromotionInfoDTO.class);
+		PromotionSellerRuleDTO sellerRuleDTO = promotionInfo.getSellerRuleDTO();
 		boolean needGetBelongSellerFlg = baseService
 				.isBelongSellerRule(sellerRuleDTO);
 		if (needGetBelongSellerFlg) {
@@ -248,22 +248,24 @@ public class CouponRedisHandle {
 			if (!belongRelationResult.isSuccess()) {
 				throw new MarketCenterBusinessException(
 						MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
-						StringUtils
-								.join(belongRelationResult
-										.getErrorMessages(), ","));
+						StringUtils.join(
+								belongRelationResult.getErrorMessages(), ","));
 			}
-			List<SellerBelongRelationDTO> belongRelationList = belongRelationResult.getResult();
+			List<SellerBelongRelationDTO> belongRelationList = belongRelationResult
+					.getResult();
 			if (belongRelationList != null && !belongRelationList.isEmpty()) {
 				for (SellerBelongRelationDTO belongRelationDTO : belongRelationList) {
-					buyerCouponDTO.setPromotionProviderSellerCode(belongRelationDTO.getCurBelongSellerCode());
+					buyerCouponDTO
+							.setPromotionProviderSellerCode(belongRelationDTO
+									.getCurBelongSellerCode());
 					continue;
 				}
 			}
-			//TODO 删除去已经领取的优惠券-redis,如果一个促销下有多张券，直接删除是否有问题
+			// TODO 删除去已经领取的优惠券-redis,如果一个促销下有多张券，直接删除是否有问题
 			marketRedisDB.delHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
 					+ buyerCode, promotionId);
 		}
-    }
+	}
     
     /**
      * 将优惠券发送到会员帐户中并添加进Redis中

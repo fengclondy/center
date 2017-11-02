@@ -828,13 +828,17 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			Integer realActorCount = groupbuyingRecordDAO.getGBRecordCountsByPromotionId(promotionId);
 			// 真实拼团价
 			BigDecimal realGroupbuyingPrice = null;
-			for (int i = 0; i < groupbuyingPriceSettingResDTOList.size(); i++) {
-				GroupbuyingPriceSettingResDTO groupbuyingPriceSettingResDTO = groupbuyingPriceSettingResDTOList.get(i);
-				Integer actorCount = groupbuyingPriceSettingResDTO.getActorCount();// 参团人数
-				if (realActorCount >= actorCount) {
-					realGroupbuyingPrice = groupbuyingPriceSettingResDTO.getGroupbuyingPrice();// 拼团价
-					break;
+			if(realActorCount > 0){
+				for (int i = 0; i < groupbuyingPriceSettingResDTOList.size(); i++) {
+					GroupbuyingPriceSettingResDTO groupbuyingPriceSettingResDTO = groupbuyingPriceSettingResDTOList.get(i);
+					Integer actorCount = groupbuyingPriceSettingResDTO.getActorCount();// 参团人数
+					if (realActorCount >= actorCount) {
+						realGroupbuyingPrice = groupbuyingPriceSettingResDTO.getGroupbuyingPrice();// 拼团价
+						break;
+					}
 				}
+			}else{ //没有人参团，取最低价
+				realGroupbuyingPrice = groupbuyingPriceSettingResDTOList.get(0).getGroupbuyingPrice();
 			}
 			
 			retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY, String.valueOf(realActorCount));

@@ -428,7 +428,7 @@ public class GroupbuyingTestUnit {
     @Test
     public void getGBActorCountAndPriceByPromotionIdTest(){
         String messageId = keyGeneratorUtils.generateMessageId();
-        String promotionId = "25171601240015";
+        String promotionId = "25171629210037";
         try {
         	ExecuteResult<Map<String, String>> executeResult = groupbuyingAPI.getGBActorCountAndPriceByPromotionId(promotionId, messageId);
         	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){

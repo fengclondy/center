@@ -335,28 +335,27 @@
  
  <select id="queryPagedSignupMemberInfoList" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 
  	parameterType="cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO">
-	  SELECT
-			temp3.*
+		SELECT
+			*
 		FROM
 			(
 				SELECT
-					@rownum :=@rownum + 1 AS sortNum,
-					temp2.member_code AS memberCode,
-					temp2.vendor_name AS sellerName,
-					temp2.member_name AS memberName,
-					temp2.contact_name AS contactName,
-					temp2.contact_phone AS phone,
-					temp2.sign_status AS signupStatus,
-					temp2.audit_status AS auditStatus,
-					temp2.sign_up_time AS signupTime,
-					temp2.vote_member_id AS voteMemberId,
-					temp2.voteCount,
-					temp2.forwardCount
+					CASE WHEN temp3.rowNum is null then 99999999 ELSE temp3.rowNum END AS sortNum,
+					temp2.*
 				FROM
 					(
 						SELECT
-							@rownum := 0,
-							temp.*
+							temp.member_code AS memberCode,
+							temp.vendor_name AS sellerName,
+							temp.member_name AS memberName,
+							temp.contact_name AS contactName,
+							temp.contact_phone AS phone,
+							temp.sign_status AS signupStatus,
+							temp.audit_status AS auditStatus,
+							temp.sign_up_time AS signupTime,
+							temp.vote_member_id AS voteMemberId,
+							temp.voteCount,
+							temp.forwardCount
 						FROM
 							(
 								SELECT
@@ -391,28 +390,59 @@
 								WHERE
 									vam.delete_flag = 0
 								AND vam.vote_id = #{voteId}
-									) temp
-						ORDER BY
-							temp.voteCount DESC,
-							temp.member_vote_last_time ASC,
-							temp.sign_status DESC,
-							temp.member_name ASC
+								ORDER BY vam.sign_status DESC
+							) temp
+							WHERE
+							1 = 1
+							<if test="sellerName !=null and sellerName != '' ">
+							 	and temp.vendor_name like concat('%',#{sellerName},'%')
+							</if> 
+							<if test="memberName != null and memberName != '' ">
+								and temp.member_name like concat('%',#{memberName},'%')
+							</if>
+							<if test="auditStatus !=null">
+								and temp.audit_status=#{auditStatus}
+							</if>
+							<if test="signUpStatus !=null">
+								and temp.sign_status=#{signUpStatus}
+							</if>
 					) temp2
-			) temp3
-			where 1=1
-			<if test="sellerName !=null and sellerName != '' ">
-			 	and temp3.sellerName like concat('%',#{sellerName},'%')
-			</if> 
-			<if test="memberName != null and memberName != '' ">
-				and temp3.memberName like concat('%',#{memberName},'%')
-			</if>
-			<if test="auditStatus !=null">
-				and temp3.auditStatus=#{auditStatus}
-			</if>
-			<if test="signUpStatus !=null">
-				and temp3.signupStatus=#{signUpStatus}
-			</if>
-		LIMIT #{start},#{pageSize}
+				LEFT JOIN (
+					SELECT
+						c.*, cast(
+							(@rownum :=@rownum + 1) AS signed
+						) AS rowNum
+					FROM
+						(
+							SELECT
+								a.vote_id,
+								a.member_code,
+								a.member_name,
+								(
+									SELECT
+										count(1)
+									FROM
+										vote_activity_fans_vote b
+									WHERE
+										a.vote_member_id = b.vote_member_id
+								) AS voteNum,
+								a.member_vote_last_time
+							FROM
+								vote_activity_member a
+							WHERE
+								vote_id = #{voteId}
+							AND sign_status = 1
+							AND audit_status = 1
+							AND delete_flag = 0
+							ORDER BY
+								voteNum DESC,
+								member_vote_last_time ASC,
+								member_name DESC
+						) c,
+						(SELECT @rownum := 0) r
+				) temp3 ON temp2.memberCode = temp3.member_code
+			) temp4
+			ORDER BY temp4.sortNum ASC
  </select>
  
  <select id="querySignUpMemberInfoList" parameterType="Long" resultType="java.lang.String">
@@ -445,64 +475,88 @@
  </select>
   
   <select id="querySignupMemberDetailInfo" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO">
-	 	select temp3.* from 
-			(select @rownum:=@rownum+1 as  sortNum,
-				temp2.vendor_name as sellerName,
-			  	temp2.member_name as memberName,
-			  	temp2.contact_name  as contactName,
-			  	temp2.contact_phone as contactPhone,
-			  	temp2.sign_status as signStatus,
-				temp2.audit_status  as auditStatus,
-				temp2.sign_up_time as signupTime,
-			    temp2.vote_start_time as voteStartTime,
-			    temp2.vote_sign_up_start_time  as voteSignupStartTime,
-			    temp2.vote_sign_up_end_time as voteSignupEndTime,
-			    temp2.vote_end_time as voteEndTime,
-			    temp2.member_activity_dec as memberActivityDec,
-			    temp2.vote_name as voteName,
-			    temp2.vote_topic_pic as voteTopicPic,
-			    temp2.vote_sample_pic  as voteSamplePic,
-			    temp2.voteCount,
-			    temp2.forwardCount,
-			    temp2.vote_member_id as voteMemberId,
-			    temp2.member_vote_last_time as memberVoteLastTime
-		 	from (
-			 	select 
-			 		@rownum := 0,
-			 		temp.* 
-			 	from (
-			 		select 
-				     vam.vote_member_id ,
-					 vam.vendor_name,
-					 vam.member_name,
-					 vam.contact_name,
-					 vam.contact_phone,
-					 vam.sign_status,
-					 vam.audit_status,
-					 vam.sign_up_time,
-				     va.vote_start_time,
-				     va.vote_sign_up_start_time,
-				     va.vote_sign_up_end_time,
-				     va.vote_end_time,
-				     vam.member_activity_dec,
-				     va.vote_name,
-				     va.vote_topic_pic,
-				     va.vote_sample_pic,
-					(select count(1) from vote_activity_fans_vote where vote_member_id=vam.vote_member_id) as voteCount,
-					(select count(1) from vote_activity_fans_forward where vote_member_id=vam.vote_member_id) as forwardCount,
-					vam.member_vote_last_time
-					from  vote_activity_member vam
-				    join vote_activity va on vam.vote_id=va.vote_id
-					where 1=1
-				    and vam.delete_flag=0
-				    and vam.vote_id = #{0}
-				) temp 
-				ORDER BY 	temp.voteCount DESC,
-							temp.member_vote_last_time ASC,
-							temp.sign_status DESC,
-							temp.member_name ASC 
-			) temp2 
-		)temp3 where temp3.voteMemberId = #{1}
+	SELECT
+		temp2.rowNum AS sortNum,
+		temp.*
+	FROM
+		(
+			SELECT
+				vam.member_code AS memberCode,
+				vam.vote_member_id AS voteMemberId,
+				vam.vendor_name AS sellerName,
+				vam.member_name AS memberName,
+				vam.contact_name AS contactName,
+				vam.contact_phone AS contactPhone,
+				vam.sign_status AS signStatus,
+				vam.audit_status AS auditStatus,
+				vam.sign_up_time AS signupTime,
+				va.vote_start_time AS voteStartTime,
+				va.vote_sign_up_start_time AS voteSignupStartTime,
+				va.vote_sign_up_end_time AS voteSignupEndTime,
+				va.vote_end_time AS voteEndTime,
+				vam.member_activity_dec AS memberActivityDec,
+				va.vote_name AS voteName,
+				va.vote_topic_pic AS voteTopicPic,
+				va.vote_sample_pic AS voteSamplePic,
+				(
+					SELECT
+						count(1)
+					FROM
+						vote_activity_fans_vote
+					WHERE
+						vote_member_id = vam.vote_member_id
+				) AS voteCount,
+				(
+					SELECT
+						count(1)
+					FROM
+						vote_activity_fans_forward
+					WHERE
+						vote_member_id = vam.vote_member_id
+				) AS forwardCount,
+				vam.member_vote_last_time AS memberVoteLastTime
+			FROM
+				vote_activity_member vam
+			JOIN vote_activity va ON vam.vote_id = va.vote_id
+			WHERE
+				vam.delete_flag = 0
+			AND vam.vote_id = #{0}
+			AND vam.vote_member_id = #{1}
+		) temp
+	LEFT JOIN (
+		SELECT
+			c.*, cast(
+				(@rownum :=@rownum + 1) AS signed
+			) AS rowNum
+		FROM
+			(
+				SELECT
+					a.vote_id,
+					a.member_code,
+					a.member_name,
+					(
+						SELECT
+							count(1)
+						FROM
+							vote_activity_fans_vote b
+						WHERE
+							a.vote_member_id = b.vote_member_id
+					) AS voteNum,
+					a.member_vote_last_time
+				FROM
+					vote_activity_member a
+				WHERE
+					vote_id = #{0}
+				AND sign_status = 1
+				AND audit_status = 1
+				AND delete_flag = 0
+				ORDER BY
+					voteNum DESC,
+					member_vote_last_time ASC,
+					member_name DESC
+			) c,
+			(SELECT @rownum := 0) r
+	) temp2 ON temp.memberCode = temp2.member_code
   </select>
   
   <insert id="batchInsertVoteActMember">

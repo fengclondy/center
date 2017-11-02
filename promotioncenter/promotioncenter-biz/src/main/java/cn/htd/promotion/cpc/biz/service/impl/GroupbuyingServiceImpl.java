@@ -812,7 +812,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 				groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingDAO.selectByPromotionId(promotionId);
 			}
 			
-			if(null == groupbuyingPriceSettingResDTOList) return null;
+			if(null == groupbuyingPriceSettingResDTOList || groupbuyingPriceSettingResDTOList.size() < 1) return null;
 			// 团购价格设置降序排序(sortNum)
 			Collections.sort(groupbuyingPriceSettingResDTOList,new Comparator<GroupbuyingPriceSettingResDTO>() {
 						@Override

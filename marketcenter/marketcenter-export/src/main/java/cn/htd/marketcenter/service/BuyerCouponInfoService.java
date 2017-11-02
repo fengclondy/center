@@ -10,6 +10,7 @@ import cn.htd.marketcenter.dto.BuyerCouponConditionDTO;
 import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
+import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 
 public interface BuyerCouponInfoService {
@@ -89,6 +90,6 @@ public interface BuyerCouponInfoService {
 	 * @param buyerCode
 	 * @return
 	 */
-	public ExecuteResult<List<BuyerCouponInfoDTO>> getBuyerNotReceivedCouponList(
+	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
 			String messageId, String buyerCode);
 }

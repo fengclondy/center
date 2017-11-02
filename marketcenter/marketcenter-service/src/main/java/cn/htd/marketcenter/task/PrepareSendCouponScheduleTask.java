@@ -241,6 +241,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         PromotionBuyerRuleDTO buyerRuleDTO = dealTargetInfo.getBuyerRuleDTO();
         List<PromotionBuyerDetailDTO> buyerDetailList = null;
         int receiveLimit = dealTargetInfo.getReceiveLimit();
+        List<Future<List<String>>> tmpWorkResultList = new ArrayList<Future<List<String>>>();
+        Future<List<String>> tmpWorkResult = null;
+        List<String> sendedBuyerList = new ArrayList<String>();
         //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         try {
             if (!(new Date()).before(dealTargetInfo.getPrepEndTime())) {
@@ -252,7 +255,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             }
             provideCount = dealTargetInfo.getProvideCount();
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-            if (NoticeTypeEnum.NO.getValue() != isNeedRemind) {
+            if (isNeedRemind != NoticeTypeEnum.NO.getValue()) {
                 buyerDetailList = getTargetBuyerDetailList(buyerRuleDTO);
                 if (buyerDetailList != null && !buyerDetailList.isEmpty()) {
                     provideCount = buyerDetailList.size() * receiveLimit;
@@ -311,14 +314,22 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     if (cellCount <= 0) {
                         break;
                     }
-                    workResult = threadPoolExecutor.submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
-                    workResultList.add(workResult);
+                    tmpWorkResult = threadPoolExecutor.submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
+                    tmpWorkResultList.add(tmpWorkResult);
                     distributedCount += cellCount;
                     logger.info("\n 方法:[{}],线程池中现在的线程数目[{}],队列中正在等待执行的任务数量[{}]",
                             "PrepareSendCouponScheduleTask-updateMemberCollectCoupon", threadPoolExecutor.getPoolSize(),
                             threadPoolExecutor.getQueue().size());
                 }
             }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            for (Future<List<String>> workRst : tmpWorkResultList) {
+                sendedBuyerList.addAll(workRst.get());
+            }
+            logger.info("\n 方法:[{}],领券活动名称:[{}],线程执行结果:[{}]",
+                    "PrepareSendCouponScheduleTask-updateMemberCollectCoupon", sendedBuyerList.size());
+            sendMemberNotice(threadPoolExecutor, dealTargetInfo, sendedBuyerList, buyerDetailList);
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             long diffTime = dealTargetInfo.getPrepEndTime().getTime() - new Date().getTime();
             int seconds = (int) (diffTime / 1000);
             jedis.expire(couponRedisListKey, seconds);
@@ -358,7 +369,12 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         int taskProvideCount = 0;
         int distributedCount = 0;
         int cellCount = 0;
-        List<Future<Integer>> tmpWorkResultList = new ArrayList<Future<Integer>>();
+        //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//        List<Future<Integer>> tmpWorkResultList = new ArrayList<Future<Integer>>();
+        List<Future<List<String>>> tmpWorkResultList = new ArrayList<Future<List<String>>>();
+        Future<List<String>> tmpWorkResult = null;
+        List<String> sendedBuyerList = new ArrayList<String>();
+        //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         Future<Integer> workResult = null;
         try {
             if (!(new Date()).before(dealTargetInfo.getEffectiveEndTime())) {
@@ -387,18 +403,25 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         if (cellCount <= 0) {
                             break;
                         }
-                        workResult = threadPoolExecutor.submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
-                        tmpWorkResultList.add(workResult);
+                        tmpWorkResult = threadPoolExecutor.submit(new ReplaceSendedBuyerCoupon(dealTargetInfo));
+                        tmpWorkResultList.add(tmpWorkResult);
                         distributedCount += cellCount;
                         logger.info("\n 方法:[{}],线程池中现在的线程数目[{}],队列中正在等待执行的任务数量[{}]",
                                 "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon",
                                 threadPoolExecutor.getPoolSize(), threadPoolExecutor.getQueue().size());
                     }
                 }
-                for (Future<Integer> workRst : tmpWorkResultList) {
-                    logger.info("\n 方法:[{}],新发券活动名称:[{}],线程执行结果:[{}]",
-                            "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon", workRst.get());
+                //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//                for (Future<Integer> workRst : tmpWorkResultList) {
+//                    logger.info("\n 方法:[{}],新发券活动名称:[{}],线程执行结果:[{}]",
+//                            "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon", workRst.get());
+//                }
+                for (Future<List<String>> workRst : tmpWorkResultList) {
+                    sendedBuyerList.addAll(workRst.get());
                 }
+                logger.info("\n 方法:[{}],新发券活动名称:[{}],线程执行结果:[{}]",
+                        "PrepareSendCouponScheduleTask-ReplaceSendedBuyerCoupon", sendedBuyerList.size());
+                //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             }
             buyerRule = dealTargetInfo.getBuyerRuleDTO();
             if (buyerRule == null) {
@@ -462,6 +485,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                             threadPoolExecutor.getQueue().size());
                 }
             }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            sendMemberNotice(threadPoolExecutor, dealTargetInfo, sendedBuyerList, buyerDetailList);
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         } catch (MarketCenterBusinessException mcbe) {
             logger.warn("\n 方法:[{}],发券名称:[{}],异常:[{}],参数:[{}]", "PrepareSendCouponScheduleTask-updateAutoPresentCoupon",
                     dealTargetInfo.getPromotionName(), JSON.toJSONString(mcbe), JSON.toJSONString(dealTargetInfo));
@@ -542,7 +568,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
         }
     }
 
-    public final class ReplaceSendedBuyerCoupon implements Callable<Integer> {
+    public final class ReplaceSendedBuyerCoupon implements Callable<List<String>> {
         private String threadName;
         private PromotionDiscountInfoDTO targetDiscountInfo;
 
@@ -552,9 +578,12 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             this.targetDiscountInfo = discountInfo;
         }
 
-        public Integer call() throws Exception {
+        public List<String> call() throws Exception {
             long startTime = System.currentTimeMillis();
             int localCount = 0;
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            List<String> sendedBuyerCodeList = new ArrayList<String>();
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             String promotionId = targetDiscountInfo.getPromotionId();
             String oldPromotionId = targetDiscountInfo.getModifyPromotionId();
             String[] tmpArr = null;
@@ -620,6 +649,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     tmpArr = buyerCouponKey.split("&");
                     buyerCode = tmpArr[0];
                     oldBuyerCouponCode = tmpArr[1];
+                    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                    sendedBuyerCodeList.add(buyerCode);
+                    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                     if (!jedis.hexists(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, oldBuyerCouponCode)) {
                         continue;
                     }
@@ -690,7 +722,10 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         "ReplaceMemberCollectCoupon-end", localCount, DateUtils.getCurrentDate(""),
                         (endTime - startTime) + "ms");
             }
-            return localCount;
+            //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//            return localCount;
+            return sendedBuyerCodeList;
+            //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         }
     }
 
@@ -734,9 +769,10 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             String buyerCode = "";
             String buyerCouponCode = "";
             String couponStr = "";
-            List<Object> mutilRst = null;
+            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//            List<Object> mutilRst = null;
+            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-            int isNeedRemind = targetDiscountInfo.getIsNeedRemind();
             boolean needGetBelongSellerFlg = false;
             PromotionSellerRuleDTO sellerRuleDTO = targetDiscountInfo.getSellerRuleDTO();
             PromotionBuyerDetailDTO tmpDetailDTO = null;
@@ -745,7 +781,6 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = null;
             List<SellerBelongRelationDTO> belongRelationList = null;
             String tmpMemberCode = "";
-            Map<String, Integer> remindTargetBuyerMap = new HashMap<String, Integer>();
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             String validStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
@@ -885,23 +920,11 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         pipeline.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
                                 buyerCode + "&" + buyerCouponCode);
                         //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
-                        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-                        remindTargetBuyerMap.put(buyerCode, receiveLimit);
-                        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                         sendedCount++;
                     }
                     pipeline.sync();
                     targetBuyerDetailList = needsendNextBuyerDetailList;
                 }
-                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-                if (remindTargetBuyerMap != null && !remindTargetBuyerMap.isEmpty()) {
-                    if (isNeedRemind == NoticeTypeEnum.SMS.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS
-                            .getValue()) {
-                        new Thread(new SendMemberSMSNoticeThread(targetDiscountInfo.getPromotionName(),
-                                remindTargetBuyerMap)).start();
-                    }
-                }
-                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             } catch (Exception e) {
                 logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",
                         ExceptionUtils.getStackTraceAsString(e));
@@ -987,29 +1010,50 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
     }
 
     /**
-     * 对于发券会员提醒通知Task
+     * 对于发券会员短信提醒通知Task
      */
     private final class SendMemberSMSNoticeThread implements Runnable {
 
         private String threadName;
 
-        private Map<String, Integer> remindTargetBuyerMap;
+        private String smsTemplateCode;
 
-        public SendMemberSMSNoticeThread(String promotionName, Map<String, Integer> remindTargetBuyerMap) {
+        private List<String> sendedBuyerList;
+
+        private List<PromotionBuyerDetailDTO> buyerDetailList;
+
+        public SendMemberSMSNoticeThread(PromotionDiscountInfoDTO dealTargetInfo, List<String> sendedBuyerList,
+                List<PromotionBuyerDetailDTO> buyerDetailList) {
             this.threadName =
-                    String.valueOf(Thread.currentThread().getId()) + "-" + promotionName + "-" + "短信通知发券会员";
-            this.remindTargetBuyerMap = remindTargetBuyerMap;
+                    String.valueOf(Thread.currentThread().getId()) + "-" + dealTargetInfo.getPromotionName() + "-"
+                            + "短信通知发券会员";
+            this.smsTemplateCode = dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,
+                    DictionaryConst.OPT_COUPON_PROVIDE_MEMBER_COLLECT).equals(dealTargetInfo.getCouponProvideType())
+                    ? dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE,
+                    DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE) : "";
+            this.sendedBuyerList = sendedBuyerList;
+            this.buyerDetailList = buyerDetailList;
         }
 
         @Override
         public void run() {
             String buyerCode = "";
+            PromotionBuyerDetailDTO buyerDetailDTO = null;
             ExecuteResult<MemberBaseInfoDTO> memberBaseInfoResult = null;
             MemberBaseInfoDTO memberBaseInfoDTO = null;
             String phoneNum = "";
+            List<String> phoneNumList = new ArrayList<String>();
+            String sendTargetPhoneNumStr = "";
             SendSmsDTO sendSmsDTO = null;
-            for (Map.Entry<String, Integer> entry : remindTargetBuyerMap.entrySet()) {
-                buyerCode = entry.getKey();
+            if (StringUtils.isEmpty(smsTemplateCode)) {
+                return;
+            }
+            for (int i = 0; i < buyerDetailList.size(); i ++) {
+                buyerDetailDTO = buyerDetailList.get(i);
+                buyerCode = buyerDetailDTO.getBuyerCode();
+                if (sendedBuyerList.contains(buyerCode)) {
+                    continue;
+                }
                 memberBaseInfoResult = memberBaseInfoService.queryMemberCompanyInfo(buyerCode);
                 if (!memberBaseInfoResult.isSuccess()) {
                     logger.warn("\n 线程名称:[{}],方法:[{}],警告:[{}],会员编号:[{}]", threadName, "SendMemberSMSNoticeThread-run",
@@ -1028,32 +1072,104 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                             "没有会员法人手机号", buyerCode);
                     continue;
                 }
+                phoneNumList.add(phoneNum);
+                if (phoneNumList.size() >= 5000) {
+                    sendSmsDTO = new SendSmsDTO();
+                    sendSmsDTO.setPhone(StringUtils.join(phoneNumList.toArray(), ","));
+                    sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE,
+                            DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE));
+                    sendSmsEmailService.sendSms(sendSmsDTO);
+                }
+            }
+            if (phoneNumList.size() > 0) {
                 sendSmsDTO = new SendSmsDTO();
-                sendSmsDTO.setPhone(phoneNum);
-                sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE, DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE));
+                sendSmsDTO.setPhone(StringUtils.join(phoneNumList.toArray(), ","));
+                sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE,
+                        DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE));
                 sendSmsEmailService.sendSms(sendSmsDTO);
             }
         }
     }
 
     /**
-     * 设置弹框提醒的Redis信息
-     *
-     * @param pipeline
-     * @param targetDiscountInfo
-     * @param remindTargetBuyerMap
+     * 对于发券会员弹框提醒通知Task
      */
-    private void initMemberPopupNotice2Redis(Pipeline pipeline, PromotionDiscountInfoDTO targetDiscountInfo,
-            Map<String, Integer> remindTargetBuyerMap) {
-        String promotionId = targetDiscountInfo.getPromotionId();
-        Integer receiveLimit = 0;
-        String buyerCode = "";
-        for (Map.Entry<String, Integer> entry : remindTargetBuyerMap.entrySet()) {
-            buyerCode = entry.getKey();
-            receiveLimit = entry.getValue();
-            pipeline.hset(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_" + buyerCode, promotionId, receiveLimit.toString());
+    private final class SendMemberPopupNoticeThread implements Runnable {
+
+        private String threadName;
+
+        private String promotionId;
+
+        private String receiveLimit;
+
+        private List<String> sendedBuyerList;
+
+        private List<PromotionBuyerDetailDTO> buyerDetailList;
+
+        public SendMemberPopupNoticeThread(PromotionDiscountInfoDTO dealTargetInfo, List<String> sendedBuyerList,
+                List<PromotionBuyerDetailDTO> buyerDetailList) {
+            this.threadName =
+                    String.valueOf(Thread.currentThread().getId()) + "-" + dealTargetInfo.getPromotionName() + "-"
+                            + "弹框通知发券会员";
+            this.promotionId = dealTargetInfo.getPromotionId();
+            this.receiveLimit = String.valueOf(dealTargetInfo.getReceiveLimit());
+            this.sendedBuyerList = sendedBuyerList;
+            this.buyerDetailList = buyerDetailList;
         }
-        pipeline.sync();
+
+        @Override
+        public void run() {
+            long startTime = System.currentTimeMillis();
+            String buyerCode = "";
+            Jedis jedis = null;
+            Pipeline pipeline = null;
+
+            logger.info("\n 线程名称:[{}],方法:[{}],开始时间:[{}]", threadName, "SendMemberPopupNoticeThread-start",
+                    DateUtils.getCurrentDate(""));
+            try {
+                jedis = marketRedisDB.getResource();
+                pipeline = jedis.pipelined();
+                for (PromotionBuyerDetailDTO buyerDetailDTO : buyerDetailList) {
+                    buyerCode = buyerDetailDTO.getBuyerCode();
+                    if (sendedBuyerList.contains(buyerCode)) {
+                        continue;
+                    }
+                    pipeline.hset(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_" + buyerCode, promotionId, receiveLimit);
+                }
+                pipeline.sync();
+            } catch (Exception e) {
+                logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "SendMemberPopupNoticeThread-end",
+                        ExceptionUtils.getStackTraceAsString(e));
+            } finally {
+                marketRedisDB.releaseResource(jedis);
+                long endTime = System.currentTimeMillis();
+                logger.info("\n 线程名称:[{}],方法:[{}],结束时间:[{}],耗时:[{}]", threadName, "SendMemberPopupNoticeThread-end",
+                        DateUtils.getCurrentDate(""), (endTime - startTime) + "ms");
+            }
+        }
+    }
+
+    /**
+     * 设置促销活动提醒信息
+     *
+     * @param threadPoolExecutor
+     * @param dealTargetInfo
+     * @param sendedBuyerList
+     * @param buyerDetailList
+     */
+    private void sendMemberNotice(ThreadPoolExecutor threadPoolExecutor, PromotionDiscountInfoDTO dealTargetInfo,
+            List<String> sendedBuyerList, List<PromotionBuyerDetailDTO> buyerDetailList) {
+        int isNeedRemind = dealTargetInfo.getIsNeedRemind();
+        if (buyerDetailList == null || buyerDetailList.isEmpty()) {
+            return;
+        }
+        if (isNeedRemind == NoticeTypeEnum.SMS.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS.getValue()) {
+            threadPoolExecutor.execute(new SendMemberSMSNoticeThread(dealTargetInfo, sendedBuyerList, buyerDetailList));
+        }
+        if (isNeedRemind == NoticeTypeEnum.POPUP.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS.getValue()) {
+            threadPoolExecutor
+                    .execute(new SendMemberPopupNoticeThread(dealTargetInfo, sendedBuyerList, buyerDetailList));
+        }
     }
     //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 }

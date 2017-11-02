@@ -1,6 +1,8 @@
 package cn.htd.promotion.cpc.biz.dao;
 
 import java.util.List;
+
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import org.apache.ibatis.annotations.Param;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
@@ -95,5 +97,18 @@ public interface GroupbuyingInfoDAO {
 	 */
 	List<GroupbuyingInfoCmplResDTO> getMyGroupbuying4MobileForPage(@Param("page")Pager<GroupbuyingInfoReqDTO> page, @Param("dto")GroupbuyingInfoReqDTO record);
 
+	/**
+	 * 查找活动结束且没有清除redis的团购信息
+	 * @param condition
+	 * @param pager
+	 * @return
+	 */
+	List<GroupbuyingInfoCmplReqDTO> queryNeedCleanGroupbuying4Task(@Param("entity") GroupbuyingInfoCmplReqDTO condition,@Param("page") Pager<GroupbuyingInfoCmplReqDTO> pager);
 
+	/**
+	 * 根据promotionId更爱redis清除标志
+	 * @param promotionId
+	 * @return
+	 */
+    int updateHasRedisClean(String promotionId);
 }

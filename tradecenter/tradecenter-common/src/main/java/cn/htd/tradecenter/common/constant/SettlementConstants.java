@@ -22,7 +22,7 @@ public final class SettlementConstants {
     
     
     // 出结算单时间间隔【默认为7天】  变更：由7天改为0天
-    public static final String TIME_INTERVAL = "7";
+    public static final String TIME_INTERVAL = "0";
     
     
     

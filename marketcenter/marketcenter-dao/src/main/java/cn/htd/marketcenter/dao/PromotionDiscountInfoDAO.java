@@ -19,10 +19,10 @@ public interface PromotionDiscountInfoDAO extends BaseDAO<PromotionDiscountInfoD
 	/**
 	 * 定时任务处理后更新处理标记
 	 * 
-	 * @param coupinInfo
+	 * @param couponInfo
 	 * @return
 	 */
-	public Integer updateCouponDealFlag(PromotionDiscountInfoDTO coupinInfo);
+	public Integer updateCouponDealFlag(PromotionDiscountInfoDTO couponInfo);
 
 	/**
 	 * 查询所有未结束的返券活动记录

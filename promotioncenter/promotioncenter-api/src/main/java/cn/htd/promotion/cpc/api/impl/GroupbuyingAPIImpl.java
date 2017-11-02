@@ -221,15 +221,12 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            if (null == dto) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动参团参数不能为空！");
-            }
-            
-			if (null == dto.getPromotionId() || dto.getPromotionId().length() == 0) {
-				throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动编码不能为空！");
-			}
 
-            groupbuyingService.addGroupbuyingRecord2HttpINTFC(dto,messageId);
+            String statusResult =groupbuyingService.addGroupbuyingRecord2HttpINTFC(dto,messageId);
+            if(!GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key().equals(statusResult)){
+           	 result.setCode(statusResult);
+             result.setResultMessage(GroupbuyingConstants.CommonStatusEnum.getValue(statusResult));
+             }
 
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());

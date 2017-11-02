@@ -172,7 +172,7 @@ public class TimelimitedPurchaseServiceImpl implements
 		if (promotionList != null && !promotionList.isEmpty()) {
 			throw new MarketCenterBusinessException(
 					MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT,
-					" 该商品存在未结束的限时购活动!");
+					" 该商品存在未结束的促销活动!");
 		}
 	}
 

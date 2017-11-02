@@ -386,7 +386,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             promotionInfo = promotionList.get(0);
             errorMsg = promotionInfo.getPromotionName();
             throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT,
-                    "和 " + errorMsg + " 秒杀活动的商品重复");
+                    "和 " + errorMsg + " 促销活动的商品重复");
         } else {
             if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
                 promotionList = promotionInfoDAO

@@ -70,7 +70,7 @@ public interface GroupbuyingService {
 	 * @param dto
 	 * @param messageId
 	 */
-	void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
+	String addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
 	
 	/**
 	 * 根据条件获取单条参团记录

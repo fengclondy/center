@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -549,9 +550,23 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	            // 查询活动信息
 	            groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfoCmplByPromotionId(promotionId);
 	            
-	            List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.getPromotionConfiguresByPromotionId(promotionId);
-	            // 设置配置信息
+	           
 	            if(null != groupbuyingInfoCmplResDTO && null != groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO()){
+	            	
+	            	if(groupbuyingInfoCmplResDTO.getRealActorCount() < 1){ //下单进行中会在groupbuying_info表里写入 真实参团人数、真实拼团价（默认开团进行中真实参团人数为0）
+		            // 根据活动编号计算  真实参团人数+真实拼团价
+		            Map<String, String> retMap = calcRealGroupbuyingPrice(promotionId);
+		   		    // 真实参团人数
+		   		    Integer realActorCount = Integer.valueOf(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY));
+		      	    // 真实拼团价
+		      	    BigDecimal realGroupbuyingPrice = new BigDecimal(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY));
+		      	    // 设置[真实参团人数+真实拼团价]
+		      	    groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
+		      	    groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+	            	}
+	            	
+		      	    // 设置配置信息
+	            	List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.getPromotionConfiguresByPromotionId(promotionId);
 	            	groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setPromotionConfigureList(promotionConfigureDTOlist);
 	            }
 
@@ -577,6 +592,21 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	            
 	            // 查询活动信息
 	            groupbuyingInfoResDTO = groupbuyingInfoDAO.selectByPromotionId(promotionId);
+	            if(null != groupbuyingInfoResDTO){
+	            	
+	            	if(groupbuyingInfoResDTO.getRealActorCount() < 1){ //下单进行中会在groupbuying_info表里写入 真实参团人数、真实拼团价（默认开团进行中真实参团人数为0）
+		            // 根据活动编号计算  真实参团人数+真实拼团价
+		            Map<String, String> retMap = calcRealGroupbuyingPrice(promotionId);
+		   		    // 真实参团人数
+		   		    Integer realActorCount = Integer.valueOf(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY));
+		      	    // 真实拼团价
+		      	    BigDecimal realGroupbuyingPrice = new BigDecimal(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY));
+		      	    // 设置[真实参团人数+真实拼团价]
+		      	    groupbuyingInfoResDTO.setRealActorCount(realActorCount);
+		      	    groupbuyingInfoResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+	            	}
+	            }
+	            
 
 	        } catch (Exception e) {
 	            logger.error("messageId{}:执行方法【getSingleGroupbuyingInfoByPromotionId】报错：{}", messageId, e.toString());
@@ -605,6 +635,18 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 					String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
 					List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingDAO.selectByPromotionId(promotionId);
 					groupbuyingInfoCmplResDTO.setGroupbuyingPriceSettingResDTOList(groupbuyingPriceSettingResDTOList);
+					
+					if(groupbuyingInfoCmplResDTO.getRealActorCount() < 1){ //下单进行中会在groupbuying_info表里写入 真实参团人数、真实拼团价（默认开团进行中真实参团人数为0）
+		            // 根据活动编号计算  真实参团人数+真实拼团价
+		            Map<String, String> retMap = calcRealGroupbuyingPrice(promotionId);
+		   		    // 真实参团人数
+		   		    Integer realActorCount = Integer.valueOf(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY));
+		      	    // 真实拼团价
+		      	    BigDecimal realGroupbuyingPrice = new BigDecimal(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY));
+		      	    // 设置[真实参团人数+真实拼团价]
+		      	    groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
+		      	    groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+					}
 				}
 				
 				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
@@ -639,29 +681,39 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	
 
     @Override
-    public void addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
+    public String addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
        
+    	// 参团操作返回状态码 [1041.参数为空,1042.活动编码为空,1043.请求过于频繁,1044.活动不存在,1045.活动状态不是开团进行中,1046.已经参团过]
+    	
         // 当前时间
         Calendar calendar = Calendar.getInstance();
         Date currentTime = calendar.getTime();
+        
+        // 参团加锁，防止并发
+    	String lockKey = null;
 
         try {
-        	// 参团加锁，防止并发
-        	String lockKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_LOCK + "_" + groupbuyingRecordReqDTO.getPromotionId() + "_" + groupbuyingRecordReqDTO.getBuyerCode();
+        	
+            if (null == groupbuyingRecordReqDTO) {
+            	return GroupbuyingConstants.CommonStatusEnum.ADDGROUPBUYING_PARAM_IS_NULL.key();//1041.参数为空
+            }
+            
+    		if (null == groupbuyingRecordReqDTO.getPromotionId() || groupbuyingRecordReqDTO.getPromotionId().length() == 0) {
+    			return GroupbuyingConstants.CommonStatusEnum.ADDGROUPBUYING_PROMOTIONID_IS_NULL.key();//1042.活动编码为空
+    		}
+        	
+        	lockKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_LOCK + "_" + groupbuyingRecordReqDTO.getPromotionId() + "_" + groupbuyingRecordReqDTO.getBuyerCode();
         	boolean isLocked = promotionRedisLockHandler.tryLock(lockKey, 300);
         	if(!isLocked){
-        		throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "参团太火爆啦,请稍后重试！");
+        		return GroupbuyingConstants.CommonStatusEnum.ADDGROUPBUYING_REQUEST_TOO_OFTEN.key();//1043.请求过于频繁
         	}
         	
         	//[start]-----------------   参团的校验  ----------------
            	String groupbuyingInfoJsonStr = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, groupbuyingRecordReqDTO.getPromotionId());
            	if(null == groupbuyingInfoJsonStr || groupbuyingInfoJsonStr.length() == 0) {
-           	    throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+           	   return GroupbuyingConstants.CommonStatusEnum.ADDGROUPBUYING_PROMOTION_NOT_EXIST.key();//1044.活动不存在
            	}
            	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
-            if (null == groupbuyingInfoCmplResDTO) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
-            }
        		// 开团开始时间
        		Date effectiveTime = groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().getEffectiveTime();
        		// 开团结束时间
@@ -669,7 +721,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
        	    //(当前时间 >= 开团开始时间 && 当前时间 <= 开团结束时间)  2.开团进行中
             boolean isGBProcessing = currentTime.getTime() >= effectiveTime.getTime() && currentTime.getTime() <= invalidTime.getTime();
             if(!isGBProcessing){
-            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "团购促销活动状态不是开团进行中！");
+            	return GroupbuyingConstants.CommonStatusEnum.ADDGROUPBUYING_PROMOTION_NOT_PROCESSING.key();//1045.活动状态不是开团进行中
             }
             
             GroupbuyingRecordReqDTO groupbuyingRecordReqDTO_check = new GroupbuyingRecordReqDTO();
@@ -677,9 +729,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             groupbuyingRecordReqDTO_check.setBuyerCode(groupbuyingRecordReqDTO.getBuyerCode());// 参团人账号
             GroupbuyingRecordResDTO groupbuyingRecordResDTO = groupbuyingRecordDAO.getGroupbuyingRecordByParams(groupbuyingRecordReqDTO_check);
             if(null != groupbuyingRecordResDTO){
-            	 throw new PromotionCenterBusinessException(ResultCodeEnum.ERROR.getCode(), "已经参团过！");
+            	 return GroupbuyingConstants.CommonStatusEnum.ADDGROUPBUYING_PROMOTION_IS_RECORD.key();//1046.已经参团过
             }
-          //[end]-----------------   参团的校验  ----------------
+            //[end]-----------------   参团的校验  ----------------
             
     		
         	 String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + groupbuyingRecordReqDTO.getPromotionId();
@@ -730,14 +782,59 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         	groupbuyingRecordReqDTO.setModifyTime(currentTime);
         	groupbuyingRecordDAO.addGroupbuyingRecord(groupbuyingRecordReqDTO);
         	
+        } finally{
         	// 参团释放锁
         	promotionRedisLockHandler.unLock(lockKey);
-        	
-        } catch (Exception e) {
-            logger.error("messageId{}:执行方法【addGroupbuyingRecord2HttpINTFC】报错：{}", messageId, e.toString());
-            throw new RuntimeException(e);
         }
+        
+        return GroupbuyingConstants.CommonStatusEnum.STATUS_SUCCESS.key(); //0.成功;
     }
+    
+    
+    /**
+     * 根据活动编号获取 真实参团人数+真实拼团价
+     * @param promotionId 活动编号
+     * @return
+     */
+	private Map<String, String> calcRealGroupbuyingPrice(String promotionId) {
+		
+		Map<String, String> retMap = new HashMap<String, String>();
+		
+		String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+		// 获取团购活动其他信息
+		Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHashOperations(groupbuyingResultKey);
+
+		// 阶梯价格
+		String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
+		List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = JSONObject.parseArray(groupbuyingPriceSettingStr, GroupbuyingPriceSettingResDTO.class);
+		// 团购价格设置降序排序(sortNum)
+		Collections.sort(groupbuyingPriceSettingResDTOList,new Comparator<GroupbuyingPriceSettingResDTO>() {
+					@Override
+					public int compare(GroupbuyingPriceSettingResDTO o1, GroupbuyingPriceSettingResDTO o2) {
+						// 默认为升序
+						// o1.getSortNum().compareTo(o2.getSortNum())
+						return o2.getSortNum().compareTo(o1.getSortNum());
+					}
+					
+				});
+		
+		// 真实参团人数
+		Integer realActorCount = groupbuyingRecordDAO.getGBRecordCountsByPromotionId(promotionId);
+		// 真实拼团价
+		BigDecimal realGroupbuyingPrice = null;
+		for (int i = 0; i < groupbuyingPriceSettingResDTOList.size(); i++) {
+			GroupbuyingPriceSettingResDTO groupbuyingPriceSettingResDTO = groupbuyingPriceSettingResDTOList.get(i);
+			Integer actorCount = groupbuyingPriceSettingResDTO.getActorCount();// 参团人数
+			if (realActorCount >= actorCount) {
+				realGroupbuyingPrice = groupbuyingPriceSettingResDTO.getGroupbuyingPrice();// 拼团价
+				break;
+			}
+		}
+		
+		retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY, String.valueOf(realActorCount));
+		retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY, String.valueOf(realGroupbuyingPrice));
+		return retMap;
+	}
 
 	@Override
 	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {
@@ -814,6 +911,19 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	            			groupbuyingInfoCmplResDTO.setGbRecordStatus("1");// 参团状态 [0.未参团,1.已参团]
 	            		}
 	    			}
+		  			
+		  			if(groupbuyingInfoCmplResDTO.getRealActorCount() < 1){ //下单进行中会在groupbuying_info表里写入 真实参团人数、真实拼团价（默认开团进行中真实参团人数为0）
+		            // 根据活动编号计算  真实参团人数+真实拼团价
+		            Map<String, String> retMap = calcRealGroupbuyingPrice(groupbuyingInfoCmplResDTO.getPromotionId());
+		   		    // 真实参团人数
+		   		    Integer realActorCount = Integer.valueOf(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY));
+		      	    // 真实拼团价
+		      	    BigDecimal realGroupbuyingPrice = new BigDecimal(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY));
+		      	    // 设置[真实参团人数+真实拼团价]
+		      	    groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
+		      	    groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+		  			}
+		      	    
 				}
 				
 				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
@@ -855,7 +965,18 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             			groupbuyingInfoCmplResDTO.setGbRecordStatus("1");// 参团状态 [0.未参团,1.已参团]
             		}
     			}
-
+    			
+    			if(groupbuyingInfoCmplResDTO.getRealActorCount() < 1){ //下单进行中会在groupbuying_info表里写入 真实参团人数、真实拼团价（默认开团进行中真实参团人数为0）
+	            // 根据活动编号计算  真实参团人数+真实拼团价
+	            Map<String, String> retMap = calcRealGroupbuyingPrice(groupbuyingInfoCmplResDTO.getPromotionId());
+	   		    // 真实参团人数
+	   		    Integer realActorCount = Integer.valueOf(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY));
+	      	    // 真实拼团价
+	      	    BigDecimal realGroupbuyingPrice = new BigDecimal(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY));
+	      	    // 设置[真实参团人数+真实拼团价]
+	      	    groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
+	      	    groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+    			}
     		}
     		
 
@@ -892,6 +1013,20 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 					String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
 					List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingDAO.selectByPromotionId(promotionId);
 					groupbuyingInfoCmplResDTO.setGroupbuyingPriceSettingResDTOList(groupbuyingPriceSettingResDTOList);
+					
+					if(groupbuyingInfoCmplResDTO.getRealActorCount() < 1){ //下单进行中会在groupbuying_info表里写入 真实参团人数、真实拼团价（默认开团进行中真实参团人数为0）
+			            // 根据活动编号计算  真实参团人数+真实拼团价
+			            Map<String, String> retMap = calcRealGroupbuyingPrice(groupbuyingInfoCmplResDTO.getPromotionId());
+			   		    // 真实参团人数
+			   		    Integer realActorCount = Integer.valueOf(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY));
+			      	    // 真实拼团价
+			      	    BigDecimal realGroupbuyingPrice = new BigDecimal(retMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY));
+			      	    // 设置[真实参团人数+真实拼团价]
+			      	    groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
+			      	    groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
+					}
+
+		      	    
 				}
 				
 				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));

@@ -291,7 +291,8 @@
 			and delete_flag = 0
 		ORDER BY
 			voteNum DESC,
-			member_vote_last_time ASC
+			member_vote_last_time ASC,
+			member_name DESC
   </sql>
 
   <select id="selectMemberRankingTop10" resultType="map">

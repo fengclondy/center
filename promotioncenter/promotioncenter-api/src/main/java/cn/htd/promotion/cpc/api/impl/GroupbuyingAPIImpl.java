@@ -244,11 +244,8 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
-            if (null == promotionId || promotionId.length() == 0) {
-                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
-            }
             
-        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = promotionGroupbuyingRedisHandle.getGroupbuyingInfoCmplByPromotionId(promotionId);
+        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingService.getGroupbuyingInfoCmplByPromotionId4Mobile(promotionId,messageId);
         	result.setResult(groupbuyingInfoCmplResDTO);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());

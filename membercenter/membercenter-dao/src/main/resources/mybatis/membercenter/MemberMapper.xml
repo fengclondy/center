@@ -1711,7 +1711,8 @@
 		left join member_company_info mc2 on m.cur_belong_seller_id=mc2.member_id and mc2.buyer_seller_type='2'
 		left join member_licence_info ml on ml.member_id=m.id 
 		where 
-		    mc.buyer_seller_type=1 and 
+		    mc.buyer_seller_type=1 and
+		    m.status=1 and  
 		    m.member_code in (
 		     <foreach collection="list" item="item" separator=",">
 			 	#{item}

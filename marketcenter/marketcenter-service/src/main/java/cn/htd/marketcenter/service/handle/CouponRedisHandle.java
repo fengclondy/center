@@ -261,9 +261,12 @@ public class CouponRedisHandle {
 					continue;
 				}
 			}
-			// TODO 删除去已经领取的优惠券-redis,如果一个促销下有多张券，直接删除是否有问题
-			marketRedisDB.delHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
-					+ buyerCode, promotionId);
+			if(marketRedisDB.incrHashBy(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
+					+ buyerCode, promotionId,-1)<1){
+				//领取完后,删除弹框提醒的redis-key
+				marketRedisDB.delHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
+						+ buyerCode, promotionId);
+			}
 		}
 	}
     
@@ -509,6 +512,10 @@ public class CouponRedisHandle {
 					}
 				}
 			}
+			//券领取数量，从redis里取
+			String receiveLimit = marketRedisDB.getHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
+					+ buyerCode, promotionId);
+			promotionDiscountInfo.setReceiveLimit(receiveLimit==null?0:Integer.valueOf(receiveLimit));
 			resultList.add(promotionDiscountInfo);
 		
 		}

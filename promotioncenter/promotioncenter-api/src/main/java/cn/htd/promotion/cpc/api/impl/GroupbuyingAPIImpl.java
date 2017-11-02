@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.api.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -148,6 +149,24 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
             result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
             result.setErrorMessage(e.toString());
             logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGroupbuyingInfoCmplForPage出现异常{}", messageId, e.toString());
+        }
+        return result;
+	}
+	
+	@Override
+	public ExecuteResult<Map<String, String>> getGBActorCountAndPriceByPromotionId(String promotionId, String messageId){
+        ExecuteResult<Map<String, String>> result = new ExecuteResult<Map<String, String>>();
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
+
+        try {
+        	Map<String, String> retMap = groupbuyingService.getGBActorCountAndPriceByPromotionId(promotionId, messageId);
+        	result.setResult(retMap);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ResultCodeEnum.ERROR.getMsg());
+            result.setErrorMessage(e.toString());
+            logger.error("MessageId:{} 调用方法GroupbuyingAPIImpl.getGBActorCountAndPriceByPromotionId出现异常{}", messageId, e.toString());
         }
         return result;
 	}

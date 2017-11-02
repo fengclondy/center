@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 投票活动-粉丝投票相关服务
@@ -100,9 +97,10 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             return executeResult;
         }
         int voteSotreNumByDay = this.queryFansVoteStoreNumByDay(voteActivityId, fansId, date);
+        Map<Object, Object> storeMap = this.queryFansVoteStoreMap(voteActivityId, fansId, date);
         // 投票前校验：当前投票数小于限制数，返回校验通过
         Integer voteSotreNumPAccountPDayLimit = voteActivityResDTO.getVoteSotreNumPAccountPDay(); // 粉丝投门店数量上限
-        if (voteSotreNumByDay >= voteSotreNumPAccountPDayLimit) {
+        if (voteSotreNumByDay >= voteSotreNumPAccountPDayLimit && !storeMap.containsKey(memberCode)) { // 已经投过这个门店的，就不校验了
             logger.info("您今天已经达到每日可投票门店数上限，明天再来吧！");
             executeResult.setCode(ResultCodeEnum.OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM.getCode());
             executeResult.setResultMessage("您今天已经达到每日可投票门店数上限，明天再来吧！");
@@ -344,5 +342,14 @@ public class VoteActivityFansVoteServiceImpl implements VoteActivityFansVoteServ
             count = promotionRedisDB.getHLen(key);
         }
         return count;
+    }
+
+    private Map<Object, Object> queryFansVoteStoreMap(Long voteActivityId, Long fansId, Date date) {
+        String key = RedisConst.FANS_VOTE_HASH_PREFIX + REDIS_SEPARATOR + SP.format(date) + REDIS_SEPARATOR + voteActivityId + REDIS_SEPARATOR + fansId;
+        Map<Object, Object> map = new HashMap<>();
+        if (promotionRedisDB.exists(key)) {
+            map = promotionRedisDB.getHashALL(key);
+        }
+        return map;
     }
 }

@@ -2214,6 +2214,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 				if(null != publishInfo){
 					resultDTO.setMimQuantity(publishInfo.getMimQuantity());
 					resultDTO.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+					resultDTO.setIsPurchaseLimit(publishInfo.getIsPurchaseLimit());
 				}
 				List<ItemSkuLadderPrice> priceList = itemSkuPriceService.queryMobileExternalLadderPriceBySkuId(skuIds);
 				if(null != priceList && !priceList.isEmpty()){

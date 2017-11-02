@@ -789,7 +789,7 @@
       </if>
       order by modify_time desc
       <if test="page!=null">
-          <include refid="pagination_tail"/>
+         limit #{page.pageOffset} , #{page.rows}
       </if>
   </select>
 

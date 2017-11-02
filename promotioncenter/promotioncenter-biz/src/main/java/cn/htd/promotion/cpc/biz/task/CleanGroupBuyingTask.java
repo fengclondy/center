@@ -1,9 +1,9 @@
 package cn.htd.promotion.cpc.biz.task;
 
 import cn.htd.common.Pager;
-import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
+import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
@@ -48,7 +48,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
     private GroupbuyingInfoDAO groupbuyingInfoDAO;
 
     @Resource
-    private GroupbuyingService groupbuyingService;
+    private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
 
     /**
      * 执行给定的任务数组。因为泛型不支持new 数组,只能传递OBJECT[]
@@ -69,8 +69,8 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
                 String messageId = keyGeneratorUtils.generateMessageId();
                 for (GroupbuyingInfoCmplReqDTO dto : tasks) {
                     //根据promotionid 清除redis
-                    String deleteResult = groupbuyingService.deleteGroupbuyingInfoByPromotionId(dto,messageId);
-                    if("成功".equals(deleteResult)){
+                    Boolean deleteResult = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(dto.getPromotionId());
+                    if(deleteResult){
                         int updateResult = groupbuyingInfoDAO.updateHasRedisClean(dto.getPromotionId());
                         logger.info("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId() +" ,updateResult: "+updateResult );
                         Map<String,String> map = new HashMap<>();

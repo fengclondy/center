@@ -1,6 +1,7 @@
 package cn.htd.marketcenter.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import cn.htd.marketcenter.dto.PromotionCategoryDetailDTO;
 import cn.htd.marketcenter.dto.PromotionCategoryDetailDefineDTO;
 import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDTO;
 import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDefineDTO;
+import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
 import cn.htd.marketcenter.dto.PromotionItemDetailDefineDTO;
@@ -49,6 +51,8 @@ import cn.htd.marketcenter.service.PromotionBuyerRuleDefineService;
 import cn.htd.marketcenter.service.PromotionCategoryItemRuleDefineService;
 import cn.htd.marketcenter.service.PromotionSellerRuleDefineService;
 import cn.htd.membercenter.dto.MemberGroupDTO;
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
+import cn.htd.membercenter.service.BelongRelationshipService;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberGroupService;
 import com.alibaba.fastjson.JSON;
@@ -108,6 +112,9 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
 
     @Resource
     private MemberBaseInfoService memberBaseInfoService;
+
+    @Resource
+    private BelongRelationshipService belongRelationshipService;
 
     /**
      * 删除促销活动
@@ -1239,4 +1246,42 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         return false;
     }
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 取得会员归属关系信息
+     *
+     * @param buyerCode
+     * @return
+     */
+    public SellerBelongRelationDTO getBuyerBelongRelationship(String buyerCode) {
+        List<String> buyerCodeList = new ArrayList<String>(Arrays.asList(buyerCode));
+        List<SellerBelongRelationDTO> belongRelationList = null;
+        belongRelationList = getBuyerBelongRelationship(buyerCodeList);
+        return belongRelationList.get(0);
+    }
+
+    /**
+     * 取得会员归属关系信息
+     *
+     * @param buyerCodeList
+     * @return
+     */
+    public List<SellerBelongRelationDTO> getBuyerBelongRelationship(List<String> buyerCodeList) {
+
+        ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = null;
+        List<SellerBelongRelationDTO> belongRelationList = null;
+
+        belongRelationResult = belongRelationshipService.queryBelongRelationListByMemberCodeList(buyerCodeList);
+        if (!belongRelationResult.isSuccess()) {
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                    StringUtils.join(belongRelationResult.getErrorMessages(), ","));
+        }
+        belongRelationList = belongRelationResult.getResult();
+        if (belongRelationList == null || belongRelationList.isEmpty()) {
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                    "没有取得会员归属平台公司信息");
+        }
+        return belongRelationList;
+    }
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 }

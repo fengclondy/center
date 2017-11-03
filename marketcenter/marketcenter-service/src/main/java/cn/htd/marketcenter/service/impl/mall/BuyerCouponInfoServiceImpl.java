@@ -231,7 +231,7 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public ExecuteResult<String> saveBuyerReceiveManyCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
@@ -247,29 +247,31 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
 						validateResult.getErrorMsg());
 			}
-			for(int i=0;i<receiveLimit.intValue();i++){				
+			for (int i = 0; i < receiveLimit.intValue(); i++) {
 				collectCoupon = couponRedisHandle.receiveMemberCollectCoupon2Redis(receiveDTO);
 				if (collectCoupon != null) {
-					if(i==0){					
-						buyerCheckInfo.setBuyerCode(receiveDTO.getBuyerCode());
-						buyerCheckInfo.setBuyerGrade(receiveDTO.getBuyerGrade());
-						buyerChkResult = baseService.checkPromotionBuyerRule(collectCoupon, buyerCheckInfo);
-						if (!buyerChkResult) {
-							throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY,
-									"会员没有领该券权限");
+					try {
+						if (i == 0) {
+							buyerCheckInfo.setBuyerCode(receiveDTO.getBuyerCode());
+							buyerCheckInfo.setBuyerGrade(receiveDTO.getBuyerGrade());
+							buyerChkResult = baseService.checkPromotionBuyerRule(collectCoupon, buyerCheckInfo);
+							if (!buyerChkResult) {
+								throw new MarketCenterBusinessException(
+										MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY, "会员没有领该券权限");
+							}
 						}
+						couponRedisHandle.sendBuyerCoupon2Redis(collectCoupon);
+					} catch (MarketCenterBusinessException bcbe) {
+						//会员已到优惠券领取上限数量,返回成功
+						if (MarketCenterCodeConst.COUPON_RECEIVE_LIMITED.equals(bcbe.getCode())) {
+							break;
+						}
+						couponRedisHandle.restoreMemberCollectCouponBack2Redis(collectCoupon);
+						throw bcbe;
 					}
-					couponRedisHandle.sendBuyerCoupon2Redis(collectCoupon);
 				}
 			}
 		} catch (MarketCenterBusinessException bcbe) {
-		    if (collectCoupon != null) {
-				couponRedisHandle.restoreMemberCollectCouponBack2Redis(collectCoupon);
-			}
-		    //会员已到优惠券领取上限数量,返回成功
-		    if(MarketCenterCodeConst.COUPON_RECEIVE_LIMITED.equals(bcbe.getCode())){
-		    	return result;
-		    }
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());
 		} catch (Exception e) {
@@ -314,7 +316,7 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 			if (StringUtils.isEmpty(buyerCode)) {
 				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "会员编码不能为空");
 			}
-			couponCountList = couponRedisHandle.getBuyerNotReceivedCouponList(buyerCode);
+			couponCountList = couponRedisHandle.getBuyerPopupNoticeCouponList(buyerCode);
 			result.setResult(couponCountList);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

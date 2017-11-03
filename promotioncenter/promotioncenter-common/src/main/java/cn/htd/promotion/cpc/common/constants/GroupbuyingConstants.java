@@ -18,6 +18,8 @@ public final class GroupbuyingConstants {
 	public static final String GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY = "realActorCount";
 	// 真实拼团价KEY
 	public static final String GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY = "realGroupbuyingPrice";
+	// 活动编号KEY
+	public static final String GROUPBUYINGINFO_PROMOTIONID_KEY = "promotionId";
 	
 	
 	/**

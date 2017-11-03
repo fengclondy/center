@@ -491,7 +491,7 @@ public class CouponRedisHandle {
         couponInfoKeyArr = couponInfoKeyList.toArray(new String[couponInfoKeyList.size()]);
         couponInfoList = marketRedisDB.mget(couponInfoKeyArr);
         if (couponInfoList == null || couponInfoList.isEmpty()) {
-            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY, "会员没有未领取的优惠券");
+            return resultList;
         }
         for (int i = couponInfoList.size() - 1; i >= 0; i --) {
                 promotionId = couponIdKeyList.get(i);

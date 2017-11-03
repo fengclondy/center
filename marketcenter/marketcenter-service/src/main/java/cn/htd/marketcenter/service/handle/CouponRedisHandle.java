@@ -2,6 +2,7 @@ package cn.htd.marketcenter.service.handle;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,9 +22,9 @@ import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.enums.NoticeTypeEnum;
-import cn.htd.marketcenter.common.enums.YesNoEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
+import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.common.utils.GeneratorUtils;
 import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.consts.MarketCenterCodeConst;
@@ -40,10 +41,7 @@ import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.membercenter.dto.SellerBelongRelationDTO;
 import cn.htd.membercenter.service.BelongRelationshipService;
-
 import com.alibaba.fastjson.JSON;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -449,77 +447,129 @@ public class CouponRedisHandle {
      * @param buyerCode
      * @return
      */
-	public List<PromotionDiscountInfoDTO> getBuyerNotReceivedCouponList(
-			String buyerCode) {
+	public List<PromotionDiscountInfoDTO> getBuyerNotReceivedCouponList(String buyerCode) {
 		List<PromotionDiscountInfoDTO> resultList = new ArrayList<PromotionDiscountInfoDTO>();
-		// 根据buyerCode获取对应的促销活动id的集合
-		Set<String> promotionIdFields = marketRedisDB
-				.getHashFields(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
-						+ buyerCode);
-		if (null == promotionIdFields || promotionIdFields.isEmpty()) {
-			throw new MarketCenterBusinessException(
-					MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY,
-					"会员没有未领取的优惠券");
-		}
-		for (String promotionId : promotionIdFields) {
-			String couponInfoKey = RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_"
-					+ promotionId;
-			String promotionInfoValue = marketRedisDB.get(couponInfoKey);
-			if (org.apache.commons.lang.StringUtils.isEmpty(promotionInfoValue)) {
-				continue;
-			}
-			PromotionDiscountInfoDTO promotionDiscountInfo = JSON.parseObject(
-					promotionInfoValue, PromotionDiscountInfoDTO.class);
-			String showStatus = promotionDiscountInfo.getShowStatus();
-			if (!showStatus.equals(dictionary.getValueByCode(
-					DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-					DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID))
-					&& !showStatus.equals(dictionary.getValueByCode(
-							DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-							DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))) {
-				// 审核未通过,或者未启用
-				continue;
-			}
-			Date prepStartTime = promotionDiscountInfo.getPrepStartTime();
-			Date prepEndTime = promotionDiscountInfo.getPrepEndTime();
-			Date currentTime = new Date();
-			if (currentTime.before(prepStartTime)
-					|| currentTime.after(prepEndTime)) {
-				// 当前时间不在券发放开始和结束之间
-				continue;
-			}
-			PromotionSellerRuleDTO sellerRuleDTO = promotionDiscountInfo
-					.getSellerRuleDTO();
-			boolean needGetBelongSellerFlg = baseService
-					.isBelongSellerRule(sellerRuleDTO);
-			if (needGetBelongSellerFlg) {
-				List<String> buyerCodeList = new ArrayList<String>();
-				buyerCodeList.add(buyerCode);
-				ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = belongRelationshipService
-						.queryBelongRelationListByMemberCodeList(buyerCodeList);
-				if (!belongRelationResult.isSuccess()) {
-					throw new MarketCenterBusinessException(
-							MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
-							StringUtils
-									.join(belongRelationResult
-											.getErrorMessages(), ","));
-				}
-				List<SellerBelongRelationDTO> belongRelationList = belongRelationResult.getResult();
-				if (belongRelationList != null && !belongRelationList.isEmpty()) {
-					for (SellerBelongRelationDTO belongRelationDTO : belongRelationList) {
-						promotionDiscountInfo.setCouponUseRangeDesc("限"+belongRelationDTO.getCurBelongSellerName()+"使用");
-						continue;
-					}
-				}
-			}
-			//券领取数量，从redis里取
-			String receiveLimit = marketRedisDB.getHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_"
-					+ buyerCode, promotionId);
-			promotionDiscountInfo.setReceiveLimit(receiveLimit==null?0:Integer.valueOf(receiveLimit));
-			resultList.add(promotionDiscountInfo);
-		
-		}
-		return resultList;
+		String promotionId = "";
+        List<String> buyerCodeList = new ArrayList<String>(Arrays.asList(buyerCode));
+        List<String> needRemoveCouponKeyList = new ArrayList<String>();
+        String[] couponIdKeyArr = null;
+        List<String> couponIdKeyList = new ArrayList<String>();
+        List<String> couponInfoKeyList = new ArrayList<String>();
+        List<String> couponReceivedKeyList = new ArrayList<String>();
+        String[] couponReceiveKeyArr = null;
+        String[] couponInfoKeyArr = null;
+        String[] removeCouponIdArr = null;
+        List<String> couponValidList = null;
+        List<String> couponInfoList = null;
+        List<String> couponReceiveCountList = null;
+        String couponValidStr = "";
+        String couponReceiveValue = "";
+        String couponInfoValue = "";
+        PromotionDiscountInfoDTO couponInfoDTO = null;
+        Date currentTime = new Date();
+        PromotionSellerRuleDTO sellerRuleDTO = null;
+        boolean needGetBelongSellerFlg = false;
+        List<PromotionDiscountInfoDTO> targetBelongCouponList = new ArrayList<PromotionDiscountInfoDTO>();
+        ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = null;
+        List<SellerBelongRelationDTO> belongRelationList = null;
+        SellerBelongRelationDTO belongRelationDTO = null;
+
+        Map<String, String> targetPromotionIdMap = marketRedisDB.getHashOperations(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_" + buyerCode);
+		if (null == targetPromotionIdMap || targetPromotionIdMap.isEmpty()) {
+            return resultList;
+        }
+		for (Entry<String, String> promotionInfo : targetPromotionIdMap.entrySet()) {
+            promotionId = promotionInfo.getKey();
+            couponIdKeyList.add(promotionId);
+            couponInfoKeyList.add(RedisConst.REDIS_COUPON_MEMBER_COLLECT + "_" + promotionId);
+            couponReceivedKeyList.add(buyerCode + "&" + promotionId);
+        }
+        couponIdKeyArr = couponIdKeyList.toArray(new String[couponIdKeyList.size()]);
+        couponValidList = marketRedisDB.getMHash(RedisConst.REDIS_COUPON_VALID, couponIdKeyArr);
+        couponReceiveKeyArr = couponReceivedKeyList.toArray(new String[couponReceivedKeyList.size()]);
+        couponReceiveCountList = marketRedisDB.getMHash(RedisConst.REDIS_BUYER_COUPON_RECEIVE_COUNT, couponReceiveKeyArr);
+        couponInfoKeyArr = couponInfoKeyList.toArray(new String[couponInfoKeyList.size()]);
+        couponInfoList = marketRedisDB.mget(couponInfoKeyArr);
+        if (couponInfoList == null || couponInfoList.isEmpty()) {
+            return resultList;
+        }
+        for (int i = couponInfoList.size() - 1; i >= 0; i --) {
+                promotionId = couponIdKeyList.get(i);
+                couponValidStr = couponValidList.get(i);
+                couponReceiveValue = couponReceiveCountList.get(i);
+                couponInfoValue = couponInfoList.get(i);
+            try {
+                if (StringUtils.isEmpty(couponInfoValue)) {
+                    needRemoveCouponKeyList.add(promotionId);
+                    continue;
+                }
+                couponInfoDTO = JSON.parseObject(couponInfoValue, PromotionDiscountInfoDTO.class);
+                if (couponInfoDTO == null) {
+                    needRemoveCouponKeyList.add(promotionId);
+                    continue;
+                }
+                if (StringUtils.isEmpty(couponValidStr)) {
+                    needRemoveCouponKeyList.add(promotionId);
+                    continue;
+                }
+                if (!couponValidStr.equals(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID)) && !couponValidStr.equals(dictionary
+                        .getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                                DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS))) {
+                    needRemoveCouponKeyList.add(promotionId);
+                    continue;
+                }
+                if (!StringUtils.isEmpty(couponReceiveValue) && couponInfoDTO.getReceiveLimit() != null
+                        && Integer.valueOf(couponReceiveValue).intValue() >= couponInfoDTO.getReceiveLimit()
+                        .intValue()) {
+                    needRemoveCouponKeyList.add(promotionId);
+                    continue;
+                }
+                if (currentTime.before(couponInfoDTO.getPrepStartTime()) || currentTime.after(couponInfoDTO.getPrepEndTime())) {
+                    needRemoveCouponKeyList.add(promotionId);
+                    continue;
+                }
+                sellerRuleDTO = couponInfoDTO.getSellerRuleDTO();
+                if (baseService.isBelongSellerRule(sellerRuleDTO)) {
+                    needGetBelongSellerFlg = true;
+                    targetBelongCouponList.add(couponInfoDTO);
+                }
+                resultList.add(couponInfoDTO);
+            } catch (Exception e) {
+                logger.error("\n 方法:[{}],异常:[{}]", "getBuyerNotReceivedCouponList", ExceptionUtils.getStackTraceAsString(e));
+                needRemoveCouponKeyList.add(promotionId);
+                continue;
+            }
+        }
+        try {
+            if (needGetBelongSellerFlg) {
+                belongRelationResult = belongRelationshipService.queryBelongRelationListByMemberCodeList(buyerCodeList);
+                if (!belongRelationResult.isSuccess()) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                            StringUtils.join(belongRelationResult.getErrorMessages(), ","));
+                }
+                belongRelationList = belongRelationResult.getResult();
+                if (belongRelationList == null || belongRelationList.isEmpty()) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                            "没有取得会员归属平台公司信息");
+                }
+                belongRelationDTO = belongRelationList.get(0);
+                for (PromotionDiscountInfoDTO belongCouponInfoDTO : targetBelongCouponList) {
+                    belongCouponInfoDTO.setCouponUseRangeDesc("限" + belongRelationDTO.getCurBelongSellerName() + "使用");
+                }
+            }
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}],异常:[{}]", "getBuyerNotReceivedCouponList", ExceptionUtils.getStackTraceAsString(e));
+            for (PromotionDiscountInfoDTO removeInfoDTO : targetBelongCouponList) {
+                resultList.remove(removeInfoDTO);
+            }
+        } finally {
+            if (needRemoveCouponKeyList != null && !needRemoveCouponKeyList.isEmpty()) {
+                removeCouponIdArr = needRemoveCouponKeyList.toArray(new String[needRemoveCouponKeyList.size()]);
+                marketRedisDB.delHash(RedisConst.REDIS_POPUP_NOTICE_INFO_HASH + "_" + buyerCode, removeCouponIdArr);
+            }
+        }
+        return resultList;
 	}
 
     /**

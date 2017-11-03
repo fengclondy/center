@@ -260,13 +260,7 @@ public class TimelimitedPurchaseServiceImpl implements
 		List<TimelimitedInfoDTO> timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
-			timelimitedListDTO = timelimitedInfoDAO
-					.queryPromotionInfoByItemCode(itemInfoDTO);
-			if (timelimitedListDTO == null) {
-				throw new MarketCenterBusinessException(
-						MarketCenterCodeConst.PROMOTION_NOT_EXIST,
-						"该商品没有正在参加限时购活动!");
-			}
+			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemInfoDTO);
 			result.setResult(timelimitedListDTO);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

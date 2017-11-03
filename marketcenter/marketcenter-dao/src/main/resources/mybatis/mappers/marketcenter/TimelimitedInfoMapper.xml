@@ -256,10 +256,15 @@
 		timelimited_info.promotion_id and promotion_accumulaty.level_code =
 		timelimited_info.level_code)
 		where 1 = 1
-		 and (timelimited_info.item_code =#{entity.itemCode} or timelimited_info.item_id=#{entity.itemId} or timelimited_info.sku_name=#{entity.itemName})
+		<if test="entity.itemCode != null and entity.itemCode != '' and entity.itemName != null and entity.itemName != ''">
+        	<![CDATA[ and ( timelimited_info.item_code =#{entity.itemCode} or timelimited_info.sku_name=#{entity.itemName} )]]>
+		</if>
+		<if test="entity.itemId != null and entity.itemId != ''">
+        	<![CDATA[ and timelimited_info.item_id=#{entity.itemId} ]]>
+		</if>
 	     and promotion_info.status in ('1','2') 
-	     and promotion_info.promotion_type=3
-	     <![CDATA[ and timelimited_info.end_time > now() ]]>
+	     <!-- and promotion_info.promotion_type=3 -->
+	     <![CDATA[ and promotion_info.invalid_time > now() ]]>  
 		 and promotion_accumulaty.delete_flag = 0
 	   </select>
 

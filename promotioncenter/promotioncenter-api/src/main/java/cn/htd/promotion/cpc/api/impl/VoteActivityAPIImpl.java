@@ -167,6 +167,8 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             memberResDTO.setVoteMemberId(NUtils.convertToLong(params.get("voteMemberId")));
             // 修改已报名
             memberResDTO.setSignStatus(1);
+            //修改为待审核
+            memberResDTO.setAuditStatus(0);
             // 报名时间为当前时间
             memberResDTO.setSignUpTime(new Date());
             // 活动宣言

@@ -798,43 +798,79 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
      */
 	private Map<String, String> calcRealGroupbuyingPrice(String promotionId) {
 		
-		Map<String, String> retMap = new HashMap<String, String>();
-		
-		String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
-		// 获取团购活动其他信息
-		Map<String, String> resultMap = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHashOperations(groupbuyingResultKey);
-
-		// 阶梯价格
-		String groupbuyingPriceSettingStr = String.valueOf(resultMap.get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING));
-		List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = JSONObject.parseArray(groupbuyingPriceSettingStr, GroupbuyingPriceSettingResDTO.class);
-		// 团购价格设置降序排序(sortNum)
-		Collections.sort(groupbuyingPriceSettingResDTOList,new Comparator<GroupbuyingPriceSettingResDTO>() {
-					@Override
-					public int compare(GroupbuyingPriceSettingResDTO o1, GroupbuyingPriceSettingResDTO o2) {
-						// 默认为升序
-						// o1.getSortNum().compareTo(o2.getSortNum())
-						return o2.getSortNum().compareTo(o1.getSortNum());
-					}
-					
-				});
-		
-		// 真实参团人数
-		Integer realActorCount = groupbuyingRecordDAO.getGBRecordCountsByPromotionId(promotionId);
-		// 真实拼团价
-		BigDecimal realGroupbuyingPrice = null;
-		for (int i = 0; i < groupbuyingPriceSettingResDTOList.size(); i++) {
-			GroupbuyingPriceSettingResDTO groupbuyingPriceSettingResDTO = groupbuyingPriceSettingResDTOList.get(i);
-			Integer actorCount = groupbuyingPriceSettingResDTO.getActorCount();// 参团人数
-			if (realActorCount >= actorCount) {
-				realGroupbuyingPrice = groupbuyingPriceSettingResDTO.getGroupbuyingPrice();// 拼团价
-				break;
+		try {
+			
+			Map<String, String> retMap = new HashMap<String, String>();
+			
+			String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+			// 阶梯价格
+			String groupbuyingPriceSettingStr = promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_PRICESETTING);
+			List<GroupbuyingPriceSettingResDTO> groupbuyingPriceSettingResDTOList = null;
+			if(null != groupbuyingPriceSettingStr) {
+				groupbuyingPriceSettingResDTOList = JSONObject.parseArray(groupbuyingPriceSettingStr, GroupbuyingPriceSettingResDTO.class);
+			}else{
+				groupbuyingPriceSettingResDTOList = groupbuyingPriceSettingDAO.selectByPromotionId(promotionId);
 			}
+			
+			if(null == groupbuyingPriceSettingResDTOList || groupbuyingPriceSettingResDTOList.size() < 1) return null;
+			// 团购价格设置降序排序(sortNum)
+			Collections.sort(groupbuyingPriceSettingResDTOList,new Comparator<GroupbuyingPriceSettingResDTO>() {
+						@Override
+						public int compare(GroupbuyingPriceSettingResDTO o1, GroupbuyingPriceSettingResDTO o2) {
+							// 默认为升序
+							// o1.getSortNum().compareTo(o2.getSortNum())
+							return o2.getSortNum().compareTo(o1.getSortNum());
+						}
+						
+					});
+			
+			// 真实参团人数
+			Integer realActorCount = groupbuyingRecordDAO.getGBRecordCountsByPromotionId(promotionId);
+			// 真实拼团价
+			BigDecimal realGroupbuyingPrice = null;
+			if(realActorCount > 0){
+				for (int i = 0; i < groupbuyingPriceSettingResDTOList.size(); i++) {
+					GroupbuyingPriceSettingResDTO groupbuyingPriceSettingResDTO = groupbuyingPriceSettingResDTOList.get(i);
+					Integer actorCount = groupbuyingPriceSettingResDTO.getActorCount();// 参团人数
+					if (realActorCount >= actorCount) {
+						realGroupbuyingPrice = groupbuyingPriceSettingResDTO.getGroupbuyingPrice();// 拼团价
+						break;
+					}
+				}
+			}else{ //没有人参团，取最低价
+				realGroupbuyingPrice = groupbuyingPriceSettingResDTOList.get(0).getGroupbuyingPrice();
+			}
+			
+			retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY, String.valueOf(realActorCount));
+			retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY, String.valueOf(realGroupbuyingPrice));
+			return retMap;
+			
+		} catch (Exception e) {
+			logger.error("执行方法【calcRealGroupbuyingPrice】报错：{}",e.toString());
+			return null;
 		}
 		
-		retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY, String.valueOf(realActorCount));
-		retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY, String.valueOf(realGroupbuyingPrice));
-		return retMap;
 	}
+	
+	
+	@Override
+	public Map<String, String> getGBActorCountAndPriceByPromotionId(String promotionId, String messageId){
+
+        try {
+
+            if (null == promotionId || promotionId.length() == 0) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "团购促销活动编号不能为空！");
+            }
+
+            return calcRealGroupbuyingPrice(promotionId);
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【getGBActorCountAndPriceByPromotionId】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+
+	}
+	
 
 	@Override
 	public GroupbuyingRecordResDTO getSingleGroupbuyingRecord(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId) {

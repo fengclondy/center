@@ -1,6 +1,7 @@
 package cn.htd.promotion.cpc.biz.service;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
@@ -71,6 +72,14 @@ public interface GroupbuyingService {
 	 * @param messageId
 	 */
 	String addGroupbuyingRecord2HttpINTFC(GroupbuyingRecordReqDTO groupbuyingRecordReqDTO, String messageId);
+	
+	/**
+	 * 根据活动编号时时查询团购真实人数和价格
+	 * @param promotionId
+	 * @param messageId
+	 * @return
+	 */
+	Map<String, String> getGBActorCountAndPriceByPromotionId(String promotionId, String messageId);
 	
 	/**
 	 * 根据条件获取单条参团记录

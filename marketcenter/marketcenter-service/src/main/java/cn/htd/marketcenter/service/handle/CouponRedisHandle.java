@@ -480,12 +480,12 @@ public class CouponRedisHandle {
 				// 审核未通过,或者未启用
 				continue;
 			}
-			Date effectiveTime = promotionDiscountInfo.getEffectiveTime();
-			Date invalidTime = promotionDiscountInfo.getInvalidTime();
+			Date prepStartTime = promotionDiscountInfo.getPrepStartTime();
+			Date prepEndTime = promotionDiscountInfo.getPrepEndTime();
 			Date currentTime = new Date();
-			if (currentTime.before(effectiveTime)
-					|| currentTime.after(invalidTime)) {
-				// 当前时间不在促销活动开始和结束之间
+			if (currentTime.before(prepStartTime)
+					|| currentTime.after(prepEndTime)) {
+				// 当前时间不在券发放开始和结束之间
 				continue;
 			}
 			PromotionSellerRuleDTO sellerRuleDTO = promotionDiscountInfo

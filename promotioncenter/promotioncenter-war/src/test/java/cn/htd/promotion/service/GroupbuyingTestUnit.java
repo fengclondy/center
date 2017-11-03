@@ -423,6 +423,27 @@ public class GroupbuyingTestUnit {
     
     
     /**
+     * 根据活动编号时时查询团购真实人数和价格-测试用例
+     */
+    @Test
+    public void getGBActorCountAndPriceByPromotionIdTest(){
+        String messageId = keyGeneratorUtils.generateMessageId();
+        String promotionId = "25171629210037";
+        try {
+        	ExecuteResult<Map<String, String>> executeResult = groupbuyingAPI.getGBActorCountAndPriceByPromotionId(promotionId, messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult.getResult());
+        	}else{
+        		System.out.println("===>根据活动编号时时查询团购真实人数和价格失败！！！");
+        	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    
+    /**
      * 分页查询参团记录-测试用例
      */
     @Test

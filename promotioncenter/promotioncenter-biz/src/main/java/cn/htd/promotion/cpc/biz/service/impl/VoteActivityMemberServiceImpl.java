@@ -3,10 +3,14 @@ package cn.htd.promotion.cpc.biz.service.impl;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.biz.dao.VoteActivityFansForwardDAO;
+import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
+import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberPictureDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityMemberService;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 
@@ -23,6 +27,12 @@ public class VoteActivityMemberServiceImpl implements VoteActivityMemberService{
 
     @Resource
     private VoteActivityFansForwardDAO voteActivityFansForwardDAO;
+    
+    @Resource
+    private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
+    
+    @Resource
+    private VoteActivityMemberPictureDAO voteActivityMemberPictureDAO;
 
     /***
      * 根据活动ID和会员编码查询投票活动
@@ -39,8 +49,16 @@ public class VoteActivityMemberServiceImpl implements VoteActivityMemberService{
      * @param voteActivityMemberResDTO
      * @return
      */
+    @Transactional(readOnly = false)
     public int updateByPrimaryKeySelective(VoteActivityMemberResDTO voteActivityMemberResDTO){
-        return voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTO);
+    	int i = voteActivityMemberDAO.updateByPrimaryKeySelective(voteActivityMemberResDTO);
+    	if (voteActivityMemberResDTO.getDeleteFlag() != null && voteActivityMemberResDTO.getDeleteFlag() == 1) {
+    		Long voteMemberId = voteActivityMemberResDTO.getVoteMemberId();
+    		voteActivityFansForwardDAO.deleteForwordInfoByVoteMemberId(voteMemberId);
+    		voteActivityFansVoteDAO.deleteVoteInfoByVoteMemberId(voteMemberId);
+    		voteActivityMemberPictureDAO.deleteByVoteMemberId(voteMemberId);
+    	}
+        return i;
     }
 
     /***

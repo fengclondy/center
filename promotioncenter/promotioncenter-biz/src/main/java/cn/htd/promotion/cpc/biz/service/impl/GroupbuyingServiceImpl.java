@@ -843,6 +843,8 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			
 			retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY, String.valueOf(realActorCount));
 			retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY, String.valueOf(realGroupbuyingPrice));
+			retMap.put(GroupbuyingConstants.GROUPBUYINGINFO_PROMOTIONID_KEY, promotionId);
+			
 			return retMap;
 			
 		} catch (Exception e) {

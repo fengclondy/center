@@ -438,7 +438,7 @@
 							ORDER BY
 								voteNum DESC,
 								member_vote_last_time ASC,
-								member_name DESC
+								sign_up_time ASC
 						) c,
 						(SELECT @rownum := 0) r
 				) temp3 ON temp2.memberCode = temp3.member_code
@@ -555,7 +555,7 @@
 				ORDER BY
 					voteNum DESC,
 					member_vote_last_time ASC,
-					member_name DESC
+					sign_up_time ASC
 			) c,
 			(SELECT @rownum := 0) r
 	) temp2 ON temp.memberCode = temp2.member_code

@@ -27,6 +27,10 @@
     delete from vote_activity_member_picture
     where picture_id = #{pictureId,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteByVoteMemberId" parameterType="java.lang.Long" >
+    update vote_activity_member_picture set delete_flag = 1
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </delete>
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityMemberPictureResDTO" >
     insert into vote_activity_member_picture (vote_member_id, picture_url,
       delete_flag, create_id, create_name, 

@@ -281,7 +281,8 @@
 				WHERE
 					a.vote_member_id = b.vote_member_id
 			) AS voteNum,
-			a.member_vote_last_time
+			a.member_vote_last_time,
+			a.sign_up_time
 		FROM
 			vote_activity_member a
 		WHERE
@@ -292,7 +293,7 @@
 		ORDER BY
 			voteNum DESC,
 			member_vote_last_time ASC,
-			member_name DESC
+			sign_up_time ASC
   </sql>
 
   <select id="selectMemberRankingTop10" resultType="map">
@@ -438,7 +439,7 @@
 							ORDER BY
 								voteNum DESC,
 								member_vote_last_time ASC,
-								member_name DESC
+								sign_up_time ASC
 						) c,
 						(SELECT @rownum := 0) r
 				) temp3 ON temp2.memberCode = temp3.member_code
@@ -555,7 +556,7 @@
 				ORDER BY
 					voteNum DESC,
 					member_vote_last_time ASC,
-					member_name DESC
+					sign_up_time ASC
 			) c,
 			(SELECT @rownum := 0) r
 	) temp2 ON temp.memberCode = temp2.member_code

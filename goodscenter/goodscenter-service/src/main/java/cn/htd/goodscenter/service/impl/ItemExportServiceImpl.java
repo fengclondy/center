@@ -3619,7 +3619,11 @@ public class ItemExportServiceImpl implements ItemExportService {
 					ItemSkuPublishInfo  publishInfo = itemSkuPublishInfo.get(0);
 					//skuOut.setDisplayQuantity(publishInfo.getDisplayQuantity());
 					skuOut.setMimQuantity(publishInfo.getMimQuantity());
-					skuOut.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+					if(publishInfo.getIsPurchaseLimit() == 0){//是否限购 0不限 1限购 //不限购的时候把这个最大设置为99999999
+						skuOut.setMaxPurchaseQuantity(999999999);
+					}else{
+						skuOut.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+					}
 					skuOut.setReserveQuantity(publishInfo.getReserveQuantity());
 				}
 				//根据skuID 和sellerId查询对应的阶梯价

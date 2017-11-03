@@ -444,6 +444,7 @@
 				) temp3 ON temp2.memberCode = temp3.member_code
 			) temp4
 			ORDER BY temp4.sortNum ASC
+			LIMIT #{start},#{pageSize}
  </select>
  
  <select id="querySignUpMemberInfoList" parameterType="Long" resultType="java.lang.String">

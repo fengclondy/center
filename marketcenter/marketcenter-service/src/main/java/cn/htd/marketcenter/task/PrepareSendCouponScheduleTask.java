@@ -485,9 +485,6 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                             threadPoolExecutor.getQueue().size());
                 }
             }
-            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-            sendMemberNotice(threadPoolExecutor, dealTargetInfo, sendedBuyerList, buyerDetailList);
-            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         } catch (MarketCenterBusinessException mcbe) {
             logger.warn("\n 方法:[{}],发券名称:[{}],异常:[{}],参数:[{}]", "PrepareSendCouponScheduleTask-updateAutoPresentCoupon",
                     dealTargetInfo.getPromotionName(), JSON.toJSONString(mcbe), JSON.toJSONString(dealTargetInfo));

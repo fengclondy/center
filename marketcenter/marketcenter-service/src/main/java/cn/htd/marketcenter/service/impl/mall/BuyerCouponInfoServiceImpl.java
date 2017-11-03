@@ -6,9 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -30,8 +27,9 @@ import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.BuyerCouponInfoService;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.handle.CouponRedisHandle;
-
 import com.github.pagehelper.StringUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service("buyerCouponInfoService")
 public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
@@ -300,15 +298,16 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * 查询会员未领取的优惠券列表
+	 * 查询会员弹框提醒优惠券列表
+	 *
 	 * @param messageId
 	 * @param buyerCode
 	 * @return
 	 */
-	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
-			String messageId, String buyerCode) {
+	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerPopupNoticeCouponList(String messageId,
+			String buyerCode) {
 		ExecuteResult<List<PromotionDiscountInfoDTO>> result = new ExecuteResult<List<PromotionDiscountInfoDTO>>();
 		List<PromotionDiscountInfoDTO> couponCountList = null;
 		try {

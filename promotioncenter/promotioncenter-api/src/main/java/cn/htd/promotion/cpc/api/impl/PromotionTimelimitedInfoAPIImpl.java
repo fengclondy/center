@@ -492,4 +492,18 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		return flag;
 	}
 
+	@Override
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedInfoBySkuCode(String messageId,String skucode) {
+		ExecuteResult<TimelimitedInfoResDTO> result = new ExecuteResult<TimelimitedInfoResDTO>();
+		try {
+			TimelimitedInfoResDTO timelimitedInfoResDTO = promotionTimelimitedInfoService.getPromotionTimelimitedInfoBySkuCode(messageId, skucode);
+			result.setResult(timelimitedInfoResDTO);
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
+		} catch (Exception e) {
+			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+			result.setErrorMessage(e.getMessage());
+		}
+		return result;
+	}
+
 }

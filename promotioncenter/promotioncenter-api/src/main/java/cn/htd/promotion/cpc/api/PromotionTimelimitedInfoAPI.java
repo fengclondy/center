@@ -120,4 +120,14 @@ public interface PromotionTimelimitedInfoAPI {
 	 * @return
 	 */
 	public boolean isHasAuthority(String promotionId, String buterCode);
+	
+	/**
+	 * 汇掌柜APP - 查询秒杀活动
+	 * 
+	 * @param messageId
+	 * @param skucode
+	 * @return
+	 */
+	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedInfoBySkuCode(String messageId, String skucode);
+
 }

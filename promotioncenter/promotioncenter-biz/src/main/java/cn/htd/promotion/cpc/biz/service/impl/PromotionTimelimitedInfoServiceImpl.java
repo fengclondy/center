@@ -39,6 +39,13 @@ public class PromotionTimelimitedInfoServiceImpl implements PromotionTimelimited
 		return timelimitedInfoDTOList;
 	}
 
+	@Override
+	public TimelimitedInfoResDTO getPromotionTimelimitedInfoBySkuCode(String messageId, String skuCode)
+			throws PromotionCenterBusinessException {
+		TimelimitedInfoResDTO timelimitedInfoResDTO = promotionTimelimitedInfoDAO.selectTimelimitedInfoBySkuCode(skuCode);
+		return timelimitedInfoResDTO;
+	}
+
 
 	
 }

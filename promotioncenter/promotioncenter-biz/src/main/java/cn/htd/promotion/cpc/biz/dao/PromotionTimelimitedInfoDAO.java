@@ -21,5 +21,7 @@ public interface PromotionTimelimitedInfoDAO {
     public List<PromotionInfoDTO> queryPromotionList(@Param("entity") PromotionInfoDTO condition, @Param("page") Pager<PromotionInfoDTO> page);
     
     public void updatePromotionShowStatusById(PromotionInfoDTO promotionInfo);
+    
+    TimelimitedInfoResDTO selectTimelimitedInfoBySkuCode(@Param("skuCode") String skuCode);
 
 }

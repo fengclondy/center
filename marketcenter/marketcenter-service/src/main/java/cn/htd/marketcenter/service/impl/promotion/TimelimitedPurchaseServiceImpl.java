@@ -260,13 +260,7 @@ public class TimelimitedPurchaseServiceImpl implements
 		List<TimelimitedInfoDTO> timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
-			timelimitedListDTO = timelimitedInfoDAO
-					.queryPromotionInfoByItemCode(itemInfoDTO);
-			if (timelimitedListDTO == null) {
-				throw new MarketCenterBusinessException(
-						MarketCenterCodeConst.PROMOTION_NOT_EXIST,
-						"该商品没有正在参加限时购活动!");
-			}
+			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemInfoDTO);
 			result.setResult(timelimitedListDTO);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
@@ -448,6 +442,7 @@ public class TimelimitedPurchaseServiceImpl implements
 					for (int i = 0; i < list.size(); i++) {
 			            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
 			            timelimite.setPurchaseSort(dto.getPurchaseSort());
+			            timelimite.setSellerName(timelimitedInfoDTO.getSellerName());
 			            timelimite.setItemCode(timelimitedInfoDTO.getItemCode());
 			            int skuTotal = timelimitedRedisHandle.getShowRemainCount(promotionId, timelimite.getSkuCode());
 			            timelimite.setTimelimitedSkuCount(skuTotal);
@@ -484,7 +479,6 @@ public class TimelimitedPurchaseServiceImpl implements
 				if(dto.getPurchaseFlag() == 1){
 					Collections.sort(resultList);
 				}else{
-					System.out.println(222);
 					Collections.sort(resultList, new PriceComparator());
 				}
 			}

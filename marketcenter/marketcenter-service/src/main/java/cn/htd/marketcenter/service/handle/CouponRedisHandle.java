@@ -485,8 +485,6 @@ public class CouponRedisHandle {
                     needRemoveCouponKeyList.add(promotionId);
                     continue;
                 }
-                couponInfoDTO.setReceiveLimit(couponInfoDTO.getReceiveLimit()
-                        .intValue() - Integer.valueOf(couponReceiveValue).intValue());
                 if (currentTime.before(couponInfoDTO.getPrepStartTime()) || currentTime.after(couponInfoDTO.getPrepEndTime())) {
                     needRemoveCouponKeyList.add(promotionId);
                     continue;

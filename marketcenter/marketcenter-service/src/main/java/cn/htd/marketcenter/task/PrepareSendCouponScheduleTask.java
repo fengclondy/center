@@ -538,6 +538,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 couponDTO.setCouponAmount(targetDiscountInfo.getDiscountAmount());
                 couponDTO.setDiscountPercent(targetDiscountInfo.getDiscountPercent());
                 couponDTO.setReceiveLimit(targetDiscountInfo.getReceiveLimit());
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                baseService.deleteBuyerUselessInfo(couponDTO);
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                 couponInfoDTOStr = JSON.toJSONString(couponDTO);
                 jedis = marketRedisDB.getResource();
                 pipeline = jedis.pipelined();

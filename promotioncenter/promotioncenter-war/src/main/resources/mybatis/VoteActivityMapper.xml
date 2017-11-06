@@ -279,6 +279,8 @@
   <select id="selectCurrentActivity" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
     from vote_activity
     where
     <![CDATA[  vote_sign_up_start_time <= NOW()]]>

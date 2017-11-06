@@ -14,6 +14,14 @@ public final class GroupbuyingConstants {
 	}
 	
 	
+	// 真实参团人数KEY
+	public static final String GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY = "realActorCount";
+	// 真实拼团价KEY
+	public static final String GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY = "realGroupbuyingPrice";
+	// 活动编号KEY
+	public static final String GROUPBUYINGINFO_PROMOTIONID_KEY = "promotionId";
+	
+	
 	/**
 	 * 说明：团购返回状态码集合
 	 */
@@ -37,7 +45,13 @@ public final class GroupbuyingConstants {
 		DELGROUPBUYING_PROMOTIONID_IS_NULL("1022", "活动编码为空"),
 		DELGROUPBUYING_REDIS_REMOVE_ERROR("1023", "redis活动删除失败"),
 		
-		
+		// 参团操作返回状态码 [1041.参数为空,1042.活动编码为空,1043.请求过于频繁,1044.活动不存在,1045.活动状态不是开团进行中,1046.已经参团过]
+		ADDGROUPBUYING_PARAM_IS_NULL("1041", "参数为空"),
+		ADDGROUPBUYING_PROMOTIONID_IS_NULL("1042", "活动编码为空"),
+		ADDGROUPBUYING_REQUEST_TOO_OFTEN("1043","请求过于频繁"),
+		ADDGROUPBUYING_PROMOTION_NOT_EXIST("1044","活动不存在"),
+		ADDGROUPBUYING_PROMOTION_NOT_PROCESSING("1045","活动状态不是开团进行中"),
+		ADDGROUPBUYING_PROMOTION_IS_RECORD("1046","已经参团过"),
 		
 		;
 

@@ -18,4 +18,6 @@ public interface VoteActivityMemberPictureDAO {
     int updateByPrimaryKey(VoteActivityMemberPictureResDTO record);
 
     List<VoteActivityMemberPictureResDTO> selectByVoteMemberId(Long voteMemberId);
+    
+    int deleteByVoteMemberId(Long voteMemberId);
 }

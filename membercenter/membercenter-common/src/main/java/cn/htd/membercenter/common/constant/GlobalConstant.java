@@ -158,6 +158,6 @@ public class GlobalConstant {
 	/**
 	 * redis的归属关系key
 	 */
-	public static final String  BELONG_RELATION_INFO = "BELONG_RELATION_INFO";
+	public static final String  BELONG_RELATION_INFO = "B2B_MIDDLE_MEMBER_BELONG_RELATION_HASH";
 
 }

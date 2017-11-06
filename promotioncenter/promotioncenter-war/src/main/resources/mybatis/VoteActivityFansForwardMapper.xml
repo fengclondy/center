@@ -25,6 +25,10 @@
     delete from vote_activity_fans_forward
     where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteForwordInfoByVoteMemberId" parameterType="java.lang.Long" >
+    delete from vote_activity_fans_forward
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </delete>
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
     insert into vote_activity_fans_forward (vote_member_id,
       create_id, create_name, create_time, 

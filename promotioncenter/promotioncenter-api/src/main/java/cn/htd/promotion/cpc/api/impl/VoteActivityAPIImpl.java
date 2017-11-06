@@ -1,5 +1,17 @@
 package cn.htd.promotion.cpc.api.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -18,18 +30,7 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.google.common.collect.Lists;
-
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 投票活动相关API
@@ -166,6 +167,8 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             memberResDTO.setVoteMemberId(NUtils.convertToLong(params.get("voteMemberId")));
             // 修改已报名
             memberResDTO.setSignStatus(1);
+            //修改为待审核
+            memberResDTO.setAuditStatus(0);
             // 报名时间为当前时间
             memberResDTO.setSignUpTime(new Date());
             // 活动宣言
@@ -244,8 +247,8 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
                     if (memberResDTO.getAuditStatus().intValue() == 0) {
                         resultMap.put("auditStatus", "待审核");
                     } else if (memberResDTO.getAuditStatus().intValue() == 1) {
-                        resultMap.put("auditStatus", "已审核");
-                    } else if (memberResDTO.getAuditStatus().intValue() == 1) {
+                        resultMap.put("auditStatus", "已通过");
+                    } else if (memberResDTO.getAuditStatus().intValue() == 2) {
                         resultMap.put("auditStatus", "已驳回");
                     }
                 }else{

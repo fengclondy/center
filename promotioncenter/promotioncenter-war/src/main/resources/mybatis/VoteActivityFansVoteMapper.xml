@@ -27,6 +27,10 @@
     delete from vote_activity_fans_vote
     where vote_fans_id = #{voteFansId,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteVoteInfoByVoteMemberId" parameterType="java.lang.Long" >
+    delete from vote_activity_fans_vote
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </delete>
   <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansVoteResDTO" >
     insert into vote_activity_fans_vote (vote_member_id, fans_id,
       fans_sign_up_time, create_id, create_name, create_time, modify_id, modify_name, modify_time)

@@ -23,4 +23,6 @@ public interface VoteActivityFansForwardDAO {
      * @return
      */
     Long selectForwordCountByVMId(Long voteMemberId);
+    
+    int deleteForwordInfoByVoteMemberId(Long voteMemberId);
 }

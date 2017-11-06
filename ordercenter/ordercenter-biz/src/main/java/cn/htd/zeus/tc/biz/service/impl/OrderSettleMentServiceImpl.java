@@ -613,7 +613,7 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 				priceDTO.setIsCanSellProdplusItem(flag.getOtherCenterResult() ? 1 : 0);
 			}
 		} catch (UnknownHostException e) {
-			LOGGER.error("transformSearchCondition4price-------------获取主机IP失败");
+			LOGGER.error("MessageId:{}transformSearchCondition4price-------------获取主机IP失败","");
 		}
 		return priceDTO;
 	}
@@ -864,7 +864,7 @@ public class OrderSettleMentServiceImpl implements OrderSettleMentService {
 		String messageId = orderSettleMentReqDTO.getMessageId();
 		String reOrderId = GenerateIdsUtil.generateOrderID(Constant.ORDER_PREHOLDING_NUMBER);
 		resDTO.getOrderSeckillInfoDTO().setReOrderId(reOrderId);
-		LOGGER.info("打印秒杀商品库存锁定接口信息=======reserveSeckillproductStock,预占订单编码：{}", reOrderId);
+		LOGGER.info("MessageId:{} 打印秒杀商品库存锁定接口信息=======reserveSeckillproductStock,预占订单编码：{}",messageId, reOrderId);
 		List<OrderItemPromotionDTO> orderItemPromotionList = new ArrayList<OrderItemPromotionDTO>();
 		OrderItemPromotionDTO itemDTO = new OrderItemPromotionDTO();
 		itemDTO.setSeckillLockNo(reOrderId);

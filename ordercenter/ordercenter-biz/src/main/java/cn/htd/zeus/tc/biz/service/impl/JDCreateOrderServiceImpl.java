@@ -93,7 +93,7 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 			List<JDCreateOrderSkuReqDTO> skuList = new ArrayList<JDCreateOrderSkuReqDTO>();
 			if(null != requestInfo){
 				String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-    			LOGGER.info("京东确认预占库存(京东确认订单) - 生成日志流水issueLogId:"+messageId);
+    			LOGGER.info("MessageId:{} 京东确认预占库存(京东确认订单) - 生成日志流水issueLogId:{}",messageId,messageId);
     			
 				String orderNo = requestInfo.getOrderNo();
 				String orderItemNos = requestInfo.getOrderItemNos();
@@ -112,9 +112,9 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 						token = tokenJson.get("data").toString();
 						
 						String url =  middlewareHttpUrlConfig.getOrdercenterMiddleware4JDConfirmCreateOrder()+"?jdOrderId="+jdorderNo+"&token="+token;
-						LOGGER.info("url:::::::京东确认预占库存:::::::::::"+url);
+						LOGGER.info("京东确认预占库存url:{}",url);
 						String httpRes = HttpClientCommon.httpGet(url);
-						LOGGER.info("京东确认预占库存(京东确认订单) ---http请求返回结果:"+httpRes);
+						LOGGER.info("京东确认预占库存(京东确认订单) ---http请求返回结果:{}",httpRes);
 					   
 						JDResDTO jdResDTO = new JDResDTO();
 					    if(StringUtilHelper.allIsNotNull(httpRes)){
@@ -127,7 +127,9 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 					} catch (Exception e1) {
 						 StringWriter w = new StringWriter();
 						 e1.printStackTrace(new PrintWriter(w));
-						 LOGGER.error("京东预占库存(京东确认订单)接口---http请求中间件出现异常"+w.toString());
+						LOGGER.error(
+								"MessageId:{} 京东预占库存(京东确认订单)接口---http请求中间件出现异常:{}",
+								"", w.toString());
 					}
 				
 				     LOGGER.info("成功发送京东预占库存(京东确认订单)接口");
@@ -163,7 +165,7 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 						jdOrderInfoDMO.setJdResultMsg(msg);
 					}
 					int update = jdOrderInfoDAO.updateJDInfo(jdOrderInfoDMO);
-					LOGGER.info("京东预占库存(京东确认订单)接口---更新TB_B_JDORDERINFO结果："+update);
+					LOGGER.info("京东预占库存(京东确认订单)接口---更新TB_B_JDORDERINFO结果：{}",update);
 					
 					//如果JdResultStatus返回2(成功),更新字段outer_channel_puchase_status:2
 					//如果JdResultStatus返回3(失败),先查询outer_channel_puchase_status是否是2，如果不是更新订单和订单行表的order_error_status和order_item_error_status
@@ -174,9 +176,9 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 							tradeOrderItemsDMO.setOrderNo(orderNo);
 							tradeOrderItemsDMO.setChannelCode(GoodCenterEnum.JD_SUPPLIER.getCode());
 							tradeOrderItemsDMO.setOuterChannelPuchaseStatus(OrderStatusEnum.JD_SURE_SATOCK_SUCCESS.getCode());
-							LOGGER.info("京东预占库存(京东确认订单)回调结果-- 成功 --更新参数:"+JSONObject.toJSONString(tradeOrderItemsDMO));
+							LOGGER.info("京东预占库存(京东确认订单)回调结果-- 成功 --更新参数:{}",JSONObject.toJSONString(tradeOrderItemsDMO));
 							int updateItem = tradeOrderItemsDAO.updateTradeOrderItemsByOrderNo(tradeOrderItemsDMO);
-							LOGGER.info("京东预占库存(京东确认订单)---trade_order_items(成功)结果:"+updateItem);
+							LOGGER.info("京东预占库存(京东确认订单)---trade_order_items(成功)结果:{}",updateItem);
 					}else{
 						LOGGER.info("京东预占库存(京东确认订单)回调结果:失败");
 						String orderItemNo = orderItemNoArray[0];
@@ -190,14 +192,14 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 								tradeOrderItemsDMO.setOrderItemErrorStatus(OrderStatusEnum.ORDER_ERROR_STATUS_JD_FAIL.getCode());
 								tradeOrderItemsDMO.setOrderItemErrorTime(DateUtil.getSystemTime());
 								int updateItem = tradeOrderItemsDAO.updateTradeOrderItemsByOrderNo(tradeOrderItemsDMO);
-								LOGGER.info("京东预占库存(京东确认订单)---trade_order_items(失败)结果:"+updateItem);
+								LOGGER.info("京东预占库存(京东确认订单)---trade_order_items(失败)结果:{}",updateItem);
 								
 								TradeOrdersDMO tradeOrdersDMO = new TradeOrdersDMO();
 								tradeOrdersDMO.setOrderNo(orderNo);
 								tradeOrdersDMO.setOrderErrorStatus(OrderStatusEnum.ORDER_ERROR_STATUS_JD_FAIL.getCode());
 								tradeOrdersDMO.setOrderErrorTime(DateUtil.getSystemTime());
 								int updateOrder = traderdersDAO.updateTradeOrdersByOrderNo(tradeOrdersDMO);
-								LOGGER.info("京东预占库存(京东确认订单)---trade_orders(失败)结果:"+updateOrder);
+								LOGGER.info("京东预占库存(京东确认订单)---trade_orders(失败)结果:{}",updateOrder);
 							}
 						}
 					}
@@ -206,7 +208,7 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("京东预占库存(京东确认订单)接口---更新TB_B_JDORDERINFO出现异常"+w.toString());
+			LOGGER.error("MessageId:{} 京东预占库存(京东确认订单)接口---更新TB_B_JDORDERINFO出现异常:{}","",w.toString());
 		}
 	}
 	
@@ -238,7 +240,7 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 			jdCreateOrderCallBackDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-		    LOGGER.error("京东预占库存(京东确认订单)接口回调出现异常:"+w.toString());
+		    LOGGER.error("MessageId:{} 京东预占库存(京东确认订单)接口回调出现异常:{}","",w.toString());
 		    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return jdCreateOrderCallBackDMO;
@@ -356,12 +358,12 @@ public class JDCreateOrderServiceImpl implements JDCreateOrderService{
 			} catch (Exception e) {
 				 StringWriter w = new StringWriter();
 				 e.printStackTrace(new PrintWriter(w));
-				 LOGGER.error("MessageId{} 京东抛单---http请求中间件出现异常{}",messageId,w.toString());
+				 LOGGER.error("MessageId:{} 京东抛单---http请求中间件出现异常:{}",messageId,w.toString());
 				 orderCreateInfoDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
 				 orderCreateInfoDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 				 return orderCreateInfoDMO;
 			}
-			LOGGER.info("MessageId{} 成功发送京东抛单",messageId);
+			LOGGER.info("MessageId:{} 成功发送京东抛单",messageId);
 			return orderCreateInfoDMO;
 	}
 	

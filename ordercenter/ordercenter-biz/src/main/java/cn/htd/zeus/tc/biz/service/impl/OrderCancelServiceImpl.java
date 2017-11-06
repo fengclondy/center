@@ -178,7 +178,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			tradeOrdersDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.orderCancel出现异常{}",
+			LOGGER.error("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.orderCancel出现异常:{}",
 					orderCancelInfoDTO.getMessageId(), orderNo, w.toString());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return tradeOrdersDMO;
@@ -717,7 +717,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			List<TradeOrderItemsDMO> tradeItemOrderDmoParam) throws Exception {
 		int isTimeLimitedOrder = tradeOrdersDMO.getIsTimelimitedOrder();
 		int hasUsedCoupon = tradeOrdersDMO.getHasUsedCoupon();
-		LOGGER.info("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.reservseResource输入参数是{}",
+		LOGGER.info("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.reservseResource输入参数:{}",
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		// 订单状态有311 和 312的 所以必须截取后判断订单状态
 		String orderstatus = tradeOrdersDMO.getOrderStatus().substring(0, 2);
@@ -860,7 +860,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 	private TradeOrdersDMO batchReleaseStock4VMSItemCancle(TradeOrderItemsDMO tradeOrderItemsDMO,
 			String orderNo, TradeOrdersDMO tradeOrdersDMO, String messageId) {
 		LOGGER.info(
-				"MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle输入参数是{}",
+				"MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.batchReleaseStock4VMSItemCancle输入参数:{}",
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		Order4StockChangeDTO order4StockChangeDTO = new Order4StockChangeDTO();
 		List<Order4StockEntryDTO> order4StockEntryDTOList = new ArrayList<Order4StockEntryDTO>();

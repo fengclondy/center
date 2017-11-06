@@ -190,8 +190,8 @@ public class RechargeOrderServiceImpl implements RechargeOrderService {
 	@Override
 	public EmptyResDTO updatePaymentOrderInfo(PaymentOrderInfoReqDTO paymentOrderInfoReqDTO,
 			String messageId) {
-		LOGGER.info("收付款回调开始中间件传入参数paymentOrderInfoReqDTO:"
-				+ JSONObject.toJSONString(paymentOrderInfoReqDTO) + " messageId:" + messageId);
+		LOGGER.info("MessageId:{} 收付款回调开始中间件传入参数paymentOrderInfoReqDTO:{}",messageId,
+				JSONObject.toJSONString(paymentOrderInfoReqDTO));
 		EmptyResDTO emptyResDTO = new EmptyResDTO();
 
 		try {
@@ -276,14 +276,14 @@ public class RechargeOrderServiceImpl implements RechargeOrderService {
 								status, statusText, directUpdateOrder, orderErrorStatus,
 								orderErrorReason);
 					} else {
-						LOGGER.warn("从表TB_B_PAYORDERINFO没有查出的订单号(downOrderNo):" + downOrderNo);
+						LOGGER.warn("MessageId:{} 从表TB_B_PAYORDERINFO没有查出的订单号(downOrderNo):{}","", downOrderNo);
 					}
 				}
 			}).start();
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("收付款回调 -- 修改订单和订单行表装填出现异常-(此异常不需要回滚)");
+			LOGGER.warn("MessageId:{} 收付款回调 -- 修改订单和订单行表装填出现异常-(此异常不需要回滚)","",w.toString());
 		}
 	}
 

@@ -164,7 +164,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法OrderPaymentResultServiceImpl.selectPaymentResultByTradeNo出现异常{}",
+					"MessageId:{} 调用方法OrderPaymentResultServiceImpl.selectPaymentResultByTradeNo出现异常:{}",
 					orderPaymentResultReqDTO.getMessageId(), w.toString());
 		}
 
@@ -251,7 +251,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 					orderPaymentResultDMOTemp.setOrderErrorTime(new Date());
 					orderPaymentResultDMOTemp.setOrderErrorReason(Constant.ORDER_ERROR_REASON);
 					LOGGER.error(
-							"MessageId:{} 调用方法OrderPaymentResultServiceImpl.updateOrderStatusByTradeNo出现异常{}",
+							"MessageId:{} 调用方法OrderPaymentResultServiceImpl.updateOrderStatusByTradeNo出现异常:{}",
 							messageId, "订单号" + orderPayResultInfoDMO.getOrderNo() + "金额被篡改");
 				}
 				if (record.getIsCancelOrder().equals(Constant.IS_CANCEL_ORDER)) {
@@ -260,7 +260,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 					orderPaymentResultDMOTemp.setOrderErrorReason(Constant.ORDER_ERROR_REASON2);
 					orderPaymentResultDMOTemp.setIsCancelOrder(Constant.IS_NOT_CANCEL_ORDER);
 					LOGGER.error(
-							"MessageId:{} 调用方法OrderPaymentResultServiceImpl.updateOrderStatusByTradeNo出现异常{}",
+							"MessageId:{} 调用方法OrderPaymentResultServiceImpl.updateOrderStatusByTradeNo出现异常:{}",
 							messageId, "订单号" + orderPayResultInfoDMO.getOrderNo() + "已取消订单被支付");
 				}
 				List<TradeOrderItemsDMO> orderItemList = record.getOrderItemsList();
@@ -321,12 +321,12 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 									new TypeReference<ArrayList<OrderItemPaymentDMO>>() {
 									});
 							LOGGER.info(
-									"MessageId:{} 调用方法OrderPaymentResultAPIImpl.updateOrderItemCommissionByItemNo入参{}",
+									"MessageId:{} 调用方法OrderPaymentResultAPIImpl.updateOrderItemCommissionByItemNo入参:{}",
 									JSONObject.toJSONString(itemList));
 							if (CollectionUtils.isNotEmpty(itemList)) {
 								for (OrderItemPaymentDMO itemDMO : itemList) {
 									LOGGER.info(
-											"MessageId:{} 调用方法OrderPaymentResultAPIImpl.updateOrderItemCommissionByItemNo入参{}",
+											"MessageId:{} 调用方法OrderPaymentResultAPIImpl.updateOrderItemCommissionByItemNo入参:{}",
 											JSONObject.toJSONString(itemDMO));
 									tradeOrderItemsDAO.updateOrderItemCommissionByItemNo(itemDMO);
 								}
@@ -348,7 +348,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 									itemDMO.setAmount(ratio.multiply(payOrderAmount
 											.subtract(costPrice.multiply(new BigDecimal(count)))));
 									LOGGER.info(
-											"MessageId:{} 调用方法OrderPaymentResultAPIImpl.updateOrderItemCommissionByItemNo入参{}",
+											"MessageId:{} 调用方法OrderPaymentResultAPIImpl.updateOrderItemCommissionByItemNo入参:{}",
 											JSONObject.toJSONString(itemDMO));
 									tradeOrderItemsDAO.updateOrderItemCommissionByItemNo(itemDMO);
 								}
@@ -399,7 +399,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法OrderPaymentResultServiceImpl.updateOrderStatusByTradeNo出现异常{}",
+					"MessageId:{} 调用方法OrderPaymentResultServiceImpl.updateOrderStatusByTradeNo出现异常:{}",
 					orderPayResultInfoDMO.getMessageId(), w.toString());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
@@ -429,7 +429,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 插入订单状态履历表出现异常-(此异常不需要回滚){}", messageId, w.toString());
+			LOGGER.error("MessageId:{} 插入订单状态履历表出现异常-(此异常不需要回滚):{}", messageId, w.toString());
 		}
 	}
 
@@ -483,14 +483,14 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 					} else {
 						LOGGER.warn("开通会员Vip成功");
 					}
-					LOGGER.info("MessageId{}【支付回调】【开通会员Vip结束】--结果:{}", messageId,
+					LOGGER.info("MessageId:{}【支付回调】【开通会员Vip结束】--结果:{}", messageId,
 							JSONObject.toJSONString(result));
 				}
 			}).start();
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId{}开通会员Vip失败", messageId, w.toString());
+			LOGGER.error("MessageId:{}开通会员Vip失败:{}", messageId, w.toString());
 		}
 	}
 
@@ -820,7 +820,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			emptyResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("调商品中心批量扣减库存失败");
+			LOGGER.warn("MessageId:{} 调商品中心批量扣减库存失败:{}",messageId,w.toString());
 		}
 
 		return emptyResDTO;
@@ -878,11 +878,11 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			if(CollectionUtils.isEmpty(orderItemPromotionList)){
 				return emptyResDTO;
 			}
-			LOGGER.info("【支付回调】【扣减会员优惠券、秒杀开始】--组装查询参数开始:{}",
+			LOGGER.info("MessageId:{}【支付回调】【扣减会员优惠券、秒杀开始】--组装查询参数开始:{}",messageId,
 					JSONObject.toJSONString(orderItemPromotionList));
 			OtherCenterResDTO<String> result = marketCenterRAO
 					.reduceBuyerPromotion(orderItemPromotionList, messageId);
-			LOGGER.info("【支付回调】【扣减会员优惠券、秒杀结束】--结果:{}", JSONObject.toJSONString(result));
+			LOGGER.info("MessageId:{}【支付回调】【扣减会员优惠券、秒杀结束】--结果:{}",messageId, JSONObject.toJSONString(result));
 			if (!result.getOtherCenterResponseCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
 				emptyResDTO.setReponseMsg(result.getOtherCenterResponseMsg());
 				emptyResDTO.setResponseCode(result.getOtherCenterResponseCode());
@@ -893,7 +893,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			emptyResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("扣减会员优惠券、秒杀失败");
+			LOGGER.warn("MessageId:{} 扣减会员优惠券、秒杀失败",messageId,w.toString());
 		}
 		return emptyResDTO;
 	}
@@ -922,7 +922,7 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("支付回调--统计限时购销量--出现异常-(此异常不需要回滚)" + w.toString());
+			LOGGER.warn("MessageId:{} 支付回调--统计限时购销量--出现异常-(此异常不需要回滚){}" ,messageId, w.toString());
 		}
 	}
 

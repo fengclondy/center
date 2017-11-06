@@ -15,89 +15,90 @@ import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 
 public interface BuyerCouponInfoService {
 
-	/**
-	 * 运营平台查询会员优惠券列表
-	 * 
-	 * @param condition
-	 * @param pager
-	 * @return
-	 */
-	public ExecuteResult<DataGrid<BuyerCouponInfoDTO>> queryBuyerCouponList(BuyerCouponConditionDTO condition,
-			Pager<BuyerCouponInfoDTO> pager);
+    /**
+     * 运营平台查询会员优惠券列表
+     *
+     * @param condition
+     * @param pager
+     * @return
+     */
+    public ExecuteResult<DataGrid<BuyerCouponInfoDTO>> queryBuyerCouponList(BuyerCouponConditionDTO condition,
+            Pager<BuyerCouponInfoDTO> pager);
 
-	/**
-	 * 商城根据优惠券类型查询会员可用优惠券数量
-	 * 
-	 * @param messageId
-	 * @param buyerCode
-	 * @return
-	 */
-	public ExecuteResult<Map<String, Long>> getBuyerUnusedOwnCouponCountByType(String messageId, String buyerCode);
+    /**
+     * 商城根据优惠券类型查询会员可用优惠券数量
+     *
+     * @param messageId
+     * @param buyerCode
+     * @return
+     */
+    public ExecuteResult<Map<String, Long>> getBuyerUnusedOwnCouponCountByType(String messageId, String buyerCode);
 
-	/**
-	 * 商城根据优惠券类型和状态查询会员优惠券数量
-	 * 
-	 * @param messageId
-	 * @param buyerCode
-	 * @return
-	 */
-	public ExecuteResult<List<BuyerCouponCountDTO>> getBuyerOwnCouponCountByStatusType(String messageId,
-			String buyerCode);
+    /**
+     * 商城根据优惠券类型和状态查询会员优惠券数量
+     *
+     * @param messageId
+     * @param buyerCode
+     * @return
+     */
+    public ExecuteResult<List<BuyerCouponCountDTO>> getBuyerOwnCouponCountByStatusType(String messageId,
+            String buyerCode);
 
-	/**
-	 * 商城查询会员优惠券列表
-	 * 
-	 * @param messageId
-	 * @param condition
-	 * @param pager
-	 * @return
-	 */
-	public ExecuteResult<DataGrid<BuyerCouponInfoDTO>> getBuyerOwnCouponList(String messageId,
-			BuyerCouponConditionDTO condition, Pager<BuyerCouponInfoDTO> pager);
+    /**
+     * 商城查询会员优惠券列表
+     *
+     * @param messageId
+     * @param condition
+     * @param pager
+     * @return
+     */
+    public ExecuteResult<DataGrid<BuyerCouponInfoDTO>> getBuyerOwnCouponList(String messageId,
+            BuyerCouponConditionDTO condition, Pager<BuyerCouponInfoDTO> pager);
 
-	/**
-	 * 查询优惠券获取会员信息
-	 * 
-	 * @param condition
-	 * @param pager
-	 * @return
-	 */
-	public ExecuteResult<DataGrid<BuyerCouponCountDTO>> queryBuyerReceiveCouponList(BuyerCouponInfoDTO condition,
-			Pager<BuyerCouponInfoDTO> pager);
+    /**
+     * 查询优惠券获取会员信息
+     *
+     * @param condition
+     * @param pager
+     * @return
+     */
+    public ExecuteResult<DataGrid<BuyerCouponCountDTO>> queryBuyerReceiveCouponList(BuyerCouponInfoDTO condition,
+            Pager<BuyerCouponInfoDTO> pager);
 
-	/**
-	 * 保存会员领取的优惠券
-	 * 
-	 * @param messageId
-	 * @param receiveDTO
-	 * @return
-	 */
-	public ExecuteResult<String> saveBuyerReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
-	
-	/**
-	 * 保存会员领取的优惠券-支持一个活动下同时领取多张券
-	 * @param messageId
-	 * @param receiveDTO
-	 * @return
-	 */
-	public ExecuteResult<String> saveBuyerReceiveManyCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO); 
+    /**
+     * 保存会员领取的优惠券
+     *
+     * @param messageId
+     * @param receiveDTO
+     * @return
+     */
+    public ExecuteResult<String> saveBuyerReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
 
-	/**
-	 * 删除已用或已过期的会员优惠券
-	 * 
-	 * @param messageId
-	 * @param targetCouponDTO
-	 * @return
-	 */
-	public ExecuteResult<String> deleteUsedExpiredBuyerCoupon(String messageId,
-			UsedExpiredBuyerCouponDTO targetCouponDTO);
-	
-	/**
-	 * 查询会员未领取的优惠券列表
-	 * @param messageId
-	 * @param buyerCode
-	 * @return
-	 */
-	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
-			String messageId, String buyerCode);
+    /**
+     * 删除已用或已过期的会员优惠券
+     *
+     * @param messageId
+     * @param targetCouponDTO
+     * @return
+     */
+    public ExecuteResult<String> deleteUsedExpiredBuyerCoupon(String messageId,
+            UsedExpiredBuyerCouponDTO targetCouponDTO);
+
+    /**
+     * 查询会员弹框提醒优惠券列表
+     *
+     * @param messageId
+     * @param buyerCode
+     * @return
+     */
+    public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerPopupNoticeCouponList(String messageId,
+            String buyerCode);
+
+    /**
+     * 保存会员领取的弹框提醒优惠券
+     * @param messageId
+     * @param receiveDTO
+     * @return
+     */
+    public ExecuteResult<String> saveBuyerPopupNoticeReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
 }

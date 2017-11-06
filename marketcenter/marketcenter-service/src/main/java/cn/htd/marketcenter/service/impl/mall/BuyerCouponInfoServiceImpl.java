@@ -6,9 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -30,8 +27,10 @@ import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.BuyerCouponInfoService;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.handle.CouponRedisHandle;
-
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
 import com.github.pagehelper.StringUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service("buyerCouponInfoService")
 public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
@@ -200,7 +199,9 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		BuyerCouponInfoDTO collectCoupon = null;
 		BuyerCheckInfo buyerCheckInfo = new BuyerCheckInfo();
 		boolean buyerChkResult = false;
-		String promotionId = receiveDTO.getPromotionId();
+		//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+		SellerBelongRelationDTO belongRelationDTO = null;
+		//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 
 		try {
 			// 输入DTO的验证
@@ -219,10 +220,21 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 					throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY,
 							"会员没有领该券权限");
 				}
+				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+				if (baseService.isBelongSellerRule(collectCoupon.getSellerRuleDTO())) {
+					belongRelationDTO = baseService.getBuyerBelongRelationship(receiveDTO.getBuyerCode());
+					if (belongRelationDTO != null) {
+						collectCoupon.setPromotionProviderSellerCode(belongRelationDTO.getCurBelongSellerCode());
+					}
+				}
+				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				couponRedisHandle.sendBuyerCoupon2Redis(collectCoupon);
 			}
 		} catch (MarketCenterBusinessException bcbe) {
 		    if (collectCoupon != null) {
+				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+				collectCoupon.setPromotionProviderSellerCode(null);
+				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				couponRedisHandle.restoreMemberCollectCouponBack2Redis(collectCoupon);
 			}
 			result.setCode(bcbe.getCode());
@@ -233,53 +245,17 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		}
 		return result;
 	}
-	
+
+	//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
 	@Override
-	public ExecuteResult<String> saveBuyerReceiveManyCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO) {
-		ExecuteResult<String> result = new ExecuteResult<String>();
-		BuyerCouponInfoDTO collectCoupon = null;
-		BuyerCheckInfo buyerCheckInfo = new BuyerCheckInfo();
-		boolean buyerChkResult = false;
-		try {
-			// 输入DTO的验证
-			ValidateResult validateResult = ValidationUtils.validateEntity(receiveDTO);
-			// 有错误信息时返回错误信息
-			Integer receiveLimit = receiveDTO.getReceiveLimit();
-			if (validateResult.isHasErrors() || null == receiveLimit) {
-				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
-						validateResult.getErrorMsg());
-			}
-			for(int i=0;i<receiveLimit.intValue();i++){				
-				collectCoupon = couponRedisHandle.receiveMemberCollectCoupon2Redis(receiveDTO);
-				if (collectCoupon != null) {
-					if(i==0){					
-						buyerCheckInfo.setBuyerCode(receiveDTO.getBuyerCode());
-						buyerCheckInfo.setBuyerGrade(receiveDTO.getBuyerGrade());
-						buyerChkResult = baseService.checkPromotionBuyerRule(collectCoupon, buyerCheckInfo);
-						if (!buyerChkResult) {
-							throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_BUYER_NO_AUTHIORITY,
-									"会员没有领该券权限");
-						}
-					}
-					couponRedisHandle.sendBuyerCoupon2Redis(collectCoupon);
-				}
-			}
-		} catch (MarketCenterBusinessException bcbe) {
-		    if (collectCoupon != null) {
-				couponRedisHandle.restoreMemberCollectCouponBack2Redis(collectCoupon);
-			}
-		    //会员已到优惠券领取上限数量,返回成功
-		    if(MarketCenterCodeConst.COUPON_RECEIVE_LIMITED.equals(bcbe.getCode())){
-		    	return result;
-		    }
-			result.setCode(bcbe.getCode());
-			result.addErrorMessage(bcbe.getMessage());
-		} catch (Exception e) {
-			result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
-			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+	public ExecuteResult<String> saveBuyerPopupNoticeReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO) {
+		ExecuteResult<String> result = saveBuyerReceiveCoupon(messageId, receiveDTO);
+		if (result.isSuccess()) {
+			couponRedisHandle.deleteBuyerPopupNoticeInfo(receiveDTO.getBuyerCode(), receiveDTO.getPromotionId());
 		}
 		return result;
 	}
+	//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 
 	@Override
 	public ExecuteResult<String> deleteUsedExpiredBuyerCoupon(String messageId,
@@ -300,22 +276,23 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * 查询会员未领取的优惠券列表
+	 * 查询会员弹框提醒优惠券列表
+	 *
 	 * @param messageId
 	 * @param buyerCode
 	 * @return
 	 */
-	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerNotReceivedCouponList(
-			String messageId, String buyerCode) {
+	public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerPopupNoticeCouponList(String messageId,
+			String buyerCode) {
 		ExecuteResult<List<PromotionDiscountInfoDTO>> result = new ExecuteResult<List<PromotionDiscountInfoDTO>>();
 		List<PromotionDiscountInfoDTO> couponCountList = null;
 		try {
 			if (StringUtils.isEmpty(buyerCode)) {
 				throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "会员编码不能为空");
 			}
-			couponCountList = couponRedisHandle.getBuyerNotReceivedCouponList(buyerCode);
+			couponCountList = couponRedisHandle.getBuyerPopupNoticeCouponList(buyerCode);
 			result.setResult(couponCountList);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

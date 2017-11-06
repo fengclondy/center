@@ -281,7 +281,8 @@
 				WHERE
 					a.vote_member_id = b.vote_member_id
 			) AS voteNum,
-			a.member_vote_last_time
+			a.member_vote_last_time,
+			a.sign_up_time
 		FROM
 			vote_activity_member a
 		WHERE
@@ -292,7 +293,7 @@
 		ORDER BY
 			voteNum DESC,
 			member_vote_last_time ASC,
-			member_name DESC
+			sign_up_time ASC
   </sql>
 
   <select id="selectMemberRankingTop10" resultType="map">
@@ -438,7 +439,7 @@
 							ORDER BY
 								voteNum DESC,
 								member_vote_last_time ASC,
-								member_name DESC
+								sign_up_time ASC
 						) c,
 						(SELECT @rownum := 0) r
 				) temp3 ON temp2.memberCode = temp3.member_code
@@ -454,6 +455,7 @@
 		vote_activity_member member
 	WHERE
 		member.vote_id = #{voteId}
+	AND delete_flag = 0
  </select>
  
  <select id="queryTotalSignupMemberInfo" resultType="Long" 
@@ -555,7 +557,7 @@
 				ORDER BY
 					voteNum DESC,
 					member_vote_last_time ASC,
-					member_name DESC
+					sign_up_time ASC
 			) c,
 			(SELECT @rownum := 0) r
 	) temp2 ON temp.memberCode = temp2.member_code
@@ -577,7 +579,7 @@
       NOW(), #{item.operatorId,jdbcType=BIGINT}, #{item.operatorName,jdbcType=VARCHAR}, 
       NOW())
     </foreach>
-     on duplicate key update modify_time =now()
+     on duplicate key update modify_time =now(), delete_flag = 0, sign_status = 0, audit_status = 0
   </insert>
   
   <select id="queryPagedSignupMemberInfoListOrderBySignUpTime" resultType="cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO" 

@@ -332,6 +332,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			
 			if (checkFlag==1) {
 				alreadyExistsList.add(memberCodeImport);
+				tempList.remove(memberCodeImport);
 			}
 		}
 		if (!alreadyExistsList.isEmpty()) {

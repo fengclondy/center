@@ -12,5 +12,9 @@ public interface PromotionTimelimitedInfoService {
 	public List<TimelimitedInfoResDTO> getPromotionTimelimitedInfoByBuyerCode(String messageId,String buyerCode) throws PromotionCenterBusinessException;
 	
 	public List<PromotionSellerDetailDTO> getPromotionSellerDetailDTOByBuyerCode(String promotionId,String buyerCode) throws PromotionCenterBusinessException;
+	
+	
+	public TimelimitedInfoResDTO getPromotionTimelimitedInfoBySkuCode(String messageId,String skuCode) throws PromotionCenterBusinessException;
+
 
 }

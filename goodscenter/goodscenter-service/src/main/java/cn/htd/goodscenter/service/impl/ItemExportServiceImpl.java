@@ -3564,8 +3564,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 		List<ItemSkuPicture> itemSkuPicture = itemSkuDAO.queryItemSKUPicsFirst(itemId);
 		if(null != itemSkuPicture && itemSkuPicture.size() > 0){
 			itemSKU.setItemSkuPictureList(itemSkuPicture);
-		}else{
-			List<ItemPicture> itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+		}
+		List<ItemPicture> itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+		if(null != itemPicture && itemPicture.size() > 0){
 			itemSKU.setItemPictureList(itemPicture);
 		}
 		return itemSKU;

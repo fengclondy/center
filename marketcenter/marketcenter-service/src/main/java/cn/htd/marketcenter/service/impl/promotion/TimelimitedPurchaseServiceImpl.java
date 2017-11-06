@@ -448,6 +448,7 @@ public class TimelimitedPurchaseServiceImpl implements
 					for (int i = 0; i < list.size(); i++) {
 			            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
 			            timelimite.setPurchaseSort(dto.getPurchaseSort());
+			            timelimite.setSellerName(timelimitedInfoDTO.getSellerName());
 			            timelimite.setItemCode(timelimitedInfoDTO.getItemCode());
 			            int skuTotal = timelimitedRedisHandle.getShowRemainCount(promotionId, timelimite.getSkuCode());
 			            timelimite.setTimelimitedSkuCount(skuTotal);
@@ -484,7 +485,6 @@ public class TimelimitedPurchaseServiceImpl implements
 				if(dto.getPurchaseFlag() == 1){
 					Collections.sort(resultList);
 				}else{
-					System.out.println(222);
 					Collections.sort(resultList, new PriceComparator());
 				}
 			}

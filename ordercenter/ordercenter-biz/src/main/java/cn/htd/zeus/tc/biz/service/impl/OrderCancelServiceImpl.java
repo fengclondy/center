@@ -609,7 +609,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 		orderStatusChangeCommonService.updateOrderErrorVMSPayStatus(tradeOrdersDMO);
 		tradeOrdersDMO.setModifyTime(DateUtil.getSystemTime());
 		LOGGER.info(
-				"MessageId:{} :{} OrderNo:{}调用方法OrderCancelServiceImpl.vmsOperateOrderItemCancel更新订单信息为{}",
+				"MessageId:{} OrderNo:{}调用方法OrderCancelServiceImpl.vmsOperateOrderItemCancel更新订单信息为{}",
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		tradeOrdersDAO.updateTradeOrdersByOrderNo(tradeOrdersDMO);
 	}

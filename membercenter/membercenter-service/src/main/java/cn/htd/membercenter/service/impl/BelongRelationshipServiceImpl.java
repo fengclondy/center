@@ -55,14 +55,13 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 		ExecuteResult<DataGrid<BelongRelationshipDTO>> rs = new ExecuteResult<DataGrid<BelongRelationshipDTO>>();
 		DataGrid<BelongRelationshipDTO> dg = new DataGrid<BelongRelationshipDTO>();
 		try {
-			List<BelongRelationshipDTO> count = null;
-			count = belongRelationshipDao.selectBelongRelationList(null, companyName, contactMobile, belongCompanyName);
+			Long count = belongRelationshipDao.selectBelongRelationListCount(companyName, contactMobile, belongCompanyName);
 			if (count != null) {
 				List<BelongRelationshipDTO> belongRelationList = null;
 				belongRelationList = belongRelationshipDao.selectBelongRelationList(page, companyName, contactMobile,
 						belongCompanyName);
 				dg.setRows(belongRelationList);
-				dg.setTotal(new Long(count.size()));
+				dg.setTotal(count);
 				rs.setResult(dg);
 			} else {
 				rs.setResultMessage("fail");

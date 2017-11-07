@@ -113,7 +113,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		String token = (String) net.sf.json.JSONObject.fromObject(tokenResult).get("data");
 		param.put("token", token);
 		param.put("errormessage", errormessage);
-		LOGGER.info("erp订单状态上行--请求中间件url:"+middlewareHttpUrlConfig.getOrdercenterMiddleware4StatusCallback()+"param:"+JSONObject.toJSONString(param));
+		LOGGER.info("MessageId:{} erp订单状态上行--请求中间件url:{}","",middlewareHttpUrlConfig.getOrdercenterMiddleware4StatusCallback()+"param:"+JSONObject.toJSONString(param));
 		HttpUtil.sendPost(middlewareHttpUrlConfig.getOrdercenterMiddleware4StatusCallback(), param);
 	}
 	/*
@@ -142,13 +142,13 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 				orderItemNos =  tradeOrderItemsDMO.getOrderItemNos();
 				orderNo = tradeOrderItemsDMO.getOrderNo();
 			}
-			LOGGER.warn("根据erp的分销单号ErpSholesalerCode:"+distributionId+"查询京东订单");
+			LOGGER.warn("MessageId:{} 根据erp的分销单号ErpSholesalerCode:{}","",distributionId+"查询京东订单");
 		}
 		//更新订单表和订单行表
 		if(StringUtilHelper.isNotNull(orderItemNos,orderNo)){	
 			updateTradeOrderAndItemCancle(orderItemNos,orderNo,refundStatus,msg,distributionId);
 		}else{
-			LOGGER.warn("(退货、退款)状态上行查出的订单号orderNo:"+orderNo+" 或者订单行号orderItemNos:"+orderItemNos+"为空");
+			LOGGER.warn("MessageId:{} (退货、退款)状态上行查出的订单号orderNo:{}或者订单行号orderItemNos:{}为空","",orderNo,orderItemNos);
 		}
 	}
 	
@@ -175,14 +175,14 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 				orderItemNos =  tradeOrderItemsDMO.getOrderItemNos();
 				orderNo = tradeOrderItemsDMO.getOrderNo();
 			}
-			LOGGER.warn("根据erp的分销单号ErpSholesalerCode:"+distributionId+"查询京东订单");
+			LOGGER.warn("MessageId:{} 根据erp的分销单号ErpSholesalerCode:{}查询京东订单","",distributionId);
 		}
 		//更新订单表和订单行表
-		LOGGER.info("分销单状态上行准备更新订单和订单行表的参数为orderItemNos:"+orderItemNos+" orderNo"+orderNo);
+		LOGGER.info("MessageId:{} 分销单状态上行准备更新订单和订单行表的参数为orderItemNos:{}orderNo：{}","",orderItemNos,orderNo);
 		if(StringUtilHelper.isNotNull(orderItemNos,orderNo)){			
 			updateTradeOrderAndItem(orderItemNos,orderNo,distributionId);
 		}else{
-			LOGGER.warn("(已发货)状态上行查出的订单号orderNo:"+orderNo+" 或者订单行号orderItemNos:"+orderItemNos+"为空");
+			LOGGER.warn("MessageId:{} (已发货)状态上行查出的订单号orderNo:{}或者订单行号orderItemNos:{}为空","",orderNo,orderItemNos);
 		}
 	}
 	
@@ -236,7 +236,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	 * erp状态上行-更新订单表和订单行表
 	 */
 	private void updateTradeOrderAndItem(String orderItemNos,String orderNo,String distributionCode){
-		LOGGER.info("分销单状态上行 跟新订单和订单行表开始 orderItemNos："+orderItemNos+" orderNo:"+orderNo+" distributionCode:"+distributionCode );
+		LOGGER.info("分销单状态上行 跟新订单和订单行表开始 orderItemNos:{} orderNo:{} distributionCode:{}","",orderItemNos, orderNo,distributionCode);
 		String[] orderItemNosArry = orderItemNos.split(",");
 		for(String orderItemNosTemp : orderItemNosArry){
 			//更新订单行表
@@ -250,7 +250,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 			tradeOrderItemsDMO.setOrderItemErrorReason("");
 			tradeOrderItemsDMO.setOrderItemErrorStatus("");
 			int update = tradeOrderItemsDAO.updateTradeOrderItemsByItemNo(tradeOrderItemsDMO);
-			LOGGER.info("分销单状态上行 跟新订单行表结果:"+update);
+			LOGGER.info("分销单状态上行 跟新订单行表结果:{}",update);
 			
 			//插入订单行履历表
 			TradeOrderItemsStatusHistoryDMO record = new TradeOrderItemsStatusHistoryDMO();
@@ -297,7 +297,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	 */
 	@Override
 	public void jdOrderDistributionStatusUpStream(String orderNo) {
-		LOGGER.info("商品+商品状态上行开始-orderCode:"+orderNo);
+		LOGGER.info("商品+商品状态上行开始-orderNo:{}",orderNo);
 		try{	
 				TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
 				tradeOrderItemsDMO.setOrderNo(orderNo);
@@ -319,7 +319,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 			
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-		    LOGGER.error(w.toString());
+		    LOGGER.error("MessageId:{} 调用方法OrderDistributionStatusUpStreamServiceImpl.jdOrderDistributionStatusUpStream出现异常:","",w.toString());
 		}
 	}
 	
@@ -334,7 +334,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		String token = (String) net.sf.json.JSONObject.fromObject(tokenResult).get("data");
 		param.put("token", token);
 		String url = middlewareHttpUrlConfig.getOrdercenterMiddleware4JDStatusCallback()+"?orderCode="+orderCode+"&flag="+flag+"&token="+token;
-		LOGGER.info("京东状态上行--请求中间件url:"+url);
+		LOGGER.info("MessageId:{} 京东状态上行--请求中间件url:","",url);
 		HttpUtil.sendGet(url);
 	}
 	
@@ -386,7 +386,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 							} catch (InterruptedException e) {
 								StringWriter w = new StringWriter();
 								e.printStackTrace(new PrintWriter(w));
-								LOGGER.warn("线程休眠出现异常" + w.toString());
+								LOGGER.warn("MessageId:{} 线程休眠出现异常:{}" ,"",w.toString());
 							}
 						}
 					}
@@ -396,7 +396,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("分销单状态上行--修改订单表为已发货--出现异常-(此异常不需要回滚)" + w.toString());
+			LOGGER.warn("MessageId:{}分销单状态上行--修改订单表为已发货--出现异常-(此异常不需要回滚)" ,"", w.toString());
 		}
 	}
 	
@@ -444,7 +444,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 							} catch (InterruptedException e) {
 								StringWriter w = new StringWriter();
 								e.printStackTrace(new PrintWriter(w));
-								LOGGER.warn("线程休眠出现异常" + w.toString());
+								LOGGER.warn("MessageId:{} 线程休眠出现异常:{}" ,"", w.toString());
 							}
 						}
 					}
@@ -454,7 +454,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("分销单状态上行--修改订单表为已取消--出现异常-(此异常不需要回滚)" + w.toString());
+			LOGGER.warn("MessageId:{} 分销单状态上行--修改订单表为已取消--出现异常-(此异常不需要回滚)","", w.toString());
 		}
 
 	}

@@ -101,7 +101,7 @@ public class PreSalesOrderExceptionOrderNoticeTask implements IScheduleTaskDealM
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用预售下行异常告警方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用预售下行异常告警方法时候发生异常:{}","", w.toString());
 		}finally{
 			
 		}

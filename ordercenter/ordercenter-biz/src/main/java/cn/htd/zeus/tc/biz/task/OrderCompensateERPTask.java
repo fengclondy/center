@@ -94,7 +94,7 @@ public class OrderCompensateERPTask implements IScheduleTaskDealMulti<OrderCompe
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用订单下行ERP补偿方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用订单下行ERP补偿方法时候发生异常:{}","", w.toString());
 		}finally{
 			
 		}
@@ -114,7 +114,7 @@ public class OrderCompensateERPTask implements IScheduleTaskDealMulti<OrderCompe
 			result = false;
 			StringWriter w = new StringWriter();
 	        e.printStackTrace(new PrintWriter(w));
-	        LOGGER.error("订单下行ERP补偿-调用execute方法时候发生异常"+ w.toString());
+	        LOGGER.error("MessageId:{}订单下行ERP补偿-调用execute方法时候发生异常:{}","", w.toString());
 		} finally {
 		}
 		return result;

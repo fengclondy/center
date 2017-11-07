@@ -98,8 +98,8 @@ public class OrderFreightInfoServiceImpl implements OrderFreightInfoService {
 	@Override
 	public void calculateOrderItemFeight4CreateOrder(
 			List<OrderCreateItemListInfoReqDTO> orderItemList, String citySiteCode) {
-		LOGGER.info("创建订单---计算外部供应商运费开始入参orderItemList{}:" + JSONObject.toJSONString(orderItemList)
-				+ " citySiteCode{}:" + citySiteCode);
+		LOGGER.info("MessageId:{} 创建订单---计算外部供应商运费开始入参orderItemList:{} citySiteCode{}" ,"", JSONObject.toJSONString(orderItemList)
+				, citySiteCode);
 		List<Long> templateIdArr = new ArrayList<Long>();
 		List<OrderFreightSkuAttrDMO> feightInfoList = new ArrayList<OrderFreightSkuAttrDMO>();
 		// 初始化需要计算运费的商品属性
@@ -138,8 +138,8 @@ public class OrderFreightInfoServiceImpl implements OrderFreightInfoService {
 	@Override
 	public OrderFreightInfoDTO calculateOrderItemFeight4seckill(
 			List<OrderCreateItemListInfoReqDTO> orderItemList, String citySiteCode) {
-		LOGGER.info("创建订单---计算超级老板秒杀运费开始入参orderItemList{}:" + JSONObject.toJSONString(orderItemList)
-				+ " citySiteCode{}:" + citySiteCode);
+		LOGGER.info("MessageId:{} 创建订单---计算超级老板秒杀运费开始入参orderItemList:{} citySiteCode{}:" ,"", JSONObject.toJSONString(orderItemList)
+				, citySiteCode);
 		OrderFreightInfoDTO orderFreightDTO = new OrderFreightInfoDTO();
 		List<Long> templateIdArr = new ArrayList<Long>();
 		List<OrderFreightSkuAttrDMO> feightInfoList = new ArrayList<OrderFreightSkuAttrDMO>();

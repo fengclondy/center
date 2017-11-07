@@ -85,7 +85,9 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 		PromotionInfoDTO condition = new PromotionInfoDTO();
 		Pager<PromotionInfoDTO> pager = null;
 		List<String> taskIdList = new ArrayList<String>();
-		List<String> statusList = new ArrayList<String>();
+		//----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//		List<String> statusList = new ArrayList<String>();
+		//----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 		List<String> verifyStatusList = new ArrayList<String>();
 		List<PromotionInfoDTO> promotionInfoDTOList = null;
 		if (eachFetchDataNum > 0) {
@@ -98,16 +100,24 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 				for (TaskItemDefine taskItem : taskQueueList) {
 					taskIdList.add(taskItem.getTaskItemId());
 				}
-				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
-				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_START));
+				//----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+//						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+//				statusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+//						DictionaryConst.OPT_PROMOTION_STATUS_START));
+				//----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
 				verifyStatusList.add(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS));
 				condition.setVerifyStatusList(verifyStatusList);
-				condition.setStatusList(statusList);
+				//----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//				condition.setStatusList(statusList);
+				condition.setNoStartStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
+				condition.setStartedStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_START));
+				//----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);
 				promotionInfoDTOList = promotionInfoDAO.queryPromotionList4Task(condition, pager);

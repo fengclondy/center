@@ -192,11 +192,19 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		try {
 			List<OrderCreateListInfoReqDTO> orderList = orderCreateInfoReqDTO.getOrderList();
 			if (null != orderList && orderList.size() > 0) {
-				if(!OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode().equals(promotionType)){					
-					orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
-				}
 				// 调用 memberCallCenterService查询会员信息
 				String buyerCode = orderCreateInfoReqDTO.getBuyerCode();
+				String sellerCode = orderList.get(0).getSellerCode();
+				if(!OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode().equals(promotionType)){					
+					orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
+				}else if(buyerCode.equals(sellerCode)){
+					throw new OrderCenterBusinessException(
+							ResultCodeEnum.ORDER_BUYER_SELLER_SAME.getCode(),
+							"提交订单时"
+									+ ResultCodeEnum.ORDER_BUYER_SELLER_SAME
+											.getMsg() + " buyerCode:" + buyerCode
+									+ " sellerCode:" + sellerCode);
+				}
 				OtherCenterResDTO<MemberBaseInfoDTO> memberBaseInfoResDTO = memberCenterRAO
 						.selectMemberBaseName(buyerCode,
 								MemberCenterEnum.MEMBER_TYPE_BUYER.getCode(),
@@ -247,7 +255,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			orderCreateInfoDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderCreateServiceImpl.orderCreate出现异常{}",
+			LOGGER.error("MessageId:{} 调用方法OrderCreateServiceImpl.orderCreate出现异常:{}",
 					orderCreateInfoReqDTO.getMessageId(), w.toString());
 		} finally {
 			if (orderCreateInfoDMO.getResultCode()
@@ -535,10 +543,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			// 计算外部供应商运费
 			if (externalSupplierFlag) {
 				// TODO 暂时屏蔽外部供应商的运费计算方法
-				LOGGER.info("外部供应商计算运费开始MessageId:{}", orderCreateInfoReqDTO.getMessageId());
+				LOGGER.info("MessageId:{} 外部供应商计算运费开始", orderCreateInfoReqDTO.getMessageId());
 				orderFreightInfoService.calculateOrderItemFeight4CreateOrder(orderItemList,
 						orderCreateInfoReqDTO.getSite());
-				LOGGER.info("外部供应商计算运费结束！MessageId:{}", orderCreateInfoReqDTO.getMessageId());
+				LOGGER.info("MessageId:{} 外部供应商计算运费结束！", orderCreateInfoReqDTO.getMessageId());
 			}
 
 		}
@@ -888,7 +896,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法(释放商品和优惠券、秒杀库存)OrderCreateServiceImpl.batchReleaseGoodsAndMarketStock出现异常{}",
+					"MessageId:{} 调用方法(释放商品和优惠券、秒杀库存)OrderCreateServiceImpl.batchReleaseGoodsAndMarketStock出现异常:{}",
 					messageId, w.toString());
 		}
 	}
@@ -954,7 +962,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				throw new Exception();
 			}
 		}
-		LOGGER.info("准备(pre)组装给前台品牌品类展示:" + brandIdErpFirstCategoryCode);
+		LOGGER.info("准备(pre)组装给前台品牌品类展示:{}" , brandIdErpFirstCategoryCode);
 		if (tradeOrderItemsDMOMap.containsKey(brandIdErpFirstCategoryCode)) {
 			BigDecimal chargeAmount = tradeOrderItemsDMOMap.get(brandIdErpFirstCategoryCode)
 					.add(tradeOrderItemsDMO.getOrderItemPayAmount());
@@ -1006,7 +1014,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 																		// 就用订单号,预售也用订单号下行
 						channelCode = GoodCenterEnum.JD_SUPPLIER.getCode();
 						chargeConditionInfoDMO.setItemOrderNo(orderTemp.getOrderNo());
-						LOGGER.info("京东商品锁定用订单号" + chargeConditionInfoDMO.getItemOrderNo());
+						LOGGER.info("京东商品锁定用订单号:{}" , chargeConditionInfoDMO.getItemOrderNo());
 					} else if (item.getChannelCode()
 							.equals(GoodCenterEnum.EXTERNAL_SUPPLIER.getCode())) {
 						record.setBrandCode(MiddleWareEnum.JD_BRAND_ID_ERP.getCode());
@@ -1031,7 +1039,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 						record.setDownOrderNo(orderTemp.getOrderNo());
 						channelCode = GoodCenterEnum.INTERNAL_SUPPLIER.getCode();
 						chargeConditionInfoDMO.setItemOrderNo(orderTemp.getOrderNo());
-						LOGGER.info("VIP商品锁定用订单号" + chargeConditionInfoDMO.getItemOrderNo());
+						LOGGER.info("VIP商品锁定用订单号:{}" , chargeConditionInfoDMO.getItemOrderNo());
 					} else {
 						record.setBrandCode(brandIdThirdCategoryId[0]);
 						record.setClassCode(brandIdThirdCategoryId[1]);
@@ -1128,7 +1136,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 				.setMemberGroupId(memberGroupDTO.getOtherCenterResult().getGroupId());
 		queryCommonItemSkuPriceDTO.setIsHasDevRelation(orderItemTemp.getIsHasDevRelation());
 		queryCommonItemSkuPriceDTO.setIsLogin(Integer.parseInt(GoodCenterEnum.IS_LOGIN.getCode()));
-		LOGGER.info("商品渠道编码:" + queryCommonItemSkuPriceDTO.getItemChannelCode());
+		LOGGER.info("商品渠道编码:{}" , queryCommonItemSkuPriceDTO.getItemChannelCode());
 		if (Constant.PRODUCT_CHANNEL_CODE_OUTLINE
 				.equals(queryCommonItemSkuPriceDTO.getItemChannelCode())) {
 			OtherCenterResDTO<Long> memberInfo = memberCenterRAO
@@ -1211,7 +1219,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		if (orderItemTemp.isHasTimelimitedFlag()
 				|| isLimitedTimePurchase==Integer.valueOf(OrderStatusEnum.IS_LIMITED_TIME_PURCHASE.getCode()).intValue()) {
 			orderItemPromotionDTO.setLevelCode(orderItemTemp.getTimelimitedInfo().getLevelCode());
-			LOGGER.info("秒杀商品--查询秒杀laveCode:" + orderItemTemp.getTimelimitedInfo().getLevelCode());
+			LOGGER.info("秒杀商品--查询秒杀laveCode:{}" , orderItemTemp.getTimelimitedInfo().getLevelCode());
 		} else {
 			List<OrderItemCouponDTO> avalibleCouponList = orderItemTemp.getAvalibleCouponList();
 			if (null != avalibleCouponList && avalibleCouponList.size() > 0) {
@@ -1380,7 +1388,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 
 		if (OrderStatusEnum.ORDER_DELIVERY_TYPE_SINCE.getCode()
 				.equals(tradeOrdersDMO.getDeliveryType())) {
-			LOGGER.info("页面传入的是自提,则查询会员中心，将注册地址插入订单表开始messageId:" + messageId);
+			LOGGER.info("MessageId:{} 页面传入的是自提,则查询会员中心，将注册地址插入订单表开始" , messageId);
 			OtherCenterResDTO<Long> memberInfo = memberCenterRAO
 					.getMemberIdByCode(orderCreateInfoReqDTO.getBuyerCode(), messageId);
 			Long memberId = memberInfo.getOtherCenterResult();
@@ -1629,7 +1637,7 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		tradeOrderItemsDiscountDMO.setPromotionType(promotionType);
 		List<OrderItemCouponDTO> avalibleCouponList = orderItemTemp.getAvalibleCouponList();
 		LOGGER.info(
-				"从促销中心返回优惠券信息avalibleCouponList:" + JSONObject.toJSONString(avalibleCouponList));
+				"从促销中心返回优惠券信息avalibleCouponList:{}" + JSONObject.toJSONString(avalibleCouponList));
 		String levelCode = "";
 		String buyerCouponCode = "";
 		String couponType = "";
@@ -1657,8 +1665,8 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 
 		tradeOrderItemsDiscountDMO.setCouponType(couponType);
 		String messageId = orderCreateInfoReqDTO.getMessageId();
-		LOGGER.info("从促销中心查询出优惠券信息MessageId:" + messageId + "levelCode:" + levelCode
-				+ " buyerCouponCode" + buyerCouponCode + " couponType" + couponType);
+		LOGGER.info("从促销中心查询出优惠券信息MessageId:{} levelCode:{} buyerCouponCode:{} couponType:{}" , messageId , levelCode
+				, buyerCouponCode , couponType);
 		Long startTime = System.currentTimeMillis();
 		int update = tradeOrderItemsDiscountDAO
 				.updateTradeOrderItemsDiscount(tradeOrderItemsDiscountDMO);
@@ -1766,14 +1774,14 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		this.setInvoiceInfo4order(messageId, buyerCode, orderCreateInfoReqDTO,
 				orderCreateInfoResDTO);
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(orderCreateInfoResDTO.getResponseCode())) {
-			LOGGER.warn("从会员中心查询卖家发票信息失败：");
+			LOGGER.warn("MessageId:{} 从会员中心查询卖家发票信息失败",messageId);
 			return orderCreateInfoResDTO;
 		}
 		// 设置收货地址信息和站点
 		this.setConsigInfo4order(messageId, orderCreate4huilinReqDTO.getBuyerId(), orderCreateInfoReqDTO,
 				orderCreateInfoResDTO);
 		if (!ResultCodeEnum.SUCCESS.getCode().equals(orderCreateInfoResDTO.getResponseCode())) {
-			LOGGER.warn("从会员中心查询卖家收货地址信息失败：");
+			LOGGER.warn("MessageId:{} 从会员中心查询卖家收货地址信息失败",messageId);
 			return orderCreateInfoResDTO;
 		}
 		// 设置订单和订单行信息

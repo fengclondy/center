@@ -135,11 +135,11 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 		    		
 		    		if(null != payOrderInfoDMO && StringUtilHelper.isNotNull(payOrderInfoDMO.getPayType()) && payOrderInfoDMO.getPayType().toString().equals(PayStatusEnum.ERP_PAY.getCode())){
 		    			if(StringUtilHelper.isNull(payOrderInfoDMO.getPayStatus()) || !payOrderInfoDMO.getPayStatus().equals(PayTypeEnum.SUCCESS.getCode())){
-	    					LOGGER.warn("预售下行-没有从收付款待下行信息表里查到数据或者收付款支付不是SUCCESS,入参orderNo:"+orderNo);
+	    					LOGGER.warn("预售下行-没有从收付款待下行信息表里查到数据或者收付款支付不是SUCCESS,入参orderNo:{}",orderNo);
 		    				continue;
 	    				}
 		    		}else if(null == payOrderInfoDMO || StringUtilHelper.isNull(payOrderInfoDMO.getPayResultStatus()) || !payOrderInfoDMO.getPayResultStatus().toString().equals(PayTypeEnum.PAY_RESULT_STATUS_SUCC.getCode())){
-		    			LOGGER.warn("预售下行-没有从收付款待下行信息表里查到数据或者收付款下行状态不是回调成功,入参orderNo:"+orderNo);
+		    			LOGGER.warn("预售下行-没有从收付款待下行信息表里查到数据或者收付款下行状态不是回调成功,入参orderNo:{}",orderNo);
 		    			continue;
 		    		}
 		    		
@@ -173,7 +173,7 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 									 preSalesOrderMap.put("manufacturer", MiddleWareEnum.PRE_SALES_ORDER_MANUFACTURER.getCode());
 									 productDetail.add(preSalesOrderMap);
 								 } else {
-									 LOGGER.info("预售下行--下行VIP套餐组装List参数开始orderType:"+orderType);
+									 LOGGER.info("预售下行--下行VIP套餐组装List参数开始orderType:{}",orderType);
 									 String[] orderItemNoArray = orderItemNos.split(","); 
 									 if(null != orderItemNoArray && orderItemNoArray.length >0){
 										 for(int i=0;i<orderItemNoArray.length;i++ ){											 
@@ -192,11 +192,11 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 															  }
 														 }
 													 }else{
-														 LOGGER.warn("预售下行-根据SkuCode查询VIP套餐--没有查到数据,入参SkuCode:"+itemList.get(0).getSkuCode());
+														 LOGGER.warn("预售下行-根据SkuCode查询VIP套餐--没有查到数据,入参SkuCode:{}",itemList.get(0).getSkuCode());
 											    	     continue;
 													 }
 												 }else{
-													 LOGGER.warn("预售下行-根据SkuCode查询VIP套餐--没有查到数据或者查询异常,入参SkuCode:"+itemList.get(0).getSkuCode());
+													 LOGGER.warn("预售下行-根据SkuCode查询VIP套餐--没有查到数据或者查询异常,入参SkuCode:{}",itemList.get(0).getSkuCode());
 										    	     continue;
 												 }
 												
@@ -231,9 +231,9 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 					preSalesOrderDownDTO.setDeliveryNote(tradeOrdersDMOTemp.getBuyerRemarks());
 					preSalesOrderDownDTO.setProductDetail(productDetail);
 
-	    			LOGGER.info("预售下行-准备往中间件发送MQ信息为:"+JSONUtil.toJSONString(preSalesOrderDownDTO));
+	    			LOGGER.info("预售下行-准备往中间件发送MQ信息为:{}",JSONUtil.toJSONString(preSalesOrderDownDTO));
 	    			item_erp_postPreorder_template.convertAndSend(mqQueueFactoryConfig.getMiddlewareErpPostPreorder(),JSONUtil.toJSONString(preSalesOrderDownDTO));
-	    			LOGGER.info("成功发送mq---- 预售下行对列名:"+mqQueueFactoryConfig.getMiddlewareErpPostPreorder());
+	    			LOGGER.info("成功发送mq---- 预售下行对列名:{}",mqQueueFactoryConfig.getMiddlewareErpPostPreorder());
 	    			//直接更新订单表
 	    			changeOrderStatus(orderNo,orderItemNos, OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getCode(), 
 	    					OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getMsg(),true,"","");
@@ -290,7 +290,7 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法PreSalesOrderDownERPJDCreateOrderServiceImpl.handleVIPPackage出现异常{}",
+			LOGGER.error("MessageId:{} 调用方法PreSalesOrderDownERPJDCreateOrderServiceImpl.handleVIPPackage出现异常:{}",
 					messageId, w.toString());
 			otherCenterResDTO.setOtherCenterResponseMsg(ResultCodeEnum.ERROR.getMsg());
 			otherCenterResDTO.setOtherCenterResponseCode(ResultCodeEnum.ERROR.getCode());
@@ -332,13 +332,13 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 					jdOrderInfoDMO.setOrderNo(orderNo);
 					jdOrderInfoDMO.setOrderItemNo(orderItem.getOrderItemNo());
 					int update = jdOrderInfoDAO.updateERPJDInfo(jdOrderInfoDMO);
-					LOGGER.info("预售下行---更新TB_B_JDORDERINFO结果："+update);
+					LOGGER.info("MessageId:{} 预售下行---更新TB_B_JDORDERINFO结果:{}",messageId,update);
 						}
 		}).start();
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("预售下行---更新TB_B_JDORDERINFO出现异常");
+			LOGGER.error("MessageId:{} 预售下行---更新TB_B_JDORDERINFO出现异常",messageId,w.toString());
 		}
 	}
 	
@@ -349,7 +349,7 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 	@Transactional
 	public PreSalesOrderCallBackDMO executeJDCreateOrderCallBack(
 			PreSalesOrderCallBackReqDTO preSalesOrderCallBackReqDTO) {
-		LOGGER.info("预售回调参数:"+JSONObject.toJSONString(preSalesOrderCallBackReqDTO));
+		LOGGER.info("预售回调参数:{}",JSONObject.toJSONString(preSalesOrderCallBackReqDTO));
 		PreSalesOrderCallBackDMO preSalesOrderCallBackDMO = new PreSalesOrderCallBackDMO();
 		preSalesOrderCallBackDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
 		preSalesOrderCallBackDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
@@ -434,7 +434,7 @@ public class PreSalesOrderDownERPJDCreateOrderServiceImpl implements PreSalesOrd
 			preSalesOrderCallBackDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-		    LOGGER.error("预售下行回调出现异常:"+w.toString());
+		    LOGGER.error("MessageId:{} 预售下行回调出现异常:{}","",w.toString());
 		    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return preSalesOrderCallBackDMO;

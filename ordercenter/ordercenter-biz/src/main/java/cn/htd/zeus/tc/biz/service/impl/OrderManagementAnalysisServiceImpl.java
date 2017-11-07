@@ -41,7 +41,7 @@ public class OrderManagementAnalysisServiceImpl implements OrderManagementAnalys
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法OrderManagementAnalysisServiceImpl.queryOrderManagermentInfo出现异常{}",
+					"MessageId:{} 调用方法OrderManagementAnalysisServiceImpl.queryOrderManagermentInfo出现异常:{}",
 					"卖家编号为=" + sellerCode, w.toString());
 		}
 		return analysis;
@@ -59,7 +59,7 @@ public class OrderManagementAnalysisServiceImpl implements OrderManagementAnalys
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法OrderManagementAnalysisServiceImpl.queryOrderManagermentInfo出现异常{}",
+					"MessageId:{} 调用方法OrderManagementAnalysisServiceImpl.queryOrderManagermentInfo出现异常:{}",
 					"插入失败订单统计数据为" + com.alibaba.fastjson.JSONObject
 							.toJSONString(orderManagementAnalysisDMO),
 					w.toString());
@@ -75,7 +75,7 @@ public class OrderManagementAnalysisServiceImpl implements OrderManagementAnalys
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderManagementAnalysisServiceImpl.queryShopInfo出现异常{}",
+			LOGGER.error("MessageId:{} 调用方法OrderManagementAnalysisServiceImpl.queryShopInfo出现异常:{}",
 					w.toString());
 		}
 		return shopInfo;

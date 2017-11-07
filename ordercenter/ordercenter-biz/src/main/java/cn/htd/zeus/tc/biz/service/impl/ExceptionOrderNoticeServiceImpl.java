@@ -117,13 +117,14 @@ public class ExceptionOrderNoticeServiceImpl implements ExceptionOrderNoticeServ
 			ExecuteResult<String> executeResult1 = this.sendSmsEmailService
 					.doSendEmailByTemplate(mailWarnInDTO);
 			if (!executeResult1.isSuccess()) {
-				LOGGER.error("分销单邮件发送错误:", executeResult1.getErrorMessages());
+				LOGGER.error("MessageId:{} 分销单邮件发送错误:{}", "",executeResult1.getErrorMessages());
 			}
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用方法ExceptionOrderNoticeServiceImpl.executeFiveAndOneExceptionOrder出现异常{}",
-					w.toString());
+			LOGGER.error(
+					"MessageId:{} 调用方法ExceptionOrderNoticeServiceImpl.executeFiveAndOneExceptionOrder出现异常:{}",
+					"", w.toString());
 		}
 	}
 
@@ -181,13 +182,15 @@ public class ExceptionOrderNoticeServiceImpl implements ExceptionOrderNoticeServ
 			ExecuteResult<String> executeResult1 = this.sendSmsEmailService
 					.doSendEmailByTemplate(mailWarnInDTO);
 			if (!executeResult1.isSuccess()) {
-				LOGGER.error("收付款邮件发送错误:", executeResult1.getErrorMessages());
+				LOGGER.error("MessageId:{} 收付款邮件发送错误:{}", "",
+						executeResult1.getErrorMessages());
 			}
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用方法ExceptionOrderNoticeServiceImpl.executePostStrikeaExceptionOrder出现异常{}",
-					w.toString());
+			LOGGER.error(
+					"MessageId:{} 调用方法ExceptionOrderNoticeServiceImpl.executePostStrikeaExceptionOrder出现异常:{}",
+					"", w.toString());
 		}
 	}
 
@@ -261,13 +264,15 @@ public class ExceptionOrderNoticeServiceImpl implements ExceptionOrderNoticeServ
 			ExecuteResult<String> executeResult1 = this.sendSmsEmailService
 					.doSendEmailByTemplate(mailWarnInDTO);
 			if (!executeResult1.isSuccess()) {
-				LOGGER.error("预售邮件发送错误:", executeResult1.getErrorMessages());
+				LOGGER.error("MessageId:{} 预售邮件发送错误:{}", "",
+						executeResult1.getErrorMessages());
 			}
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用方法ExceptionOrderNoticeServiceImpl.executePreSalesOrderExceptionOrder出现异常{}",
-					w.toString());
+			LOGGER.error(
+					"MessageId:{}调用方法ExceptionOrderNoticeServiceImpl.executePreSalesOrderExceptionOrder出现异常:{}",
+					"", w.toString());
 		}
 	}
 

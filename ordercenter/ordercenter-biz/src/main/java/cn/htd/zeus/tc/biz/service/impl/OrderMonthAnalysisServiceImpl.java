@@ -31,8 +31,9 @@ public class OrderMonthAnalysisServiceImpl implements OrderMonthAnalysisService 
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderMonthAnalysisServiceImpl.queryShopInfo出现异常{}",
-					w.toString());
+			LOGGER.error(
+					"MessageId:{} 调用方法OrderMonthAnalysisServiceImpl.queryShopInfo出现异常:{}",
+					"", w.toString());
 		}
 		return shopInfo;
 	}
@@ -48,8 +49,8 @@ public class OrderMonthAnalysisServiceImpl implements OrderMonthAnalysisService 
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法OrderMonthAnalysisServiceImpl.queryOrderMonthAnalysisInfo出现异常{}",
-					"卖家编号为=" + sellerCode, w.toString());
+					"MessageId:{} 调用方法OrderMonthAnalysisServiceImpl.queryOrderMonthAnalysisInfo出现异常:{}",
+					"", w.toString());
 		}
 		return analysis;
 	}
@@ -65,10 +66,8 @@ public class OrderMonthAnalysisServiceImpl implements OrderMonthAnalysisService 
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error(
-					"MessageId:{} 调用方法OrderMonthAnalysisServiceImpl.queryOrderMonthAnalysisInfo出现异常{}",
-					"插入失败订单统计数据为"
-							+ com.alibaba.fastjson.JSONObject.toJSONString(orderSalesMonthInfoDMO),
-					w.toString());
+					"MessageId:{} 调用方法OrderMonthAnalysisServiceImpl.queryOrderMonthAnalysisInfo出现异常:{}",
+					"", w.toString());
 		}
 	}
 

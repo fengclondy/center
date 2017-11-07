@@ -100,7 +100,7 @@ public class FiveAndOneExceptionOrderNoticeTask implements IScheduleTaskDealMult
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用五合一下行异常--订单告警查询方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用五合一下行异常--订单告警查询方法时候发生异常:{}","", w.toString());
 		}finally{
 			
 		}

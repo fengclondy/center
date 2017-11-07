@@ -70,7 +70,7 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<ShopDTO> {
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("店铺销售分析导入获取店铺信息时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 店铺销售分析导入获取店铺信息时候发生异常:{}","", w.toString());
 		}
 		return shopInfo;
 	}
@@ -108,7 +108,7 @@ public class OrderSkuAnalysisiTask implements IScheduleTaskDealMulti<ShopDTO> {
 			result = false;
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("店铺销售分析导入-调用导入方法时候发生异常" + w.toString());
+			LOGGER.error("MessageId:{} 店铺销售分析导入-调用导入方法时候发生异常:{}","", w.toString());
 		} finally {
 		}
 		return result;

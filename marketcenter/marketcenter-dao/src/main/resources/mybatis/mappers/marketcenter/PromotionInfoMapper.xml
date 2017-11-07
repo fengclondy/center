@@ -348,6 +348,25 @@
       <include refid="pagination_tail"/>
     </if>
   </select>
+  <select id="queryNeedCleanRedisPromotion5Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where has_redis_clean = 0
+    <if test="entity != null">
+      <if test="entity.promotionType != null and entity.promotionType != ''">
+        and promotion_type = #{entity.promotionType}
+      </if>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    order by id desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
   <update id="updateCleanedRedisPromotionStatus" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO">
     update promotion_info
     <set>

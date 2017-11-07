@@ -351,6 +351,9 @@ public class TimelimitedPurchaseServiceImpl implements
 							RedisConst.REDIS_TIMELIMITED, promotionId);
 					timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr,
 							TimelimitedInfoDTO.class);
+					if(null == timelimitedInfoDTO){
+						continue;
+					}
 					List list = timelimitedInfoDTO.getPromotionAccumulatyList();
 					if (null != list && !list.isEmpty()) {
 						for (int i = 0; i < list.size(); i++) {

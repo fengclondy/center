@@ -1302,15 +1302,16 @@ public class TimelimitedRedisHandle {
     		if (null != list && !list.isEmpty()) {
     			for (int i = 0; i < list.size(); i++) {
     	            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
+    	            int skuTotal = getShowRemainCount(promotionId, timelimite.getSkuCode());
     	            if(!timelimite.getSkuCode().equals(skuCode)){
     	            	continue;
     	            }
-    	            if(timelimite.getTimelimitedSkuCount().intValue() <= 0){
+    	            if(skuTotal <= 0){
     	            	continue;
     	            }
     	            PromotionStockChangeDTO promotionStockChangeDTO = new PromotionStockChangeDTO();
     	            promotionStockChangeDTO.setSkuCode(timelimite.getSkuCode());
-    	            promotionStockChangeDTO.setQuantity(timelimite.getTimelimitedSkuCount());
+    	            promotionStockChangeDTO.setQuantity(skuTotal);
     	            return promotionStockChangeDTO;
     			}
     		}

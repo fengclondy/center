@@ -243,11 +243,9 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
         } catch (MarketCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());
             result.addErrorMessage(mcbe.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
             result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
             result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } finally {
             promotionRedisHandle.unlockRedisPromotionAction(lockKeyList);
         }

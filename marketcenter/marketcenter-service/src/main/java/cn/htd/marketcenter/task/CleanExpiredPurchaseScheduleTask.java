@@ -16,12 +16,16 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
 import cn.htd.goodscenter.dto.stock.PromotionStockChangeDTO;
 import cn.htd.goodscenter.service.promotionstock.PromotionSkuStockChangeExportService;
+import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.utils.DateUtils;
 import cn.htd.marketcenter.common.utils.ExceptionUtils;
+import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.dao.PromotionInfoDAO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
+import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
@@ -46,6 +50,9 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
 
 	@Resource
 	private PromotionSkuStockChangeExportService promotionSkuStockChangeExportService;
+
+	@Resource
+	private MarketCenterRedisDB marketRedisDB;
 	
     @Override
     public Comparator<PromotionInfoDTO> getComparator() {
@@ -118,7 +125,12 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                 JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
         boolean result = true;
         int expirePromotionInterval = Integer.parseInt(SysProperties.getProperty(EXPIRE_PROMOTION_PURCHASE_INTERVAL));
+        List<PromotionStockChangeDTO> stockChangeList = new ArrayList<PromotionStockChangeDTO>();
+        List<TimelimitedInfoDTO> oldTimelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
         Date expireDt = DateUtils.getSpecifiedDay(new Date(), -1 * expirePromotionInterval);
+        TimelimitedInfoDTO timelimitedInfoDTO = null;
+		TimelimitedInfoDTO timelimite = null;
+		String timelimitedJSONStr = "";
         String promotionId = "";
         String promotionType = "";
         try {
@@ -126,17 +138,35 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                 for (PromotionInfoDTO promotionInfoDTO : tasks) {
                     promotionId = promotionInfoDTO.getPromotionId();
                     promotionType = promotionInfoDTO.getPromotionType();
-                    if (expireDt.compareTo(promotionInfoDTO.getInvalidTime()) > 0) {
                         if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
         						DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionType)) {
-                        	List<PromotionStockChangeDTO> stockChangeList = timelimitedRedisHandle.getPromotionStockChangeList(promotionId, promotionType);
-                        	if(null != stockChangeList && !stockChangeList.isEmpty()){
+                        	timelimitedJSONStr = marketRedisDB.getHash(
+        							RedisConst.REDIS_TIMELIMITED, promotionId);
+                        	timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr,
+        							TimelimitedInfoDTO.class);
+        					List list = timelimitedInfoDTO.getPromotionAccumulatyList();
+        					if (null != list && !list.isEmpty()) {
+        						for (int i = 0; i < list.size(); i++) {
+        							timelimite = JSONObject.toJavaObject((JSONObject) list.get(i),TimelimitedInfoDTO.class);
+        							if(expireDt.compareTo(timelimite.getEndTime()) > 0){
+        	                        	PromotionStockChangeDTO stockChangeDTO = timelimitedRedisHandle.getPromotionStockChangeList(promotionId, timelimite.getSkuCode(), promotionType);
+        	                        	stockChangeList.add(stockChangeDTO);
+        							}else{
+        								oldTimelimitedInfoList.add(timelimite);
+        							}
+        						}
+                        	if(!stockChangeList.isEmpty()){
                         		promotionSkuStockChangeExportService.batchReleaseStock(stockChangeList);
                         	}
-                        	timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
-                            promotionInfoDAO.updateCleanedRedisPromotionStatus(promotionInfoDTO);
+                        	if(!oldTimelimitedInfoList.isEmpty()){
+                        		marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId,
+                    					JSON.toJSONString(oldTimelimitedInfoList));
+                        	}else{
+                        		timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
+                                promotionInfoDAO.updateCleanedRedisPromotionStatus(promotionInfoDTO);
+                        	}
                         }
-                    }
+					}
                 }
             }
         } catch (Exception e) {

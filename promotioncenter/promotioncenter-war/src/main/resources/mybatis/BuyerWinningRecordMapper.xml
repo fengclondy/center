@@ -272,7 +272,9 @@
       <if test="logisticsNo != null and logisticsNo != ''">
         logistics_no = #{logisticsNo},
       </if>
-      order_status = '3',
+      <if test="orderStatus == '待发货'">
+        order_status = '3',
+      </if>
       modify_id = #{modifyId},
       modify_name = #{modifyName},
       modify_time = #{modifyTime}

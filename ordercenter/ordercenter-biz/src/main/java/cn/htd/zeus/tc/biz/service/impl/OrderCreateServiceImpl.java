@@ -192,11 +192,19 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		try {
 			List<OrderCreateListInfoReqDTO> orderList = orderCreateInfoReqDTO.getOrderList();
 			if (null != orderList && orderList.size() > 0) {
-				if(!OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode().equals(promotionType)){					
-					orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
-				}
 				// 调用 memberCallCenterService查询会员信息
 				String buyerCode = orderCreateInfoReqDTO.getBuyerCode();
+				String sellerCode = orderList.get(0).getSellerCode();
+				if(!OrderStatusEnum.PROMOTION_TYPE_SECKILL.getCode().equals(promotionType)){					
+					orderCreate4BusinessHandleService.handleLimitedTimePurchaseSkuCode(orderCreateInfoReqDTO);
+				}else if(buyerCode.equals(sellerCode)){
+					throw new OrderCenterBusinessException(
+							ResultCodeEnum.ORDER_BUYER_SELLER_SAME.getCode(),
+							"提交订单时"
+									+ ResultCodeEnum.ORDER_BUYER_SELLER_SAME
+											.getMsg() + " buyerCode:" + buyerCode
+									+ " sellerCode:" + sellerCode);
+				}
 				OtherCenterResDTO<MemberBaseInfoDTO> memberBaseInfoResDTO = memberCenterRAO
 						.selectMemberBaseName(buyerCode,
 								MemberCenterEnum.MEMBER_TYPE_BUYER.getCode(),

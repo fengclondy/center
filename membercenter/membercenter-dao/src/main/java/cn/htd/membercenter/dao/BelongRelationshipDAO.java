@@ -11,7 +11,12 @@ import cn.htd.membercenter.dto.MemberDownCondition;
 import cn.htd.membercenter.dto.SellerBelongRelationDTO;
 
 public interface BelongRelationshipDAO {
-
+	/**
+	 * 查询会员归属关系列表总数
+	 * @return
+	 */
+	public Long selectBelongRelationListCount(@Param("companyName") String companyName, @Param("contactMobile") String contactMobile,
+			@Param("belongSellerName") String belongSellerName);
 	/**
 	 * 查询会员归属关系列表
 	 * 

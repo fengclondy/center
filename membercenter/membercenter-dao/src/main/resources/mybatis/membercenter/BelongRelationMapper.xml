@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.htd.membercenter.dao.BelongRelationshipDAO">
-  
+ 	<!-- 查询会员归属关系总数，状态为3：审核通过且有效 -->
+	<select id="selectBelongRelationListCount" resultType="java.lang.Long">
+		select 
+			count(b.buyer_id)
+		from belong_relationship b
+		LEFT JOIN member_base_info m on m.id = b.buyer_id  
+		LEFT JOIN member_company_info c on m.id = c.member_id and c.buyer_seller_type='1'
+		LEFT JOIN member_company_info co on m.cur_belong_seller_id = co.member_id and  co.buyer_seller_type='2' 
+		where 1=1 and b.status = '3'
+		<if test="companyName != null and companyName !='' ">
+			and c.company_name like CONCAT('%',#{companyName},'%')
+		</if>
+		<if test="contactMobile != null and contactMobile !='' ">
+			and c.artificial_person_mobile like CONCAT('%',#{contactMobile},'%')
+		</if>
+		<if test="belongSellerName != null and belongSellerName !='' ">
+			and co.company_name like CONCAT('%',#{belongSellerName},'%')
+		</if>
+	</select> 
 	
 	<!-- 查询会员归属关系，状态为3：审核通过且有效 -->
 	<select id="selectBelongRelationList" resultType="cn.htd.membercenter.dto.BelongRelationshipDTO">

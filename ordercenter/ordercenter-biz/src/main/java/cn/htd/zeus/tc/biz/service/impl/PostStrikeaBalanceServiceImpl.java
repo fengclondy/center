@@ -67,7 +67,7 @@ public class PostStrikeaBalanceServiceImpl implements PostStrikeaBalanceService{
 	@Override
 	public void postStrikeaBalance(PostStrikeaBalanceReqDTO postStrikeaBalanceReqDTO) {
 		// TODO Auto-generated method stub
-		LOGGER.info("收付款-准备往中间件发送MQ信息为:"+JSONUtil.toJSONString(postStrikeaBalanceReqDTO));
+		LOGGER.info("收付款-准备往中间件发送MQ信息为:{}",JSONUtil.toJSONString(postStrikeaBalanceReqDTO));
 		postStrikeaBalancer_template.convertAndSend(mqQueueFactoryConfig.getMiddlewarePostStrikeaBalance(),JSONUtil.toJSONString(postStrikeaBalanceReqDTO));
         LOGGER.info("成功发送mq");
 	}
@@ -123,7 +123,7 @@ public class PostStrikeaBalanceServiceImpl implements PostStrikeaBalanceService{
 					RechargeOrderQueryReqDTO rechargeOrderQueryReqDTO = new RechargeOrderQueryReqDTO();
 					rechargeOrderQueryReqDTO.setOrderNo(requestInfo.getOrderNo());
 					RechargeOrderDMO result = rechargeOrderService.selectRechargeOrderByOrderNo(rechargeOrderQueryReqDTO);
-					LOGGER.info("充值订单号为"+requestInfo.getOrderNo());
+					LOGGER.info("充值订单号为:{}",requestInfo.getOrderNo());
 					// 如果充值记录存在并且充值渠道是2：超级老板则记录9002
 					if(result != null && "2".equals(result.getRechargeChannelCode())){
 						postStrikeaBalanceReqDTO.setProductCode(MiddleWareEnum.SUPERBOSS_RECHARGE.getCode());
@@ -135,7 +135,7 @@ public class PostStrikeaBalanceServiceImpl implements PostStrikeaBalanceService{
 				}else{
 					postStrikeaBalanceReqDTO.setProductCode(requestInfo.getProductCode());
 				}
-				LOGGER.info("充值通道为"+postStrikeaBalanceReqDTO.getProductCode());
+				LOGGER.info("充值通道为:{}",postStrikeaBalanceReqDTO.getProductCode());
 				postStrikeaBalanceReqDTO.setOperaterCode(MiddleWareEnum.OPERATE_CODE.getCode());
 				postStrikeaBalanceReqDTO.setOperaterName(MiddleWareEnum.OPERATER_NAME.getCode());
 				postStrikeaBalanceReqDTO.setSaleman(MiddleWareEnum.SALES_MAN.getCode());
@@ -194,15 +194,15 @@ public class PostStrikeaBalanceServiceImpl implements PostStrikeaBalanceService{
 					PayOrderInfoDMO payOrderInfoDMO4Update = new PayOrderInfoDMO();
 					payOrderInfoDMO4Update.setOrderNo(payOrderInfoDMO.getOrderNo());
 					payOrderInfoDMO4Update.setDownOrderNo(payOrderInfoDMO.getDownOrderNo());
-					LOGGER.info("收付款下行---更新TB_B_PAYORDERINFO入参："+JSONObject.toJSONString(payOrderInfoDMO4Update));
+					LOGGER.info("收付款下行---更新TB_B_PAYORDERINFO入参:{}",JSONObject.toJSONString(payOrderInfoDMO4Update));
 					int update = payOrderInfoDAO.updateByRechargeOrderNoLockNo(payOrderInfoDMO4Update);
-					LOGGER.info("收付款下行---更新TB_B_PAYORDERINFO结果："+update);
+					LOGGER.info("收付款下行---更新TB_B_PAYORDERINFO结果:{}",update);
 						}
 		}).start();
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("收付款下行---更新TB_B_PAYORDERINFO出现异常");
+			LOGGER.error("MessageId:{} 收付款下行---更新TB_B_PAYORDERINFO出现异常","",w.toString());
 		}
 	}
 

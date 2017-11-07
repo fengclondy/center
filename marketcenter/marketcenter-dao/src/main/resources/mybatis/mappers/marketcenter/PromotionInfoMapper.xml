@@ -70,9 +70,9 @@
     where 1 = 1
     <if test="entity != null">
       and (
-        <![CDATA[(status = #{entity.noStartStatus,jdbcType=VARCHAR} and now() >= effective_time and now() <= invalid_time)]]>
+        <![CDATA[(status <> #{entity.startedStatus,jdbcType=VARCHAR} and now() >= effective_time and now() <= invalid_time)]]>
         or
-        <![CDATA[(status = #{entity.startedStatus,jdbcType=VARCHAR} and now() > invalid_time)]]>
+        <![CDATA[(status <> #{entity.endStatus,jdbcType=VARCHAR} and now() > invalid_time)]]>
       )
       and show_status in
       <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","

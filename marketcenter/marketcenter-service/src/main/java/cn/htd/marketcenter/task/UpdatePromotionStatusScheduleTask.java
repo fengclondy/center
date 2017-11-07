@@ -113,10 +113,10 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 				condition.setVerifyStatusList(verifyStatusList);
 				//----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
 //				condition.setStatusList(statusList);
-				condition.setNoStartStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
-						DictionaryConst.OPT_PROMOTION_STATUS_NO_START));
 				condition.setStartedStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_START));
+				condition.setEndStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_END));
 				//----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);

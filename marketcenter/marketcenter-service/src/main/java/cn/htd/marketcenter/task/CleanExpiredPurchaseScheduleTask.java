@@ -160,9 +160,6 @@ public class CleanExpiredPurchaseScheduleTask implements
 			if (tasks != null && tasks.length > 0) {
 				for (PromotionInfoDTO promotionInfoDTO : tasks) {
 					promotionId = promotionInfoDTO.getPromotionId();
-					if("3171623330242".equals(promotionId)){
-						System.out.println(111);
-					}
 					promotionType = promotionInfoDTO.getPromotionType();
 					if (dictionary.getValueByCode(
 									DictionaryConst.TYPE_PROMOTION_TYPE,

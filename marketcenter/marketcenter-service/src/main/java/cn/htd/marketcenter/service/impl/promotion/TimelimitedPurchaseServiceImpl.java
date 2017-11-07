@@ -324,6 +324,7 @@ public class TimelimitedPurchaseServiceImpl implements
 		TimelimitedInfoDTO timelimitedInfoDTO = null;
 		TimelimitedInfoDTO timelimite = null;
 		String timelimitedJSONStr = "";
+		boolean isPurchaseFlag = false;
 		try {
 			if (StringUtils.isNotEmpty(skuCode)) {
 				Map<String, String> resultMap = timelimitedRedisHandle
@@ -356,6 +357,7 @@ public class TimelimitedPurchaseServiceImpl implements
 					}
 					List list = timelimitedInfoDTO.getPromotionAccumulatyList();
 					if (null != list && !list.isEmpty()) {
+						isPurchaseFlag = true;
 						for (int i = 0; i < list.size(); i++) {
 							timelimite = JSONObject.toJavaObject(
 									(JSONObject) list.get(i),
@@ -396,6 +398,11 @@ public class TimelimitedPurchaseServiceImpl implements
 								"该商品限时活动不存在");
 					}
 				}
+			}
+			if(!isPurchaseFlag){
+				//该sku商品可能参加了活动，但不是限时购活动
+				result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL);
+				result.setResult(null);
 			}
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());

@@ -18,8 +18,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import redis.clients.jedis.JedisShardInfo;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
@@ -58,15 +62,12 @@ import cn.htd.promotion.cpc.dto.response.PromotionAwardInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionPictureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionStatusHistoryDTO;
 import cn.htd.promotion.cpc.dto.response.ShareLinkHandleResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateLuckDrawResDTO;
 import cn.htd.promotion.cpc.dto.response.ValidateScratchCardResDTO;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
+@Transactional
 @Service("luckDrawService")
 public class LuckDrawServiceImpl implements LuckDrawService {
 
@@ -498,9 +499,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         } catch (PromotionCenterBusinessException e) {
             rtobj.setResponseCode(e.getCode());
             rtobj.setResponseMsg(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
             rtobj.setResponseCode(ResultCodeEnum.ERROR.getCode());
             rtobj.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return rtobj;
@@ -600,9 +603,11 @@ public class LuckDrawServiceImpl implements LuckDrawService {
         } catch (PromotionCenterBusinessException e) {
         	resultrp.setResponseCode(e.getCode());
         	resultrp.setResponseMsg(e.getMessage());
+        	TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
         	resultrp.setResponseCode(ResultCodeEnum.ERROR.getCode());
         	resultrp.setResponseMsg(ExceptionUtils.getStackTraceAsString(e));
+        	TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return resultrp;
     }

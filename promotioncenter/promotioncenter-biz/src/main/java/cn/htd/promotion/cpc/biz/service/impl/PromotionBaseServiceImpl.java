@@ -8,12 +8,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import cn.htd.promotion.cpc.common.constants.RedisConst;
-import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 
@@ -32,10 +31,12 @@ import cn.htd.promotion.cpc.biz.dao.PromotionSellerRuleDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionSloganDAO;
 import cn.htd.promotion.cpc.biz.dmo.PromotionDetailDescribeDMO;
 import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.emums.YesNoEnum;
 import cn.htd.promotion.cpc.common.exception.PromotionCenterBusinessException;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
+import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.BuyerCheckInfo;
 import cn.htd.promotion.cpc.dto.response.PromotionAccumulatyDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionBuyerDetailDTO;
@@ -49,7 +50,7 @@ import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionSloganDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
-
+@Transactional
 @Service("promotionBaseService")
 public class PromotionBaseServiceImpl implements PromotionBaseService {
 

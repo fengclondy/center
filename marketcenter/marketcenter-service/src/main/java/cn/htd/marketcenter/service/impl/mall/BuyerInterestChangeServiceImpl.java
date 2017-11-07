@@ -92,9 +92,6 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
         if (orderItemPromotionList == null || orderItemPromotionList.isEmpty()) {
             return;
         }
-        for (OrderItemPromotionDTO tmpOrderPromotionDTO : orderItemPromotionList) {
-            tmpOrderPromotionDTO.setPromoitionChangeType(promotionChangeType);
-        }
         if (dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                 DictionaryConst.OPT_BUYER_PROMOTION_STATUS_ROLLBACK).equals(promotionChangeType)) {
             promotionDealHandle.rollbackBuyerPromotion(messageId, orderItemPromotionList);
@@ -150,7 +147,7 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                             validateResult.getErrorMsg());
                 }
-                //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+                //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
 //                if (couponType.equals(promotionDTO.getPromotionType())) {
 //                    if (BigDecimal.ZERO.compareTo(promotionDTO.getDiscountAmount()) >= 0) {
 //                        continue;
@@ -187,6 +184,7 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
 //                                "会员促销活动处理一次只能处理一种业务（优惠惠券或秒杀）");
 //                    }
 //                }
+                promotionDTO.setPromoitionChangeType(promotionChangeType);
                 if (timelimitedType.equals(promotionType)) {
                     if (StringUtils.isEmpty(promotionDTO.getSeckillLockNo()) && StringUtils
                             .isEmpty(promotionDTO.getOrderNo())) {
@@ -194,7 +192,7 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
                                 "促销活动ID:" + promotionDTO.getPromotionId() + " 的订单编号或秒杀锁定预占订单号都为空");
                     }
                     lockKey = promotionDTO.getOrderNo();
-                    if (reverseStatus.equals(promotionDTO.getPromoitionChangeType())) {
+                    if (reverseStatus.equals(promotionChangeType)) {
                         lockKey = promotionDTO.getSeckillLockNo();
                     }
                 } else {
@@ -243,11 +241,9 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
         } catch (MarketCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());
             result.addErrorMessage(mcbe.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
             result.setCode(MarketCenterCodeConst.SYSTEM_ERROR);
             result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } finally {
             promotionRedisHandle.unlockRedisPromotionAction(lockKeyList);
         }
@@ -266,9 +262,7 @@ public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeServic
             Map<String, List<OrderItemPromotionDTO>> itemPromotionMap) throws Exception {
         String promotionType = "";
         List<OrderItemPromotionDTO> orderItemPromotionList = null;
-        Map<String, List<OrderItemPromotionDTO>> dealSuccessPromotionMap =
-                new HashMap<String, List<OrderItemPromotionDTO>>();
-        List<OrderItemPromotionDTO> tmpOrderItemPromotionList = null;
+        Map<String, List<OrderItemPromotionDTO>> dealSuccessPromotionMap = new HashMap<String, List<OrderItemPromotionDTO>>();
 
         try {
             for (Map.Entry<String, List<OrderItemPromotionDTO>> entry : itemPromotionMap.entrySet()) {

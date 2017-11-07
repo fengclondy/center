@@ -195,10 +195,20 @@ public class PromotionInfoDTO implements Serializable {
      * 当前调度服务器，分配到的可处理队列
      */
     private List<String> taskIdList;
+    //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//    /**
+//     * 定时任务处理对象促销活动状态
+//     */
+//    private List<String> statusList;
     /**
-     * 定时任务处理对象促销活动状态
+     * 定时任务处理对象促销活动未开始状态
      */
-    private List<String> statusList;
+    private String noStartStatus;
+    /**
+     * 定时任务处理对象促销活动已开始状态
+     */
+    private String startedStatus;
+    //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
     /**
      * 查询条件的审核状态列表
      */
@@ -560,12 +570,20 @@ public class PromotionInfoDTO implements Serializable {
         this.deleteStatus = deleteStatus;
     }
 
-    public List<String> getStatusList() {
-        return statusList;
+    public String getNoStartStatus() {
+        return noStartStatus;
     }
 
-    public void setStatusList(List<String> statusList) {
-        this.statusList = statusList;
+    public void setNoStartStatus(String noStartStatus) {
+        this.noStartStatus = noStartStatus;
+    }
+
+    public String getStartedStatus() {
+        return startedStatus;
+    }
+
+    public void setStartedStatus(String startedStatus) {
+        this.startedStatus = startedStatus;
     }
 
     public List<String> getVerifyStatusList() {

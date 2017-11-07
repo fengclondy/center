@@ -210,14 +210,14 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         ExecutorService executorService = null;
         Future<String> futureRst = null;
         List<Future<String>> workResultList = null;
-        String promotionType = "";
+        String limitedDiscountType = dictMap.get(
+                DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
         try {
             executorService = Executors.newFixedThreadPool(1);
             workResultList = new ArrayList<Future<String>>();
-            promotionType = dictMap.get(
-                    DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
-            if (targetPromotionMap.containsKey(promotionType)) {
-                futureRst = executorService.submit(new ValidTimelimitedDiscountTask(messageId, targetPromotionMap.get(promotionType)));
+            if (targetPromotionMap.containsKey(limitedDiscountType)) {
+                futureRst = executorService.submit(new ValidTimelimitedDiscountTask(messageId,
+                        targetPromotionMap.get(limitedDiscountType)));
                 workResultList.add(futureRst);
             }
             for (Future<String> workRst : workResultList) {
@@ -1612,7 +1612,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     }
                     dealTask = new ValidTimelimitedDiscountDealTask(promotionIdList);
                     forkJoinPool = new ForkJoinPool();
-                    forkJoinPool.execute(dealTask);
+                    forkJoinPool.invoke(dealTask);
                     if (dealTask.isCompletedAbnormally()) {
                         throwable = dealTask.getException();
                         if (throwable instanceof MarketCenterBusinessException) {
@@ -1688,6 +1688,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 String skuCode = "";
                 int stockNum = 0;
                 TimelimitedResultDTO resultDTO = null;
+                TimelimitedInfoDTO tmpNewTimelimitedInfoDTO = null;
 
                 timelimitedInfoDTO = timelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
                 accuDTOList = timelimitedInfoDTO.getPromotionAccumulatyList();
@@ -1760,6 +1761,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     itemInfoDTO.setGoodsPriceType(dictionary.getValueByCode(DictionaryConst.TYPE_SKU_PRICE_TYPE,
                             DictionaryConst.OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT));
                     itemInfoDTO.setGoodsTotal(itemInfoDTO.getGoodsPrice().multiply(new BigDecimal(goodsCount)));
+                    tmpNewTimelimitedInfoDTO = new TimelimitedInfoDTO();
+                    tmpNewTimelimitedInfoDTO.setPromotionId(tmpTimelimitedInfoDTO.getPromotionId());
+                    tmpNewTimelimitedInfoDTO.setLevelCode(tmpTimelimitedInfoDTO.getLevelCode());
                     itemInfoDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
                 }
             }

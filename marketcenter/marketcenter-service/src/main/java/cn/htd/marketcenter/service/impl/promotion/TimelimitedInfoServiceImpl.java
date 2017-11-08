@@ -498,7 +498,16 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             historyDTO.setCreateId(validDTO.getOperatorId());
             historyDTO.setCreateName(validDTO.getOperatorName());
             promotionStatusHistoryDAO.add(historyDTO);
-            timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+
+			// modify by pantao 2017-11-08 start
+			// 剩余库存将于活动结束后的48小时内退还至普通商品库存。
+			// 判断活动如果正在进行，不删redis
+			PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(validDTO.getPromotionId());
+			if (!((new Date()).before(promotionInfo.getInvalidTime())
+					&& (new Date()).after(promotionInfo.getEffectiveTime()))) {
+				timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+			}
+			// modify by pantao 2017-11-08 end
             result.setResult("处理成功");
         } catch (MarketCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());

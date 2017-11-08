@@ -260,13 +260,7 @@ public class TimelimitedPurchaseServiceImpl implements
 		List<TimelimitedInfoDTO> timelimitedListDTO = null;
 		try {
 			// 获取限时购活动信息
-			timelimitedListDTO = timelimitedInfoDAO
-					.queryPromotionInfoByItemCode(itemInfoDTO);
-			if (timelimitedListDTO == null) {
-				throw new MarketCenterBusinessException(
-						MarketCenterCodeConst.PROMOTION_NOT_EXIST,
-						"该商品没有正在参加限时购活动!");
-			}
+			timelimitedListDTO = timelimitedInfoDAO.queryPromotionInfoByItemCode(itemInfoDTO);
 			result.setResult(timelimitedListDTO);
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
@@ -330,6 +324,7 @@ public class TimelimitedPurchaseServiceImpl implements
 		TimelimitedInfoDTO timelimitedInfoDTO = null;
 		TimelimitedInfoDTO timelimite = null;
 		String timelimitedJSONStr = "";
+		boolean isPurchaseFlag = false;
 		try {
 			if (StringUtils.isNotEmpty(skuCode)) {
 				Map<String, String> resultMap = timelimitedRedisHandle
@@ -357,8 +352,12 @@ public class TimelimitedPurchaseServiceImpl implements
 							RedisConst.REDIS_TIMELIMITED, promotionId);
 					timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr,
 							TimelimitedInfoDTO.class);
+					if(null == timelimitedInfoDTO){
+						continue;
+					}
 					List list = timelimitedInfoDTO.getPromotionAccumulatyList();
 					if (null != list && !list.isEmpty()) {
+						isPurchaseFlag = true;
 						for (int i = 0; i < list.size(); i++) {
 							timelimite = JSONObject.toJavaObject(
 									(JSONObject) list.get(i),
@@ -399,6 +398,11 @@ public class TimelimitedPurchaseServiceImpl implements
 								"该商品限时活动不存在");
 					}
 				}
+			}
+			if(!isPurchaseFlag){
+				//该sku商品可能参加了活动，但不是限时购活动
+				result.setCode(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NULL);
+				result.setResult(null);
 			}
 		} catch (MarketCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
@@ -443,11 +447,15 @@ public class TimelimitedPurchaseServiceImpl implements
 			for (String promotionId : promotionIdList) {
 				timelimitedJSONStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
 				timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr, TimelimitedInfoDTO.class);
+				if(null == timelimitedInfoDTO){
+					continue;
+				}
 				List list = timelimitedInfoDTO.getPromotionAccumulatyList();
 				if (null != list && !list.isEmpty()) {
 					for (int i = 0; i < list.size(); i++) {
 			            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
 			            timelimite.setPurchaseSort(dto.getPurchaseSort());
+			            timelimite.setSellerName(timelimitedInfoDTO.getSellerName());
 			            timelimite.setItemCode(timelimitedInfoDTO.getItemCode());
 			            int skuTotal = timelimitedRedisHandle.getShowRemainCount(promotionId, timelimite.getSkuCode());
 			            timelimite.setTimelimitedSkuCount(skuTotal);
@@ -484,7 +492,6 @@ public class TimelimitedPurchaseServiceImpl implements
 				if(dto.getPurchaseFlag() == 1){
 					Collections.sort(resultList);
 				}else{
-					System.out.println(222);
 					Collections.sort(resultList, new PriceComparator());
 				}
 			}

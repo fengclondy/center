@@ -257,7 +257,7 @@ public class MarketCenterRedisDB {
 			jedis = getResource();
 			ret = jedis.hsetnx(key, field, value);
 		} catch (Exception e) {
-			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHashNx", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
 		}

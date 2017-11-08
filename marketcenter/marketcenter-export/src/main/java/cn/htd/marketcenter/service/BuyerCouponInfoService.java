@@ -75,15 +75,6 @@ public interface BuyerCouponInfoService {
     public ExecuteResult<String> saveBuyerReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
 
     /**
-     * 保存会员领取的优惠券-支持一个活动下同时领取多张券
-     *
-     * @param messageId
-     * @param receiveDTO
-     * @return
-     */
-    public ExecuteResult<String> saveBuyerReceiveManyCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
-
-    /**
      * 删除已用或已过期的会员优惠券
      *
      * @param messageId
@@ -102,4 +93,12 @@ public interface BuyerCouponInfoService {
      */
     public ExecuteResult<List<PromotionDiscountInfoDTO>> getBuyerPopupNoticeCouponList(String messageId,
             String buyerCode);
+
+    /**
+     * 保存会员领取的弹框提醒优惠券
+     * @param messageId
+     * @param receiveDTO
+     * @return
+     */
+    public ExecuteResult<String> saveBuyerPopupNoticeReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO);
 }

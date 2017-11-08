@@ -169,5 +169,11 @@
   <sql id="pagination_tail">
     limit #{page.pageOffset} , #{page.rows}
   </sql>
+  
+   <select id="selectTimelimitedInfoBySkuCode" resultMap="ResultMap">
+      SELECT * FROM timelimited_info b
+      where  b.sku_code=#{skuCode, jdbcType=VARCHAR}
+      limit 0,1
+  </select>
 
 </mapper>

@@ -95,7 +95,7 @@ public class PostStrikeaBalanceDownTask implements IScheduleTaskDealMulti<PayOrd
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用收付款接口方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用收付款接口方法时候发生异常:{}","", w.toString());
 		}finally{
 			
 		}
@@ -114,7 +114,7 @@ public class PostStrikeaBalanceDownTask implements IScheduleTaskDealMulti<PayOrd
 			result = false;
 			StringWriter w = new StringWriter();
 	        e.printStackTrace(new PrintWriter(w));
-	        LOGGER.error("收付款-调用executeDownPostStrikeaBalance方法时候发生异常"+ w.toString());
+	        LOGGER.error("MessageId:{} 收付款-调用executeDownPostStrikeaBalance方法时候发生异常:{}","",toString());
 		} finally {
 		}
 		return result;

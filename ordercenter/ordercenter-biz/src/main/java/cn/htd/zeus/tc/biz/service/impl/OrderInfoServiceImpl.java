@@ -41,7 +41,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 			tradeOrdersDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("MessageId:{} 调用方法OrderInfoServiceImpl.queryOrderBySellerIdAndBuyerId出现异常{}",orderQueryReqDTO.getMessageId(),w.toString());
+			LOGGER.error("MessageId:{} 调用方法OrderInfoServiceImpl.queryOrderBySellerIdAndBuyerId出现异常:{}",orderQueryReqDTO.getMessageId(),w.toString());
 			return tradeOrdersDMO;
 		}
 	}

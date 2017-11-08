@@ -102,7 +102,7 @@ public class PostStrikeaExceptionOrderNoticeTask implements IScheduleTaskDealMul
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用收付款下行异常--告警方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用收付款下行异常--告警方法时候发生异常:{}","", w.toString());
 		}finally{
 			
 		}

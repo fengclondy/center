@@ -19,7 +19,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RecursiveTask;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -208,18 +207,17 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             Map<String, String> dictMap) throws Exception {
         logger.info("***********校验购物车中是否有促销活动商品 messageId:[{}] 开始***********", messageId);
         long startTime = System.currentTimeMillis();
-        boolean hasTimelimitedDiscountFlag = false;
         ExecutorService executorService = null;
         Future<String> futureRst = null;
         List<Future<String>> workResultList = null;
-        String promotionType = "";
+        String limitedDiscountType = dictMap.get(
+                DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
         try {
             executorService = Executors.newFixedThreadPool(1);
             workResultList = new ArrayList<Future<String>>();
-            promotionType = dictMap.get(
-                    DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
-            if (targetPromotionMap.containsKey(promotionType)) {
-                futureRst = executorService.submit(new ValidTimelimitedDiscountTask(messageId, targetPromotionMap.get(promotionType)));
+            if (targetPromotionMap.containsKey(limitedDiscountType)) {
+                futureRst = executorService.submit(new ValidTimelimitedDiscountTask(messageId,
+                        targetPromotionMap.get(limitedDiscountType)));
                 workResultList.add(futureRst);
             }
             for (Future<String> workRst : workResultList) {
@@ -246,8 +244,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 executorService.shutdown();
             }
             long endTime = System.currentTimeMillis();
-            logger.info("***********校验购物车中是否有促销活动商品 messageId:[{}],是否存在参加限时购商品:[{}] 结束|调用耗时[{}]ms***********",
-                    messageId, hasTimelimitedDiscountFlag, (endTime - startTime));
+            logger.info("***********校验购物车中是否有促销活动商品 messageId:[{}],结束|调用耗时[{}]ms***********",
+                    messageId, (endTime - startTime));
         }
 
     }
@@ -1606,7 +1604,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             ForkJoinPool forkJoinPool = null;
             ValidTimelimitedDiscountDealTask dealTask = null;
             Throwable throwable = null;
-            String retMsg = "";
+            String retMsg = "处理正常";
             try {
                 if (promotionIdMap != null && !promotionIdMap.isEmpty()) {
                     for (Entry<String, List<OrderItemInfoDTO>> entry : promotionIdMap.entrySet()) {
@@ -1614,8 +1612,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     }
                     dealTask = new ValidTimelimitedDiscountDealTask(promotionIdList);
                     forkJoinPool = new ForkJoinPool();
-                    forkJoinPool.execute(dealTask);
-                    forkJoinPool.awaitTermination(1, TimeUnit.SECONDS);
+                    forkJoinPool.invoke(dealTask);
                     if (dealTask.isCompletedAbnormally()) {
                         throwable = dealTask.getException();
                         if (throwable instanceof MarketCenterBusinessException) {
@@ -1637,7 +1634,8 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     forkJoinPool.shutdown();
                 }
                 long endTime = System.currentTimeMillis();
-                logger.info("***********校验购物车满足限时购商品 messageId:[{}] 结束|调用耗时{}ms***********", messageId, (endTime - startTime));
+                logger.info("***********校验购物车满足限时购商品 messageId:[{}],处理结果:[{}],结束|调用耗时{}ms***********", messageId,
+                        retMsg, (endTime - startTime));
             }
             return retMsg;
         }
@@ -1690,6 +1688,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 String skuCode = "";
                 int stockNum = 0;
                 TimelimitedResultDTO resultDTO = null;
+                TimelimitedInfoDTO tmpNewTimelimitedInfoDTO = null;
 
                 timelimitedInfoDTO = timelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
                 accuDTOList = timelimitedInfoDTO.getPromotionAccumulatyList();
@@ -1762,6 +1761,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     itemInfoDTO.setGoodsPriceType(dictionary.getValueByCode(DictionaryConst.TYPE_SKU_PRICE_TYPE,
                             DictionaryConst.OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT));
                     itemInfoDTO.setGoodsTotal(itemInfoDTO.getGoodsPrice().multiply(new BigDecimal(goodsCount)));
+                    tmpNewTimelimitedInfoDTO = new TimelimitedInfoDTO();
+                    tmpNewTimelimitedInfoDTO.setPromotionId(tmpTimelimitedInfoDTO.getPromotionId());
+                    tmpNewTimelimitedInfoDTO.setLevelCode(tmpTimelimitedInfoDTO.getLevelCode());
                     itemInfoDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
                 }
             }

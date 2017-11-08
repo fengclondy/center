@@ -1288,8 +1288,7 @@ public class TimelimitedRedisHandle {
 		return resultMap;
 	}
 
-	public List<PromotionStockChangeDTO> getPromotionStockChangeList(String promotionId, String promotionType) {
-		List<PromotionStockChangeDTO> resultList = new ArrayList<PromotionStockChangeDTO>();
+	public PromotionStockChangeDTO getPromotionStockChangeList(String promotionId, String skuCode, String promotionType) {
         TimelimitedInfoDTO timelimitedInfo = null;
         String timelimitedJsonStr = "";
         timelimitedJsonStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
@@ -1301,20 +1300,23 @@ public class TimelimitedRedisHandle {
 				DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionType)) {
         	List list = timelimitedInfo.getPromotionAccumulatyList();
     		if (null != list && !list.isEmpty()) {
-    			resultList = new ArrayList<PromotionStockChangeDTO>();
     			for (int i = 0; i < list.size(); i++) {
     	            TimelimitedInfoDTO timelimite = JSONObject.toJavaObject((JSONObject) list.get(i), TimelimitedInfoDTO.class);
-    	            if(timelimite.getTimelimitedSkuCount().intValue() <= 0){
+    	            int skuTotal = getShowRemainCount(promotionId, timelimite.getSkuCode());
+    	            if(!timelimite.getSkuCode().equals(skuCode)){
+    	            	continue;
+    	            }
+    	            if(skuTotal <= 0){
     	            	continue;
     	            }
     	            PromotionStockChangeDTO promotionStockChangeDTO = new PromotionStockChangeDTO();
     	            promotionStockChangeDTO.setSkuCode(timelimite.getSkuCode());
-    	            promotionStockChangeDTO.setQuantity(timelimite.getTimelimitedSkuCount());
-    	            resultList.add(promotionStockChangeDTO);
+    	            promotionStockChangeDTO.setQuantity(skuTotal);
+    	            return promotionStockChangeDTO;
     			}
     		}
 		}
-        return resultList;
+        return null;
 	}
 	
 	public int getShowRemainCount(String promotionId, String skuCode){

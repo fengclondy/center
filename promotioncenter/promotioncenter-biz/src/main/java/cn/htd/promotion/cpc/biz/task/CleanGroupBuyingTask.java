@@ -82,7 +82,12 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
                     }
                 }
                 //更新汇掌柜sptag、上下架状态
-                String hlResult = changeShelves(list);
+                int num = list.size()%1000 == 0 ? list.size()%1000 :list.size()%1000+1;
+//                for(int i=0 ;i<num; i++){
+//                    List<Map<String,String>> subList = list.subList()
+//                     changeShelves(list);
+//                }
+
             }
         } catch (Exception e) {
             result = false;

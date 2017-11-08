@@ -101,6 +101,16 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      */
     public List<PromotionInfoDTO> queryNeedCleanRedisPromotion4Task(@Param("entity") PromotionInfoDTO condition,
             @Param("page") Pager<PromotionInfoDTO> page);
+    
+    /**
+     * 根据是否已清除Redis标记，查询需要清除的促销活动信息(限时购)
+     *
+     * @param condition
+     * @param page
+     * @return
+     */
+    public List<PromotionInfoDTO> queryNeedCleanRedisPromotion5Task(@Param("entity") PromotionInfoDTO condition,
+            @Param("page") Pager<PromotionInfoDTO> page);
 
     /**
      * 更新促销活动的清除Redis标记

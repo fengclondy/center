@@ -65,7 +65,7 @@ public class OrderManagementAnalysisTask implements IScheduleTaskDealMulti<ShopD
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("店铺经营信息导入获取店铺信息时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 店铺经营信息导入获取店铺信息时候发生异常:{}","", w.toString());
 		}
 		return shopInfo;
 	}
@@ -105,7 +105,7 @@ public class OrderManagementAnalysisTask implements IScheduleTaskDealMulti<ShopD
 			result = false;
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("店铺经营信息导入-调用导入方法方法时候发生异常" + w.toString());
+			LOGGER.error("MessageId:{} 店铺经营信息导入-调用导入方法方法时候发生异常:{}","",w.toString());
 		} finally {
 		}
 		return result;

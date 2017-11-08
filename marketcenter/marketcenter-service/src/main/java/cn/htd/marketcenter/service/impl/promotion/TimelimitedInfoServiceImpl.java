@@ -282,7 +282,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
         PromotionAccumulatyDTO accuDTO = null;
         TimelimitedInfoDTO timelimitedInfoDTO = null;
-        TimelimitedResultDTO timelimitedResultDTO = null;
         List<PromotionStatusHistoryDTO> historyList = null;
         try {
             accuDTO = baseService.querySingleAccumulatyPromotionInfo(promotionId);
@@ -503,8 +502,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 			// 剩余库存将于活动结束后的48小时内退还至普通商品库存。
 			// 判断活动如果正在进行，不删redis
 			PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(validDTO.getPromotionId());
-			if (!((new Date()).before(promotionInfo.getInvalidTime())
-					&& (new Date()).after(promotionInfo.getEffectiveTime()))) {
+			if ((new Date()).after(promotionInfo.getEffectiveTime())) {
 				timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
 			}
 			// modify by pantao 2017-11-08 end

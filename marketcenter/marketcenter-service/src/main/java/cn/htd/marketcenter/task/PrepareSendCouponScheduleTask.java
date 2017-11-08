@@ -1043,7 +1043,6 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             MemberBaseInfoDTO memberBaseInfoDTO = null;
             String phoneNum = "";
             List<String> phoneNumList = new ArrayList<String>();
-            String sendTargetPhoneNumStr = "";
             SendSmsDTO sendSmsDTO = null;
             if (StringUtils.isEmpty(smsTemplateCode)) {
                 return;

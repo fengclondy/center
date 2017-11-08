@@ -201,8 +201,7 @@ public class RedisDB {
 	 * 向Redis中设定hash对象
 	 * 
 	 * @param key
-	 * @param field
-	 * @param value
+	 * @param hValue
 	 */
 	public void setHash(String key, Map<String, String> hValue) {
 		logger.debug("\n 方法:[{}]，入参:[{}][{}]", "redisDB-setHash", "key=" + key, "value=" + JSON.toJSONString(hValue));

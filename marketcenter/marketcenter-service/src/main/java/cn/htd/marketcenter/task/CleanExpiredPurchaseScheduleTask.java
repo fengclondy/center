@@ -191,7 +191,7 @@ public class CleanExpiredPurchaseScheduleTask implements
 								} else{
 									if("00000".equals(stockResult.getCode())){
 										timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
-										promotionInfoDAO.updateCleanedRedisPromotionStatus(promotionInfoDTO);
+										promotionInfoDAO.updateCleanedRedisPurchasePromotionStatus(promotionInfoDTO);
 									}
 								}
 							}

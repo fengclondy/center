@@ -119,6 +119,14 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public Integer updateCleanedRedisPromotionStatus(PromotionInfoDTO promotionInfoDTO);
+    
+    /**
+     * 更新促销活动的清除Redis标记(限时购)
+     *
+     * @param promotionInfoDTO
+     * @return
+     */
+    public Integer  updateCleanedRedisPurchasePromotionStatus(PromotionInfoDTO promotionInfoDTO);
 
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
     /**

@@ -378,6 +378,16 @@
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
     and has_redis_clean = 0
   </update>
+  <update id="updateCleanedRedisPurchasePromotionStatus" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      has_redis_clean = 1,
+      status = 9,
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+    and has_redis_clean = 0
+  </update>
   <select id="queryPromotionInfoByB2cActivityCode" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO"
           resultMap="BaseResultMap">
     select

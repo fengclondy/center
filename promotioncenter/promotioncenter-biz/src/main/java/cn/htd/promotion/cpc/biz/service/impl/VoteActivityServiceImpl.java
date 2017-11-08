@@ -69,6 +69,10 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			return  result;
 		}
 		//校验时间先后
+		if(voteActivityResDTO.getVoteSignUpStartTime().before(new Date())){
+			result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于当前时间"));
+			return  result;
+		}
 		
 		if(voteActivityResDTO.getVoteEndTime().before(voteActivityResDTO.getVoteStartTime())){
 			result.setErrorMessages(Lists.newArrayList("投票开始时间不能晚于投票结束时间"));

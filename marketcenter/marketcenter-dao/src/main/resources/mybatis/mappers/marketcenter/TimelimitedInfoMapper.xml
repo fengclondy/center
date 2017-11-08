@@ -288,17 +288,18 @@
 		<if test="entity.sellerCode != null and entity.sellerCode != ''">
         	<![CDATA[ and timelimited_info.seller_code = #{entity.sellerCode}]]>
 		</if>
-		<if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
+        <if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
             <![CDATA[
                 and ((promotion_info.effective_time <= #{entity.startTimeStr} and promotion_info.invalid_time > #{entity.startTimeStr})
-                   or (promotion_info.effective_time <= #{entity.endTimeStr} and promotion_info.invalid_time > #{entity.endTimeStr}))
+                   or (promotion_info.effective_time < #{entity.endTimeStr} and promotion_info.invalid_time >= #{entity.endTimeStr})
+                   or (promotion_info.effective_time > #{entity.startTimeStr} and promotion_info.invalid_time < #{entity.endTimeStr}))
             ]]>
         </if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and (entity.endTimeStr == null or entity.endTimeStr == '' )">
-            <![CDATA[ and promotion_info.effective_time <= #{entity.startTimeStr} and promotion_info.invalid_time > #{entity.startTimeStr} ]]>
+            <![CDATA[ and promotion_info.invalid_time >= #{entity.startTimeStr} ]]>
         </if>
         <if test="entity.endTimeStr != null and entity.endTimeStr != '' and (entity.startTimeStr == null or entity.startTimeStr == '' )">
-            <![CDATA[ and promotion_info.effective_time <= #{entity.endTimeStr} and promotion_info.invalid_time > #{entity.endTimeStr} ]]>
+            <![CDATA[ and promotion_info.effective_time <= #{entity.endTimeStr} ]]>
         </if>
 		and promotion_accumulaty.delete_flag = 0
 		GROUP BY promotion_info.id) as tmp
@@ -333,14 +334,15 @@
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
             <![CDATA[
                 and ((promotion_info.effective_time <= #{entity.startTimeStr} and promotion_info.invalid_time > #{entity.startTimeStr})
-                   or (promotion_info.effective_time <= #{entity.endTimeStr} and promotion_info.invalid_time > #{entity.endTimeStr}))
+                   or (promotion_info.effective_time < #{entity.endTimeStr} and promotion_info.invalid_time >= #{entity.endTimeStr})
+                   or (promotion_info.effective_time > #{entity.startTimeStr} and promotion_info.invalid_time < #{entity.endTimeStr}))
             ]]>
         </if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and (entity.endTimeStr == null or entity.endTimeStr == '' )">
-            <![CDATA[ and promotion_info.effective_time <= #{entity.startTimeStr} and promotion_info.invalid_time > #{entity.startTimeStr} ]]>
+            <![CDATA[ and promotion_info.invalid_time >= #{entity.startTimeStr} ]]>
         </if>
         <if test="entity.endTimeStr != null and entity.endTimeStr != '' and (entity.startTimeStr == null or entity.startTimeStr == '' )">
-            <![CDATA[ and promotion_info.effective_time <= #{entity.endTimeStr} and promotion_info.invalid_time > #{entity.endTimeStr} ]]>
+            <![CDATA[ and promotion_info.effective_time <= #{entity.endTimeStr} ]]>
         </if>
 		and promotion_accumulaty.delete_flag = 0
 		group by promotion_info.id

@@ -50,7 +50,7 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 			List<BelongRelationshipDTO> belongRelationList = null;
 			List<ApplyBusiRelationDTO> applyBusiRelationDto = null;
 			Long count = boxRelationshipDao.selectBoxRelationListCount(companyName, artificialPersonMobile, boxCompanyName, null);
-			if (count != null) {
+			if (count != null && count > 0) {
 				belongRelationList = boxRelationshipDao.selectBoxRelationList(page, companyName, artificialPersonMobile,
 						boxCompanyName, null);
 				for (int i = 0; i < belongRelationList.size(); i++) {

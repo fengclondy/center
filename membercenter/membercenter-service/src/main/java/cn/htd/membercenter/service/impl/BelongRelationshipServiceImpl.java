@@ -56,7 +56,7 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 		DataGrid<BelongRelationshipDTO> dg = new DataGrid<BelongRelationshipDTO>();
 		try {
 			Long count = belongRelationshipDao.selectBelongRelationListCount(companyName, contactMobile, belongCompanyName);
-			if (count != null) {
+			if (count != null && count > 0) {
 				List<BelongRelationshipDTO> belongRelationList = null;
 				belongRelationList = belongRelationshipDao.selectBelongRelationList(page, companyName, contactMobile,
 						belongCompanyName);

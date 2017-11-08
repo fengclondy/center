@@ -212,10 +212,10 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
                 // 取得时间
                 Date date = new Date();
                 // 根据时间判断状态
-                if(!NUtils.isEmpty(voteActivity.getVoteSignUpStartTime()) && !NUtils.isEmpty(voteActivity.getVoteEndTime())){
-                    if(date.before(voteActivity.getVoteSignUpStartTime())){
+                if(!NUtils.isEmpty(voteActivity.getVoteStartTime()) && !NUtils.isEmpty(voteActivity.getVoteEndTime())){
+                    if(date.before(voteActivity.getVoteStartTime())){
                         resultMap.put("activityStatus","未开始");
-                    }else if(date.after(voteActivity.getVoteSignUpStartTime()) && date.before(voteActivity.getVoteEndTime())){
+                    }else if(date.after(voteActivity.getVoteStartTime()) && date.before(voteActivity.getVoteEndTime())){
                         resultMap.put("activityStatus","进行中");
                     }else{
                         resultMap.put("activityStatus","已结束");

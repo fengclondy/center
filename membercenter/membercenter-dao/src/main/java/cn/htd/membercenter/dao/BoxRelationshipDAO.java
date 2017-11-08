@@ -14,6 +14,17 @@ import cn.htd.membercenter.dto.MemberShipDTO;
 public interface BoxRelationshipDAO {
 
 	/**
+	 * 查询会员包厢关系数量
+	 * 
+	 * @param memberId
+	 * @param companyName
+	 * @param contactMobile
+	 * @param sellerId
+	 * @return
+	 */
+	public Long selectBoxRelationListCount(@Param("companyName") String companyName, @Param("artificialPersonMobile") String artificialPersonMobile,
+			@Param("boxSellerName") String boxSellerName, @Param("boxId") Long boxId);
+	/**
 	 * 查询会员包厢关系列表
 	 * 
 	 * @param memberId

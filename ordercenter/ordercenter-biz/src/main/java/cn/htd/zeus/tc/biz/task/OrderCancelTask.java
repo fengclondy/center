@@ -103,7 +103,7 @@ public class OrderCancelTask implements IScheduleTaskDealMulti<TradeOrdersDMO> {
 		} catch (Exception e) {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用取消订单定时任务selectTasks方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用取消订单定时任务selectTasks方法时候发生异常:" ,"", w.toString());
 		} finally {
 
 		}

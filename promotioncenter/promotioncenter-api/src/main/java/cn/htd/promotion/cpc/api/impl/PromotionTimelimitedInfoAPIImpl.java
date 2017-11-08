@@ -138,7 +138,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 				}
 				datagrid.setTotal(total);
 				datagrid.setRows(timelimitedDTOList);
-				logger.info("秒杀活动列表数据timelimitedDTOLis:" + JSON.toJSONString(timelimitedDTOList));
+				//logger.info("秒杀活动列表数据timelimitedDTOLis:" + JSON.toJSONString(timelimitedDTOList));
 			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException bcbe) {

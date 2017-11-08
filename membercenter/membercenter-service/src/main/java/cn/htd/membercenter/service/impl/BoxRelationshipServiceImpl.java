@@ -48,12 +48,9 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 		DataGrid<BelongRelationshipDTO> dg = new DataGrid<BelongRelationshipDTO>();
 		try {
 			List<BelongRelationshipDTO> belongRelationList = null;
-			List<BelongRelationshipDTO> count = null;
 			List<ApplyBusiRelationDTO> applyBusiRelationDto = null;
-			count = boxRelationshipDao.selectBoxRelationList(null, companyName, artificialPersonMobile, boxCompanyName,
-					null);
-
-			if (count != null) {
+			Long count = boxRelationshipDao.selectBoxRelationListCount(companyName, artificialPersonMobile, boxCompanyName, null);
+			if (count != null && count > 0) {
 				belongRelationList = boxRelationshipDao.selectBoxRelationList(page, companyName, artificialPersonMobile,
 						boxCompanyName, null);
 				for (int i = 0; i < belongRelationList.size(); i++) {
@@ -72,7 +69,7 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 					}
 				}
 				dg.setRows(belongRelationList);
-				dg.setTotal(new Long(count.size()));
+				dg.setTotal(count);
 				rs.setResult(dg);
 			} else {
 				rs.setResultMessage("fail");

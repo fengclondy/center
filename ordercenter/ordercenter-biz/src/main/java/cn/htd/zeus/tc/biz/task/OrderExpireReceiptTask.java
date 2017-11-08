@@ -104,7 +104,7 @@ public class OrderExpireReceiptTask implements IScheduleTaskDealMulti<TradeOrder
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("系统自动确认收货发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 系统自动确认收货发生异常:{}" ,"", w.toString());
 		}finally{
 
 		}
@@ -135,7 +135,7 @@ public class OrderExpireReceiptTask implements IScheduleTaskDealMulti<TradeOrder
 			result = false;
 			StringWriter w = new StringWriter();
 	        e.printStackTrace(new PrintWriter(w));
-	        LOGGER.error("系统自动确认收货-调用execute方法时候发生异常"+ w.toString());
+	        LOGGER.error("MessageId:{} 系统自动确认收货-调用execute方法时候发生异常:{}","", w.toString());
 		} finally {
 		}
 		return result;

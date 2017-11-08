@@ -3,6 +3,8 @@ package cn.htd.marketcenter.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +13,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.marketcenter.common.constant.RedisConst;
+import cn.htd.marketcenter.common.utils.MarketCenterRedisDB;
 import cn.htd.marketcenter.domain.BuyerUseTimelimitedLog;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
@@ -27,6 +31,7 @@ public class TimelimitedRedisHandleTest {
 	private TimelimitedRedisHandle timelimitedRedisHandle;
 	private DictionaryUtils dictionary;
 	private TimelimitedPurchaseService timelimitedPurchaseService;
+	private MarketCenterRedisDB marketRedisDB;
 
 	@Before
 	public void setUp() throws Exception {
@@ -34,6 +39,7 @@ public class TimelimitedRedisHandleTest {
 		timelimitedRedisHandle = (TimelimitedRedisHandle) act.getBean("timelimitedRedisHandle");
 		timelimitedPurchaseService = (TimelimitedPurchaseService) act.getBean("timelimitedPurchaseService");
 		dictionary = (DictionaryUtils) act.getBean("dictionaryUtils");
+		marketRedisDB = (MarketCenterRedisDB) act.getBean("marketRedisDB");
 	}
 
 	@Test
@@ -119,7 +125,7 @@ public class TimelimitedRedisHandleTest {
 	@Test
 	public void getTimelimitedInfo() throws Exception {
 		TimelimitedInfoDTO dto = new TimelimitedInfoDTO();
-		dto.setPurchaseFlag(2);
+		dto.setPurchaseFlag(1);
 		ExecuteResult<List<TimelimitPurchaseMallInfoDTO>> result = timelimitedPurchaseService.getTimelimitedInfo(dto);
 		System.out.println(JSON.toJSONString(result));
 	}
@@ -132,5 +138,14 @@ public class TimelimitedRedisHandleTest {
 		dto.setSalesVolume(1);
 		ExecuteResult<String> result = timelimitedPurchaseService.updateTimitedInfoSalesVolumeRedis(dto);
 		System.out.println(JSON.toJSONString(result));
+	}
+	
+	@Test
+	public void test1111(){
+		String timelimitedJsonStr = marketRedisDB.getHash(
+				RedisConst.REDIS_TIMELIMITED, "3171536460239");
+		TimelimitedInfoDTO timelimitedInfo = JSON.parseObject(timelimitedJsonStr,
+				TimelimitedInfoDTO.class);
+		System.out.println(JSON.toJSONString(timelimitedInfo));
 	}
 }

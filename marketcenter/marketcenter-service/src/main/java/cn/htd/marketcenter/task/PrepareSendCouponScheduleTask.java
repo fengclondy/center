@@ -1164,7 +1164,10 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             return;
         }
         if (isNeedRemind == NoticeTypeEnum.SMS.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS.getValue()) {
-            threadPoolExecutor.execute(new SendMemberSMSNoticeThread(dealTargetInfo, sendedBuyerList, buyerDetailList));
+            if (StringUtils.isEmpty(dealTargetInfo.getModifyPromotionId())) {
+                threadPoolExecutor
+                        .execute(new SendMemberSMSNoticeThread(dealTargetInfo, sendedBuyerList, buyerDetailList));
+            }
         }
         if (isNeedRemind == NoticeTypeEnum.POPUP.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS.getValue()) {
             threadPoolExecutor

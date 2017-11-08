@@ -1,6 +1,7 @@
 package cn.htd.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,11 +9,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
-
+import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.dto.DictionaryInfo;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * 取得字典信息
@@ -27,10 +28,11 @@ public class DictionaryUtils {
 	private static final String REDIS_DICTIONARY = "B2B_MIDDLE_DICTIONARY";
 	// Redis字典类型数据
 	private static final String REDIS_DICTIONARY_TYPE = "B2B_MIDDLE_DICTIONARY_TYPE";
-
 	//----- add by jiangkun for 性能优化 on 20171011 start -----
 	private static Map<String, String> DICTIONARY_TYPE_MAP = new HashMap<String, String>();
 	private static Map<String, Map<String, String>> DICTIONARY_VALUE_MAP  = new HashMap<String, Map<String, String>>();
+	private static long flushedTime = System.currentTimeMillis();
+	private static final List<String> EXCEPT_CACHE_TYPE_LIST = Arrays.asList(DictionaryConst.TYPE_ITEM_UNIT);
 	//----- add by jiangkun for 性能优化 on 20171011 end -----
 	@Resource
 	private RedisDB redisDB;
@@ -70,7 +72,8 @@ public class DictionaryUtils {
 	 */
 	private Map<String, String> getDictAllValueMap(String typeCode) {
 		Map<String, String> dictValueMap = null;
-		if (DICTIONARY_VALUE_MAP.containsKey(typeCode)) {
+
+		if (!EXCEPT_CACHE_TYPE_LIST.contains(typeCode) && DICTIONARY_VALUE_MAP.containsKey(typeCode)) {
 			return DICTIONARY_VALUE_MAP.get(typeCode);
 		}
 		dictValueMap = redisDB.getHashOperations(REDIS_DICTIONARY + "_" + typeCode);
@@ -78,6 +81,23 @@ public class DictionaryUtils {
 			DICTIONARY_VALUE_MAP.put(typeCode, dictValueMap);
 		}
 		return dictValueMap;
+	}
+
+	/**
+	 * 每24小时清除字典的缓存
+	 */
+	private void flushDictCacheEvery24H() {
+		boolean needFlushFlag = (System.currentTimeMillis() - flushedTime) > (1000 * 60 * 60 * 24);
+		if (needFlushFlag) {
+			synchronized (DictionaryUtils.class) {
+				needFlushFlag = (System.currentTimeMillis() - flushedTime) > (1000 * 60 * 60 * 24);
+				if (needFlushFlag) {
+					DICTIONARY_TYPE_MAP = new HashMap<String, String>();
+					DICTIONARY_VALUE_MAP = new HashMap<String, Map<String, String>>();
+					flushedTime = System.currentTimeMillis();
+				}
+			}
+		}
 	}
 	//----- add by jiangkun for 性能优化 on 20171011 end -----
 
@@ -187,6 +207,7 @@ public class DictionaryUtils {
 		}
 		//----- modify by jiangkun for 性能优化 on 20171011 start -----
 //		vopMap = redisDB.getHashOperations(REDIS_DICTIONARY + "_" + typeCode);
+		flushDictCacheEvery24H();
 		vopMap = getDictAllValueMap(typeCode);
 		//----- modify by jiangkun for 性能优化 on 20171011 end -----
 		if (vopMap != null && vopMap.size() > 0) {
@@ -297,7 +318,8 @@ public class DictionaryUtils {
 //		}
 		Map<String, String> dictValueMap = null;
 		boolean hasUpdDictValMapFlg = false;
-		if (DICTIONARY_TYPE_MAP.containsKey(typeCode)) {
+		flushDictCacheEvery24H();
+		if (!EXCEPT_CACHE_TYPE_LIST.contains(typeCode) && DICTIONARY_TYPE_MAP.containsKey(typeCode)) {
 			dictTypeStr = DICTIONARY_TYPE_MAP.get(typeCode);
 		} else {
 			dictTypeStr = redisDB.getHash(REDIS_DICTIONARY_TYPE, typeCode);

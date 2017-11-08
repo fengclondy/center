@@ -1043,7 +1043,6 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             MemberBaseInfoDTO memberBaseInfoDTO = null;
             String phoneNum = "";
             List<String> phoneNumList = new ArrayList<String>();
-            String sendTargetPhoneNumStr = "";
             SendSmsDTO sendSmsDTO = null;
             if (StringUtils.isEmpty(smsTemplateCode)) {
                 return;
@@ -1079,6 +1078,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE,
                             DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE));
                     sendSmsEmailService.sendSms(sendSmsDTO);
+                    phoneNumList = new ArrayList<String>();
                 }
             }
             if (phoneNumList.size() > 0) {
@@ -1164,7 +1164,10 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             return;
         }
         if (isNeedRemind == NoticeTypeEnum.SMS.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS.getValue()) {
-            threadPoolExecutor.execute(new SendMemberSMSNoticeThread(dealTargetInfo, sendedBuyerList, buyerDetailList));
+            if (StringUtils.isEmpty(dealTargetInfo.getModifyPromotionId())) {
+                threadPoolExecutor
+                        .execute(new SendMemberSMSNoticeThread(dealTargetInfo, sendedBuyerList, buyerDetailList));
+            }
         }
         if (isNeedRemind == NoticeTypeEnum.POPUP.getValue() || isNeedRemind == NoticeTypeEnum.POPUPSMS.getValue()) {
             threadPoolExecutor

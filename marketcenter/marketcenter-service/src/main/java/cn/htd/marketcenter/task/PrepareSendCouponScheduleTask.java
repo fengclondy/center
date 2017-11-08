@@ -1078,6 +1078,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE,
                             DictionaryConst.OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE));
                     sendSmsEmailService.sendSms(sendSmsDTO);
+                    phoneNumList = new ArrayList<String>();
                 }
             }
             if (phoneNumList.size() > 0) {

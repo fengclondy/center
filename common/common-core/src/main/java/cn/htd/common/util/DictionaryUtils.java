@@ -84,13 +84,13 @@ public class DictionaryUtils {
 	}
 
 	/**
-	 * 每4小时清除字典的缓存
+	 * 每24小时清除字典的缓存
 	 */
-	private void flushDictCacheEvery4H() {
-		boolean needFlushFlag = (System.currentTimeMillis() - flushedTime) > (1000 * 60);
+	private void flushDictCacheEvery24H() {
+		boolean needFlushFlag = (System.currentTimeMillis() - flushedTime) > (1000 * 60 * 60 * 24);
 		if (needFlushFlag) {
 			synchronized (DictionaryUtils.class) {
-				needFlushFlag = (System.currentTimeMillis() - flushedTime) > (1000 * 60);
+				needFlushFlag = (System.currentTimeMillis() - flushedTime) > (1000 * 60 * 60 * 24);
 				if (needFlushFlag) {
 					DICTIONARY_TYPE_MAP = new HashMap<String, String>();
 					DICTIONARY_VALUE_MAP = new HashMap<String, Map<String, String>>();
@@ -207,7 +207,7 @@ public class DictionaryUtils {
 		}
 		//----- modify by jiangkun for 性能优化 on 20171011 start -----
 //		vopMap = redisDB.getHashOperations(REDIS_DICTIONARY + "_" + typeCode);
-		flushDictCacheEvery4H();
+		flushDictCacheEvery24H();
 		vopMap = getDictAllValueMap(typeCode);
 		//----- modify by jiangkun for 性能优化 on 20171011 end -----
 		if (vopMap != null && vopMap.size() > 0) {
@@ -318,7 +318,7 @@ public class DictionaryUtils {
 //		}
 		Map<String, String> dictValueMap = null;
 		boolean hasUpdDictValMapFlg = false;
-		flushDictCacheEvery4H();
+		flushDictCacheEvery24H();
 		if (!EXCEPT_CACHE_TYPE_LIST.contains(typeCode) && DICTIONARY_TYPE_MAP.containsKey(typeCode)) {
 			dictTypeStr = DICTIONARY_TYPE_MAP.get(typeCode);
 		} else {

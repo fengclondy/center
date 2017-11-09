@@ -291,7 +291,7 @@
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
             <![CDATA[
                 and ((promotion_info.effective_time <= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d'))
-                   or (promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) and promotion_info.invalid_time > DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d')), INTERVAL 1 DAY)
+                   or (promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) and promotion_info.invalid_time > DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY))
                    or (promotion_info.effective_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY)))
             ]]>
         </if>
@@ -334,7 +334,7 @@
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
             <![CDATA[
                 and ((promotion_info.effective_time <= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d'))
-                   or (promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) and promotion_info.invalid_time > DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d')), INTERVAL 1 DAY)
+                   or (promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) and promotion_info.invalid_time > DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY))
                    or (promotion_info.effective_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY)))
             ]]>
         </if>

@@ -1,17 +1,15 @@
 package cn.htd.promotion.cpc.biz.task;
 
-import cn.htd.common.Pager;
-import cn.htd.common.util.SysProperties;
-import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
-import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
-import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
-import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
-import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
-import com.alibaba.fastjson.JSONObject;
-import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
-import com.taobao.pamirs.schedule.TaskItemDefine;
-import net.sf.json.JSONArray;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -26,10 +24,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.*;
+import com.alibaba.fastjson.JSONObject;
+import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
+import com.taobao.pamirs.schedule.TaskItemDefine;
+
+import cn.htd.common.Pager;
+import cn.htd.common.util.SysProperties;
+import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
+import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
+import cn.htd.promotion.cpc.common.util.ExceptionUtils;
+import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
+import net.sf.json.JSONArray;
 
 /**
  * Created by tangjiayong on 2017/10/31.
@@ -65,8 +71,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
         boolean result = true;
         try {
             if (tasks != null && tasks.length > 0) {
-                List<Map<String,String>> list = null;
-                String messageId = keyGeneratorUtils.generateMessageId();
+                List<Map<String,String>> list = new ArrayList<Map<String,String>>();
                 for (GroupbuyingInfoCmplReqDTO dto : tasks) {
                     //根据promotionid 清除redis
                     Boolean deleteResult = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(dto.getPromotionId());
@@ -82,10 +87,10 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
                     }
                 }
                 //更新汇掌柜sptag、上下架状态
-                int num = list.size()%1000 == 0 ? list.size()%1000 :list.size()%1000+1;
+//                int num = list.size()%1000 == 0 ? list.size()%1000 :list.size()%1000+1;
 //                for(int i=0 ;i<num; i++){
 //                    List<Map<String,String>> subList = list.subList()
-//                     changeShelves(list);
+                     changeShelves(list);
 //                }
 
             }

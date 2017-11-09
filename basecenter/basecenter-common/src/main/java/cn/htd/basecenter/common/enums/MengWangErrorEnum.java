@@ -12,7 +12,7 @@
 package cn.htd.basecenter.common.enums;
 
 /**
- * 删除标记枚举
+ * 梦网错误枚举
  *
  * @author jiangkun
  */

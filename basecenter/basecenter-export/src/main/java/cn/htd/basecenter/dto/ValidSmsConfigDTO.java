@@ -6,18 +6,18 @@ public class ValidSmsConfigDTO implements Serializable {
 
 	private static final long serialVersionUID = 2648782374271000247L;
 
-	private Long id;
+	private String channelCode;
 
 	private Long operatorId;
 
 	private String operatorName;
 
-	public Long getId() {
-		return id;
+	public String getChannelCode() {
+		return channelCode;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setChannelCode(String channelCode) {
+		this.channelCode = channelCode;
 	}
 
 	public Long getOperatorId() {

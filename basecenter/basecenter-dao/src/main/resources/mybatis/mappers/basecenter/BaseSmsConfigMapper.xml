@@ -49,6 +49,13 @@
     where type = #{type,jdbcType=VARCHAR}
       and used_flag = #{usedFlag,jdbcType=TINYINT}
   </select>
+  <select id="queryByChannelCode" resultMap="BaseResultMap" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
+    select
+    <include refid="Base_Column_List" />
+    from base_sms_config
+    where type = #{type,jdbcType=VARCHAR}
+    and channel_code = #{channelCode,jdbcType=VARCHAR}
+  </select>
   <insert id="add" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
     insert into base_sms_config
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -267,6 +274,7 @@
         modify_name = #{modifyName,jdbcType=VARCHAR},
         modify_time = now(),
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where type = #{type,jdbcType=VARCHAR}
+      and channel_code = #{channelCode,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -865,5 +865,7 @@ public class DictionaryConst {
     public static final String OPT_PROMOTION_SELLER_TYPE_HTD_BELONG = "PROMOTION_SELLER_TYPE_HTD_BELONG";
     //字典信息-短信模版类型-会员领取优惠券短信提醒
     public static final String OPT_SMS_MEMBER_RECEIVE_COUPON_NOTICE = "SMS_MEMBER_RECEIVE_COUPON_NOTICE";
+    //字典信息-短信通道-梦网
+    public static final String OPT_SMS_CHANNEL_MENGWANG = "SMS_CHANNEL_MENGWANG";
     //******************* add by jiangkun on 20170917 for PromotionCenter End *********************
 }

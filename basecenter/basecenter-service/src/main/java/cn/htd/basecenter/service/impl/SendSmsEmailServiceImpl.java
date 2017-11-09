@@ -54,11 +54,11 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 	/**
 	 * 读取配置文件是否发送邮件标识
 	 */
-	private static final String isSendEmailFLag = SysProperties.getProperty("send.email.flag");
+	private static final String IS_SEND_EMAIL_FLAG = "send.email.flag";
 	/**
 	 * 读取配置文件是否发送短信标识
 	 */
-	private static final String isSendSmsFLag = SysProperties.getProperty("send.sms.flag");
+	private static final String IS_SEND_SMS_FLAG = "send.sms.flag";
 
 	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
@@ -191,7 +191,7 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		boolean hasError = false;
 		BaseSendMessageDTO message = new BaseSendMessageDTO();
 		try {
-			if (YesNoEnum.YES.getValue() == Integer.valueOf(isSendSmsFLag).intValue()) {
+			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_SMS_FLAG))) {
 				if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
 					result = manDaoSmsClient.sendSms(config, phoneNum, content);
 				} else if (SmsChannelTypeEnum.TIANXUNTONG.getCode().equals(config.getChannelCode())) {
@@ -236,7 +236,7 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		boolean hasError = false;
 		BaseSendMessageDTO message = new BaseSendMessageDTO();
 		try {
-			if (YesNoEnum.YES.getValue() == Integer.valueOf(isSendEmailFLag)) {
+			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_EMAIL_FLAG))) {
 				sendMailClient.setSender(config.getSendName());
 				sendMailClient.setSendAddress(config.getSendAddress());
 				sendMailClient.setEmailType(EmailTypeEnum.getName(config.getEmailType()));

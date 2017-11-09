@@ -11,11 +11,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
@@ -23,6 +23,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DateUtils;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.goodscenter.common.utils.RedissonClientUtil;
 import cn.htd.marketcenter.common.constant.RedisConst;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.CalculateUtils;
@@ -41,11 +42,13 @@ import cn.htd.marketcenter.dto.TimelimitPurchaseItemInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitPurchaseMallInfoDTO;
 import cn.htd.marketcenter.dto.TimelimitedConditionDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
-import cn.htd.marketcenter.dto.TimelimitedListDTO;
 import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 import cn.htd.marketcenter.service.PromotionBaseService;
 import cn.htd.marketcenter.service.TimelimitedPurchaseService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service("timelimitedPurchaseService")
 public class TimelimitedPurchaseServiceImpl implements
@@ -71,6 +74,9 @@ public class TimelimitedPurchaseServiceImpl implements
 
 	@Resource
 	private TimelimitedInfoDAO timelimitedInfoDAO;
+	
+    @Autowired
+    private RedissonClientUtil redissonClientUtil;
 
 	/**
 	 * 限时购 - 新增限时购活动信息
@@ -444,7 +450,10 @@ public class TimelimitedPurchaseServiceImpl implements
 				result.addErrorMessage(resultMap.get("ERROR2"));
 				return result;
 			}
+			int index = 0;
 			for (String promotionId : promotionIdList) {
+				index  ++;
+				System.out.println(index + "===" + promotionId);
 				timelimitedJSONStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
 				timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr, TimelimitedInfoDTO.class);
 				if(null == timelimitedInfoDTO){
@@ -525,6 +534,7 @@ public class TimelimitedPurchaseServiceImpl implements
 	@Override
 	public ExecuteResult<String> updateTimitedInfoSalesVolumeRedis(
 			TimelimitedInfoDTO timelimitedInfoDTO) {
+		RLock rLock = null;
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		List<TimelimitedInfoDTO> timelimitedInfoList = new ArrayList<TimelimitedInfoDTO>();
 		TimelimitedInfoDTO timelimitedInfo = null;
@@ -533,6 +543,11 @@ public class TimelimitedPurchaseServiceImpl implements
 		int salesVolume = timelimitedInfoDTO.getSalesVolume();
 		String skuCode = timelimitedInfoDTO.getSkuCode();
 		try {
+            String lockKey = RedisConst.REDIS_PURCHASE_SALES_VOLUME_SYNC + promotionId; // 竞争资源标志
+            RedissonClient redissonClient = redissonClientUtil.getInstance();
+            rLock = redissonClient.getLock(lockKey);
+            /** 上锁 **/
+            rLock.lock();
 			if (StringUtils.isEmpty(promotionId)) {
 				throw new MarketCenterBusinessException(
 						MarketCenterCodeConst.PARAMETER_ERROR, "限时购活动id不能为空");
@@ -578,7 +593,12 @@ public class TimelimitedPurchaseServiceImpl implements
 			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 			TransactionAspectSupport.currentTransactionStatus()
 					.setRollbackOnly();
-		}
+		} finally {
+            /** 释放锁资源 **/
+            if (rLock != null) {
+                rLock.unlock();
+            }
+        }
 		return result;
 	}
 

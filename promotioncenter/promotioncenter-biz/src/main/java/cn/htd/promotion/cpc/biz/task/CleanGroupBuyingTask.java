@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -33,7 +34,6 @@ import cn.htd.common.util.SysProperties;
 import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
 import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import net.sf.json.JSONArray;
 
@@ -43,18 +43,71 @@ import net.sf.json.JSONArray;
  * 1.把商品标记从团购商品变成普通商品;
  * 2.清除互动结束的团购信息
  */
-public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingInfoCmplReqDTO> {
+public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingInfoResDTO> {
 
     protected static transient Logger logger = LoggerFactory.getLogger(CleanGroupBuyingTask.class);
-
-    @Resource
-    private KeyGeneratorUtils keyGeneratorUtils;
 
     @Resource
     private GroupbuyingInfoDAO groupbuyingInfoDAO;
 
     @Resource
     private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
+
+    @Override
+    public Comparator<GroupbuyingInfoResDTO> getComparator() {
+        return new Comparator<GroupbuyingInfoResDTO>() {
+            public int compare(GroupbuyingInfoResDTO o1, GroupbuyingInfoResDTO o2) {
+                Long id1 = o1.getGroupbuyingId();
+                Long id2 = o2.getGroupbuyingId();
+                return id1.compareTo(id2);
+            }
+        };
+    }
+
+    /**
+     * 根据条件,查询当前调度服务器可处理的任务
+     *
+     * @param taskParameter    任务的自定义参数
+     * @param ownSign          当前环境名称
+     * @param taskQueueNum     当前任务类型的任务队列数量
+     * @param taskQueueList    当前调度服务器,分配到的可处理队列
+     * @param eachFetchDataNum 每次获取数据的数量
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<GroupbuyingInfoResDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
+                                                       List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
+        logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "CleanGroupBuyingTask-selectTasks",
+                "taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
+                JSONObject.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
+        GroupbuyingInfoCmplReqDTO condition = new GroupbuyingInfoCmplReqDTO();
+        Pager<GroupbuyingInfoCmplReqDTO> pager = null;
+        List<String> taskIdList = new ArrayList<String>();
+        List<GroupbuyingInfoResDTO> groupbuyingDTOList = null;
+        if (eachFetchDataNum > 0) {
+            pager = new Pager<GroupbuyingInfoCmplReqDTO>();
+            pager.setPageOffset(0);
+            pager.setRows(eachFetchDataNum);
+        }
+        try {
+            if (taskQueueList != null && taskQueueList.size() > 0) {
+                for (TaskItemDefine taskItem : taskQueueList) {
+                    taskIdList.add(taskItem.getTaskItemId());
+                }
+                condition.setTaskQueueNum(taskQueueNum);
+                condition.setTaskIdList(taskIdList);
+                groupbuyingDTOList = groupbuyingInfoDAO.queryNeedCleanGroupbuying4Task(condition, pager);
+            }
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}],异常:[{}]", "CleanGroupBuyingTask-selectTasks",
+                    ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "CleanGroupBuyingTask-selectTasks",
+                    JSONObject.toJSONString(groupbuyingDTOList));
+        }
+        return groupbuyingDTOList;
+    }
 
     /**
      * 执行给定的任务数组。因为泛型不支持new 数组,只能传递OBJECT[]
@@ -65,14 +118,14 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
      * @throws Exception
      */
     @Override
-    public boolean execute(GroupbuyingInfoCmplReqDTO[] tasks, String ownSign) throws Exception {
+    public boolean execute(GroupbuyingInfoResDTO[] tasks, String ownSign) throws Exception {
         logger.info("\n 方法:[{}],入参:[{}][{}]", "CleanGroupBuyingTask-execute",
                 JSONObject.toJSONString(tasks), "ownSign:" + ownSign);
         boolean result = true;
         try {
             if (tasks != null && tasks.length > 0) {
                 List<Map<String,String>> list = new ArrayList<Map<String,String>>();
-                for (GroupbuyingInfoCmplReqDTO dto : tasks) {
+                for (GroupbuyingInfoResDTO dto : tasks) {
                     //根据promotionid 清除redis
                     Boolean deleteResult = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(dto.getPromotionId());
                     if(deleteResult){
@@ -161,59 +214,4 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
         return "";
     }
 
-    /**
-     * 根据条件,查询当前调度服务器可处理的任务
-     *
-     * @param taskParameter    任务的自定义参数
-     * @param ownSign          当前环境名称
-     * @param taskQueueNum     当前任务类型的任务队列数量
-     * @param taskQueueList    当前调度服务器,分配到的可处理队列
-     * @param eachFetchDataNum 每次获取数据的数量
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public List<GroupbuyingInfoCmplReqDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
-                                                       List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
-        logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "CleanExpiredPromotionScheduleTask-selectTasks",
-                "taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
-                JSONObject.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
-        GroupbuyingInfoCmplReqDTO condition = new GroupbuyingInfoCmplReqDTO();
-        Pager<GroupbuyingInfoCmplReqDTO> pager = null;
-        List<String> taskIdList = new ArrayList<String>();
-        List<GroupbuyingInfoCmplReqDTO> groupbuyingDTOList = null;
-        if (eachFetchDataNum > 0) {
-            pager = new Pager<GroupbuyingInfoCmplReqDTO>();
-            pager.setPageOffset(0);
-            pager.setRows(eachFetchDataNum);
-        }
-        try {
-            if (taskQueueList != null && taskQueueList.size() > 0) {
-                for (TaskItemDefine taskItem : taskQueueList) {
-                    taskIdList.add(taskItem.getTaskItemId());
-                }
-                condition.setTaskQueueNum(taskQueueNum);
-                condition.setTaskIdList(taskIdList);
-                groupbuyingDTOList = groupbuyingInfoDAO.queryNeedCleanGroupbuying4Task(condition, pager);
-            }
-        } catch (Exception e) {
-            logger.error("\n 方法:[{}],异常:[{}]", "CleanGroupBuyingTask-selectTasks",
-                    ExceptionUtils.getStackTraceAsString(e));
-        } finally {
-            logger.info("\n 方法:[{}],出参:[{}]", "CleanGroupBuyingTask-selectTasks",
-                    JSONObject.toJSONString(groupbuyingDTOList));
-        }
-        return groupbuyingDTOList;
-    }
-
-    @Override
-    public Comparator<GroupbuyingInfoCmplReqDTO> getComparator() {
-        return new Comparator<GroupbuyingInfoCmplReqDTO>() {
-            public int compare(GroupbuyingInfoCmplReqDTO o1, GroupbuyingInfoCmplReqDTO o2) {
-                Long id1 = o1.getGroupbuyingId();
-                Long id2 = o2.getGroupbuyingId();
-                return id1.compareTo(id2);
-            }
-        };
-    }
 }

@@ -296,7 +296,7 @@
             ]]>
         </if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and (entity.endTimeStr == null or entity.endTimeStr == '' )">
-            <![CDATA[ and promotion_info.invalid_time >= DATE_ADD(STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) ]]>
+            <![CDATA[ and promotion_info.invalid_time >= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') ]]>
         </if>
         <if test="entity.endTimeStr != null and entity.endTimeStr != '' and (entity.startTimeStr == null or entity.startTimeStr == '' )">
             <![CDATA[ and promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) ]]>
@@ -339,7 +339,7 @@
             ]]>
         </if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and (entity.endTimeStr == null or entity.endTimeStr == '' )">
-            <![CDATA[ and promotion_info.invalid_time >= DATE_ADD(STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) ]]>
+            <![CDATA[ and promotion_info.invalid_time >= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') ]]>
         </if>
         <if test="entity.endTimeStr != null and entity.endTimeStr != '' and (entity.startTimeStr == null or entity.startTimeStr == '' )">
             <![CDATA[ and promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) ]]>

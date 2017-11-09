@@ -444,9 +444,13 @@ public class ItemExportServiceImpl implements ItemExportService {
 									.queryCatAttrByKeyVals(skuOut
 											.getAttributes());
 							// 根据skuID查询对应ｓｋｕ下面的显示库存
-							skuOut.setDisplayQuantity(itemSkuPublishInfoMapper
-									.queryBySkuId(skuOut.getSkuId()).get(0)
-									.getDisplayQuantity());
+							//edit by li.jun
+							List<ItemSkuPublishInfo> publishInfo = itemSkuPublishInfoMapper.queryBySkuId(skuOut.getSkuId());
+							if(null != publishInfo && publishInfo.size() > 0){
+								skuOut.setDisplayQuantity(publishInfo.get(0).getDisplayQuantity());
+								skuOut.setReserveQuantity(publishInfo.get(0).getReserveQuantity());	
+							}
+							//edit by li.jun
 							skuOut.setItemAttr(itemAttr.getResult());
 							DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService
 									.queryLadderPriceBySellerIdAndSkuId(

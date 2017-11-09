@@ -290,16 +290,16 @@
 		</if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
             <![CDATA[
-                and ((promotion_info.effective_time <= #{entity.startTimeStr} and promotion_info.invalid_time > #{entity.startTimeStr})
-                   or (promotion_info.effective_time < #{entity.endTimeStr} and promotion_info.invalid_time >= #{entity.endTimeStr})
-                   or (promotion_info.effective_time > #{entity.startTimeStr} and promotion_info.invalid_time < #{entity.endTimeStr}))
+                and ((promotion_info.effective_time <= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d'))
+                   or (promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) and promotion_info.invalid_time > DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY))
+                   or (promotion_info.effective_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY)))
             ]]>
         </if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and (entity.endTimeStr == null or entity.endTimeStr == '' )">
-            <![CDATA[ and promotion_info.invalid_time >= #{entity.startTimeStr} ]]>
+            <![CDATA[ and promotion_info.invalid_time >= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') ]]>
         </if>
         <if test="entity.endTimeStr != null and entity.endTimeStr != '' and (entity.startTimeStr == null or entity.startTimeStr == '' )">
-            <![CDATA[ and promotion_info.effective_time <= #{entity.endTimeStr} ]]>
+            <![CDATA[ and promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) ]]>
         </if>
 		and promotion_accumulaty.delete_flag = 0
 		GROUP BY promotion_info.id) as tmp
@@ -333,16 +333,16 @@
 		</if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and  entity.endTimeStr != null and entity.endTimeStr != '' ">
             <![CDATA[
-                and ((promotion_info.effective_time <= #{entity.startTimeStr} and promotion_info.invalid_time > #{entity.startTimeStr})
-                   or (promotion_info.effective_time < #{entity.endTimeStr} and promotion_info.invalid_time >= #{entity.endTimeStr})
-                   or (promotion_info.effective_time > #{entity.startTimeStr} and promotion_info.invalid_time < #{entity.endTimeStr}))
+                and ((promotion_info.effective_time <= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d'))
+                   or (promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) and promotion_info.invalid_time > DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY))
+                   or (promotion_info.effective_time > STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') and promotion_info.invalid_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY)))
             ]]>
         </if>
         <if test="entity.startTimeStr != null and entity.startTimeStr != '' and (entity.endTimeStr == null or entity.endTimeStr == '' )">
-            <![CDATA[ and promotion_info.invalid_time >= #{entity.startTimeStr} ]]>
+            <![CDATA[ and promotion_info.invalid_time >= STR_TO_DATE(#{entity.startTimeStr}, '%Y-%m-%d') ]]>
         </if>
         <if test="entity.endTimeStr != null and entity.endTimeStr != '' and (entity.startTimeStr == null or entity.startTimeStr == '' )">
-            <![CDATA[ and promotion_info.effective_time <= #{entity.endTimeStr} ]]>
+            <![CDATA[ and promotion_info.effective_time < DATE_ADD(STR_TO_DATE(#{entity.endTimeStr}, '%Y-%m-%d'), INTERVAL 1 DAY) ]]>
         </if>
 		and promotion_accumulaty.delete_flag = 0
 		group by promotion_info.id

@@ -164,7 +164,9 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                                     PromotionStockChangeDTO stockChangeDTO = timelimitedRedisHandle
                                             .getPromotionStockChangeList(promotionId, timelimite.getSkuCode(),
                                                     promotionType);
-                                    stockChangeList.add(stockChangeDTO);
+                                    if(null != stockChangeDTO){
+                                        stockChangeList.add(stockChangeDTO);
+                                    }
                                 } else {
                                     oldTimelimitedInfoList.add(timelimite);
                                 }

@@ -1072,7 +1072,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     continue;
                 }
                 phoneNumList.add(phoneNum);
-                if (phoneNumList.size() >= 5000) {
+                if (phoneNumList.size() >= 1000) {
                     sendSmsDTO = new SendSmsDTO();
                     sendSmsDTO.setPhone(StringUtils.join(phoneNumList.toArray(), ","));
                     sendSmsDTO.setSmsType(dictionary.getValueByCode(DictionaryConst.TYPE_SMS_TEMPLATE_TYPE,

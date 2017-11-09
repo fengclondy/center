@@ -135,6 +135,7 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
         boolean result = true;
         int expirePromotionInterval = Integer.parseInt(SysProperties.getProperty(EXPIRE_PROMOTION_PURCHASE_INTERVAL));
         Date expireDt = DateUtils.getSpecifiedDay(new Date(), -1 * expirePromotionInterval);
+        System.out.println("=======" + JSON.toJSONString(tasks));
         try {
             if (tasks != null && tasks.length > 0) {
                 for (PromotionInfoDTO promotionInfoDTO : tasks) {
@@ -142,6 +143,9 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                     if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
                             DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionType)) {
                         String promotionId = promotionInfoDTO.getPromotionId();
+                        if(promotionId.equals("3171831500656")){
+                        	System.out.println(1111);
+                        }
                         String timelimitedJSONStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
                         TimelimitedInfoDTO timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr,
                                 TimelimitedInfoDTO.class);
@@ -164,7 +168,9 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                                     PromotionStockChangeDTO stockChangeDTO = timelimitedRedisHandle
                                             .getPromotionStockChangeList(promotionId, timelimite.getSkuCode(),
                                                     promotionType);
-                                    stockChangeList.add(stockChangeDTO);
+                                    if(null != stockChangeDTO){
+                                        stockChangeList.add(stockChangeDTO);
+                                    }
                                 } else {
                                     oldTimelimitedInfoList.add(timelimite);
                                 }

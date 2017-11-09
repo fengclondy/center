@@ -401,17 +401,12 @@ public class UpdateRedisData4CouponRequireScheduleTask implements IScheduleTaskD
         if (jedis.exists(RedisConst.REDIS_TIMELIMITED_INDEX)) {
             indexMap = jedis.hgetAll(RedisConst.REDIS_TIMELIMITED_INDEX);
             for (Entry<String, String> entry : indexMap.entrySet()) {
-                String newKey = promotionType + "&";
-                String[] keyArr = null;
-                String key = "";
-                String promotionIdStr = "";
-                key = entry.getKey();
-                newKey = newKey + key;
-                promotionIdStr = entry.getValue();
-                keyArr = key.split("&");
+            	String key = entry.getKey();
+            	String[] keyArr = key.split("&");
                 if (!keyArr[0].equals(timelimitedPurchaseType) && !keyArr[0]
                         .equals(promotionType)) { //没有2 和 3 开头的活动 2.秒杀 3.限时购
-                    jedis.hset(RedisConst.REDIS_TIMELIMITED_INDEX, newKey, promotionIdStr);
+	                String newKey = promotionType + "&" + key;
+                    jedis.hset(RedisConst.REDIS_TIMELIMITED_INDEX, newKey, entry.getValue());
                     jedis.hdel(RedisConst.REDIS_TIMELIMITED_INDEX, key);
                 }
             }

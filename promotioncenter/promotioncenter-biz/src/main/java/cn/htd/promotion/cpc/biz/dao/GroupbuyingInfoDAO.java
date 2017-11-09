@@ -103,7 +103,7 @@ public interface GroupbuyingInfoDAO {
 	 * @param pager
 	 * @return
 	 */
-	List<GroupbuyingInfoCmplReqDTO> queryNeedCleanGroupbuying4Task(@Param("entity") GroupbuyingInfoCmplReqDTO condition,@Param("page") Pager<GroupbuyingInfoCmplReqDTO> pager);
+	List<GroupbuyingInfoResDTO> queryNeedCleanGroupbuying4Task(@Param("entity") GroupbuyingInfoCmplReqDTO condition,@Param("page") Pager<GroupbuyingInfoCmplReqDTO> pager);
 
 	/**
 	 * 根据promotionId更爱redis清除标志

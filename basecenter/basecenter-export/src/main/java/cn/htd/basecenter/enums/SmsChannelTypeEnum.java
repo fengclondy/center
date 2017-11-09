@@ -3,7 +3,8 @@ package cn.htd.basecenter.enums;
 public enum SmsChannelTypeEnum {
 
 	MANDAO("漫道", "1"),
-	TIANXUNTONG("天信通", "2");
+	TIANXUNTONG("天信通", "2"),
+	MENGWANG("梦网", "3");
 
 	private SmsChannelTypeEnum(String name, String code) {
 		this.name = name;

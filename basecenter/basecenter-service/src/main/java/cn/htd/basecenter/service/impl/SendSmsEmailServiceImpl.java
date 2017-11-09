@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import cn.htd.basecenter.service.sms.MengWangSmsClient;
 import cn.htd.common.util.SysProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +74,9 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 
 	@Resource
 	private TianXunTongSmsClient tianXunTongSmsClient;
+
+	@Resource
+	private MengWangSmsClient mengWangSmsClient;
 
 	@Resource
 	private SendMailClient sendMailClient;
@@ -192,6 +196,8 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 					result = manDaoSmsClient.sendSms(config, phoneNum, content);
 				} else if (SmsChannelTypeEnum.TIANXUNTONG.getCode().equals(config.getChannelCode())) {
 					result = tianXunTongSmsClient.sendSms(config, phoneNum, content);
+				} else if (SmsChannelTypeEnum.MENGWANG.getCode().equals(config.getChannelCode())) {
+					result = mengWangSmsClient.sendSms(config, phoneNum, content);
 				}
 			}
 		} catch (BaseCenterBusinessException bcbe) {

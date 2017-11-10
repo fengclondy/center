@@ -894,6 +894,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                                 continue;
                             }
                             couponDTO.setPromotionProviderSellerCode(tmpDTO.getBelognSellerCode());
+                            couponDTO.setSellerRuleDTO(null);
                         }
                         //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                         couponDTO.setGetCouponTime(new Date());

@@ -58,9 +58,10 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 					useLogRedisKey);
 			// 如果是下单接口则删除当前用户锁定标记，默认下单成功
-			if(seckillInfoReqDTO.isOrderFlag()){
-                // 删除锁定记录
-                promotionRedisDB.delHash(reserveHashKey, seckillInfoReqDTO.getBuyerCode());
+			if (seckillInfoReqDTO.isOrderFlag()) {
+				logger.info("下单秒杀接口==========================={}", useLogJsonStr);
+				// 删除锁定记录
+				promotionRedisDB.delHash(reserveHashKey, seckillInfoReqDTO.getBuyerCode());
 			}
 			BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
 			if (timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE)) {

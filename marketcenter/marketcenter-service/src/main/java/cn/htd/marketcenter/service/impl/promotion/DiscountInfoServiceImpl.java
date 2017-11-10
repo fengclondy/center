@@ -509,7 +509,7 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "领券开始日期必须小于结束日期");
             }
             if (couponInfo.getProvideCount() == null || couponInfo.getProvideCount().intValue() < 1) {
-                if (NoticeTypeEnum.NO.getValue() != couponInfo.getIsNeedRemind()) {
+                if (NoticeTypeEnum.NO.getValue() == couponInfo.getIsNeedRemind()) {
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "申请数量不能为空不能为空且必须大于0");
                 }
             }

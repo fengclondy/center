@@ -495,7 +495,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             try {
                 jedis = marketRedisDB.getResource();
                 targetBuyerCouponList =
-                        jedis.lrange(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, startIdx, endIdx);
+                        jedis.lrange(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, startIdx, endIdx - 1);
                 if (targetBuyerCouponList != null && !targetBuyerCouponList.isEmpty()) {
                     for (String buyerCouponStr : targetBuyerCouponList) {
                         tmpStrArr = buyerCouponStr.split("&");
@@ -503,15 +503,16 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                         buyerCouponCode = tmpStrArr[1];
                         couponStr = jedis.hget(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode);
                         couponDTO = JSON.parseObject(couponStr, BuyerCouponInfoDTO.class);
-                        couponDTO.setCouponName(targetDiscountInfo.getPromotionName());
-                        couponDTO.setCouponDescribe(targetDiscountInfo.getPromotionDescribe());
-                        couponDTO.setCouponStartTime(targetDiscountInfo.getEffectiveStartTime());
-                        couponDTO.setCouponEndTime(targetDiscountInfo.getEffectiveEndTime());
-                        couponDTO.setDiscountThreshold(targetDiscountInfo.getDiscountThreshold());
-                        couponDTO.setDiscountPercent(targetDiscountInfo.getDiscountPercent());
-                        jedis.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode,
-                                JSON.toJSONString(couponDTO));
-                        updatedCount++;
+                        if (couponDTO != null) {
+                            couponDTO.setCouponName(targetDiscountInfo.getPromotionName());
+                            couponDTO.setCouponDescribe(targetDiscountInfo.getPromotionDescribe());
+                            couponDTO.setCouponStartTime(targetDiscountInfo.getEffectiveStartTime());
+                            couponDTO.setCouponEndTime(targetDiscountInfo.getEffectiveEndTime());
+                            couponDTO.setDiscountThreshold(targetDiscountInfo.getDiscountThreshold());
+                            couponDTO.setDiscountPercent(targetDiscountInfo.getDiscountPercent());
+                            jedis.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, JSON.toJSONString(couponDTO));
+                            updatedCount++;
+                        }
                     }
                 }
             } catch (Exception e) {

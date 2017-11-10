@@ -14,6 +14,7 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DateUtils;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.SysProperties;
+import cn.htd.marketcenter.common.enums.NoticeTypeEnum;
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.common.utils.ExceptionUtils;
 import cn.htd.marketcenter.common.utils.ValidateResult;
@@ -508,7 +509,9 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "领券开始日期必须小于结束日期");
             }
             if (couponInfo.getProvideCount() == null || couponInfo.getProvideCount().intValue() < 1) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "申请数量不能为空不能为空且必须大于0");
+                if (NoticeTypeEnum.NO.getValue() != couponInfo.getIsNeedRemind()) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "申请数量不能为空不能为空且必须大于0");
+                }
             }
         }
         if (!dictionary.getValueByCode(DictionaryConst.TYPE_COUPON_PROVIDE_TYPE,

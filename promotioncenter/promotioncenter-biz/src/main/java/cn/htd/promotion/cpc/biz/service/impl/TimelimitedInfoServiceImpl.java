@@ -664,10 +664,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         Map<String, String> resultMap = new HashMap<String, String>();
         String promotionId = timelimitedInfoResDTO.getPromotionId();
         String timelimitedResultKey = RedisConst.PROMOTION_REDIS_TIMELIMITED_RESULT + "_" + promotionId;
-        String timelimitedResultStr = promotionRedisDB.get(timelimitedResultKey);
-        if (StringUtils.isNotBlank(timelimitedResultStr)) {
-            promotionRedisDB.del(timelimitedResultKey);
-        }
+        promotionRedisDB.del(timelimitedResultKey);
         resultMap.put(RedisConst.PROMOTION_REDIS_TIMELIMITED_TOTAL_COUNT,
                 String.valueOf(timelimitedInfoResDTO.getTimelimitedSkuCount()));
         resultMap.put(RedisConst.PROMOTION_REDIS_TIMELIMITED_SHOW_REMAIN_COUNT,

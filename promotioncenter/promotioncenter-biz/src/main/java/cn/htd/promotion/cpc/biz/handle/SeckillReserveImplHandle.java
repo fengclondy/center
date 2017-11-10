@@ -3,8 +3,6 @@ package cn.htd.promotion.cpc.biz.handle;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -27,11 +25,6 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 
 	@Resource
 	private PromotionRedisDB promotionRedisDB;
-
-	/**
-	 * 日志
-	 */
-	protected Logger logger = LoggerFactory.getLogger(SeckillReserveImplHandle.class);
 
 	@Override
 	protected void changeStock(String messageId, SeckillInfoReqDTO seckillInfoReqDTO) throws Exception {
@@ -64,12 +57,13 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 			String useLogRedisKey = buyerCode + "&" + promotionId;
 			String useLogJsonStr = promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_USELOG,
 					useLogRedisKey);
+			// 如果是下单接口则删除当前用户锁定标记，默认下单成功
+			if(seckillInfoReqDTO.isOrderFlag()){
+                // 删除锁定记录
+                promotionRedisDB.delHash(reserveHashKey, seckillInfoReqDTO.getBuyerCode());
+			}
 			BuyerUseTimelimitedLogDMO timelimitedLog = JSON.parseObject(useLogJsonStr, BuyerUseTimelimitedLogDMO.class);
-			logger.info("useLogJsonStr================================:{}boolean1:{},boolean2:{}", useLogJsonStr,
-					StringUtils.isNotBlank(reserveResult),
-					timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE));
-			if ((StringUtils.isNotBlank(reserveResult)
-					&& timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE))) {
+			if (timelimitedLog.getUseType().equals(Constants.SECKILL_REDUCE)) {
 				throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
 						"您已参加该秒杀活动不能再次秒杀");
 			}

@@ -33,11 +33,13 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 		int count = seckillInfoReqDTO.getCount();
 		String reserveHashKey = RedisConst.PROMOTION_REIDS_BUYER_TIMELIMITED_RESERVE_HASH + "_" + promotionId;
 		String reserveResult = promotionRedisDB.getHash(reserveHashKey, buyerCode);
+		logger.info("messageId{}----------------------------reserveResult{}", messageId, reserveResult);
 		if (StringUtils.isBlank(reserveResult)
 				&& this.checkSeckillOperateLegalOrNot(promotionId, buyerCode, Constants.SECKILL_RESERVE)) {
 			String timeLimitedQueueKey = RedisConst.PROMOTION_REDIS_BUYER_TIMELIMITED_QUEUE + "_" + promotionId;
 			// 获取该秒杀活动库存锁定队列的值
 			String result = promotionRedisDB.lpop(timeLimitedQueueKey);
+			logger.info("messageId{}----------------------------lpopresult{}", messageId, result);
 			// 如果队列取不到值说明秒杀库存已经被抢完
 			if (StringUtils.isBlank(result)) {
 				throw new PromotionCenterBusinessException(PromotionCenterConst.TIMELIMITED_BUYER_NO_COUNT, "秒杀商品已抢光");
@@ -59,7 +61,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 					useLogRedisKey);
 			// 如果是下单接口则删除当前用户锁定标记，默认下单成功
 			if (seckillInfoReqDTO.isOrderFlag()) {
-				logger.info("下单秒杀接口==========================={}", useLogJsonStr);
+				logger.info("messageId{}下单秒杀接口==========================={}", messageId, useLogJsonStr);
 				// 删除锁定记录
 				promotionRedisDB.delHash(reserveHashKey, seckillInfoReqDTO.getBuyerCode());
 			}
@@ -69,6 +71,7 @@ public class SeckillReserveImplHandle extends StockChangeImpl {
 						"您已参加该秒杀活动不能再次秒杀");
 			}
 		} else {
+			logger.info("messageId{}订单超卖状态{}", messageId);
 			throw new PromotionCenterBusinessException(PromotionCenterConst.BUYER_HAS_TIMELIMITED_ERROR,
 					"您已存在秒杀订单，不能继续参与秒杀活动");
 		}

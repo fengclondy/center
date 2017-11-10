@@ -75,4 +75,6 @@ public class RedisConst {
     // Redis会员弹框提醒信息Hash
     public static final String REDIS_POPUP_NOTICE_INFO_HASH = "B2B_MIDDLE_POPUP_NOTICE_INFO_HASH";
     //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+    //Redis限时购活动销量同步竞争资源标志
+    public static final String REDIS_PURCHASE_SALES_VOLUME_SYNC = "B2B_PURCHASE_SALES_VOLUME_SYNC";
 }

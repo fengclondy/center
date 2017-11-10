@@ -721,7 +721,7 @@
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
 		<when test="dto.activeState=='2'.toString()">
-		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
+		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
 		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>
@@ -761,7 +761,7 @@
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
 		<when test="dto.activeState=='2'.toString()">
-		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
+		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
 		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>

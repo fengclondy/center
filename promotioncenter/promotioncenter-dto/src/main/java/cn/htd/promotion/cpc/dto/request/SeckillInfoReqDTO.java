@@ -46,6 +46,11 @@ public class SeckillInfoReqDTO implements Serializable {
 	 */
 	@NotEmpty(message = "操作人名称不能为空")
 	private String operaterName;
+	
+	/**
+	 * 是否下单标记
+	 */
+	private boolean orderFlag;
 
 	/**
 	 * @return the useType
@@ -167,4 +172,13 @@ public class SeckillInfoReqDTO implements Serializable {
 		this.operaterName = operaterName;
 	}
 
+    public boolean isOrderFlag() {
+        return orderFlag;
+    }
+
+    public void setOrderFlag(boolean orderFlag) {
+        this.orderFlag = orderFlag;
+    }
+
+	
 }

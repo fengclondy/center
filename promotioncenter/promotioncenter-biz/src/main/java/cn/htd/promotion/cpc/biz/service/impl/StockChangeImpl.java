@@ -58,8 +58,7 @@ public abstract class StockChangeImpl implements StockChangeService {
 			}
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS");
-		logger.info("MessageId:{}加分布式锁并调用方法StockChangeImpl.checkAndChangeStock入参{}",
-				JSON.toJSONString(seckillInfoReqDTO));
+		logger.info("MessageId:{}加分布式锁并调用方法checkAndChangeStock入参{}", messageId, JSON.toJSONString(seckillInfoReqDTO));
 		RLock rLock = null;
 		try {
 			RedissonClient redissonClient = redissonClientUtil.getInstance();

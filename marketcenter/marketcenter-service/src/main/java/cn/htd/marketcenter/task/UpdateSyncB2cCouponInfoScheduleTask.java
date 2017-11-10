@@ -495,7 +495,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
             try {
                 jedis = marketRedisDB.getResource();
                 targetBuyerCouponList =
-                        jedis.lrange(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, startIdx, endIdx);
+                        jedis.lrange(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId, startIdx, endIdx - 1);
                 if (targetBuyerCouponList != null && !targetBuyerCouponList.isEmpty()) {
                     for (String buyerCouponStr : targetBuyerCouponList) {
                         tmpStrArr = buyerCouponStr.split("&");

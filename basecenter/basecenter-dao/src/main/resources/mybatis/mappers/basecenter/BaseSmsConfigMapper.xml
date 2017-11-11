@@ -36,6 +36,10 @@
     msg_url, msg_host, msg_account, msg_password, msg_pszSubPort, msg_sa, msg_soapAddress, 
     used_flag, create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
+  <!-- mysql 分页尾 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
   <select id="queryById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
@@ -48,6 +52,20 @@
     from base_sms_config
     where type = #{type,jdbcType=VARCHAR}
       and used_flag = #{usedFlag,jdbcType=TINYINT}
+  </select>
+  <select id="queryCount" resultType="java.lang.Long">
+    select count(1)
+    from base_sms_config
+    where type = #{entity.type}
+  </select>
+  <select id="queryList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from base_sms_config
+    where type = #{entity.type}
+    <if test="page != null">
+      <include refid="pagination_tail" />
+    </if>
   </select>
   <select id="queryByChannelCode" resultMap="BaseResultMap" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
     select

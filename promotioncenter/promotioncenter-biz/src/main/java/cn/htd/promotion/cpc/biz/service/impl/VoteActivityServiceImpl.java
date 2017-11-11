@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,48 +69,51 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			result.setErrorMessages(Lists.newArrayList(StringUtils.split(va1lidateResult.getErrorMsg(),DTOValidateUtil.ERROR_MSG_SEPERATOR)));
 			return  result;
 		}
-		//校验时间先后
-		if(voteActivityResDTO.getVoteSignUpStartTime().before(new Date())){
-			result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于当前时间"));
-			return  result;
-		}
-		
-		if(voteActivityResDTO.getVoteEndTime().before(voteActivityResDTO.getVoteStartTime())){
-			result.setErrorMessages(Lists.newArrayList("投票开始时间不能晚于投票结束时间"));
-			return  result;
-		}
-		
-		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteSignUpStartTime())){
-			result.setErrorMessages(Lists.newArrayList("报名开始时间不能晚于报名结束时间"));
-			return  result;
-		}
-		
-		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteStartTime())){
-			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票开始时间"));
-			return  result;
-		}
-		
-		if(voteActivityResDTO.getVoteSignUpStartTime().after(voteActivityResDTO.getVoteStartTime())){
-			result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于投票开始时间"));
-			return  result;
-		}
-		
-		
-		if(voteActivityResDTO.getVoteSignUpEndTime().after(voteActivityResDTO.getVoteEndTime())){
-			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票结束时间"));
-			return  result;
-		}
-		
-		//根据voteActivityResDTO.getVoteSignUpStartTime() 和 voteActivityResDTO.getVoteSignUpEndTime()查询是否有活动
-		int voceAcitvityNum = voteActivityDAO.queryVoteActivityByTime(voteActivityResDTO.getVoteSignUpStartTime(),
-				voteActivityResDTO.getVoteEndTime(), null);
-		
-		if(voceAcitvityNum > 0){
-			result.setErrorMessages(Lists.newArrayList("同一时间段内，不可有多个投票活动，请确认！"));
-			return  result;
-		}
-		
 		try{
+			//校验时间先后
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date now = new Date();
+			String today = simpleDateFormat.format(now) + " 00:00:00";
+			Date todayTime = simpleDateFormat.parse(today);
+			if(voteActivityResDTO.getVoteSignUpStartTime().before(todayTime)){
+				result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于当天"));
+				return  result;
+			}
+
+			if(voteActivityResDTO.getVoteEndTime().before(voteActivityResDTO.getVoteStartTime())){
+				result.setErrorMessages(Lists.newArrayList("投票开始时间不能晚于投票结束时间"));
+				return  result;
+			}
+
+			if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteSignUpStartTime())){
+				result.setErrorMessages(Lists.newArrayList("报名开始时间不能晚于报名结束时间"));
+				return  result;
+			}
+
+			if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteStartTime())){
+				result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票开始时间"));
+				return  result;
+			}
+
+			if(voteActivityResDTO.getVoteSignUpStartTime().after(voteActivityResDTO.getVoteStartTime())){
+				result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于投票开始时间"));
+				return  result;
+			}
+
+
+			if(voteActivityResDTO.getVoteSignUpEndTime().after(voteActivityResDTO.getVoteEndTime())){
+				result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票结束时间"));
+				return  result;
+			}
+
+			//根据voteActivityResDTO.getVoteSignUpStartTime() 和 voteActivityResDTO.getVoteSignUpEndTime()查询是否有活动
+			int voceAcitvityNum = voteActivityDAO.queryVoteActivityByTime(voteActivityResDTO.getVoteSignUpStartTime(),
+					voteActivityResDTO.getVoteEndTime(), null);
+
+			if(voceAcitvityNum > 0){
+				result.setErrorMessages(Lists.newArrayList("同一时间段内，不可有多个投票活动，请确认！"));
+				return  result;
+			}
 			if(voteActivityResDTO.getVoteId() != null){
 				voteActivityDAO.updateByPrimaryKeySelective(voteActivityResDTO);
 			}else{
@@ -345,7 +349,9 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		importVoteActivityMemResDTO.setAlreadyExistsList(alreadyExistsList);
 		try {
 			//throw new Exception("故意为之 测试导出错误数据时使用的");
-			voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+			if (tempList.size() > 0) {
+				voteActivityMemberDAO.batchInsertVoteActMember(tempList);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("importVoteActivityMember 方法异常 异常信息" + e.getMessage());

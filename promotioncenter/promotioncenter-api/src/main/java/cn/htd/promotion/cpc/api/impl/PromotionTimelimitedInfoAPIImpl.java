@@ -239,7 +239,7 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		String showStatus = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 				DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID);
 		PromotionExtendInfoDTO promotionExtendInfoDTO = timelimitedInfo.getPromotionExtendInfoDTO();
-		if (timelimitedInfo.getPromotionId().equals(promotionId)) {
+		if (null !=timelimitedInfo && timelimitedInfo.getPromotionId().equals(promotionId)) {
 			if (showStatus.equals(promotionExtendInfoDTO.getShowStatus())) {// 秒杀活动启用
 				if ((new Date()).before(promotionExtendInfoDTO.getEffectiveTime())) {
 					// 秒杀活动未开始

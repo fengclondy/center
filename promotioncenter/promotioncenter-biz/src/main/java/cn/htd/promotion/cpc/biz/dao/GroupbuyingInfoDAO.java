@@ -111,4 +111,12 @@ public interface GroupbuyingInfoDAO {
 	 * @return
 	 */
     int updateHasRedisClean(String promotionId);
+
+	/**
+	 *
+	 * @param condition
+	 * @param pager
+	 * @return
+	 */
+	List<GroupbuyingInfoResDTO> queryNeedUpdateGroupbuying4Task(@Param("entity") GroupbuyingInfoCmplReqDTO condition,@Param("page") Pager<GroupbuyingInfoCmplReqDTO> pager);
 }

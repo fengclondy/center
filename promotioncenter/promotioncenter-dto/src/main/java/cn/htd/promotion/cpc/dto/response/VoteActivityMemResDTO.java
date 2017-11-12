@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.dto.response;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class VoteActivityMemResDTO implements Serializable{
 	
@@ -48,6 +49,9 @@ public class VoteActivityMemResDTO implements Serializable{
 	private Long voteMemberId;
 	//(截止目前)最终投票时间
 	private Date memberVoteLastTime;
+
+	private List<String> memberPicList;
+
 	public Integer getSortNum() {
 		return sortNum;
 	}
@@ -168,6 +172,13 @@ public class VoteActivityMemResDTO implements Serializable{
 	public void setMemberVoteLastTime(Date memberVoteLastTime) {
 		this.memberVoteLastTime = memberVoteLastTime;
 	}
-	
-	
+
+
+	public List<String> getMemberPicList() {
+		return memberPicList;
+	}
+
+	public void setMemberPicList(List<String> memberPicList) {
+		this.memberPicList = memberPicList;
+	}
 }

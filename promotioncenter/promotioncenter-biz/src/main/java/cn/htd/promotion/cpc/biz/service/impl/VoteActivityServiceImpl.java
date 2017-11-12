@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.biz.dao.*;
+import cn.htd.promotion.cpc.dto.response.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,21 +21,12 @@ import org.springframework.stereotype.Service;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityFansForwardDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityFansVoteDAO;
-import cn.htd.promotion.cpc.biz.dao.VoteActivityMemberDAO;
 import cn.htd.promotion.cpc.biz.service.VoteActivityService;
 import cn.htd.promotion.cpc.common.util.DTOValidateUtil;
 import cn.htd.promotion.cpc.common.util.GeneratorUtils;
 import cn.htd.promotion.cpc.common.util.ValidateResult;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemListReqDTO;
 import cn.htd.promotion.cpc.dto.request.VoteActivityMemReqDTO;
-import cn.htd.promotion.cpc.dto.response.ImportVoteActivityMemResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityListResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemListResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
-import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
 import com.google.common.collect.Lists;
 
@@ -51,6 +44,9 @@ public class VoteActivityServiceImpl implements VoteActivityService{
     private VoteActivityFansVoteDAO voteActivityFansVoteDAO;
     @Resource
     private VoteActivityFansForwardDAO voteActivityFansForwardDAO;
+    @Resource
+    private VoteActivityMemberPictureDAO voteActivityMemberPictureDAO;
+
     @Resource
     private GeneratorUtils generatorUtils;
 
@@ -272,16 +268,19 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 
 
 	@Override
-	public ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteId,
-			Long voteMemberId) {
+	public ExecuteResult<VoteActivityMemResDTO> queryVoteActivityMemberDetail(Long voteId, Long voteMemberId) {
 		ExecuteResult<VoteActivityMemResDTO> resut=new ExecuteResult<VoteActivityMemResDTO>();
-		
 		if(voteMemberId==null||voteMemberId<=0){
 			resut.setErrorMessages(Lists.newArrayList("参数为空"));
 			return resut;
 		}
-		
-		VoteActivityMemResDTO voteActivityMemResDTO=voteActivityMemberDAO.querySignupMemberDetailInfo(voteId,voteMemberId);
+		VoteActivityMemResDTO voteActivityMemResDTO = voteActivityMemberDAO.querySignupMemberDetailInfo(voteId,voteMemberId);
+		List<VoteActivityMemberPictureResDTO> pictureResDTOList = this.voteActivityMemberPictureDAO.selectByVoteMemberId(voteMemberId);
+		List<String> picList = new ArrayList<>();
+		for (VoteActivityMemberPictureResDTO voteActivityMemberPictureResDTO : pictureResDTOList) {
+			picList.add(voteActivityMemberPictureResDTO.getPictureUrl());
+		}
+		voteActivityMemResDTO.setMemberPicList(picList);
 		resut.setResult(voteActivityMemResDTO);
 		return resut;
 	}

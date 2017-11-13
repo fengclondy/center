@@ -1285,7 +1285,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
         private OrderItemCouponDTO checkBuyerCouponInfo(String couponInfoStr) {
             BuyerCouponInfoDTO couponInfo = JSON.parseObject(couponInfoStr, BuyerCouponInfoDTO.class);
-            String sellerCode = "";
             String promotionId = "";
             String levelCode = "";
             String couponProviderType = "";
@@ -1295,7 +1294,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             if (couponInfo == null) {
                 return null;
             }
-            sellerCode = couponInfo.getPromotionProviderSellerCode();
             promotionId = couponInfo.getPromotionId();
             levelCode = couponInfo.getLevelCode();
             couponProviderType = couponInfo.getPromotionProviderType();
@@ -1347,7 +1345,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                             "优惠券不适用购买商品的店铺 优惠券编号:" + couponInfo.getBuyerCouponCode());
                 }
                 avaliableProductList = checkAvaliableCouponProducts(couponInfo,
-                        orderInfoMap.get(sellerCode).getOrderItemList());
+                        orderInfoMap.get(couponProviderCode).getOrderItemList());
             } else {
                 avaliableProductList = checkAvaliableCouponProducts(couponInfo, allProductsList);
             }
@@ -1423,7 +1421,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             List<PromotionSellerDetailDTO> detailList = null;
             List<String> sellerCodeList = null;
             String channelCode = "";
-            String promotionId = targetBuyerCoupon.getPromotionId();
 
             if (dictMap.get(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE + "&"
                     + DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP)

@@ -23,6 +23,7 @@ import cn.htd.marketcenter.dto.BuyerCouponCountDTO;
 import cn.htd.marketcenter.dto.BuyerCouponInfoDTO;
 import cn.htd.marketcenter.dto.BuyerReceiveCouponDTO;
 import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
+import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.UsedExpiredBuyerCouponDTO;
 import cn.htd.marketcenter.service.BuyerCouponInfoService;
 import cn.htd.marketcenter.service.PromotionBaseService;
@@ -201,6 +202,7 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		boolean buyerChkResult = false;
 		//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
 		SellerBelongRelationDTO belongRelationDTO = null;
+		PromotionSellerRuleDTO sellerRuleDTO = null;
 		//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 
 		try {
@@ -221,10 +223,12 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 							"会员没有领该券权限");
 				}
 				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-				if (baseService.isBelongSellerRule(collectCoupon.getSellerRuleDTO())) {
+				sellerRuleDTO = collectCoupon.getSellerRuleDTO();
+				if (baseService.isBelongSellerRule(sellerRuleDTO)) {
 					belongRelationDTO = baseService.getBuyerBelongRelationship(receiveDTO.getBuyerCode());
 					if (belongRelationDTO != null) {
 						collectCoupon.setPromotionProviderSellerCode(belongRelationDTO.getCurBelongSellerCode());
+						collectCoupon.setSellerRuleDTO(null);
 					}
 				}
 				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
@@ -234,6 +238,9 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 		    if (collectCoupon != null) {
 				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
 				collectCoupon.setPromotionProviderSellerCode(null);
+				if (sellerRuleDTO != null) {
+					collectCoupon.setSellerRuleDTO(sellerRuleDTO);
+				}
 				//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				couponRedisHandle.restoreMemberCollectCouponBack2Redis(collectCoupon);
 			}

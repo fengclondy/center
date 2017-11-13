@@ -1,5 +1,8 @@
 package cn.htd.basecenter.service;
 
+import cn.htd.basecenter.dto.BaseSmsConfigDTO;
+import cn.htd.common.DataGrid;
+import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import org.junit.Before;
@@ -22,6 +25,13 @@ public class BaseSmsConfigServiceTest {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
 		baseSmsConfigService = (BaseSmsConfigService) ctx.getBean("baseSmsConfigService");
 		dictionary = (DictionaryUtils) ctx.getBean("dictionaryUtils");
+	}
+
+	@Test
+	public void querySMSConfigStatusListTest() {
+		Pager<BaseSmsConfigDTO> page = new Pager<BaseSmsConfigDTO>();
+		ExecuteResult<DataGrid<BaseSmsConfigDTO>> result = baseSmsConfigService.querySMSConfigStatusList(page);
+		System.out.println("-------------" + JSONObject.toJSONString(result));
 	}
 
 	@Test

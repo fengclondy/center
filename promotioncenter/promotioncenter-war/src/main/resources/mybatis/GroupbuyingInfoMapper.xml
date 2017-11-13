@@ -716,12 +716,12 @@
    FROM groupbuying_record gr 
    left join groupbuying_info gi on gi.promotion_id = gr.promotion_id 
    left join promotion_info pi on pi.promotion_id = gr.promotion_id  
-		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0  and pi.show_status = '3'    
+		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0  
          and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
 		<when test="dto.activeState=='2'.toString()">
-		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
+		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
 		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>
@@ -756,12 +756,12 @@
    FROM groupbuying_record gr 
    left join groupbuying_info gi on gi.promotion_id = gr.promotion_id 
    left join promotion_info pi on pi.promotion_id = gr.promotion_id  
-		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0 and pi.show_status = '3'    
+		WHERE  gr.delete_flag = 0 and gi.delete_flag = 0  
         and gr.buyer_code=#{dto.buyerCode,jdbcType=VARCHAR}   
         <if test="dto.activeState != null and dto.activeState != '' ">
 		<choose>
 		<when test="dto.activeState=='2'.toString()">
-		  <![CDATA[ and pi.invalid_time < sysdate() and sysdate() <= gi.end_time ]]>
+		  <![CDATA[ and pi.effective_time <= sysdate() and sysdate() <= gi.end_time ]]>
 		</when>
 		<when test="dto.activeState=='3'.toString()">
 		  <![CDATA[ and sysdate() > gi.end_time ]]>
@@ -777,7 +777,7 @@
     select
     <include refid="Base_Column_List" />
     from groupbuying_info
-    where has_redis_clean = 0 and (delete_flag != 0 or <![CDATA[end_time < sysdate()]]> )
+    where has_redis_clean = 0 and (delete_flag != 0 or <![CDATA[end_time < sysdate()+1 ]]> )
       <if test="entity != null">
           and mod(promotion_id, #{entity.taskQueueNum}) in
           <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
@@ -797,4 +797,30 @@
         </set>
         where  promotion_id = #{promotionId,jdbcType=VARCHAR}
     </update>
+
+  <select id="queryNeedUpdateGroupbuying4Task" resultMap="BaseResultMap" >
+    select
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label,
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time,
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold,
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time,
+    gi.modify_id, gi.modify_name, gi.modify_time
+    from groupbuying_info gi
+    left join promotion_info pi on pi.promotion_id = gi.promotion_id
+    where gi.delete_flag = 0
+    and  <![CDATA[gi.real_actor_count < 1 ]]>
+    and  <![CDATA[pi.invalid_time < sysdate() ]]>
+
+    <if test="entity != null">
+      and mod(promotion_id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    order by modify_time desc
+    <if test="page!=null">
+      limit #{page.pageOffset} , #{page.rows}
+    </if>
+  </select>
+
 </mapper>

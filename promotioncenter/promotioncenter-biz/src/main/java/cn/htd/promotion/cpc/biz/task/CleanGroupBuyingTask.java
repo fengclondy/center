@@ -163,7 +163,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
      * @param list<GroupbuyingInfoCmplReqDTO>
      * @return
      */
-    private synchronized String changeShelves(List<Map<String,String>> list) {
+    private String changeShelves(List<Map<String,String>> list) {
         String responseMsg = "";
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 1.构造HttpClient的实例

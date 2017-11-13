@@ -37,7 +37,6 @@ import cn.htd.marketcenter.dto.PromotionCategoryDetailDTO;
 import cn.htd.marketcenter.dto.PromotionCategoryDetailDefineDTO;
 import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDTO;
 import cn.htd.marketcenter.dto.PromotionCategoryItemRuleDefineDTO;
-import cn.htd.marketcenter.dto.PromotionDiscountInfoDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
 import cn.htd.marketcenter.dto.PromotionItemDetailDefineDTO;
@@ -239,6 +238,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         insertPromotionCategoryItemRule(promotionInfo);
         vipFlg = getPromotionVipFlag(promotionInfo);
         promotionInfo.setIsVip(vipFlg);
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+        if (isBelongSellerRule(promotionInfo.getSellerRuleDTO())) {
+            promotionInfo.setPromotionProviderType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE,
+                            DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP));
+        }
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
         promotionInfoDAO.add(promotionInfo);
         return promotionInfo;
     }
@@ -709,7 +715,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      */
     public PromotionInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
             throws MarketCenterBusinessException, Exception {
-        String promotionType = "";
         String promotionId = "";
         List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
@@ -721,7 +726,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动参数不能为空");
         }
         promotionId = promotionInfo.getPromotionId();
-        promotionType = promotionInfo.getPromotionType();
         promotionAccumulatyList = promotionInfo.getPromotionAccumulatyList();
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
@@ -773,6 +777,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         updatePromotionCategoryItemRule(promotionInfo);
         vipFlg = getPromotionVipFlag(promotionInfo);
         promotionInfo.setIsVip(vipFlg);
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+        if (isBelongSellerRule(promotionInfo.getSellerRuleDTO())) {
+            promotionInfo.setPromotionProviderType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE,
+                            DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP));
+        }
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
         promotionInfoDAO.update(promotionInfo);
         return promotionInfo;
     }

@@ -266,15 +266,15 @@ public class SearchSolrExportMobileServiceImpl implements
 			}
 			if (null != businessRelationSellerIdList
 					&& businessRelationSellerIdList.size() > 0) {
-				addressSb.append("(((((shelvesFlag:3 OR shelvesFlag:4) AND ( "
+				addressSb.append("((((((shelvesFlag:3 OR shelvesFlag:4) AND ( "
 						+ join(businessRelationSellerIdList)
 						+ ")) OR shelvesFlag:1 OR shelvesFlag:2 ");
 			} else {
-				addressSb.append(" (((shelvesFlag:1 OR shelvesFlag:2");
+				addressSb.append(" ((((shelvesFlag:1 OR shelvesFlag:2");
 			}
 			addressSb.append(") AND (" + addressCode);
 			addressSb.append(" OR isSalesWholeCountry:true NOT shelvesFlag:4)))");
-			addressSb.append(" AND hasQuantity:true");
+			addressSb.append(" AND hasQuantity:true)");
 			addressSb.append(" OR itemType:1");
 			filterList.add(addressSb.toString());
 		} else {

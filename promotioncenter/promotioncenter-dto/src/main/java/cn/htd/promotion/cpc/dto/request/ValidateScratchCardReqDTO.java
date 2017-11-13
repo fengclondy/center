@@ -52,6 +52,7 @@ public class ValidateScratchCardReqDTO extends GenricReqDTO{
 	/**
 	 * 支付时间
 	 */
+	@NotNull(message = "payDate不能为空")
 	private Date payDate;
 
 	public String getOrderNo() {

@@ -233,6 +233,6 @@ public interface ItemSkuPriceService {
      */
     ExecuteResult<String> saveHzgTerminalPrice(HzgPriceInDTO hzgPriceInDTO);
 
-    List<ItemSkuLadderPrice> queryMobileExternalLadderPriceBySkuId(String skuIds);
+    List<ItemSkuLadderPrice> queryMobileExternalLadderPriceBySkuId(List<String> skuIds);
 	
 }

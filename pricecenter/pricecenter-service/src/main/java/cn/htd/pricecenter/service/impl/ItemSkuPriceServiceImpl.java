@@ -1204,7 +1204,7 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 	}
 
 	@Override
-	public List<ItemSkuLadderPrice> queryMobileExternalLadderPriceBySkuId(String skuIds) {
+	public List<ItemSkuLadderPrice> queryMobileExternalLadderPriceBySkuId(List<String> skuIds) {
 		return itemSkuLadderPriceMapper.getSkuLadderPriceMobile(skuIds);
 	}
 }

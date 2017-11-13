@@ -80,5 +80,5 @@ public interface ItemSkuPublishInfoMapper {
 
     QueryItemStockDetailOutDTO queryItemStockDetailInDTO(@Param("param")QueryItemStockDetailInDTO queryItemStockDetailInDTO );
 
-	ItemSkuPublishInfo queryMobileExternalPublishInfoBySkuId(@Param("skuIds") String skuIds);
+	ItemSkuPublishInfo queryMobileExternalPublishInfoBySkuId(@Param("skuIds") List<String> skuIds);
 }

@@ -216,4 +216,10 @@ public class MallItemExportServiceTest extends CommonTest {
         System.out.println(com.alibaba.fastjson.JSON.toJSONString(executeResult));
     }
 
+    
+    @Test
+    public void testqueryMobileItemDetail(){
+    	ExecuteResult<MallMobileItemOutDTO> result = mallItemExportService.queryMobileItemDetail("10056478");
+    	System.out.println(com.alibaba.fastjson.JSON.toJSONString(result));
+    }
 }

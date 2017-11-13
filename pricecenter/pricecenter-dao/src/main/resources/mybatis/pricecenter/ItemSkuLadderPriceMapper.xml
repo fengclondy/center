@@ -217,11 +217,17 @@
     where sku_id = #{skuId,jdbcType=BIGINT} and delete_flag=0
   </select>
   <!-- 根据skuId查询阶梯价格 -->
-  <select id="getSkuLadderPriceMobile" resultMap="BaseResultMap"  parameterType="java.lang.String">
+  <select id="getSkuLadderPriceMobile" resultMap="BaseResultMap">
   	select
     <include refid="Base_Column_List" />
     from item_sku_ladder_price
-    where sku_id in (#{skuIds,jdbcType=BIGINT}) and delete_flag=0
+    where delete_flag=0
+    <if test="skuIds != null and skuIds.size() > 0 ">
+    	AND sku_id in 
+        <foreach collection="skuIds" item="skuId" open="(" separator="," close=")">
+        	#{skuId}
+        </foreach>
+    </if> 
   </select>
   <!--根据ItemId更新删除标记-->
   <update id="updateDeleteFlagByItemId" parameterType="cn.htd.pricecenter.domain.ItemSkuLadderPrice" >

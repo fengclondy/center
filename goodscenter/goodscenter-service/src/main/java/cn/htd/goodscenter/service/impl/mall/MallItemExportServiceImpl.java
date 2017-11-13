@@ -2197,7 +2197,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 	@Override
 	public ExecuteResult<MallMobileItemOutDTO> queryMobileItemDetail(String itemCode) {
 		ExecuteResult<MallMobileItemOutDTO> result = new ExecuteResult<MallMobileItemOutDTO>();
-		String skuIds = "";
+		List<String> skuIds = new ArrayList<String>();
 		try {
 			Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);
 			if (item == null) {
@@ -2206,9 +2206,8 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 			List<SkuInfoDTO> list = this.itemMybatisDAO.queryItemSkuInfo(item.getItemId());
 			if(null != list && !list.isEmpty()){
 				for (SkuInfoDTO skuInfoDTO : list) {
-					skuIds += skuInfoDTO.getSkuId() + ",";
+					skuIds.add(skuInfoDTO.getSkuId() + "");
 				}
-				skuIds = skuIds.substring(0 ,skuIds.length() - 1);
 				ItemSkuPublishInfo publishInfo = itemSkuPublishInfoMapper.queryMobileExternalPublishInfoBySkuId(skuIds);
 				MallMobileItemOutDTO resultDTO = new MallMobileItemOutDTO();
 				if(null != publishInfo){

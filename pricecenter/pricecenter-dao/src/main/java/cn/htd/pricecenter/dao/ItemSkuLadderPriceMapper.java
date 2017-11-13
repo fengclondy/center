@@ -32,5 +32,5 @@ public interface ItemSkuLadderPriceMapper {
     
     String queryMinLadderPriceByItemId(Long itemId);
 
-	List<ItemSkuLadderPrice> getSkuLadderPriceMobile(@Param("skuIds") String skuIds);
+	List<ItemSkuLadderPrice> getSkuLadderPriceMobile(@Param("skuIds") List<String> skuIds);
 }

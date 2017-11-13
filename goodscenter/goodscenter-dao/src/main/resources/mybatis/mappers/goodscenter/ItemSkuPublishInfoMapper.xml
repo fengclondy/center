@@ -786,6 +786,12 @@
   	SELECT min(mim_quantity) as mim_quantity,
 		   max(max_purchase_quantity) as max_purchase_quantity,
 		   min(is_purchase_limit) as is_purchase_limit
-	FROM item_sku_publish_info WHERE sku_id in (#{skuIds})
+	FROM item_sku_publish_info WHERE 1=1
+	<if test="skuIds != null and skuIds.size() > 0 ">
+    	AND sku_id in
+    	<foreach collection="skuIds" item="skuId" open="(" separator="," close=")">
+        	#{skuId}
+        </foreach>
+    </if> 
   </select>
 </mapper>

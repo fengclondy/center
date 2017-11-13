@@ -785,7 +785,8 @@
   <select id="queryMobileExternalPublishInfoBySkuId" resultMap="BaseResultMap">
   	SELECT min(mim_quantity) as mim_quantity,
 		   max(max_purchase_quantity) as max_purchase_quantity,
-		   min(is_purchase_limit) as is_purchase_limit
+		   min(is_purchase_limit) as is_purchase_limit,
+		   max(display_quantity-reserve_quantity) display_quantity
 	FROM item_sku_publish_info WHERE 1=1
 	<if test="skuIds != null and skuIds.size() > 0 ">
     	AND sku_id in

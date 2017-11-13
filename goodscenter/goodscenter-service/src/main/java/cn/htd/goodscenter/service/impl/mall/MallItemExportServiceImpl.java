@@ -2211,8 +2211,20 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 				ItemSkuPublishInfo publishInfo = itemSkuPublishInfoMapper.queryMobileExternalPublishInfoBySkuId(skuIds);
 				MallMobileItemOutDTO resultDTO = new MallMobileItemOutDTO();
 				if(null != publishInfo){
+					if("1".equals(publishInfo.getIsPurchaseLimit())){//限购
+						if(publishInfo.getDisplayQuantity() > publishInfo.getMaxPurchaseQuantity()){
+							resultDTO.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+						}else{
+							resultDTO.setMaxPurchaseQuantity(publishInfo.getDisplayQuantity());
+						}
+					}else{
+						if(publishInfo.getDisplayQuantity() > 99999999){
+							resultDTO.setMaxPurchaseQuantity(99999999);
+						}else{
+							resultDTO.setMaxPurchaseQuantity(publishInfo.getDisplayQuantity());
+						}
+					}
 					resultDTO.setMimQuantity(publishInfo.getMimQuantity());
-					resultDTO.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
 					resultDTO.setIsPurchaseLimit(publishInfo.getIsPurchaseLimit());
 				}
 				List<ItemSkuLadderPrice> priceList = itemSkuPriceService.queryMobileExternalLadderPriceBySkuId(skuIds);

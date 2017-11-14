@@ -2076,6 +2076,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 						mallRecommendItemOutDTO.setSalePrice(BigDecimal.valueOf(itemSearchItemDataDTO.getPrice()));
 						mallRecommendItemOutDTO.setSalesVolume(itemSearchItemDataDTO.getSalesVolume());
 						mallRecommendItemOutDTO.setListtingTime(itemSearchItemDataDTO.getListtingTime());
+						mallRecommendItemOutDTO.setItemType(itemSearchItemDataDTO.getItemType());
 						mallRecommendItemOutDTOList.add(mallRecommendItemOutDTO);
 						// 已经获取到一个商品的，加入已经完成的大B集合中
 						handledMemberCodeList.add(itemSearchItemDataDTO.getSellerId());

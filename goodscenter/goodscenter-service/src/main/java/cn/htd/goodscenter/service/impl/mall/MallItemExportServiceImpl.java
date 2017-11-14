@@ -1921,6 +1921,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 					recommend0801Item.setSalePrice(BigDecimal.valueOf(itemSearchItemDataDTO.getPrice()));
 					recommend0801Item.setSalesVolume(itemSearchItemDataDTO.getSalesVolume());
 					recommend0801Item.setListtingTime(itemSearchItemDataDTO.getListtingTime());
+					recommend0801Item.setItemType(itemSearchItemDataDTO.getItemType());
 				}
 			}
 		}

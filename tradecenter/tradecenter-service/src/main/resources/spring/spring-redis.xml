@@ -21,4 +21,9 @@
         <constructor-arg index="0" ref="jedisPoolConfig"/>
         <constructor-arg index="1" value="${redis.host}"/>
     </bean>
+    
+    <bean id="redissonClientUtil" class="cn.htd.tradecenter.common.utils.RedissonClientUtil" init-method="init">
+	 	<property name="redisAddress" value="${redis.host}:${redis.port}"/>
+		<property name="connectionPoolSize" value="${redis.maxTotal}"/>  
+  </bean>
 </beans>

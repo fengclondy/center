@@ -23,6 +23,8 @@ import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.tradecenter.dto.TradeOrderItemStockDTO;
 import cn.htd.tradecenter.dto.TradeOrderItemsShowDTO;
+import cn.htd.tradecenter.dto.TradeOrderQueryInForSellerDTO;
+import cn.htd.tradecenter.dto.TradeOrderQueryOutForSellerDTO;
 import cn.htd.tradecenter.dto.TradeOrdersDTO;
 import cn.htd.tradecenter.dto.TradeOrdersQueryInDTO;
 import cn.htd.tradecenter.dto.VenusConfirmTradeOrderDTO;
@@ -40,6 +42,7 @@ public class TradeOrderServiceImplTest {
     private ApplicationContext ctx;
     private DictionaryUtils dictionary;
     private TransactionRelationService transactionRelationService;
+    private TradeOrderExportService tradeOrderExportService;
 
     @Before
     public void setUp() throws Exception {
@@ -47,6 +50,7 @@ public class TradeOrderServiceImplTest {
         tradeOrderService = (TradeOrderService) ctx.getBean("tradeOrderService");
         dictionary = (DictionaryUtils) ctx.getBean("dictionaryUtils");
         transactionRelationService = (TransactionRelationService) ctx.getBean("transactionRelationService");
+        tradeOrderExportService = (TradeOrderExportService)ctx.getBean("tradeOrderExportService");
     }
     
     @Test
@@ -207,4 +211,23 @@ public class TradeOrderServiceImplTest {
         }
     }
     
+    @Test
+    public void queryTradeOrderForSeller(){
+    	TradeOrderQueryInForSellerDTO dto = new TradeOrderQueryInForSellerDTO();
+    	Pager<TradeOrderQueryInForSellerDTO> pager = new Pager<TradeOrderQueryInForSellerDTO>();
+    	dto.setShopId(711L);
+    	dto.setBuyerName("");
+    	dto.setIsCancelOrder(0);
+//    	dto.setIsCancelOrder(1);
+//    	dto.setOrderStatus("20");
+//    	dto.seto
+    	String[] str = {"60", "61", "62"};
+    	dto.setOrderStatuss(str);
+    	pager.setRows(10);
+    	pager.setPage(1);
+        ExecuteResult<DataGrid<TradeOrderQueryOutForSellerDTO>> executeResult = tradeOrderExportService.queryTradeOrderForSeller(dto,pager);
+        if (executeResult.isSuccess()) {
+        	System.out.println(JSON.toJSONString(executeResult.getResult()));
+        }
+    }
 }

@@ -79,8 +79,8 @@
 	
 	<!-- 根据条件查询符合结算规则的订单 -->
 	<select id="getOrderSettlementsByParams" resultMap="resultMap_tradeOrderSettlement" parameterType="cn.htd.tradecenter.dto.TradeOrderSettlementDTO">
-		    
-		SELECT 
+	
+			SELECT 
 			o.id,o.trade_no,o.order_no,o.buyer_code,o.buyer_type,o.buyer_name,o.seller_code,o.seller_type,o.seller_name,o.shop_id,o.shop_name,o.has_productplus_flag,o.is_vip_member,
 			o.order_status,o.pay_type,o.create_id,o.create_name,o.create_time,o.modify_id,o.modify_name,o.modify_time,
 	        i.id id_2,i.order_item_no order_item_no_2,i.order_no order_no_2,i.channel_code channel_code_2,i.item_code item_code_2,i.goods_name goods_name_2,i.sku_code sku_code_2,
@@ -91,7 +91,17 @@
 	        i.goods_count goods_count_2,i.cost_price cost_price_2,i.price_floating_ratio price_floating_ratio_2,
 	        i.commission_ratio commission_ratio_2,i.commission_amount commission_amount_2,
 	        i.goods_amount goods_amount_2,i.order_item_total_amount order_item_total_amount_2,
-	        i.order_item_pay_amount order_item_pay_amount_2,i.goods_real_price goods_real_price_2
+	        i.order_item_pay_amount order_item_pay_amount_2,i.goods_real_price goods_real_price_2   
+		FROM trade_orders o
+        left join trade_order_items i on i.order_no = o.order_no 
+        where i.is_settled = #{isSettled,jdbcType=INTEGER}   and  
+        <foreach collection="useProductChannelCodeArray" item="useProductChannelCode" index="index" open=" (" separator="or" close=")">
+ 			i.channel_code = #{useProductChannelCode,jdbcType=VARCHAR}  
+		</foreach>
+        and o.order_no in (
+	  SELECT tmpa.order_no  
+	     from (  
+		SELECT  distinct o.order_no order_no  
 		FROM trade_orders o
         left join trade_order_items i on i.order_no = o.order_no 
         where o.seller_code = #{sellerCode,jdbcType=VARCHAR} and i.is_settled = #{isSettled,jdbcType=INTEGER}  and 
@@ -118,8 +128,9 @@
 		         ${sortDir}
 		    </if>
 		</if>
-
 		limit #{startNum},#{pageSize}
+		) as tmpa 
+		)
 	</select>
 
 

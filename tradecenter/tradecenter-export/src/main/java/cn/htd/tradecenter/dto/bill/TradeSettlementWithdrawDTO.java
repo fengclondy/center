@@ -42,6 +42,8 @@ public class TradeSettlementWithdrawDTO implements Serializable{
 	private String payType;
 	
 	private List<String> payTypeList;
+	
+	private List<String> statusList;
 
 	public String getSettlementNo() {
 		return settlementNo;
@@ -169,5 +171,13 @@ public class TradeSettlementWithdrawDTO implements Serializable{
 
 	public void setPayTypeList(List<String> payTypeList) {
 		this.payTypeList = payTypeList;
+	}
+
+	public List<String> getStatusList() {
+		return statusList;
+	}
+
+	public void setStatusList(List<String> statusList) {
+		this.statusList = statusList;
 	}
 }

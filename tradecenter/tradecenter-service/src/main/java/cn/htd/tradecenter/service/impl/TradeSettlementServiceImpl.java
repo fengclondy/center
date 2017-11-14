@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -80,6 +81,7 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 
 	private static final Logger logger = LoggerFactory.getLogger(TradeSettlementServiceImpl.class);
 	
+	private static final String ROCKTITTLE = "WITHDRAW";
 	// 订单DAO
 	@Resource
 	private TradeOrderSettlementDAO tradeOrderSettlementDAO;
@@ -1099,7 +1101,7 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 			dto.setTradeType("1");//外部供应商
 			String settlementNo = wdcParams.get("settlementNo");
 			RedissonClient redisson = redissonClientUtil.getInstance();
-			rLock = redisson.getLock(settlementNo);
+			rLock = redisson.getLock(ROCKTITTLE + settlementNo);
 			rLock.lock();
 			dto.setSettlementNo(settlementNo);
 			String bindId = wdcParams.get("bindId");

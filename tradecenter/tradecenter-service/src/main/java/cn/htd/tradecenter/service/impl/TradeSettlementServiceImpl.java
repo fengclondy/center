@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -40,6 +42,7 @@ import cn.htd.tradecenter.common.enums.SettlementEnum;
 import cn.htd.tradecenter.common.enums.SettlementStatusEnum;
 import cn.htd.tradecenter.common.utils.ErpPay;
 import cn.htd.tradecenter.common.utils.PaySDK;
+import cn.htd.tradecenter.common.utils.RedissonClientUtil;
 import cn.htd.tradecenter.common.utils.SettlementUtils;
 import cn.htd.tradecenter.dao.TraSetComOpeDAO;
 import cn.htd.tradecenter.dao.TradeOrderSettlementDAO;
@@ -123,6 +126,9 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 	
 	@Resource
 	private MemberBaseInfoService memberBaseInfoService;
+	
+	@Resource
+	private RedissonClientUtil redissonClientUtil;
 
 	@Override
 	public ExecuteResult<DataGrid<TradeSettlementDTO>> queryTradeSettlements(HashMap<String, Object> params, Pager<TradeSettlementDTO> pager) {
@@ -1086,11 +1092,15 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 		ExecuteResult<Map<String, Object>> result = new ExecuteResult<Map<String,Object>>();
 		result.setCode(SettlementConstants.SETTLEMENT_COUNT_SUCCESS);
 		result.setResultMessage(SettlementConstants.SETTLEMENT_COUNT_SUCCESS_TEXT);
+		RLock rLock = null;
 		try{
 			TradeSettlementWithdrawDTO dto = new TradeSettlementWithdrawDTO();
 			dto.setOperateType("2");//提款
 			dto.setTradeType("1");//外部供应商
 			String settlementNo = wdcParams.get("settlementNo");
+			RedissonClient redisson = redissonClientUtil.getInstance();
+			rLock = redisson.getLock(settlementNo);
+			rLock.lock();
 			dto.setSettlementNo(settlementNo);
 			String bindId = wdcParams.get("bindId");
 			String accountNo = wdcParams.get("accountNo");
@@ -1099,16 +1109,20 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 			String userIp = wdcParams.get("userIp");
 			String message = null;
 			
-//			List<TradeSettlementWithdrawDTO> list = tradeSettlementWithdrawDAO.queryTraSetWithdraw(dto);
-//			String merchOrderNo  = null;
-//			if(CollectionUtils.isEmpty(list)){
+			List<String> statusList = new ArrayList<String>();
+			statusList.add("EXECUTE_PROCESSING");
+			statusList.add("EXECUTE_SUCCESS");
+			dto.setStatusList(statusList);
+			List<TradeSettlementWithdrawDTO> list = tradeSettlementWithdrawDAO.queryTraSetWithdraw(dto);
+			if(!CollectionUtils.isEmpty(list)){
+				result.setCode(SettlementConstants.SETTLEMENT_COUNT_FAILED);
+				result.setResultMessage(settlementNo + "已经提款处理中或已经提款完成，请刷新页面！");;
+				return result;
+			}
 			String merchOrderNo = settlementUtils.generateWithdrawalsNo("TK");
 			dto.setTradeNo(merchOrderNo);
 			dto.setCreateTime(new Date());
 			tradeSettlementWithdrawDAO.addTraSetWithdraw(dto);
-//			}else{
-//				merchOrderNo = list.get(0).getTradeNo();
-//			}
 			
 			Map<String,Object> map = new HashMap<String,Object>();
 			Map<String,String> secYjfMap = getYjfCommonMap("withdraw");
@@ -1128,8 +1142,8 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 	        	message = "success";
 	        	Map<String,Object> params = new HashMap<String,Object>();
 	    		params.put("settlementNo", settlementNo);
-	    		params.put("status", SettlementStatusEnum.SETTLEMENT_STATUS_13.key());
-	    		params.put("statusText", SettlementStatusEnum.SETTLEMENT_STATUS_13.value());
+	    		params.put("status", SettlementStatusEnum.SETTLEMENT_STATUS_12.key());
+	    		params.put("statusText", SettlementStatusEnum.SETTLEMENT_STATUS_12.value());
 	    		updateTradeStatus(params);
 	        }else {
 	        	result.setCode(SettlementConstants.SETTLEMENT_COUNT_FAILED);
@@ -1148,6 +1162,11 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 			result.setResultMessage(SettlementConstants.SETTLEMENT_COUNT_FAILED_TEXT);
 			result.addErrorMessage(e.toString());
 			result.setResult(null);
+		}finally{
+			/** 释放锁资源 **/
+			if (rLock != null) {
+				rLock.unlock();
+			}
 		}
 		return result;
 	}

@@ -32,6 +32,12 @@
         <if test="settlementNo !=null and settlementNo !=''">
             and t.settlement_no=#{settlementNo,jdbcType=VARCHAR}
         </if>
+        <if test="statusLis != null and statusLis.size > 0">
+        	and t.status in 
+            <foreach collection=statusList index="index" item="status" open="(" separator="," close=")"> 
+            	#{status} 
+          </foreach> 
+        </if>
         ORDER BY modify_time desc
     </select>
 

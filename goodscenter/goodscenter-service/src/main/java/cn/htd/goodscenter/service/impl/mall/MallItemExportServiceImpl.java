@@ -2214,7 +2214,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 				ItemSkuPublishInfo publishInfo = itemSkuPublishInfoMapper.queryMobileExternalPublishInfoBySkuId(skuIds);
 				MallMobileItemOutDTO resultDTO = new MallMobileItemOutDTO();
 				if(null != publishInfo){
-					if("1".equals(publishInfo.getIsPurchaseLimit())){//限购
+					if(publishInfo.getIsPurchaseLimit().intValue() == 1){//限购
 						if(publishInfo.getDisplayQuantity() > publishInfo.getMaxPurchaseQuantity()){
 							resultDTO.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
 						}else{

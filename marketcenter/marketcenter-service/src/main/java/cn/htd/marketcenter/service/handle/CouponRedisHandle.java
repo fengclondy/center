@@ -142,6 +142,11 @@ public class CouponRedisHandle {
         BuyerCouponInfoDTO popedCoupon = null;
         List<DictionaryInfo> promotionStatusList =
                 dictionary.getDictionaryOptList(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS);
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+        String discountCouponStr = "";
+        PromotionDiscountInfoDTO discountCouponInfo = null;
+        Date currentTime = new Date();
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
         Map<String, String> promotionStatusMap = new HashMap<String, String>();
         for (DictionaryInfo dictionaryInfo : promotionStatusList) {
             promotionStatusMap.put(dictionaryInfo.getCode(), dictionaryInfo.getValue());
@@ -152,14 +157,34 @@ public class CouponRedisHandle {
                     && !promotionStatusMap.get(DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(validStatus)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_VALID, "该优惠券活动已失效");
             }
-            if (!marketRedisDB.exists(couponInfoKey)) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_COLLECT_HAS_EXPIRED, "该优惠券领取期限已过");
-            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//            if (!marketRedisDB.exists(couponInfoKey)) {
+//                throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_COLLECT_HAS_EXPIRED, "该优惠券领取期限已过");
+//            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             if (marketRedisDB.getLlen(couponRedisKey) <= 0) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_TOTAL_COLLECTED, "该优惠券已领光");
             }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            discountCouponStr = marketRedisDB.get(couponInfoKey);
+            if (StringUtils.isEmpty(discountCouponStr)) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_COLLECT_HAS_EXPIRED, "该优惠券领取期限已过");
+            }
+            discountCouponInfo = JSON.parseObject(discountCouponStr, PromotionDiscountInfoDTO.class);
+            if (discountCouponInfo == null) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_COLLECT_HAS_EXPIRED, "该优惠券领取期限已过");
+            }
+            if (currentTime.before(discountCouponInfo.getPrepStartTime())) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_COLLECT_NO_START, "该优惠券领取期间未开始");
+            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             popedJsonStr = marketRedisDB.headPop(couponRedisKey);
             popedCoupon = JSON.parseObject(popedJsonStr, BuyerCouponInfoDTO.class);
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            if (popedCoupon == null) {
+                throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_TOTAL_COLLECTED, "该优惠券已领光");
+            }
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             popedCoupon.setBuyerCode(buyerCode);
             popedCoupon.setBuyerName(receiveDTO.getBuyerName());
             popedCoupon.setCreateId(receiveDTO.getOperatorId());

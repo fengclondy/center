@@ -137,11 +137,14 @@
 
     <!-- 查询符合结算规则的订单数量 -->
 	<select id="getOrderSettlementCount" resultType="java.lang.Integer" parameterType="cn.htd.tradecenter.dto.TradeOrderSettlementDTO">
-		<![CDATA[
+		
 		select count(distinct o.order_no)   FROM trade_orders o 
 		left join trade_order_items i on i.order_no = o.order_no 
-        where o.seller_code = #{sellerCode,jdbcType=VARCHAR} and  i.is_settled = #{isSettled,jdbcType=INTEGER}  
-        and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%i:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) >= #{startTime,jdbcType=VARCHAR}
+        where o.seller_code = #{sellerCode,jdbcType=VARCHAR} and  i.is_settled = #{isSettled,jdbcType=INTEGER}   and  
+        <foreach collection="useProductChannelCodeArray" item="useProductChannelCode" index="index" open=" (" separator="or" close=")">
+ 			i.channel_code = #{useProductChannelCode,jdbcType=VARCHAR}  
+		</foreach>
+       <![CDATA[ and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%i:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) >= #{startTime,jdbcType=VARCHAR}
         and date_add(date_format(o.modify_time,'%Y-%m-%d %H:%i:%s'), interval #{timeInterval,jdbcType=VARCHAR} day) < #{endTime,jdbcType=VARCHAR} 
 		 ]]>  and ( 
 			<foreach collection="orderStatusArray" item="orderStatus" index="index" open=" (" separator="or" close=") ">

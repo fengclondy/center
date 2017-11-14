@@ -55,8 +55,8 @@ public class MarketCenterCodeConst {
 	public static final String BUYER_COUPON_HAS_EXPIRED = "15108";
 	// 会员优惠券余额不足
 	public static final String BUYER_COUPON_BALANCE_DEFICIENCY = "15109";
-	// 会员购买商品不满足优惠券使用规则
-	public static final String BUYER_COUPON_NO_AVALIBLE_PRODUCTS = "15110";
+	// 会员领取优惠券的领取期间未开始
+	public static final String COUPON_COLLECT_NO_START = "15110";
 	// 会员优惠券可优惠金额为0
 	public static final String BUYER_COUPON_CANNOT_DISCOUNT = "15111";
 	// 会员优惠券为可用或锁定不能被删除

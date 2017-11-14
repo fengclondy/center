@@ -1114,7 +1114,6 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 			List<String> statusList = new ArrayList<String>();
 			statusList.add("EXECUTE_PROCESSING");
 			statusList.add("EXECUTE_SUCCESS");
-			statusList.add("UNAUTHORIZED");
 			
 			dto.setStatusList(statusList);
 			List<TradeSettlementWithdrawDTO> list = tradeSettlementWithdrawDAO.queryTraSetWithdraw(dto);

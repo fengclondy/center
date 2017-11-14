@@ -1114,11 +1114,13 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 			List<String> statusList = new ArrayList<String>();
 			statusList.add("EXECUTE_PROCESSING");
 			statusList.add("EXECUTE_SUCCESS");
+			statusList.add("UNAUTHORIZED");
+			
 			dto.setStatusList(statusList);
 			List<TradeSettlementWithdrawDTO> list = tradeSettlementWithdrawDAO.queryTraSetWithdraw(dto);
 			if(!CollectionUtils.isEmpty(list)){
 				result.setCode(SettlementConstants.SETTLEMENT_COUNT_FAILED);
-				result.setResultMessage(settlementNo + "已经提款处理中或已经提款完成，请刷新页面！");;
+				result.setResultMessage(settlementNo + "已经提款处理中或已经提款完成，请刷新页面！");
 				return result;
 			}
 			String merchOrderNo = settlementUtils.generateWithdrawalsNo("TK");

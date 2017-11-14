@@ -54,8 +54,20 @@ public class MallRecommendItemOutDTO implements Serializable {
      * 上架时间
      */
     private Date listtingTime;
+    /**
+     * 商品类型
+     */
+    private Integer itemType;
 
-    public Long getItemId() {
+    public Integer getItemType() {
+		return itemType;
+	}
+
+	public void setItemType(Integer itemType) {
+		this.itemType = itemType;
+	}
+
+	public Long getItemId() {
         return itemId;
     }
 

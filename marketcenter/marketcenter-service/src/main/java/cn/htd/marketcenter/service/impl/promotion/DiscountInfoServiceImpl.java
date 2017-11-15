@@ -295,6 +295,10 @@ public class DiscountInfoServiceImpl implements DiscountInfoService {
             couponInfoDTO.setInvalidTime(modifyCouponInfo.getEffectiveEndTime());
             couponInfoDTO.setPrepStartTime(modifyCouponInfo.getPrepStartTime());
             couponInfoDTO.setPrepEndTime(modifyCouponInfo.getPrepEndTime());
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+            couponInfoDTO.setCouponUseRangeDesc(accuDTO.getSellerRuleDesc());
+            couponInfoDTO.setCouponItemDesc(accuDTO.getCategoryItemRuleDesc());
+            //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             couponInfoDTO.setCreateId(modifyCouponInfo.getOperatorId());
             couponInfoDTO.setCreateName(modifyCouponInfo.getOperatorName());
             couponInfoDTO.setModifyPromotionId(couponInfoDTO.getPromotionId());

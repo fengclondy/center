@@ -1,6 +1,7 @@
 package cn.htd.basecenter.service;
 
 import cn.htd.basecenter.dto.BaseSmsConfigDTO;
+import cn.htd.basecenter.dto.BaseSmsConfigShowDTO;
 import cn.htd.basecenter.dto.ValidSmsConfigDTO;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
@@ -11,7 +12,7 @@ public interface BaseSmsConfigService {
     /**
      * 查询短信通道的启用列表
      */
-    public ExecuteResult<DataGrid<BaseSmsConfigDTO>> querySMSConfigStatusList(Pager<BaseSmsConfigDTO> pager);
+    public ExecuteResult<DataGrid<BaseSmsConfigShowDTO>> querySMSConfigStatusList(Pager<BaseSmsConfigDTO> pager);
 
     /**
      * 启用短信配置信息

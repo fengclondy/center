@@ -679,6 +679,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     couponDTO.setBuyerCode(buyerCode);
                     couponDTO.setBuyerName(oldCouponDTO.getBuyerName());
                     newBuyerCouponCode = generateCouponCode(jedis, couponDTO.getCouponType());
+                    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                    couponDTO.setPromotionProviderSellerCode(oldCouponDTO.getPromotionProviderSellerCode());
+                    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                     couponDTO.setBuyerCouponCode(newBuyerCouponCode);
                     couponDTO.setGetCouponTime(new Date());
                     if (couponTypeMap.get(DictionaryConst.OPT_COUPON_KIND_DISCOUNT)

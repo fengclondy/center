@@ -417,13 +417,19 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	
 	
 	@Override
-	public Boolean hasProductIsBeingUsedByPromotion(String skuCode, String messageId) {
+	public Boolean hasProductIsBeingUsedByPromotion(String skuCode,Date startTime,Date endTime, String messageId) {
 		try {
             if (null == skuCode || skuCode.length() == 0) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "skuCode参数不能为空！");
             }
+            if (null == startTime) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "startTime参数不能为空！");
+            }
+            if (null == endTime) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "endTime参数不能为空！");
+            }
             
-    		int count = groupbuyingInfoDAO.getPromotionCountsBySkuCode(skuCode);
+    		int count = groupbuyingInfoDAO.getPromotionCountsBySkuCode(skuCode,startTime,endTime);
     		return (count < 1 ? false:true);
     		
 		} catch (Exception e) {

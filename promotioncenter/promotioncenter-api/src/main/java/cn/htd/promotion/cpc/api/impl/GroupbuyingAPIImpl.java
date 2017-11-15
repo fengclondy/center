@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.api.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -341,14 +342,14 @@ public class GroupbuyingAPIImpl implements GroupbuyingAPI {
     }
     
 	@Override
-	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode, String messageId) {
+	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode,Date startTime,Date endTime, String messageId) {
         ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
         result.setResultMessage(ResultCodeEnum.SUCCESS.getMsg());
 
         try {
 
-        	Boolean flag = groupbuyingService.hasProductIsBeingUsedByPromotion(skuCode,messageId);
+        	Boolean flag = groupbuyingService.hasProductIsBeingUsedByPromotion(skuCode,startTime,endTime,messageId);
         	result.setResult(flag);
         } catch (Exception e) {
             result.setCode(ResultCodeEnum.ERROR.getCode());

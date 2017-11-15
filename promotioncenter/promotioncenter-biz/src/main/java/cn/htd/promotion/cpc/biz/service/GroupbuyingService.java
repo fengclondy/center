@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.biz.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public interface GroupbuyingService {
 	 * @param messageId
 	 * @return
 	 */
-	public Boolean hasProductIsBeingUsedByPromotion(String skuCode, String messageId);
+	public Boolean hasProductIsBeingUsedByPromotion(String skuCode,Date startTime,Date endTime, String messageId);
 	
 	
     /**

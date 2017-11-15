@@ -583,6 +583,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             int localCount = 0;
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
             List<String> sendedBuyerCodeList = new ArrayList<String>();
+            boolean isBelongSellerFlag = false;
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             String promotionId = targetDiscountInfo.getPromotionId();
             String oldPromotionId = targetDiscountInfo.getModifyPromotionId();
@@ -636,6 +637,12 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                 couponDTO.setCouponLeftAmount(couponDTO.getCouponAmount());
                 couponDTO.setStatus("1");
                 couponDTO.setBuyerRuleDTO(null);
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+                isBelongSellerFlag = baseService.isBelongSellerRule(targetDiscountInfo.getSellerRuleDTO());
+                if (isBelongSellerFlag) {
+                    couponDTO.setSellerRuleDTO(null);
+                }
+                //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                 couponAmountStr = String.valueOf(
                         CalculateUtils.multiply(couponDTO.getCouponAmount(), new BigDecimal(100)).longValue());
                 jedis = marketRedisDB.getResource();
@@ -680,7 +687,9 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                     couponDTO.setBuyerName(oldCouponDTO.getBuyerName());
                     newBuyerCouponCode = generateCouponCode(jedis, couponDTO.getCouponType());
                     //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-                    couponDTO.setPromotionProviderSellerCode(oldCouponDTO.getPromotionProviderSellerCode());
+                    if (isBelongSellerFlag) {
+                        couponDTO.setPromotionProviderSellerCode(oldCouponDTO.getPromotionProviderSellerCode());
+                    }
                     //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                     couponDTO.setBuyerCouponCode(newBuyerCouponCode);
                     couponDTO.setGetCouponTime(new Date());

@@ -161,5 +161,13 @@ public interface GroupbuyingAPI {
 	 */
 	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode, String messageId);
 	
+	/**
+	 * 修改团购活动-手工更新
+	 * @param groupbuyingInfoCmplReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<?> updateGroupbuyingInfoByManual(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO,String messageId);
+	
 	
 }

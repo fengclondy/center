@@ -326,9 +326,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >
     update groupbuying_info
     <set >
-      <if test="promotionId != null" >
-        promotion_id = #{promotionId,jdbcType=VARCHAR},
-      </if>
       <if test="sellerCode != null" >
         seller_code = #{sellerCode,jdbcType=VARCHAR},
       </if>
@@ -405,7 +402,7 @@
         modify_time = #{modifyTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where groupbuying_id = #{groupbuyingId,jdbcType=BIGINT}
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
   </update>
   
     <update id="updateGroupbuyingInfo" parameterType="cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO" >

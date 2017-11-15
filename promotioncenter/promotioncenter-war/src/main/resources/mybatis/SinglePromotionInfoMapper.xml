@@ -378,9 +378,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
     update promotion_info
     <set >
-      <if test="promotionId != null" >
-        promotion_id = #{promotionId,jdbcType=VARCHAR},
-      </if>
       <if test="promotionName != null" >
         promotion_name = #{promotionName,jdbcType=VARCHAR},
       </if>
@@ -460,7 +457,7 @@
         modify_time = #{modifyTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
   </update>
   
   

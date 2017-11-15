@@ -1139,6 +1139,61 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		return dataGrid;
 	}
 
+	@Override
+	public void updateGroupbuyingInfoByManual(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
+
+        try {
+
+        	String promotionId = groupbuyingInfoCmplReqDTO.getPromotionId();
+        	GroupbuyingInfoResDTO groupbuyingInfoRes_check = groupbuyingInfoDAO.selectByPromotionId(promotionId);
+            if (null == groupbuyingInfoRes_check) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+            }
+           
+        	SinglePromotionInfoReqDTO singlePromotionInfoReqDTO = groupbuyingInfoCmplReqDTO.getSinglePromotionInfoReqDTO();
+        	
+        	// 修改活动信息
+        	singlePromotionInfoReqDTO.setPromotionId(promotionId);
+        	int singlePromotionInfoRet = singlePromotionInfoDAO.updateByPrimaryKeySelective(singlePromotionInfoReqDTO);
+        	if(1 != singlePromotionInfoRet){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "修改促销活动失败！");
+        	}
+        	
+        	// 修改团购活动信息
+        	int groupbuyingInfoRet = groupbuyingInfoDAO.updateByPrimaryKeySelective(groupbuyingInfoCmplReqDTO);
+        	if(1 != groupbuyingInfoRet){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "修改团购促销活动失败！");
+        	}
+        	
+        	// 更新redis里活动的时间
+    		String groupbuyingInfoJsonStr = String.valueOf(promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId));
+			if(null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0){
+				GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+				if(null != groupbuyingInfoCmplResDTO){
+					// 促销活动开始时间
+					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setEffectiveTime(singlePromotionInfoReqDTO.getEffectiveTime());
+					// 促销活动结束时间
+					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setInvalidTime(singlePromotionInfoReqDTO.getInvalidTime());
+					// 团购开始时间
+					groupbuyingInfoCmplResDTO.setStartTime(groupbuyingInfoCmplReqDTO.getStartTime());
+					// 团购结束时间
+					groupbuyingInfoCmplResDTO.setEndTime(groupbuyingInfoCmplReqDTO.getEndTime());
+					
+					String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+					// 设置团购活动
+					promotionGroupbuyingRedisHandle.getPromotionRedisDB().setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+				}
+			}
+        	
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【updateGroupbuyingInfoByManual】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+
+		
+	}
+
 
 
 

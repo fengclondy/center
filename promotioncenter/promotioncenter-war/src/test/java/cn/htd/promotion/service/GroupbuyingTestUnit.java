@@ -696,6 +696,53 @@ public class GroupbuyingTestUnit {
 		}
 	}
 	
+    /**
+     * 修改团购活动-手工跟新-测试用例
+     */
+	@Test
+	@Rollback(false) 
+    public void updateGroupbuyingInfoByManualTest(){
+    	
+    	try {
+    		String messageId = keyGeneratorUtils.generateMessageId();
+    		Long userId = 10001L;
+    		String userName = "admin";
+    		
+    		String promotionId = "25171138110019";
+    		
+            Calendar calendar = Calendar.getInstance();
+            Date currentTime = calendar.getTime();
+        	
+        	//团购商品信息
+            GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO = new GroupbuyingInfoCmplReqDTO();
+            groupbuyingInfoCmplReqDTO.setPromotionId(promotionId);
+    		// 团购开始时间
+    		Date startTime = currentTime;
+    		// 团购结束时间
+    		Date endTime = DateUtils.addDays(currentTime, 1);
+    		groupbuyingInfoCmplReqDTO.setStartTime(startTime);
+    		groupbuyingInfoCmplReqDTO.setEndTime(endTime);
+    		
+    		// 设置活动信息
+    		SinglePromotionInfoCmplReqDTO singlePromotionInfoCmplReqDTO = new SinglePromotionInfoCmplReqDTO();
+    		singlePromotionInfoCmplReqDTO.setEffectiveTime(currentTime);
+    		singlePromotionInfoCmplReqDTO.setInvalidTime(endTime);
+    		groupbuyingInfoCmplReqDTO.setSinglePromotionInfoReqDTO(singlePromotionInfoCmplReqDTO);
+    		
+         	ExecuteResult<?> executeResult = groupbuyingAPI.updateGroupbuyingInfoByManual(groupbuyingInfoCmplReqDTO, messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>手工修改团购活动失败！！！");
+        	}
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+    }
+	
+	
 	
 	/**
 	 * redis测试-测试用例

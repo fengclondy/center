@@ -173,5 +173,12 @@ public interface GroupbuyingService {
 	DataGrid<GroupbuyingInfoCmplResDTO> getMyGroupbuying4MobileForPage(Pager<GroupbuyingInfoReqDTO> page, GroupbuyingInfoReqDTO groupbuyingInfoReqDTO, String messageId);
 	
 	
+	/**
+	 * 修改团购活动-手工更新
+	 * @param groupbuyingInfoCmplReqDTO
+	 * @param messageId
+	 */
+	public void updateGroupbuyingInfoByManual(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId);
+	
 	
 }

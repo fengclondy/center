@@ -1,10 +1,12 @@
 package cn.htd.promotion.cpc.biz.dao;
 
+import java.util.Date;
 import java.util.List;
 
-import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import org.apache.ibatis.annotations.Param;
+
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
@@ -58,7 +60,7 @@ public interface GroupbuyingInfoDAO {
 	 * @param skuCode
 	 * @return
 	 */
-	int getPromotionCountsBySkuCode(String skuCode);
+	int getPromotionCountsBySkuCode(@Param("skuCode") String skuCode,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 	
 	/**
 	 * 根据条件查询团购活动总数(供移动端使用)

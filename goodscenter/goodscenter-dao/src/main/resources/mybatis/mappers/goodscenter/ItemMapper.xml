@@ -2540,6 +2540,12 @@
 		</if>
 	</sql>
 	
+	<select id="queryItemBySellerId" resultMap="BaseResultMap">
+		SELECT * FROM item 
+		WHERE item_status = 5
+		AND seller_id = #{sellerId}
+	</select>
+	
 	
 	<!-- add by li.jun for 限时购 end -->
 	

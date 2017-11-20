@@ -355,5 +355,12 @@ public interface ItemExportService {
 	 * @time 2017-10-26
 	 */
 	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode); 
+	
+	/**
+	 * 超级老板中间件 - 根据sellerId,areaCode查当前供应商是否有商品上架
+	 * @author xmz
+	 * @time 2017-11-16
+	 */
+	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode);
 
 }

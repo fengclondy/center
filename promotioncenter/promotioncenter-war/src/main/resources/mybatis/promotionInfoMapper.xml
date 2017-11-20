@@ -365,6 +365,7 @@
     and has_redis_clean = 0
   </update>
     <select id="getPromotionGashaponByInfo" resultMap="BaseResultMap" parameterType="Object">
+	<![CDATA[
 	SELECT 
 	a.promotion_id,
 	a.promotion_type,
@@ -372,10 +373,13 @@
 	a.effective_time,
 	a.invalid_time,
 	a.`status`,
-	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5) as winningNum,
-	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <![CDATA[ <> ]]> 5 and bw.winning_time = str_to_date(date_format(now(), '%Y-%m-%d'), '%Y-%m-%d')) as winningTodayNum,
+	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <> 5) as winningNum,
+	(SELECT count(1) from buyer_winning_record bw where bw.promotion_id = a.promotion_id and bw.reward_type <> 5 
+	and bw.winning_time >= str_to_date(date_format(now(), '%Y-%m-%d'), '%Y-%m-%d')
+	and bw.winning_time < str_to_date(date_format(DATE_ADD(now(), INTERVAL 1 DAY), '%Y-%m-%d'), '%Y-%m-%d')) as winningTodayNum,
 	a.modify_time
 	FROM promotion_info a WHERE 1=1 
+	]]>
 	<if test="entity.promotionType != null and entity.	promotionType != ''">
 	and  a.promotion_type = #{entity.promotionType}
 	</if>

@@ -142,10 +142,12 @@ public class TradeOrderCouponHandle {
 					itemPromotionDTOList.add(itemPromotionDTO);
 				}
 			}
-			couponResutl = buyerInterestChangeService.releaseBuyerPromotion(messageId, itemPromotionDTOList);
-			if (!couponResutl.isSuccess()) {
-				throw new TradeCenterBusinessException(couponResutl.getCode(),
-						StringUtils.join(couponResutl.getErrorMessages(), "\n"));
+			if (itemPromotionDTOList != null && !itemPromotionDTOList.isEmpty()) {
+				couponResutl = buyerInterestChangeService.releaseBuyerPromotion(messageId, itemPromotionDTOList);
+				if (!couponResutl.isSuccess()) {
+					throw new TradeCenterBusinessException(couponResutl.getCode(),
+							StringUtils.join(couponResutl.getErrorMessages(), "\n"));
+				}
 			}
 		} catch (TradeCenterBusinessException tcbe) {
 			logger.error("\n 方法[{}]，异常：[{}]", "TradeOrderCouponHandle-reserveOrderCoupon",

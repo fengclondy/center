@@ -1080,6 +1080,16 @@ public class CouponRedisHandle {
         useLog = getRedisBuyerCouponUseLog(orderCouponDTO);
         if (useLog != null) {
             if (!orderCouponDTO.getPromoitionChangeType().equals(useLog.getUseType())) {
+                if (dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
+                        DictionaryConst.OPT_BUYER_PROMOTION_STATUS_RELEASE).equals(useLog.getUseType())
+                        && useLog.getCouponUsedAmount().compareTo(orderCouponDTO.getDiscountAmount()) == 0) {
+                    useLog.setUseType(orderCouponDTO.getPromoitionChangeType());
+                    useLog.setCreateId(orderCouponDTO.getOperaterId());
+                    useLog.setCreateName(orderCouponDTO.getOperaterName());
+                    useLog.setModifyId(orderCouponDTO.getOperaterId());
+                    useLog.setModifyName(orderCouponDTO.getOperaterName());
+                    return useLog;
+                }
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_DOUBLE_REVERSE,
                         "订单号:" + orderNo + " 订单行号:" + orderItemNo + " 会员编号:" + buyerCode + " 优惠券编号:" + buyerCouponCode
                                 + " 该订单已使用过此优惠券不能重复使用");

@@ -500,13 +500,13 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
 
 
 			// modify by pantao 2017-11-08 start
-			// 剩余库存将于活动结束后的48小时内退还至普通商品库存。
-			// 判断活动如果正在进行，不删redis
+			// 限时购的剩余库存将于活动结束后的48小时内退还至普通商品库存。
 			PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(validDTO.getPromotionId());
 			if (dictionary
 					.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
 							DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT)
 					.equals(promotionInfo.getPromotionType())) {
+				// 判断活动如果正在进行，不删redis
 				if (promotionInfo.getEffectiveTime() != null && (new Date()).before(promotionInfo.getEffectiveTime())) {
 					timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
 					// 更新promotion has_redis_clean

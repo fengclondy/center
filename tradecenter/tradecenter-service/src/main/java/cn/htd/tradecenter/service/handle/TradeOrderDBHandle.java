@@ -82,7 +82,7 @@ public class TradeOrderDBHandle {
 
     @Resource
     private JDOrderInfoDAO jdOrderInfoDAO;
-    
+
     @Autowired
    	private MiddleWare middleware;
 
@@ -172,7 +172,7 @@ public class TradeOrderDBHandle {
                     BigDecimal costPrice =  getSaleLimitPrice(orderItemDTO.getItemSpuCode(),tradeOrdersDTO.getSellerCode());
                     orderItemDTO.setCostPrice(costPrice);
                 }
-                if (YesNoEnum.NO.getValue() == tradeOrdersDTO.getHasUsedCoupon()) {
+                if (YesNoEnum.YES.getValue() == tradeOrdersDTO.getHasUsedCoupon()) {
                     orderItemDiscountDTOList = orderItemsDiscountDAO.queryItemDiscountByOrderNo(orderNo);
                     if (orderItemDiscountDTOList != null && !orderItemDiscountDTOList.isEmpty()) {
                         for (TradeOrderItemsDiscountDTO discountDTO : orderItemDiscountDTOList) {
@@ -207,9 +207,7 @@ public class TradeOrderDBHandle {
         }
         return tradeOrdersDTO;
     }
-    
-    
-    
+
     /**
      * 获取最新的分销现价
      */
@@ -229,7 +227,7 @@ public class TradeOrderDBHandle {
 			return null;
 		}
 		String accessToken=String.valueOf(accessTokenMap.get("data"));
-		
+
 		String url=middleware.getPath()+"/product/findProductPrice";
 		String param = "?supplierCode=" + supplierCode + "&productCode=" + spuCode + "&token=" + accessToken;
 		String responseJson = MiddlewareInterfaceUtil
@@ -241,22 +239,22 @@ public class TradeOrderDBHandle {
 		if(Integer.parseInt(String.valueOf( map.get("code")))!=1){
 			return null;
 		}
-		
+
 		if(map.get("data")==null){
 			return null;
 		}
 		Map mapSaleLimitPrice = (Map) JSONObject.parseObject(String.valueOf(map.get("data")), Map.class);
 		if(mapSaleLimitPrice.get("floorPrice")==null){
-			return null;	
+			return null;
 		}
 		BigDecimal result=null;
-		 if( mapSaleLimitPrice.get("floorPrice")!=null) {  
+		 if( mapSaleLimitPrice.get("floorPrice")!=null) {
 			 result=new BigDecimal(String.valueOf(mapSaleLimitPrice.get("floorPrice")));
 		 }
 		return result;
-		
+
 	}
-    
+
 
     /**
      * 保存订单拆单信息

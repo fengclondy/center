@@ -362,5 +362,11 @@ public interface ItemExportService {
 	 * @time 2017-11-16
 	 */
 	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode);
-
+	
+	/** 根据skuCode 查询商品名称是否重复
+	 * @author li.jun
+	 * @time 2017-11-20
+	 */
+	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId);
+	
 }

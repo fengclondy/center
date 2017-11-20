@@ -1,5 +1,6 @@
 package cn.htd.basecenter.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -10,14 +11,15 @@ import cn.htd.basecenter.common.exception.BaseCenterBusinessException;
 import cn.htd.basecenter.common.utils.ExceptionUtils;
 import cn.htd.basecenter.dao.BaseSmsConfigDAO;
 import cn.htd.basecenter.dto.BaseSmsConfigDTO;
-import cn.htd.basecenter.dto.PlacardCondition;
-import cn.htd.basecenter.dto.PlacardInfo;
+import cn.htd.basecenter.dto.BaseSmsConfigShowDTO;
 import cn.htd.basecenter.dto.ValidSmsConfigDTO;
 import cn.htd.basecenter.enums.SmsEmailTypeEnum;
 import cn.htd.basecenter.service.BaseSmsConfigService;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.util.DictionaryUtils;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,16 +35,21 @@ public class BaseSmsConfigServiceImpl implements BaseSmsConfigService {
 	private static final Logger logger = LoggerFactory.getLogger(BaseSmsConfigServiceImpl.class);
 
 	@Resource
+	private DictionaryUtils dictionary;
+
+	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
 
 	/**
 	 * 查询短信通道的启用列表
 	 */
 	@Override
-	public ExecuteResult<DataGrid<BaseSmsConfigDTO>> querySMSConfigStatusList(Pager<BaseSmsConfigDTO> pager) {
+	public ExecuteResult<DataGrid<BaseSmsConfigShowDTO>> querySMSConfigStatusList(Pager<BaseSmsConfigDTO> pager) {
 		logger.info("\n 方法[{}]，入参：[]", "BaseSmsConfigServiceImpl-querySMSConfigStatusList");
-		ExecuteResult<DataGrid<BaseSmsConfigDTO>> result = new ExecuteResult<DataGrid<BaseSmsConfigDTO>>();
-		DataGrid<BaseSmsConfigDTO> dataGrid = new DataGrid<BaseSmsConfigDTO>();
+		ExecuteResult<DataGrid<BaseSmsConfigShowDTO>> result = new ExecuteResult<DataGrid<BaseSmsConfigShowDTO>>();
+		DataGrid<BaseSmsConfigShowDTO> dataGrid = new DataGrid<BaseSmsConfigShowDTO>();
+		List<BaseSmsConfigShowDTO> configShowList = new ArrayList<BaseSmsConfigShowDTO>();
+		BaseSmsConfigShowDTO showDTO = null;
 		BaseSmsConfigDTO configCondition = new BaseSmsConfigDTO();
 		long count = 0;
 		List<BaseSmsConfigDTO> configList = null;
@@ -51,7 +58,18 @@ public class BaseSmsConfigServiceImpl implements BaseSmsConfigService {
 			count = baseSmsConfigDAO.queryCount(configCondition);
 			if (count > 0) {
 				configList = baseSmsConfigDAO.queryList(configCondition, pager);
-				dataGrid.setRows(configList);
+				for (BaseSmsConfigDTO configDTO : configList) {
+					showDTO = new BaseSmsConfigShowDTO();
+					showDTO.setChannelCode(configDTO.getChannelCode());
+					showDTO.setChannelName(
+							dictionary.getNameByValue(DictionaryConst.TYPE_SMS_CHANNEL, showDTO.getChannelCode()));
+					showDTO.setUsedFlag(configDTO.getUsedFlag());
+					showDTO.setOperatorId(configDTO.getModifyId());
+					showDTO.setOperatorName(configDTO.getModifyName());
+					showDTO.setOperatorTime(configDTO.getModifyTime());
+					configShowList.add(showDTO);
+				}
+				dataGrid.setRows(configShowList);
 			}
 			dataGrid.setTotal(count);
 			result.setResult(dataGrid);

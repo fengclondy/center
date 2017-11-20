@@ -517,7 +517,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!valueList.isEmpty()) {
-                forkJoinPool = new ForkJoinPool(4);
+                forkJoinPool = new ForkJoinPool();
                 allCouponList = forkJoinPool
                         .invoke(new ValidBuyerAvaliableCouponTask(messageId, dictMap, valueList, validMap,
                                 hasTargetCouponFlag, orderInfoMap, allProductList));

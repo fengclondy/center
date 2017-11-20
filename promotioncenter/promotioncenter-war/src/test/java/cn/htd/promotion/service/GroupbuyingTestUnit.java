@@ -525,9 +525,16 @@ public class GroupbuyingTestUnit {
 	@Test
 	public void hasProductIsBeingUsedByPromotionTest(){
 		try{
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String startTimeStr = "2017-11-16 15:20:00";
+			String endTimeStr = "2017-11-28 15:20:00";
+			
 			String messageId = "342453251349";
 			String skuCode = "1731665017";
-			ExecuteResult<Boolean> executeResult = groupbuyingAPI.hasProductIsBeingUsedByPromotion(skuCode,messageId);
+		    Date startTime = sdf.parse(startTimeStr);//开始时间(开团开始时间)
+		    Date endTime = sdf.parse(endTimeStr);//结束时间(下单结束时间)
+		    
+			ExecuteResult<Boolean> executeResult = groupbuyingAPI.hasProductIsBeingUsedByPromotion(skuCode,startTime,endTime,messageId);
         	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
         		if(Boolean.FALSE == executeResult.getResult()){ //商品没有被活动正在使用
         			System.out.println(skuCode + "商品没有被活动正在使用");
@@ -695,6 +702,58 @@ public class GroupbuyingTestUnit {
 			e.printStackTrace();
 		}
 	}
+	
+    /**
+     * 修改团购活动-手工跟新-测试用例
+     */
+	@Test
+	@Rollback(false) 
+    public void updateGroupbuyingInfoByManualTest(){
+    	
+    	try {
+    		String messageId = keyGeneratorUtils.generateMessageId();
+    		Long userId = 10001L;
+    		String userName = "admin";
+    		
+    		String promotionId = "25171138110019";
+    		
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			String effectiveTimeStr = "2017-11-16 15:20:00";//开团开始时间
+			String invalidTimeStr = "2017-11-17 15:20:00";//开团结束时间
+			String startTimeStr = "2017-11-18 15:20:00"; //下单开始时间
+			String endTimeStr = "2017-11-20 15:20:00";//下单结束时间
+
+			Date effectiveTime = sdf.parse(effectiveTimeStr);
+			Date invalidTime = sdf.parse(invalidTimeStr);
+		    Date startTime = sdf.parse(startTimeStr);
+		    Date endTime = sdf.parse(endTimeStr);
+        	
+        	//团购商品信息
+            GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO = new GroupbuyingInfoCmplReqDTO();
+            groupbuyingInfoCmplReqDTO.setPromotionId(promotionId);
+    		groupbuyingInfoCmplReqDTO.setStartTime(startTime);// 团购开始时间
+    		groupbuyingInfoCmplReqDTO.setEndTime(endTime);// 团购结束时间
+    		
+    		// 设置活动信息
+    		SinglePromotionInfoCmplReqDTO singlePromotionInfoCmplReqDTO = new SinglePromotionInfoCmplReqDTO();
+    		singlePromotionInfoCmplReqDTO.setEffectiveTime(effectiveTime);
+    		singlePromotionInfoCmplReqDTO.setInvalidTime(invalidTime);
+    		groupbuyingInfoCmplReqDTO.setSinglePromotionInfoReqDTO(singlePromotionInfoCmplReqDTO);
+    		
+         	ExecuteResult<?> executeResult = groupbuyingAPI.updateGroupbuyingInfoByManual(groupbuyingInfoCmplReqDTO, messageId);
+        	if(ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())){
+        		System.out.println("===>executeResult:" + executeResult);
+        	}else{
+        		System.out.println("===>手工修改团购活动失败！！！");
+        	}
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+    }
+	
 	
 	
 	/**

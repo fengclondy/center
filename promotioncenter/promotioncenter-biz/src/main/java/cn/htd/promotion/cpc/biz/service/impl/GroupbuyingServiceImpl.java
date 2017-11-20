@@ -417,13 +417,19 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 	
 	
 	@Override
-	public Boolean hasProductIsBeingUsedByPromotion(String skuCode, String messageId) {
+	public Boolean hasProductIsBeingUsedByPromotion(String skuCode,Date startTime,Date endTime, String messageId) {
 		try {
             if (null == skuCode || skuCode.length() == 0) {
                 throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "skuCode参数不能为空！");
             }
+            if (null == startTime) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "startTime参数不能为空！");
+            }
+            if (null == endTime) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.PARAMETER_ERROR.getCode(), "endTime参数不能为空！");
+            }
             
-    		int count = groupbuyingInfoDAO.getPromotionCountsBySkuCode(skuCode);
+    		int count = groupbuyingInfoDAO.getPromotionCountsBySkuCode(skuCode,startTime,endTime);
     		return (count < 1 ? false:true);
     		
 		} catch (Exception e) {
@@ -628,8 +634,11 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 
             dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
             List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfoCmplForPage(page, groupbuyingInfoReqDTO);
+            int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
+            dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+            
 			if(null != groupbuyingInfoCmplResDTOList && groupbuyingInfoCmplResDTOList.size() > 0){
-				int count = groupbuyingInfoDAO.getGroupbuyingInfoCmplCount(groupbuyingInfoReqDTO);
+				
 				// 团购价格设置
 				for(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO : groupbuyingInfoCmplResDTOList){
 					String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
@@ -649,7 +658,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 					}
 				}
 				
-				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
 				dataGrid.setRows(groupbuyingInfoCmplResDTOList);
 			}
 			
@@ -933,8 +941,11 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             
 			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
 			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getGroupbuyingInfo4MobileForPage(page, groupbuyingInfoReqDTO);
+			int count = groupbuyingInfoDAO.getGroupbuyingInfo4MobileCount(groupbuyingInfoReqDTO);
+			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+			
 			if(null != groupbuyingInfoCmplResDTOList && groupbuyingInfoCmplResDTOList.size() > 0){
-				int count = groupbuyingInfoDAO.getGroupbuyingInfo4MobileCount(groupbuyingInfoReqDTO);
+				
 				// 设置参团状态
 				for(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO : groupbuyingInfoCmplResDTOList){
 		  			if(StringUtils.isEmpty(groupbuyingInfoReqDTO.getBuyerCode())){
@@ -963,8 +974,6 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		  			}
 		      	    
 				}
-				
-				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
 				dataGrid.setRows(groupbuyingInfoCmplResDTOList);
 				
 			}
@@ -1105,8 +1114,10 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
             
 			dataGrid = new DataGrid<GroupbuyingInfoCmplResDTO>();
 			List<GroupbuyingInfoCmplResDTO> groupbuyingInfoCmplResDTOList = groupbuyingInfoDAO.getMyGroupbuying4MobileForPage(page, groupbuyingInfoReqDTO);
+			int count = groupbuyingInfoDAO.getMyGroupbuying4MobileCount(groupbuyingInfoReqDTO);
+			dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
+			
 			if(null != groupbuyingInfoCmplResDTOList && groupbuyingInfoCmplResDTOList.size() > 0){
-				int count = groupbuyingInfoDAO.getMyGroupbuying4MobileCount(groupbuyingInfoReqDTO);
 				// 团购价格设置
 				for(GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO : groupbuyingInfoCmplResDTOList){
 					String promotionId = groupbuyingInfoCmplResDTO.getPromotionId();
@@ -1124,11 +1135,9 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			      	    groupbuyingInfoCmplResDTO.setRealActorCount(realActorCount);
 			      	    groupbuyingInfoCmplResDTO.setRealGroupbuyingPrice(realGroupbuyingPrice);
 					}
-
 		      	    
 				}
 				
-				dataGrid.setTotal(Long.valueOf(String.valueOf(count)));
 				dataGrid.setRows(groupbuyingInfoCmplResDTOList);
 			}
 			
@@ -1137,6 +1146,61 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 			throw new RuntimeException(e);
 		}
 		return dataGrid;
+	}
+
+	@Override
+	public void updateGroupbuyingInfoByManual(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO, String messageId) {
+
+        try {
+
+        	String promotionId = groupbuyingInfoCmplReqDTO.getPromotionId();
+        	GroupbuyingInfoResDTO groupbuyingInfoRes_check = groupbuyingInfoDAO.selectByPromotionId(promotionId);
+            if (null == groupbuyingInfoRes_check) {
+                throw new PromotionCenterBusinessException(ResultCodeEnum.NORESULT.getCode(), "团购促销活动不存在！");
+            }
+           
+        	SinglePromotionInfoReqDTO singlePromotionInfoReqDTO = groupbuyingInfoCmplReqDTO.getSinglePromotionInfoReqDTO();
+        	
+        	// 修改活动信息
+        	singlePromotionInfoReqDTO.setPromotionId(promotionId);
+        	int singlePromotionInfoRet = singlePromotionInfoDAO.updateByPrimaryKeySelective(singlePromotionInfoReqDTO);
+        	if(1 != singlePromotionInfoRet){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "修改促销活动失败！");
+        	}
+        	
+        	// 修改团购活动信息
+        	int groupbuyingInfoRet = groupbuyingInfoDAO.updateByPrimaryKeySelective(groupbuyingInfoCmplReqDTO);
+        	if(1 != groupbuyingInfoRet){
+        		throw new PromotionCenterBusinessException(ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(), "修改团购促销活动失败！");
+        	}
+        	
+        	// 更新redis里活动的时间
+    		String groupbuyingInfoJsonStr = String.valueOf(promotionGroupbuyingRedisHandle.getPromotionRedisDB().getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId));
+			if(null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0){
+				GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+				if(null != groupbuyingInfoCmplResDTO){
+					// 促销活动开始时间
+					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setEffectiveTime(singlePromotionInfoReqDTO.getEffectiveTime());
+					// 促销活动结束时间
+					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setInvalidTime(singlePromotionInfoReqDTO.getInvalidTime());
+					// 团购开始时间
+					groupbuyingInfoCmplResDTO.setStartTime(groupbuyingInfoCmplReqDTO.getStartTime());
+					// 团购结束时间
+					groupbuyingInfoCmplResDTO.setEndTime(groupbuyingInfoCmplReqDTO.getEndTime());
+					
+					String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+					// 设置团购活动
+					promotionGroupbuyingRedisHandle.getPromotionRedisDB().setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+				}
+			}
+        	
+
+        } catch (Exception e) {
+            logger.error("messageId{}:执行方法【updateGroupbuyingInfoByManual】报错：{}", messageId, e.toString());
+            throw new RuntimeException(e);
+        }
+
+		
 	}
 
 

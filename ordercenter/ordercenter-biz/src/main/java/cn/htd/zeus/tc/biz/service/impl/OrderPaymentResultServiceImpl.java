@@ -653,14 +653,18 @@ public class OrderPaymentResultServiceImpl implements OrderPaymentResultService 
 			for (PayOrderInfoDMO payOrderDMO : orderList) {
 				TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
 				tradeOrderItemsDMO.setOrderNo(payOrderDMO.getOrderNo());
+				//更新有平台公司身份的外部供应商金额，京东的金额不需要更新了，因为已经下架了
 				if (MiddleWareEnum.JD_CLASS_CODE_ERP.getCode().equals(payOrderDMO.getClassCode())
 						&& MiddleWareEnum.JD_BRAND_ID_ERP.getCode()
 								.equals(payOrderDMO.getBrandCode())) {
-					tradeOrderItemsDMO.setChannelCode(GoodCenterEnum.JD_SUPPLIER.getCode());
-				} else {
-					tradeOrderItemsDMO.setErpFirstCategoryCode(payOrderDMO.getClassCode());
-					tradeOrderItemsDMO.setBrandId(Long.valueOf(payOrderDMO.getBrandCode()));
+					tradeOrderItemsDMO.setChannelCode(GoodCenterEnum.EXTERNAL_SUPPLIER.getCode());
+					BigDecimal amount = tradeOrderItemsDAO.selectSumAmountByBrandCodeAndClassCode(tradeOrderItemsDMO);
+					payOrderInfoDMO.setAmount(amount);
 				}
+//				else {
+//					tradeOrderItemsDMO.setErpFirstCategoryCode(payOrderDMO.getClassCode());
+//					tradeOrderItemsDMO.setBrandId(Long.valueOf(payOrderDMO.getBrandCode()));
+//				}
 				// LOGGER.info("【支付回调】【查询分销金额开始】--组装查询参数开始:{}",
 				// JSONObject.toJSONString(payOrderInfoDMO));
 				// BigDecimal amount = tradeOrderItemsDAO

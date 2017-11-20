@@ -3398,6 +3398,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return result;
 	}
 
+<<<<<<< HEAD
 	@Override
 	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
@@ -3443,6 +3444,22 @@ public class ItemExportServiceImpl implements ItemExportService {
 			result.setCode(ErrorCodes.E00001.name());
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+	/**
+	 * 根据skuCode 查询商品名称是否重复
+	 * @author li.jun
+	 * @time 2017-11-20
+	 */
+	@Override
+	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		List<Item> itemList = itemMybatisDAO.queryItemInfo(itemName,sellerId);
+		if(itemList != null && itemList.size() > 0){
+			result.setResult(true);
+		}else{
+			result.setResult(false);
 		}
 		return result;
 	}

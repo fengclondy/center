@@ -1,5 +1,6 @@
 package cn.htd.promotion.cpc.api;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -159,7 +160,15 @@ public interface GroupbuyingAPI {
 	 * @param messageId
 	 * @return
 	 */
-	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode, String messageId);
+	public ExecuteResult<Boolean> hasProductIsBeingUsedByPromotion(String skuCode,Date startTime,Date endTime, String messageId);
+	
+	/**
+	 * 修改团购活动-手工更新
+	 * @param groupbuyingInfoCmplReqDTO
+	 * @param messageId
+	 * @return
+	 */
+	public ExecuteResult<?> updateGroupbuyingInfoByManual(GroupbuyingInfoCmplReqDTO groupbuyingInfoCmplReqDTO,String messageId);
 	
 	
 }

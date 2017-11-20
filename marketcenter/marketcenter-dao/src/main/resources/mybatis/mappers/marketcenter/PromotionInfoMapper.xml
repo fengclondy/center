@@ -354,7 +354,7 @@
     select
     <include refid="Base_Column_List"/>
     from promotion_info
-    where has_redis_clean = 0
+    where status != 9
     <if test="entity != null">
       <if test="entity.promotionType != null and entity.promotionType != ''">
         and promotion_type = #{entity.promotionType}
@@ -381,12 +381,10 @@
   <update id="updateCleanedRedisPurchasePromotionStatus" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO">
     update promotion_info
     <set>
-      has_redis_clean = 1,
       status = 9,
       modify_time = now()
     </set>
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
-    and has_redis_clean = 0
   </update>
   <select id="queryPromotionInfoByB2cActivityCode" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO"
           resultMap="BaseResultMap">

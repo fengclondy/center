@@ -17,10 +17,11 @@ public interface PromotionBaseService {
      * 删除促销活动
      *
      * @param validDTO
+     * @return
      * @throws MarketCenterBusinessException
      * @throws Exception
      */
-    public void deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception;
+    public PromotionInfoDTO deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception;
 
     /**
      * 插入促销活动表

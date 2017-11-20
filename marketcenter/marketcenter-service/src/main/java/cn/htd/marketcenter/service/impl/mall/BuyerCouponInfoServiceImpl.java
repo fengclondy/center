@@ -1,5 +1,6 @@
 package cn.htd.marketcenter.service.impl.mall;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -256,9 +257,16 @@ public class BuyerCouponInfoServiceImpl implements BuyerCouponInfoService {
 	//----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
 	@Override
 	public ExecuteResult<String> saveBuyerPopupNoticeReceiveCoupon(String messageId, BuyerReceiveCouponDTO receiveDTO) {
+		String resCode = "";
 		ExecuteResult<String> result = saveBuyerReceiveCoupon(messageId, receiveDTO);
-		if (result.isSuccess()) {
-			couponRedisHandle.deleteBuyerPopupNoticeInfo(receiveDTO.getBuyerCode(), receiveDTO.getPromotionId());
+		if (result != null) {
+			resCode	= result.getCode();
+			if (result.isSuccess() || MarketCenterCodeConst.COUPON_TOTAL_COLLECTED.equals(resCode)
+					|| MarketCenterCodeConst.COUPON_RECEIVE_LIMITED.equals(resCode)) {
+				result.setCode(MarketCenterCodeConst.RETURN_SUCCESS);
+				result.setErrorMessages(new ArrayList<String>());
+				couponRedisHandle.deleteBuyerPopupNoticeInfo(receiveDTO.getBuyerCode(), receiveDTO.getPromotionId());
+			}
 		}
 		return result;
 	}

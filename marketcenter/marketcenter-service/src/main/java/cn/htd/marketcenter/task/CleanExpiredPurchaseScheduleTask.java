@@ -146,6 +146,7 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                         TimelimitedInfoDTO timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr,
                                 TimelimitedInfoDTO.class);
                         if (timelimitedInfoDTO == null) {
+                            promotionInfoDAO.updateCleanedRedisPurchasePromotionStatus(promotionInfoDTO);
                             continue;
                         }
                         List skuList = timelimitedInfoDTO.getPromotionAccumulatyList();
@@ -180,8 +181,8 @@ public class CleanExpiredPurchaseScheduleTask implements IScheduleTaskDealMulti<
                                 }
                             }
                             if (oldTimelimitedInfoList.isEmpty()) {
-                                timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
                                 promotionInfoDAO.updateCleanedRedisPurchasePromotionStatus(promotionInfoDTO);
+                                timelimitedRedisHandle.deleteRedisTimelimitedInfo(promotionId);
                             } else {
                                 timelimitedInfoDTO.setPromotionAccumulatyList(oldTimelimitedInfoList);
                                 marketRedisDB.setHash(RedisConst.REDIS_TIMELIMITED, promotionId,

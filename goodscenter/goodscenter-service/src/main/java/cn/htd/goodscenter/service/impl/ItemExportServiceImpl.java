@@ -3398,7 +3398,6 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return result;
 	}
 
-<<<<<<< HEAD
 	@Override
 	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode) {
 		ExecuteResult<String> result = new ExecuteResult<String>();

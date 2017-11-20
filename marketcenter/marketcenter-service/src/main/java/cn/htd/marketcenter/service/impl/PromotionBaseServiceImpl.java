@@ -119,10 +119,11 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * 删除促销活动
      *
      * @param validDTO
+     * @return
      * @throws MarketCenterBusinessException
      * @throws Exception
      */
-    public void deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception {
+    public PromotionInfoDTO deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception {
         PromotionInfoDTO promotionInfo = null;
         try {
             // 根据活动ID获取活动信息
@@ -134,7 +135,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             if (dictionary
                     .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE)
                     .equals(promotionInfo.getStatus())) {
-                return;
+                return promotionInfo;
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionInfo.getShowStatus())) {
@@ -157,6 +158,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         } catch (Exception e) {
             throw e;
         }
+        return promotionInfo;
     }
 
     /**

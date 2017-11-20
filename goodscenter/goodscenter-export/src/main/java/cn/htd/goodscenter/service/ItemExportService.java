@@ -355,5 +355,13 @@ public interface ItemExportService {
 	 * @time 2017-10-26
 	 */
 	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode); 
+	
+	/**
+	 * 根据skuCode 查询商品名称是否重复
+	 * @author li.jun
+	 * @time 2017-11-20
+	 */
+	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId);
+	
 
 }

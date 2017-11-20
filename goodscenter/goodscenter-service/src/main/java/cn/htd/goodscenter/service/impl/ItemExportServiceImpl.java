@@ -3653,5 +3653,22 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return result;
 	}
 
+	/**
+	 * 根据skuCode 查询商品名称是否重复
+	 * @author li.jun
+	 * @time 2017-11-20
+	 */
+	@Override
+	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		List<Item> itemList = itemMybatisDAO.queryItemInfo(itemName,sellerId);
+		if(itemList != null && itemList.size() > 0){
+			result.setResult(true);
+		}else{
+			result.setResult(false);
+		}
+		return result;
+	}
+
 	
 }

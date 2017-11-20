@@ -995,9 +995,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 		GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = null;
         try {
         	
-        	groupbuyingInfoCmplResDTO = this.getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
         	
-        	/**
         	 groupbuyingInfoCmplResDTO = promotionGroupbuyingRedisHandle.getGroupbuyingInfoCmplByPromotionId(promotionId);
         	 
         	 if(null != groupbuyingInfoCmplResDTO){
@@ -1049,7 +1047,7 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
         		 groupbuyingInfoCmplResDTO = this.getGroupbuyingInfoCmplByPromotionId(promotionId, messageId);
         	 }
 
-**/
+
         } catch (Exception e) {
             logger.error("messageId{}:执行方法【getGroupbuyingInfoCmplByPromotionId4Mobile】报错：{}", messageId, e.toString());
             throw new RuntimeException(e);

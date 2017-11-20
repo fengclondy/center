@@ -171,31 +171,44 @@ public class PromotionGroupbuyingRedisHandle {
     public boolean upDownShelvesPromotionInfo2Redis(final String promotionId,final String showStatus) {
     	
     	try {
-    		return promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
-	        	
-				@SuppressWarnings({ "rawtypes", "unchecked" })
-				@Override
-	            public Boolean execute(RedisOperations operations) throws DataAccessException {
-	            
-	            		operations.multi();
-	            		
-	            		String groupbuyingInfoJsonStr = String.valueOf(operations.opsForHash().get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId));
-	        			if(null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0){
-	        				GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
-	        				if(null != groupbuyingInfoCmplResDTO){
-	        					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setShowStatus(showStatus);
-	        					String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
-	        					// 设置团购活动
-	        					operations.opsForHash().put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
-	        				}
-	        			}
-	            		
-	                	operations.exec();
-	              
-	               return true;  
-	            }
-	        	
-	        });  
+//    		return promotionRedisDB.getStringRedisTemplate().execute(new SessionCallback<Boolean>()  {
+//	        	
+//				@SuppressWarnings({ "rawtypes", "unchecked" })
+//				@Override
+//	            public Boolean execute(RedisOperations operations) throws DataAccessException {
+//	            
+//	            		operations.multi();
+//	            		
+//	            		String groupbuyingInfoJsonStr = String.valueOf(operations.opsForHash().get(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId));
+//	        			if(null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0){
+//	        				GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+//	        				if(null != groupbuyingInfoCmplResDTO){
+//	        					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setShowStatus(showStatus);
+//	        					String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+//	        					// 设置团购活动
+//	        					operations.opsForHash().put(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+//	        				}
+//	        			}
+//	            		
+//	                	operations.exec();
+//	              
+//	               return true;  
+//	            }
+//	        	
+//	        });  
+    		
+    		String groupbuyingInfoJsonStr = String.valueOf(promotionRedisDB.getHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId));
+			if(null != groupbuyingInfoJsonStr && groupbuyingInfoJsonStr.length() > 0){
+				GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = JSON.parseObject(groupbuyingInfoJsonStr, GroupbuyingInfoCmplResDTO.class);
+				if(null != groupbuyingInfoCmplResDTO){
+					groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setShowStatus(showStatus);
+					String jsonObj = JSON.toJSONString(groupbuyingInfoCmplResDTO);
+					// 设置团购活动
+					promotionRedisDB.setHash(RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO, promotionId, jsonObj);
+				}
+			}
+			
+			return true;  
 	        
 		} catch (Exception e) {
 			logger.error("执行方法【upDownShelvesPromotionInfo2Redis】报错：{}", e.toString());

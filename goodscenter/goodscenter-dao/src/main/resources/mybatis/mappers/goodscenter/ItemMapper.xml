@@ -2544,6 +2544,7 @@
 		SELECT * FROM item 
 		WHERE item_status = 5
 		AND seller_id = #{sellerId}
+		AND product_channel_code = 10
 	</select>
 	
 	<select id="queryItemInfo" resultMap="BaseResultMap">

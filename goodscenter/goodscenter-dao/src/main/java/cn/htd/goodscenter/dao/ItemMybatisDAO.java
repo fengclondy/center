@@ -351,6 +351,8 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	public ItemQueryOutDTO querySellerCenterItem(@Param("entity") ItemQueryInDTO itemInDTO);
 	
 	public List<ItemQueryOutDTO> querySellerCenterItemList(@Param("entity") ItemQueryInDTO itemInDTO);
+	
+	public List<Item> queryItemBySellerId(@Param("sellerId") String sellerId);
 
 	public List<Item> queryItemInfo(@Param("itemName")String itemName,@Param("sellerId")Long sellerId);
 

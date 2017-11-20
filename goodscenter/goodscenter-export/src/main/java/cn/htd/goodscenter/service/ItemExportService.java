@@ -357,11 +357,16 @@ public interface ItemExportService {
 	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode); 
 	
 	/**
-	 * 根据skuCode 查询商品名称是否重复
+	 * 超级老板中间件 - 根据sellerId,areaCode查当前供应商是否有商品上架
+	 * @author xmz
+	 * @time 2017-11-16
+	 */
+	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode);
+	
+	/** 根据skuCode 查询商品名称是否重复
 	 * @author li.jun
 	 * @time 2017-11-20
 	 */
 	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId);
 	
-
 }

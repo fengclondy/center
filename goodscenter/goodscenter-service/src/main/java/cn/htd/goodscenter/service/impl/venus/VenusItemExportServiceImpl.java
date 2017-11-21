@@ -234,21 +234,25 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			itemSpuMapper.insertSelective(itemSpu);
 			//图片
 			List<ItemSpuPicture> itemSpuPicturelist=Lists.newArrayList();
-			for(ItemPicture picture:venusItemDTO.getPictures()){
-				ItemSpuPicture itemSpuPicture=new ItemSpuPicture();
-				itemSpuPicture.setSpuId(itemSpu.getSpuId());
-				itemSpuPicture.setIsFirst(picture.getIsFirst());
-				itemSpuPicture.setModifyId(venusItemDTO.getOperatorId());
-				itemSpuPicture.setModifyName(venusItemDTO.getOperatorName());
-				itemSpuPicture.setModifyTime(new Date());
-				itemSpuPicture.setPictureUrl(picture.getPictureUrl());
-				itemSpuPicture.setSortNum(picture.getSortNumber()==null?0:picture.getSortNumber());
-				itemSpuPicture.setCreateTime(new Date());
-				itemSpuPicture.setCreateId(venusItemDTO.getOperatorId());
-				itemSpuPicture.setCreateName(venusItemDTO.getOperatorName());
-				itemSpuPicturelist.add(itemSpuPicture);
+			
+			if(CollectionUtils.isNotEmpty(itemSpuPicturelist)){
+				for(ItemPicture picture:venusItemDTO.getPictures()){
+					ItemSpuPicture itemSpuPicture=new ItemSpuPicture();
+					itemSpuPicture.setSpuId(itemSpu.getSpuId());
+					itemSpuPicture.setIsFirst(picture.getIsFirst());
+					itemSpuPicture.setModifyId(venusItemDTO.getOperatorId());
+					itemSpuPicture.setModifyName(venusItemDTO.getOperatorName());
+					itemSpuPicture.setModifyTime(new Date());
+					itemSpuPicture.setPictureUrl(picture.getPictureUrl());
+					itemSpuPicture.setSortNum(picture.getSortNumber()==null?0:picture.getSortNumber());
+					itemSpuPicture.setCreateTime(new Date());
+					itemSpuPicture.setCreateId(venusItemDTO.getOperatorId());
+					itemSpuPicture.setCreateName(venusItemDTO.getOperatorName());
+					itemSpuPicturelist.add(itemSpuPicture);
+				}
+				 itemSpuPictureMapper.batchInsert(itemSpuPicturelist);
 			}
-			 itemSpuPictureMapper.batchInsert(itemSpuPicturelist);
+			
 			//描述
     		ItemSpuDescribe itemSpuDescribe= new ItemSpuDescribe();
 			
@@ -278,6 +282,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 	private void doAddItemPicture(VenusItemInDTO venusItemDTO, Item item) {
 		List<ItemPicture> picturesList= venusItemDTO.getPictures();
+		
+		if(CollectionUtils.isEmpty(picturesList)){
+			return;
+		}
+		
 	    for(ItemPicture picture:picturesList){
 	    	picture.setItemId(item.getItemId());
 	    	if(picture.getSellerId()==null){
@@ -527,6 +536,13 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 	private void doUpdateItemDraftPicture(VenusItemInDTO venusItemDTO,
 			Item itemFromDb, ItemDraft itemDraftFromDB) {
+		
+		//清除图片
+		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
+			itemDraftPictureMapper.deleteDraftPicByItemDraftId(itemDraftFromDB.getItemDraftId());
+			return;
+		}
+		
 		//图片
 		 List<ItemDraftPicture> draftPicturesList= Lists.newArrayList();
 		    for(ItemPicture picture:venusItemDTO.getPictures()){

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +92,9 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             logger.error("VoteActivityAPI方法selectCurrentActivity调用出错，信息{}",e.getMessage());
 
             result.setCode(ResultCodeEnum.ERROR.getMsg());
+        } finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "VoteActivityAPI-selectCurrentActivity",
+                    JSONObject.toJSONString(result));
         }
         return result;
     }
@@ -121,8 +126,12 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             logger.error("VoteActivityAPI方法selectByVoteIdAndMemberCode调用出错，信息{}",e.getMessage());
 
             result.setCode(ResultCodeEnum.ERROR.getMsg());
+        } finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "VoteActivityAPI-selectByVoteIdAndMemberCode",
+                    JSONObject.toJSONString(result));
         }
         return result;
+
     }
 
     /***
@@ -145,6 +154,9 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             e.printStackTrace();
             logger.error("VoteActivityAPI方法selectByVoteIdAndMemberCode调用出错，信息{}",e.getMessage());
             result.setErrorMessages(Lists.newArrayList("查询详情异常"));
+        }finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "VoteActivityAPI-selectByVoteMemberCode",
+                    JSONObject.toJSONString(result));
         }
         return result;
     }
@@ -186,6 +198,9 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             logger.error("VoteActivityAPI方法saveVoteActivityMember调用出错，信息{}",e.getMessage());
 
             result.setCode(ResultCodeEnum.ERROR.getCode());
+        }finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "VoteActivityAPI-saveVoteActivityMember",
+                    JSONObject.toJSONString(result));
         }
         return result;
     }
@@ -263,6 +278,9 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             logger.error("VoteActivityAPI方法selectMemberVotesData调用出错，信息{}",e.getMessage());
 
             result.setCode(ResultCodeEnum.ERROR.getCode());
+        }finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "VoteActivityAPI-selectMemberVotesData",
+                    JSONObject.toJSONString(result));
         }
         return result;
     }

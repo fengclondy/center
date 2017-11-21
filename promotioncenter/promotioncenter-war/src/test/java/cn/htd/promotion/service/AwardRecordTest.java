@@ -43,6 +43,8 @@ public class AwardRecordTest {
             dto.setPage(1);
             dto.setPageSize(10);
            // dto.setBuyerName("买");
+          //  dto.setWinningStartTime("2017-09-13");
+            dto.setWinningEndTime("2017-09-13");
             DataGrid<PromotionAwardDTO> result =  awardRecordService.getAwardRecordByPromotionId(dto,messageId);
             System.out.printf("result:"+result);
 		} catch (Exception e) {

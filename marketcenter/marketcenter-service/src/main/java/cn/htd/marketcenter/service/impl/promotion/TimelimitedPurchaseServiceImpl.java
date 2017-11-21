@@ -492,6 +492,7 @@ public class TimelimitedPurchaseServiceImpl implements
 							timelimitPurchaseMallInfoDTO.setSalesVolumePriceSort(timelimite.getSalesVolumePrice());
 							timelimitPurchaseMallInfoDTO.setSkuTimelimitedPriceSort(timelimite.getSkuTimelimitedPrice());
 							timelimitPurchaseMallInfoDTO.setPreferentialStrengthSort(timelimite.getPreferentialStrength());
+							timelimitPurchaseMallInfoDTO.setNowDate(new Date().getTime());
 							resultList.add(timelimitPurchaseMallInfoDTO);
 						}
 					}

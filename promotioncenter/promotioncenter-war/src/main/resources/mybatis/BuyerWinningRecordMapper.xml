@@ -84,10 +84,10 @@
       and bwr.reward_type = #{params.rewardType}
     </if>
     <if test="params.winningStartTime!=null and params.winningStartTime!=''">
-      and date_format(bwr.winning_time , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+      and bwr.winning_time  &gt;= str_to_date(#{params.winningStartTime}, '%Y-%m-%d %H:%i:%s')
     </if>
     <if test="params.winningEndTime!=null and params.winningEndTime!=''">
-      and date_format(bwr.winning_time , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
+      and bwr.winning_time &lt;= str_to_date(#{params.winningEndTime}, '%Y-%m-%d %H:%i:%s')
     </if>
     <if test="params.sellerCode!=null and params.sellerCode!=''">
       and bwr.seller_code = #{params.sellerCode}
@@ -130,10 +130,10 @@
     </if>
       and bwr.reward_type in ('1', '2')
     <if test="params.winningStartTime!=null and params.winningStartTime!=''">
-      and date_format(bwr.winning_time , '%Y-%m-%d') &gt;= date_format(#{params.winningStartTime} , '%Y-%m-%d')
+      and bwr.winning_time  &gt;= str_to_date(#{params.winningStartTime}, '%Y-%m-%d %H:%i:%s')
     </if>
     <if test="params.winningEndTime!=null and params.winningEndTime!=''">
-      and date_format(bwr.winning_time , '%Y-%m-%d') &lt;= date_format(#{params.winningEndTime} , '%Y-%m-%d')
+      and bwr.winning_time &lt;= str_to_date(#{params.winningEndTime}, '%Y-%m-%d %H:%i:%s')
     </if>
     <if test="params.sellerCode!=null and params.sellerCode!=''">
       and bwr.seller_code = #{params.sellerCode}

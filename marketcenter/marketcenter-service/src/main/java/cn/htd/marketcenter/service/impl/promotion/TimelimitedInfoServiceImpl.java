@@ -480,6 +480,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     public ExecuteResult<String> deleteTimelimitedInfo(PromotionValidDTO validDTO) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+        //----- add by jiangkun for 2017活动需求限时购 on 20171030 start -----
+        PromotionInfoDTO promotionInfo = null;
+        //----- add by jiangkun for 2017活动需求限时购 on 20171030 end -----
         try {
             // 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(validDTO);
@@ -488,7 +491,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                         validateResult.getErrorMsg());
             }
-            baseService.deletePromotionInfo(validDTO);
+            promotionInfo = baseService.deletePromotionInfo(validDTO);
             historyDTO.setPromotionId(validDTO.getPromotionId());
             historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                     DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
@@ -497,17 +500,17 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             historyDTO.setCreateId(validDTO.getOperatorId());
             historyDTO.setCreateName(validDTO.getOperatorName());
             promotionStatusHistoryDAO.add(historyDTO);
-
-			// modify by pantao 2017-11-08 start
-			// 剩余库存将于活动结束后的48小时内退还至普通商品库存。
-			// 判断活动如果正在进行，不删redis
-			PromotionInfoDTO promotionInfo = promotionInfoDAO.queryById(validDTO.getPromotionId());
-			if (promotionInfo.getEffectiveTime() != null && (new Date()).before(promotionInfo.getEffectiveTime())) {
-				timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
-				// 更新promotion has_redis_clean
-				promotionInfoDAO.updateCleanedRedisPromotionStatus(promotionInfo);
-			}
-			// modify by pantao 2017-11-08 end
+            //----- modify by jiangkun for 2017活动需求限时购 on 20171030 start -----
+//            timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                    DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionInfo.getPromotionType())) {
+                if (promotionInfo.getEffectiveTime() != null && (new Date()).before(promotionInfo.getEffectiveTime())) {
+                    timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+                }
+            } else {
+                timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+            }
+            //----- modify by jiangkun for 2017活动需求限时购 on 20171030 end -----
             result.setResult("处理成功");
         } catch (MarketCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());

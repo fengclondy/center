@@ -140,11 +140,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
                     }
                 }
                 //更新汇掌柜sptag、上下架状态
-//                int num = list.size()%1000 == 0 ? list.size()%1000 :list.size()%1000+1;
-//                for(int i=0 ;i<num; i++){
-//                    List<Map<String,String>> subList = list.subList()
-                     changeShelves(list);
-//                }
+                changeShelves(list);
 
             }
         } catch (Exception e) {
@@ -169,7 +165,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
         // 1.构造HttpClient的实例
         CloseableHttpClient httpClient = httpClientBuilder.build();
 
-        String url = SysProperties.getProperty("HTDBOSS_ADDRESS") + "/groupBuy/changeGroupBuyFlags.htm";
+        String url = SysProperties.getProperty("HTDBOSS_ADDRESS") + "/groupBuyTask/changeGroupBuyFlags.htm";
 
         // 2.构造PostMethod的实例
         HttpPost httppost = new HttpPost(url);

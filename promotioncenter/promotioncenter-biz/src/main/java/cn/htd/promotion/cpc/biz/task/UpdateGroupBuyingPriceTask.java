@@ -48,6 +48,66 @@ public class UpdateGroupBuyingPriceTask implements IScheduleTaskDealMulti<Groupb
     
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    
+    
+    @Override
+    public Comparator<GroupbuyingInfoResDTO> getComparator() {
+        return new Comparator<GroupbuyingInfoResDTO>() {
+            public int compare(GroupbuyingInfoResDTO o1, GroupbuyingInfoResDTO o2) {
+                Long id1 = o1.getGroupbuyingId();
+                Long id2 = o2.getGroupbuyingId();
+                return id1.compareTo(id2);
+            }
+        };
+    }
+    
+    
+    /**
+     * 根据条件,查询当前调度服务器可处理的任务
+     *
+     * @param taskParameter    任务的自定义参数
+     * @param ownSign          当前环境名称
+     * @param taskQueueNum     当前任务类型的任务队列数量
+     * @param taskQueueList    当前调度服务器,分配到的可处理队列
+     * @param eachFetchDataNum 每次获取数据的数量
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<GroupbuyingInfoResDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
+                                                   List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
+        logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "UpdateGroupBuyingPriceTask-selectTasks",
+                "taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
+                JSONObject.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
+        GroupbuyingInfoCmplReqDTO condition = new GroupbuyingInfoCmplReqDTO();
+        Pager<GroupbuyingInfoCmplReqDTO> pager = null;
+        List<String> taskIdList = new ArrayList<String>();
+        List<GroupbuyingInfoResDTO> groupbuyingDTOList = null;
+        if (eachFetchDataNum > 0) {
+            pager = new Pager<GroupbuyingInfoCmplReqDTO>();
+            pager.setPageOffset(0);
+            pager.setRows(eachFetchDataNum);
+        }
+        try {
+            if (taskQueueList != null && taskQueueList.size() > 0) {
+                for (TaskItemDefine taskItem : taskQueueList) {
+                    taskIdList.add(taskItem.getTaskItemId());
+                }
+                condition.setTaskQueueNum(taskQueueNum);
+                condition.setTaskIdList(taskIdList);
+                groupbuyingDTOList = groupbuyingInfoDAO.queryNeedUpdateGroupbuying4Task(condition, pager);
+            }
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}],异常:[{}]", "UpdateGroupBuyingPriceTask-selectTasks",
+                    ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.info("\n 方法:[{}],出参:[{}]", "UpdateGroupBuyingPriceTask-selectTasks",
+                    JSONObject.toJSONString(groupbuyingDTOList));
+        }
+        return groupbuyingDTOList;
+    }
+
+    
 
     /**
      * 执行给定的任务数组。因为泛型不支持new 数组,只能传递OBJECT[]
@@ -112,59 +172,6 @@ public class UpdateGroupBuyingPriceTask implements IScheduleTaskDealMulti<Groupb
         return result;
     }
 
-    /**
-     * 根据条件,查询当前调度服务器可处理的任务
-     *
-     * @param taskParameter    任务的自定义参数
-     * @param ownSign          当前环境名称
-     * @param taskQueueNum     当前任务类型的任务队列数量
-     * @param taskQueueList    当前调度服务器,分配到的可处理队列
-     * @param eachFetchDataNum 每次获取数据的数量
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public List<GroupbuyingInfoResDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
-                                                   List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
-        logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "UpdateGroupBuyingPriceTask-selectTasks",
-                "taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
-                JSONObject.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);
-        GroupbuyingInfoCmplReqDTO condition = new GroupbuyingInfoCmplReqDTO();
-        Pager<GroupbuyingInfoCmplReqDTO> pager = null;
-        List<String> taskIdList = new ArrayList<String>();
-        List<GroupbuyingInfoResDTO> groupbuyingDTOList = null;
-        if (eachFetchDataNum > 0) {
-            pager = new Pager<GroupbuyingInfoCmplReqDTO>();
-            pager.setPageOffset(0);
-            pager.setRows(eachFetchDataNum);
-        }
-        try {
-            if (taskQueueList != null && taskQueueList.size() > 0) {
-                for (TaskItemDefine taskItem : taskQueueList) {
-                    taskIdList.add(taskItem.getTaskItemId());
-                }
-                condition.setTaskQueueNum(taskQueueNum);
-                condition.setTaskIdList(taskIdList);
-                groupbuyingDTOList = groupbuyingInfoDAO.queryNeedUpdateGroupbuying4Task(condition, pager);
-            }
-        } catch (Exception e) {
-            logger.error("\n 方法:[{}],异常:[{}]", "UpdateGroupBuyingPriceTask-selectTasks",
-                    ExceptionUtils.getStackTraceAsString(e));
-        } finally {
-            logger.info("\n 方法:[{}],出参:[{}]", "UpdateGroupBuyingPriceTask-selectTasks",
-                    JSONObject.toJSONString(groupbuyingDTOList));
-        }
-        return groupbuyingDTOList;
-    }
 
-    @Override
-    public Comparator<GroupbuyingInfoResDTO> getComparator() {
-        return new Comparator<GroupbuyingInfoResDTO>() {
-            public int compare(GroupbuyingInfoResDTO o1, GroupbuyingInfoResDTO o2) {
-                Long id1 = o1.getGroupbuyingId();
-                Long id2 = o2.getGroupbuyingId();
-                return id1.compareTo(id2);
-            }
-        };
-    }
+
 }

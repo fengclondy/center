@@ -41,11 +41,9 @@ public class PromotionRedisLockHandler {
 		try {
 			long nano = System.nanoTime();
 			do {
-				logger.debug("try lock key: " + key);
 				boolean isNoAbsent = stringRedisTemplate.opsForValue().setIfAbsent(key, key);
 				if (isNoAbsent) {
 					stringRedisTemplate.expire(key, DEFAULT_EXPIRE_TIME,TimeUnit.SECONDS);
-					logger.debug("get lock, key: " + key + " , expire in "+ DEFAULT_EXPIRE_TIME + " seconds.");
 					return Boolean.TRUE;
 				} else { // 存在锁
 					if (logger.isDebugEnabled()) {
@@ -70,11 +68,9 @@ public class PromotionRedisLockHandler {
 	public void lock(String key) {
 		try {
 			while (true) {
-				logger.debug("lock key: " + key);
 				boolean isNoAbsent = stringRedisTemplate.opsForValue().setIfAbsent(key, key);
 				if (isNoAbsent) {
 					stringRedisTemplate.expire(key, DEFAULT_EXPIRE_TIME,TimeUnit.SECONDS);
-					logger.debug("get lock, key: " + key + " , expire in " + DEFAULT_EXPIRE_TIME + " seconds.");
 					break;
 				} else {
 					if (logger.isDebugEnabled()) {

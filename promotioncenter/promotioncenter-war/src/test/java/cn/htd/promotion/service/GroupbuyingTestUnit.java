@@ -17,15 +17,22 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.api.GroupbuyingAPI;
+import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
 import cn.htd.promotion.cpc.biz.handle.PromotionGroupbuyingRedisHandle;
+import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
+import cn.htd.promotion.cpc.common.constants.GroupbuyingConstants;
+import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.emums.PromotionConfigureEnum;
 import cn.htd.promotion.cpc.common.emums.ResultCodeEnum;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
@@ -785,5 +792,54 @@ public class GroupbuyingTestUnit {
 			e.printStackTrace();
 		}
 	}
+	
+	
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private GroupbuyingService groupbuyingService;
+    @Resource
+    private GroupbuyingInfoDAO groupbuyingInfoDAO;
+    
+	@Test
+	@Rollback(false) 
+	public void TaskTest() {
+	String messageId = keyGeneratorUtils.generateMessageId();
+        String promotionId ="25171100430046";
+        //计算真实价格
+        Map<String, String> resultMap = groupbuyingService.getGBActorCountAndPriceByPromotionId(promotionId,messageId);
+        String realGroupbuyingPrice = resultMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY);
+        String realActorCount = resultMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY);
+        //保存真实价格
+        if (!StringUtils.isEmpty(realGroupbuyingPrice) && !StringUtils.isEmpty(realActorCount)){
+        	// 1.如果Redis执行失败，数据库不执行；2.如果Redis执行成功，数据库执行失败，下次还会进行1操作
+        	
+        	boolean redisFlag = true;
+        	try {
+          	    String groupbuyingResultKey = RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_RESULT + "_" + promotionId;
+	         	// redis设置真实参团人数
+	      	    stringRedisTemplate.opsForHash().put(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_ACTOR_COUNT, realActorCount);
+	        	// redis设置真实拼团价
+	      	    stringRedisTemplate.opsForHash().put(groupbuyingResultKey, RedisConst.PROMOTION_REDIS_GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE, realGroupbuyingPrice);
+            	
+			} catch (Exception e) {
+				 redisFlag = false;
+				 e.printStackTrace();
+			}
+    
+        	if(redisFlag){//redis设置成功
+                GroupbuyingInfoReqDTO groupbuyingInfoReqDTO = new GroupbuyingInfoReqDTO();
+                groupbuyingInfoReqDTO.setPromotionId(promotionId);
+                groupbuyingInfoReqDTO.setRealActorCount(Integer.valueOf(realActorCount));// 真实参团人数
+                groupbuyingInfoReqDTO.setRealGroupbuyingPrice(new BigDecimal(realGroupbuyingPrice));// 真实拼团价
+                groupbuyingInfoDAO.updateGBActorCountAndPrice(groupbuyingInfoReqDTO);
+        	}
+        }
+        
+        System.out.println("成功.......");
+        
+	}
+	
+	
 
 }

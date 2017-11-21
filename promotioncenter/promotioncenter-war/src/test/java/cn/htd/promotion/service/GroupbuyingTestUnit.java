@@ -477,7 +477,7 @@ public class GroupbuyingTestUnit {
 	public void updateShowStatusByPromotionIdTest(){
     	try{
 			String messageId = "342453251349";
-			String promotionId = "25171430390018";
+			String promotionId = "25171100430046";
 			SinglePromotionInfoReqDTO dto = new SinglePromotionInfoReqDTO();
 			dto.setPromotionId(promotionId);
 			dto.setShowStatus("3");// 审核状态 0：待审核，1：审核通过，2：审核被驳回，3：启用，4：不启用
@@ -762,15 +762,24 @@ public class GroupbuyingTestUnit {
 	@Test
 	public void RedisTest() {
 		try {
-			String key = "test-zzf-key";
+//			String key = "test-zzf-key";
+//
+//			Map<String, String> map = new HashMap<String, String>();
+//			map.put("name", "林寻88");
+//			map.put("age", "228");
+//			map.put("sex", "nam");
+//			map.put("promotionId", "25171100430046");
+//
+//			boolean flag = promotionGroupbuyingRedisHandle.testHash(key, map);
+//			System.out.println(flag);
+			
 
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("name", "林寻");
-			map.put("age", "18");
-			map.put("sex", "nam");
-
-			boolean flag = promotionGroupbuyingRedisHandle.testHash(key, map);
-			System.out.println(flag);
+//			boolean flag2 = promotionGroupbuyingRedisHandle.testStr("25171100430046", "");
+//			System.out.println(flag2);
+			
+			
+			boolean flag3 = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis("25171005280040");
+			System.out.println(flag3);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import net.sf.json.JSON;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -170,6 +171,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("skuCode", skuCode));
         formparams.add(new BasicNameValuePair("sellerCode", sellerCode));
+        logger.info("********************formparams:"+ JSONObject.toJSONString(formparams));
 
         UrlEncodedFormEntity uefEntity;
         try {
@@ -179,6 +181,8 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
 
             // 5.读取内容
             CloseableHttpResponse response = httpClient.execute(httppost);
+            logger.info("********************response:"+ JSONObject.toJSONString(response));
+
             HttpEntity entity = response.getEntity();
             responseMsg = EntityUtils.toString(entity, "UTF-8").trim();
             // 6.处理返回的内容

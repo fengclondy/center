@@ -213,4 +213,17 @@ public class VoteActivityMemberResDTO implements Serializable{
     public void setMemberPictureResDTOList(List<VoteActivityMemberPictureResDTO> memberPictureResDTOList) {
         this.memberPictureResDTOList = memberPictureResDTOList;
     }
+
+	@Override
+	public String toString() {
+		return "VoteActivityMemberResDTO [voteMemberId=" + voteMemberId + ", voteId=" + voteId + ", memberCode="
+				+ memberCode + ", memberName=" + memberName + ", vendorName=" + vendorName + ", contactName="
+				+ contactName + ", contactPhone=" + contactPhone + ", signStatus=" + signStatus + ", auditStatus="
+				+ auditStatus + ", signUpTime=" + signUpTime + ", memberActivityDec=" + memberActivityDec
+				+ ", memberVoteLastTime=" + memberVoteLastTime + ", deleteFlag=" + deleteFlag + ", createId=" + createId
+				+ ", createName=" + createName + ", createTime=" + createTime + ", modifyId=" + modifyId
+				+ ", modifyName=" + modifyName + ", modifyTime=" + modifyTime + ", memberPictureResDTOList="
+				+ memberPictureResDTOList + "]";
+	}
+    
 }

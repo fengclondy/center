@@ -64,6 +64,11 @@ public class VoteActivityMemListReqDTO implements Serializable{
 	public void setVoteId(String voteId) {
 		this.voteId = voteId;
 	}
-	
+	@Override
+	public String toString() {
+		return "VoteActivityMemListReqDTO [voteId=" + voteId + ", sellerName=" + sellerName + ", memberName="
+				+ memberName + ", auditStatus=" + auditStatus + ", signUpStatus=" + signUpStatus + ", start=" + start
+				+ ", pageSize=" + pageSize + "]";
+	}
 	
 }

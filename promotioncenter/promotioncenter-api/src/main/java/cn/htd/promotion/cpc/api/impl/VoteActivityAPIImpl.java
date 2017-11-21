@@ -106,6 +106,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
      * @return
      */
     public ExecuteResult<VoteActivityMemberResDTO> selectByVoteIdAndMemberCode(Long voteId,String memberCode){
+    	logger.info("selectByVoteIdAndMemberCode方法已进入 voteId=" + voteId + ",memberCode=" + memberCode);
         // 返回对象
         ExecuteResult<VoteActivityMemberResDTO> result = new ExecuteResult<VoteActivityMemberResDTO>();
         try{
@@ -130,6 +131,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
             logger.info("\n 方法:[{}],出参:[{}]", "VoteActivityAPI-selectByVoteIdAndMemberCode",
                     JSONObject.toJSONString(result));
         }
+        logger.info("selectByVoteIdAndMemberCode方法已结束 返回结果 result=" + result);
         return result;
 
     }
@@ -317,9 +319,11 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 	 */
 	@Override
 	public ExecuteResult<String> updateVoteActivityMember(Long voteMemberId, String deleteFlag, String auditStatus) {
+		logger.info("updateVoteActivityMember方法已进入 voteMemberId=" + voteMemberId + ",deleteFlag=" + deleteFlag + "auditStatus=" + auditStatus);
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		if (voteMemberId == null) {
 			result.setErrorMessages(Lists.newArrayList("参数值为null"));
+			logger.info("updateVoteActivityMember方法已执行结束 返回结果 result=" + result);
 			return result;
 		}
 		VoteActivityMemberResDTO voteActivityMemberResDTO = new VoteActivityMemberResDTO();
@@ -334,6 +338,7 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 				e.printStackTrace();
 				logger.error("updateVoteActivityMember调用出错，信息{}",e.getMessage());
 				result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+				logger.info("updateVoteActivityMember方法已执行结束 返回结果 result=" + result);
 				return result;
 			}
 		}
@@ -343,9 +348,10 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
 			e.printStackTrace();
 			logger.error("updateVoteActivityMember调用出错，信息{}",e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			logger.info("updateVoteActivityMember方法已执行结束 返回结果 result=" + result);
 			return result;
 		}
-		
+		logger.info("updateVoteActivityMember方法已执行结束 返回结果 result=" + result);
 		return result;
 	}
 

@@ -184,11 +184,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			return  result;
 		}
 		
-		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
-			result.setCode(VenusErrorCodes.E1040001.name());
-			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
-			return  result;
-		}
+//		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
+//			result.setCode(VenusErrorCodes.E1040001.name());
+//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
+//			return  result;
+//		}
 		
 		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
 			result.setCode(VenusErrorCodes.E1040002.name());
@@ -448,11 +448,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			return  result;
 		}
 		
-		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
-			result.setCode(VenusErrorCodes.E1040001.name());
-			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
-			return  result;
-		}
+//		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
+//			result.setCode(VenusErrorCodes.E1040001.name());
+//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
+//			return  result;
+//		}
 		
 		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
 			result.setCode(VenusErrorCodes.E1040002.name());

@@ -209,4 +209,16 @@ public class VoteActivityResDTO implements Serializable{
     public void setVoteRule(String voteRule) {
         this.voteRule = voteRule == null ? null : voteRule.trim();
     }
+
+	@Override
+	public String toString() {
+		return "VoteActivityResDTO [voteId=" + voteId + ", voteName=" + voteName + ", voteTopicPic=" + voteTopicPic
+				+ ", voteSamplePic=" + voteSamplePic + ", voteSotreNumPAccountPDay=" + voteSotreNumPAccountPDay
+				+ ", voteNumPAccountPDayPStore=" + voteNumPAccountPDayPStore + ", voteSignUpStartTime="
+				+ voteSignUpStartTime + ", voteSignUpEndTime=" + voteSignUpEndTime + ", voteStartTime=" + voteStartTime
+				+ ", voteEndTime=" + voteEndTime + ", deleteFlag=" + deleteFlag + ", createId=" + createId
+				+ ", createName=" + createName + ", createTime=" + createTime + ", modifyId=" + modifyId
+				+ ", modifyName=" + modifyName + ", modifyTime=" + modifyTime + ", voteRule=" + voteRule + "]";
+	}
+    
 }

@@ -132,7 +132,19 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 	 * 商家名称
 	 */
 	private String sellerName;
+	/**
+	 * 系统当前时间
+	 */
+	private Long nowDate;
 	
+	public Long getNowDate() {
+		return nowDate;
+	}
+
+	public void setNowDate(Long nowDate) {
+		this.nowDate = nowDate;
+	}
+
 	public int getPurchasePriceFlag() {
 		return purchasePriceFlag;
 	}
@@ -356,6 +368,7 @@ public class TimelimitedInfoDTO extends PromotionAccumulatyDTO implements Serial
 		this.purchasePriceFlag = timelimitedInfo.getPurchasePriceFlag();
 		this.sellerName = timelimitedInfo.getSellerName();
 		this.itemCode = timelimitedInfo.getItemCode();
+		this.nowDate = timelimitedInfo.getNowDate();
 	}
 
 	public HashMap<String, String> getItemStockInfo() {

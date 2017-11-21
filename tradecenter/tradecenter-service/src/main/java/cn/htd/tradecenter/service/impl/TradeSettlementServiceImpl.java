@@ -404,6 +404,7 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 		String endTime = calendarCurrentMonthStr + "-01 00:00:00";
 		tradeOrderSettlementDTO.setStartTime(startTime);
 		tradeOrderSettlementDTO.setEndTime(endTime);
+		tradeOrderSettlementDTO.setSettlementTime(settlementTime);
 		// [end]-------------startTime endTime 的计算------------
 		
 		
@@ -593,6 +594,7 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 		String endTime = calendarCurrentMonthStr + "-01 00:00:00";
 		tradeOrderSettlementDTO.setStartTime(startTime);
 		tradeOrderSettlementDTO.setEndTime(endTime);
+		tradeOrderSettlementDTO.setSettlementTime(settlementTime);
 		// [end]-------------startTime endTime 的计算------------
 		
 		

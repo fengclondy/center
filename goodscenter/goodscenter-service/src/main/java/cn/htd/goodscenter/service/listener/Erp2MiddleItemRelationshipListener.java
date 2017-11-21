@@ -296,6 +296,11 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 
 	private void doAddItemPicture(ItemSpu spu, Item item) {
 		List<ItemSpuPictureDTO> spuPicList=itemSpuPictureMapper.queryBySpuId(spu.getSpuId());
+		
+		if(CollectionUtils.isEmpty(spuPicList)){
+			return;
+		}
+		
 		List<ItemPicture> itemPicList=Lists.newArrayList();
 		ItemPicture itemPic=null;
 		for(ItemSpuPictureDTO spuPic:spuPicList){

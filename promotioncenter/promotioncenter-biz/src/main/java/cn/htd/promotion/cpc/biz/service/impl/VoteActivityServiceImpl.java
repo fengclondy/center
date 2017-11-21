@@ -52,19 +52,22 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 
 	@Override
 	public ExecuteResult<String> saveVoteActivity(VoteActivityResDTO voteActivityResDTO) {
-		
+		logger.info("saveVoteActivity方法已进入 voteActivityResDTO=" + voteActivityResDTO.toString());
 		ExecuteResult<String> result=new ExecuteResult<String>();
 		
 		if(voteActivityResDTO==null){
 			result.setErrorMessages(Lists.newArrayList("voteActivityResDTO为null"));
+			logger.info("saveVoteActivity方法执行正常 已结束 返回结果result=" + result);
 			return result;
 		}
 		ValidateResult va1lidateResult=DTOValidateUtil.validate(voteActivityResDTO);
 		
 		if(!va1lidateResult.isPass()){
 			result.setErrorMessages(Lists.newArrayList(StringUtils.split(va1lidateResult.getErrorMsg(),DTOValidateUtil.ERROR_MSG_SEPERATOR)));
+			logger.info("saveVoteActivity方法执行正常 已结束 返回结果result=" + result);
 			return  result;
 		}
+
 		try{
 			//校验时间先后
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -120,6 +123,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			logger.error("saveVoteActivity方法异常 异常信息=", e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 		}
+		logger.info("saveVoteActivity方法执行正常 已结束 返回结果result=" + result);
 		return result;
 	}
 
@@ -138,6 +142,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 
 	@Override
 	public ExecuteResult<DataGrid<VoteActivityListResDTO>> queryVoteActivityList(Pager page,String voteActName,String actStatus) {
+		logger.info("queryVoteActivityList方法已进入 page=" + page.getPage() + ",voteActNum=" + voteActName + ",actStatus=" + actStatus);
 		ExecuteResult<DataGrid<VoteActivityListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityListResDTO>>();
 		DataGrid<VoteActivityListResDTO> dataGrid=new DataGrid<VoteActivityListResDTO>();
 		Long totalCount=voteActivityDAO.selectVoteActivityTotalCount(voteActName,actStatus);
@@ -196,6 +201,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			dataGrid.setRows(resultList);
 		}
 		result.setResult(dataGrid);
+		logger.info("queryVoteActivityList方法已结束  返回结果result=" + result);
 		return result;
 	}
 	
@@ -231,6 +237,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	@Override
 	public ExecuteResult<DataGrid<VoteActivityMemListResDTO>> queryPagedVoteActivityMemberList(
 			Pager page, VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
+		logger.info("queryPagedVoteActivityMemberList已进入 page=" + page.getPage() + ",voteActivityMemListReqDTO=" + voteActivityMemListReqDTO.toString());
 		ExecuteResult<DataGrid<VoteActivityMemListResDTO>> result=new ExecuteResult<DataGrid<VoteActivityMemListResDTO>>();
 		DataGrid<VoteActivityMemListResDTO> datagrid=new DataGrid<VoteActivityMemListResDTO>();
 		if(page==null||voteActivityMemListReqDTO==null || voteActivityMemListReqDTO.getVoteId() == null){
@@ -249,6 +256,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			logger.error("queryPagedVoteActivityMemberList方法异常 异常信息=", e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 			result.setResult(datagrid);
+			logger.info("queryPagedVoteActivityMemberList已结束 返回结果result=" + result);
 			return result;
 		}
 		
@@ -263,6 +271,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			}
 		}
 		result.setResult(datagrid);
+		logger.info("queryPagedVoteActivityMemberList已结束 返回结果result=" + result);
 		return result;
 	}
 
@@ -289,17 +298,20 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	@Override
 	public ExecuteResult<ImportVoteActivityMemResDTO> importVoteActivityMember(
 			List<VoteActivityMemReqDTO> list) {
+		logger.info("importVoteActivityMember 方法已进入 ");
 		ExecuteResult<ImportVoteActivityMemResDTO> result=new ExecuteResult<ImportVoteActivityMemResDTO>();
 		
 		if(CollectionUtils.isEmpty(list)){
 			result.setCode("1001");
 			result.setErrorMessages(Lists.newArrayList("参数为空"));
+			logger.info("importVoteActivityMember 方法已结束  返回结果result=" + result);
 			return result;
 		}
 		
 		if(list.size()>1000){
 			result.setCode("1002");
 			result.setErrorMessages(Lists.newArrayList("导入记录数过多"));
+			logger.info("importVoteActivityMember 方法已结束  返回结果result=" + result);
 			return result;
 		}
 		
@@ -318,6 +330,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		if (tempList.isEmpty() || tempList.size() == 0) {
 			result.setCode("1003");
 			result.setErrorMessages(Lists.newArrayList("导入数据均不符合规则"));
+			logger.info("importVoteActivityMember 方法已结束  返回结果result=" + result);
 			return result;
 		}
 		List<String> memberCodeList = voteActivityMemberDAO.querySignUpMemberInfoList(voteId);
@@ -386,12 +399,14 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 		importVoteActivityMemResDTO.setFaillist(faillist);
 		importVoteActivityMemResDTO.setUniqueId(generatorUtils.generatePromotionId("6"));
 		result.setResult(importVoteActivityMemResDTO);
+		logger.info("importVoteActivityMember 方法已结束  返回结果result=" + result);
 		return result;
 	}
 
 
 	@Override
 	public ExecuteResult<List<VoteActivityMemListResDTO>> exportVoteActivityMember(VoteActivityMemListReqDTO voteActivityMemListReqDTO) {
+		logger.info("exportVoteActivityMember方法已进入 voteActivityMemListReqDTO=" + voteActivityMemListReqDTO.toString());
 		ExecuteResult<List<VoteActivityMemListResDTO>> result = new ExecuteResult<List<VoteActivityMemListResDTO>>();
 		if(voteActivityMemListReqDTO==null || voteActivityMemListReqDTO.getVoteId() == null){
 			result.setErrorMessages(Lists.newArrayList("voteActivityMemListReqDTO参数为null或活动ID为null"));
@@ -408,6 +423,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 		}
 		result.setResult(resultList);
+		logger.info("exportVoteActivityMember方法已结束 返回结果 result=" + result);
 		return result;
 	}
 
@@ -418,6 +434,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 	 */
 	@Override
 	public ExecuteResult<String> deleteVoteActivity(Long voteId) {
+		logger.info("deleteVoteActivity 方法已进入 voteId=" + voteId);
 		VoteActivityResDTO voteActivityResDTO = new VoteActivityResDTO();
 		voteActivityResDTO.setVoteId(voteId);
 		//0 未删除 1已删除
@@ -430,53 +447,63 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			logger.error("deleteVoteActivity方法异常 异常信息=", e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 		}
+		logger.info("deleteVoteActivity 方法已执行结束 返回结果result=" + result);
 		return result;
 	}
 
 
 	@Override
 	public ExecuteResult<String> updateVoteActivity(VoteActivityResDTO voteActivityResDTO) {
+		logger.info("updateVoteActivity 方法已进入 voteActivityResDTO=" + voteActivityResDTO.toString());
 		ExecuteResult<String> result=new ExecuteResult<String>();
 		
 		if(voteActivityResDTO==null){
 			result.setErrorMessages(Lists.newArrayList("voteActivityResDTO为null"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return result;
 		}
 		if (voteActivityResDTO.getVoteId() == null) {
 			result.setErrorMessages(Lists.newArrayList("voteId为null"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return result;
 		}
 		ValidateResult va1lidateResult=DTOValidateUtil.validate(voteActivityResDTO);
 		
 		if(!va1lidateResult.isPass()){
 			result.setErrorMessages(Lists.newArrayList(StringUtils.split(va1lidateResult.getErrorMsg(),DTOValidateUtil.ERROR_MSG_SEPERATOR)));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		//校验时间先后
 		
 		if(voteActivityResDTO.getVoteEndTime().before(voteActivityResDTO.getVoteStartTime())){
 			result.setErrorMessages(Lists.newArrayList("投票开始时间不能晚于投票结束时间"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		
 		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteSignUpStartTime())){
 			result.setErrorMessages(Lists.newArrayList("报名开始时间不能晚于报名结束时间"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		
 		if(voteActivityResDTO.getVoteSignUpEndTime().before(voteActivityResDTO.getVoteStartTime())){
 			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票开始时间"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		
 		if(voteActivityResDTO.getVoteSignUpStartTime().after(voteActivityResDTO.getVoteStartTime())){
 			result.setErrorMessages(Lists.newArrayList("报名开始时间不能早于投票开始时间"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		
 		
 		if(voteActivityResDTO.getVoteSignUpEndTime().after(voteActivityResDTO.getVoteEndTime())){
 			result.setErrorMessages(Lists.newArrayList("报名结束时间不能早于投票结束时间"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		
@@ -489,12 +516,14 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			e.printStackTrace();
 			logger.error("updateVoteActivity方法异常 异常信息=", e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return result;
 		}
 			
 		
 		if(voceAcitvityNum > 0){
 			result.setErrorMessages(Lists.newArrayList("同一时间段内，不可有多个投票活动，请确认！"));
+			logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 			return  result;
 		}
 		
@@ -510,6 +539,7 @@ public class VoteActivityServiceImpl implements VoteActivityService{
 			logger.error("updateVoteActivity方法异常 异常信息=", e.getMessage());
 			result.setErrorMessages(Lists.newArrayList(e.getMessage()));
 		}
+		logger.info("updateVoteActivity 方法已执行结束  返回结果 result=" + result);
 		return result;
 	}
 }

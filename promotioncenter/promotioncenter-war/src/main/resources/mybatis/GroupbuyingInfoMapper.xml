@@ -781,7 +781,7 @@
     from groupbuying_info 
     where has_redis_clean = 0 and (delete_flag != 0 or <![CDATA[end_time < sysdate()-1 ]]> )
       <if test="entity != null">
-          and mod(promotion_id, #{entity.taskQueueNum}) in
+          and mod(groupbuying_id, #{entity.taskQueueNum}) in
           <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
               #{taskId}
           </foreach>
@@ -810,7 +810,7 @@
     and  <![CDATA[pi.invalid_time <= DATE_SUB(SYSDATE(),INTERVAL 10 DAY_MINUTE) ]]>
 
     <if test="entity != null">
-      and mod(gi.promotion_id, #{entity.taskQueueNum}) in
+      and mod(gi.groupbuying_id, #{entity.taskQueueNum}) in
       <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
         #{taskId} 
       </foreach>

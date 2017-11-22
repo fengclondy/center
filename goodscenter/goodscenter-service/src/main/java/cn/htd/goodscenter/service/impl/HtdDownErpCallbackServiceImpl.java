@@ -121,6 +121,8 @@ public class HtdDownErpCallbackServiceImpl implements HtdDownErpCallbackService{
 		            if(CollectionUtils.isNotEmpty(picList)){
 		            	 itemPictureDAO.updateDeleteFlagByItemId(dbItem.getItemId());
 				         itemPictureDAO.batchInsert(picList);
+		            }else{
+		            	itemPictureDAO.updateDeleteFlagByItemId(dbItem.getItemId());
 		            }
 		            //同步描述
 		            ItemDescribe describe=itemDraftDescribeMapper.selectByItemId(dbItem.getItemId());

@@ -100,6 +100,26 @@ public class MarketCenterRedisDB {
 	}
 
 	/**
+	 * 从Redis中设定的key对象
+	 *
+	 * @param keys
+	 * @return
+	 */
+	public List<String> mget(String[] keys) {
+		List<String> valueList = null;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			valueList = jedis.mget(keys);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-mget", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+		}
+		return valueList;
+	}
+
+	/**
 	 * 根据key向redis中保存value
 	 * 
 	 * @param key
@@ -237,7 +257,7 @@ public class MarketCenterRedisDB {
 			jedis = getResource();
 			ret = jedis.hsetnx(key, field, value);
 		} catch (Exception e) {
-			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHash", getStackTraceAsString(e));
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-setHashNx", getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
 		}
@@ -289,6 +309,7 @@ public class MarketCenterRedisDB {
 		}
 		return valueList;
 	}
+
 	/**
 	 * 从Redis中设定hash对象
 	 * 
@@ -310,7 +331,26 @@ public class MarketCenterRedisDB {
 
 	/**
 	 * 从Redis中设定hash对象
-	 * 
+	 *
+	 * @param key
+	 * @param fields
+	 * @return
+	 */
+	public void delHash(String key, String[] fields) {
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			jedis.hdel(key, fields);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-delHash", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+		}
+	}
+
+	/**
+	 * 从Redis中设定hash对象
+	 *
 	 * @param key
 	 * @param field
 	 * @return
@@ -401,6 +441,26 @@ public class MarketCenterRedisDB {
 		} finally {
 			releaseResource(jedis);
 		}
+	}
+    /**
+     * 从redis对列里查询指定数量的数组
+     * @param key
+     * @param start
+     * @param end
+     */
+	public List<String> lrange(String key, long start, long end) {
+		Jedis jedis = null;
+		List<String> value = null;
+		try {
+			jedis = getResource();
+			value = jedis.lrange(key, start, end);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-lrange",
+					getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+		}
+		return value;
 	}
 
 	/**

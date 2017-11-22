@@ -379,4 +379,12 @@ public interface MemberBaseInfoService {
 	public ExecuteResult<MemberDetailInfo> getMemberDetailByIdForLogin(Long cusCompanyId);
 
 	public ExecuteResult<MemberDetailInfo> getMemberDetailBySellerIdForLogin(Long curBelongSellerId);
+	
+	/**
+	 * 查询当前会员的公司信息
+	 * 
+	 * @return
+	 */
+	public ExecuteResult<MemberBaseInfoDTO> queryMemberCompanyInfo(String memberCode);
+	
 }

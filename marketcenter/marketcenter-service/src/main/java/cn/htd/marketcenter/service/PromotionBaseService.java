@@ -1,22 +1,27 @@
 package cn.htd.marketcenter.service;
 
+import java.util.List;
+
 import cn.htd.marketcenter.common.exception.MarketCenterBusinessException;
 import cn.htd.marketcenter.domain.BuyerCheckInfo;
 import cn.htd.marketcenter.dto.BuyerInfoDTO;
 import cn.htd.marketcenter.dto.PromotionAccumulatyDTO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
+import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.PromotionValidDTO;
 import cn.htd.membercenter.dto.MemberGroupDTO;
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
 
 public interface PromotionBaseService {
     /**
      * 删除促销活动
      *
      * @param validDTO
+     * @return
      * @throws MarketCenterBusinessException
      * @throws Exception
      */
-    public void deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception;
+    public PromotionInfoDTO deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception;
 
     /**
      * 插入促销活动表
@@ -132,6 +137,7 @@ public interface PromotionBaseService {
     public MemberGroupDTO getBuyerGroupRelationship(String messageId, BuyerInfoDTO buyerInfo);
 
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+
     /**
      * 删除促销活动中无效的数据
      *
@@ -160,4 +166,30 @@ public interface PromotionBaseService {
      */
     public void deleteCategoryUselessInfo(PromotionInfoDTO promotionInfo);
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 校验卖家规则是否是取得归属平台信息
+     *
+     * @param sellerRule
+     * @return
+     */
+    public boolean isBelongSellerRule(PromotionSellerRuleDTO sellerRule);
+
+    /**
+     * 取得会员归属关系信息
+     *
+     * @param buyerCode
+     * @return
+     */
+    public SellerBelongRelationDTO getBuyerBelongRelationship(String buyerCode);
+
+    /**
+     * 取得会员归属关系信息
+     *
+     * @param buyerCodeList
+     * @return
+     */
+    public List<SellerBelongRelationDTO> getBuyerBelongRelationship(List<String> buyerCodeList);
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+
 }

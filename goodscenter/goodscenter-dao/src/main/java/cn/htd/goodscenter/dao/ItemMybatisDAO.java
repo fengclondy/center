@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.goodscenter.domain.Item;
@@ -346,5 +347,13 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	PreSaleProdQueryDTO queryPreSaleItemInfo(@Param("skuCode") String skuCode);
 
 	void updateItemModifiedByItemId(Long itemId);
+	
+	public ItemQueryOutDTO querySellerCenterItem(@Param("entity") ItemQueryInDTO itemInDTO);
+	
+	public List<ItemQueryOutDTO> querySellerCenterItemList(@Param("entity") ItemQueryInDTO itemInDTO);
+	
+	public List<Item> queryItemBySellerId(@Param("sellerId") String sellerId);
+
+	public List<Item> queryItemInfo(@Param("itemName")String itemName,@Param("sellerId")Long sellerId);
 
 }

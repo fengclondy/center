@@ -37,4 +37,6 @@ public interface ItemPictureDAO extends BaseDAO<ItemPicture> {
 
 
 	List<ItemPicture> selectAllJdPic();
+	
+	List<ItemPicture> queryItemPicsFirst(@Param("itemId") Long itemId);
 }

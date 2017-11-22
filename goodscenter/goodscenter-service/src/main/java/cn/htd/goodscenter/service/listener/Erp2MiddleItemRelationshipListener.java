@@ -21,7 +21,6 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import cn.htd.basecenter.enums.ErpStatusEnum;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.middleware.MiddlewareInterfaceConstant;
 import cn.htd.common.middleware.MiddlewareInterfaceUtil;
@@ -148,7 +147,7 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 				count=itemMybatisDAO.queryItemCountBySpuIdAndSellerId(spu.getSpuId(), sellerId);
 			}
 			if(count==null||count<=0L){
-				logger.error("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand 数据库中没有该商品关系");
+				logger.error("Erp2MiddleItemRelationshipListener::doAddShopCategoryAndBrand  数据库中没有该商品关系");
 				//新建一个item 
 				Item item = doAddNewItem(itemAndSellerRelationship, spu,sellerId);
 				
@@ -275,11 +274,6 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 			item.setTaxRate(spu.getTaxRate());
 		}
 		
-		if(StringUtils.isNotEmpty(spu.getErpCode())){
-			item.setErpCode(spu.getErpCode());
-			item.setErpStatus(ErpStatusEnum.SUCCESS.getValue());
-		}
-		
 		item.setSellerId(sellerId);
 		
 		ExecuteResult<ShopDTO> shopResult = shopExportService.queryBySellerId(sellerId);
@@ -302,6 +296,11 @@ public class Erp2MiddleItemRelationshipListener implements MessageListener{
 
 	private void doAddItemPicture(ItemSpu spu, Item item) {
 		List<ItemSpuPictureDTO> spuPicList=itemSpuPictureMapper.queryBySpuId(spu.getSpuId());
+		
+		if(CollectionUtils.isEmpty(spuPicList)){
+			return;
+		}
+		
 		List<ItemPicture> itemPicList=Lists.newArrayList();
 		ItemPicture itemPic=null;
 		for(ItemSpuPictureDTO spuPic:spuPicList){

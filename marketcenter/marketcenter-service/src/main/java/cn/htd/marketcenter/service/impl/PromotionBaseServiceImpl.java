@@ -1,6 +1,7 @@
 package cn.htd.marketcenter.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,8 @@ import cn.htd.marketcenter.service.PromotionBuyerRuleDefineService;
 import cn.htd.marketcenter.service.PromotionCategoryItemRuleDefineService;
 import cn.htd.marketcenter.service.PromotionSellerRuleDefineService;
 import cn.htd.membercenter.dto.MemberGroupDTO;
+import cn.htd.membercenter.dto.SellerBelongRelationDTO;
+import cn.htd.membercenter.service.BelongRelationshipService;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberGroupService;
 import com.alibaba.fastjson.JSON;
@@ -109,14 +112,18 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
     @Resource
     private MemberBaseInfoService memberBaseInfoService;
 
+    @Resource
+    private BelongRelationshipService belongRelationshipService;
+
     /**
      * 删除促销活动
      *
      * @param validDTO
+     * @return
      * @throws MarketCenterBusinessException
      * @throws Exception
      */
-    public void deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception {
+    public PromotionInfoDTO deletePromotionInfo(PromotionValidDTO validDTO) throws MarketCenterBusinessException, Exception {
         PromotionInfoDTO promotionInfo = null;
         try {
             // 根据活动ID获取活动信息
@@ -128,7 +135,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             if (dictionary
                     .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE)
                     .equals(promotionInfo.getStatus())) {
-                return;
+                return promotionInfo;
             }
             if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
                     DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionInfo.getShowStatus())) {
@@ -151,6 +158,7 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         } catch (Exception e) {
             throw e;
         }
+        return promotionInfo;
     }
 
     /**
@@ -232,6 +240,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         insertPromotionCategoryItemRule(promotionInfo);
         vipFlg = getPromotionVipFlag(promotionInfo);
         promotionInfo.setIsVip(vipFlg);
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+        if (isBelongSellerRule(promotionInfo.getSellerRuleDTO())) {
+            promotionInfo.setPromotionProviderType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE,
+                            DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP));
+        }
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
         promotionInfoDAO.add(promotionInfo);
         return promotionInfo;
     }
@@ -702,7 +717,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      */
     public PromotionInfoDTO updatePromotionInfo(PromotionInfoDTO promotionInfo)
             throws MarketCenterBusinessException, Exception {
-        String promotionType = "";
         String promotionId = "";
         List<? extends PromotionAccumulatyDTO> promotionAccumulatyList = null;
         PromotionAccumulatyDTO accumulatyDTO = null;
@@ -714,7 +728,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动参数不能为空");
         }
         promotionId = promotionInfo.getPromotionId();
-        promotionType = promotionInfo.getPromotionType();
         promotionAccumulatyList = promotionInfo.getPromotionAccumulatyList();
         if (promotionAccumulatyList == null || promotionAccumulatyList.isEmpty()) {
             throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "促销活动层级不能为空");
@@ -766,6 +779,13 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         updatePromotionCategoryItemRule(promotionInfo);
         vipFlg = getPromotionVipFlag(promotionInfo);
         promotionInfo.setIsVip(vipFlg);
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+        if (isBelongSellerRule(promotionInfo.getSellerRuleDTO())) {
+            promotionInfo.setPromotionProviderType(dictionary
+                    .getValueByCode(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE,
+                            DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP));
+        }
+        //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
         promotionInfoDAO.update(promotionInfo);
         return promotionInfo;
     }
@@ -1097,7 +1117,6 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
      * @param promotionInfo
      */
     public void deletePromotionUselessInfo(PromotionInfoDTO promotionInfo) {
-
         promotionInfo.setVerifierId(null);
         promotionInfo.setVerifierName(null);
         promotionInfo.setVerifyTime(null);
@@ -1105,6 +1124,9 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
         promotionInfo.setBuyerRuleId(null);
         promotionInfo.setSellerRuleId(null);
         promotionInfo.setCategoryItemRuleId(null);
+        promotionInfo.setBuyerRuleDesc(null);
+        promotionInfo.setSellerRuleDesc(null);
+        promotionInfo.setCategoryItemRuleDesc(null);
         promotionInfo.setPromotionStatusHistoryList(null);
     }
     /**
@@ -1211,5 +1233,68 @@ public class PromotionBaseServiceImpl implements PromotionBaseService {
             }
         }
     }
+
+    /**
+     * 校验卖家规则是否是取得归属平台信息
+     *
+     * @param sellerRule
+     * @return
+     */
+    public boolean isBelongSellerRule(PromotionSellerRuleDTO sellerRule) {
+        String sellerType = "";
+        if (sellerRule == null) {
+            return false;
+        }
+        if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_RULE,
+                DictionaryConst.OPT_PROMOTION_SELLER_RULE_APPIONT).equals(sellerRule.getRuleTargetType())) {
+            sellerType = sellerRule.getTargetSellerType();
+            if (StringUtils.isEmpty(sellerType)) {
+                return false;
+            }
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_SELLER_TYPE,
+                    DictionaryConst.OPT_PROMOTION_SELLER_TYPE_HTD_BELONG).equals(sellerType)) {
+                return true;
+            }
+        }
+        return false;
+    }
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 取得会员归属关系信息
+     *
+     * @param buyerCode
+     * @return
+     */
+    public SellerBelongRelationDTO getBuyerBelongRelationship(String buyerCode) {
+        List<String> buyerCodeList = new ArrayList<String>(Arrays.asList(buyerCode));
+        List<SellerBelongRelationDTO> belongRelationList = null;
+        belongRelationList = getBuyerBelongRelationship(buyerCodeList);
+        return belongRelationList.get(0);
+    }
+
+    /**
+     * 取得会员归属关系信息
+     *
+     * @param buyerCodeList
+     * @return
+     */
+    public List<SellerBelongRelationDTO> getBuyerBelongRelationship(List<String> buyerCodeList) {
+
+        ExecuteResult<List<SellerBelongRelationDTO>> belongRelationResult = null;
+        List<SellerBelongRelationDTO> belongRelationList = null;
+
+        belongRelationResult = belongRelationshipService.queryBelongRelationListByMemberCodeList(buyerCodeList);
+        if (!belongRelationResult.isSuccess()) {
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                    StringUtils.join(belongRelationResult.getErrorMessages(), ","));
+        }
+        belongRelationList = belongRelationResult.getResult();
+        if (belongRelationList == null || belongRelationList.isEmpty()) {
+            throw new MarketCenterBusinessException(MarketCenterCodeConst.COUPON_GET_BELONG_SELLER_ERROR,
+                    "没有取得会员归属平台公司信息");
+        }
+        return belongRelationList;
+    }
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 }

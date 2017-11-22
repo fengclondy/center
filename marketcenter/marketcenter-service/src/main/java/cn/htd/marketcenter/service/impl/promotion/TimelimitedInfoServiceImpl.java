@@ -68,9 +68,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
             datagrid = timelimitedRedisHandle
-                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.NO.getValue()), "", page);
+                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.NO.getValue()), "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -87,9 +88,10 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             Pager<TimelimitedInfoDTO> page) {
         ExecuteResult<DataGrid<TimelimitedMallInfoDTO>> result = new ExecuteResult<DataGrid<TimelimitedMallInfoDTO>>();
         DataGrid<TimelimitedMallInfoDTO> datagrid = null;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
         try {
             datagrid = timelimitedRedisHandle
-                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.YES.getValue()), "", page);
+                    .getRedisTimelimitedInfoList(String.valueOf(YesNoEnum.YES.getValue()), "", page,promotionType);
             result.setResult(datagrid);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -106,12 +108,19 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
         List<TimelimitedInfoDTO> tmpTimelimitedDTOList = null;
         List<String> skuCodeList = new ArrayList<String>();
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         try {
             if (StringUtils.isEmpty(skuCode)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            tmpTimelimitedDTOList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start ----
+//            tmpTimelimitedDTOList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
+            tmpTimelimitedDTOList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList, promotionType);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
             if (tmpTimelimitedDTOList == null || tmpTimelimitedDTOList.isEmpty()) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.SKU_NO_TIMELIMITED, "该商品没有参加秒杀活动");
             }
@@ -133,12 +142,14 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         List<String> promotionIdList = null;
         TimelimitedInfoDTO timelimitedInfoDTO = null;
         int allCount = 0;
+        String promotionType = dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+
         try {
             if (StringUtils.isEmpty(skuCode)) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "商品编码不能为空");
             }
             skuCodeList.add(skuCode);
-            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true);
+            promotionIdList = timelimitedRedisHandle.getRedisTimelimitedIndex("", skuCodeList, "", true, promotionType);
             if (promotionIdList != null && !promotionIdList.isEmpty()) {
                 for (String promotionId : promotionIdList) {
                     try {
@@ -271,7 +282,6 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         ExecuteResult<TimelimitedInfoDTO> result = new ExecuteResult<TimelimitedInfoDTO>();
         PromotionAccumulatyDTO accuDTO = null;
         TimelimitedInfoDTO timelimitedInfoDTO = null;
-        TimelimitedResultDTO timelimitedResultDTO = null;
         List<PromotionStatusHistoryDTO> historyList = null;
         try {
             accuDTO = baseService.querySingleAccumulatyPromotionInfo(promotionId);
@@ -282,9 +292,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             }
             timelimitedInfoDTO.setPromotionAccumulaty(accuDTO);
             // 获取秒杀活动结果信息
-            timelimitedResultDTO =
-                    timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO.getPromotionId());
-            timelimitedInfoDTO.setTimelimitedResult(timelimitedResultDTO);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            timelimitedResultDTO =
+//                    timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO.getPromotionId());
+//            timelimitedInfoDTO.setTimelimitedResult(timelimitedResultDTO);
+            timelimitedRedisHandle.getRedisTimelimitedResult(timelimitedInfoDTO);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             historyList = promotionStatusHistoryDAO.queryByPromotionId(promotionId);
             timelimitedInfoDTO.setPromotionStatusHistoryList(historyList);
             result.setResult(timelimitedInfoDTO);
@@ -356,9 +369,12 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
         TimelimitedCheckInfo condition = new TimelimitedCheckInfo();
         PromotionInfoDTO promotionInfo = null;
         String errorMsg = "";
-
-        condition.setPromotionType(dictionary
-                .getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
+        List<String> promotionTypeList = new ArrayList<String>();
+        String  promotionTypePurchase= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        String  promotionTypeTimelited= dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE, DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED);
+        promotionTypeList.add(promotionTypePurchase);
+        promotionTypeList.add(promotionTypeTimelited);
+        condition.setPromotionTypeList(promotionTypeList);
         condition.setDeleteStatus(dictionary
                 .getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS, DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
         condition.setSkuCode(timelimitedInfo.getSkuCode());
@@ -369,7 +385,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             promotionInfo = promotionList.get(0);
             errorMsg = promotionInfo.getPromotionName();
             throw new MarketCenterBusinessException(MarketCenterCodeConst.TIMELIMITED_DURING_REPEAT,
-                    "和 " + errorMsg + " 秒杀活动的商品重复");
+                    "和 " + errorMsg + " 促销活动的商品重复");
         } else {
             if (StringUtils.isNotBlank(timelimitedInfo.getPromotionProviderSellerCode())) {
                 promotionList = promotionInfoDAO
@@ -464,6 +480,9 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
     public ExecuteResult<String> deleteTimelimitedInfo(PromotionValidDTO validDTO) {
         ExecuteResult<String> result = new ExecuteResult<String>();
         PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+        //----- add by jiangkun for 2017活动需求限时购 on 20171030 start -----
+        PromotionInfoDTO promotionInfo = null;
+        //----- add by jiangkun for 2017活动需求限时购 on 20171030 end -----
         try {
             // 输入DTO的验证
             ValidateResult validateResult = ValidationUtils.validateEntity(validDTO);
@@ -472,7 +491,7 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR,
                         validateResult.getErrorMsg());
             }
-            baseService.deletePromotionInfo(validDTO);
+            promotionInfo = baseService.deletePromotionInfo(validDTO);
             historyDTO.setPromotionId(validDTO.getPromotionId());
             historyDTO.setPromotionStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
                     DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
@@ -481,7 +500,17 @@ public class TimelimitedInfoServiceImpl implements TimelimitedInfoService {
             historyDTO.setCreateId(validDTO.getOperatorId());
             historyDTO.setCreateName(validDTO.getOperatorName());
             promotionStatusHistoryDAO.add(historyDTO);
-            timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+            //----- modify by jiangkun for 2017活动需求限时购 on 20171030 start -----
+//            timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+            if (dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                    DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT).equals(promotionInfo.getPromotionType())) {
+                if (promotionInfo.getEffectiveTime() != null && (new Date()).before(promotionInfo.getEffectiveTime())) {
+                    timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+                }
+            } else {
+                timelimitedRedisHandle.deleteRedisTimelimitedInfo(validDTO.getPromotionId());
+            }
+            //----- modify by jiangkun for 2017活动需求限时购 on 20171030 end -----
             result.setResult("处理成功");
         } catch (MarketCenterBusinessException mcbe) {
             result.setCode(mcbe.getCode());

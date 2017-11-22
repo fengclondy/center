@@ -164,5 +164,13 @@ public interface ItemSkuDAO extends BaseDAO<ItemSku> {
 	
 	
 	VenusOrderImportItemOutDTO queryVenusOrderImportItemInfo(@Param("itemCode")  String itemCode);
+	
+	/**
+	 * 限时购 - 根据itemCode 查询sku相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	List<VenusItemSkuOutDTO> selectItemSkuByItemId(@Param("itemId") Long itemId);
 
+    List<ItemSkuPicture> queryItemSKUPicsFirst(@Param("itemId") Long itemId);
 }

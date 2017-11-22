@@ -76,6 +76,7 @@ public class MethodAccessLogInterceptor implements MethodInterceptor, AfterRetur
 	 */
 	private static String formatParamResult(String result) {
 		int len = result.length();
-		return len > MAX_LENGTH ? result.substring(0, MAX_LENGTH) + " ..." : result;
+//		return len > MAX_LENGTH ? result.substring(0, MAX_LENGTH) + " ..." : result;
+        return result;
 	}
 }

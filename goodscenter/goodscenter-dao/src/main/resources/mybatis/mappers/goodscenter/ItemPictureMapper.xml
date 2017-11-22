@@ -217,4 +217,11 @@
        i.product_channel_code = '3010'
        and i.item_id = p.item_id
 	</select>
+	
+   <select id="queryItemPicsFirst" resultMap="itemPictureMapper">
+		select *
+		from 
+		item_picture t 
+		where t.item_id=#{itemId} AND picture_status = 1  and is_first=1 and delete_flag=0
+	</select>
 </mapper>

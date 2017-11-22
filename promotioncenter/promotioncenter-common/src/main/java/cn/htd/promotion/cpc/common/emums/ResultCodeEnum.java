@@ -60,6 +60,16 @@ public enum ResultCodeEnum {
     LOTTERY_MEMBER_NO_VALIDATE_FAIL("26221","前台传入的和从汇邻查出的不是同一个粉丝号"),
     LOTTERY_ORDER_NOT_IN_EFFECTIVE_DATE("26222","货到付款的下单时间或者在线支付的支付时间不在活动有效期之内"),
     LOTTERY_ORDER_WRONGFUL("26223","抽奖订单数据不合法"),
+
+    // 投票活动错误码
+    VOTE_ACTIVITY_NOT_EXIST("26301", "投票活动不存在"),
+    VOTE_ACTIVITY_NOT_EXIST_MEMBER("26302", "投票活动不存在该会员店报名信息"),
+    OTE_ACTIVITY_HAVA_NO_VOTE_ACTIVITY("26303", "当前没有投票活动"),
+    OTE_ACTIVITY_MEMBER_NOT_SIGN_UP("26304", "会员店未报名"),
+    OTE_ACTIVITY_MEMBER_NOT_AUDIT_PASSED("26305", "会员店未审核通过"),
+    OTE_ACTIVITY_NOT_MEET_VOTE_STORE_NUM("26306", "您今天已经达到每日可投票门店数上限，明天再来吧！"),
+    OTE_ACTIVITY_NOT_MEET_VOTE_NUM_PER_STORE("26307", "您今天已经投过我了，谢谢您！"),
+    OTE_ACTIVITY_INPUT_PARAM_IS_NULL("26308", "必填参数为空")
     ;
 
     private ResultCodeEnum(String code, String msg) {

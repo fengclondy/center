@@ -199,6 +199,21 @@ public class OrderItemInfoDTO implements Serializable {
 	 * ERP一级类目编码
 	 */
 	private String erpFirstCategoryCode;
+	
+	/**
+	 * 是否是限时购商品 0：不是，1：是
+	 */
+	private int isLimitedTimePurchase;
+
+	/**
+	 * 促销活动类型 1：优惠券，2:秒杀，3:限时购
+	 */
+	private String promotionType;
+
+	/**
+	 * 促销活动编码
+	 */
+	private String promotionId;
 	/**
 	 * 订单扩展字段列表
 	 */
@@ -578,6 +593,42 @@ public class OrderItemInfoDTO implements Serializable {
 
 	public void setTimelimitedInfo(TimelimitedInfoDTO timelimitedInfo) {
 		this.timelimitedInfo = timelimitedInfo;
+	}
+	
+	public int getIsLimitedTimePurchase() {
+		return isLimitedTimePurchase;
+	}
+
+	public void setIsLimitedTimePurchase(int isLimitedTimePurchase) {
+		this.isLimitedTimePurchase = isLimitedTimePurchase;
+	}
+
+	public String getPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(String promotionType) {
+		this.promotionType = promotionType;
+	}
+
+	public String getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
+	}
+
+	public void setGoodsTotal(BigDecimal goodsTotal) {
+		this.goodsTotal = goodsTotal;
+	}
+
+	public void setTotalDiscountAmount(BigDecimal totalDiscountAmount) {
+		this.totalDiscountAmount = totalDiscountAmount;
+	}
+
+	public void setOrderItemTotal(BigDecimal orderItemTotal) {
+		this.orderItemTotal = orderItemTotal;
 	}
 
 	public void initBeforeCalculateCoupon(String sellerCode) {

@@ -14,6 +14,7 @@
     <result column="coupon_provider_type" property="couponProviderType" jdbcType="VARCHAR" />
     <result column="coupon_type" property="couponType" jdbcType="VARCHAR" />
     <result column="coupon_discount" property="couponDiscount" jdbcType="DECIMAL" />
+    <result column="promotion_type" property="promotionType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id,
@@ -27,7 +28,8 @@
 	buyer_coupon_code,
 	coupon_provider_type,
 	coupon_type,
-	coupon_discount
+	coupon_discount,
+	promotion_type
   </sql>
   <select id="queryItemDiscountByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 

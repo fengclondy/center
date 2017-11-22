@@ -240,6 +240,7 @@ public class ManDaoSmsClient extends BaseSmsClient {
 					result = matcher.group(1);
 				}
 			}
+			logger.info("【漫道短信】发送结果：" + result);
 		} catch (Exception e) {
 			throw e;
 		} finally {

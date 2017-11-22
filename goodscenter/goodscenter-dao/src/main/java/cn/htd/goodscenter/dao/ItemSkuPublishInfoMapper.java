@@ -79,4 +79,6 @@ public interface ItemSkuPublishInfoMapper {
     void updateVisibleStateByPk(Map paramMap);
 
     QueryItemStockDetailOutDTO queryItemStockDetailInDTO(@Param("param")QueryItemStockDetailInDTO queryItemStockDetailInDTO );
+
+	ItemSkuPublishInfo queryMobileExternalPublishInfoBySkuId(@Param("skuIds") List<String> skuIds);
 }

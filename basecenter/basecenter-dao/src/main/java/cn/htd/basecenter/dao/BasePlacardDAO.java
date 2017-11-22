@@ -23,7 +23,7 @@ public interface BasePlacardDAO extends BaseDAO<BasePlacard> {
 	 * 查询会员所有公告列表
 	 * 
 	 * @param placardCondition
-	 * @param pager
+	 * @param page
 	 * @return
 	 */
 	public List<BasePlacard> getAllPlacardList(@Param("entity") PlacardCondition placardCondition,
@@ -41,7 +41,7 @@ public interface BasePlacardDAO extends BaseDAO<BasePlacard> {
 	 * 查询会员平台公告列表
 	 * 
 	 * @param placardCondition
-	 * @param pager
+	 * @param page
 	 * @return
 	 */
 	public List<BasePlacard> getPlatformPlacardList(@Param("entity") PlacardCondition placardCondition,
@@ -59,7 +59,7 @@ public interface BasePlacardDAO extends BaseDAO<BasePlacard> {
 	 * 查询会员商家公告列表
 	 * 
 	 * @param placardCondition
-	 * @param pager
+	 * @param page
 	 * @return
 	 */
 	public List<BasePlacard> getSellerPlacardList(@Param("entity") PlacardCondition placardCondition,

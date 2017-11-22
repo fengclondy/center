@@ -94,7 +94,7 @@ public class JDCreateOrderTask implements IScheduleTaskDealMulti<JDOrderInfoDMO>
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用确认预占库存订单(京东确认订单)接口方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用确认预占库存订单(京东确认订单)接口方法时候发生异常:{}","", w.toString());
 		}finally{
 			
 		}
@@ -113,7 +113,7 @@ public class JDCreateOrderTask implements IScheduleTaskDealMulti<JDOrderInfoDMO>
 			result = false;
 			StringWriter w = new StringWriter();
 	        e.printStackTrace(new PrintWriter(w));
-	        LOGGER.error("京东确认预占库存订单(京东确认订单)接口-调用execute方法时候发生异常"+ w.toString());
+	        LOGGER.error("MessageId:{} 京东确认预占库存订单(京东确认订单)接口-调用execute方法时候发生异常:{}","", w.toString());
 		} finally {
 		}
 		return result;

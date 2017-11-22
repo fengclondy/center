@@ -28,7 +28,6 @@ import com.taobao.pamirs.schedule.TaskItemDefine;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.Jedis;
 
 /**
  * 释放秒杀活动预锁1小时以上，但是没提交订单而导致被锁定的库存
@@ -109,6 +108,8 @@ public class ReleaseTimelimitedLockedNoOrderStockScheduleTask
                 }
                 condition.setTaskQueueNum(taskQueueNum);
                 condition.setTaskIdList(taskIdList);
+                condition.setPromotionType(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_TYPE,
+                        DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
                 condition.setUseType(dictionary.getValueByCode(DictionaryConst.TYPE_BUYER_PROMOTION_STATUS,
                         DictionaryConst.OPT_BUYER_PROMOTION_STATUS_REVERSE));
                 condition.setReleaseStockInterval(SysProperties.getProperty(RELEASE_TIMELIMITED_LOCKED_STOCK_INTERVAL));

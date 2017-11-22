@@ -116,7 +116,6 @@ public abstract class BaseSmsClient {
 	/**
 	 * 发送短信
 	 * 
-	 * @param config
 	 * @param phoneNum
 	 * @param content
 	 * @return

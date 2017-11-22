@@ -8,9 +8,12 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import cn.htd.basecenter.service.sms.MengWangSmsClient;
+import cn.htd.common.util.SysProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -48,6 +51,15 @@ import cn.htd.common.ExecuteResult;
 public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 	private static final Logger logger = LoggerFactory.getLogger(SendSmsEmailServiceImpl.class);
 
+	/**
+	 * 读取配置文件是否发送邮件标识
+	 */
+	private static final String IS_SEND_EMAIL_FLAG = "send.email.flag";
+	/**
+	 * 读取配置文件是否发送短信标识
+	 */
+	private static final String IS_SEND_SMS_FLAG = "send.sms.flag";
+
 	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
 
@@ -62,6 +74,9 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 
 	@Resource
 	private TianXunTongSmsClient tianXunTongSmsClient;
+
+	@Resource
+	private MengWangSmsClient mengWangSmsClient;
 
 	@Resource
 	private SendMailClient sendMailClient;
@@ -123,7 +138,6 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		List<BaseSmsClient> smsTemplateList = null;
 		BaseSmsClient smsTemplate = null;
 		BaseSmsConfigDTO targetObj = null;
-		String title = "";
 		String content = "";
 		List<String> parameterList = null;
 		String sendResult = "";
@@ -142,7 +156,6 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 				throw new BaseCenterBusinessException(ReturnCodeConst.NO_SMS_TEMPLATE_ERROR, "未设置发送短信模版信息");
 			}
 			smsTemplate = smsTemplateList.get(0);
-			title = smsTemplate.getName();
 			content = smsTemplate.getContent();
 			if (sendSmsDTO.getParameterList() != null && sendSmsDTO.getParameterList().size() > 0) {
 				parameterList = sendSmsDTO.getParameterList();
@@ -167,7 +180,6 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 	 * 
 	 * @param config
 	 * @param phoneNum
-	 * @param title
 	 * @param content
 	 * @return
 	 * @throws BaseCenterBusinessException
@@ -179,10 +191,14 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		boolean hasError = false;
 		BaseSendMessageDTO message = new BaseSendMessageDTO();
 		try {
-			if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
-				result = manDaoSmsClient.sendSms(config, phoneNum, content);
-			} else if (SmsChannelTypeEnum.TIANXUNTONG.getCode().equals(config.getChannelCode())) {
-				result = tianXunTongSmsClient.sendSms(config, phoneNum, content);
+			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_SMS_FLAG))) {
+				if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
+					result = manDaoSmsClient.sendSms(config, phoneNum, content);
+				} else if (SmsChannelTypeEnum.TIANXUNTONG.getCode().equals(config.getChannelCode())) {
+					result = tianXunTongSmsClient.sendSms(config, phoneNum, content);
+				} else if (SmsChannelTypeEnum.MENGWANG.getCode().equals(config.getChannelCode())) {
+					result = mengWangSmsClient.sendSms(config, phoneNum, content);
+				}
 			}
 		} catch (BaseCenterBusinessException bcbe) {
 			hasError = true;
@@ -220,17 +236,18 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		boolean hasError = false;
 		BaseSendMessageDTO message = new BaseSendMessageDTO();
 		try {
-			sendMailClient.setSender(config.getSendName());
-			sendMailClient.setSendAddress(config.getSendAddress());
-			sendMailClient.setEmailType(EmailTypeEnum.getName(config.getEmailType()));
-			sendMailClient.setSendServer(config.getSendServer());
-			sendMailClient.setUsername(config.getLoginEmail());
-			sendMailClient.setPassword(config.getLoginPassword());
-			if (EmailTypeEnum.SMTP.getName().equals(EmailTypeEnum.getName(config.getEmailType()))) {
-				sendMailClient
-						.setNeedSmtpAuth(YesNoEnum.YES.getValue() == config.getIsUseSmtpAuth() ? "true" : "false");
+			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_EMAIL_FLAG))) {
+				sendMailClient.setSender(config.getSendName());
+				sendMailClient.setSendAddress(config.getSendAddress());
+				sendMailClient.setEmailType(EmailTypeEnum.getName(config.getEmailType()));
+				sendMailClient.setSendServer(config.getSendServer());
+				sendMailClient.setUsername(config.getLoginEmail());
+				sendMailClient.setPassword(config.getLoginPassword());
+				if (EmailTypeEnum.SMTP.getName().equals(EmailTypeEnum.getName(config.getEmailType()))) {
+					sendMailClient.setNeedSmtpAuth(YesNoEnum.YES.getValue() == config.getIsUseSmtpAuth() ? "true" : "false");
+				}
+				sendMailClient.send(new String[]{address}, title, content, null, mailType);
 			}
-			sendMailClient.send(new String[] { address }, title, content, null, mailType);
 		} catch (BaseCenterBusinessException bcbe) {
 			hasError = true;
 			result = bcbe.getMessage();

@@ -1,5 +1,7 @@
 package cn.htd.marketcenter.service.impl.mall;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +12,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RecursiveTask;
 
 import javax.annotation.Resource;
@@ -42,6 +49,7 @@ import cn.htd.marketcenter.dto.PromotionItemDetailDTO;
 import cn.htd.marketcenter.dto.PromotionSellerDetailDTO;
 import cn.htd.marketcenter.dto.PromotionSellerRuleDTO;
 import cn.htd.marketcenter.dto.TimelimitedInfoDTO;
+import cn.htd.marketcenter.dto.TimelimitedResultDTO;
 import cn.htd.marketcenter.dto.TradeInfoDTO;
 import cn.htd.marketcenter.service.BuyerInterestValidService;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
@@ -111,6 +119,18 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         List<OrderInfoDTO> orderList = cart.getOrderList();
         List<OrderItemInfoDTO> productsList = null;
         Map<String, String> dictMap = initCouponCheckDictMap();
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        Map<String, OrderInfoDTO> orderInfoMap = new HashMap<String, OrderInfoDTO>();
+        List<OrderItemInfoDTO> allProductList = new ArrayList<OrderItemInfoDTO>();
+        List<String> skuCodeList = new ArrayList<String>();
+        Map<String, OrderItemInfoDTO> skuCodeMap = new HashMap<String, OrderItemInfoDTO>();
+        List<OrderItemInfoDTO> tmpProductsList = null;
+        String sellerCode = "";
+        String skuCode = "";
+        List<OrderItemCouponDTO> allCouponList = null;
+        List<OrderItemCouponDTO> avaliableCouponList = new ArrayList<OrderItemCouponDTO>();
+        List<OrderItemCouponDTO> unavaliableCouponList = new ArrayList<OrderItemCouponDTO>();
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         try {
             cart.initBeforeCalculateCoupon();
             // 输入DTO的验证
@@ -128,10 +148,41 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 if (productsList.isEmpty()) {
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "进货单商品不能为空");
                 }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+                sellerCode = productsDTO.getSellerCode();
+                orderInfoMap.put(sellerCode, productsDTO);
+                allProductList.addAll(productsDTO.getOrderItemList());
+                for (OrderItemInfoDTO productDTO : productsDTO.getOrderItemList()) {
+                    skuCode = productDTO.getSkuCode();
+                    skuCodeList.add(skuCode);
+                    skuCodeMap.put(skuCode, productDTO);
+                }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
             }
             // 校验购物车商品是否有秒杀商品
-            validateTimelimitedProducts(messageId, cart);
-            validateCouponProducts(messageId, cart, null, dictMap);
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            validateTimelimitedProducts(messageId, cart);
+//            validateCouponProducts(messageId, cart, null, dictMap);
+            validateTimelimitedProducts(messageId, cart, skuCodeList, skuCodeMap, dictMap);
+            allCouponList = validateCouponProducts(messageId, cart, null, orderInfoMap, allProductList, dictMap);
+            if (allCouponList != null && !allCouponList.isEmpty()) {
+                Collections.sort(allCouponList, new Comparator<BuyerCouponInfoDTO>() {
+                    public int compare(BuyerCouponInfoDTO o1, BuyerCouponInfoDTO o2) {
+                        return o2.getGetCouponTime().compareTo(o1.getGetCouponTime());
+                    }
+                });
+                for (OrderItemCouponDTO tmpItemCouponDTO : allCouponList) {
+                    deleteOrderItemCouponUselessInfo(tmpItemCouponDTO);
+                    if (StringUtils.isEmpty(tmpItemCouponDTO.getErrorMsg())) {
+                        avaliableCouponList.add(tmpItemCouponDTO);
+                    } else {
+                        unavaliableCouponList.add(tmpItemCouponDTO);
+                    }
+                }
+                cart.setAvaliableCouponList(avaliableCouponList);
+                cart.setUnavaliableCouponList(unavaliableCouponList);
+            }
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             result.setResult(cart);
         } catch (MarketCenterBusinessException bcbe) {
             result.setCode(bcbe.getCode());
@@ -143,49 +194,133 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         return result;
     }
 
+    //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
     /**
-     * 校验购物车中是否有秒杀商品
+     * 校验购物车中是否有参加促销活动的商品
+     *
+     * @param messageId
+     * @param targetPromotionMap
+     * @param dictMap
+     * @throws Exception
+     */
+    private void validatePromotionProducts(String messageId, Map<String, Map<String, List<OrderItemInfoDTO>>> targetPromotionMap,
+            Map<String, String> dictMap) throws Exception {
+        logger.info("***********校验购物车中是否有促销活动商品 messageId:[{}] 开始***********", messageId);
+        long startTime = System.currentTimeMillis();
+        ExecutorService executorService = null;
+        Future<String> futureRst = null;
+        List<Future<String>> workResultList = null;
+        String limitedDiscountType = dictMap.get(
+                DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_LIMITED_DISCOUNT);
+        try {
+            executorService = Executors.newFixedThreadPool(1);
+            workResultList = new ArrayList<Future<String>>();
+            if (targetPromotionMap.containsKey(limitedDiscountType)) {
+                futureRst = executorService.submit(new ValidTimelimitedDiscountTask(messageId,
+                        targetPromotionMap.get(limitedDiscountType)));
+                workResultList.add(futureRst);
+            }
+            for (Future<String> workRst : workResultList) {
+                logger.info("\n 方法:[{}],线程执行结果:[{}]", "validatePromotionProducts", workRst.get());
+            }
+        } catch (Exception e) {
+            if (workResultList != null && !workResultList.isEmpty()) {
+                for (Future<String> workRst : workResultList) {
+                    if (!workRst.isDone()) {
+                        workRst.cancel(true);
+                    }
+                }
+            }
+            if (e instanceof MarketCenterBusinessException) {
+                logger.info("***********校验购物车中是否有促销活动商品 messageId:[{}],校验结果:[{}]***********", messageId,
+                        e.getMessage());
+            } else {
+                logger.error("***********校验购物车中是否有促销活动商品 messageId:[{}],异常:[{}]***********", messageId,
+                        ExceptionUtils.getStackTraceAsString(e));
+            }
+            throw e;
+        } finally {
+            if (executorService != null && !executorService.isShutdown()) {
+                executorService.shutdown();
+            }
+            long endTime = System.currentTimeMillis();
+            logger.info("***********校验购物车中是否有促销活动商品 messageId:[{}],结束|调用耗时[{}]ms***********",
+                    messageId, (endTime - startTime));
+        }
+
+    }
+    //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+
+    /**
+     * 校验购物车中是否有秒杀和限时购商品
      *
      * @param messageId
      * @param cart
+     * @param skuCodeList
+     * @param skuCodeMap
+     * @param dictMap
      * @throws MarketCenterBusinessException
      */
-    private void validateTimelimitedProducts(String messageId, TradeInfoDTO cart) throws MarketCenterBusinessException {
+    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//    private void validateTimelimitedProducts(String messageId, TradeInfoDTO cart) throws MarketCenterBusinessException {
+    private void validateTimelimitedProducts(String messageId, TradeInfoDTO cart, List<String> skuCodeList,
+            Map<String, OrderItemInfoDTO> skuCodeMap, Map<String, String> dictMap) throws MarketCenterBusinessException {
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
         logger.info("***********校验购物车中是否有秒杀商品 messageId:[{}] 开始***********", messageId);
         long startTime = System.currentTimeMillis();
-        List<OrderInfoDTO> orderList = cart.getOrderList();
-        List<OrderItemInfoDTO> productsList = null;
-        List<String> skuCodeList = new ArrayList<String>();
-        Map<String, List<OrderItemInfoDTO>> skuCodeMap = new HashMap<String, List<OrderItemInfoDTO>>();
-        List<OrderItemInfoDTO> tmpProductsList = null;
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        List<OrderInfoDTO> orderList = cart.getOrderList();
+//        List<OrderItemInfoDTO> productsList = null;
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
+//        List<String> skuCodeList = new ArrayList<String>();
+//        Map<String, List<OrderItemInfoDTO>> skuCodeMap = new HashMap<String, List<OrderItemInfoDTO>>();
+//        List<OrderItemInfoDTO> tmpProductsList = null;
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
         List<TimelimitedInfoDTO> timelimitedInfoList = null;
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        OrderItemInfoDTO tmpProductDTO = null;
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         String skuCode = "";
         boolean hasTimelimitedSkuFlg = false;
 
-        for (OrderInfoDTO orderInfoDTO : orderList) {
-            productsList = orderInfoDTO.getOrderItemList();
-            for (OrderItemInfoDTO productDTO : productsList) {
-                skuCode = productDTO.getSkuCode();
-                skuCodeList.add(skuCode);
-                if (skuCodeMap.containsKey(skuCode)) {
-                    tmpProductsList = skuCodeMap.get(skuCode);
-                } else {
-                    tmpProductsList = new ArrayList<OrderItemInfoDTO>();
-                }
-                tmpProductsList.add(productDTO);
-                skuCodeMap.put(skuCode, tmpProductsList);
-            }
-        }
-        timelimitedInfoList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        for (OrderInfoDTO orderInfoDTO : orderList) {
+//            productsList = orderInfoDTO.getOrderItemList();
+//            for (OrderItemInfoDTO productDTO : productsList) {
+//                skuCode = productDTO.getSkuCode();
+//                skuCodeList.add(skuCode);
+//                if (skuCodeMap.containsKey(skuCode)) {
+//                    tmpProductsList = skuCodeMap.get(skuCode);
+//                } else {
+//                    tmpProductsList = new ArrayList<OrderItemInfoDTO>();
+//                }
+//                tmpProductsList.add(productDTO);
+//                skuCodeMap.put(skuCode, tmpProductsList);
+//            }
+//        }
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        timelimitedInfoList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList);
+        timelimitedInfoList = timelimitedRedisHandle.getRedisTimelimitedInfoBySkuCode(skuCodeList, dictMap.get(
+                DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
         if (timelimitedInfoList != null && !timelimitedInfoList.isEmpty()) {
             hasTimelimitedSkuFlg = true;
             for (TimelimitedInfoDTO timelimitedInfo : timelimitedInfoList) {
                 skuCode = timelimitedInfo.getSkuCode();
-                tmpProductsList = skuCodeMap.get(skuCode);
-                for (OrderItemInfoDTO tmpProductDTO : tmpProductsList) {
-                    tmpProductDTO.setHasTimelimitedFlag(true);
-                    tmpProductDTO.setTimelimitedInfo(timelimitedInfo);
-                }
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//                tmpProductsList = skuCodeMap.get(skuCode);
+//                for (OrderItemInfoDTO tmpProductDTO : tmpProductsList) {
+//                    tmpProductDTO.setHasTimelimitedFlag(true);
+//                    tmpProductDTO.setTimelimitedInfo(timelimitedInfo);
+//                }
+                tmpProductDTO = skuCodeMap.get(skuCode);
+                tmpProductDTO.setHasTimelimitedFlag(true);
+                tmpProductDTO.setTimelimitedInfo(timelimitedInfo);
+                tmpProductDTO.setPromotionId(timelimitedInfo.getPromotionId());
+                tmpProductDTO.setPromotionType(dictMap.get(
+                        DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED));
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
                 logger.info("***********校验购物车中是否有秒杀商品 messageId:[{}],商品skuCode:[{}],参加秒杀活动PromotionId:[{}]***********",
                         messageId, skuCode, timelimitedInfo.getPromotionId());
             }
@@ -226,43 +361,75 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
      * @param messageId
      * @param cart
      * @param targetCouponCodeList
+     * @param orderInfoMap
+     * @param allProductList
      * @param dictMap
      * @return
      * @throws MarketCenterBusinessException
      * @throws Exception
      */
-    private void validateCouponProducts(String messageId, TradeInfoDTO cart, List<String> targetCouponCodeList,
+    //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//    private void validateCouponProducts(String messageId, TradeInfoDTO cart, List<String> targetCouponCodeList,
+    private List<OrderItemCouponDTO> validateCouponProducts(String messageId, TradeInfoDTO cart,
+            List<String> targetCouponCodeList, Map<String, OrderInfoDTO> orderInfoMap,
+            List<OrderItemInfoDTO> allProductList,
+            //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             Map<String, String> dictMap) throws MarketCenterBusinessException, Exception {
         logger.info("***********校验可用会员可用优惠券 messageId:[{}] 开始***********", messageId);
         long startTime = System.currentTimeMillis();
         Jedis jedis = null;
         List<String> valueList = null;
         Map<String, String> validMap = null;
-        List<OrderInfoDTO> orderList = cart.getOrderList();
-        Map<String, OrderInfoDTO> orderInfoMap = new HashMap<String, OrderInfoDTO>();
+        BuyerCouponInfoDTO couponInfo = null;
+
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        List<OrderInfoDTO> orderList = cart.getOrderList();
+//        Map<String, OrderInfoDTO> orderInfoMap = new HashMap<String, OrderInfoDTO>();
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
         List<OrderItemCouponDTO> allCouponList = new ArrayList<OrderItemCouponDTO>();
-        List<OrderItemCouponDTO> avaliableCouponList = new ArrayList<OrderItemCouponDTO>();
-        List<OrderItemCouponDTO> unavaliableCouponList = new ArrayList<OrderItemCouponDTO>();
-        List<OrderItemInfoDTO> allProductList = new ArrayList<OrderItemInfoDTO>();
-        String sellerCode = "";
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        List<OrderItemCouponDTO> avaliableCouponList = new ArrayList<OrderItemCouponDTO>();
+//        List<OrderItemCouponDTO> unavaliableCouponList = new ArrayList<OrderItemCouponDTO>();
+//        List<OrderItemInfoDTO> allProductList = new ArrayList<OrderItemInfoDTO>();
+//        OrderItemCouponDTO tmpOrderCoupon = null;
+//        String couponValidStatus = "";
+//        String sellerCode = "";
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
         String buyerCode = cart.getBuyerCode();
         String buyerCouponRedisKey = RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode;
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        String unusedStatus =
+//                dictMap.get(DictionaryConst.TYPE_COUPON_STATUS + "&" + DictionaryConst.OPT_COUPON_STATUS_UNUSED);
+//        String expirdStatus =
+//                dictMap.get(DictionaryConst.TYPE_COUPON_STATUS + "&" + DictionaryConst.OPT_COUPON_STATUS_EXPIRE);
+//        String invalidStatus =
+//                dictMap.get(DictionaryConst.TYPE_COUPON_STATUS + "&" + DictionaryConst.OPT_COUPON_STATUS_INVALID);
+//        String invalidPromotionStatus = dictMap.get(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS + "&"
+//                + DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_INVALID);
+//        String buyerCouponCode = "";
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
         String buyerCouponValue = "";
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        String buyerCouponLeftAmount = "";
+//        List<BuyerCouponInfoDTO> couponInfoList = new ArrayList<BuyerCouponInfoDTO>();
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
         ForkJoinPool forkJoinPool = null;
         boolean hasTargetCouponFlag = false;
 
         if (targetCouponCodeList != null && !targetCouponCodeList.isEmpty()) {
             hasTargetCouponFlag = true;
         }
-        for (OrderInfoDTO tmpOrderInfoDTO : orderList) {
-            sellerCode = tmpOrderInfoDTO.getSellerCode();
-            orderInfoMap.put(sellerCode, tmpOrderInfoDTO);
-            allProductList.addAll(tmpOrderInfoDTO.getOrderItemList());
-        }
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        for (OrderInfoDTO tmpOrderInfoDTO : orderList) {
+//            sellerCode = tmpOrderInfoDTO.getSellerCode();
+//            orderInfoMap.put(sellerCode, tmpOrderInfoDTO);
+//            allProductList.addAll(tmpOrderInfoDTO.getOrderItemList());
+//        }
+        //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
         try {
             jedis = marketRedisDB.getResource();
             if (!jedis.exists(buyerCouponRedisKey)) {
-                return;
+                return allCouponList;
             }
             if (hasTargetCouponFlag) {
                 valueList = new ArrayList<String>();
@@ -275,37 +442,112 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 valueList = jedis.hvals(buyerCouponRedisKey);
                 validMap = jedis.hgetAll(RedisConst.REDIS_COUPON_VALID);
             }
+//            for (Entry<String, String> entry : valueMap.entrySet()) {
+//                buyerCouponCode = entry.getKey();
+//                buyerCouponValue = entry.getValue();
+//                couponInfo = JSON.parseObject(buyerCouponValue, BuyerCouponInfoDTO.class);
+//                if (couponInfo == null) {
+//                    continue;
+//                }
+//                if (hasTargetCouponFlag && !targetCouponCodeList.contains(buyerCouponCode)) {
+//                    continue;
+//                }
+//                if (new Date().before(couponInfo.getCouponStartTime())) {
+//                    if (hasTargetCouponFlag) {
+//                        tmpOrderCoupon = new OrderItemCouponDTO();
+//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
+//                        tmpOrderCoupon.setErrorMsg("优惠券未到使用开始期限不能使用 优惠券编号:" + couponInfo.getBuyerCouponCode());
+//                        unavaliableCouponList.add(tmpOrderCoupon);
+//                    }
+//                    continue;
+//
+//                }
+//                if (!unusedStatus.equals(couponInfo.getStatus())) {
+//                    if (hasTargetCouponFlag) {
+//                        tmpOrderCoupon = new OrderItemCouponDTO();
+//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
+//                        tmpOrderCoupon.setErrorMsg("优惠券已被使用 优惠券编号:" + couponInfo.getBuyerCouponCode());
+//                        unavaliableCouponList.add(tmpOrderCoupon);
+//                    }
+//                    continue;
+//                }
+//                if (new Date().after(couponInfo.getCouponEndTime())) {
+//                    couponInfo.setStatus(expirdStatus);
+//                    updateExpireInvalidRedisCouponInfo(jedis, couponInfo);
+//                    if (hasTargetCouponFlag) {
+//                        tmpOrderCoupon = new OrderItemCouponDTO();
+//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
+//                        tmpOrderCoupon.setErrorMsg("优惠券已过期 优惠券编号:" + couponInfo.getBuyerCouponCode());
+//                        unavaliableCouponList.add(tmpOrderCoupon);
+//                    }
+//                    continue;
+//                }
+//                couponValidStatus = validMap.get(couponInfo.getPromotionId());
+//                if (invalidPromotionStatus.equals(couponValidStatus)) {
+//                    couponInfo.setStatus(invalidStatus);
+//                    updateExpireInvalidRedisCouponInfo(jedis, couponInfo);
+//                    if (hasTargetCouponFlag) {
+//                        tmpOrderCoupon = new OrderItemCouponDTO();
+//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
+//                        tmpOrderCoupon.setErrorMsg("优惠券已失效 优惠券编号:" + couponInfo.getBuyerCouponCode());
+//                        unavaliableCouponList.add(tmpOrderCoupon);
+//                    }
+//                    continue;
+//                }
+//                if (couponInfo.getDiscountThreshold() == null
+//                        || BigDecimal.ZERO.compareTo(couponInfo.getDiscountThreshold()) >= 0) {
+//                    continue;
+//                }
+//                buyerCouponLeftAmount =
+//                        jedis.hget(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode);
+//                if (StringUtils.isEmpty(buyerCouponLeftAmount) || "nil".equals(buyerCouponLeftAmount)) {
+//                    if (hasTargetCouponFlag) {
+//                        tmpOrderCoupon = new OrderItemCouponDTO();
+//                        tmpOrderCoupon.setBuyerCouponInfo(couponInfo);
+//                        tmpOrderCoupon.setErrorMsg("优惠券余额不足 优惠券编号:" + couponInfo.getBuyerCouponCode());
+//                        unavaliableCouponList.add(tmpOrderCoupon);
+//                    }
+//                    continue;
+//                }
+//                couponInfo.setCouponLeftAmount(
+//                        CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
+//                couponInfoList.add(couponInfo);
+//            }
             long endTime0 = System.currentTimeMillis();
             logger.info("***********取得会员所有优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                     (endTime0 - startTime));
             if (!valueList.isEmpty()) {
-                forkJoinPool = new ForkJoinPool(4);
+                forkJoinPool = new ForkJoinPool();
                 allCouponList = forkJoinPool
                         .invoke(new ValidBuyerAvaliableCouponTask(messageId, dictMap, valueList, validMap,
                                 hasTargetCouponFlag, orderInfoMap, allProductList));
                 long endTime1 = System.currentTimeMillis();
                 logger.info("***********校验会员优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
                         (endTime1 - endTime0));
-                if (allCouponList != null && !allCouponList.isEmpty()) {
-                    Collections.sort(allCouponList, new Comparator<BuyerCouponInfoDTO>() {
-                        public int compare(BuyerCouponInfoDTO o1, BuyerCouponInfoDTO o2) {
-                            return o2.getGetCouponTime().compareTo(o1.getGetCouponTime());
-                        }
-                    });
-                    for (OrderItemCouponDTO tmpItemCouponDTO : allCouponList) {
-                        if (StringUtils.isEmpty(tmpItemCouponDTO.getErrorMsg())) {
-                            avaliableCouponList.add(tmpItemCouponDTO);
-                        } else {
-                            unavaliableCouponList.add(tmpItemCouponDTO);
-                        }
-                    }
-                }
-                long endTime2 = System.currentTimeMillis();
-                logger.info("***********切割会员可用不可用优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
-                        (endTime2 - endTime1));
+                //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//                if (allCouponList != null && !allCouponList.isEmpty()) {
+//                    Collections.sort(allCouponList, new Comparator<BuyerCouponInfoDTO>() {
+//                        public int compare(BuyerCouponInfoDTO o1, BuyerCouponInfoDTO o2) {
+//                            return o2.getGetCouponTime().compareTo(o1.getGetCouponTime());
+//                        }
+//                    });
+//                    for (OrderItemCouponDTO tmpItemCouponDTO : allCouponList) {
+//                        if (StringUtils.isEmpty(tmpItemCouponDTO.getErrorMsg())) {
+//                            avaliableCouponList.add(tmpItemCouponDTO);
+//                        } else {
+//                            unavaliableCouponList.add(tmpItemCouponDTO);
+//                        }
+//                    }
+//                }
+//                long endTime2 = System.currentTimeMillis();
+//                logger.info("***********切割会员可用不可用优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId,
+//                        (endTime2 - endTime1));
+                //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             }
-            cart.setAvaliableCouponList(avaliableCouponList);
-            cart.setUnavaliableCouponList(unavaliableCouponList);
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            cart.setAvaliableCouponList(avaliableCouponList);
+//            cart.setUnavaliableCouponList(unavaliableCouponList);
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
         } catch (Exception e) {
             logger.error("***********校验会员可用优惠券 messageId:[{}],错误信息:[{}] ***********", messageId,
                     ExceptionUtils.getStackTraceAsString(e));
@@ -317,7 +559,66 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             long endTime = System.currentTimeMillis();
             logger.info("***********校验会员可用优惠券 messageId:[{}] 结束|调用耗时{}ms***********", messageId, (endTime - startTime));
         }
+        return allCouponList;
     }
+
+    //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+    /**
+     * 删除会员优惠券DTO中无效数据
+     * @param orderItemCouponDTO
+     */
+    private void deleteOrderItemCouponUselessInfo (OrderItemCouponDTO orderItemCouponDTO) {
+        orderItemCouponDTO.setPromotionProviderType(null);
+        orderItemCouponDTO.setPromotionProviderSellerCode(null);
+        orderItemCouponDTO.setPromotionProviderShopId(null);
+        orderItemCouponDTO.setPromotionProviderShopName(null);
+        orderItemCouponDTO.setEffectiveTime(null);
+        orderItemCouponDTO.setInvalidTime(null);
+        orderItemCouponDTO.setBuyerCode(null);
+        orderItemCouponDTO.setBuyerName(null);
+        orderItemCouponDTO.setReceiveLimit(null);
+        orderItemCouponDTO.setProductList(null);
+        orderItemCouponDTO.setBuyerRuleDTO(null);
+        orderItemCouponDTO.setSellerRuleDTO(null);
+        orderItemCouponDTO.setCategoryItemRuleDTO(null);
+        orderItemCouponDTO.setVerifierId(null);
+        orderItemCouponDTO.setVerifierName(null);
+        orderItemCouponDTO.setVerifyTime(null);
+        orderItemCouponDTO.setVerifyRemark(null);
+        orderItemCouponDTO.setCreateId(null);
+        orderItemCouponDTO.setCreateName(null);
+        orderItemCouponDTO.setCreateTime(null);
+        orderItemCouponDTO.setModifyId(null);
+        orderItemCouponDTO.setModifyName(null);
+        orderItemCouponDTO.setModifyTime(null);
+        orderItemCouponDTO.setBuyerRuleId(null);
+        orderItemCouponDTO.setSellerRuleId(null);
+        orderItemCouponDTO.setCategoryItemRuleId(null);
+        orderItemCouponDTO.setPromotionStatusHistoryList(null);
+    }
+
+    /**
+     * 获取折扣券剩余金额
+     *
+     * @param couponInfo
+     * @param dictMap
+     */
+    private void getBuyerCouponLeftAmount(OrderItemCouponDTO couponInfo, Map<String, String> dictMap) {
+        String couponKind = couponInfo.getCouponType();
+        String buyerCouponLeftAmount = "";
+        if (dictMap.get(DictionaryConst.TYPE_COUPON_KIND + "&" + DictionaryConst.OPT_COUPON_KIND_DISCOUNT)
+                .equals(couponKind)) {
+            buyerCouponLeftAmount = marketRedisDB.getHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT,
+                    couponInfo.getBuyerCode() + "&" + couponInfo.getBuyerCouponCode());
+            if (StringUtils.isEmpty(buyerCouponLeftAmount)) {
+                couponInfo.setCouponLeftAmount(BigDecimal.ZERO);
+            } else {
+                couponInfo.setCouponLeftAmount(
+                        CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
+            }
+        }
+    }
+    //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
 
     @Override
     public ExecuteResult<TradeInfoDTO> calculateTradeDiscount(String messageId, TradeInfoDTO cart) {
@@ -330,6 +631,19 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         Map<String, String> dictMap = initCouponCheckDictMap();
         String key = "";
         String value = "";
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        Map<String, OrderInfoDTO> orderInfoMap = new HashMap<String, OrderInfoDTO>();
+        List<OrderItemInfoDTO> allProductList = new ArrayList<OrderItemInfoDTO>();
+        List<String> skuCodeList = new ArrayList<String>();
+        Map<String, OrderItemInfoDTO> skuCodeMap = new HashMap<String, OrderItemInfoDTO>();
+        List<OrderItemInfoDTO> tmpProductsList = null;
+        String sellerCode = "";
+        String skuCode = "";
+        List<OrderItemInfoDTO> targetItemInfoList = null;
+        Map<String, List<OrderItemInfoDTO>> targetPromotionIdMap = null;
+        Map<String, Map<String, List<OrderItemInfoDTO>>> targetPromotionMap =
+                new HashMap<String, Map<String, List<OrderItemInfoDTO>>>();
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         try {
             cart.initBeforeCalculateCoupon();
             // 输入DTO的验证
@@ -340,65 +654,133 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                         validateResult.getErrorMsg());
             }
             promotionType = cart.getPromotionType();
-            if (StringUtils.isEmpty(promotionType)) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不能为空");
-            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            if (StringUtils.isEmpty(promotionType)) {
+//                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不能为空");
+//            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             if (orderList.isEmpty()) {
                 throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "订单信息不能为空");
             }
-
-            for (Entry<String, String> entry : dictMap.entrySet()) {
-                key = entry.getKey();
-                value = entry.getValue();
-                if (key.startsWith(DictionaryConst.TYPE_PROMOTION_TYPE) && value.equals(promotionType)) {
-                    isValidPromotionType = true;
-                    break;
-                }
-            }
-            if (!isValidPromotionType) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不正确");
-            }
-            // 秒杀活动时
-            if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                    .equals(promotionType)) {
-                if (orderList.size() > 1) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
-                }
-                if (StringUtils.isEmpty(cart.getPromotionId())) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加秒杀活动编号不能为空");
-                }
-                // 使用优惠券时
-            } else if (dictMap
-                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
-                    .equals(promotionType)) {
-                if (cart.getCouponCodeList() == null || cart.getCouponCodeList().isEmpty()) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "使用优惠券时优惠券编码不能为空");
-                }
-            }
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
             for (OrderInfoDTO productsDTO : orderList) {
                 productsList = productsDTO.getOrderItemList();
-                if (productsList.isEmpty()) {
+                if (productsList == null || productsList.isEmpty()) {
                     throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "购买商品不能为空");
                 }
-                // 秒杀活动时
-                if (dictMap
-                        .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
-                        .equals(promotionType) && productsList.size() > 1) {
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+                sellerCode = productsDTO.getSellerCode();
+                orderInfoMap.put(sellerCode, productsDTO);
+                allProductList.addAll(productsDTO.getOrderItemList());
+                for (OrderItemInfoDTO productDTO : productsDTO.getOrderItemList()) {
+                    skuCode = productDTO.getSkuCode();
+                    skuCodeList.add(skuCode);
+                    skuCodeMap.put(skuCode, productDTO);
+                    if (!StringUtils.isEmpty(productDTO.getPromotionId()) && !dictMap
+                            .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&"
+                                    + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+                            .equals(productDTO.getPromotionType()) && !StringUtils.isEmpty(productDTO.getPromotionId())
+                            && !dictMap
+                            .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
+                            .equals(productDTO.getPromotionType())) {
+                        if (targetPromotionMap.containsKey(productDTO.getPromotionType())) {
+                            targetPromotionIdMap = targetPromotionMap.get(productDTO.getPromotionType());
+                        } else {
+                            targetPromotionIdMap = new HashMap<String, List<OrderItemInfoDTO>>();
+                        }
+                        if (targetPromotionIdMap.containsKey(productDTO.getPromotionId())) {
+                            targetItemInfoList = targetPromotionIdMap.get(productDTO.getPromotionId());
+                        } else {
+                            targetItemInfoList = new ArrayList<OrderItemInfoDTO>();
+                        }
+                        targetItemInfoList.add(productDTO);
+                        targetPromotionIdMap.put(productDTO.getPromotionId(), targetItemInfoList);
+                        targetPromotionMap.put(productDTO.getPromotionType(), targetPromotionIdMap);
+                    }
                 }
             }
+            if (!StringUtils.isEmpty(promotionType)) {
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+                for (Entry<String, String> entry : dictMap.entrySet()) {
+                    key = entry.getKey();
+                    value = entry.getValue();
+                    if (key.startsWith(DictionaryConst.TYPE_PROMOTION_TYPE) && value.equals(promotionType)) {
+                        isValidPromotionType = true;
+                        break;
+                    }
+                }
+                if (!isValidPromotionType) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加促销活动类型不正确");
+                }
+
+                // 秒杀活动时
+                if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+                        .equals(promotionType)) {
+                    if (orderList.size() > 1) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+                    }
+                    //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+                    productsList = orderList.get(0).getOrderItemList();
+                    if (productsList.size() > 1) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+                    }
+                    //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+                    if (StringUtils.isEmpty(cart.getPromotionId())) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "参加秒杀活动编号不能为空");
+                    }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+                }
+            }
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
+//                // 使用优惠券时
+//            } else if (dictMap
+//                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
+//                    .equals(promotionType)) {
+//                if (cart.getCouponCodeList() == null || cart.getCouponCodeList().isEmpty()) {
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "使用优惠券时优惠券编码不能为空");
+//                }
+//            }
+//            for (OrderInfoDTO productsDTO : orderList) {
+//                productsList = productsDTO.getOrderItemList();
+//                if (productsList.isEmpty()) {
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "购买商品不能为空");
+//                }
+//                // 秒杀活动时
+//                if (dictMap
+//                        .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
+//                        .equals(promotionType) && productsList.size() > 1) {
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PARAMETER_ERROR, "秒杀活动订单只能单个购买");
+//                }
+//            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             // 秒杀活动时
             if (dictMap.get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_TIMELIMITED)
                     .equals(promotionType)) {
                 logger.info("***********计算优惠券分摊或取得秒杀价格 messageId:[{}] 进入秒杀计算***********", messageId);
                 cart = calculateTimelimitedDiscount(messageId, cart.getPromotionId(), cart, dictMap);
                 // 使用优惠券时
-            } else if (dictMap
-                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
-                    .equals(promotionType)) {
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            } else if (dictMap
+//                    .get(DictionaryConst.TYPE_PROMOTION_TYPE + "&" + DictionaryConst.OPT_PROMOTION_TYPE_COUPON)
+//                    .equals(promotionType)) {
+            } else {
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+                logger.info("***********计算优惠券分摊或取得秒杀价格 messageId:[{}] 进入秒杀商品校验***********", messageId);
+                validateTimelimitedProducts(messageId, cart, skuCodeList, skuCodeMap, dictMap);
+                if (cart.isHasTimelimitedProduct()) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.HAS_TIMELIMITED_SKU, "订单中有参加秒杀活动的商品");
+                }
+                if (targetPromotionMap != null && !targetPromotionMap.isEmpty()) {
+                    validatePromotionProducts(messageId, targetPromotionMap, dictMap);
+                }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
                 logger.info("***********计算优惠券分摊或取得秒杀价格 messageId:[{}] 进入优惠券分摊计算***********", messageId);
                 couponCodeList = cart.getCouponCodeList();
-                cart = calculateCouponDiscount(messageId, couponCodeList, cart, dictMap);
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//                cart = calculateCouponDiscount(messageId, couponCodeList, cart, dictMap);
+                cart = calculateCouponDiscount(messageId, couponCodeList, cart, orderInfoMap, allProductList, dictMap);
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             }
             result.setResult(cart);
         } catch (MarketCenterBusinessException bcbe) {
@@ -475,33 +857,61 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
      * @param messageId
      * @param couponCodeList
      * @param cart
+     * @param orderInfoMap
      * @param dictMap
      * @return
      * @throws MarketCenterBusinessException
      * @throws Exception
      */
     private TradeInfoDTO calculateCouponDiscount(String messageId, List<String> couponCodeList, TradeInfoDTO cart,
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+            Map<String, OrderInfoDTO> orderInfoMap, List<OrderItemInfoDTO> allProductList,
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
             Map<String, String> dictMap) throws MarketCenterBusinessException, Exception {
         logger.info("***********根据选择的优惠券信息计算订单行的分摊金额 messageId:[{}],使用优惠券:[{}] 开始***********", messageId,
                 JSON.toJSONString(couponCodeList));
-        List<OrderItemCouponDTO> unavaliableCouponList = null;
-        OrderItemCouponDTO unavaliableCoupon = null;
+
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        List<OrderItemCouponDTO> unavaliableCouponList = null;
+//        OrderItemCouponDTO unavaliableCoupon = null;
+        List<OrderItemCouponDTO> allCouponList = null;
+        List<OrderItemCouponDTO> avaliableCouponList = new ArrayList<OrderItemCouponDTO>();
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
         try {
             // 校验购物车商品是否有秒杀商品
-            validateTimelimitedProducts(messageId, cart);
-            if (cart.isHasTimelimitedProduct()) {
-                throw new MarketCenterBusinessException(MarketCenterCodeConst.HAS_TIMELIMITED_SKU, "订单中有参加秒杀活动的商品");
-            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//            validateTimelimitedProducts(messageId, cart);
+//            if (cart.isHasTimelimitedProduct()) {
+//                throw new MarketCenterBusinessException(MarketCenterCodeConst.HAS_TIMELIMITED_SKU, "订单中有参加秒杀活动的商品");
+//            }
+            //----- delete by jiangkun for 2017双12活动限时购 on 20171013 end -----
             if (couponCodeList != null && !couponCodeList.isEmpty()) {
-                validateCouponProducts(messageId, cart, couponCodeList, dictMap);
-                unavaliableCouponList = cart.getUnavaliableCouponList();
-                if (unavaliableCouponList != null && !unavaliableCouponList.isEmpty()) {
-                    unavaliableCoupon = unavaliableCouponList.get(0);
-                    logger.info("***********根据选择的优惠券信息计算订单行的分摊金额 messageId:[{}],存在不可用优惠券:[{}] ***********", messageId,
-                            JSON.toJSONString(unavaliableCouponList));
-                    throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_NO_USE,
-                            unavaliableCoupon.getErrorMsg());
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//                validateCouponProducts(messageId, cart, couponCodeList, orderInfoMap, allProductList, dictMap);
+//                unavaliableCouponList = cart.getUnavaliableCouponList();
+//                if (unavaliableCouponList != null && !unavaliableCouponList.isEmpty()) {
+//                    unavaliableCoupon = unavaliableCouponList.get(0);
+//                    logger.info("***********根据选择的优惠券信息计算订单行的分摊金额 messageId:[{}],存在不可用优惠券:[{}] ***********", messageId,
+//                            JSON.toJSONString(unavaliableCouponList));
+//                    throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_NO_USE,
+//                            unavaliableCoupon.getErrorMsg());
+//                }
+                allCouponList =
+                        validateCouponProducts(messageId, cart, couponCodeList, orderInfoMap, allProductList, dictMap);
+                if (allCouponList != null && !allCouponList.isEmpty()) {
+                    for (OrderItemCouponDTO tmpItemCouponDTO : allCouponList) {
+                        if (!StringUtils.isEmpty(tmpItemCouponDTO.getErrorMsg())) {
+                            logger.info("***********根据选择的优惠券信息计算订单行的分摊金额 messageId:[{}],存在不可用优惠券:[{}] ***********", messageId,
+                                    JSON.toJSONString(tmpItemCouponDTO));
+                            throw new MarketCenterBusinessException(MarketCenterCodeConst.BUYER_COUPON_NO_USE,
+                                    tmpItemCouponDTO.getErrorMsg());
+                        } else {
+                            avaliableCouponList.add(tmpItemCouponDTO);
+                        }
+                    }
+                    cart.setAvaliableCouponList(avaliableCouponList);
                 }
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
                 calculateAvaliableCoupon(messageId, cart, dictMap);
             }
         } catch (MarketCenterBusinessException bcbe) {
@@ -581,6 +991,10 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                 }
             }
         }
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+        cart.setAvaliableCouponList(null);
+        cart.setUnavaliableCouponList(null);
+        //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
         logger.info("***********计算订单行的可用优惠券及分摊金额 messageId:[{}] 结束***********", messageId);
     }
 
@@ -607,23 +1021,26 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
         if (couponList == null || couponList.isEmpty()) {
             return;
         }
-        for (OrderItemCouponDTO couponInfo : couponList) {
-            discountTotal = calculateCouponTotalDiscountAmount(messageId, couponInfo, dictMap);
-            if (BigDecimal.ZERO.compareTo(discountTotal) >= 0) {
-                continue;
-            }
-            if (BigDecimal.ZERO.compareTo(oldDiscountTotal) == 0) {
-                oldDiscountTotal = discountTotal;
-                targetCoupon = couponInfo;
-            }
-            if (discountTotal.compareTo(oldDiscountTotal) > 0) {
-                targetCoupon = couponInfo;
-                oldDiscountTotal = discountTotal;
-            }
-        }
-        if (targetCoupon == null) {
-            return;
-        }
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
+//        for (OrderItemCouponDTO couponInfo : couponList) {
+//            discountTotal = calculateCouponTotalDiscountAmount(messageId, couponInfo, dictMap);
+//            if (BigDecimal.ZERO.compareTo(discountTotal) >= 0) {
+//                continue;
+//            }
+//            if (BigDecimal.ZERO.compareTo(oldDiscountTotal) == 0) {
+//                oldDiscountTotal = discountTotal;
+//                targetCoupon = couponInfo;
+//            }
+//            if (discountTotal.compareTo(oldDiscountTotal) > 0) {
+//                targetCoupon = couponInfo;
+//                oldDiscountTotal = discountTotal;
+//            }
+//        }
+//        if (targetCoupon == null) {
+//            return;
+//        }
+        targetCoupon = couponList.get(0);
+        //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
         discountTotal = targetCoupon.getTotalDiscountAmount();
         productList = targetCoupon.getProductList();
         logger.info("***********计算订单行的可用优惠券及分摊金额 messageId:[{}],确定优惠券编码:[{}],优惠总金额:[{}] ***********", messageId,
@@ -665,6 +1082,9 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             productCouponInfo = new OrderItemCouponDTO();
             productCouponInfo.setBuyerCouponInfo(targetCoupon);
             productCouponInfo.setSharedDiscountAmount(discount);
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 start -----
+            deleteOrderItemCouponUselessInfo(productCouponInfo);
+            //----- add by jiangkun for 2017双12活动限时购 on 20171013 end -----
             productCouponList = productDTO.getAvalibleCouponList();
             if (productCouponList == null) {
                 productCouponList = new ArrayList<OrderItemCouponDTO>();
@@ -688,7 +1108,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             Map<String, String> dictMap) {
         BigDecimal payTotal = BigDecimal.ZERO;
         String couponKind = "";
-        String buyerCouponLeftAmount = "";
         BigDecimal discountTotal = BigDecimal.ZERO;
         BigDecimal leftDiscountAmount = BigDecimal.ZERO;
         BigDecimal discountPercent = BigDecimal.ZERO;
@@ -706,23 +1125,19 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                         couponInfo.getBuyerCouponCode(), discountTotal);
             } else if (dictMap.get(DictionaryConst.TYPE_COUPON_KIND + "&" + DictionaryConst.OPT_COUPON_KIND_DISCOUNT)
                     .equals(couponKind)) {
-                buyerCouponLeftAmount =
-                        marketRedisDB.getHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, couponInfo.getBuyerCode()+ "&" + couponInfo.getBuyerCouponCode());
-                if (StringUtils.isEmpty(buyerCouponLeftAmount)) {
-                    couponInfo.setCouponLeftAmount(BigDecimal.ZERO);
-                } else {
-                    couponInfo.setCouponLeftAmount(CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
-                }
                 leftDiscountAmount = couponInfo.getCouponLeftAmount();
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 start -----
                 if (BigDecimal.ZERO.compareTo(leftDiscountAmount) < 0) {
-                    discountPercent = CalculateUtils.divide(new BigDecimal(couponInfo.getDiscountPercent()), new BigDecimal(100));
+                    discountPercent =
+                            CalculateUtils.divide(new BigDecimal(couponInfo.getDiscountPercent()), new BigDecimal(100));
                     discountTotal = CalculateUtils.multiply(payTotal, discountPercent);
-                    discountTotal = leftDiscountAmount.compareTo(discountTotal) > 0 ? discountTotal : leftDiscountAmount;
+                    discountTotal =
+                            leftDiscountAmount.compareTo(discountTotal) > 0 ? discountTotal : leftDiscountAmount;
                     discountTotal = payTotal.compareTo(discountTotal) >= 0 ? discountTotal : payTotal;
+                    logger.info("***********计算可用优惠券优惠总金额 messageId:[{}],优惠券编码:[{}],折扣比例:[{}],优惠总金额:[{}]***********",
+                            messageId, couponInfo.getBuyerCouponCode(), discountPercent, discountTotal);
                 }
-                logger.info("***********计算可用优惠券优惠总金额 messageId:[{}],优惠券编码:[{}],折扣比例:[{}],优惠总金额:[{}]***********",
-                        messageId, couponInfo.getBuyerCouponCode(), discountPercent, discountTotal);
-
+                //----- modify by jiangkun for 2017双12活动限时购 on 20171013 end -----
             }
             if (BigDecimal.ZERO.compareTo(discountTotal) < 0) {
                 couponInfo.setTotalDiscountAmount(discountTotal);
@@ -858,7 +1273,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                     orderInfoMap, allProductsList);
             rightTask = new ValidBuyerAvaliableCouponTask(messageId, dictMap, rightList, validMap, hasTargetCouponFlag,
                     orderInfoMap, allProductsList);
+            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 start -----
+//            leftTask.fork();
+//            rightTask.fork();
             invokeAll(leftTask, rightTask);
+            //----- modify by jiangkun for 2017活动需求商城无敌券 on 20170930 end -----
             resultList.addAll(leftTask.join());
             resultList.addAll(rightTask.join());
             return resultList;
@@ -866,18 +1285,15 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
         private OrderItemCouponDTO checkBuyerCouponInfo(String couponInfoStr) {
             BuyerCouponInfoDTO couponInfo = JSON.parseObject(couponInfoStr, BuyerCouponInfoDTO.class);
-            String sellerCode = "";
             String promotionId = "";
             String levelCode = "";
             String couponProviderType = "";
             String couponProviderCode = "";
             List<OrderItemInfoDTO> avaliableProductList = null;
             BigDecimal payTotal = BigDecimal.ZERO;
-            String buyerCouponLeftAmount = "";
             if (couponInfo == null) {
                 return null;
             }
-            sellerCode = couponInfo.getPromotionProviderSellerCode();
             promotionId = couponInfo.getPromotionId();
             levelCode = couponInfo.getLevelCode();
             couponProviderType = couponInfo.getPromotionProviderType();
@@ -929,7 +1345,7 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
                             "优惠券不适用购买商品的店铺 优惠券编号:" + couponInfo.getBuyerCouponCode());
                 }
                 avaliableProductList = checkAvaliableCouponProducts(couponInfo,
-                        orderInfoMap.get(sellerCode).getOrderItemList());
+                        orderInfoMap.get(couponProviderCode).getOrderItemList());
             } else {
                 avaliableProductList = checkAvaliableCouponProducts(couponInfo, allProductsList);
             }
@@ -955,15 +1371,14 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
 
         private OrderItemCouponDTO exchange2OrderItemCoupon(BuyerCouponInfoDTO targetBuyerCoupon,
                 List<OrderItemInfoDTO> avaliableProductList, String... errorMsg) {
-            BigDecimal discountTotal = BigDecimal.ZERO;
             OrderItemCouponDTO orderCoupon = new OrderItemCouponDTO();
             orderCoupon.setBuyerCouponInfo(targetBuyerCoupon);
             if (avaliableProductList != null && !avaliableProductList.isEmpty()) {
                 orderCoupon.setProductList(avaliableProductList);
-                discountTotal = calculateCouponTotalDiscountAmount(messageId, orderCoupon, dictMap);
-                if (BigDecimal.ZERO.compareTo(discountTotal) >= 0) {
-                    return null;
-                }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171016 start -----
+                getBuyerCouponLeftAmount(orderCoupon, dictMap);
+                //----- add by jiangkun for 2017双12活动限时购 on 20171016 end -----
+                calculateCouponTotalDiscountAmount(messageId, orderCoupon, dictMap);
             }
             if (errorMsg != null && errorMsg.length > 0) {
                 orderCoupon.setErrorMsg(errorMsg[0]);
@@ -977,6 +1392,11 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             SellerProductInfo sellerProductInfo = null;
 
             for (OrderItemInfoDTO productDTO : productsList) {
+                //----- add by jiangkun for 2017双12活动限时购 on 20171016 start -----
+                if (!StringUtils.isEmpty(productDTO.getPromotionId())) {
+                    continue;
+                }
+                //----- add by jiangkun for 2017双12活动限时购 on 20171016 end -----
                 if (BigDecimal.ZERO.compareTo(productDTO.getOrderItemTotal()) >= 0) {
                     continue;
                 }
@@ -1001,7 +1421,6 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             List<PromotionSellerDetailDTO> detailList = null;
             List<String> sellerCodeList = null;
             String channelCode = "";
-            String promotionId = targetBuyerCoupon.getPromotionId();
 
             if (dictMap.get(DictionaryConst.TYPE_PROMOTION_PROVIDER_TYPE + "&"
                     + DictionaryConst.OPT_PROMOTION_PROVIDER_TYPE_SHOP)
@@ -1161,4 +1580,191 @@ public class BuyerInterestValidServiceImpl implements BuyerInterestValidService 
             return true;
         }
     }
+
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 start -----
+    public final class ValidTimelimitedDiscountTask implements Callable<String> {
+
+        private String messageId;
+
+        private Map<String, List<OrderItemInfoDTO>> promotionIdMap;
+
+        public ValidTimelimitedDiscountTask(String messageId, Map<String, List<OrderItemInfoDTO>> promotionIdMap) {
+            this.messageId = messageId;
+            this.promotionIdMap = promotionIdMap;
+        }
+
+        @Override
+        public String call() throws Exception {
+            logger.info("***********校验购物车满足限时购商品 messageId:[{}] 开始***********", messageId);
+            long startTime = System.currentTimeMillis();
+            List<String> promotionIdList = new ArrayList<String>();
+            ForkJoinPool forkJoinPool = null;
+            ValidTimelimitedDiscountDealTask dealTask = null;
+            Throwable throwable = null;
+            String retMsg = "处理正常";
+            try {
+                if (promotionIdMap != null && !promotionIdMap.isEmpty()) {
+                    for (Entry<String, List<OrderItemInfoDTO>> entry : promotionIdMap.entrySet()) {
+                        promotionIdList.add(entry.getKey());
+                    }
+                    dealTask = new ValidTimelimitedDiscountDealTask(promotionIdList);
+                    forkJoinPool = new ForkJoinPool();
+                    forkJoinPool.invoke(dealTask);
+                    if (dealTask.isCompletedAbnormally()) {
+                        throwable = dealTask.getException();
+                        if (throwable instanceof MarketCenterBusinessException) {
+                            throw (MarketCenterBusinessException) throwable;
+                        } else if (throwable instanceof Exception) {
+                            throw (Exception) throwable;
+                        } else {
+                            StringWriter stringWriter = new StringWriter();
+                            throwable.printStackTrace(new PrintWriter(stringWriter));
+                            throw new RuntimeException(stringWriter.toString());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                retMsg = e.getMessage();
+                throw e;
+            } finally {
+                if (forkJoinPool != null) {
+                    forkJoinPool.shutdown();
+                }
+                long endTime = System.currentTimeMillis();
+                logger.info("***********校验购物车满足限时购商品 messageId:[{}],处理结果:[{}],结束|调用耗时{}ms***********", messageId,
+                        retMsg, (endTime - startTime));
+            }
+            return retMsg;
+        }
+
+        private final class ValidTimelimitedDiscountDealTask extends RecursiveAction {
+
+            private List<String> targetPromotionIdList;
+
+            public ValidTimelimitedDiscountDealTask(List<String> promotionIdList) {
+                this.targetPromotionIdList = promotionIdList;
+            }
+
+            @Override
+            protected void compute() {
+                List<String> leftList = new ArrayList<String>();
+                List<String> rightList = new ArrayList<String>();
+                ValidTimelimitedDiscountDealTask leftTask = null;
+                ValidTimelimitedDiscountDealTask rightTask = null;
+                String promotionId = "";
+                int listSize = targetPromotionIdList.size();
+                int halfSize = 0;
+                if (listSize == 0) {
+                    return;
+                }
+                if (listSize == 1) {
+                    promotionId = targetPromotionIdList.get(0);
+                    checkTimelimitedDiscountInfo(promotionId, promotionIdMap.get(promotionId));
+                    return;
+                }
+                halfSize = listSize / 2;
+                for (int i = 0; i < listSize; i++) {
+                    if (i < halfSize) {
+                        leftList.add(targetPromotionIdList.get(i));
+                    } else {
+                        rightList.add(targetPromotionIdList.get(i));
+                    }
+                }
+                leftTask = new ValidTimelimitedDiscountDealTask(leftList);
+                rightTask = new ValidTimelimitedDiscountDealTask(rightList);
+                invokeAll(leftTask, rightTask);
+            }
+
+            private void checkTimelimitedDiscountInfo(String promotionId, List<OrderItemInfoDTO> orderItemInfoList) {
+                Date nowDt = new Date();
+                TimelimitedInfoDTO timelimitedInfoDTO = null;
+                List<?> accuDTOList = null;
+                Map<String, TimelimitedInfoDTO> timelimitedInfoDTOMap = new HashMap<String, TimelimitedInfoDTO>();
+                TimelimitedInfoDTO tmpTimelimitedInfoDTO = null;
+                Integer goodsCount = 0;
+                String skuCode = "";
+                int stockNum = 0;
+                TimelimitedResultDTO resultDTO = null;
+                TimelimitedInfoDTO tmpNewTimelimitedInfoDTO = null;
+
+                timelimitedInfoDTO = timelimitedRedisHandle.getRedisTimelimitedInfo(promotionId);
+                accuDTOList = timelimitedInfoDTO.getPromotionAccumulatyList();
+                if (accuDTOList!= null && !accuDTOList.isEmpty()) {
+                    for (int i = 0; i < accuDTOList.size(); i ++) {
+                        tmpTimelimitedInfoDTO = (TimelimitedInfoDTO) accuDTOList.get(i);
+                        timelimitedInfoDTOMap.put(tmpTimelimitedInfoDTO.getSkuCode(), tmpTimelimitedInfoDTO);
+                    }
+                }
+                for (OrderItemInfoDTO itemInfoDTO : orderItemInfoList) {
+                    skuCode = itemInfoDTO.getSkuCode();
+                    if (!timelimitedInfoDTOMap.containsKey(skuCode)) {
+                        logger.info(
+                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}] 限时购活动中不包含会员购买商品***********",
+                                messageId, promotionId, skuCode);
+                        throw new MarketCenterBusinessException(
+                                MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NO_CONTAIN_SKU,
+                                "限时购活动中不包含购买商品 活动编号:" + promotionId + " SKU编码:" + skuCode);
+                    }
+                    tmpTimelimitedInfoDTO = timelimitedInfoDTOMap.get(skuCode);
+                    if (nowDt.after(tmpTimelimitedInfoDTO.getEndTime())) {
+                        logger.info(
+                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],结束时间:[{}] 购买商品的限时购活动已结束***********",
+                                messageId, promotionId, skuCode, tmpTimelimitedInfoDTO.getEndTime());
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_IS_OVER,
+                                "购买商品的限时购活动已结束 活动编号:" + promotionId + " SKU编码:" + skuCode + " 结束时间:"
+                                        + tmpTimelimitedInfoDTO.getEndTime());
+                    }
+                    if (nowDt.before(tmpTimelimitedInfoDTO.getStartTime())) {
+                        logger.info(
+                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],开始时间:[{}] 购买商品的限时购活动未开始***********",
+                                messageId, promotionId, skuCode, tmpTimelimitedInfoDTO.getStartTime());
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NOT_BEGIN,
+                                "购买商品的限时购活动未开始 活动编号:" + promotionId + " SKU编码:" + skuCode + " 开始时间:"
+                                        + tmpTimelimitedInfoDTO.getStartTime());
+                    }
+                    goodsCount = itemInfoDTO.getGoodsCount();
+                    if (goodsCount < tmpTimelimitedInfoDTO.getTimelimitedThresholdMin()) {
+                        logger.info(
+                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],起订量:[{}],购买数量:[{}] 会员购买商品数量不满足限时购起订量***********",
+                                messageId, promotionId, skuCode, tmpTimelimitedInfoDTO.getTimelimitedThresholdMin(),
+                                goodsCount);
+                        throw new MarketCenterBusinessException(
+                                MarketCenterCodeConst.LIMITED_TIME_PURCHASE_MIN_QUANTITY,
+                                "会员购买商品数量不满足限时购起订量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 起订量:"
+                                        + tmpTimelimitedInfoDTO.getTimelimitedThresholdMin() + " 购买数量:" + goodsCount);
+                    }
+                    if (goodsCount > tmpTimelimitedInfoDTO.getTimelimitedThreshold()) {
+                        logger.info(
+                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],限购量:[{}],购买数量:[{}] 会员购买商品数量超过限时购限购量***********",
+                                messageId, promotionId, skuCode, tmpTimelimitedInfoDTO.getTimelimitedThreshold(),
+                                goodsCount);
+                        throw new MarketCenterBusinessException(
+                                MarketCenterCodeConst.LIMITED_TIME_PURCHASE_MAX_QUANTITY,
+                                "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 限购量:"
+                                        + tmpTimelimitedInfoDTO.getTimelimitedThreshold() + " 购买数量:" + goodsCount);
+                    }
+                    resultDTO = tmpTimelimitedInfoDTO.getTimelimitedResult();
+                    stockNum = Integer.valueOf(resultDTO.getShowRemainSkuCount()).intValue();
+                    if (goodsCount > stockNum) {
+                        logger.info(
+                                "***********校验购物车满足限时购商品 messageId:[{}],限时购活动编码:[{}],SKU编码:[{}],购买数量:[{}],库存数量:[{}] 会员购买商品超过限时购商品数量***********",
+                                messageId, promotionId, skuCode, itemInfoDTO.getGoodsPrice(),
+                                tmpTimelimitedInfoDTO.getSkuTimelimitedPrice());
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.LIMITED_TIME_PURCHASE_NO_COUNT,
+                                "会员购买商品数量超过限时购限购量 活动编号:" + promotionId + " SKU编码:" + skuCode + " 购买数量:" + goodsCount
+                                        + " 库存数量:" + stockNum);
+                    }
+                    itemInfoDTO.setGoodsPrice(tmpTimelimitedInfoDTO.getSkuTimelimitedPrice());
+                    itemInfoDTO.setGoodsPriceType(dictionary.getValueByCode(DictionaryConst.TYPE_SKU_PRICE_TYPE,
+                            DictionaryConst.OPT_SKU_PRICE_TYPE_LIMITED_DISCOUNT));
+                    itemInfoDTO.setGoodsTotal(itemInfoDTO.getGoodsPrice().multiply(new BigDecimal(goodsCount)));
+                    tmpNewTimelimitedInfoDTO = new TimelimitedInfoDTO();
+                    tmpNewTimelimitedInfoDTO.setPromotionId(tmpTimelimitedInfoDTO.getPromotionId());
+                    tmpNewTimelimitedInfoDTO.setLevelCode(tmpTimelimitedInfoDTO.getLevelCode());
+                    itemInfoDTO.setTimelimitedInfo(tmpTimelimitedInfoDTO);
+                }
+            }
+        }
+    }
+    //----- add by jiangkun for 2017活动需求商城限时购 on 20171009 end -----
 }

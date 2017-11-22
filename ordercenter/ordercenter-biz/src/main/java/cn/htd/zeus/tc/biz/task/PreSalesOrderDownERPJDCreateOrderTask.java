@@ -94,7 +94,7 @@ public class PreSalesOrderDownERPJDCreateOrderTask implements IScheduleTaskDealM
 		}catch(Exception e){
 			StringWriter w = new StringWriter();
 		    e.printStackTrace(new PrintWriter(w));
-			LOGGER.error("调用预售下行接口方法时候发生异常:" + w.toString());
+			LOGGER.error("MessageId:{} 调用预售下行接口方法时候发生异常:{}" ,"",w.toString());
 		}finally{
 			
 		}
@@ -113,7 +113,7 @@ public class PreSalesOrderDownERPJDCreateOrderTask implements IScheduleTaskDealM
 			result = false;
 			StringWriter w = new StringWriter();
 	        e.printStackTrace(new PrintWriter(w));
-	        LOGGER.error("预售下行接口-调用preSalesOrderDown方法时候发生异常"+ w.toString());
+	        LOGGER.error("MessageId:{} 预售下行接口-调用preSalesOrderDown方法时候发生异常:{}","", w.toString());
 		} finally {
 		}
 		return result;

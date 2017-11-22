@@ -13,6 +13,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.Item;
+import cn.htd.goodscenter.domain.ItemPicture;
 import cn.htd.goodscenter.dto.ItemAdDTO;
 import cn.htd.goodscenter.dto.ItemDBDTO;
 import cn.htd.goodscenter.dto.ItemDTO;
@@ -30,6 +31,7 @@ import cn.htd.goodscenter.dto.indto.SyncItemStockInDTO;
 import cn.htd.goodscenter.dto.indto.SyncItemStockSearchInDTO;
 import cn.htd.goodscenter.dto.outdto.ItemToDoCountDTO;
 import cn.htd.goodscenter.dto.outdto.SyncItemStockSearchOutDTO;
+import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuOutDTO;
 
 /**
  * 
@@ -316,5 +318,55 @@ public interface ItemExportService {
 	 * @return
 	 */
 	public ExecuteResult<QueryItemStockDetailOutDTO> queryItemQuantityInfo(QueryItemStockDetailInDTO quantityInfoInDTO);
+	
+	
+	/**
+	 * 限时购 - 新增活动 - 查询商品接口
+	 * @author li.jun
+	 * @time 2017-10-09
+	 */
+	public ItemQueryOutDTO querySellerCenterItem(ItemQueryInDTO itemInDTO);
 
+	/**
+	 * 限时购 - 新增活动 - 模糊查询商品名称
+	 * @author li.jun
+	 * @time 2017-10-09
+	 */
+	public List<ItemQueryOutDTO> querySellerCenterItemList(ItemQueryInDTO itemInDTO);
+	
+	
+	/**
+	 * 限时购 - 新增活动 - 查询商品主图
+	 * @author li.jun
+	 * @time 2017-10-09
+	 */
+	public VenusItemSkuOutDTO queryItemPicsFirst(Long itemId);
+	
+	/**
+	 * 限时购 - 根据itemCode 查询sku属性相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	public ExecuteResult<List<VenusItemSkuOutDTO>> getItemSkuList(String itemCode); 
+	
+	/**
+	 * 限时购 - 根据skuCode 查询库存和阶梯价等相关信息相关信息
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode); 
+	
+	/**
+	 * 超级老板中间件 - 根据sellerId,areaCode查当前供应商是否有商品上架
+	 * @author xmz
+	 * @time 2017-11-16
+	 */
+	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode);
+	
+	/** 根据skuCode 查询商品名称是否重复
+	 * @author li.jun
+	 * @time 2017-11-20
+	 */
+	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId);
+	
 }

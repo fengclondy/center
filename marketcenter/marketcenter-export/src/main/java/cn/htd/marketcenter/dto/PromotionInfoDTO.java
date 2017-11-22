@@ -107,6 +107,12 @@ public class PromotionInfoDTO implements Serializable {
      */
     private String b2cActivityCode;
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 end -----
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+    /**
+     * 是否有活动提醒
+     */
+    private int isNeedRemind;
+    //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
     /**
      * 创建人ID
      */
@@ -189,10 +195,20 @@ public class PromotionInfoDTO implements Serializable {
      * 当前调度服务器，分配到的可处理队列
      */
     private List<String> taskIdList;
+    //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
+//    /**
+//     * 定时任务处理对象促销活动状态
+//     */
+//    private List<String> statusList;
     /**
-     * 定时任务处理对象促销活动状态
+     * 定时任务处理对象促销活动已开始状态
      */
-    private List<String> statusList;
+    private String startedStatus;
+    /**
+     * 定时任务处理对象促销活动未开始状态
+     */
+    private String endStatus;
+    //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
     /**
      * 查询条件的审核状态列表
      */
@@ -402,6 +418,14 @@ public class PromotionInfoDTO implements Serializable {
         this.b2cActivityCode = b2cActivityCode;
     }
 
+    public int getIsNeedRemind() {
+        return isNeedRemind;
+    }
+
+    public void setIsNeedRemind(int isNeedRemind) {
+        this.isNeedRemind = isNeedRemind;
+    }
+
     public Long getCreateId() {
         return createId;
     }
@@ -546,12 +570,20 @@ public class PromotionInfoDTO implements Serializable {
         this.deleteStatus = deleteStatus;
     }
 
-    public List<String> getStatusList() {
-        return statusList;
+    public String getStartedStatus() {
+        return startedStatus;
     }
 
-    public void setStatusList(List<String> statusList) {
-        this.statusList = statusList;
+    public void setStartedStatus(String startedStatus) {
+        this.startedStatus = startedStatus;
+    }
+
+    public String getEndStatus() {
+        return endStatus;
+    }
+
+    public void setEndStatus(String endStatus) {
+        this.endStatus = endStatus;
     }
 
     public List<String> getVerifyStatusList() {
@@ -583,6 +615,7 @@ public class PromotionInfoDTO implements Serializable {
         this.verifyRemark = promotionInfoDTO.getVerifyRemark();
         this.modifyPromotionId = promotionInfoDTO.getModifyPromotionId();
         this.b2cActivityCode = promotionInfoDTO.getB2cActivityCode();
+        this.isNeedRemind = promotionInfoDTO.getIsNeedRemind();
         this.createId = promotionInfoDTO.getCreateId();
         this.createName = promotionInfoDTO.getCreateName();
         this.createTime = promotionInfoDTO.getCreateTime();

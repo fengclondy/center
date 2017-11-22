@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.VoteActivityFansForwardDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
+    <id column="forward_fans_id" property="forwardFansId" jdbcType="BIGINT" />
+    <result column="vote_member_id" property="voteMemberId" jdbcType="BIGINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    forward_fans_id, vote_member_id, create_id, create_name, create_time, modify_id,
+    modify_name, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from vote_activity_fans_forward
+    where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vote_activity_fans_forward
+    where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteForwordInfoByVoteMemberId" parameterType="java.lang.Long" >
+    delete from vote_activity_fans_forward
+    where vote_member_id = #{voteMemberId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
+    insert into vote_activity_fans_forward (vote_member_id,
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{voteMemberId,jdbcType=BIGINT},
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
+    insert into vote_activity_fans_forward
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="forwardFansId != null" >
+        forward_fans_id,
+      </if>
+      <if test="voteMemberId != null" >
+        vote_member_id,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="forwardFansId != null" >
+        #{forwardFansId,jdbcType=BIGINT},
+      </if>
+      <if test="voteMemberId != null" >
+        #{voteMemberId,jdbcType=BIGINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
+    update vote_activity_fans_forward
+    <set >
+      <if test="voteMemberId != null" >
+        vote_member_id = #{voteMemberId,jdbcType=BIGINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.response.VoteActivityFansForwardResDTO" >
+    update vote_activity_fans_forward
+    set vote_member_id = #{voteMemberId,jdbcType=BIGINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where forward_fans_id = #{forwardFansId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectVoteActivityForwardCount" parameterType="Long" resultType="Long">
+    select
+      count(1)
+    from
+      vote_activity_fans_forward vff
+	  left join vote_activity_member vam on vff.vote_member_id=vam.vote_member_id
+	where
+	  vam.vote_id=#{voteId} and vam.delete_flag=0
+  </select>
+
+  <!-- 根据会员报名编码查询转发数 -->
+  <select id="selectForwordCountByVMId" parameterType="Long" resultType="Long">
+    select
+      count(1)
+    from
+      vote_activity_fans_forward t
+    where
+      t.vote_member_id=#{voteMemberId}
+  </select>
+  
+</mapper>

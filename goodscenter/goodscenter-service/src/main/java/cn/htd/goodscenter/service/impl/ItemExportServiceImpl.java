@@ -128,8 +128,7 @@ import com.google.common.collect.Lists;
 
 @Service("itemExportService")
 public class ItemExportServiceImpl implements ItemExportService {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ItemExportServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemExportServiceImpl.class);
 	@Resource
 	private ItemMybatisDAO itemMybatisDAO;
 	@Resource
@@ -183,8 +182,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * </p>
 	 */
 	@Override
-	public ExecuteResult<String> modifyItemStatusBatch(
-			ItemStatusModifyDTO statusDTO) {
+	public ExecuteResult<String> modifyItemStatusBatch(ItemStatusModifyDTO statusDTO) {
 		LOGGER.info("================开始批量修改商品状态=====================");
 		ExecuteResult<String> executeResult = new ExecuteResult<String>();
 		try {
@@ -202,9 +200,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				return executeResult;
 			}
 			// 平台下架商品 下架通过平台商品发布的所有商品
-			if (2 == statusDTO.getOperator()
-					&& statusDTO.getItemStatus() == ItemStatusEnum.UNSHELVED
-							.getCode()) {
+			if (2 == statusDTO.getOperator() && statusDTO.getItemStatus() == ItemStatusEnum.UNSHELVED.getCode()) {
 				List<ItemDTO> items = null;
 				List<Long> subIds = null;
 				for (Long id : ids) {
@@ -218,49 +214,36 @@ public class ItemExportServiceImpl implements ItemExportService {
 					if (subIds.isEmpty()) {
 						continue;
 					} else {
-						itemMybatisDAO.updateItemStatusBatch(subIds,
-								"平台对应商品已经下架！", statusDTO.getItemStatus(),
+						itemMybatisDAO.updateItemStatusBatch(subIds, "平台对应商品已经下架！", statusDTO.getItemStatus(),
 								statusDTO.getAuditFlag());
 					}
 				}
-				this.itemMybatisDAO.updateItemStatusBatch(ids,
-						statusDTO.getChangeReason(), statusDTO.getItemStatus(),
+				this.itemMybatisDAO.updateItemStatusBatch(ids, statusDTO.getChangeReason(), statusDTO.getItemStatus(),
 						statusDTO.getAuditFlag());
 				// 商家上架商品 校验平台商品状态 平台商品下架的 该商品不能上架
-			} else if (1 == statusDTO.getOperator()
-					&& statusDTO.getItemStatus() == ItemStatusEnum.SALING
-							.getCode()) {
-				itemMybatisDAO.updateItemStatusBatch(
-						this.getInputItemIds(statusDTO),
-						statusDTO.getChangeReason(), statusDTO.getItemStatus(),
-						statusDTO.getAuditFlag());
+			} else if (1 == statusDTO.getOperator() && statusDTO.getItemStatus() == ItemStatusEnum.SALING.getCode()) {
+				itemMybatisDAO.updateItemStatusBatch(this.getInputItemIds(statusDTO), statusDTO.getChangeReason(),
+						statusDTO.getItemStatus(), statusDTO.getAuditFlag());
 				// 审核通过卖家商品 并且要加入到平台商品库 的商品 查询出原有商品 并且加入平台商品库
-			} else if (1 == statusDTO.getOperator()
-					&& statusDTO.getItemStatus() == ItemStatusEnum.SHELVING
-							.getCode()) {
+			} else if (1 == statusDTO.getOperator() && statusDTO.getItemStatus() == ItemStatusEnum.SHELVING.getCode()) {
 				List<Long> modifyItemIds = this.getInputItemIds(statusDTO);
 				statusDTO.setItemIds(modifyItemIds);
 				if (!modifyItemIds.isEmpty()) {
 					if (statusDTO.isCreatePlatItem()) {
 						this.copyItemToPlat(statusDTO);
 					}
-					itemMybatisDAO
-							.updateItemStatusBatch(modifyItemIds,
-									statusDTO.getChangeReason(),
-									statusDTO.getItemStatus(),
-									statusDTO.getAuditFlag());
+					itemMybatisDAO.updateItemStatusBatch(modifyItemIds, statusDTO.getChangeReason(),
+							statusDTO.getItemStatus(), statusDTO.getAuditFlag());
 				}
 			} else {
 				// 其他修改
-				itemMybatisDAO.updateItemStatusBatch(ids,
-						statusDTO.getChangeReason(), statusDTO.getItemStatus(),
+				itemMybatisDAO.updateItemStatusBatch(ids, statusDTO.getChangeReason(), statusDTO.getItemStatus(),
 						statusDTO.getAuditFlag());
 			}
 			executeResult.setResultMessage("操作成功");
 		} catch (Exception e) {
 			LOGGER.error("执行方法【modifyItemStatusById】报错：{}", e);
-			executeResult.addErrorMessage("执行方法【modifyItemStatusById】报错："
-					+ e.getMessage());
+			executeResult.addErrorMessage("执行方法【modifyItemStatusById】报错：" + e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			LOGGER.info("================结束批量修改商品状态=====================");
@@ -279,16 +262,13 @@ public class ItemExportServiceImpl implements ItemExportService {
 		for (Long itemId : statusDTO.getItemIds()) {
 			inDTO = new ItemQueryInDTO();
 			inDTO.setId(Integer.parseInt(Long.toString(itemId)));
-			List<ItemQueryOutDTO> items = this.itemMybatisDAO.queryItemList(
-					inDTO, null);
+			List<ItemQueryOutDTO> items = this.itemMybatisDAO.queryItemList(inDTO, null);
 			if (!items.isEmpty()) {
 				inDTO.setId(null);
 				inDTO.setPlatItemId(items.get(0).getItemId());
-				List<ItemQueryOutDTO> dbItem = this.itemMybatisDAO
-						.queryItemList(inDTO, null);
+				List<ItemQueryOutDTO> dbItem = this.itemMybatisDAO.queryItemList(inDTO, null);
 				if (dbItem != null && dbItem.size() > 0) {
-					if (ItemStatusEnum.UNSHELVED.getCode() >= dbItem.get(0)
-							.getItemStatus()) {
+					if (ItemStatusEnum.UNSHELVED.getCode() >= dbItem.get(0).getItemStatus()) {
 						continue;
 					}
 				}
@@ -306,8 +286,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 */
 	private void copyItemToPlat(ItemStatusModifyDTO statusDTO) {
 		for (Long itemId : statusDTO.getItemIds()) {
-			ItemDTO item = this.getItemById(itemId,
-					HtdItemStatusEnum.PASS.getCode()).getResult();
+			ItemDTO item = this.getItemById(itemId, HtdItemStatusEnum.PASS.getCode()).getResult();
 			if (item == null) {
 				continue;
 			}
@@ -342,8 +321,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * </p>
 	 */
 	@Override
-	public DataGrid<ItemQueryOutDTO> queryItemList(ItemQueryInDTO itemInDTO,
-			Pager page) {
+	public DataGrid<ItemQueryOutDTO> queryItemList(ItemQueryInDTO itemInDTO, Pager page) {
 		DataGrid<ItemQueryOutDTO> dataGrid = new DataGrid<ItemQueryOutDTO>();
 		try {
 			// 状态列表
@@ -352,8 +330,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			// itemStatusList.add(1);
 			// itemStatusList.add(2);
 			// itemInDTO.setItemStatusList(itemStatusList);
-			List<ItemQueryOutDTO> listItemDTO = itemMybatisDAO.queryItemList(
-					itemInDTO, page);
+			List<ItemQueryOutDTO> listItemDTO = itemMybatisDAO.queryItemList(itemInDTO, page);
 			Long size = itemMybatisDAO.queryCount(itemInDTO);
 			// List<SellPriceDTO> prices = null;
 			List<ItemPicture> pics = null;
@@ -364,29 +341,22 @@ public class ItemExportServiceImpl implements ItemExportService {
 					item.setPictureUrl(pics.get(0).getPictureUrl());
 				}
 				// 设置品牌
-				ExecuteResult<ItemBrand> itemBrandResult = itemBrandExportService
-						.queryItemBrandById(item.getBrand());
-				if (itemBrandResult != null
-						&& itemBrandResult.getResult() != null) {
-					item.setBrandName(itemBrandResult.getResult()
-							.getBrandName());
+				ExecuteResult<ItemBrand> itemBrandResult = itemBrandExportService.queryItemBrandById(item.getBrand());
+				if (itemBrandResult != null && itemBrandResult.getResult() != null) {
+					item.setBrandName(itemBrandResult.getResult().getBrandName());
 				}
 				// 如果商品审核状态是待审核，需要查询临时表item_draft以及对应的图片和描述
-				if (item.getItemStatus() == HtdItemStatusEnum.AUDITING
-						.getCode()) {
+				if (item.getItemStatus() == HtdItemStatusEnum.AUDITING.getCode()) {
 					// 如果审核状态是待审核,商品列表中商品名称、品牌、类目需要展示临时表item_draft中未通过审核的数据.
-					ItemDraft itemDraft = itemDraftMapper.selectByItemId(item
-							.getItemId());
+					ItemDraft itemDraft = itemDraftMapper.selectByItemId(item.getItemId());
 					if (itemDraft != null) {
 						item.setItemName(itemDraft.getItemName());
 						ExecuteResult<ItemBrand> executeResult = itemBrandExportService
 								.queryItemBrandById(itemDraft.getBrand());
 						if (executeResult != null && executeResult.isSuccess()) {
-							item.setBrandName(executeResult.getResult()
-									.getBrandName());
+							item.setBrandName(executeResult.getResult().getBrandName());
 						}
-						item.setCid(Integer.valueOf(String.valueOf(itemDraft
-								.getCid())));
+						item.setCid(Integer.valueOf(String.valueOf(itemDraft.getCid())));
 					}
 				}
 			}
@@ -405,12 +375,10 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * Discription:[方法功能中文描述:查询商品的信息列表]
 	 * </p>
 	 */
-	public DataGrid<ItemQueryOutDTO> querySellerItemList(
-			ItemQueryInDTO itemInDTO, Pager page) {
+	public DataGrid<ItemQueryOutDTO> querySellerItemList(ItemQueryInDTO itemInDTO, Pager page) {
 		DataGrid<ItemQueryOutDTO> dataGrid = new DataGrid<ItemQueryOutDTO>();
 		try {
-			List<ItemQueryOutDTO> listItemDTO = itemMybatisDAO.queryItemList(
-					itemInDTO, page);
+			List<ItemQueryOutDTO> listItemDTO = itemMybatisDAO.queryItemList(itemInDTO, page);
 			Long size = itemMybatisDAO.queryCount(itemInDTO);
 			if (listItemDTO != null && listItemDTO.size() > 0) {
 				for (ItemQueryOutDTO outDto : listItemDTO) {
@@ -429,33 +397,30 @@ public class ItemExportServiceImpl implements ItemExportService {
 						outDto.setAttributess(attrs);
 					}
 					// 根据cid查询类目属性
-					ExecuteResult<List<ItemCatCascadeDTO>> er = itemCategoryService
-							.queryParentCategoryList(3,
-									Long.valueOf(outDto.getCid()));
+					ExecuteResult<List<ItemCatCascadeDTO>> er = itemCategoryService.queryParentCategoryList(3,
+							Long.valueOf(outDto.getCid()));
 					outDto.setItemCatCascadeDTO(er.getResult());
 					List<VenusItemSkuOutDTO> venusItemSkuOutDTOs = itemSkuDAO
-							.selectByItemIdAndSellerId(outDto.getItemId(),
-									Long.valueOf(outDto.getSellerId()));
-					if (venusItemSkuOutDTOs != null
-							&& venusItemSkuOutDTOs.size() > 0) {
+							.selectByItemIdAndSellerId(outDto.getItemId(), Long.valueOf(outDto.getSellerId()));
+					if (venusItemSkuOutDTOs != null && venusItemSkuOutDTOs.size() > 0) {
 						for (VenusItemSkuOutDTO skuOut : venusItemSkuOutDTOs) {
 							// 根据sku的销售属性keyId:valueId查询商品属性
 							ExecuteResult<List<ItemAttrDTO>> itemAttr = itemCategoryService
-									.queryCatAttrByKeyVals(skuOut
-											.getAttributes());
+									.queryCatAttrByKeyVals(skuOut.getAttributes());
 							// 根据skuID查询对应ｓｋｕ下面的显示库存
-							skuOut.setDisplayQuantity(itemSkuPublishInfoMapper
-									.queryBySkuId(skuOut.getSkuId()).get(0)
-									.getDisplayQuantity());
+							// edit by li.jun
+							List<ItemSkuPublishInfo> publishInfo = itemSkuPublishInfoMapper
+									.queryBySkuId(skuOut.getSkuId());
+							if (null != publishInfo && publishInfo.size() > 0) {
+								skuOut.setDisplayQuantity(publishInfo.get(0).getDisplayQuantity());
+								skuOut.setReserveQuantity(publishInfo.get(0).getReserveQuantity());
+							}
+							// edit by li.jun
 							skuOut.setItemAttr(itemAttr.getResult());
 							DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService
-									.queryLadderPriceBySellerIdAndSkuId(
-											itemInDTO.getSellerId(),
-											skuOut.getSkuId());
-							if (ladderList.getRows() != null
-									&& ladderList.getRows().size() > 0) {
-								skuOut.setItemSkuLadderPrices(ladderList
-										.getRows());
+									.queryLadderPriceBySellerIdAndSkuId(itemInDTO.getSellerId(), skuOut.getSkuId());
+							if (ladderList.getRows() != null && ladderList.getRows().size() > 0) {
+								skuOut.setItemSkuLadderPrices(ladderList.getRows());
 							}
 						}
 					}
@@ -490,8 +455,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 		} catch (Exception e) {
 			LOGGER.error("执行方法【updateShopItemStatusByItemId】报错：{}", e);
-			result.addErrorMessage("执行方法【updateShopItemStatusByItemId】报错："
-					+ e.getMessage());
+			result.addErrorMessage("执行方法【updateShopItemStatusByItemId】报错：" + e.getMessage());
 		}
 		return result;
 	}
@@ -532,26 +496,24 @@ public class ItemExportServiceImpl implements ItemExportService {
 				itemDTO.setAttributes(attrs);
 			}
 			// 销售区域
-			ItemSalesArea salesAreaPublic = itemSalesAreaMapper.selectByItemId(
-					itemId, "2");
+			ItemSalesArea salesAreaPublic = itemSalesAreaMapper.selectByItemId(itemId, "2");
 			if (null != salesAreaPublic) {
 				if (salesAreaPublic.getIsSalesWholeCountry().intValue() == 0) {
-					Map<String, Map<String, List<String>>> publicSalesAreaMap = assemblingItemArea(salesAreaPublic
-							.getSalesAreaId());
+					Map<String, Map<String, List<String>>> publicSalesAreaMap = assemblingItemArea(
+							salesAreaPublic.getSalesAreaId());
 					itemDTO.setPublicSalesAreaMap(publicSalesAreaMap);
 				} else {
-					itemDTO.setPublicSalesAreaMap(new HashMap<String, Map<String,List<String>>>());
+					itemDTO.setPublicSalesAreaMap(new HashMap<String, Map<String, List<String>>>());
 				}
 			}
-			ItemSalesArea salesAreaBox = itemSalesAreaMapper.selectByItemId(
-					itemId, "1");
+			ItemSalesArea salesAreaBox = itemSalesAreaMapper.selectByItemId(itemId, "1");
 			if (null != salesAreaBox) {
 				if (salesAreaBox.getIsSalesWholeCountry().intValue() == 0) {
-					Map<String, Map<String, List<String>>> boxSalesAreaMap = assemblingItemArea(salesAreaBox
-							.getSalesAreaId());
+					Map<String, Map<String, List<String>>> boxSalesAreaMap = assemblingItemArea(
+							salesAreaBox.getSalesAreaId());
 					itemDTO.setBoxSalesAreaMap(boxSalesAreaMap);
 				} else {
-					itemDTO.setBoxSalesAreaMap(new HashMap<String, Map<String,List<String>>>());
+					itemDTO.setBoxSalesAreaMap(new HashMap<String, Map<String, List<String>>>());
 				}
 			}
 
@@ -559,12 +521,10 @@ public class ItemExportServiceImpl implements ItemExportService {
 			String[] picUrls = this.getItemPictures(itemDTO.getItemId());
 			itemDTO.setPicUrls(picUrls);
 			// 查询商品SKU 阶梯价 图片 库存 成本价
-			List<SkuInfoDTO> skus = this.getItemSkuList(itemId,
-					itemDTO.getProductChannelCode());
+			List<SkuInfoDTO> skus = this.getItemSkuList(itemId, itemDTO.getProductChannelCode());
 			itemDTO.setSkuInfos(skus);
 			// 销售属性
-			if (ProductChannelEnum.EXTERNAL_SUPPLIER.getCode().equals(
-					itemDTO.getProductChannelCode())) {
+			if (ProductChannelEnum.EXTERNAL_SUPPLIER.getCode().equals(itemDTO.getProductChannelCode())) {
 				String attrSale = itemDTO.getAttrSaleStr();
 				List<ItemAttrDTO> attrSales = null;
 				if (StringUtils.isNotEmpty(attrSale)) {
@@ -572,82 +532,63 @@ public class ItemExportServiceImpl implements ItemExportService {
 					itemDTO.setAttrSale(attrSales);
 				}
 				// 添加：根据颜色分组的sku图片
-				itemDTO.setSkuColorGroupPictureDTOList(this
-						.getSkuColorGroupPictureDTOList(skus));
+				itemDTO.setSkuColorGroupPictureDTOList(this.getSkuColorGroupPictureDTOList(skus));
 			}
-			if (ProductChannelEnum.INTERNAL_SUPPLIER.getCode().equals(
-					itemDTO.getProductChannelCode())) {
+			if (ProductChannelEnum.INTERNAL_SUPPLIER.getCode().equals(itemDTO.getProductChannelCode())) {
 				List<ItemSku> itemSkus = itemSkuDAO.queryByItemId(itemId);
 				ExecuteResult<StandardPriceDTO> standardPriceDTOExecuteResult = itemSkuPriceService
 						.queryAllPrice4InnerSeller(itemSkus.get(0).getSkuId());
 				ExecuteResult<MemberDetailInfo> memberDetailResult = memberBaseInfoService
 						.getMemberDetailBySellerId(itemDTO.getSellerId());
-				ItemSpu itemSpu = itemSpuMapper.selectById(Long.valueOf(itemDTO
-						.getItemSpuId()));
+				ItemSpu itemSpu = itemSpuMapper.selectById(Long.valueOf(itemDTO.getItemSpuId()));
 				String floorPrice = null;
 				String supplierCode = null;
 				String itemSpuCode = null;
-				if (itemSpu != null
-						&& StringUtils.isNotEmpty(itemSpu.getSpuCode())
-						&& memberDetailResult != null
-						&& memberDetailResult.isSuccess()
-						&& memberDetailResult.getResult() != null
-						&& memberDetailResult.getResult()
-								.getMemberBaseInfoDTO() != null
-						&& StringUtils.isNotEmpty(memberDetailResult
-								.getResult().getMemberBaseInfoDTO()
-								.getMemberCode())) {
+				if (itemSpu != null && StringUtils.isNotEmpty(itemSpu.getSpuCode()) && memberDetailResult != null
+						&& memberDetailResult.isSuccess() && memberDetailResult.getResult() != null
+						&& memberDetailResult.getResult().getMemberBaseInfoDTO() != null && StringUtils
+								.isNotEmpty(memberDetailResult.getResult().getMemberBaseInfoDTO().getMemberCode())) {
 					// use memberCode like 'htd218861',not companyCode
-					supplierCode = memberDetailResult.getResult()
-							.getMemberBaseInfoDTO().getMemberCode();// getCompanyCode();
+					supplierCode = memberDetailResult.getResult().getMemberBaseInfoDTO().getMemberCode();// getCompanyCode();
 					itemSpuCode = itemSpu.getSpuCode();
 
-					floorPrice = MiddlewareInterfaceUtil.findItemFloorPrice(
-							supplierCode, itemSpuCode);
+					floorPrice = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, itemSpuCode);
 				}
 				if (standardPriceDTOExecuteResult.getResult() != null
-						&& standardPriceDTOExecuteResult.getResult()
-								.getItemSkuBasePrice() != null
+						&& standardPriceDTOExecuteResult.getResult().getItemSkuBasePrice() != null
 						&& floorPrice != null) {
-					standardPriceDTOExecuteResult.getResult()
-							.getItemSkuBasePrice()
+					standardPriceDTOExecuteResult.getResult().getItemSkuBasePrice()
 							.setSaleLimitedPrice(new BigDecimal(floorPrice));
 				}
 				// itemDTO设置StandardPriceDTO
-				itemDTO.setStandardPriceDTO(standardPriceDTOExecuteResult
-						.getResult());
+				itemDTO.setStandardPriceDTO(standardPriceDTOExecuteResult.getResult());
 				// 查询总库存
-				if (StringUtils.isNotEmpty(supplierCode)
-						&& StringUtils.isNotEmpty(itemSpuCode)) {
-					ItemStockResponseDTO itemStockResponse = MiddlewareInterfaceUtil
-							.getSingleItemStock(supplierCode, itemSpuCode);
-					Integer stockNum = (itemStockResponse == null
-							|| itemStockResponse.getStoreNum() == null || itemStockResponse
-							.getStoreNum() <= 0) ? 0 : itemStockResponse
-							.getStoreNum();
+				if (StringUtils.isNotEmpty(supplierCode) && StringUtils.isNotEmpty(itemSpuCode)) {
+					ItemStockResponseDTO itemStockResponse = MiddlewareInterfaceUtil.getSingleItemStock(supplierCode,
+							itemSpuCode);
+					Integer stockNum = (itemStockResponse == null || itemStockResponse.getStoreNum() == null
+							|| itemStockResponse.getStoreNum() <= 0) ? 0 : itemStockResponse.getStoreNum();
 					itemDTO.setInventory(stockNum);
 				}
 			}
-			
-			//审核人
+
+			// 审核人
 			itemDTO.setVerifyName("管理员");
-			//审核状态
+			// 审核状态
 			itemDTO.setVerifyStatus(1);
-			
+
 			// 当审核状态是待审核时,商品信息、图片、描述读取临时表item_draft中的数据．
 			if (HtdItemStatusEnum.AUDITING.getCode() == itemSatus
 					|| HtdItemStatusEnum.REJECTED.getCode() == itemSatus) {
 				// 如果审核状态是待审核,商品列表中商品名称、品牌、类目需要展示临时表item_draft中未通过审核的数据.
-				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO
-						.getItemId());
+				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
 				if (itemDraft != null) {
 					// itemDTO.setItemName(itemDraft.getItemName());
 					BeanUtils.copyProperties(itemDraft, itemDTO);
 					ExecuteResult<ItemBrand> executeResult = itemBrandExportService
 							.queryItemBrandById(itemDraft.getBrand());
 					if (executeResult != null && executeResult.isSuccess()) {
-						itemDTO.setBrandName(executeResult.getResult()
-								.getBrandName());
+						itemDTO.setBrandName(executeResult.getResult().getBrandName());
 					}
 					itemDTO.setAttrSaleStr(itemDraft.getAttrSale());
 					itemDTO.setAttributesStr(itemDraft.getAttributes());
@@ -667,20 +608,18 @@ public class ItemExportServiceImpl implements ItemExportService {
 					ItemDraftDescribe itemDraftDescribe = itemDraftDescribeMapper
 							.selectByItemDraftId(itemDraft.getItemDraftId());
 					ItemDescribe itemDescribeAuding = new ItemDescribe();
-					BeanUtils.copyProperties(itemDraftDescribe,
-							itemDescribeAuding, new String[] {
-									"itemDraftDesId", "itemDraftId" });
+					BeanUtils.copyProperties(itemDraftDescribe, itemDescribeAuding,
+							new String[] { "itemDraftDesId", "itemDraftId" });
 					itemDescribeAuding.setItemId(itemId);
 					itemDTO.setItemDescribe(itemDescribeAuding);
 					// 图片
-					String[] draftPicUrls = this.getItemDraftPictures(itemDraft
-							.getItemDraftId());
-					//审核人
-					if(itemDraft.getVerifyName() != null){
+					String[] draftPicUrls = this.getItemDraftPictures(itemDraft.getItemDraftId());
+					// 审核人
+					if (itemDraft.getVerifyName() != null) {
 						itemDTO.setVerifyName(itemDraft.getVerifyName());
 					}
-					//审核状态
-					if(itemDraft.getVerifyStatus() != null){
+					// 审核状态
+					if (itemDraft.getVerifyStatus() != null) {
 						itemDTO.setVerifyStatus(itemDraft.getVerifyStatus());
 					}
 					itemDTO.setPicUrls(draftPicUrls);
@@ -700,8 +639,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * 
 	 * @return
 	 */
-	private Map<String, Map<String, List<String>>> assemblingItemArea(
-			Long salesAreaId) {
+	private Map<String, Map<String, List<String>>> assemblingItemArea(Long salesAreaId) {
 		List<ItemSalesAreaDetail> saleDefaultAreaList = itemSalesAreaDetailMapper
 				.selectAreaDetailsBySalesAreaIdAll(salesAreaId);
 		List<String> areaFirstList = new ArrayList<String>();
@@ -745,8 +683,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					if (addressS == null) {
 						continue;
 					}
-					areaAssemblingMap.put(addressS.getName(),
-							areaSecondThreesMap.get(key));
+					areaAssemblingMap.put(addressS.getName(), areaSecondThreesMap.get(key));
 				}
 			}
 			AddressInfo addressF = addressUtil.getAddressName(areaF);
@@ -764,14 +701,12 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * @param skuInfoDTOList
 	 * @return
 	 */
-	private List<SkuColorGroupPictureDTO> getSkuColorGroupPictureDTOList(
-			List<SkuInfoDTO> skuInfoDTOList) {
+	private List<SkuColorGroupPictureDTO> getSkuColorGroupPictureDTOList(List<SkuInfoDTO> skuInfoDTOList) {
 		List<SkuColorGroupPictureDTO> skuColorGroupPictureDTOList = new ArrayList();
 		try {
 			Map<String, List<SkuPictureDTO>> skuColorGroupPictureMap = new HashMap<>(); // 用map保证颜色不重复，
 			for (SkuInfoDTO skuInfoDTO : skuInfoDTOList) {
-				List<ItemAttrDTO> skuSaleAttributes = skuInfoDTO
-						.getSkuSaleAttributes();
+				List<ItemAttrDTO> skuSaleAttributes = skuInfoDTO.getSkuSaleAttributes();
 				List<SkuPictureDTO> skuPics = skuInfoDTO.getSkuPics();
 				// 如果有颜色属性
 				String color = null;
@@ -791,15 +726,12 @@ public class ItemExportServiceImpl implements ItemExportService {
 					skuColorGroupPictureMap.put(color, skuPics);
 				}
 			}
-			Iterator<String> iterator = skuColorGroupPictureMap.keySet()
-					.iterator();
+			Iterator<String> iterator = skuColorGroupPictureMap.keySet().iterator();
 			while (iterator.hasNext()) {
 				String color = iterator.next();
 				SkuColorGroupPictureDTO skuColorGroupPictureDTO = new SkuColorGroupPictureDTO();
 				skuColorGroupPictureDTO.setColor(color);
-				skuColorGroupPictureDTO
-						.setSkuPictureDTOList(skuColorGroupPictureMap
-								.get(color));
+				skuColorGroupPictureDTO.setSkuPictureDTOList(skuColorGroupPictureMap.get(color));
 				skuColorGroupPictureDTOList.add(skuColorGroupPictureDTO);
 			}
 		} catch (Exception e) {
@@ -838,8 +770,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * </p>
 	 */
 	private String[] getItemDraftPictures(Long itemDraftId) {
-		List<ItemDraftPicture> itemDraftPictures = itemDraftPictureMapper
-				.queryItemDraftPicsByDraftId(itemDraftId);
+		List<ItemDraftPicture> itemDraftPictures = itemDraftPictureMapper.queryItemDraftPicsByDraftId(itemDraftId);
 		List<String> picUrls = new ArrayList<String>();
 		for (ItemDraftPicture itemDraftPicture : itemDraftPictures) {
 			picUrls.add(itemDraftPicture.getPictureUrl());
@@ -951,8 +882,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				result.addErrorMessage("参数为空！");
 				return result;
 			}
-			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO
-					.getItemId());
+			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO.getItemId());
 			if (dbItem == null) {// 商品信息不能为空
 				result.addErrorMessage("没有查询到该商品信息！");
 				return result;
@@ -977,8 +907,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			int passCode = HtdItemStatusEnum.PASS.getCode();
 			int rejectedCode = HtdItemStatusEnum.REJECTED.getCode();
 			Integer itemStatus = itemDTO.getItemStatus();
-			if (itemStatus != null && itemStatus != passCode
-					&& itemStatus != rejectedCode) {
+			if (itemStatus != null && itemStatus != passCode && itemStatus != rejectedCode) {
 				itemDTO.setErpFirstCategoryCode(null);
 				itemDTO.setErpFiveCategoryCode(null);
 				// itemDTO.setItemStatus(HtdItemStatusEnum.AUDITING.getCode());
@@ -991,21 +920,16 @@ public class ItemExportServiceImpl implements ItemExportService {
 			String productChannelCode = itemDTO.getProductChannelCode();
 			// productChannelCode = "10";
 			// 外部供应商商品时, 如果商品状态为审核通过, 则更新商品状态为未上架
-			if (itemStatus != null
-					&& itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
-				if (productChannelCode
-						.equals(ProductChannelEnum.EXTERNAL_SUPPLIER.getCode())) {
-					itemDTO.setItemStatus(HtdItemStatusEnum.NOT_SHELVES
-							.getCode());
+			if (itemStatus != null && itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
+				if (productChannelCode.equals(ProductChannelEnum.EXTERNAL_SUPPLIER.getCode())) {
+					itemDTO.setItemStatus(HtdItemStatusEnum.NOT_SHELVES.getCode());
 				}
 			}
 			// 修改信息后进入待审核状态
 			// itemDTO.setItemStatus(HtdItemStatusEnum.AUDITING.getCode());
 			// itemDTO.setItemStatus(1);//内部供应商需要审核
 			if (StringUtils.isNotEmpty(productChannelCode)
-					&& productChannelCode
-							.equals(ProductChannelEnum.EXTERNAL_SUPPLIER
-									.getCode())) {
+					&& productChannelCode.equals(ProductChannelEnum.EXTERNAL_SUPPLIER.getCode())) {
 				// itemDTO.setItemStatus(2);//外部供应商不需要审核
 				result = this.modifySellerItem(itemDTO);
 			} else {
@@ -1044,16 +968,14 @@ public class ItemExportServiceImpl implements ItemExportService {
 				return result;
 			}
 
-			List<ItemAttrDTO> attrList = this.getItemAttrList(sku
-					.getAttributes());
+			List<ItemAttrDTO> attrList = this.getItemAttrList(sku.getAttributes());
 			skuDTO.setAttrSales(attrList);
 			// skuDTO.setItemName(sku.getItemName());
 			// skuDTO.setCid(sku.getCid());
 			// skuDTO.setItemStatus(sku.getItemStatus());
 			// skuDTO.setSkuScope(sku.getSkuScope());
 			// skuDTO.setHasPrice(sku.getHasPrice() == 1 ? true : false);
-			List<SkuPictureDTO> pics = this.itemMybatisDAO.querySkuPics(sku
-					.getSkuId());
+			List<SkuPictureDTO> pics = this.itemMybatisDAO.querySkuPics(sku.getSkuId());
 			if (pics != null && pics.size() > 0) {
 				skuDTO.setSkuPicUrl(pics.get(0).getPicUrl());
 			}
@@ -1062,8 +984,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			// BigDecimal skuPrice = this.getSkuPrice(skuDTO);
 			// skuDTO.setSkuPrice(skuPrice);
 			// 增加库存
-			Integer qty = this.tradeInventoryDAO
-					.queryBySkuId(skuDTO.getSkuId()).getTotalInventory();
+			Integer qty = this.tradeInventoryDAO.queryBySkuId(skuDTO.getSkuId()).getTotalInventory();
 			skuDTO.setQty(qty);
 			result.setResult(skuDTO);
 		} catch (Exception e) {
@@ -1085,8 +1006,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			}
 			this.itemMybatisDAO.modifyItemAdBatch(ads);
 		} catch (Exception e) {
-			result.addErrorMessage("执行方法【modifyItemAdBatch】报错：{}"
-					+ e.getMessage());
+			result.addErrorMessage("执行方法【modifyItemAdBatch】报错：{}" + e.getMessage());
 			LOGGER.error("执行方法【modifyItemAdBatch】报错：{}", e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
@@ -1096,8 +1016,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<String> modifyItemShopCidBatch(
-			List<ItemShopCidDTO> cids) {
+	public ExecuteResult<String> modifyItemShopCidBatch(List<ItemShopCidDTO> cids) {
 		LOGGER.info("============开始批量修改商品店铺分类=============");
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		try {
@@ -1107,8 +1026,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			}
 			this.itemMybatisDAO.modifyItemShopCidBatch(cids);
 		} catch (Exception e) {
-			result.addErrorMessage("执行方法【modifyItemShopCidBatch】报错:{}"
-					+ e.getMessage());
+			result.addErrorMessage("执行方法【modifyItemShopCidBatch】报错:{}" + e.getMessage());
 			LOGGER.info("执行方法【modifyItemShopCidBatch】报错:{}", e);
 			throw new RuntimeException(e);
 		} finally {
@@ -1122,8 +1040,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * Discription:[添加卖家商品]
 	 * </p>
 	 */
-	private ExecuteResult<ItemDTO> addSellerItem(ItemDTO itemDTO)
-			throws Exception {
+	private ExecuteResult<ItemDTO> addSellerItem(ItemDTO itemDTO) throws Exception {
 		ExecuteResult<ItemDTO> result = new ExecuteResult<ItemDTO>();
 		// 校验空值
 		result = this.checkExistSellerItemNull(itemDTO);
@@ -1163,8 +1080,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * @param attrType
 	 *            属性类型:1:销售属性;2:非销售属性
 	 */
-	private void addItemAttrs(List<ItemAttrDTO> saleAttrs, int attrType,
-			long itemId) {
+	private void addItemAttrs(List<ItemAttrDTO> saleAttrs, int attrType, long itemId) {
 		List<ItemAttrValueItemDTO> paramList = new ArrayList<ItemAttrValueItemDTO>();
 		ItemAttrValueItemDTO dto = null;
 		for (ItemAttrDTO attr : saleAttrs) {
@@ -1234,8 +1150,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * </p>
 	 */
 	private void insertItemSkuInventory(SkuInfoDTO sku, ItemDTO itemDTO) {
-		List<ItemSkuPublishInfo> itemSkuPublishInfos = sku
-				.getItemSkuPublishInfos();
+		List<ItemSkuPublishInfo> itemSkuPublishInfos = sku.getItemSkuPublishInfos();
 		for (ItemSkuPublishInfo itemSkuPublishInfo : itemSkuPublishInfos) {
 			itemSkuPublishInfo.setItemId(itemDTO.getItemId());
 			itemSkuPublishInfo.setSkuId(sku.getSkuId());
@@ -1459,8 +1374,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * itemStatus:4 platLinkStatus:3 ]
 	 * </p>
 	 */
-	private ExecuteResult<ItemDTO> addPlatformItem(ItemDTO itemDTO)
-			throws Exception {
+	private ExecuteResult<ItemDTO> addPlatformItem(ItemDTO itemDTO) throws Exception {
 		ExecuteResult<ItemDTO> result = new ExecuteResult<ItemDTO>();
 		// 校验空值
 		result = this.checkExistPlatItemNull(itemDTO);
@@ -1505,8 +1419,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					itemPicture.setSortNumber(i);
 					itemPicture.setItemId(itemDTO.getItemId());
 					itemPicture.setSellerId(itemDTO.getSellerId());
-					itemPicture.setShopId(itemDTO.getShopId() == null ? 0L
-							: itemDTO.getShopId());
+					itemPicture.setShopId(itemDTO.getShopId() == null ? 0L : itemDTO.getShopId());
 					itemPicture.setPictureUrl(pictureUrl);
 					itemPicture.setPictureStatus(1);
 					itemPicture.setCreateId(itemDTO.getModifyId());
@@ -1564,8 +1477,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			return result;
 		}
 		// 非销售属性
-		if (itemDTO.getAttributes() == null
-				|| itemDTO.getAttributes().isEmpty()) {
+		if (itemDTO.getAttributes() == null || itemDTO.getAttributes().isEmpty()) {
 			result.addErrorMessage("参数【Attributes】为空！");
 			return result;
 		}
@@ -1577,34 +1489,26 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * Discription:[获取商品的SKU信息 查询商品SKU 阶梯价 图片 库存 成本价]
 	 * </p>
 	 */
-	private List<SkuInfoDTO> getItemSkuList(Long itemId,
-			String productChannelCode) throws Exception {
+	private List<SkuInfoDTO> getItemSkuList(Long itemId, String productChannelCode) throws Exception {
 		List<SkuInfoDTO> list = this.itemMybatisDAO.queryItemSkuInfo(itemId);
 		for (SkuInfoDTO sku : list) {
 			// 阶梯价
-			List<ItemSkuLadderPrice> skuLadderPrices = itemSkuPriceService
-					.getSkuLadderPrice(sku.getSkuId());
+			List<ItemSkuLadderPrice> skuLadderPrices = itemSkuPriceService.getSkuLadderPrice(sku.getSkuId());
 			// 图片
-			List<SkuPictureDTO> skuPics = this.itemMybatisDAO.querySkuPics(sku
-					.getSkuId());
+			List<SkuPictureDTO> skuPics = this.itemMybatisDAO.querySkuPics(sku.getSkuId());
 			if (StringUtils.isNotEmpty(productChannelCode)
-					&& productChannelCode
-							.equals(ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL)) {
+					&& productChannelCode.equals(ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL)) {
 				// 查询sku实际库存:只有内部供应商价格有实际库存，阶梯价只有显示库存。
-				ItemSkuTotalStock itemSkuTotalStock = itemSkuTotalStockMapper
-						.queryBySkuId(sku.getSkuId());
-				sku.setSkuInventory(itemSkuTotalStock == null ? 0
-						: itemSkuTotalStock.getInventory());
+				ItemSkuTotalStock itemSkuTotalStock = itemSkuTotalStockMapper.queryBySkuId(sku.getSkuId());
+				sku.setSkuInventory(itemSkuTotalStock == null ? 0 : itemSkuTotalStock.getInventory());
 			}
 			// 销售属性 外部供应商商品
 			List<ItemAttrDTO> skuSaleAttributes = new ArrayList();
-			if (productChannelCode
-					.equals(ItemChannelConstant.ITME_CHANNEL_OF_EXTERNAL)) {
+			if (productChannelCode.equals(ItemChannelConstant.ITME_CHANNEL_OF_EXTERNAL)) {
 				skuSaleAttributes = this.getItemAttrList(sku.getAttributes());
 			}
 			// 查询商品sku库存:包括起订量和限定量．
-			List<ItemSkuPublishInfo> itemSkuPublishInfos = itemSkuPublishInfoMapper
-					.queryBySkuId(sku.getSkuId());
+			List<ItemSkuPublishInfo> itemSkuPublishInfos = itemSkuPublishInfoMapper.queryBySkuId(sku.getSkuId());
 			sku.setItemSkuPublishInfos(itemSkuPublishInfos);
 			sku.setSkuPics(skuPics);
 			sku.setSkuLadderPrices(skuLadderPrices);
@@ -1632,8 +1536,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				Map<String, Object> map = JSONObject.fromObject(attributes);
 				if (map != null && !map.isEmpty()) {
 					for (String attributeId : map.keySet()) {
-						String attributeValeName = this.getAttributeName(Long
-								.valueOf(attributeId));
+						String attributeValeName = this.getAttributeName(Long.valueOf(attributeId));
 						if (StringUtils.isNotEmpty(attributeValeName)) {
 							ItemAttrDTO itemAttrDTO = new ItemAttrDTO();
 							itemAttrDTO.setId(Long.valueOf(attributeId));
@@ -1645,35 +1548,24 @@ public class ItemExportServiceImpl implements ItemExportService {
 								int size = jsonArray.size();
 								List<ItemAttrValueDTO> values = new ArrayList<>();
 								for (int i = 0; i < size; i++) {
-									if (jsonArray.get(i) == null
-											|| !StringUtils.isNumeric(jsonArray
-													.get(i) + "")) {
-										LOGGER.error(
-												"执行方法【getItemAttrList】attributeValueId",
-												jsonArray.get(i));
+									if (jsonArray.get(i) == null || !StringUtils.isNumeric(jsonArray.get(i) + "")) {
+										LOGGER.error("执行方法【getItemAttrList】attributeValueId", jsonArray.get(i));
 										continue;
 									}
-									Integer attributeValueId = Integer
-											.valueOf(jsonArray.get(i) + "");
-									String attributeValueName = this
-											.getAttributeValueName(attributeValueId);
+									Integer attributeValueId = Integer.valueOf(jsonArray.get(i) + "");
+									String attributeValueName = this.getAttributeValueName(attributeValueId);
 									ItemAttrValueDTO itemAttrValueDTO = new ItemAttrValueDTO();
-									itemAttrValueDTO.setId(Long
-											.valueOf(attributeValueId));
-									itemAttrValueDTO
-											.setName(attributeValueName);
+									itemAttrValueDTO.setId(Long.valueOf(attributeValueId));
+									itemAttrValueDTO.setName(attributeValueName);
 									values.add(itemAttrValueDTO);
 									itemAttrDTO.setValues(values);
 								}
 							} else {
-								Integer attributeValueId = Integer
-										.valueOf(attributeValueObj + "");
-								String attributeValueName = this
-										.getAttributeValueName(attributeValueId);
+								Integer attributeValueId = Integer.valueOf(attributeValueObj + "");
+								String attributeValueName = this.getAttributeValueName(attributeValueId);
 								List<ItemAttrValueDTO> values = new ArrayList<>();
 								ItemAttrValueDTO itemAttrValueDTO = new ItemAttrValueDTO();
-								itemAttrValueDTO.setId(Long
-										.valueOf(attributeValueId));
+								itemAttrValueDTO.setId(Long.valueOf(attributeValueId));
 								itemAttrValueDTO.setName(attributeValueName);
 								values.add(itemAttrValueDTO);
 								itemAttrDTO.setValues(values);
@@ -1697,8 +1589,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 	private String getAttributeName(Long attributeId) {
 		if (attributeId != null) {
-			String attributeName = this.redisDB
-					.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE + attributeId);
+			String attributeName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE + attributeId);
 			if (StringUtils.isEmpty(attributeName)) {
 				return this.categoryAttrDAO.getAttrNameByAttrId(attributeId);
 			} else {
@@ -1711,12 +1602,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 	private String getAttributeValueName(Integer attributeValueId) {
 		if (attributeValueId != null) {
-			String attributeValueName = this.redisDB
-					.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE_VALUE
-							+ attributeValueId);
+			String attributeValueName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE_VALUE + attributeValueId);
 			if (StringUtils.isEmpty(attributeValueName)) {
-				return this.categoryAttrDAO.getAttrValueNameByAttrValueId(Long
-						.valueOf(attributeValueId));
+				return this.categoryAttrDAO.getAttrValueNameByAttrValueId(Long.valueOf(attributeValueId));
 			} else {
 				return attributeValueName;
 			}
@@ -1778,8 +1666,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 * @param itemId
 	 *            商品ID
 	 */
-	private void modifyItemAttrs(List<ItemAttrDTO> attributes,
-			List<ItemAttrDTO> attrSales, Long itemId) {
+	private void modifyItemAttrs(List<ItemAttrDTO> attributes, List<ItemAttrDTO> attrSales, Long itemId) {
 		List<ItemAttrValueItemDTO> paramList = new ArrayList<ItemAttrValueItemDTO>();
 		ItemAttrValueItemDTO dto = null;
 		for (ItemAttrDTO attr : attributes) {// 非销售属性
@@ -1829,8 +1716,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				insertSkus.add(skuDTO);
 			}
 		}
-		List<SkuInfoDTO> dbSkus = this.itemMybatisDAO.queryItemSkuInfo(itemDTO
-				.getItemId());
+		List<SkuInfoDTO> dbSkus = this.itemMybatisDAO.queryItemSkuInfo(itemDTO.getItemId());
 		Map<Long, SkuInfoDTO> deleteSkus = new HashMap<Long, SkuInfoDTO>();
 		for (SkuInfoDTO skuInfo : dbSkus) {
 			deleteSkus.put(skuInfo.getSkuId(), skuInfo);
@@ -1855,8 +1741,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		LOGGER.info("删除的SKU：" + JSON.toJSONString(insertSkus));
 		Iterator<Long> idsIt = deleteSkus.keySet().iterator();
 		while (idsIt.hasNext()) {
-			this.itemSkuDAO.deleteSkuById(idsIt.next(), itemDTO.getModifyId(),
-					itemDTO.getModifyName());
+			this.itemSkuDAO.deleteSkuById(idsIt.next(), itemDTO.getModifyId(), itemDTO.getModifyName());
 		}
 
 	}
@@ -1962,8 +1847,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		// 删除原来的商品图片
 		// this.itemPictureDAO.deleteItemPicture(itemDTO.getItemId());
 		if (itemDTO.getOperator() == 1) {
-			this.itemPictureDAO.updateDeleteFlagByItemIdAndSellerId(
-					itemDTO.getItemId(), itemDTO.getSellerId());
+			this.itemPictureDAO.updateDeleteFlagByItemIdAndSellerId(itemDTO.getItemId(), itemDTO.getSellerId());
 		} else {
 			this.itemPictureDAO.updateDeleteFlagByItemId(itemDTO.getItemId());
 		}
@@ -1985,30 +1869,24 @@ public class ItemExportServiceImpl implements ItemExportService {
 			return result;
 		}
 		Integer itemStatus = itemDTO.getItemStatus();
-		ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO
-				.getItemId());
-		if (itemStatus != null
-				&& itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
+		ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
+		if (itemStatus != null && itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
 			// //外部供应商商品时, 如果商品状态为审核通过, 则更新商品状态为未上架
 			// if(itemDTO.getProductChannelCode().equals(ProductChannelEnum.EXTERNAL_SUPPLIER.getCode())){
 			// itemDTO.setItemStatus(HtdItemStatusEnum.NOT_SHELVES.getCode());
 			// }
 			// TODO 2016-11-24 START
 			// 如果商品状态为审核通过, 内部供应商商品时, 则商品信息下行ERP
-			if (itemDTO.getProductChannelCode().equals(
-					ProductChannelEnum.INTERNAL_SUPPLIER.getCode())) {
+			if (itemDTO.getProductChannelCode().equals(ProductChannelEnum.INTERNAL_SUPPLIER.getCode())) {
 				MQSendUtil mqSendUtil = SpringUtils.getBean(MQSendUtil.class);
-				ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long
-						.valueOf(itemDTO.getItemSpuId()));
+				ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long.valueOf(itemDTO.getItemSpuId()));
 				ProductMessage productMessage = new ProductMessage();
 				productMessage.setProductCode(itemSpu.getSpuCode());
 				productMessage.setBrandCode(itemDTO.getBrand().toString());
-				productMessage
-						.setCategoryCode(itemDTO.getErpFiveCategoryCode());
+				productMessage.setCategoryCode(itemDTO.getErpFiveCategoryCode());
 				productMessage.setChargeUnit(itemDTO.getWeightUnit());
 				productMessage.setMarque(itemDTO.getModelType());
-				productMessage.setProductSpecifications(itemDTO
-						.getItemQualification());
+				productMessage.setProductSpecifications(itemDTO.getItemQualification());
 				productMessage.setProductName(itemDTO.getItemName());
 				productMessage.setOutputRate(itemDTO.getTaxRate().toString());
 				productMessage.setProductColorCode("0");
@@ -2020,15 +1898,12 @@ public class ItemExportServiceImpl implements ItemExportService {
 				productMessage.setIncomeTaxRates("0.17");
 				productMessage.setPackingContent("1");
 				productMessage.setIsUpdateFlag(1);
-				LOGGER.info("商品开始下行ERP, 下行信息 : {}",
-						JSONObject.fromObject(productMessage));
-				mqSendUtil.sendToMQWithRoutingKey(productMessage,
-						MQRoutingKeyConstant.ITEM_DOWN_ERP_ROUTING_KEY);
+				LOGGER.info("商品开始下行ERP, 下行信息 : {}", JSONObject.fromObject(productMessage));
+				mqSendUtil.sendToMQWithRoutingKey(productMessage, MQRoutingKeyConstant.ITEM_DOWN_ERP_ROUTING_KEY);
 			}
 			// TODO 2016-11-24 END
 			// use draft to override item and sku by zhanxiaolong
-			if (itemDTO.getProductChannelCode().equals(
-					ProductChannelEnum.INTERNAL_SUPPLIER.getCode())) {
+			if (itemDTO.getProductChannelCode().equals(ProductChannelEnum.INTERNAL_SUPPLIER.getCode())) {
 				syncDraft2Item(itemDraft, itemDTO);
 			}
 
@@ -2062,21 +1937,18 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	private void syncDraft2Item(ItemDraft itemDraft, ItemDTO itemDTO) {
-		if (itemDTO == null || itemDTO.getItemId() == null
-				|| itemDTO.getItemId() <= 0) {
+		if (itemDTO == null || itemDTO.getItemId() == null || itemDTO.getItemId() <= 0) {
 			return;
 		}
 		if (itemDraft == null) {
 			return;
 		}
 		itemDTO.setAd(itemDraft.getAd());
-		if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(itemDraft
-				.getAttributes()))) {
+		if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(itemDraft.getAttributes()))) {
 			itemDTO.setAttributesStr(itemDraft.getAttributes());
 		}
 		// 处理sku 颜色字段 放到sku表的销售属性字段上去
-		List<ItemSku> itemSkuList = itemSkuDAO.queryByItemId(itemDraft
-				.getItemId());
+		List<ItemSku> itemSkuList = itemSkuDAO.queryByItemId(itemDraft.getItemId());
 
 		if (CollectionUtils.isNotEmpty(itemSkuList)) {
 			ItemSku itemSku = itemSkuList.get(0);
@@ -2090,8 +1962,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		if (itemDraft.getCid() != null) {
 			itemDTO.setCid(itemDraft.getCid());
 		}
-		if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(itemDraft
-				.getEanCode()))) {
+		if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(itemDraft.getEanCode()))) {
 			itemDTO.setEanCode(itemDraft.getEanCode());
 		}
 
@@ -2104,18 +1975,14 @@ public class ItemExportServiceImpl implements ItemExportService {
 		if (itemDraft.getItemSpuId() != null) {
 			itemDTO.setItemSpuId(itemDraft.getItemSpuId().intValue());
 		}
-		itemDTO.setHeight(itemDraft.getHeight() == null ? "0" : itemDraft
-				.getHeight().toPlainString());
-		itemDTO.setLength(itemDraft.getLength() == null ? "0" : itemDraft
-				.getLength().toPlainString());
-		itemDTO.setWidth(itemDraft.getWidth() == null ? "0" : itemDraft
-				.getWidth().toPlainString());
+		itemDTO.setHeight(itemDraft.getHeight() == null ? "0" : itemDraft.getHeight().toPlainString());
+		itemDTO.setLength(itemDraft.getLength() == null ? "0" : itemDraft.getLength().toPlainString());
+		itemDTO.setWidth(itemDraft.getWidth() == null ? "0" : itemDraft.getWidth().toPlainString());
 		itemDTO.setModelType(itemDraft.getModelType());
 		itemDTO.setNetWeight(itemDraft.getNetWeight());
 		itemDTO.setOrigin(itemDraft.getOrigin());
 		itemDTO.setTaxRate(itemDraft.getTaxRate());
-		itemDTO.setWeight(itemDraft.getWeight() == null ? new BigDecimal(0)
-				: itemDraft.getWeight());
+		itemDTO.setWeight(itemDraft.getWeight() == null ? new BigDecimal(0) : itemDraft.getWeight());
 		itemDTO.setWeightUnit(itemDraft.getWeightUnit());
 	}
 
@@ -2141,8 +2008,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	//
 	// }
 	@Override
-	public ExecuteResult<DataGrid<ItemQueryOutDTO>> queryItemByCid(Long cid,
-			Pager page) {
+	public ExecuteResult<DataGrid<ItemQueryOutDTO>> queryItemByCid(Long cid, Pager page) {
 		ExecuteResult<DataGrid<ItemQueryOutDTO>> result = new ExecuteResult<DataGrid<ItemQueryOutDTO>>();
 		DataGrid<ItemQueryOutDTO> dataGrid = new DataGrid<ItemQueryOutDTO>();
 		try {
@@ -2156,8 +2022,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					itemInDTO.setCid(cid);
 					itemInDTO.setOperator(2);
 					itemInDTO.setItemStatus(4);
-					DataGrid<ItemQueryOutDTO> d1 = this.queryItemList(
-							itemInDTO, page);
+					DataGrid<ItemQueryOutDTO> d1 = this.queryItemList(itemInDTO, page);
 					d1.getRows();
 					list = d1.getRows();
 					count += d1.getTotal();
@@ -2166,8 +2031,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					// 入过传入是2级类目 用二级类目查询下面的三级类目 用三级类目查询商品
 					ItemCategoryDTO itemCategoryDTO = new ItemCategoryDTO();
 					itemCategoryDTO.setCategoryParentCid(cid);
-					List<ItemCategoryDTO> itemcList = itemCategoryDAO
-							.queryItemCategoryAllList(itemCategoryDTO, null);
+					List<ItemCategoryDTO> itemcList = itemCategoryDAO.queryItemCategoryAllList(itemCategoryDTO, null);
 					List<Long> idsList = new ArrayList<Long>();
 					for (int i = 0; i < itemcList.size(); i++) {
 						idsList.add(itemcList.get(i).getCategoryCid());
@@ -2178,8 +2042,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 						itemQueryInDTO.setCids(ids);
 						itemQueryInDTO.setOperator(2);
 						itemQueryInDTO.setItemStatus(4);
-						DataGrid<ItemQueryOutDTO> d2 = this.queryItemList(
-								itemQueryInDTO, page);
+						DataGrid<ItemQueryOutDTO> d2 = this.queryItemList(itemQueryInDTO, page);
 						d2.getRows();
 						list = d2.getRows();
 						count += d2.getTotal();
@@ -2194,8 +2057,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					// 用一级类目查询旗下的二级类目
 					ItemCategoryDTO itemCategoryDTO = new ItemCategoryDTO();
 					itemCategoryDTO.setCategoryParentCid(cid);
-					List<ItemCategoryDTO> itemcList2 = itemCategoryDAO
-							.queryItemCategoryAllList(itemCategoryDTO, null);
+					List<ItemCategoryDTO> itemcList2 = itemCategoryDAO.queryItemCategoryAllList(itemCategoryDTO, null);
 					List<Long> cids2List = new ArrayList<Long>();
 					for (int i = 0; i < itemcList2.size(); i++) {
 						cids2List.add(itemcList2.get(i).getCategoryCid());
@@ -2206,8 +2068,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					if (cids2.length > 0) {
 						itemCategoryDTO2.setCategoryParentCids(cids2);
 					}
-					List<ItemCategoryDTO> itemcList3 = itemCategoryDAO
-							.queryItemCategoryAllList(itemCategoryDTO2, null);
+					List<ItemCategoryDTO> itemcList3 = itemCategoryDAO.queryItemCategoryAllList(itemCategoryDTO2, null);
 					List<Long> cids3List = new ArrayList<Long>();
 					for (int i = 0; i < itemcList3.size(); i++) {
 						cids3List.add(itemcList3.get(i).getCategoryCid());
@@ -2219,8 +2080,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 						itemQueryInDTO.setCids(cids3);
 						itemQueryInDTO.setOperator(2);
 						itemQueryInDTO.setItemStatus(4);
-						DataGrid<ItemQueryOutDTO> d3 = this.queryItemList(
-								itemQueryInDTO, page);
+						DataGrid<ItemQueryOutDTO> d3 = this.queryItemList(itemQueryInDTO, page);
 						d3.getRows();
 						list = d3.getRows();
 						count += d3.getTotal();
@@ -2232,8 +2092,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				ItemQueryInDTO itemQueryInDTO = new ItemQueryInDTO();
 				itemQueryInDTO.setOperator(2);
 				itemQueryInDTO.setItemStatus(4);
-				DataGrid<ItemQueryOutDTO> d4 = this.queryItemList(
-						itemQueryInDTO, page);
+				DataGrid<ItemQueryOutDTO> d4 = this.queryItemList(itemQueryInDTO, page);
 				d4.getRows();
 				list = d4.getRows();
 				count += d4.getTotal();
@@ -2252,8 +2111,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<ItemQueryOutDTO>> queryItemByPlatItemId(
-			Long itemId, Pager<Long> pager) {
+	public ExecuteResult<DataGrid<ItemQueryOutDTO>> queryItemByPlatItemId(Long itemId, Pager<Long> pager) {
 		ExecuteResult<DataGrid<ItemQueryOutDTO>> result = new ExecuteResult<DataGrid<ItemQueryOutDTO>>();
 		DataGrid<ItemQueryOutDTO> dg = new DataGrid<ItemQueryOutDTO>();
 		ItemQueryInDTO itemInDTO = new ItemQueryInDTO();
@@ -2261,8 +2119,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		Pager<ItemQueryOutDTO> page = new Pager<ItemQueryOutDTO>();
 		page.setRows(pager.getRows());
 		page.setPage(pager.getPage());
-		List<ItemQueryOutDTO> list = this.itemMybatisDAO.queryItemList(
-				itemInDTO, page);
+		List<ItemQueryOutDTO> list = this.itemMybatisDAO.queryItemList(itemInDTO, page);
 		dg.setTotal(this.itemMybatisDAO.queryCount(itemInDTO));
 		dg.setRows(list);
 		result.setResult(dg);
@@ -2270,8 +2127,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<String> modifyItemPlatStatus(List<Long> ids,
-			Integer status) {
+	public ExecuteResult<String> modifyItemPlatStatus(List<Long> ids, Integer status) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		if (ids == null || ids.size() <= 0) {
 			result.addErrorMessage("参数为空！");
@@ -2282,8 +2138,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<String> modifyShopItemStatus(
-			ItemStatusModifyDTO statusDTO) {
+	public ExecuteResult<String> modifyShopItemStatus(ItemStatusModifyDTO statusDTO) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		if (statusDTO == null) {
 			result.addErrorMessage("参数为空！");
@@ -2331,8 +2186,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<String> updateStatusUserShopCate(
-			ItemStatusModifyDTO statusDTO) {
+	public ExecuteResult<String> updateStatusUserShopCate(ItemStatusModifyDTO statusDTO) {
 		ExecuteResult<String> executeResult = new ExecuteResult<String>();
 		try {
 			if (statusDTO.getItemStatus() == null) {
@@ -2348,12 +2202,10 @@ public class ItemExportServiceImpl implements ItemExportService {
 				executeResult.addErrorMessage("商品ID为空！");
 				return executeResult;
 			}
-			itemMybatisDAO.updateStatusUserShopCate(ids,
-					statusDTO.getChangeReason(), statusDTO.getItemStatus());
+			itemMybatisDAO.updateStatusUserShopCate(ids, statusDTO.getChangeReason(), statusDTO.getItemStatus());
 		} catch (Exception e) {
 			LOGGER.error("执行方法【modifyItemStatusById】报错：{}", e);
-			executeResult.addErrorMessage("执行方法【modifyItemStatusById】报错："
-					+ e.getMessage());
+			executeResult.addErrorMessage("执行方法【modifyItemStatusById】报错：" + e.getMessage());
 			throw new RuntimeException(e);
 		}
 		return executeResult;
@@ -2379,8 +2231,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<Boolean> mondifyMarketPrice(String[] itemIds,
-			BigDecimal price) {
+	public ExecuteResult<Boolean> mondifyMarketPrice(String[] itemIds, BigDecimal price) {
 		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
 		try {
 			if (itemIds != null && itemIds.length > 0) {
@@ -2405,8 +2256,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public List<ItemQueryOutDTO> queryItemsList(ItemQueryInDTO itemInDTO,
-			Pager page) {
+	public List<ItemQueryOutDTO> queryItemsList(ItemQueryInDTO itemInDTO, Pager page) {
 		return itemMybatisDAO.queryItemList(itemInDTO, page);
 	}
 
@@ -2433,8 +2283,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		itemDescribe.setModifyName(itemDTO.getModifyName());
 		itemDescribe.setModifyTime(new Date());
 		itemDescribe.setDescribeContent(itemDTO.getDescribeUrl());
-		ItemDescribe dbItemDesc = itemDescribeDAO.getDescByItemId(itemDTO
-				.getItemId());
+		ItemDescribe dbItemDesc = itemDescribeDAO.getDescByItemId(itemDTO.getItemId());
 		if (dbItemDesc == null) {
 			itemDescribe.setCreateId(itemDTO.getModifyId());
 			itemDescribe.setCreateName(itemDTO.getModifyName());
@@ -2446,7 +2295,8 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<SyncItemStockSearchOutDTO>> querySyncItemStockSearchList(SyncItemStockSearchInDTO syncItemStockSearchInDTO, Pager page) {
+	public ExecuteResult<DataGrid<SyncItemStockSearchOutDTO>> querySyncItemStockSearchList(
+			SyncItemStockSearchInDTO syncItemStockSearchInDTO, Pager page) {
 		ExecuteResult<DataGrid<SyncItemStockSearchOutDTO>> result = new ExecuteResult<DataGrid<SyncItemStockSearchOutDTO>>();
 		// 校验参数是否全为空
 		if (syncItemStockSearchInDTO == null || syncItemStockSearchInDTO.getPageSize() == null) {
@@ -2463,7 +2313,8 @@ public class ItemExportServiceImpl implements ItemExportService {
 		if (syncItemStockSearchInDTO.getThirdCatId() == null && syncItemStockSearchInDTO.getSecondCatId() != null) {
 			catIdList = getThirdCatIdListByParentCatId(syncItemStockSearchInDTO.getSecondCatId());
 		}
-		if (syncItemStockSearchInDTO.getThirdCatId() == null && syncItemStockSearchInDTO.getSecondCatId() == null && syncItemStockSearchInDTO.getFirstCatId() != null) {
+		if (syncItemStockSearchInDTO.getThirdCatId() == null && syncItemStockSearchInDTO.getSecondCatId() == null
+				&& syncItemStockSearchInDTO.getFirstCatId() != null) {
 			catIdList = getThirdCatIdListByParentCatId(syncItemStockSearchInDTO.getSecondCatId());
 		}
 		syncItemStockSearchInDTO.setThirdCatIdList(catIdList);
@@ -2498,13 +2349,11 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 	private List<Long> getThirdCatIdListByParentCatId(Long parentCatId) {
 		List<Long> catIdList = null;
-		ExecuteResult<DataGrid<ItemCategoryDTO>> catResult = itemCategoryService
-				.queryItemCategoryList(parentCatId);
+		ExecuteResult<DataGrid<ItemCategoryDTO>> catResult = itemCategoryService.queryItemCategoryList(parentCatId);
 
 		if (catResult.isSuccess() && catResult.getResult() != null) {
 			catIdList = Lists.newArrayList();
-			List<ItemCategoryDTO> thirdCatList = catResult.getResult()
-					.getRows();
+			List<ItemCategoryDTO> thirdCatList = catResult.getResult().getRows();
 			if (CollectionUtils.isNotEmpty(thirdCatList)) {
 				for (ItemCategoryDTO thirdCat : thirdCatList) {
 					catIdList.add(thirdCat.getCategoryCid());
@@ -2514,11 +2363,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return catIdList;
 	}
 
-	private void makeUpFirstAndSecondCat(
-			SyncItemStockSearchOutDTO syncItemStockSearchOutDTO) {
+	private void makeUpFirstAndSecondCat(SyncItemStockSearchOutDTO syncItemStockSearchOutDTO) {
 		ExecuteResult<List<ItemCatCascadeDTO>> catResult = itemCategoryService
-				.queryParentCategoryList(syncItemStockSearchOutDTO
-						.getThirdCatId());
+				.queryParentCategoryList(syncItemStockSearchOutDTO.getThirdCatId());
 		if (!catResult.isSuccess()) {
 			return;
 		}
@@ -2552,24 +2399,20 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<String> syncItemStock(
-			SyncItemStockInDTO syncItemStockInDTO) {
+	public ExecuteResult<String> syncItemStock(SyncItemStockInDTO syncItemStockInDTO) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 
-		if (syncItemStockInDTO == null
-				|| syncItemStockInDTO.getOperatorId() == null
+		if (syncItemStockInDTO == null || syncItemStockInDTO.getOperatorId() == null
 				|| CollectionUtils.isEmpty(syncItemStockInDTO.getData())) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("syncItemStockInDTO")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("syncItemStockInDTO")));
 			return result;
 		}
 
 		String accessToken = MiddlewareInterfaceUtil.getAccessToken();
 		if (StringUtils.isEmpty(accessToken)) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("accessToken")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("accessToken")));
 			return result;
 		}
 
@@ -2583,23 +2426,19 @@ public class ItemExportServiceImpl implements ItemExportService {
 			ExecuteResult<MemberImportSuccInfoDTO> memberImportSuccInfoDTO = memberBaseInfoService
 					.querySellerIdByCode(supplierCode);
 
-			if (memberImportSuccInfoDTO == null
-					|| !memberImportSuccInfoDTO.isSuccess()
+			if (memberImportSuccInfoDTO == null || !memberImportSuccInfoDTO.isSuccess()
 					|| memberImportSuccInfoDTO.getResult() == null
-					|| !StringUtils.isNumeric(memberImportSuccInfoDTO
-							.getResult().getMemberId())) {
+					|| !StringUtils.isNumeric(memberImportSuccInfoDTO.getResult().getMemberId())) {
 				continue;
 			}
 
-			Long sellerId = Long.valueOf(memberImportSuccInfoDTO.getResult()
-					.getMemberId());
+			Long sellerId = Long.valueOf(memberImportSuccInfoDTO.getResult().getMemberId());
 
 			ItemSpu itemSpu = itemSpuMapper.queryItemSpuBySpuCode(spuCode);
 			if (itemSpu == null) {
 				continue;
 			}
-			ItemSku itemSku = itemSkuDAO.queryItemSkuBySellerIdAndSpuId(
-					itemSpu.getSpuId(), sellerId);
+			ItemSku itemSku = itemSkuDAO.queryItemSkuBySellerIdAndSpuId(itemSpu.getSpuId(), sellerId);
 			if (itemSku == null) {
 				continue;
 			}
@@ -2609,22 +2448,15 @@ public class ItemExportServiceImpl implements ItemExportService {
 			if (CollectionUtils.isEmpty(itemSkuPublishInfoList)) {
 				continue;
 			}
-			LOGGER.info(
-					"调取中间件查询getSingleItemStock开始, supplierCode : {}, spuCode : {}",
-					supplierCode, spuCode);
-			ItemStockResponseDTO itemStockResponse = MiddlewareInterfaceUtil
-					.getSingleItemStock(supplierCode, spuCode);
-			LOGGER.info("调取中间件查询getSingleItemStock结束, itemStockResponse : {}",
-					JSON.toJSONString(itemStockResponse));
-			Integer stockNum = (itemStockResponse == null
-					|| itemStockResponse.getStoreNum() == null || itemStockResponse
-					.getStoreNum() <= 0) ? 0 : itemStockResponse.getStoreNum();
+			LOGGER.info("调取中间件查询getSingleItemStock开始, supplierCode : {}, spuCode : {}", supplierCode, spuCode);
+			ItemStockResponseDTO itemStockResponse = MiddlewareInterfaceUtil.getSingleItemStock(supplierCode, spuCode);
+			LOGGER.info("调取中间件查询getSingleItemStock结束, itemStockResponse : {}", JSON.toJSONString(itemStockResponse));
+			Integer stockNum = (itemStockResponse == null || itemStockResponse.getStoreNum() == null
+					|| itemStockResponse.getStoreNum() <= 0) ? 0 : itemStockResponse.getStoreNum();
 
 			for (ItemSkuPublishInfo itemSkuPublishInfo : itemSkuPublishInfoList) {
-				ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(
-						syncItemStockInDTO.getOperatorId(),
-						syncItemStockInDTO.getOperatorName(), itemSku,
-						stockNum, itemSkuPublishInfo);
+				ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(syncItemStockInDTO.getOperatorId(),
+						syncItemStockInDTO.getOperatorName(), itemSku, stockNum, itemSkuPublishInfo);
 			}
 		}
 
@@ -2637,36 +2469,31 @@ public class ItemExportServiceImpl implements ItemExportService {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		if (pauseItemInDTO == null) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("pauseItemInDTO")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("pauseItemInDTO")));
 			return result;
 		}
 
 		if (pauseItemInDTO.getOperatorId() == null) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("OperatorId")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("OperatorId")));
 			return result;
 		}
 
 		if (StringUtils.isEmpty(pauseItemInDTO.getOperatorName())) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("OperatorName")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("OperatorName")));
 			return result;
 		}
 
 		if (pauseItemInDTO.getSellerId() == null) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("SellerId")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("SellerId")));
 			return result;
 		}
 
 		if (pauseItemInDTO.getShopId() == null) {
 			result.setCode(ErrorCodes.E10000.name());
-			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000
-					.getErrorMsg("ShopId")));
+			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("ShopId")));
 			return result;
 		}
 		itemMybatisDAO.pauseItemByShopId(pauseItemInDTO);
@@ -2675,8 +2502,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public boolean checkErpFirstAndErpFiveCode(String erpFirstCategoryCode,
-			String erpFiveCategoryCode) {
+	public boolean checkErpFirstAndErpFiveCode(String erpFirstCategoryCode, String erpFiveCategoryCode) {
 		// erpFirstCategoryCode = "15";//真实ERP一级类目code
 		// erpFiveCategoryCode = "1524060101";//真实ERP五级类目code
 		// 使用HTTP方式调用中间件获取ERP一级类目与五级类目的关系
@@ -2690,11 +2516,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 			sbf.append("?firstCategreyCode=").append(erpFirstCategoryCode);
 			sbf.append("&fiveCategreyCode=").append(erpFiveCategoryCode);
 			sbf.append("&token=").append(accessToken);
-			String resultJson = MiddlewareInterfaceUtil.httpGet(sbf.toString(),
-					Boolean.FALSE);
+			String resultJson = MiddlewareInterfaceUtil.httpGet(sbf.toString(), Boolean.FALSE);
 			MiddlewareResponseObject middlewareResponseObject = (MiddlewareResponseObject) JSONObject
-					.toBean(JSONObject.fromObject(resultJson),
-							MiddlewareResponseObject.class);
+					.toBean(JSONObject.fromObject(resultJson), MiddlewareResponseObject.class);
 			String code = middlewareResponseObject.getCode();
 			String msg = middlewareResponseObject.getMsg();
 			if (MiddlewareResponseCodeEnum.EXIST_RELATE.getCode().equals(code)) {
@@ -2717,8 +2541,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			List<ItemToDoCountDTO> list = itemMybatisDAO.selectToDoCount(dto);
 			if (list != null && list.size() > 0) {
 				for (ItemToDoCountDTO idto : list) {
-					idto.setStatusName(HtdItemStatusEnum.getEnumBycode(idto
-							.getItemStatus()));
+					idto.setStatusName(HtdItemStatusEnum.getEnumBycode(idto.getItemStatus()));
 				}
 				dataGrid.setRows(list);
 			}
@@ -2786,23 +2609,20 @@ public class ItemExportServiceImpl implements ItemExportService {
 				return result;
 			}
 
-			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO
-					.getItemId());
+			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO.getItemId());
 			if (dbItem == null) {
 				result.addErrorMessage("没有查询到该商品信息！");
 				return result;
 			}
 
 			Integer itemStatus = itemDTO.getItemStatus();
-			ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long
-					.valueOf(dbItem.getItemSpuId()));
+			ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long.valueOf(dbItem.getItemSpuId()));
 
 			if (itemSpu == null) {
 				result.addErrorMessage("itemSpu为空！");
 				return result;
 			}
-			if (itemStatus != null
-					&& itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
+			if (itemStatus != null && itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
 
 				if (StringUtils.isEmpty(itemDTO.getErpFirstCategoryCode())) {
 					result.addErrorMessage("getErpFirstCategoryCode为空！");
@@ -2810,57 +2630,46 @@ public class ItemExportServiceImpl implements ItemExportService {
 				}
 
 				if (StringUtils.isEmpty(dbItem.getErpFirstCategoryCode())) {
-					dbItem.setErpFirstCategoryCode(itemDTO
-							.getErpFirstCategoryCode());
+					dbItem.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
 				}
 
 				if (StringUtils.isEmpty(dbItem.getErpFiveCategoryCode())
-						&& StringUtils
-								.isEmpty(itemDTO.getErpFiveCategoryCode())) {
+						&& StringUtils.isEmpty(itemDTO.getErpFiveCategoryCode())) {
 					result.addErrorMessage("ErpFiveCategoryCode为空！");
 					return result;
 				}
 
 				if (StringUtils.isEmpty(dbItem.getErpFiveCategoryCode())) {
-					dbItem.setErpFiveCategoryCode(itemDTO
-							.getErpFiveCategoryCode());
+					dbItem.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 				}
 
-				itemMybatisDAO.updateAuditStatusChangeReason("",
-						itemDTO.getItemId());
-				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO
-						.getItemId());
-				if(null != itemDraft){
+				itemMybatisDAO.updateAuditStatusChangeReason("", itemDTO.getItemId());
+				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
+				if (null != itemDraft) {
 					itemDraft.setVerifyStatus(1);
 					itemDraft.setVerifyName(itemDTO.getModifyName());
 					itemDraftMapper.updateItemDraftVerifyStatusByPrimaryKey(itemDraft);
-					
-					if(itemDraft.getItemSpuId()!=null){
-						itemSpu=itemSpuMapper.selectByPrimaryKey(itemDraft.getItemSpuId());
+
+					if (itemDraft.getItemSpuId() != null) {
+						itemSpu = itemSpuMapper.selectByPrimaryKey(itemDraft.getItemSpuId());
 					}
 				}
 				// 如果商品状态为审核通过, 内部供应商商品时, 则商品信息下行ERP
 				doItemDownErp(itemSpu, dbItem);
 			}
 			// 审核不通过
-			if (itemStatus != null
-					&& itemStatus.equals(HtdItemStatusEnum.REJECTED.getCode())) {
-				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO
-						.getItemId());
+			if (itemStatus != null && itemStatus.equals(HtdItemStatusEnum.REJECTED.getCode())) {
+				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
 				// 修改主数据状态
 				// Integer mainStatus=itemStatus;
-				if (dbItem.getItemStatus() != HtdItemStatusEnum.SHELVED
-						.getCode()) {
+				if (dbItem.getItemStatus() != HtdItemStatusEnum.SHELVED.getCode()) {
 					// mainStatus=HtdItemStatusEnum.SHELVED.getCode();
-					itemMybatisDAO.updateItemStatusByPk(itemDTO.getItemId(),
-							itemStatus, itemDTO.getModifyId(),
+					itemMybatisDAO.updateItemStatusByPk(itemDTO.getItemId(), itemStatus, itemDTO.getModifyId(),
 							itemDTO.getModifyName());
 				}
 
 				if (StringUtils.isNotEmpty(itemDTO.getStatusChangeReason())) {
-					itemMybatisDAO.updateAuditStatusChangeReason(
-							itemDTO.getStatusChangeReason(),
-							itemDTO.getItemId());
+					itemMybatisDAO.updateAuditStatusChangeReason(itemDTO.getStatusChangeReason(), itemDTO.getItemId());
 				}
 				// 修改草稿的状态
 				if (itemDraft != null) {
@@ -2874,15 +2683,12 @@ public class ItemExportServiceImpl implements ItemExportService {
 			// 修改了erp的一级和五级类目
 			Item tempItem = new Item();
 			if (StringUtils.isNotEmpty(itemDTO.getErpFirstCategoryCode())) {
-				tempItem.setErpFirstCategoryCode(itemDTO
-						.getErpFirstCategoryCode());
-				itemSpu.setErpFirstCategoryCode(itemDTO
-						.getErpFirstCategoryCode());
+				tempItem.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
+				itemSpu.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
 			}
 			if (StringUtils.isNotEmpty(itemDTO.getErpFiveCategoryCode())) {
 				tempItem.setItemId(itemDTO.getItemId());
-				tempItem.setErpFiveCategoryCode(itemDTO
-						.getErpFiveCategoryCode());
+				tempItem.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 				itemSpu.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 				itemMybatisDAO.updateFirstAndFiveCategoryCodeByItemId(tempItem);
 				itemSpuMapper.updateBySpuIdSelective(itemSpu);
@@ -2891,8 +2697,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error("ItemExportServiceImpl::auditInternalSupplierItem:", e);
-			TransactionAspectSupport.currentTransactionStatus()
-					.setRollbackOnly();
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return result;
 	}
@@ -2900,11 +2705,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 	private void doItemDownErp(ItemSpu itemSpu, ItemDTO dbItem) {
 		LOGGER.info("ERPdoItemDownErp start " + itemSpu.getSpuCode());
 		// 查草稿
-		ItemDraft itemDraft = itemDraftMapper
-				.selectByItemId(dbItem.getItemId());
+		ItemDraft itemDraft = itemDraftMapper.selectByItemId(dbItem.getItemId());
 		if (itemDraft != null && 0 == itemDraft.getStatus()) {
-			LOGGER.info("ERPdoItemDownErp 存在待审核的草稿数据 {}",
-					JSON.toJSON(itemDraft));
+			LOGGER.info("ERPdoItemDownErp 存在待审核的草稿数据 {}", JSON.toJSON(itemDraft));
 			// 用草稿来覆盖
 			if (StringUtils.isNotEmpty(itemDraft.getItemName())) {
 				dbItem.setItemName(itemDraft.getItemName());
@@ -2922,8 +2725,8 @@ public class ItemExportServiceImpl implements ItemExportService {
 				dbItem.setModelType(itemDraft.getModelType());
 			}
 
-			if (StringUtils.isNotEmpty(dictionaryUtils.getNameByValue(
-					DictionaryConst.TYPE_ITEM_UNIT, itemDraft.getWeightUnit()))) {
+			if (StringUtils.isNotEmpty(
+					dictionaryUtils.getNameByValue(DictionaryConst.TYPE_ITEM_UNIT, itemDraft.getWeightUnit()))) {
 				dbItem.setWeightUnit(itemDraft.getWeightUnit());
 			}
 
@@ -2941,39 +2744,32 @@ public class ItemExportServiceImpl implements ItemExportService {
 		productMessage.setProductCode(itemSpu.getSpuCode());
 		productMessage.setBrandCode(dbItem.getBrand().toString());
 		productMessage.setCategoryCode(dbItem.getErpFiveCategoryCode());
-		productMessage.setChargeUnit(dictionaryUtils.getNameByValue(
-				DictionaryConst.TYPE_ITEM_UNIT, dbItem.getWeightUnit()));
 		productMessage
-				.setMarque(StringUtils.isEmpty(dbItem.getModelType()) ? "0"
-						: dbItem.getModelType());
-		productMessage.setProductSpecifications(StringUtils.isEmpty(StringUtils
-				.trimToEmpty(dbItem.getItemQualification())) ? "0" : dbItem
-				.getItemQualification());
+				.setChargeUnit(dictionaryUtils.getNameByValue(DictionaryConst.TYPE_ITEM_UNIT, dbItem.getWeightUnit()));
+		productMessage.setMarque(StringUtils.isEmpty(dbItem.getModelType()) ? "0" : dbItem.getModelType());
+		productMessage
+				.setProductSpecifications(StringUtils.isEmpty(StringUtils.trimToEmpty(dbItem.getItemQualification()))
+						? "0" : dbItem.getItemQualification());
 		productMessage.setProductName(dbItem.getItemName());
-		productMessage.setOutputRate(dbItem.getTaxRate() == null ? "0" : dbItem
-				.getTaxRate().toString());
+		productMessage.setOutputRate(dbItem.getTaxRate() == null ? "0" : dbItem.getTaxRate().toString());
 		productMessage.setProductColorCode("0");
 		productMessage.setProductColorName("0");
-		productMessage.setOrigin(StringUtils.isEmpty(StringUtils
-				.trimToEmpty(dbItem.getOrigin())) ? "0" : dbItem.getOrigin());
+		productMessage
+				.setOrigin(StringUtils.isEmpty(StringUtils.trimToEmpty(dbItem.getOrigin())) ? "0" : dbItem.getOrigin());
 		productMessage.setQualityGrade("0");
 		productMessage.setFunctionIntroduction("0");
 		productMessage.setValidTags(1);
 		productMessage.setIncomeTaxRates("0");
 		productMessage.setPackingContent("1");
-		if (StringUtils.isEmpty(itemSpu.getErpCode())
-				|| "0".equals(itemSpu.getErpCode())) {
+		if (StringUtils.isEmpty(itemSpu.getErpCode()) || "0".equals(itemSpu.getErpCode())) {
 			productMessage.setIsUpdateFlag(0);
 		} else {
 			productMessage.setIsUpdateFlag(1);
 		}
 		productMessage.setItemId(dbItem.getItemId() + "");
-		LOGGER.info("商品开始下行ERP, 下行信息 : {}",
-				JSONObject.fromObject(productMessage));
-		mqSendUtil.sendToMQWithRoutingKey(productMessage,
-				MQRoutingKeyConstant.ITEM_DOWN_ERP_ROUTING_KEY);
-		itemMybatisDAO.updateErpStatus(dbItem.getItemId(),
-				ItemErpStatusEnum.DOWNING.getCode(), "");
+		LOGGER.info("商品开始下行ERP, 下行信息 : {}", JSONObject.fromObject(productMessage));
+		mqSendUtil.sendToMQWithRoutingKey(productMessage, MQRoutingKeyConstant.ITEM_DOWN_ERP_ROUTING_KEY);
+		itemMybatisDAO.updateErpStatus(dbItem.getItemId(), ItemErpStatusEnum.DOWNING.getCode(), "");
 		LOGGER.info("ERPdoItemDownErp end " + itemSpu.getSpuCode());
 	}
 
@@ -2985,8 +2781,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 	 */
 	@Transactional
 	@Override
-	public ExecuteResult<ItemDTO> modifyInternalSupplierItemBySalesman(
-			ItemDTO itemDTO) {
+	public ExecuteResult<ItemDTO> modifyInternalSupplierItemBySalesman(ItemDTO itemDTO) {
 		ExecuteResult<ItemDTO> result = new ExecuteResult<ItemDTO>();
 		try {
 			// 校验空值
@@ -2995,57 +2790,45 @@ public class ItemExportServiceImpl implements ItemExportService {
 				result.addErrorMessage("参数为空！");
 				return result;
 			}
-			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO
-					.getItemId());
+			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO.getItemId());
 			if (dbItem == null) {
 				result.setCode(ErrorCodes.E10001.name());
 				result.addErrorMessage("没有查询到该商品信息！");
 				return result;
 			}
 			// 数据保存到item_draft
-			ItemDraft changedItemDraft = itemDraftMapper.selectByItemId(itemDTO
-					.getItemId());
+			ItemDraft changedItemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
 			// 更改记录 存到modify_detail_info 商品详情页更改记录都要保存到这个表，包括所有的字段
 			// ModifyDetailInfoUtil.saveChangedRecord(itemDTO, dbItem);
 			convertItemDTO2Item(itemDTO, dbItem, changedItemDraft);
 
 			// 更新spu表中的ERP一级和五级类目
 
-			if (dbItem.getItemSpuId() != null
-					&& StringUtils
-							.isNotEmpty(itemDTO.getErpFirstCategoryCode())
+			if (dbItem.getItemSpuId() != null && StringUtils.isNotEmpty(itemDTO.getErpFirstCategoryCode())
 					&& StringUtils.isNotEmpty(itemDTO.getErpFiveCategoryCode())) {
-				ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long
-						.valueOf(dbItem.getItemSpuId()));
+				ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long.valueOf(dbItem.getItemSpuId()));
 				if (itemSpu != null) {
-					itemSpu.setErpFirstCategoryCode(itemDTO
-							.getErpFirstCategoryCode());
-					itemSpu.setErpFiveCategoryCode(itemDTO
-							.getErpFiveCategoryCode());
+					itemSpu.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
+					itemSpu.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 					itemSpuMapper.updateBySpuIdSelective(itemSpu);
 				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			LOGGER.error(
-					"ItemExportServiceImpl::modifyInternalSupplierItemBySalesman:",
-					e);
-			TransactionAspectSupport.currentTransactionStatus()
-					.setRollbackOnly();
+			LOGGER.error("ItemExportServiceImpl::modifyInternalSupplierItemBySalesman:", e);
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return result;
 	}
 
-	private void convertItemDTO2Item(ItemDTO itemDTO, ItemDTO dbItem,
-			ItemDraft changedItemDraft) {
+	private void convertItemDTO2Item(ItemDTO itemDTO, ItemDTO dbItem, ItemDraft changedItemDraft) {
 		if (itemDTO == null || dbItem == null) {
 			return;
 		}
 		boolean isItemInfoChanged = false;
 		// 3级类目
-		if (itemDTO.getCid() != null
-				&& !itemDTO.getCid().equals(dbItem.getCid())) {
+		if (itemDTO.getCid() != null && !itemDTO.getCid().equals(dbItem.getCid())) {
 			dbItem.setCid(itemDTO.getCid());
 			if (changedItemDraft != null) {
 				changedItemDraft.setCid(itemDTO.getCid());
@@ -3053,8 +2836,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			isItemInfoChanged = true;
 		}
 		// 品牌编码
-		if (itemDTO.getBrand() != null
-				&& !itemDTO.getBrand().equals(dbItem.getBrand())) {
+		if (itemDTO.getBrand() != null && !itemDTO.getBrand().equals(dbItem.getBrand())) {
 			dbItem.setBrand(itemDTO.getBrand());
 			if (changedItemDraft != null) {
 				changedItemDraft.setBrand(itemDTO.getBrand());
@@ -3071,8 +2853,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 		dbItem.setSpu(true);
 
-		if (StringUtils.isNotEmpty(itemDTO.getAd())
-				&& !itemDTO.getAd().equals(dbItem.getAd())) {
+		if (StringUtils.isNotEmpty(itemDTO.getAd()) && !itemDTO.getAd().equals(dbItem.getAd())) {
 			dbItem.setAd(itemDTO.getAd());
 			if (changedItemDraft != null) {
 				changedItemDraft.setAd(itemDTO.getAd());
@@ -3088,24 +2869,21 @@ public class ItemExportServiceImpl implements ItemExportService {
 			}
 		}
 
-		if (itemDTO.getWeight() != null
-				&& !itemDTO.getWeight().equals(dbItem.getWeight())) {
+		if (itemDTO.getWeight() != null && !itemDTO.getWeight().equals(dbItem.getWeight())) {
 			dbItem.setWeight(itemDTO.getWeight());
 			if (changedItemDraft != null) {
 				changedItemDraft.setWeight(itemDTO.getWeight());
 			}
 			isItemInfoChanged = true;
 		}
-		if (itemDTO.getNetWeight() != null
-				&& !itemDTO.getNetWeight().equals(dbItem.getNetWeight())) {
+		if (itemDTO.getNetWeight() != null && !itemDTO.getNetWeight().equals(dbItem.getNetWeight())) {
 			dbItem.setNetWeight(itemDTO.getNetWeight());
 			if (changedItemDraft != null) {
 				changedItemDraft.setNetWeight(itemDTO.getNetWeight());
 			}
 			isItemInfoChanged = true;
 		}
-		if (StringUtils.isNotEmpty(itemDTO.getHeight())
-				&& !itemDTO.getHeight().equals(dbItem.getHeight())) {
+		if (StringUtils.isNotEmpty(itemDTO.getHeight()) && !itemDTO.getHeight().equals(dbItem.getHeight())) {
 			dbItem.setHeight(itemDTO.getHeight());
 			if (changedItemDraft != null) {
 				changedItemDraft.setHeight(new BigDecimal(itemDTO.getHeight()));
@@ -3113,8 +2891,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			isItemInfoChanged = true;
 		}
 
-		if (StringUtils.isNotEmpty(itemDTO.getModelType())
-				&& !itemDTO.getModelType().equals(dbItem.getModelType())) {
+		if (StringUtils.isNotEmpty(itemDTO.getModelType()) && !itemDTO.getModelType().equals(dbItem.getModelType())) {
 			dbItem.setModelType(itemDTO.getModelType());
 			if (changedItemDraft != null) {
 				changedItemDraft.setModelType(itemDTO.getModelType());
@@ -3122,8 +2899,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			isItemInfoChanged = true;
 		}
 
-		if (itemDTO.getTaxRate() != null
-				&& !itemDTO.getTaxRate().equals(dbItem.getTaxRate())) {
+		if (itemDTO.getTaxRate() != null && !itemDTO.getTaxRate().equals(dbItem.getTaxRate())) {
 			dbItem.setTaxRate(itemDTO.getTaxRate());
 			if (changedItemDraft != null) {
 				changedItemDraft.setTaxRate(itemDTO.getTaxRate());
@@ -3131,8 +2907,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			isItemInfoChanged = true;
 		}
 
-		if (StringUtils.isNotEmpty(itemDTO.getOrigin())
-				&& !itemDTO.getOrigin().equals(dbItem.getOrigin())) {
+		if (StringUtils.isNotEmpty(itemDTO.getOrigin()) && !itemDTO.getOrigin().equals(dbItem.getOrigin())) {
 			dbItem.setOrigin(itemDTO.getOrigin());
 			if (changedItemDraft != null) {
 				changedItemDraft.setOrigin(itemDTO.getOrigin());
@@ -3141,14 +2916,12 @@ public class ItemExportServiceImpl implements ItemExportService {
 		}
 
 		if (StringUtils.isNotEmpty(itemDTO.getProductChannelCode())
-				&& !itemDTO.getProductChannelCode().equals(
-						dbItem.getProductChannelCode())) {
+				&& !itemDTO.getProductChannelCode().equals(dbItem.getProductChannelCode())) {
 			dbItem.setProductChannelCode(itemDTO.getProductChannelCode());
 			isItemInfoChanged = true;
 		}
 
-		if (StringUtils.isNotEmpty(itemDTO.getLength())
-				&& !itemDTO.getLength().equals(dbItem.getLength())) {
+		if (StringUtils.isNotEmpty(itemDTO.getLength()) && !itemDTO.getLength().equals(dbItem.getLength())) {
 			dbItem.setLength(itemDTO.getLength());
 			if (changedItemDraft != null) {
 				changedItemDraft.setLength(new BigDecimal(itemDTO.getLength()));
@@ -3156,8 +2929,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			isItemInfoChanged = true;
 		}
 
-		if (StringUtils.isNotEmpty(itemDTO.getWidth())
-				&& !itemDTO.getWidth().equals(dbItem.getWidth())) {
+		if (StringUtils.isNotEmpty(itemDTO.getWidth()) && !itemDTO.getWidth().equals(dbItem.getWidth())) {
 			dbItem.setWidth(itemDTO.getWidth());
 			if (changedItemDraft != null) {
 				changedItemDraft.setWidth(new BigDecimal(itemDTO.getWidth()));
@@ -3166,22 +2938,19 @@ public class ItemExportServiceImpl implements ItemExportService {
 		}
 
 		if (StringUtils.isNotEmpty(itemDTO.getErpFirstCategoryCode())
-				&& !itemDTO.getErpFirstCategoryCode().equals(
-						dbItem.getErpFirstCategoryCode())) {
+				&& !itemDTO.getErpFirstCategoryCode().equals(dbItem.getErpFirstCategoryCode())) {
 			dbItem.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
 			isItemInfoChanged = true;
 		}
 
 		if (StringUtils.isNotEmpty(itemDTO.getErpFiveCategoryCode())
-				&& !itemDTO.getErpFiveCategoryCode().equals(
-						dbItem.getErpFiveCategoryCode())) {
+				&& !itemDTO.getErpFiveCategoryCode().equals(dbItem.getErpFiveCategoryCode())) {
 			dbItem.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 			isItemInfoChanged = true;
 		}
 
 		if (StringUtils.isNotEmpty(itemDTO.getAttributesStr())
-				&& !itemDTO.getAttributesStr()
-						.equals(dbItem.getAttributesStr())) {
+				&& !itemDTO.getAttributesStr().equals(dbItem.getAttributesStr())) {
 			dbItem.setAttributesStr(itemDTO.getAttributesStr());
 			if (changedItemDraft != null) {
 				changedItemDraft.setAttributes(itemDTO.getAttributesStr());
@@ -3190,8 +2959,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		}
 
 		if (StringUtils.isNotEmpty(itemDTO.getItemQualification())
-				&& !itemDTO.getItemQualification().equals(
-						dbItem.getItemQualification())) {
+				&& !itemDTO.getItemQualification().equals(dbItem.getItemQualification())) {
 			dbItem.setItemQualification(itemDTO.getItemQualification());
 			isItemInfoChanged = true;
 		}
@@ -3204,8 +2972,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		if (isItemInfoChanged) {
 			itemMybatisDAO.updateItem(dbItem);
 			if (changedItemDraft != null
-					&& ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL
-							.equals(itemDTO.getProductChannelCode())) {
+					&& ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL.equals(itemDTO.getProductChannelCode())) {
 				// 更新草稿表
 				itemDraftMapper.updateByPrimaryKeySelective(changedItemDraft);
 			}
@@ -3215,8 +2982,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			itemPictureDAO.updateDeleteFlagByItemId(itemDTO.getItemId());
 			insertItemPics(itemDTO);
 			if (changedItemDraft != null
-					&& ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL
-							.equals(itemDTO.getProductChannelCode())) {
+					&& ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL.equals(itemDTO.getProductChannelCode())) {
 				// 更新草稿的图片
 				doUpdateItemDraftPicture(itemDTO, dbItem, changedItemDraft);
 			}
@@ -3225,8 +2991,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 		if (StringUtils.isNotEmpty(itemDTO.getDescribeUrl())) {
 			modifyItemDescribe(itemDTO);
 			if (changedItemDraft != null
-					&& ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL
-							.equals(itemDTO.getProductChannelCode())) {
+					&& ItemChannelConstant.ITME_CHANNEL_OF_INTERNAL.equals(itemDTO.getProductChannelCode())) {
 				// 更新草稿的描述
 				doUpdateItemDraftDescribe(itemDTO, changedItemDraft);
 			}
@@ -3234,8 +2999,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 	}
 
-	private void doUpdateItemDraftPicture(ItemDTO itemDTO, ItemDTO itemFromDb,
-			ItemDraft itemDraftFromDB) {
+	private void doUpdateItemDraftPicture(ItemDTO itemDTO, ItemDTO itemFromDb, ItemDraft itemDraftFromDB) {
 		// 图片
 		List<ItemDraftPicture> draftPicturesList = Lists.newArrayList();
 		// 把商品Id和图片路径保存到商品图片表
@@ -3254,10 +3018,8 @@ public class ItemExportServiceImpl implements ItemExportService {
 				}
 				draftPic.setSortNumber(i);
 				draftPic.setItemDraftId(itemDraftFromDB.getItemDraftId());
-				draftPic.setSellerId(itemDTO.getSellerId() == null ? 0L
-						: itemDTO.getSellerId());
-				draftPic.setShopId(itemFromDb.getShopId() == null ? 0
-						: itemFromDb.getShopId());
+				draftPic.setSellerId(itemDTO.getSellerId() == null ? 0L : itemDTO.getSellerId());
+				draftPic.setShopId(itemFromDb.getShopId() == null ? 0 : itemFromDb.getShopId());
 				draftPic.setPictureUrl(pictureUrl);
 				draftPic.setPictureStatus(1);
 				draftPic.setCreated(new Date());
@@ -3272,16 +3034,14 @@ public class ItemExportServiceImpl implements ItemExportService {
 		}
 
 		if (CollectionUtils.isNotEmpty(draftPicturesList)) {
-			itemDraftPictureMapper.deleteDraftPicByItemDraftId(itemDraftFromDB
-					.getItemDraftId());
+			itemDraftPictureMapper.deleteDraftPicByItemDraftId(itemDraftFromDB.getItemDraftId());
 			// 更新图片
 			itemDraftPictureMapper.batchInsert(draftPicturesList);
 		}
 
 	}
 
-	private void doUpdateItemDraftDescribe(ItemDTO itemDTO,
-			ItemDraft itemDraftFromDB) {
+	private void doUpdateItemDraftDescribe(ItemDTO itemDTO, ItemDraft itemDraftFromDB) {
 		// 查询数据库中描述
 		ItemDraftDescribe describeFromDb = itemDraftDescribeMapper
 				.selectByItemDraftId(itemDraftFromDB.getItemDraftId());
@@ -3306,41 +3066,32 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public DataGrid<ItemQueryOutDTO> queryItemListForSaleManageSystem(
-			ItemQueryInDTO itemInDTO, Pager page) {
+	public DataGrid<ItemQueryOutDTO> queryItemListForSaleManageSystem(ItemQueryInDTO itemInDTO, Pager page) {
 		DataGrid<ItemQueryOutDTO> dataGrid = new DataGrid<ItemQueryOutDTO>();
 		List<ItemQueryOutDTO> listItemDTO = null;
 		Long size = 0L;
 		try {
 			// 待审核和审核驳回
-			if (itemInDTO.getItemStatus() == 0
-					|| itemInDTO.getItemStatus() == 2) {
-				listItemDTO = itemMybatisDAO.queryItemDraftForSaleManageSystem(
-						itemInDTO, page);
-				size = itemMybatisDAO
-						.queryCountItemDraftForSaleManageSystem(itemInDTO);
+			if (itemInDTO.getItemStatus() == 0 || itemInDTO.getItemStatus() == 2) {
+				listItemDTO = itemMybatisDAO.queryItemDraftForSaleManageSystem(itemInDTO, page);
+				size = itemMybatisDAO.queryCountItemDraftForSaleManageSystem(itemInDTO);
 			} else {// 其他状态查商品主表
-				listItemDTO = itemMybatisDAO.queryItemForSaleManageSystem(
-						itemInDTO, page);
+				listItemDTO = itemMybatisDAO.queryItemForSaleManageSystem(itemInDTO, page);
 				List<ItemQueryOutDTO> itemList = new ArrayList<ItemQueryOutDTO>();
-				if(null != itemList){
+				if (null != itemList) {
 					for (ItemQueryOutDTO itemQueryOutDTO : listItemDTO) {
 						itemQueryOutDTO.setShelvesStatus(itemInDTO.getShelvesStatus());
 						itemList.add(itemQueryOutDTO);
 					}
 				}
-				size = itemMybatisDAO
-						.queryCountItemForSaleManageSystem(itemInDTO);
+				size = itemMybatisDAO.queryCountItemForSaleManageSystem(itemInDTO);
 			}
 			if (CollectionUtils.isNotEmpty(listItemDTO)) {
 				for (ItemQueryOutDTO item : listItemDTO) {
 					ExecuteResult<Map<String, Object>> categoryResult = itemCategoryService
-							.queryItemOneTwoThreeCategoryName(
-									Long.valueOf(item.getCid()), ">");
-					if (categoryResult != null
-							&& MapUtils.isNotEmpty(categoryResult.getResult())) {
-						String catName = (String) categoryResult.getResult()
-								.get("categoryName");
+							.queryItemOneTwoThreeCategoryName(Long.valueOf(item.getCid()), ">");
+					if (categoryResult != null && MapUtils.isNotEmpty(categoryResult.getResult())) {
+						String catName = (String) categoryResult.getResult().get("categoryName");
 						item.setcName(catName);
 					}
 				}
@@ -3387,17 +3138,15 @@ public class ItemExportServiceImpl implements ItemExportService {
 				return itemWaringOutDTODataGrid;
 			}
 
-			List<ItemWaringOutDTO> resultList = itemMybatisDAO
-					.queryFailedDownErpList(page.getPageOffset(),
-							page.getRows());
+			List<ItemWaringOutDTO> resultList = itemMybatisDAO.queryFailedDownErpList(page.getPageOffset(),
+					page.getRows());
 
 			itemWaringOutDTODataGrid.setTotal(failedDownErpCount);
 
 			itemWaringOutDTODataGrid.setRows(resultList);
 		} catch (Exception e) {
 			e.printStackTrace();
-			LOGGER.error("ItemExportServiceImpl::queryPagedFailedItemWarningList:"
-					+ e);
+			LOGGER.error("ItemExportServiceImpl::queryPagedFailedItemWarningList:" + e);
 		}
 		return itemWaringOutDTODataGrid;
 	}
@@ -3429,8 +3178,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				return result;
 			}
 			// 如果商品状态为审核通过, 内部供应商商品时, 则商品信息下行ERP
-			ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long
-					.valueOf(dbItem.getItemSpuId()));
+			ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long.valueOf(dbItem.getItemSpuId()));
 			if (itemSpu == null) {
 				result.addErrorMessage("itemSpu为空！");
 				return result;
@@ -3439,8 +3187,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			TransactionAspectSupport.currentTransactionStatus()
-					.setRollbackOnly();
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return result;
 	}
@@ -3464,23 +3211,15 @@ public class ItemExportServiceImpl implements ItemExportService {
 		ExecuteResult<QueryItemStockDetailOutDTO> executeResult = new ExecuteResult<>();
 		try {
 			if (quantityInfoInDTO == null) {
-				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL
-						.getCode());
-				executeResult
-						.setResultMessage(ResultCodeEnum.INPUT_PARAM_IS_NULL
-								.getMessage());
+				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+				executeResult.setResultMessage(ResultCodeEnum.INPUT_PARAM_IS_NULL.getMessage());
 				executeResult.addErrorMsg("quantityInfoInDTO is null");
 				return executeResult;
 			}
-			if (quantityInfoInDTO.getIsBoxFlag() == null
-					|| StringUtils.isEmpty(quantityInfoInDTO.getItemCode())) {
-				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL
-						.getCode());
-				executeResult
-						.setResultMessage(ResultCodeEnum.INPUT_PARAM_IS_NULL
-								.getMessage());
-				executeResult
-						.addErrorMsg("IsBoxFlag is null or ItemCode is empty");
+			if (quantityInfoInDTO.getIsBoxFlag() == null || StringUtils.isEmpty(quantityInfoInDTO.getItemCode())) {
+				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+				executeResult.setResultMessage(ResultCodeEnum.INPUT_PARAM_IS_NULL.getMessage());
+				executeResult.addErrorMsg("IsBoxFlag is null or ItemCode is empty");
 				return executeResult;
 			}
 			QueryItemStockDetailOutDTO queryItemStockDetailOutDTO = this.itemSkuPublishInfoMapper
@@ -3500,4 +3239,227 @@ public class ItemExportServiceImpl implements ItemExportService {
 		return executeResult;
 	}
 
+	/**
+	 * 限时购 - 新增活动 - 查询商品接口
+	 * 
+	 * @author li.jun
+	 * @time 2017-10-09
+	 */
+	@Override
+	public ItemQueryOutDTO querySellerCenterItem(ItemQueryInDTO itemInDTO) {
+		ItemQueryOutDTO itemOutDto = new ItemQueryOutDTO();
+		try {
+			itemOutDto = itemMybatisDAO.querySellerCenterItem(itemInDTO);
+			if (null != itemOutDto) {
+				// 销售属性
+				String attrSale = itemOutDto.getAttrSale();
+				List<ItemAttrDTO> attrSales = null;
+				if (StringUtils.isNotEmpty(attrSale)) {
+					attrSales = this.getItemAttrList(attrSale);
+					itemOutDto.setAttrSales(attrSales);
+				}
+				// 非销售属性
+				String attrStr = itemOutDto.getAttributes();
+				List<ItemAttrDTO> attrs = null;
+				if (StringUtils.isNotEmpty(attrStr)) {
+					attrs = this.getItemAttrList(attrStr);
+					itemOutDto.setAttributess(attrs);
+				}
+				// 根据cid查询类目属性
+				ExecuteResult<List<ItemCatCascadeDTO>> er = itemCategoryService.queryParentCategoryList(3,
+						Long.valueOf(itemOutDto.getCid()));
+				itemOutDto.setItemCatCascadeDTO(er.getResult());
+				List<VenusItemSkuOutDTO> venusItemSkuOutDTOs = itemSkuDAO
+						.selectByItemIdAndSellerId(itemOutDto.getItemId(), Long.valueOf(itemOutDto.getSellerId()));
+				if (venusItemSkuOutDTOs != null && venusItemSkuOutDTOs.size() > 0) {
+					for (VenusItemSkuOutDTO skuOut : venusItemSkuOutDTOs) {
+						// 根据sku的销售属性keyId:valueId查询商品属性
+						ExecuteResult<List<ItemAttrDTO>> itemAttr = itemCategoryService
+								.queryCatAttrByKeyVals(skuOut.getAttributes());
+						// 根据skuID查询对应ｓｋｕ下面的显示库存
+						skuOut.setDisplayQuantity(
+								itemSkuPublishInfoMapper.queryBySkuId(skuOut.getSkuId()).get(0).getDisplayQuantity());
+						skuOut.setItemAttr(itemAttr.getResult());
+						DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService
+								.queryLadderPriceBySellerIdAndSkuId(itemInDTO.getSellerId(), skuOut.getSkuId());
+						if (ladderList.getRows() != null && ladderList.getRows().size() > 0) {
+							skuOut.setItemSkuLadderPrices(ladderList.getRows());
+						}
+					}
+				}
+				itemOutDto.setVenusItemSkuOutDTOs(venusItemSkuOutDTOs);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return itemOutDto;
+	}
+
+	@Override
+	public List<ItemQueryOutDTO> querySellerCenterItemList(ItemQueryInDTO itemInDTO) {
+		List<ItemQueryOutDTO> itemOutDto = new ArrayList<ItemQueryOutDTO>();
+		itemOutDto = itemMybatisDAO.querySellerCenterItemList(itemInDTO);
+		return itemOutDto;
+	}
+
+	@Override
+	public VenusItemSkuOutDTO queryItemPicsFirst(Long itemId) {
+		VenusItemSkuOutDTO itemSKU = new VenusItemSkuOutDTO();
+		List<ItemSkuPicture> itemSkuPicture = itemSkuDAO.queryItemSKUPicsFirst(itemId);
+		if (null != itemSkuPicture && itemSkuPicture.size() > 0) {
+			itemSKU.setItemSkuPictureList(itemSkuPicture);
+		}
+		List<ItemPicture> itemPicture = itemPictureDAO.queryItemPicsFirst(itemId);
+		if (null != itemPicture && itemPicture.size() > 0) {
+			itemSKU.setItemPictureList(itemPicture);
+		}
+		return itemSKU;
+	}
+
+	/**
+	 * 限时购 - 根据itemCode 查询sku属性相关信息
+	 * 
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	@Override
+	public ExecuteResult<List<VenusItemSkuOutDTO>> getItemSkuList(String itemCode) {
+		ExecuteResult<List<VenusItemSkuOutDTO>> result = new ExecuteResult<List<VenusItemSkuOutDTO>>();
+		try {
+			Item item = itemMybatisDAO.queryItemByItemCode(itemCode);
+			if (null != item) {
+				List<VenusItemSkuOutDTO> venusItemSkuOutDTOs = itemSkuDAO.selectItemSkuByItemId(item.getItemId());
+				if (null != venusItemSkuOutDTOs && venusItemSkuOutDTOs.size() > 0) {
+					for (VenusItemSkuOutDTO skuOut : venusItemSkuOutDTOs) {
+						// 根据sku的销售属性keyId:valueId查询商品属性
+						ExecuteResult<List<ItemAttrDTO>> itemAttr = itemCategoryService
+								.queryCatAttrByKeyVals(skuOut.getAttributes());
+						skuOut.setItemAttr(itemAttr.getResult());
+					}
+				}
+				result.setResult(venusItemSkuOutDTOs);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+
+	/**
+	 * 限时购 - 根据skuCode 查询库存和阶梯价等相关信息相关信息
+	 * 
+	 * @author li.jun
+	 * @time 2017-10-26
+	 */
+	@Override
+	public ExecuteResult<VenusItemSkuOutDTO> getItemSkuBySkuCode(String skuCode) {
+		ExecuteResult<VenusItemSkuOutDTO> result = new ExecuteResult<VenusItemSkuOutDTO>();
+		VenusItemSkuOutDTO skuOut = new VenusItemSkuOutDTO();
+		try {
+			ItemSku itemSku = itemSkuDAO.selectItemSkuBySkuCode(skuCode);
+			if (null != itemSku) {
+				skuOut.setSkuCode(skuCode);
+				// 根据skuID查询对应sku下面的库存
+				List<ItemSkuPublishInfo> itemSkuPublishInfo = itemSkuPublishInfoMapper.queryBySkuId(itemSku.getSkuId());
+				if (null != itemSkuPublishInfo && itemSkuPublishInfo.size() > 0) {
+					ItemSkuPublishInfo publishInfo = itemSkuPublishInfo.get(0);
+					skuOut.setDisplayQuantity(publishInfo.getDisplayQuantity());
+					skuOut.setMimQuantity(publishInfo.getMimQuantity());
+					if (publishInfo.getIsPurchaseLimit() == 0) {// 是否限购 0不限 1限购
+																// //不限购的时候把这个最大设置为99999999
+						skuOut.setMaxPurchaseQuantity(999999999);
+					} else {
+						skuOut.setMaxPurchaseQuantity(publishInfo.getMaxPurchaseQuantity());
+					}
+					skuOut.setReserveQuantity(publishInfo.getReserveQuantity());
+				}
+				// 根据skuID 和sellerId查询对应的阶梯价
+				DataGrid<ItemSkuLadderPrice> ladderList = itemSkuPriceService
+						.queryLadderPriceBySellerIdAndSkuId(itemSku.getSellerId(), itemSku.getSkuId());
+				if (ladderList.getRows() != null && ladderList.getRows().size() > 0) {
+					skuOut.setItemSkuLadderPrices(ladderList.getRows());
+				}
+				// 查询商品图片信息，如果skupicture存在,则取skupicture 否则取itempicture
+				List<ItemSkuPicture> skuPictureList = itemSkuDAO.selectSkuPictureBySkuId(itemSku.getSkuId());
+				if (null != skuPictureList && skuPictureList.size() > 0) {
+					skuOut.setItemSkuPictureList(skuPictureList);
+				} else {
+					List<ItemPicture> pictureList = itemPictureDAO.queryItemPicsById(itemSku.getItemId());
+					skuOut.setItemPictureList(pictureList);
+				}
+				result.setResult(skuOut);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<String> queryItemBySellerId(String sellerId, String areaCode) {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		result.setCode(ErrorCodes.SUCCESS.name());
+		result.setResult("FALSE");
+		try {
+			if(StringUtils.isEmpty(sellerId)){
+				result.setCode(ErrorCodes.E10000.name());
+				result.setErrorMessages(Lists.newArrayList("sellerId:" + sellerId));
+				return result;
+			}
+			List<Item> itemList = itemMybatisDAO.queryItemBySellerId(sellerId);
+			for (Item dto : itemList) {
+				ItemSalesArea itemArea = itemSalesAreaMapper.selectByItemId(dto.getItemId(), null);
+				if(null != itemArea){
+					if(itemArea.getIsSalesWholeCountry().intValue() == 1){
+						result.setResult("TRUE");
+						return result;
+					}else{
+						 List<ItemSalesAreaDetail> salesList = itemSalesAreaDetailMapper.selectAreaDetailsBySalesAreaId(itemArea.getSalesAreaId());
+						 if(null != salesList && !salesList.isEmpty()){
+							 for (ItemSalesAreaDetail itemSalesAreaDetail : salesList) {
+								 String saleAreaCode = itemSalesAreaDetail.getAreaCode();
+								 if(saleAreaCode.length() == 2){
+									 if(areaCode.equals(saleAreaCode)){
+										 result.setResult("TRUE");
+										 return result;
+									 }
+								 }else if(saleAreaCode.length() == 4 || saleAreaCode.length() == 6){
+									 String areaCodeStr = saleAreaCode.substring(0, 2);
+									 if(areaCode.equals(areaCodeStr)){
+										 result.setResult("TRUE");
+										 return result;
+									 }
+								 } 
+							}
+						 }
+					}
+				}
+				
+			}
+		} catch (Exception e) {
+			result.setCode(ErrorCodes.E00001.name());
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+		return result;
+	}
+	/**
+	 * 根据skuCode 查询商品名称是否重复
+	 * @author li.jun
+	 * @time 2017-11-20
+	 */
+	@Override
+	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		List<Item> itemList = itemMybatisDAO.queryItemInfo(itemName,sellerId);
+		if(itemList != null && itemList.size() > 0){
+			result.setResult(true);
+		}else{
+			result.setResult(false);
+		}
+		return result;
+	}
 }

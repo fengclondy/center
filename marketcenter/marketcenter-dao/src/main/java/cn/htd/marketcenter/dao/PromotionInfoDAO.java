@@ -76,6 +76,7 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * 查询促销活动已经结束，且状态为已开启的活动信息
      *
      * @param condition
+     * @param sellerCode
      * @return
      */
     public List<PromotionInfoDTO> queryTimelimitedListBySku(@Param("entity") TimelimitedCheckInfo condition,
@@ -84,7 +85,8 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
     /**
      * 更新促销活动已经结束，且状态为已开启的活动信息
      *
-     * @param condition
+     * @param promotionIdList
+     * @param timelimitedInfoDTO
      * @return
      */
     public void updateTimelimitedListBySku(@Param("promotionIdList") List<String> promotionIdList,
@@ -99,6 +101,16 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      */
     public List<PromotionInfoDTO> queryNeedCleanRedisPromotion4Task(@Param("entity") PromotionInfoDTO condition,
             @Param("page") Pager<PromotionInfoDTO> page);
+    
+    /**
+     * 根据是否已清除Redis标记，查询需要清除的促销活动信息(限时购)
+     *
+     * @param condition
+     * @param page
+     * @return
+     */
+    public List<PromotionInfoDTO> queryNeedCleanRedisPromotion5Task(@Param("entity") PromotionInfoDTO condition,
+            @Param("page") Pager<PromotionInfoDTO> page);
 
     /**
      * 更新促销活动的清除Redis标记
@@ -107,6 +119,14 @@ public interface PromotionInfoDAO extends BaseDAO<PromotionInfoDTO> {
      * @return
      */
     public Integer updateCleanedRedisPromotionStatus(PromotionInfoDTO promotionInfoDTO);
+    
+    /**
+     * 更新促销活动的清除Redis标记(限时购)
+     *
+     * @param promotionInfoDTO
+     * @return
+     */
+    public Integer  updateCleanedRedisPurchasePromotionStatus(PromotionInfoDTO promotionInfoDTO);
 
     //----- add by jiangkun for 2017活动需求商城无敌券 on 20170927 start -----
     /**

@@ -226,6 +226,47 @@ public class PromotionRedisDB {
     }
 
     /**
+     * 获取hash 键值对数量
+     *
+     * @param key
+     * @return
+     */
+    public int getHLen(String key) {
+        logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-getHLen", "key=" + key);
+        int length = 0;
+        try {
+            Map<Object, Object> value = stringRedisTemplate.opsForHash().entries(key);
+            if (value != null) {
+                length = value.keySet().size();
+            }
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getHLen", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-getHLen", "length=" + length);
+        }
+        return length;
+    }
+
+    /**
+     * 获取hash 键值对数量
+     *
+     * @param key
+     * @return
+     */
+    public Map<Object, Object> getHashALL(String key) {
+        logger.debug("\n 方法:[{}]，入参:[{}][{}]", "promotionRedisDB-getHashALL", "key=" + key);
+        Map<Object, Object> value = new HashMap<>();
+        try {
+            value = stringRedisTemplate.opsForHash().entries(key);
+        } catch (Exception e) {
+            logger.error("\n 方法:[{}]，异常:[{}]", "promotionRedisDB-getHashALL", ExceptionUtils.getStackTraceAsString(e));
+        } finally {
+            logger.debug("\n 方法:[{}]，出参:[{}]", "promotionRedisDB-getHashALL", "value=" + value);
+        }
+        return value;
+    }
+
+    /**
      * 从Redis中设定hash对象
      *
      * @param key

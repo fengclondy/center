@@ -684,14 +684,13 @@
 	
 	<select id="queryListOrderByCondition4SuperManager" resultMap="BaseResultMap"
 		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
-	SELECT t.* from trade_orders t where exists (select 1 from
-	trade_order_items b where t.order_no = b.order_no
-
-<if test="customerManagerID != null">
-and b.customer_manager_code = #{customerManagerID}
-</if>
-<![CDATA[	
- and b.is_cancel_order_item <> '2') ]]>
+	SELECT t.* from trade_orders t,trade_order_items b
+	where t.order_no = b.order_no
+	<if test="customerManagerID != null">
+	and b.customer_manager_code = #{customerManagerID}
+	</if>
+	<![CDATA[	
+	 and b.is_cancel_order_item <> '2' ]]>
 	<if test="sellerName != null">
 		and t.seller_name = #{sellerName}
 	</if>
@@ -717,14 +716,13 @@ and b.customer_manager_code = #{customerManagerID}
 	
 	<select id="queryListOrderByCondition4SuperManagerCount" resultType="java.lang.Integer"
 		parameterType="cn.htd.zeus.tc.biz.dmo.OrderQueryParamDMO">
-	      SELECT count(1) from trade_orders t where exists (select 1 from
-		trade_order_items b where t.order_no = b.order_no
-	
-	<if test="customerManagerID != null">
-	    and b.customer_manager_code = #{customerManagerID} 
-	</if>
+      SELECT count(1) from trade_orders t,trade_order_items b
+		where t.order_no = b.order_no
+		<if test="customerManagerID != null">
+		    and b.customer_manager_code = #{customerManagerID} 
+		</if>
 		<![CDATA[
-	and b.is_cancel_order_item <> '2') ]]>
+			and b.is_cancel_order_item <> '2' ]]>
 		<if test="sellerName != null">
 			and t.seller_name = #{sellerName}
 		</if>

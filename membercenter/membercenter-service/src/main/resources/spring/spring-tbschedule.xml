@@ -57,4 +57,6 @@
 	<bean id="hTDUserGradeMonthlyTask" class="cn.htd.membercenter.service.task.HTDUserGradeMonthlyTask"/>
 	<bean id="hTDUserGradeYearlyTask" class="cn.htd.membercenter.service.task.HTDUserGradeYearlyTask"/>
 	
+	<bean id="loadBelongRelationInRedisTask" class="cn.htd.membercenter.service.task.LoadBelongRelationInRedisTask"/>
+	
 </beans>

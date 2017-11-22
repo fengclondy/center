@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.promotion.cpc.biz.dao.SinglePromotionInfoDAO" >
+
+  <resultMap id="BaseResultMap" type="cn.htd.promotion.cpc.dto.response.SinglePromotionInfoResDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+    <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
+    <result column="promotion_describe" property="promotionDescribe" jdbcType="VARCHAR" />
+    <result column="promotion_provider_type" property="promotionProviderType" jdbcType="VARCHAR" />
+    <result column="promotion_provider_seller_code" property="promotionProviderSellerCode" jdbcType="VARCHAR" />
+    <result column="promotion_provider_shop_id" property="promotionProviderShopId" jdbcType="BIGINT" />
+    <result column="cost_allocation_type" property="costAllocationType" jdbcType="VARCHAR" />
+    <result column="promotion_type" property="promotionType" jdbcType="VARCHAR" />
+    <result column="effective_time" property="effectiveTime" jdbcType="TIMESTAMP" />
+    <result column="invalid_time" property="invalidTime" jdbcType="TIMESTAMP" />
+    <result column="is_vip" property="isVip" jdbcType="TINYINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="show_status" property="showStatus" jdbcType="VARCHAR" />
+    <result column="verifier_id" property="verifierId" jdbcType="BIGINT" />
+    <result column="verifier_name" property="verifierName" jdbcType="VARCHAR" />
+    <result column="verify_time" property="verifyTime" jdbcType="TIMESTAMP" />
+    <result column="verify_remark" property="verifyRemark" jdbcType="VARCHAR" />
+    <result column="modify_promotion_id" property="modifyPromotionId" jdbcType="VARCHAR" />
+    <result column="has_redis_clean" property="hasRedisClean" jdbcType="TINYINT" />
+    <result column="deal_flag" property="dealFlag" jdbcType="TINYINT" />
+    <result column="has_up_flag" property="hasUpFlag" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, promotion_id, promotion_name, promotion_describe, promotion_provider_type, promotion_provider_seller_code, 
+    promotion_provider_shop_id, cost_allocation_type, promotion_type, effective_time, 
+    invalid_time, is_vip, status, show_status, verifier_id, verifier_name, verify_time, 
+    verify_remark, modify_promotion_id, has_redis_clean, deal_flag, has_up_flag, create_id, 
+    create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByPromotionId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from promotion_info  
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from promotion_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    insert into promotion_info (id, promotion_id, promotion_name, 
+      promotion_describe, promotion_provider_type, 
+      promotion_provider_seller_code, promotion_provider_shop_id, 
+      cost_allocation_type, promotion_type, effective_time, 
+      invalid_time, is_vip, status, 
+      show_status, verifier_id, verifier_name, 
+      verify_time, verify_remark, modify_promotion_id, 
+      has_redis_clean, deal_flag, has_up_flag, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{promotionId,jdbcType=VARCHAR}, #{promotionName,jdbcType=VARCHAR}, 
+      #{promotionDescribe,jdbcType=VARCHAR}, #{promotionProviderType,jdbcType=VARCHAR}, 
+      #{promotionProviderSellerCode,jdbcType=VARCHAR}, #{promotionProviderShopId,jdbcType=BIGINT}, 
+      #{costAllocationType,jdbcType=VARCHAR}, #{promotionType,jdbcType=VARCHAR}, #{effectiveTime,jdbcType=TIMESTAMP}, 
+      #{invalidTime,jdbcType=TIMESTAMP}, #{isVip,jdbcType=TINYINT}, #{status,jdbcType=VARCHAR}, 
+      #{showStatus,jdbcType=VARCHAR}, #{verifierId,jdbcType=BIGINT}, #{verifierName,jdbcType=VARCHAR}, 
+      #{verifyTime,jdbcType=TIMESTAMP}, #{verifyRemark,jdbcType=VARCHAR}, #{modifyPromotionId,jdbcType=VARCHAR}, 
+      #{hasRedisClean,jdbcType=TINYINT}, #{dealFlag,jdbcType=TINYINT}, #{hasUpFlag,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    insert into promotion_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="promotionId != null" >
+        promotion_id,
+      </if>
+      <if test="promotionName != null" >
+        promotion_name,
+      </if>
+      <if test="promotionDescribe != null" >
+        promotion_describe,
+      </if>
+      <if test="promotionProviderType != null" >
+        promotion_provider_type,
+      </if>
+      <if test="promotionProviderSellerCode != null" >
+        promotion_provider_seller_code,
+      </if>
+      <if test="promotionProviderShopId != null" >
+        promotion_provider_shop_id,
+      </if>
+      <if test="costAllocationType != null" >
+        cost_allocation_type,
+      </if>
+      <if test="promotionType != null" >
+        promotion_type,
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time,
+      </if>
+      <if test="invalidTime != null" >
+        invalid_time,
+      </if>
+      <if test="isVip != null" >
+        is_vip,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="showStatus != null" >
+        show_status,
+      </if>
+      <if test="verifierId != null" >
+        verifier_id,
+      </if>
+      <if test="verifierName != null" >
+        verifier_name,
+      </if>
+      <if test="verifyTime != null" >
+        verify_time,
+      </if>
+      <if test="verifyRemark != null" >
+        verify_remark,
+      </if>
+      <if test="modifyPromotionId != null" >
+        modify_promotion_id,
+      </if>
+      <if test="hasRedisClean != null" >
+        has_redis_clean,
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag,
+      </if>
+      <if test="hasUpFlag != null" >
+        has_up_flag,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="promotionId != null" >
+        #{promotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionName != null" >
+        #{promotionName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionDescribe != null" >
+        #{promotionDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderType != null" >
+        #{promotionProviderType,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderSellerCode != null" >
+        #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderShopId != null" >
+        #{promotionProviderShopId,jdbcType=BIGINT},
+      </if>
+      <if test="costAllocationType != null" >
+        #{costAllocationType,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionType != null" >
+        #{promotionType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveTime != null" >
+        #{effectiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invalidTime != null" >
+        #{invalidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isVip != null" >
+        #{isVip,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null" >
+        #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="verifierId != null" >
+        #{verifierId,jdbcType=BIGINT},
+      </if>
+      <if test="verifierName != null" >
+        #{verifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTime != null" >
+        #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyRemark != null" >
+        #{verifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyPromotionId != null" >
+        #{modifyPromotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="hasRedisClean != null" >
+        #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="dealFlag != null" >
+        #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null" >
+        #{hasUpFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+    <insert id="addPromotionInfo" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    insert into promotion_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        promotion_id,
+        promotion_name,
+      <if test="promotionDescribe != null" >
+        promotion_describe,
+      </if>
+      <if test="promotionProviderType != null" >
+        promotion_provider_type,
+      </if>
+      <if test="promotionProviderSellerCode != null" >
+        promotion_provider_seller_code,
+      </if>
+      <if test="promotionProviderShopId != null" >
+        promotion_provider_shop_id,
+      </if>
+      <if test="costAllocationType != null" >
+        cost_allocation_type,
+      </if>
+        promotion_type,
+        effective_time,
+        invalid_time,
+        is_vip,
+        status,
+        show_status,
+      <if test="verifierId != null" >
+        verifier_id,
+      </if>
+      <if test="verifierName != null" >
+        verifier_name,
+      </if>
+      <if test="verifyTime != null" >
+        verify_time,
+      </if>
+      <if test="verifyRemark != null" >
+        verify_remark,
+      </if>
+      <if test="modifyPromotionId != null" >
+        modify_promotion_id,
+      </if>
+      <if test="hasRedisClean != null" >
+        has_redis_clean,
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag,
+      </if>
+      <if test="hasUpFlag != null" >
+        has_up_flag,
+      </if>
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{promotionId,jdbcType=VARCHAR},
+        #{promotionName,jdbcType=VARCHAR},
+      <if test="promotionDescribe != null" >
+        #{promotionDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderType != null" >
+        #{promotionProviderType,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderSellerCode != null" >
+        #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderShopId != null" >
+        #{promotionProviderShopId,jdbcType=BIGINT},
+      </if>
+      <if test="costAllocationType != null" >
+        #{costAllocationType,jdbcType=VARCHAR},
+      </if>
+        #{promotionType,jdbcType=VARCHAR},
+        #{effectiveTime,jdbcType=TIMESTAMP},
+        #{invalidTime,jdbcType=TIMESTAMP},
+        #{isVip,jdbcType=TINYINT},
+        #{status,jdbcType=VARCHAR},
+        #{showStatus,jdbcType=VARCHAR},
+      <if test="verifierId != null" >
+        #{verifierId,jdbcType=BIGINT},
+      </if>
+      <if test="verifierName != null" >
+        #{verifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTime != null" >
+        #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyRemark != null" >
+        #{verifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyPromotionId != null" >
+        #{modifyPromotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="hasRedisClean != null" >
+        #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="dealFlag != null" >
+        #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null" >
+        #{hasUpFlag,jdbcType=TINYINT},
+      </if>
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{modifyId,jdbcType=BIGINT},
+        #{modifyName,jdbcType=VARCHAR},
+        #{modifyTime,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    update promotion_info
+    <set >
+      <if test="promotionName != null" >
+        promotion_name = #{promotionName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionDescribe != null" >
+        promotion_describe = #{promotionDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderType != null" >
+        promotion_provider_type = #{promotionProviderType,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderSellerCode != null" >
+        promotion_provider_seller_code = #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionProviderShopId != null" >
+        promotion_provider_shop_id = #{promotionProviderShopId,jdbcType=BIGINT},
+      </if>
+      <if test="costAllocationType != null" >
+        cost_allocation_type = #{costAllocationType,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionType != null" >
+        promotion_type = #{promotionType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invalidTime != null" >
+        invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isVip != null" >
+        is_vip = #{isVip,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null" >
+        show_status = #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="verifierId != null" >
+        verifier_id = #{verifierId,jdbcType=BIGINT},
+      </if>
+      <if test="verifierName != null" >
+        verifier_name = #{verifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTime != null" >
+        verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyRemark != null" >
+        verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyPromotionId != null" >
+        modify_promotion_id = #{modifyPromotionId,jdbcType=VARCHAR},
+      </if>
+      <if test="hasRedisClean != null" >
+        has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null" >
+        has_up_flag = #{hasUpFlag,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  
+  
+    <update id="updatePromotionInfo" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    update promotion_info
+    <set >
+      <if test="promotionName != null" >
+        promotion_name = #{promotionName,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionType != null" >
+        promotion_type = #{promotionType,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invalidTime != null" >
+        invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isVip != null" >
+        is_vip = #{isVip,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="showStatus != null" >
+        show_status = #{showStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="hasRedisClean != null" >
+        has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      </if>
+      <if test="dealFlag != null" >
+        deal_flag = #{dealFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hasUpFlag != null" >
+        has_up_flag = #{hasUpFlag,jdbcType=TINYINT},
+      </if>
+        modify_id = #{modifyId,jdbcType=BIGINT},
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="cn.htd.promotion.cpc.dto.request.SinglePromotionInfoReqDTO" >
+    update promotion_info
+    set promotion_id = #{promotionId,jdbcType=VARCHAR},
+      promotion_name = #{promotionName,jdbcType=VARCHAR},
+      promotion_describe = #{promotionDescribe,jdbcType=VARCHAR},
+      promotion_provider_type = #{promotionProviderType,jdbcType=VARCHAR},
+      promotion_provider_seller_code = #{promotionProviderSellerCode,jdbcType=VARCHAR},
+      promotion_provider_shop_id = #{promotionProviderShopId,jdbcType=BIGINT},
+      cost_allocation_type = #{costAllocationType,jdbcType=VARCHAR},
+      promotion_type = #{promotionType,jdbcType=VARCHAR},
+      effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+      invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
+      is_vip = #{isVip,jdbcType=TINYINT},
+      status = #{status,jdbcType=VARCHAR},
+      show_status = #{showStatus,jdbcType=VARCHAR},
+      verifier_id = #{verifierId,jdbcType=BIGINT},
+      verifier_name = #{verifierName,jdbcType=VARCHAR},
+      verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+      verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+      modify_promotion_id = #{modifyPromotionId,jdbcType=VARCHAR},
+      has_redis_clean = #{hasRedisClean,jdbcType=TINYINT},
+      deal_flag = #{dealFlag,jdbcType=TINYINT},
+      has_up_flag = #{hasUpFlag,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  
+  <update id="upDownShelvesPromotionInfo">
+  	UPDATE promotion_info
+  	SET show_status = #{dto.showStatus,jdbcType=VARCHAR},
+  	modify_id = #{dto.modifyId,jdbcType=BIGINT},
+    modify_name = #{dto.modifyName,jdbcType=VARCHAR},
+    modify_time = #{dto.modifyTime,jdbcType=TIMESTAMP}  
+  	WHERE promotion_id = #{dto.promotionId,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

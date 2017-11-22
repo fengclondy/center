@@ -22,6 +22,7 @@
     <result column="verify_remark" jdbcType="VARCHAR" property="verifyRemark"/>
     <result column="modify_promotion_id" jdbcType="VARCHAR" property="modifyPromotionId"/>
     <result column="b2c_activity_code" jdbcType="VARCHAR" property="b2cActivityCode"/>
+    <result column="is_need_remind" jdbcType="TINYINT" property="isNeedRemind"/>
     <result column="create_id" jdbcType="BIGINT" property="createId"/>
     <result column="create_name" jdbcType="VARCHAR" property="createName"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -50,6 +51,7 @@
 		verify_remark,
 		modify_promotion_id,
 		b2c_activity_code,
+		is_need_remind,
 		create_id,
 		create_name,
 		create_time,
@@ -67,10 +69,11 @@
     from promotion_info
     where 1 = 1
     <if test="entity != null">
-      and status in
-      <foreach collection="entity.statusList" index="index" item="statusCode" open="(" separator="," close=")">
-        #{statusCode}
-      </foreach>
+      and (
+        <![CDATA[(status <> #{entity.startedStatus,jdbcType=VARCHAR} and now() >= effective_time and now() <= invalid_time)]]>
+        or
+        <![CDATA[(status <> #{entity.endStatus,jdbcType=VARCHAR} and now() > invalid_time)]]>
+      )
       and show_status in
       <foreach collection="entity.verifyStatusList" index="index" item="verifyStatusCode" open="(" separator=","
                close=")">
@@ -81,6 +84,7 @@
         #{taskId}
       </foreach>
     </if>
+    order by modify_time desc
     <if test="page!=null">
       <include refid="pagination_tail"/>
     </if>
@@ -106,7 +110,10 @@
     select
     <include refid="Base_Column_List"/>
     from promotion_info
-    where promotion_type = #{promotionType, jdbcType=VARCHAR}
+    where 1=1 and promotion_type in
+      <foreach collection="promotionTypeList" index="index" item="promotionType" open="(" separator="," close=")">
+        #{promotionType}
+      </foreach>
     <![CDATA[ and status <> #{deleteStatus, jdbcType=VARCHAR} ]]>
     <![CDATA[ and now() <= invalid_time]]>
     and exists (select 1
@@ -157,6 +164,9 @@
       <if test="b2cActivityCode != null and b2cActivityCode != ''">
         b2c_activity_code,
       </if>
+      <if test="isNeedRemind != null ">
+        is_need_remind,
+      </if>
       create_id,
       create_name,
       create_time,
@@ -204,6 +214,9 @@
       <if test="b2cActivityCode != null and b2cActivityCode != ''">
         #{b2cActivityCode,jdbcType=VARCHAR},
       </if>
+      <if test="isNeedRemind != null ">
+        #{isNeedRemind,jdbcType=TINYINT},
+      </if>
       #{createId,jdbcType=BIGINT},
       #{createName,jdbcType=VARCHAR},
       now(),
@@ -231,6 +244,9 @@
       invalid_time = #{invalidTime,jdbcType=TIMESTAMP},
       <if test="isVip != null">
         is_vip = #{isVip,jdbcType=TINYINT},
+      </if>
+      <if test="isNeedRemind != null">
+        is_need_remind = #{isNeedRemind,jdbcType=TINYINT},
       </if>
       status = #{status,jdbcType=VARCHAR},
       show_status = #{showStatus,jdbcType=VARCHAR},
@@ -334,6 +350,25 @@
       <include refid="pagination_tail"/>
     </if>
   </select>
+  <select id="queryNeedCleanRedisPromotion5Task" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from promotion_info
+    where status != 9
+    <if test="entity != null">
+      <if test="entity.promotionType != null and entity.promotionType != ''">
+        and promotion_type = #{entity.promotionType}
+      </if>
+      and mod(id, #{entity.taskQueueNum}) in
+      <foreach collection="entity.taskIdList" index="index" item="taskId" open="(" separator="," close=")">
+        #{taskId}
+      </foreach>
+    </if>
+    order by id desc
+    <if test="page!=null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
   <update id="updateCleanedRedisPromotionStatus" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO">
     update promotion_info
     <set>
@@ -342,6 +377,14 @@
     </set>
     where promotion_id = #{promotionId,jdbcType=VARCHAR}
     and has_redis_clean = 0
+  </update>
+  <update id="updateCleanedRedisPurchasePromotionStatus" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO">
+    update promotion_info
+    <set>
+      status = 9,
+      modify_time = now()
+    </set>
+    where promotion_id = #{promotionId,jdbcType=VARCHAR}
   </update>
   <select id="queryPromotionInfoByB2cActivityCode" parameterType="cn.htd.marketcenter.dto.PromotionInfoDTO"
           resultMap="BaseResultMap">
@@ -367,12 +410,12 @@
     <include refid="Base_Column_List"/>
 	from promotion_info
 	where b2c_activity_code = #{b2cActivityCode, jdbcType=VARCHAR}
-	<if test="statusList != null">
+	<!-- <if test="statusList != null">
 		<foreach collection="statusList" item="status"
 			open=" and status in(" close=")" separator=",">
 			#{status}
 		</foreach>
-	</if>
+	</if> -->
 	<if test="showStatus != null">	
 		and show_status = #{showStatus, jdbcType=VARCHAR}
 	</if>

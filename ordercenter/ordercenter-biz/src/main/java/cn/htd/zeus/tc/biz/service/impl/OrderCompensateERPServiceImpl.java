@@ -195,16 +195,16 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 						if (StringUtilHelper.isNull(payOrderInfoDMO.getPayStatus())
 								|| !payOrderInfoDMO.getPayStatus()
 										.equals(PayTypeEnum.SUCCESS.getCode())) {
-							LOGGER.warn("五合一下行-没有从收付款待下行信息表里查到数据或者收付款支付不是SUCCESS,入参orderNo:"
-									+ requestInfo.getOrderNo());
+							LOGGER.warn("五合一下行-没有从收付款待下行信息表里查到数据或者收付款支付不是SUCCESS,入参orderNo:{}"
+									, requestInfo.getOrderNo());
 							continue;
 						}
 					} else if (null == payOrderInfoDMO
 							|| StringUtilHelper.isNull(payOrderInfoDMO.getPayResultStatus())
 							|| !payOrderInfoDMO.getPayResultStatus().toString()
 									.equals(PayTypeEnum.PAY_RESULT_STATUS_SUCC.getCode())) {
-						LOGGER.warn("五合一下行-没有从收付款待下行信息表里查到数据或者收付款下行状态不是回调成功,入参orderNo:"
-								+ requestInfo.getOrderNo());
+						LOGGER.warn("五合一下行-没有从收付款待下行信息表里查到数据或者收付款下行状态不是回调成功,入参orderNo:{}"
+								, requestInfo.getOrderNo());
 						continue;
 					}
 				}
@@ -315,8 +315,8 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 							orderDetailList.add(orderDetailMap);
 						}
 					} else {
-						LOGGER.warn("trade_order_items_warehouse_detail表没有查到数据,条件:"
-								+ JSONObject.toJSONString(tradeOrderItemsWarehouseDetailDMO));// TODO
+						LOGGER.warn("trade_order_items_warehouse_detail表没有查到数据,条件:{}"
+								, JSONObject.toJSONString(tradeOrderItemsWarehouseDetailDMO));// TODO
 						continue outterLoop;
 					}
 
@@ -362,11 +362,11 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 											itemDiscount.get(0).getPromotionId());// 红包唯一标识符
 									if (StringUtilHelper
 											.isNull(itemDiscount.get(0).getPromotionId())) {
-										LOGGER.warn("中台根据订单号:" + orderNo + "查优惠信息表,没有查到促销活动编码");
+										LOGGER.warn("中台根据orderNo:{}查优惠信息表,没有查到促销活动编码",orderNo);
 										continue outterLoop;
 									}
 								} else {
-									LOGGER.warn("中台根据订单号:" + orderNo + "查优惠信息表,没有查到数据");
+									LOGGER.warn("中台根据orderNo:{}查优惠信息表,没有查到数据",orderNo);
 									rebateDetailMap.put("rebateIdentifier", "");
 									continue outterLoop;
 								}
@@ -417,20 +417,21 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 				TradeOrderErpDistributionDMO tradeOrderErpDistributionDMO = new TradeOrderErpDistributionDMO();
 				tradeOrderErpDistributionDMO.setId(requestInfo.getId());
 				updateTradeOrderErpDistributionByPrimaryKey(tradeOrderErpDistributionDMO);
-				LOGGER.info("订单中心往五合一接口-发送日志流水issueLogId:" + issueLogId);
-				LOGGER.info("五合一接口-准备往中间件发送MQ信息为:" + JSONUtil.toJSONString(orderCompensateERPDTO));
+				LOGGER.info("MessageId:{} 订单中心往五合一接口-发送日志流水issueLogId:{}" , issueLogId,issueLogId);
+				LOGGER.info("MessageId:{} 五合一接口-准备往中间件发送MQ信息为:{}" ,issueLogId, JSONUtil.toJSONString(orderCompensateERPDTO));
 				item_down_erp_template.convertAndSend(
 						mqQueueFactoryConfig.getOrdercenterMiddlewareCompensate(),
 						JSONUtil.toJSONString(orderCompensateERPDTO));
-				LOGGER.info("成功发送mq----五合一队列名:"
-						+ mqQueueFactoryConfig.getOrdercenterMiddlewareCompensate());
+				LOGGER.info("MessageId:{} 成功发送mq----五合一队列名:{}",issueLogId
+						, mqQueueFactoryConfig.getOrdercenterMiddlewareCompensate());
 				// 直接更新订单表
 				changeOrderStatus(requestInfo.getOrderNo(), requestInfo.getOrderItemNos(),
 						OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getCode(),
 						OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getMsg(), false, "", "");
 			} else {
-				LOGGER.warn("从表trade_order_erp_distribution查出的订单行号(orderItemNos):"
-						+ requestInfo.getOrderItemNos() + " " + requestInfo.getOrderNo());
+				LOGGER.warn(
+						"从表trade_order_erp_distribution查出的订单行号(orderItemNos):{} orderNo:{}",
+						requestInfo.getOrderItemNos(), requestInfo.getOrderNo());
 			}
 
 		}
@@ -495,7 +496,7 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 	public OrderCompensateERPCallBackDMO executeOrderCompensateERPCallBack(
 			OrderCompensateERPCallBackReqDTO orderCompensateERPCallBackReqDTO) {
 		String messageId = GenerateIdsUtil.generateId(GenerateIdsUtil.getHostIp());
-		LOGGER.info("messageId:{}五合一下行回调开始{}", messageId,
+		LOGGER.info("MessageId:{} 五合一下行回调开始{}", messageId,
 				JSONObject.toJSONString(orderCompensateERPCallBackReqDTO));
 		OrderCompensateERPCallBackDMO orderCompensateERPCallBackDMO = new OrderCompensateERPCallBackDMO();
 		orderCompensateERPCallBackDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
@@ -511,12 +512,12 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 
 			TradeOrderErpDistributionDMO selectTradeOrderErpDistributionDMO = tradeOrderErpDistributionDAO
 					.selectOrderItemNosBySelective(tradeOrderErpDistributionDMO);
-			LOGGER.info("messageId:{}五合一下行回调--查询分销单表结果:{}", messageId,
+			LOGGER.info("MessageId:{} 五合一下行回调--查询分销单表结果:{}", messageId,
 					JSONObject.toJSONString(selectTradeOrderErpDistributionDMO));
 			if (null == selectTradeOrderErpDistributionDMO
 					|| "".equals(selectTradeOrderErpDistributionDMO.getOrderNo())) {
-				LOGGER.info("中间件回调订单中心时候,没有查到订单分销单信息表的数据-入参:"
-						+ JSONObject.toJSONString(tradeOrderErpDistributionDMO));
+				LOGGER.info("MessageId:{} 中间件回调订单中心时候,没有查到订单分销单信息表的数据-入参:{}",messageId
+						, JSONObject.toJSONString(tradeOrderErpDistributionDMO));
 				orderCompensateERPCallBackDMO.setResultCode(
 						ResultCodeEnum.ORDERCALLBACK_QUERY_ERP_DISTRIBUTION_IS_NULL.getCode());
 				orderCompensateERPCallBackDMO.setResultMsg(
@@ -562,16 +563,16 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 				OrderQueryParamDMO orderQueryParamDMO = new OrderQueryParamDMO();
 				orderQueryParamDMO.setOrderNo(orderNo);
 				orderQueryParamDMO.setOrderItemNoList(Arrays.asList(orderItemNos.split(",")));
-				LOGGER.info("messageId :{}五合一回调成功,从分销单表里查询出的订单行集合为：{},订单号{}", messageId,
+				LOGGER.info("MessageId:{} 五合一回调成功,从分销单表里查询出的订单行集合为：{},订单号:{}", messageId,
 						orderItemNos, orderNo);
 				TradeOrdersDMO tradeOrdersDMOTemp = tradeOrdersDAO
 						.selectOrderByOrderNoANDOrderItemNo(orderQueryParamDMO);
-				LOGGER.info("messageId :{}五合一回调成功，判断是不是要扣减库存查询结果tradeOrdersDMOTemp{}", messageId,
+				LOGGER.info("MessageId:{} 五合一回调成功，判断是不是要扣减库存查询结果tradeOrdersDMOTemp:{}", messageId,
 						JSONObject.toJSONString(tradeOrdersDMOTemp));
 				if (null != tradeOrdersDMOTemp && null != tradeOrdersDMOTemp.getIsTimelimitedOrder()
 						&& !OrderStatusEnum.IS_TIMELIMITED_ORDER.getCode()
 								.equals(tradeOrdersDMOTemp.getIsTimelimitedOrder().toString())) {
-					LOGGER.info("messageId :{}五合一回调成功，扣减非秒杀商品 isTimelimitedOrder{}", messageId,
+					LOGGER.info("MessageId:{} 五合一回调成功，扣减非秒杀商品 isTimelimitedOrder:{}", messageId,
 							tradeOrdersDMOTemp.getIsTimelimitedOrder());
 					EmptyResDTO goodsResDTO = batchReduceStock(tradeOrdersDMOTemp, messageId);
 					if (!goodsResDTO.getResponseCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
@@ -733,7 +734,7 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 		tradeOrderErpDistributionDMO.setErpStatus(OrderStatusEnum.ERP_DOWN_LINK.getCode());
 		int update = tradeOrderErpDistributionDAO
 				.updateTradeOrderErpDistributionByPrimaryKey(tradeOrderErpDistributionDMO);
-		LOGGER.info("更新trade_order_erp_distribution 数据库结果：" + update);
+		LOGGER.info("更新trade_order_erp_distribution 数据库结果:{}" , update);
 		return update;
 	}
 
@@ -767,12 +768,12 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 			order4StockChangeDTO.setOrderEntries(orderEntries);
 			order4StockChangeDTOs.add(order4StockChangeDTO);
 
-			LOGGER.info("【五合一回调】【调商品中心批量扣减库存开始】--组装查询参数开始:{}",
+			LOGGER.info("MessageId:{} 【五合一回调】【调商品中心批量扣减库存开始】--组装查询参数开始:{}",messageId,
 					JSONObject.toJSONString(order4StockChangeDTOs));
 			OtherCenterResDTO<String> result = goodsCenterRAO
 					.batchReduceStock(order4StockChangeDTOs, messageId);
 
-			LOGGER.info("【五合一回调】【调商品中心批量扣减库存结束】--结果:{}", JSONObject.toJSONString(result));
+			LOGGER.info("MessageId:{} 【五合一回调】【调商品中心批量扣减库存结束】--结果:{}", messageId,JSONObject.toJSONString(result));
 			if (!result.getOtherCenterResponseCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
 				emptyResDTO.setReponseMsg(result.getOtherCenterResponseMsg());
 				emptyResDTO.setResponseCode(result.getOtherCenterResponseCode());
@@ -785,7 +786,7 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 			emptyResDTO.setReponseMsg(ResultCodeEnum.ERROR.getMsg());
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
-			LOGGER.warn("调商品中心批量扣减库存失败");
+			LOGGER.warn("MessageId:{} 调商品中心批量扣减库存失败",messageId);
 		}
 
 		return emptyResDTO;

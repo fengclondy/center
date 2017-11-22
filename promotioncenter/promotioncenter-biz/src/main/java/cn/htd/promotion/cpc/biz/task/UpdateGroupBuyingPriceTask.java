@@ -145,6 +145,7 @@ public class UpdateGroupBuyingPriceTask implements IScheduleTaskDealMulti<Groupb
                             groupbuyingInfoReqDTO.setPromotionId(promotionId);
                             groupbuyingInfoReqDTO.setRealActorCount(Integer.valueOf(realActorCount));// 真实参团人数
                             groupbuyingInfoReqDTO.setRealGroupbuyingPrice(new BigDecimal(realGroupbuyingPrice));// 真实拼团价
+                            groupbuyingInfoReqDTO.setHasPricecountFlag(1); // 是否更新价格和人数标记（0.未更新，1.更新）
                             groupbuyingInfoDAO.updateGBActorCountAndPrice(groupbuyingInfoReqDTO);
                     	}
 

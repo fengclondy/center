@@ -2,13 +2,20 @@ package cn.htd.goodscenter.service.impl.promotionstock;
 
 import java.util.List;
 import javax.annotation.Resource;
+
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.github.pagehelper.StringUtil;
 import cn.htd.common.ExecuteResult;
+import cn.htd.goodscenter.common.constants.Constants;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
+import cn.htd.goodscenter.common.utils.RedissonClientUtil;
 import cn.htd.goodscenter.dao.ItemMybatisDAO;
 import cn.htd.goodscenter.dao.ItemSkuDAO;
 import cn.htd.goodscenter.dao.ItemSkuPublishInfoHistoryMapper;
@@ -33,7 +40,10 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
     protected ItemSkuPublishInfoMapper itemSkuPublishInfoMapper;
     @Resource
     private ItemSkuPublishInfoHistoryMapper itemSkuPublishInfoHistoryMapper;
+    @Autowired
+    private RedissonClientUtil redissonClientUtil;
 
+    @Transactional
 	@Override
 	public ExecuteResult<String> batchReduceStock(List<PromotionStockChangeDTO> promotionStockChangeDTOs) {
 		logger.info("批量扣减库存, 参数 : {}", JSONArray.fromObject(promotionStockChangeDTOs));
@@ -42,17 +52,27 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
             for (PromotionStockChangeDTO promotionStockChangeDTO : promotionStockChangeDTOs) {
             	verificationPromotionParam(promotionStockChangeDTO);
             	long stockId = selectStockId(promotionStockChangeDTO);
-            	int quantity = promotionStockChangeDTO.getQuantity().intValue();
-                ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
-                int displayQuantity = (itemSkuPublishInfo.getDisplayQuantity() - quantity);
-                if(displayQuantity < 0){
-                	// 可卖库存小于下单商品数量
-                    throw new StockNotEnoughAvailableStockException("可卖库存不足, 详细 : "
-                            + formatExceptionMessage(itemSkuPublishInfo, promotionStockChangeDTO));
-                }
-                itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
-                // 更新库存信息
-                itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
+            	RLock rLock = null;
+            	try {
+                    RedissonClient redissonClient = redissonClientUtil.getInstance();
+                    String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(stockId); // 竞争资源标志
+                    rLock = redissonClient.getLock(lockKey);
+                	/** 上锁 **/
+                    rLock.lock();
+                	int quantity = promotionStockChangeDTO.getQuantity().intValue();
+                    ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
+                    int displayQuantity = ((itemSkuPublishInfo.getDisplayQuantity() - itemSkuPublishInfo.getReserveQuantity()) - quantity);
+                    if(displayQuantity < 0){
+                    	// 可卖库存小于下单商品数量
+                        throw new StockNotEnoughAvailableStockException("可卖库存不足, 详细 : "
+                                + formatExceptionMessage(itemSkuPublishInfo, promotionStockChangeDTO));
+                    }
+                    itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
+                    // 更新库存信息
+                    itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
+				} finally{
+					 rLock.unlock();
+				}
             }
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
             executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMessage());

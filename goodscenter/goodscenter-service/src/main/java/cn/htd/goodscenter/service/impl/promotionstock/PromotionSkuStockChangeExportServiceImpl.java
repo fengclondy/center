@@ -91,12 +91,22 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
         	for (PromotionStockChangeDTO promotionStockChangeDTO : promotionStockChangeDTOs) {
             	verificationPromotionParam(promotionStockChangeDTO);
             	long stockId = selectStockId(promotionStockChangeDTO);
-            	int quantity = promotionStockChangeDTO.getQuantity().intValue();
-                ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
-                int displayQuantity = itemSkuPublishInfo.getDisplayQuantity() + quantity;
-                itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
-                // 更新库存信息
-                itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
+            	RLock rLock = null;
+            	try {
+            		 RedissonClient redissonClient = redissonClientUtil.getInstance();
+                     String lockKey = Constants.REDIS_KEY_PREFIX_STOCK + String.valueOf(stockId); // 竞争资源标志
+                     rLock = redissonClient.getLock(lockKey);
+                 	 /** 上锁 **/
+                     rLock.lock();
+                     int quantity = promotionStockChangeDTO.getQuantity().intValue();
+                     ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
+                     int displayQuantity = itemSkuPublishInfo.getDisplayQuantity() + quantity;
+                     itemSkuPublishInfo.setDisplayQuantity(displayQuantity);
+                     // 更新库存信息
+                     itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
+            	} finally{
+					 rLock.unlock();
+				}
             }
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
             executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMessage());

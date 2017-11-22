@@ -801,8 +801,12 @@
     </update>
 
   <select id="queryNeedUpdateGroupbuying4Task" resultMap="BaseResultMap" >
-    select
-    <include refid="Base_Column_List" />
+    select  
+    gi.groupbuying_id, gi.promotion_id, gi.seller_code,gi.seller_name,gi.seller_alias_name, gi.item_id, gi.sku_code, gi.sku_name, gi.sku_label, 
+    gi.sku_pic_url, gi.sku_cost_price, gi.real_actor_count, gi.real_groupbuying_price, gi.start_time, 
+    gi.end_time, gi.sales_area_code, gi.sales_area_name, gi.groupbuying_sku_count, gi.groupbuying_threshold, 
+    gi.groupbuying_valid_interval, gi.delete_flag, gi.create_id, gi.create_name, gi.create_time, gi.modify_id, 
+    gi.modify_name, gi.modify_time  
     from groupbuying_info gi  
     left join promotion_info pi on pi.promotion_id = gi.promotion_id  
     where gi.delete_flag = 0 

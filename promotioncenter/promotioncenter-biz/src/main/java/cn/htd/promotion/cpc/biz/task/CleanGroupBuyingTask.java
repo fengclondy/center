@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import net.sf.json.JSON;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -124,23 +125,18 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
         boolean result = true;
         try {
             if (tasks != null && tasks.length > 0) {
-                List<Map<String,String>> list = new ArrayList<Map<String,String>>();
                 for (GroupbuyingInfoResDTO dto : tasks) {
                     //根据promotionid 清除redis
                     Boolean deleteResult = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(dto.getPromotionId());
                     if(deleteResult){
                         int updateResult = groupbuyingInfoDAO.updateHasRedisClean(dto.getPromotionId());
                         logger.info("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId() +" ,updateResult: "+updateResult );
-                        Map<String,String> map = new HashMap<>();
-                        map.put("spxxno",dto.getSkuCode());
-                        map.put("orgid",dto.getSellerCode());
-                        list.add(map);
+                        changeShelves(dto.getSkuCode(),dto.getSellerCode());
                     }else{
                         logger.error("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId()+"清除redis团购信息失败!");
                     }
                 }
                 //更新汇掌柜sptag、上下架状态
-                changeShelves(list);
 
             }
         } catch (Exception e) {
@@ -154,12 +150,13 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
         return result;
     }
 
+
     /**
      * 通过http请求汇掌柜更新商品sptag和上下架状态
      * @param list<GroupbuyingInfoCmplReqDTO>
      * @return
      */
-    private String changeShelves(List<Map<String,String>> list) {
+    private String changeShelves(String skuCode, String sellerCode) {
         String responseMsg = "";
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 1.构造HttpClient的实例
@@ -172,7 +169,9 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
 
         // 3.把参数值放入到PostMethod对象中
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("list", JSONArray.fromObject(list).toString()));
+        formparams.add(new BasicNameValuePair("skuCode", skuCode));
+        formparams.add(new BasicNameValuePair("sellerCode", sellerCode));
+        logger.info("********************formparams:"+ JSONObject.toJSONString(formparams));
 
         UrlEncodedFormEntity uefEntity;
         try {
@@ -182,6 +181,8 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
 
             // 5.读取内容
             CloseableHttpResponse response = httpClient.execute(httppost);
+            logger.info("********************response:"+ JSONObject.toJSONString(response));
+
             HttpEntity entity = response.getEntity();
             responseMsg = EntityUtils.toString(entity, "UTF-8").trim();
             // 6.处理返回的内容

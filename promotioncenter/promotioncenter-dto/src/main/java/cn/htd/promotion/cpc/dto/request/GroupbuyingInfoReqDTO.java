@@ -54,6 +54,10 @@ public class GroupbuyingInfoReqDTO implements Serializable {
     private Integer groupbuyingValidInterval;
     // 删除标记
     private Boolean deleteFlag;
+    // 是否已清理redis标记（0.否，1.是）
+    private Integer hasRedisClean;
+    // 是否更新价格和人数标记（0.未更新，1.更新）
+    private Integer hasPricecountFlag;
     // 创建人ID
     private Long createId;
     // 创建人名称
@@ -362,4 +366,22 @@ public class GroupbuyingInfoReqDTO implements Serializable {
     public void setTaskIdList(List<String> taskIdList) {
         this.taskIdList = taskIdList;
     }
+
+	public Integer getHasRedisClean() {
+		return hasRedisClean;
+	}
+
+	public void setHasRedisClean(Integer hasRedisClean) {
+		this.hasRedisClean = hasRedisClean;
+	}
+
+	public Integer getHasPricecountFlag() {
+		return hasPricecountFlag;
+	}
+
+	public void setHasPricecountFlag(Integer hasPricecountFlag) {
+		this.hasPricecountFlag = hasPricecountFlag;
+	}
+    
+    
 }

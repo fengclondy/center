@@ -184,11 +184,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			return  result;
 		}
 		
-		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
-			result.setCode(VenusErrorCodes.E1040001.name());
-			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
-			return  result;
-		}
+//		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
+//			result.setCode(VenusErrorCodes.E1040001.name());
+//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
+//			return  result;
+//		}
 		
 		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
 			result.setCode(VenusErrorCodes.E1040002.name());
@@ -234,21 +234,25 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			itemSpuMapper.insertSelective(itemSpu);
 			//图片
 			List<ItemSpuPicture> itemSpuPicturelist=Lists.newArrayList();
-			for(ItemPicture picture:venusItemDTO.getPictures()){
-				ItemSpuPicture itemSpuPicture=new ItemSpuPicture();
-				itemSpuPicture.setSpuId(itemSpu.getSpuId());
-				itemSpuPicture.setIsFirst(picture.getIsFirst());
-				itemSpuPicture.setModifyId(venusItemDTO.getOperatorId());
-				itemSpuPicture.setModifyName(venusItemDTO.getOperatorName());
-				itemSpuPicture.setModifyTime(new Date());
-				itemSpuPicture.setPictureUrl(picture.getPictureUrl());
-				itemSpuPicture.setSortNum(picture.getSortNumber()==null?0:picture.getSortNumber());
-				itemSpuPicture.setCreateTime(new Date());
-				itemSpuPicture.setCreateId(venusItemDTO.getOperatorId());
-				itemSpuPicture.setCreateName(venusItemDTO.getOperatorName());
-				itemSpuPicturelist.add(itemSpuPicture);
+			
+			if(CollectionUtils.isNotEmpty(itemSpuPicturelist)){
+				for(ItemPicture picture:venusItemDTO.getPictures()){
+					ItemSpuPicture itemSpuPicture=new ItemSpuPicture();
+					itemSpuPicture.setSpuId(itemSpu.getSpuId());
+					itemSpuPicture.setIsFirst(picture.getIsFirst());
+					itemSpuPicture.setModifyId(venusItemDTO.getOperatorId());
+					itemSpuPicture.setModifyName(venusItemDTO.getOperatorName());
+					itemSpuPicture.setModifyTime(new Date());
+					itemSpuPicture.setPictureUrl(picture.getPictureUrl());
+					itemSpuPicture.setSortNum(picture.getSortNumber()==null?0:picture.getSortNumber());
+					itemSpuPicture.setCreateTime(new Date());
+					itemSpuPicture.setCreateId(venusItemDTO.getOperatorId());
+					itemSpuPicture.setCreateName(venusItemDTO.getOperatorName());
+					itemSpuPicturelist.add(itemSpuPicture);
+				}
+				 itemSpuPictureMapper.batchInsert(itemSpuPicturelist);
 			}
-			 itemSpuPictureMapper.batchInsert(itemSpuPicturelist);
+			
 			//描述
     		ItemSpuDescribe itemSpuDescribe= new ItemSpuDescribe();
 			
@@ -278,6 +282,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 	private void doAddItemPicture(VenusItemInDTO venusItemDTO, Item item) {
 		List<ItemPicture> picturesList= venusItemDTO.getPictures();
+		
+		if(CollectionUtils.isEmpty(picturesList)){
+			return;
+		}
+		
 	    for(ItemPicture picture:picturesList){
 	    	picture.setItemId(item.getItemId());
 	    	if(picture.getSellerId()==null){
@@ -373,35 +382,39 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		itemDraftMapper.insertSelective(itemDraft);
 		
 		//图片
-		 List<ItemDraftPicture> draftPicturesList= Lists.newArrayList();
-		    for(ItemPicture picture:venusItemDTO.getPictures()){
-		    	ItemDraftPicture draftPic=new ItemDraftPicture();
-		    	draftPic.setItemDraftId(itemDraft.getItemDraftId());
-		    	draftPic.setPictureUrl(picture.getPictureUrl());
-		    	draftPic.setIsFirst(picture.getIsFirst());
-		    	draftPic.setSortNumber(picture.getSortNumber());
-		    	//sellerId
-		    	if(picture.getSellerId()==null){
-		    		draftPic.setSellerId(item.getSellerId());
-		    	}else{
-		    		draftPic.setSellerId(picture.getSellerId());
-		    	}
-		    	if(picture.getShopId()==null){
-		    		draftPic.setShopId(venusItemDTO.getShopId()==null?0L:venusItemDTO.getShopId());
-		    	}else{
-		    		draftPic.setShopId(picture.getShopId());
-		    	}
-		    	draftPic.setPictureStatus(1);
-		    	draftPic.setCreated(new Date());
-		    	draftPic.setCreateId(venusItemDTO.getOperatorId());
-		    	draftPic.setCreateName(venusItemDTO.getOperatorName());
-		    	draftPic.setModified(new Date());
-		    	draftPic.setModifyId(venusItemDTO.getOperatorId());
-		    	draftPic.setModifyName(venusItemDTO.getOperatorName());
-		    	
-		    	draftPicturesList.add(draftPic);
-		    }
-		itemDraftPictureMapper.batchInsert(draftPicturesList);
+		
+		if(CollectionUtils.isNotEmpty(venusItemDTO.getPictures())){
+			 List<ItemDraftPicture> draftPicturesList= Lists.newArrayList();
+			    for(ItemPicture picture:venusItemDTO.getPictures()){
+			    	ItemDraftPicture draftPic=new ItemDraftPicture();
+			    	draftPic.setItemDraftId(itemDraft.getItemDraftId());
+			    	draftPic.setPictureUrl(picture.getPictureUrl());
+			    	draftPic.setIsFirst(picture.getIsFirst());
+			    	draftPic.setSortNumber(picture.getSortNumber());
+			    	//sellerId
+			    	if(picture.getSellerId()==null){
+			    		draftPic.setSellerId(item.getSellerId());
+			    	}else{
+			    		draftPic.setSellerId(picture.getSellerId());
+			    	}
+			    	if(picture.getShopId()==null){
+			    		draftPic.setShopId(venusItemDTO.getShopId()==null?0L:venusItemDTO.getShopId());
+			    	}else{
+			    		draftPic.setShopId(picture.getShopId());
+			    	}
+			    	draftPic.setPictureStatus(1);
+			    	draftPic.setCreated(new Date());
+			    	draftPic.setCreateId(venusItemDTO.getOperatorId());
+			    	draftPic.setCreateName(venusItemDTO.getOperatorName());
+			    	draftPic.setModified(new Date());
+			    	draftPic.setModifyId(venusItemDTO.getOperatorId());
+			    	draftPic.setModifyName(venusItemDTO.getOperatorName());
+			    	
+			    	draftPicturesList.add(draftPic);
+			    }
+			itemDraftPictureMapper.batchInsert(draftPicturesList);
+		}
+		
 		
 		ItemDraftDescribe describeFromDb=new ItemDraftDescribe();
 		describeFromDb.setCreateId(venusItemDTO.getOperatorId());
@@ -439,11 +452,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			return  result;
 		}
 		
-		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
-			result.setCode(VenusErrorCodes.E1040001.name());
-			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
-			return  result;
-		}
+//		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
+//			result.setCode(VenusErrorCodes.E1040001.name());
+//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
+//			return  result;
+//		}
 		
 		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
 			result.setCode(VenusErrorCodes.E1040002.name());
@@ -527,6 +540,13 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 	private void doUpdateItemDraftPicture(VenusItemInDTO venusItemDTO,
 			Item itemFromDb, ItemDraft itemDraftFromDB) {
+		
+		//清除图片
+		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
+			itemDraftPictureMapper.deleteDraftPicByItemDraftId(itemDraftFromDB.getItemDraftId());
+			return;
+		}
+		
 		//图片
 		 List<ItemDraftPicture> draftPicturesList= Lists.newArrayList();
 		    for(ItemPicture picture:venusItemDTO.getPictures()){

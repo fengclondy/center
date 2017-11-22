@@ -287,7 +287,10 @@ public class OrderCreateServiceImpl implements OrderCreateService {
 		orderCreateInfoDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
 		JSONObject jsonObj = (JSONObject) JSONObject.toJSON(orderCreateInfoReqDTO);
 		List<String> couponCodeList = new ArrayList<String>();
-		couponCodeList.add(orderCreateInfoReqDTO.getCouponCode());
+		String couponCode = orderCreateInfoReqDTO.getCouponCode();
+		if(!StringUtils.isEmpty(couponCode)){
+			couponCodeList.add(couponCode);
+		}
 		TradeInfoDTO cart = JSONObject.toJavaObject(jsonObj, TradeInfoDTO.class);
 		OtherCenterResDTO<TradeInfoDTO> calculateRes = marketCenterRAO.calculateCouponDiscount(
 				couponCodeList, cart, orderCreateInfoReqDTO.getMessageId());

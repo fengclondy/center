@@ -5,22 +5,18 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
-
 import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.common.constants.GroupbuyingConstants;
 import cn.htd.promotion.cpc.common.constants.RedisConst;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
-import cn.htd.promotion.cpc.common.util.KeyGeneratorUtils;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoCmplReqDTO;
 import cn.htd.promotion.cpc.dto.request.GroupbuyingInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
@@ -42,9 +38,6 @@ public class UpdateGroupBuyingPriceTask implements IScheduleTaskDealMulti<Groupb
 
     @Resource
     private GroupbuyingService groupbuyingService;
-
-    @Resource
-    private KeyGeneratorUtils keyGeneratorUtils;
     
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -124,11 +117,10 @@ public class UpdateGroupBuyingPriceTask implements IScheduleTaskDealMulti<Groupb
         boolean result = true;
         try {
             if (tasks != null && tasks.length > 0) {
-                String messageId = keyGeneratorUtils.generateMessageId();
                 for (GroupbuyingInfoResDTO dto : tasks) {
                     String promotionId =dto.getPromotionId();
                     //计算真实价格
-                    Map<String, String> resultMap = groupbuyingService.getGBActorCountAndPriceByPromotionId(promotionId,messageId);
+                    Map<String, String> resultMap = groupbuyingService.getGBActorCountAndPriceByPromotionId(promotionId,null);
                     String realGroupbuyingPrice = resultMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_GROUPBUYINGPRICE_KEY);
                     String realActorCount = resultMap.get(GroupbuyingConstants.GROUPBUYINGINFO_REAL_ACTOR_COUNT_KEY);
                     //保存真实价格

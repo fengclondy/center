@@ -7,8 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +30,7 @@ import cn.htd.promotion.cpc.dto.response.VoteActivityMemResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityMemberResDTO;
 import cn.htd.promotion.cpc.dto.response.VoteActivityResDTO;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
 /**
@@ -240,6 +239,19 @@ public class VoteActivityAPIImpl implements VoteActivityAPI {
                 }else{
                     resultMap.put("activityStatus","已结束");
                 }
+                
+                resultMap.put("signUpDateStatus","1");
+                //add by zhangxiaolong start for sign up time 
+                if(voteActivity.getVoteSignUpStartTime()!=null&&voteActivity.getVoteSignUpEndTime()!=null){
+                	//已经结束
+                	if(date.after(voteActivity.getVoteSignUpEndTime())){
+                		resultMap.put("signUpDateStatus","0");
+                	}
+                }else{
+                	 resultMap.put("signUpDateStatus","0");
+                }
+                
+                //add by zhangxiaolong end  for sign up time
             }
             // 获取当前会员店排名情况
             Map<String, Object> rankingByMemberCode = this.voteActivityMemberService.selectMemberRankingByMemberCode(voteId, memberCode);

@@ -190,11 +190,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 //			return  result;
 //		}
 		
-		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
-			result.setCode(VenusErrorCodes.E1040002.name());
-			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040002.getErrorMsg()));
-			return  result;
-		}
+//		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
+//			result.setCode(VenusErrorCodes.E1040002.name());
+//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040002.getErrorMsg()));
+//			return  result;
+//		}
 		try{
 			//DTO转化为domain
 			Item item=Converters.convert(venusItemDTO, Item.class);
@@ -308,6 +308,9 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 	private void doAddItemDescribe(VenusItemInDTO venusItemDTO, Item item) {
 		ItemDescribe describe= venusItemDTO.getDescribe();
+		if(describe==null){
+			return;
+		}
 		//清空id
 		describe.setDesId(null);
 	    describe.setItemId(item.getItemId());
@@ -458,11 +461,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 //			return  result;
 //		}
 		
-		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
-			result.setCode(VenusErrorCodes.E1040002.name());
-			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040002.getErrorMsg()));
-			return  result;
-		}
+//		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
+//			result.setCode(VenusErrorCodes.E1040002.name());
+//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040002.getErrorMsg()));
+//			return  result;
+//		}
 		//查询数据库中item
 		try{
 			Item itemFromDb=itemMybatisDAO.queryItemByPk(venusItemDTO.getItemId());

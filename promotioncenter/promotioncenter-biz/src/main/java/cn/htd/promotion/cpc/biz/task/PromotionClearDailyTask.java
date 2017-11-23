@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.htd.common.Pager;
+import cn.htd.promotion.cpc.biz.dao.GroupbuyingInfoDAO;
+import cn.htd.promotion.cpc.biz.dao.PromotionConfigureDAO;
 import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.biz.service.GroupbuyingService;
 import cn.htd.promotion.cpc.biz.service.LuckDrawService;
@@ -27,6 +29,7 @@ import cn.htd.promotion.cpc.biz.service.TimelimitedInfoService;
 import cn.htd.promotion.cpc.common.constants.TimelimitedConstants;
 import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoCmplResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionConfigureDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
@@ -56,6 +59,10 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
     private TimelimitedInfoService timelimitedInfoService;
     @Resource
     private GroupbuyingService groupbuyingService;
+    @Resource
+    private GroupbuyingInfoDAO groupbuyingInfoDAO;
+    @Resource
+    private PromotionConfigureDAO promotionConfigureDAO;
 
 	@Override
 	public Comparator<PromotionInfoDTO> getComparator() {
@@ -145,7 +152,12 @@ public class PromotionClearDailyTask implements IScheduleTaskDealMulti<Promotion
 			        	TimelimitedInfoResDTO timelimitedInfoResDTO = timelimitedInfoService.getSingleFullTimelimitedInfoByPromotionId(promotionInfoDTO.getPromotionId(),TimelimitedConstants.TYPE_DATA_TIMELIMITED_REAL_REMAIN_COUNT, null);
 			        	timelimitedInfoService.initTimelimitedInfoRedisInfo(timelimitedInfoResDTO);
 					}else if(TimelimitedConstants.PromotionTypeEnum.GROUPBUYING.key().equals(promotionInfoDTO.getPromotionType())){//阶梯团
-			        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingService.getGroupbuyingInfoCmplByPromotionId(promotionInfoDTO.getPromotionId(), null);
+//			        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingService.getGroupbuyingInfoCmplByPromotionId(promotionInfoDTO.getPromotionId(), null);
+			            // 查询活动信息
+			        	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfoCmplByPromotionId(promotionInfoDTO.getPromotionId());
+			          	// 设置配置信息
+			            List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.getPromotionConfiguresByPromotionId(promotionInfoDTO.getPromotionId());
+			            groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setPromotionConfigureList(promotionConfigureDTOlist);
 			        	groupbuyingService.initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
 					}
 					

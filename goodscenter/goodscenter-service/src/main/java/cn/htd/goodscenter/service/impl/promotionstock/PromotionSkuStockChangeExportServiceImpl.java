@@ -61,8 +61,9 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
                     rLock.lock();
                 	int quantity = promotionStockChangeDTO.getQuantity().intValue();
                     ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByPrimaryKey(stockId);
-                    int displayQuantity = ((itemSkuPublishInfo.getDisplayQuantity() - itemSkuPublishInfo.getReserveQuantity()) - quantity);
-                    if(displayQuantity < 0){
+                    int displayQuantity = itemSkuPublishInfo.getDisplayQuantity() - quantity;
+                    int submitQuantity = ((itemSkuPublishInfo.getDisplayQuantity() - itemSkuPublishInfo.getReserveQuantity()) - quantity);
+                    if(submitQuantity < 0){
                     	// 可卖库存小于下单商品数量
                         throw new StockNotEnoughAvailableStockException("可卖库存不足, 详细 : "
                                 + formatExceptionMessage(itemSkuPublishInfo, promotionStockChangeDTO));
@@ -71,7 +72,9 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
                     // 更新库存信息
                     itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
 				} finally{
-					 rLock.unlock();
+					if(null != rLock){
+						rLock.unlock();
+					}
 				}
             }
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
@@ -105,7 +108,9 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
                      // 更新库存信息
                      itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
             	} finally{
-					 rLock.unlock();
+            		if(null != rLock){
+						rLock.unlock();
+					}
 				}
             }
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());

@@ -769,9 +769,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             Jedis jedis = null;
             Pipeline pipeline = null;
             List<Object> result = Lists.newArrayList();
-            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-//            Transaction multi = null;
-            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+            Transaction multi = null;
             List<PromotionBuyerDetailDTO> targetBuyerDetailList = new ArrayList<PromotionBuyerDetailDTO>();
             List<PromotionBuyerDetailDTO> sendBuyerDetailList = null;
             List<PromotionBuyerDetailDTO> needsendNextBuyerDetailList = null;
@@ -781,9 +779,7 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
             String buyerCode = "";
             String buyerCouponCode = "";
             String couponStr = "";
-            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-//            List<Object> mutilRst = null;
-            //----- delete by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+            List<Object> mutilRst = null;
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
             boolean needGetBelongSellerFlg = false;
             PromotionSellerRuleDTO sellerRuleDTO = targetDiscountInfo.getSellerRuleDTO();
@@ -911,31 +907,21 @@ public class PrepareSendCouponScheduleTask implements IScheduleTaskDealMulti<Pro
                         //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
                         couponDTO.setGetCouponTime(new Date());
                         couponStr = JSON.toJSONString(couponDTO);
-                        //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 start -----
-//                        multi = jedis.multi();
-//                        multi.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, couponStr);
-//                        multi.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
-//                                couponAmountStr);
-//                        multi.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
-//                        multi.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
-//                        multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
-//                                buyerCode + "&" + buyerCouponCode);
-//                        mutilRst = multi.exec();
-//                        if (mutilRst == null || mutilRst.isEmpty()) {
-//                            logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",
-//                                    JSON.toJSONString(mutilRst));
-//                        }
-                        pipeline.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, couponStr);
-                        pipeline.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
+                        multi = jedis.multi();
+                        multi.hset(RedisConst.REDIS_BUYER_COUPON + "_" + buyerCode, buyerCouponCode, couponStr);
+                        multi.hset(RedisConst.REDIS_BUYER_COUPON_AMOUNT, buyerCode + "&" + buyerCouponCode,
                                 couponAmountStr);
-                        pipeline.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
-                        pipeline.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
-                        pipeline.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
+                        multi.hincrBy(RedisConst.REDIS_COUPON_RECEIVE_COUNT, promotionId, 1);
+                        multi.rpush(RedisConst.REDIS_BUYER_COUPON_NEED_SAVE_LIST, couponStr);
+                        multi.rpush(RedisConst.REDIS_COUPON_SEND_LIST + "_" + promotionId,
                                 buyerCode + "&" + buyerCouponCode);
-                        //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
+                        mutilRst = multi.exec();
+                        if (mutilRst == null || mutilRst.isEmpty()) {
+                            logger.error("\n 线程名称:[{}],方法:[{}],异常:[{}]", threadName, "autoPresentBuyerCoupon-work",
+                                    JSON.toJSONString(mutilRst));
+                        }
                         sendedCount++;
                     }
-                    pipeline.sync();
                     targetBuyerDetailList = needsendNextBuyerDetailList;
                 }
             } catch (Exception e) {

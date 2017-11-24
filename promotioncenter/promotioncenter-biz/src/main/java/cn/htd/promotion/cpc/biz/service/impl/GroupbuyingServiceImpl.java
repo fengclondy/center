@@ -519,7 +519,14 @@ public class GroupbuyingServiceImpl implements GroupbuyingService {
 //            }
 //        }.start();
         
-    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, null);
+//    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = getGroupbuyingInfoCmplByPromotionId(promotionId, null);
+    	
+        // 查询活动信息
+    	GroupbuyingInfoCmplResDTO groupbuyingInfoCmplResDTO = groupbuyingInfoDAO.getGroupbuyingInfoCmplByPromotionId(promotionId);
+      	// 设置配置信息
+        List<PromotionConfigureDTO> promotionConfigureDTOlist = promotionConfigureDAO.getPromotionConfiguresByPromotionId(promotionId);
+        groupbuyingInfoCmplResDTO.getSinglePromotionInfoCmplResDTO().setPromotionConfigureList(promotionConfigureDTOlist);
+        	
     	initGroupbuyingInfoRedisInfo(groupbuyingInfoCmplResDTO);
 	}
 

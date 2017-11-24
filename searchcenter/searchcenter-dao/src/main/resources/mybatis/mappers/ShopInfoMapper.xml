@@ -53,7 +53,7 @@
 		<include refid="columns" />
 		from shop_info as s
 		<![CDATA[ 
-		left join shop_platform_category as sc on sc.shop_id = s.shop_id and sc.category_level = 3 
+		left join shop_platform_category as sc on sc.shop_id = s.shop_id and sc.seller_id = s.seller_id and sc.category_level = 3 
 		where s.modify_time >= #{syncTime}
 		group by s.shop_id
  		limit #{start},#{end}
@@ -67,7 +67,7 @@
 		<include refid="columns" />
 		from shop_info as s
 		<![CDATA[ 
-		left join shop_platform_category as sc on sc.shop_id = s.shop_id and sc.category_level = 3 
+		left join shop_platform_category as sc on sc.shop_id = s.shop_id and sc.seller_id = s.seller_id and sc.category_level = 3 
 		where s.modify_time >= #{syncTime}
 		group by s.shop_id) as st
  		]]>

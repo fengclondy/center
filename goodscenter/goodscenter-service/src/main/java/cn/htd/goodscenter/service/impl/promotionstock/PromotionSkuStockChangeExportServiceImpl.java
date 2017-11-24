@@ -72,7 +72,9 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
                     // 更新库存信息
                     itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
 				} finally{
-					 rLock.unlock();
+					if(null != rLock){
+						rLock.unlock();
+					}
 				}
             }
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
@@ -106,7 +108,9 @@ public class PromotionSkuStockChangeExportServiceImpl implements PromotionSkuSto
                      // 更新库存信息
                      itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfo);
             	} finally{
-					 rLock.unlock();
+            		if(null != rLock){
+						rLock.unlock();
+					}
 				}
             }
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());

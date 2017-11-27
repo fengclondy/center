@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -160,6 +161,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
                     }
                     promotionInfoDTO = queryB2cCouponPromotionInfo(targetB2cActivityCode, deleteStatus);
                     for (B2cCouponInfoSyncDMO syncCouponInfo : syncCouponInfoList) {
+                        syncCouponInfo.setDealFailReason("");
                         try {
                             updateSyncB2cCouponInfo(syncCouponInfo, promotionInfoDTO);
                             updateB2cCouponInfoDealResult(syncCouponInfo);
@@ -227,6 +229,7 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
      */
     public void updateSyncB2cCouponInfo(B2cCouponInfoSyncDMO b2cCouponInfoSyncDMO, PromotionInfoDTO promotionInfoDTO)
             throws Exception {
+        Date nowDt = new Date();
         PromotionDiscountInfoDTO couponInfoDTO = null;
         String promotionId = "";
         int targetCouponListSize = 0;
@@ -237,11 +240,36 @@ public class UpdateSyncB2cCouponInfoScheduleTask implements IScheduleTaskDealMul
         List<Future<Integer>> workResultList = new ArrayList<Future<Integer>>();
         Future<Integer> workResult = null;
         BuyerCouponInfoDTO buyerCouponInfoDTO = null;
+        long effeciveTime = 0L;
+        long couponStartTime = 0L;
 
         try {
             if (promotionInfoDTO == null) {
+                if (nowDt.after(b2cCouponInfoSyncDMO.getCouponEndTime())) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_HAS_EXPIRED,
+                            "同步的优惠券活动信息已过期");
+                }
                 couponInfoDTO = addB2cCouponPromotionInfo(b2cCouponInfoSyncDMO);
             } else {
+                if (nowDt.after(promotionInfoDTO.getInvalidTime())) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_HAS_EXPIRED,
+                            "已产生的优惠券返券活动信息已过期不能修改");
+                }
+                if (nowDt.after(promotionInfoDTO.getEffectiveTime())) {
+                    effeciveTime = promotionInfoDTO.getEffectiveTime().getTime();
+                    couponStartTime = b2cCouponInfoSyncDMO.getCouponStartTime().getTime();
+                    if (effeciveTime != couponStartTime) {
+                        throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_HAS_STARTED,
+                                "已产生的优惠券返券活动信息已开始开始时间不能变动");
+                    }
+                }
+                if (!dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_PASS).equals(promotionInfoDTO.getShowStatus())
+                        && !dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
+                        DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID).equals(promotionInfoDTO.getShowStatus())) {
+                    throw new MarketCenterBusinessException(MarketCenterCodeConst.PROMOTION_NOT_VALID,
+                            "已产生的优惠券返券活动信息已失效不能修改");
+                }
                 couponInfoDTO = updateB2cCouponPromotionInfo(b2cCouponInfoSyncDMO, promotionInfoDTO);
             }
             if (couponInfoDTO == null) {

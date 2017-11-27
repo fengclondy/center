@@ -26,7 +26,6 @@ import cn.htd.marketcenter.service.handle.PromotionRedisHandle;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Service("buyerInterestChangeService")
 public class BuyerInterestChangeServiceImpl implements BuyerInterestChangeService {

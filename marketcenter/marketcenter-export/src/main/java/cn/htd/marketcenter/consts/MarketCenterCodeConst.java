@@ -27,6 +27,8 @@ public class MarketCenterCodeConst {
 	public static final String PROMOTION_NO_START = "15007";
     // 促销活动已被修改
     public static final String PROMOTION_HAS_MODIFIED = "15008";
+	// 促销活动已开始
+	public static final String PROMOTION_HAS_STARTED = "15009";
 	// 促销规则数据不存在
 	public static final String RULE_NOT_EXIST = "15011";
 	// 促销规则数据名称重复

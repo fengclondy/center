@@ -69,6 +69,7 @@
     from promotion_info
     where 1 = 1
     <if test="entity != null">
+      and <![CDATA[status <> #{entity.deletedStatus,jdbcType=VARCHAR}]]>
       and (
         <![CDATA[(status <> #{entity.startedStatus,jdbcType=VARCHAR} and now() >= effective_time and now() <= invalid_time)]]>
         or

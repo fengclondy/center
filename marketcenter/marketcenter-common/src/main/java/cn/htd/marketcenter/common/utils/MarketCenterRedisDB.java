@@ -9,13 +9,11 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.alibaba.fastjson.JSON;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -303,7 +301,8 @@ public class MarketCenterRedisDB {
 				valueList = jedis.hmget(key, fields);
 			}
 		} catch (Exception e) {
-			logger.error("\n 方法:[{}]，异常:[{}]", "marketRedisDB-getMHash", getStackTraceAsString(e));
+			logger.error("\n 方法:[{}]，入参key:[{}], 入参fileds:[{}], 异常:[{}]", "marketRedisDB-getMHash", key,
+					JSON.toJSONString(fields), getStackTraceAsString(e));
 		} finally {
 			releaseResource(jedis);
 		}

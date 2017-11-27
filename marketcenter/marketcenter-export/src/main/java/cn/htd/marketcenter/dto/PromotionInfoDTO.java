@@ -208,6 +208,10 @@ public class PromotionInfoDTO implements Serializable {
      * 定时任务处理对象促销活动未开始状态
      */
     private String endStatus;
+    /**
+     * 定时任务处理对象促销活动已删除
+     */
+    private String deletedStatus;
     //----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
     /**
      * 查询条件的审核状态列表
@@ -584,6 +588,14 @@ public class PromotionInfoDTO implements Serializable {
 
     public void setEndStatus(String endStatus) {
         this.endStatus = endStatus;
+    }
+
+    public String getDeletedStatus() {
+        return deletedStatus;
+    }
+
+    public void setDeletedStatus(String deletedStatus) {
+        this.deletedStatus = deletedStatus;
     }
 
     public List<String> getVerifyStatusList() {

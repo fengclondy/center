@@ -7,9 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
@@ -21,11 +18,12 @@ import cn.htd.marketcenter.dao.PromotionStatusHistoryDAO;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.dto.PromotionStatusHistoryDTO;
 import cn.htd.marketcenter.service.handle.TimelimitedRedisHandle;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 根据系统时间、促销活动开始时间、结束时间和促销活动状态修改促销活动状态
@@ -117,6 +115,8 @@ public class UpdatePromotionStatusScheduleTask implements IScheduleTaskDealMulti
 						DictionaryConst.OPT_PROMOTION_STATUS_START));
 				condition.setEndStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_END));
+				condition.setDeletedStatus(dictionary.getValueByCode(DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_DELETE));
 				//----- modify by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
 				condition.setTaskQueueNum(taskQueueNum);
 				condition.setTaskIdList(taskIdList);

@@ -100,7 +100,13 @@ public class CouponRedisHandle {
             }
             //----- add by jiangkun for 2017活动需求商城优惠券激活 on 20171030 end -----
             couponJsonStr = JSON.toJSONString(couponInfo);
-            marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
+            //----- modify by jiangkun for 2017活动性能优化 on 20171128 start -----
+//            marketRedisDB.setAndExpire(couponRedisKey, couponJsonStr, couponInfo.getPrepEndTime());
+            couponInfo.setBuyerRuleDTO(null);
+            couponInfo.setSellerRuleDTO(null);
+            couponInfo.setCategoryItemRuleDTO(null);
+            marketRedisDB.setAndExpire(couponRedisKey, JSON.toJSONString(couponInfo), couponInfo.getPrepEndTime());
+            //----- modify by jiangkun for 2017活动性能优化 on 20171128 end -----
         }
         marketRedisDB.tailPush(RedisConst.REDIS_COUPON_NEED_DEAL_LIST, couponJsonStr);
 //        }
@@ -518,6 +524,9 @@ public class CouponRedisHandle {
                     needGetBelongSellerFlg = true;
                     targetBelongCouponList.add(couponInfoDTO);
                 }
+                //----- add by jiangkun for 2017活动性能优化 on 20171128 start -----
+                couponInfoDTO.setBuyerRuleDTO(null);
+                //----- add by jiangkun for 2017活动性能优化 on 20171128 start -----
                 resultList.add(couponInfoDTO);
             } catch (Exception e) {
                 logger.error("\n 方法:[{}],异常:[{}]", "getBuyerPopupNoticeCouponList", ExceptionUtils.getStackTraceAsString(e));
@@ -531,6 +540,9 @@ public class CouponRedisHandle {
                 for (PromotionDiscountInfoDTO belongCouponInfoDTO : targetBelongCouponList) {
                     belongCouponInfoDTO.setPromotionProviderSellerCode(belongRelationDTO.getCurBelongSellerCode());
                     belongCouponInfoDTO.setCouponUseRangeDesc("限" + belongRelationDTO.getCurBelongSellerName() + "使用");
+                    //----- add by jiangkun for 2017活动性能优化 on 20171128 start -----
+                    belongCouponInfoDTO.setSellerRuleDTO(null);
+                    //----- add by jiangkun for 2017活动性能优化 on 20171128 start -----
                 }
             }
         } catch (Exception e) {

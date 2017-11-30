@@ -29,9 +29,9 @@ public class DictionaryUtils {
 	// Redis字典类型数据
 	private static final String REDIS_DICTIONARY_TYPE = "B2B_MIDDLE_DICTIONARY_TYPE";
 	//----- add by jiangkun for 性能优化 on 20171011 start -----
-	private static Map<String, String> DICTIONARY_TYPE_MAP = new HashMap<String, String>();
-	private static Map<String, Map<String, String>> DICTIONARY_VALUE_MAP  = new HashMap<String, Map<String, String>>();
-	private static long flushedTime = System.currentTimeMillis();
+	private volatile static Map<String, String> DICTIONARY_TYPE_MAP = new HashMap<String, String>();
+	private volatile static Map<String, Map<String, String>> DICTIONARY_VALUE_MAP  = new HashMap<String, Map<String, String>>();
+	private volatile static long flushedTime = System.currentTimeMillis();
 	private static final List<String> EXCEPT_CACHE_TYPE_LIST = Arrays.asList(DictionaryConst.TYPE_ITEM_UNIT);
 	//----- add by jiangkun for 性能优化 on 20171011 end -----
 	@Resource

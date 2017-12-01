@@ -1,5 +1,7 @@
 package cn.htd.membercenter.service;
 
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.membercenter.dto.ErpSellerupDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
 
 public class MemberBusinessRelationTest {
@@ -17,11 +20,13 @@ public class MemberBusinessRelationTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MemberBusinessRelationTest.class);
 	ApplicationContext ctx = null;
 	MemberBusinessRelationService memberBusinessRelationService = null;
+	@Resource
+	ErpService erpService;
 
 	@Before
 	public void setUp() {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
-		memberBusinessRelationService = (MemberBusinessRelationService) ctx.getBean("memberBusinessRelationService");
+		erpService = (ErpService) ctx.getBean("erpService");
 	}
 
 	@Test
@@ -36,6 +41,25 @@ public class MemberBusinessRelationTest {
 				.queryMemberNoneBusinessRelationListInfo(memberBusinessRelationDTO, pager);
 	}
 
+
+	@Test
+	public void updateInvoiceInfo() {
+		ErpSellerupDTO dto = new ErpSellerupDTO();
+		dto.setAccountNo("12");
+		dto.setVendorName("常州驰晟网络科技有限公司1");
+		dto.setTaxpayerIDnumber("34");
+		dto.setDepositBank("56");
+		dto.setFinancialAccount("78");
+		dto.setContactMobile("91");
+		dto.setRegisteredAddressProvince("13");
+		dto.setBusinessAddressCity("46");
+		dto.setBusinessAddressCounty("79");
+		dto.setBusinessAddressDetailAddress("11");
+		dto.setVendorCode("8126");
+		erpService.saveErpSellerup(dto);
+	}
+
+	
 	// @Test
 	// public void queryMemberBusinessRelationPendingAudit() {
 	// MemberBusinessRelationDTO memberBusinessRelationDTO = new

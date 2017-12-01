@@ -138,7 +138,7 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 			}
 			if(memberList !=null && memberList.size()>1){
 				for(MemberBaseDTO memberbase:memberList){
-					if(memberbase.getSellerType().equals("2")){ //外部供应商优先
+					if(memberbase.getSellerType().equals("1")){ //内部供应商
 						memberId = memberbase.getMemberId();
 					}
 				}

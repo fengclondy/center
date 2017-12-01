@@ -652,16 +652,18 @@ public class CouponRedisHandle {
                         break;
                     }
                 }
-                redisAmountKeyArr = (String[])redisAmountKeyList.toArray(new String[redisAmountKeyList.size()]);
-                couponAmountList = marketRedisDB.getMHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, redisAmountKeyArr);
-                for (int i = 0; i < couponResult.size(); i ++) {
-                    buyerCouponInfo = couponResult.get(i);
-                    buyerCouponLeftAmount = couponAmountList.get(i);
-                    if (StringUtils.isEmpty(couponAmountList.get(i)) || "nil".equals(couponAmountList.get(i))) {
-                        buyerCouponLeftAmount = "0";
+                if (redisAmountKeyList != null && !redisAmountKeyList.isEmpty()) {
+                    redisAmountKeyArr = (String[]) redisAmountKeyList.toArray(new String[redisAmountKeyList.size()]);
+                    couponAmountList = marketRedisDB.getMHash(RedisConst.REDIS_BUYER_COUPON_AMOUNT, redisAmountKeyArr);
+                    for (int i = 0; i < couponResult.size(); i++) {
+                        buyerCouponInfo = couponResult.get(i);
+                        buyerCouponLeftAmount = couponAmountList.get(i);
+                        if (StringUtils.isEmpty(couponAmountList.get(i)) || "nil".equals(couponAmountList.get(i))) {
+                            buyerCouponLeftAmount = "0";
+                        }
+                        buyerCouponInfo.setCouponLeftAmount(
+                                CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
                     }
-                    buyerCouponInfo.setCouponLeftAmount(
-                            CalculateUtils.divide(new BigDecimal(buyerCouponLeftAmount), new BigDecimal(100)));
                 }
             }
         }

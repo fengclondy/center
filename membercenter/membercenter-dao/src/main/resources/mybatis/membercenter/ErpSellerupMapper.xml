@@ -420,6 +420,48 @@
 			modify_time = now()
 	    </set>
 		where 
-		member_id=#{dto.memberId} and buyer_seller_type='2'
+		member_id=#{dto.memberId}
 	 </update>	
+	 
+	 
+	 	<!-- 供应商修改修改上行，变更发票信息表 -->
+	 <update id="updateInvoiceInfo" parameterType="Object">
+		update member_invoice_info 
+			<set>
+			<if test="dto.vendorName != null and dto.vendorName != ''">
+				 invoice_notify = #{dto.vendorName},
+			</if> 
+			<if test="dto.vendorName != null and dto.vendorName != ''">
+				 invoice_company_name = #{dto.vendorName},
+			</if> 
+			<if test="dto.taxpayerIDnumber != null and dto.taxpayerIDnumber != '' ">
+				   	tax_man_id = #{dto.taxpayerIDnumber},
+			</if>
+			<if test="dto.depositBank != null and dto.depositBank">
+				   	bank_name = #{dto.depositBank},
+			</if>
+			<if test="dto.financialAccount != null and dto.financialAccount !='' ">
+				   	bank_account = #{dto.financialAccount},
+			</if>
+			<if test="dto.contactMobile != null and dto.contactMobile !='' ">
+				   	contact_phone = #{dto.contactMobile},
+			</if>
+			<if test="dto.registeredAddressProvince != null and dto.registeredAddressProvince !=''" >
+				   invoice_address_province = #{dto.registeredAddressProvince},
+			</if>
+			<if test="dto.businessAddressCity != null and dto.businessAddressCity !='' ">
+				   invoice_address_city = #{dto.businessAddressCity},
+			</if>
+			<if test="dto.businessAddressCounty != null and dto.businessAddressCounty !='' ">
+				   invoice_address_county = #{dto.businessAddressCounty},
+			</if>
+			<if test="dto.businessAddressDetailAddress != null and dto.businessAddressDetailAddress !='' ">
+				   invoice_address_detail = #{dto.businessAddressDetailAddress},
+			</if>
+				modify_time = now(),
+			</set>
+			
+		where member_id = #{dto.memberId}
+			and channel_code =''
+	</update>
 </mapper>

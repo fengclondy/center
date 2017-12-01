@@ -23,4 +23,6 @@ public interface ErpSellerupDAO {
 	public int updateMemberBaseInfo(@Param("dto") ErpSellerupDTO dto);
 
 	public int updateCompanyInfo(@Param("dto") ErpSellerupDTO dto);
+	
+	public int updateInvoiceInfo(@Param("dto") ErpSellerupDTO dto);
 }

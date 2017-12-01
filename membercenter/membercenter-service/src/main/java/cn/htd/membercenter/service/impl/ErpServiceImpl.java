@@ -316,7 +316,8 @@ public class ErpServiceImpl implements ErpService {
 				null != dto.getBusinessAddressDetailAddress() ? dto.getBusinessAddressDetailAddress() : "");
 		invoiceInfo.setDeleteFlag(GlobalConstant.FLAG_NO);
 		invoiceInfo.setErpStatus(ErpStatusEnum.SUCCESS.getValue());
-		invoiceInfo.setErpDownTime(defaultDate);
+		//invoiceInfo.setErpDownTime(defaultDate);
+		invoiceInfo.setErpDownTime(tranceDate);
 		invoiceInfo.setErpErrorMsg("");
 		invoiceInfo.setInvoicePerson("");
 		invoiceInfo.setCreateId(GlobalConstant.NULL_DEFAUL_VALUE);
@@ -466,7 +467,8 @@ public class ErpServiceImpl implements ErpService {
 		MemberBusinessRelationDTO memberBusinessRelationDTO = new MemberBusinessRelationDTO();
 		memberBusinessRelationDTO.setBuyerId(memberBaseDto.getId().toString());
 		memberBusinessRelationDTO.setSellerId(memberBaseDto.getBelongSellerId().toString());
-		memberBusinessRelationDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
+		//memberBusinessRelationDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
+		memberBusinessRelationDTO.setErpStatus(ErpStatusEnum.SUCCESS.getValue());//默认成功，但实际上并未下行到erp
 		memberBusinessRelationDTO.setDeleteFlag(GlobalConstant.FLAG_NO);
 		memberBusinessRelationDTO.setCreateId("0");
 		memberBusinessRelationDTO.setModifyId("0");
@@ -494,7 +496,8 @@ public class ErpServiceImpl implements ErpService {
 		statusInfo.setSyncErrorMsg("");
 		statusInfo.setSyncKey(KeygenGenerator.getUidKey());
 		statusInfo.setVerifyId(0L);
-		statusInfo.setVerifyStatus(ErpStatusEnum.PENDING.getValue());
+		//statusInfo.setVerifyStatus(ErpStatusEnum.PENDING.getValue());
+		statusInfo.setVerifyStatus(ErpStatusEnum.SUCCESS.getValue());//因为是erp上行而来，故默认下行成功
 		statusInfo.setInfoType(GlobalConstant.INFO_TYPE_ERP_ADD);
 		statusInfo.setCreateId(0L);
 		statusInfo.setCreateName("内部供应商上行");
@@ -572,7 +575,7 @@ public class ErpServiceImpl implements ErpService {
 			}
 		}
 		erpSellerupDAO.updateCompanyInfo(dto);
-		// erpSellerupDAO.updateMemberInvoiceInfo(dto);
+		erpSellerupDAO.updateInvoiceInfo(dto);
 		MemberOutsideSupplierCompanyDTO outCompany = new MemberOutsideSupplierCompanyDTO();
 		outCompany.setMemberId(dto.getMemberId());
 		outCompany.setTaxManId(null != dto.getTaxpayerIDnumber() ? dto.getTaxpayerIDnumber() : "");

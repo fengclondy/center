@@ -97,9 +97,9 @@
 		<if test="buyerSellerType != null and buyerSellerType =='2'.toString() "> <!-- 如果是供应商，则取内部供应商 -->
 			and m.seller_type='1' 
 		</if>
-		<if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
+	<!-- 	<if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
 			and (m.seller_type ='1' or m.seller_type='')
-		</if>
+		</if> -->
 		and c.company_name =#{companyName} and c.buyer_seller_type=#{buyerSellerType} 
 		</select>
 	

@@ -578,10 +578,10 @@
 		<if test="dto.locationCounty != null and dto.locationCounty != ''">
 			AND member_company_info.location_county = #{dto.locationCounty}
 		</if>
-		<if test="dto.cardBindStatusList != null and dto.cardBindStatusList != ''">
+		<if test="dto.cardBindStatus != null and dto.cardBindStatus != ''">
 			AND member_bank_info.business_card_bind_status in
-			<foreach collection="dto.cardBindStatusList" index="index" item="status" open="(" separator="," close=")">
-				#{status}
+			<foreach collection="dto.cardBindStatusList" index="index" item="aStatus" open="(" separator="," close=")">
+				#{aStatus}
 			</foreach>
 		</if>
 		order by member_base_info.id desc

@@ -579,7 +579,7 @@
 			AND member_company_info.location_county = #{dto.locationCounty}
 		</if>
 		<if test="dto.cardBindStatus != null and dto.cardBindStatus != ''">
-			AND member_bank_info.business_card_bind_status = #{dto.cardBindStatus}	
+			AND member_bank_info.business_card_bind_status in #{dto.cardBindStatus}
 		</if>
 		order by member_base_info.id desc
 		limit #{page.pageOffset} , #{page.rows}

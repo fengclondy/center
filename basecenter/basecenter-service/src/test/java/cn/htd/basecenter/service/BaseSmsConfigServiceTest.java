@@ -29,9 +29,9 @@ public class BaseSmsConfigServiceTest {
 
 	@Test
 	public void querySMSConfigStatusListTest() {
-		Pager<BaseSmsConfigDTO> page = new Pager<BaseSmsConfigDTO>();
-		ExecuteResult<DataGrid<BaseSmsConfigDTO>> result = baseSmsConfigService.querySMSConfigStatusList(page);
-		System.out.println("-------------" + JSONObject.toJSONString(result));
+//		Pager<BaseSmsConfigDTO> page = new Pager<BaseSmsConfigDTO>();
+//		ExecuteResult<DataGrid<BaseSmsConfigDTO>> result = baseSmsConfigService.querySMSConfigStatusList(page);
+//		System.out.println("-------------" + JSONObject.toJSONString(result));
 	}
 
 	@Test

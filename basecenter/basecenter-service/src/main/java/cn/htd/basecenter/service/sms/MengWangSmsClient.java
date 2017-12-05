@@ -94,5 +94,10 @@ public class MengWangSmsClient extends BaseSmsClient {
         return returnMsg;
     }
 
+	@Override
+	protected String queryBalance() throws BaseCenterBusinessException, Exception {
+		return null;
+	}
+
 
 }

@@ -1,6 +1,9 @@
 package cn.htd.membercenter.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MemberOutsideSupplierDTO implements Serializable{
 
@@ -12,7 +15,8 @@ public class MemberOutsideSupplierDTO implements Serializable{
 	private String sellerType;//商家类型   0全部  1外部  2二代
 	private String realNameStatus;//企业实名认证状态
 	private String cardBindStatus;//银行卡绑定状态
-	private String locationProvince;//省   
+	private List cardBindStatusList;//银行卡绑定状态
+	private String locationProvince;//省
 	private String locationCity;//市    
 	private String locationCounty;//区
 	private String locationTown;//镇
@@ -32,8 +36,23 @@ public class MemberOutsideSupplierDTO implements Serializable{
 		return cardBindStatus;
 	}
 	public void setCardBindStatus(String cardBindStatus) {
-		this.cardBindStatus = cardBindStatus;
+		this.cardBindStatusList = new ArrayList();
+		if (cardBindStatus!=null && cardBindStatus.indexOf(",") > 0) {
+			Collections.addAll(cardBindStatusList, cardBindStatus.split(","));
+		}else{
+			cardBindStatusList.add(cardBindStatus);
+			this.cardBindStatus = cardBindStatus;
+		}
 	}
+
+	public List getCardBindStatusArr() {
+		return cardBindStatusList;
+	}
+
+	public void setCardBindStatusArr(List cardBindStatusList) {
+		this.cardBindStatusList = cardBindStatusList;
+	}
+
 	public String getLocationAllAddress() {
 		return locationAllAddress;
 	}

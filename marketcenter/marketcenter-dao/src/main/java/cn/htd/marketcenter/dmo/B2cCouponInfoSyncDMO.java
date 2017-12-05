@@ -3,6 +3,8 @@ package cn.htd.marketcenter.dmo;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import cn.htd.marketcenter.common.enums.YesNoEnum;
+
 public class B2cCouponInfoSyncDMO {
 
     /**
@@ -79,6 +81,10 @@ public class B2cCouponInfoSyncDMO {
      * 更新时间
      */
     private Date modifyTime;
+    /**
+     * 未处理标记
+     */
+    private int noDealFlag = YesNoEnum.NO.getValue();
 
     public Long getId() {
         return id;
@@ -222,5 +228,13 @@ public class B2cCouponInfoSyncDMO {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public int getNoDealFlag() {
+        return noDealFlag;
+    }
+
+    public void setNoDealFlag(int noDealFlag) {
+        this.noDealFlag = noDealFlag;
     }
 }

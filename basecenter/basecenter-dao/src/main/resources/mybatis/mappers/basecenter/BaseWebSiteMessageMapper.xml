@@ -108,8 +108,8 @@
 				and wm_read = #{entity.wmRead}
 			</if>
 			<if test="entity.wmCreated!= null">
-				and DATE_FORMAT(wm_created, '%Y-%m-%d') =
-				DATE_FORMAT(#{entity.wmCreated}, '%Y-%m-%d')
+				and <![CDATA[ wm_created >= DATE_FORMAT(CONCAT(#{entity.wmCreated}, ' 00:00:00'), '%Y-%m-%d %H:%i:%s')]]>
+				and <![CDATA[ wm_created <= DATE_FORMAT(CONCAT(#{entity.wmCreated}, ' 23:59:59'), '%Y-%m-%d %H:%i:%s')]]>
 			</if>
 			<if test="entity.type!= null">
 				and type = #{entity.type}

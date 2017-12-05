@@ -94,11 +94,11 @@
 			c.member_id  memberId,seller_type sellerType
 		from member_company_info c,member_base_info m
 		where m.id=c.member_id and m.status='1' 
-		<if test="buyerSellerType != null and buyerSellerType =='2'.toString() ">
+		<if test="buyerSellerType != null and buyerSellerType =='2'.toString() "> <!-- 如果是供应商，则取内部供应商 -->
 			and m.seller_type='1' 
 		</if>
-		<!-- <if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
-			and (m.seller_type ='2' or m.seller_type='')
+	<!-- 	<if test="buyerSellerType != null and buyerSellerType =='1'.toString() ">
+			and (m.seller_type ='1' or m.seller_type='')
 		</if> -->
 		and c.company_name =#{companyName} and c.buyer_seller_type=#{buyerSellerType} 
 		</select>

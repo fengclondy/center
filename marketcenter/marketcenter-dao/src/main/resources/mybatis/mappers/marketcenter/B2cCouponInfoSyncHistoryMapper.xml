@@ -142,11 +142,13 @@
     update b2c_coupon_info_sync_history
     <set>
       deal_flag = #{dealFlag,jdbcType=TINYINT},
+      deal_fail_reason = '',
       modify_id = #{createId,jdbcType=BIGINT},
       modify_name = #{createName,jdbcType=VARCHAR},
       modify_time = now()
     </set>
     where <![CDATA[ id <= #{id,jdbcType=BIGINT} ]]>
+    and deal_flag = #{noDealFlag,jdbcType=TINYINT}
     and b2c_activity_code = #{b2cActivityCode,jdbcType=VARCHAR}
   </update>
 </mapper>

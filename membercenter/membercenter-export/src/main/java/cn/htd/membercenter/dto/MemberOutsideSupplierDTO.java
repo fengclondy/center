@@ -45,11 +45,11 @@ public class MemberOutsideSupplierDTO implements Serializable{
 		}
 	}
 
-	public List getCardBindStatusArr() {
+	public List getCardBindStatusList() {
 		return cardBindStatusList;
 	}
 
-	public void setCardBindStatusArr(List cardBindStatusList) {
+	public void setCardBindStatusList(List cardBindStatusList) {
 		this.cardBindStatusList = cardBindStatusList;
 	}
 

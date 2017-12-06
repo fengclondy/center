@@ -91,4 +91,10 @@ public class TianXunTongSmsClient extends BaseSmsClient {
 		}
 		return responseContent;
 	}
+
+	@Override
+	protected String queryBalance() throws BaseCenterBusinessException, Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

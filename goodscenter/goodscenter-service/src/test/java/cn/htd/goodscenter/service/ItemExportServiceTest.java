@@ -151,5 +151,14 @@ public class ItemExportServiceTest {
         itemExportService.queryItemQuantityInfo(queryItemStockDetailInDTO);
 
     }
+    
+    @Test
+    public void testqueryItemInfo() {
+
+      String itemName="测试商品xp";
+      Long sellerId = 91049l;
+      itemExportService.queryItemInfo( itemName, sellerId);
+
+    }
 
 }

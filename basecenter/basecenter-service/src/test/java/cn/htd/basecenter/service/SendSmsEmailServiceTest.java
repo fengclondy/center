@@ -1,7 +1,6 @@
 package cn.htd.basecenter.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -12,13 +11,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
-import cn.htd.basecenter.common.utils.DateUtils;
+import cn.htd.basecenter.common.exception.BaseCenterBusinessException;
 import cn.htd.basecenter.dto.MailWarnColumn;
 import cn.htd.basecenter.dto.MailWarnInDTO;
 import cn.htd.basecenter.dto.MailWarnRow;
-import cn.htd.basecenter.dto.SendEmailDTO;
 import cn.htd.basecenter.dto.SendSmsDTO;
-import cn.htd.basecenter.enums.EmailMimeTypeEnum;
+import cn.htd.basecenter.service.sms.MengWangSmsClient;
 import cn.htd.common.ExecuteResult;
 
 /**
@@ -40,7 +38,7 @@ public class SendSmsEmailServiceTest {
 		SendSmsDTO sendSmsDTO = new SendSmsDTO();
 		List<String> parameterList = new ArrayList<String>();
 		parameterList.add("12345678");
-		sendSmsDTO.setPhone("13813956585");
+		sendSmsDTO.setPhone("13913037054");
 		sendSmsDTO.setSmsType("206");
 		sendSmsDTO.setParameterList(parameterList);
 		ExecuteResult<String> result = sendSmsEmailService.sendSms(sendSmsDTO);
@@ -114,6 +112,13 @@ public class SendSmsEmailServiceTest {
 		mailWarnInDTO.setRowList(rowList);
 		ExecuteResult<String> result = sendSmsEmailService.doSendEmailByTemplate(mailWarnInDTO);
 		System.out.println("-------------" + JSONObject.toJSONString(result));
+	}
+	
+	@Test
+	public void test2(){
+		ExecuteResult<String> result = sendSmsEmailService.queryBalance();
+		System.out.println(JSONObject.toJSONString(result));
+		 
 	}
 
 }

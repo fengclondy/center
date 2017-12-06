@@ -63,6 +63,7 @@
     <include refid="Base_Column_List" />
     from base_sms_config
     where type = #{entity.type}
+    and used_flag != 2
     <if test="page != null">
       <include refid="pagination_tail" />
     </if>
@@ -73,6 +74,7 @@
     from base_sms_config
     where type = #{type,jdbcType=VARCHAR}
     and channel_code = #{channelCode,jdbcType=VARCHAR}
+    and used_flag != 2
   </select>
   <insert id="add" parameterType="cn.htd.basecenter.dto.BaseSmsConfigDTO" >
     insert into base_sms_config

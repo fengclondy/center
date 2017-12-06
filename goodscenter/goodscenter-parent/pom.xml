@@ -33,6 +33,9 @@
 		<!-- PREP环境 -->
 		<profile>
 			<id>prep</id>
+						<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<properties>
 				<env>prep</env>
 			</properties>
@@ -64,9 +67,7 @@
 			<properties>
 				<env>dev</env>
 			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+
 		</profile>
 	</profiles>
 	<dependencyManagement>

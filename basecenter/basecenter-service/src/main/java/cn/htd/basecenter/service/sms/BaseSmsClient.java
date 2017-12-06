@@ -124,4 +124,34 @@ public abstract class BaseSmsClient {
 	 */
 	protected abstract String clientSendSms(String phoneNum, String content)
 			throws BaseCenterBusinessException, Exception;
+
+	/**
+	 * 查询短信通道余额
+	 * @return
+	 * @throws BaseCenterBusinessException
+	 * @throws Exception
+	 */
+	protected abstract String queryBalance() throws BaseCenterBusinessException, Exception;
+	
+	/**
+	 * 查询短信通道余额
+	 * @return
+	 * @throws BaseCenterBusinessException
+	 * @throws Exception
+	 */
+	public String queryBalanceInit(BaseSmsConfigDTO config) throws BaseCenterBusinessException, Exception{
+		logger.info("\n 方法[{}]，入参：[{}]", "BaseSmsClient-queryBalance", JSONObject.toJSONString(config));
+		String result = "";
+		try {
+			initClient(config);
+			result = queryBalance();
+		} catch (BaseCenterBusinessException bcbe) {
+			throw bcbe;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			logger.info("\n 方法[{}]，出参：[{}]", "BaseSmsClient-queryBalance", JSONObject.toJSONString(result));
+		}
+		return result;
+	}
 }

@@ -20,11 +20,16 @@ import org.springframework.stereotype.Service;
 
 import cn.htd.basecenter.common.constant.ReturnCodeConst;
 import cn.htd.basecenter.common.exception.BaseCenterBusinessException;
+import cn.htd.basecenter.common.utils.SecurityUtils;
 import cn.htd.basecenter.dto.BaseSmsConfigDTO;
+import cn.htd.common.util.SysProperties;
 
 @Service("manDaoSmsClient")
 public class ManDaoSmsClient extends BaseSmsClient {
 
+	//短信余额查询url
+	private static final String NOTICE_SMS_BALANCE_MANDAO = "notice_sms_balance_mandao";
+	
 	@Override
 	protected void initClient(BaseSmsConfigDTO config) throws Exception {
 		super.initClient(config);
@@ -265,4 +270,62 @@ public class ManDaoSmsClient extends BaseSmsClient {
 		return result;
 	}
 
+	/*
+	 * 方法名称：getBalance 
+	 * 功    能：获取余额 
+	 * 参    数：无 
+	 * 返 回 值：余额（String）
+	 */
+	public String queryBalance() throws UnsupportedEncodingException {
+		String result = "";
+		String soapAction = "http://tempuri.org/balance";
+		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+		xml += "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		xml += "<soap:Body>";
+		xml += "<balance xmlns=\"http://tempuri.org/\">";
+		xml += "<sn>" + sn + "</sn>";
+		xml += "<pwd>" + pwd + "</pwd>";
+		xml += "</balance>";
+		xml += "</soap:Body>";
+		xml += "</soap:Envelope>";
+		URL url;
+		try {
+			url = new URL(SysProperties.getProperty(NOTICE_SMS_BALANCE_MANDAO));
+			URLConnection connection = url.openConnection();
+			HttpURLConnection httpconn = (HttpURLConnection) connection;
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			bout.write(xml.getBytes());
+			byte[] b = bout.toByteArray();
+			httpconn.setRequestProperty("Content-Length", String
+					.valueOf(b.length));
+			httpconn.setRequestProperty("Content-Type",
+					"text/xml; charset=gb2312");
+			httpconn.setRequestProperty("SOAPAction", soapAction);
+			httpconn.setRequestMethod("POST");
+			httpconn.setDoInput(true);
+			httpconn.setDoOutput(true);
+
+			OutputStream out = httpconn.getOutputStream();
+			out.write(b);
+			out.close();
+
+			InputStreamReader isr = new InputStreamReader(httpconn
+					.getInputStream());
+			BufferedReader in = new BufferedReader(isr);
+			String inputLine;
+			while (null != (inputLine = in.readLine())) {
+				Pattern pattern = Pattern
+						.compile("<balanceResult>(.*)</balanceResult>");
+				Matcher matcher = pattern.matcher(inputLine);
+				while (matcher.find()) {
+					result = matcher.group(1);
+				}
+			}
+			in.close();
+			return new String(result.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
 }

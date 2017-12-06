@@ -27,5 +27,7 @@ public interface SendSmsEmailService {
 	public ExecuteResult<String> sendEmail(SendEmailDTO sendEmailDTO);
 	
 	public ExecuteResult<String> doSendEmailByTemplate(MailWarnInDTO mailWarnInDTO);
+	
+	public ExecuteResult<String> queryBalance();
 
 }

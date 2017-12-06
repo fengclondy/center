@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.basecenter.dao.BaseSmsNoticeDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.basecenter.dto.BaseSmsNoticeDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="notice_name" property="noticeName" jdbcType="VARCHAR" />
+    <result column="notice_phone" property="noticePhone" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, notice_name, notice_phone, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <!-- mysql 分页尾 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset} , #{page.rows}
+  </sql>
+  <select id="queryBaseSmsNoticeCount" resultType="java.lang.Integer">
+    select count(1)
+    from base_sms_notice
+    where delete_flag = 0
+  </select>
+  <select id="queryBaseSmsNotice" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from base_sms_notice
+    where delete_flag = 0
+    <if test="page != null">
+      <include refid="pagination_tail" />
+    </if>
+  </select>
+  <update id="deleteBaseSmsNotice">
+  	update base_sms_notice 
+  	set delete_flag = 1, 
+  	modify_id = #{noticeDTO.modifyId,jdbcType=BIGINT}, 
+  	modify_name = #{noticeDTO.modifyName,jdbcType=VARCHAR},
+  	modify_time = now()
+  	where id = #{noticeDTO.id,jdbcType=BIGINT}
+  </update>
+  <insert id="add" parameterType="cn.htd.basecenter.dto.BaseSmsNoticeDTO" useGeneratedKeys="true" keyProperty="id">
+    insert into base_sms_notice
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="noticeName != null" >
+        notice_name,
+      </if>
+      <if test="noticePhone != null" >
+        notice_phone,
+      </if>
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="noticeName != null" >
+        #{noticeName,jdbcType=VARCHAR},
+      </if>
+      <if test="noticePhone != null" >
+        #{noticePhone,jdbcType=VARCHAR},
+      </if>
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+        #{createId,jdbcType=BIGINT},
+        #{createName,jdbcType=VARCHAR},
+        now(),
+    </trim>
+  </insert>
+</mapper>

@@ -405,6 +405,61 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 	    
 	    return mailWarnRowList;
 	}
+
+	@Override
+	public ExecuteResult<String> queryBalance() {
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		BaseSmsConfigDTO configCondition = new BaseSmsConfigDTO();
+		List<BaseSmsConfigDTO> validSmsConfigList = null;
+		String queryResult = "";
+		try {
+			configCondition.setType(SmsEmailTypeEnum.SMS.getCode());
+			configCondition.setUsedFlag(YesNoEnum.YES.getValue());
+			validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(configCondition);
+			if (validSmsConfigList == null || validSmsConfigList.size() == 0) {
+				throw new BaseCenterBusinessException(ReturnCodeConst.NO_SMS_CONFIG_ERROR, "启用的短信通道配置信息不存在");
+			}
+			configCondition = validSmsConfigList.get(0);
+			queryResult = queryBalanceByChannel(configCondition);
+			result.setResult(queryResult);
+		} catch (BaseCenterBusinessException bcbe) {
+			result.setCode(bcbe.getCode());
+			result.addErrorMessage(bcbe.getMessage());
+		} catch (Exception e) {
+			result.setCode(ReturnCodeConst.SYSTEM_ERROR);
+			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
+	
+	/**
+	 * 根据通道查询通道余额
+	 * 
+	 * @param config
+	 * @param phoneNum
+	 * @param content
+	 * @return
+	 * @throws BaseCenterBusinessException
+	 * @throws Exception
+	 */
+	private String queryBalanceByChannel(BaseSmsConfigDTO config)
+			throws BaseCenterBusinessException, Exception {
+		String result = "";
+		try {
+			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_SMS_FLAG))) {
+				if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
+					result = manDaoSmsClient.queryBalanceInit(config) + "";
+				}
+			}
+		} catch (BaseCenterBusinessException bcbe) {
+			result = bcbe.getMessage();
+			throw bcbe;
+		} catch (Exception e) {
+			result = e.getMessage();
+			throw e;
+		}
+		return result;
+	}
 	
 	
 }

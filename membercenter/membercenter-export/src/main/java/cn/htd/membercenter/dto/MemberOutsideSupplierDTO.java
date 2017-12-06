@@ -36,12 +36,14 @@ public class MemberOutsideSupplierDTO implements Serializable{
 		return cardBindStatus;
 	}
 	public void setCardBindStatus(String cardBindStatus) {
-		this.cardBindStatusList = new ArrayList();
-		if (cardBindStatus!=null && cardBindStatus.indexOf(",") > 0) {
-			Collections.addAll(cardBindStatusList, cardBindStatus.split(","));
-		}else{
-			cardBindStatusList.add(cardBindStatus);
-			this.cardBindStatus = cardBindStatus;
+		this.cardBindStatus = cardBindStatus;
+		if(cardBindStatus!=null){
+			this.cardBindStatusList = new ArrayList();
+			if (cardBindStatus.indexOf(",") > 0) {
+				Collections.addAll(cardBindStatusList, cardBindStatus.split(","));
+			}else{
+				cardBindStatusList.add(cardBindStatus);
+			}
 		}
 	}
 

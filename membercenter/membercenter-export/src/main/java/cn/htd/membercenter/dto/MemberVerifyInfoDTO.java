@@ -28,6 +28,19 @@ public class MemberVerifyInfoDTO implements Serializable {
 	private String memberType;
 	// 供应商担保证明电子版图片地址
 	private String buyerGuaranteeLicensePicSrc;
+	
+	/**
+	 * 身份证正面
+	 */
+	private String artificialPersonPicSrc;
+	/**
+	 * 身份证反面
+	 */
+	private String artificialPersonPicBackSrc;
+	/**
+	 * 手持身份证
+	 */
+	private String artificialPersonIdcardPicSrc;
 
 	/**
 	 * @return the memberType
@@ -205,4 +218,29 @@ public class MemberVerifyInfoDTO implements Serializable {
 	public void setBuyerFeature(String buyerFeature) {
 		this.buyerFeature = buyerFeature;
 	}
+
+	public String getArtificialPersonPicSrc() {
+		return artificialPersonPicSrc;
+	}
+
+	public void setArtificialPersonPicSrc(String artificialPersonPicSrc) {
+		this.artificialPersonPicSrc = artificialPersonPicSrc;
+	}
+
+	public String getArtificialPersonPicBackSrc() {
+		return artificialPersonPicBackSrc;
+	}
+
+	public void setArtificialPersonPicBackSrc(String artificialPersonPicBackSrc) {
+		this.artificialPersonPicBackSrc = artificialPersonPicBackSrc;
+	}
+
+	public String getArtificialPersonIdcardPicSrc() {
+		return artificialPersonIdcardPicSrc;
+	}
+
+	public void setArtificialPersonIdcardPicSrc(String artificialPersonIdcardPicSrc) {
+		this.artificialPersonIdcardPicSrc = artificialPersonIdcardPicSrc;
+	}
+	
 }

@@ -13,6 +13,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dao.MemberVerifyStatusDAO;
+import cn.htd.membercenter.dto.MemberAuditPendingDTO;
 import cn.htd.membercenter.dto.MemberVerifyStatusDTO;
 import cn.htd.membercenter.service.MemberVerifyStatusService;
 
@@ -55,6 +56,31 @@ public class MemberVerifyStatusServiceImpl implements MemberVerifyStatusService 
 		}
 
 		return rs;
+	}
+
+	/**
+	 * VMS - 查询待审核会员列表
+	 * @author li.jun
+	 * @time 2017-12-06
+	 */
+	@Override
+	public ExecuteResult<DataGrid<MemberVerifyStatusDTO>> queryAuditPendingMember(Pager<MemberVerifyStatusDTO> page,
+			MemberAuditPendingDTO memberAuditPending) {
+		ExecuteResult<DataGrid<MemberVerifyStatusDTO>> result = new ExecuteResult<DataGrid<MemberVerifyStatusDTO>>();
+		DataGrid<MemberVerifyStatusDTO> dataGrid = new DataGrid<MemberVerifyStatusDTO>();
+		try {
+			Long count = memberVerifyStatusDao.queryAuditPendingMemberCount(memberAuditPending);
+			if(count > 0){
+				List<MemberVerifyStatusDTO> list  = memberVerifyStatusDao.queryAuditPendingMember(page, memberAuditPending);
+				dataGrid.setRows(list);
+				dataGrid.setTotal(count);
+			}
+			result.setResult(dataGrid);
+		}catch (Exception e) {
+			logger.error("查询待审核会员报错  -> queryAuditPendingMember=" + e);
+			result.addErrorMessage("查询待审核会员报错!");
+		}
+		return result;
 	}
 
 }

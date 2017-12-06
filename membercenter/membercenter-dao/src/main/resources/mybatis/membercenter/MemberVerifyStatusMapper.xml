@@ -5,6 +5,31 @@
     status_id, member_id, info_type, verify_status, verify_time, verify_id, sync_error_msg, 
     create_id, create_name, create_time, modify_id, modify_name, modify_time
   </sql>
+  
+  <sql id="query_member_condition">
+     <if test="entity.verifyStatus != null and entity.verifyStatus != '' " >
+		and s.verify_status = #{entity.verifyStatus}
+	</if>
+	<if test="entity.companyName != null and entity.companyName != '' " >
+		and c.company_name like CONCAT('%',#{entity.companyName},'%')
+	</if>
+	<if test="entity.artificialPersonName != null and entity.artificialPersonName != '' " >
+		and c.artificial_person_name like CONCAT('%',#{entity.artificialPersonName},'%')
+	</if>
+	<if test="entity.isDiffIndustry != null and entity.isDiffIndustry != '' " >
+		and m.is_diff_industry = #{entity.isDiffIndustry}
+	</if>
+	<if test="entity.startTime != null and entity.endTime != null and entity.startTime != '' and entity.endTime != ''">
+		and (m.regist_time between #{entity.startTime} and #{entity.endTime})
+	</if>
+	<if test="entity.startTime !=null and entity.endTime == null">
+		<![CDATA[ and m.regist_time >= #{entity.startTime} ]]>
+	</if>
+	<if test="entity.startTime ==null and entity.endTime != null">
+		<![CDATA[ and m.regist_time <= #{entity.endTime} ]]>
+	</if>
+  </sql>
+  
   <select id="selectByStatusList"  resultType = "cn.htd.membercenter.dto.MemberVerifyStatusDTO">
     select 
     c.member_id memberId,
@@ -67,7 +92,10 @@
     l.buyer_business_license_pic_src buyerBusinessLicensePicSrc
     ,l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc
     ,case when m.can_mall_login=1 and m.has_guarantee_license=1 and m.has_business_license=0 then '3'
-    when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
+    when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType,
+    c.artificial_person_pic_src artificialPersonPicSrc,
+    c.artificial_person_pic_back_src artificialPersonPicBackSrc,
+    c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc
     from member_base_info m
     left join  member_company_info c on m.id = c.member_id 
     left join member_licence_info l on  m.id = l.member_id 
@@ -84,6 +112,46 @@
     where buyer_id = #{memberId,jdbcType=BIGINT} and audit_status ='0' and delete_flag=0
     and (category_id !=0 and brand_id !=0)
     limit #{page.pageOffset},#{page.rows} 
+  </select>
+  
+  
+  <select id="queryAuditPendingMember"  resultType = "cn.htd.membercenter.dto.MemberVerifyStatusDTO">
+    select 
+    c.member_id memberId,
+    c.company_name companyName,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.location_province locationProvince,
+    c.location_city locationCity,
+    c.location_county locationCounty,
+    c.location_town locationTown,
+    c.location_detail locationDetail,
+    c.location_addr as locationAddr,
+    m.is_diff_industry isDiffIndustry,
+    m.industry_category industryCategory,
+    m.regist_time registTime
+    from member_base_info m, member_company_info c,member_status_info s
+    where s.member_id = m.id and m.id = c.member_id and s.info_type='12'
+     and c.buyer_seller_type ='1' and m.cur_belong_seller_id = #{entity.memberId}
+    <if test="entity != null and entity != ''">
+	     <include refid="query_member_condition" />
+	</if>
+	<if test="page != null and page != '' " >
+		 limit #{page.pageOffset},#{page.rows}  
+	</if>
+  </select>
+  
+  
+    
+  <select id="queryAuditPendingMemberCount"  resultType = "java.lang.Long">
+    select 
+    count(1)
+    from member_base_info m, member_company_info c,member_status_info s
+    where s.member_id = m.id and m.id = c.member_id and s.info_type='12'
+     and c.buyer_seller_type ='1' and m.cur_belong_seller_id = #{entity.memberId} 
+    <if test="entity != null and entity != ''">
+	    <include refid="query_member_condition" />
+	</if>
   </select>
   
 </mapper>

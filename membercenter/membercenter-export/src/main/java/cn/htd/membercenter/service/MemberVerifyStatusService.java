@@ -5,6 +5,7 @@ import java.util.Date;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.membercenter.dto.MemberAuditPendingDTO;
 import cn.htd.membercenter.dto.MemberVerifyStatusDTO;
 
 public interface MemberVerifyStatusService {
@@ -21,5 +22,13 @@ public interface MemberVerifyStatusService {
 	 */
 	public ExecuteResult<DataGrid<MemberVerifyStatusDTO>> selectByStatus(Pager page,String verifyStatus,Long sellerId,
 			String name,String isDiffIndustry, Date startTime, Date endTime);
+	
+    /**
+     * VMS - 查询待审核会员列表
+     * @param page
+     * @param memberAuditPending
+     * @return
+     */
+	public ExecuteResult<DataGrid<MemberVerifyStatusDTO>> queryAuditPendingMember(Pager<MemberVerifyStatusDTO> page,MemberAuditPendingDTO memberAuditPending);
 
 }

@@ -93,4 +93,10 @@ public interface ItemCategoryDAO extends BaseDAO<ItemCategoryDTO> {
 	 * @return
 	 */
 	List<ItemCategoryDTO> getCategoryListByCids(@Param("cidList") List<Long> cidList);
+	
+	/**
+	 * 根据名称模糊查询品类
+	 */
+	public List<ItemCategoryDTO> queryItemCategoryList(@Param("entity") ItemCategoryDTO itemCategoryDTO, @Param("page") Pager pager);
+
 }

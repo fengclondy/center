@@ -1,5 +1,9 @@
 package cn.htd.membercenter.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -9,25 +13,49 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.yiji.openapi.tool.fastjson.JSON;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.ErpSellerupDTO;
+import cn.htd.membercenter.dto.MemberAuditPendingDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
+import cn.htd.membercenter.dto.MemberVerifyStatusDTO;
 
 public class MemberBusinessRelationTest {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MemberBusinessRelationTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(MemberBusinessRelationTest.class);
 	ApplicationContext ctx = null;
 	MemberBusinessRelationService memberBusinessRelationService = null;
 	@Resource
 	ErpService erpService;
+	MemberVerifyStatusService memberVerifyStatusService;
 
 	@Before
 	public void setUp() {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
-		erpService = (ErpService) ctx.getBean("erpService");
+		memberVerifyStatusService = (MemberVerifyStatusService) ctx.getBean("memberVerifyStatusService");
 	}
+	
+	@Test
+	public void queryAuditPendingMember() throws ParseException {
+		MemberAuditPendingDTO memberAuditPending = new MemberAuditPendingDTO();
+		memberAuditPending.setMemberId(17606l);
+		memberAuditPending.setVerifyStatus("1");
+		String date = "2017-12-07 00:00:00";
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date a = dateFormat.parse(date);
+		memberAuditPending.setEndTime(a);
+		Pager<MemberVerifyStatusDTO> pager = new Pager<MemberVerifyStatusDTO>();
+		pager.setPage(1);
+		pager.setRows(10);
+		ExecuteResult<DataGrid<MemberVerifyStatusDTO>> result = null;
+	    result = memberVerifyStatusService.queryAuditPendingMember(pager,memberAuditPending);
+	    logger.info("result = " + JSON.toJSONString(result));
+
+	}
+
 
 	@Test
 	public void queryMemberNoneBusinessRelationListInfo() {

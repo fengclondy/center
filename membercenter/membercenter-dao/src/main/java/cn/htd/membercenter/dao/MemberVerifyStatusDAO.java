@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.CategoryBrandDTO;
+import cn.htd.membercenter.dto.MemberAuditPendingDTO;
 import cn.htd.membercenter.dto.MemberVerifyInfoDTO;
 import cn.htd.membercenter.dto.MemberVerifyStatusDTO;
 
@@ -20,5 +21,17 @@ public interface MemberVerifyStatusDAO {
 	
 	public List<CategoryBrandDTO> queryBrandByMemberId(@Param("page") Pager page,@Param("memberId") Long memberId);
 	
+	/**
+	 * VMS - 查询待审核会员列表
+	 * @author li.jun
+	 * @time 2017-12-06
+	 */
+	public List<MemberVerifyStatusDTO> queryAuditPendingMember(@Param("page") Pager<MemberVerifyStatusDTO> page,@Param("entity") MemberAuditPendingDTO memberAuditPending);
+	/**
+	 * VMS - 查询待审核会员数量
+	 * @author li.jun
+	 * @time 2017-12-06
+	 */
+	public Long queryAuditPendingMemberCount(@Param("entity") MemberAuditPendingDTO memberAuditPending);
 	
 }

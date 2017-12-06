@@ -244,4 +244,12 @@ public interface ItemCategoryService {
 	 * 根据时间戳查询品类类别，提供超级老板
 	 */
 	public ExecuteResult<DataGrid<ItemCategoryDTO>> queryItemCategoryList4SuperBoss(QueryItemCategoryInDTO queryItemCategoryInDTO, Pager Pager);
+	
+	/**
+	 * 根据品类名称模糊查询品类
+	 * @param itemCategoryDTO
+	 * @param page
+	 * @return
+	 */
+	public ExecuteResult<List<ItemCategoryDTO>> queryCategoryList(ItemCategoryDTO itemCategoryDTO, Pager page);
 }

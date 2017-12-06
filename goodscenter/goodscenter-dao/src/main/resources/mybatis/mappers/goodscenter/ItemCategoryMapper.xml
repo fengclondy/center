@@ -414,4 +414,16 @@
 			#{cid}
 		</foreach>
 	</select>
+	
+	<!-- 根据名称模糊查询类目 -->
+	 <select id="queryItemCategoryList" resultMap="itemCategoryDTOMapper">
+ 		<include refid="selectAllColumns"/>
+	    where 1=1 and status=1
+	    <if test="entity.categoryCName != null and entity.categoryCName != ''">
+	       and c_name like CONCAT('%',#{entity.categoryCName},'%' )
+		</if>
+	    <if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
 </mapper>

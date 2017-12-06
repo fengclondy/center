@@ -1368,4 +1368,24 @@ public class ItemCategoryServiceImpl implements ItemCategoryService {
 		}
 		return executeResult;
 	}
+	
+	/**
+	 * VMS - 根据品类名称模糊查询品类
+	 * @time 2017-12-06
+	 * @param itemCategoryDTO 查询参数
+	 * @param page 分页信息
+	 * @return
+	 * @support
+	 */
+	public ExecuteResult<List<ItemCategoryDTO>> queryCategoryList(ItemCategoryDTO itemCategoryDTO, Pager page) {
+		ExecuteResult<List<ItemCategoryDTO>> result = new ExecuteResult<List<ItemCategoryDTO>>();
+		try {
+			List<ItemCategoryDTO> list = itemCategoryDAO.queryItemCategoryList(itemCategoryDTO, page);
+			result.setResult(list);
+		} catch (Exception e) {
+			logger.error("error:：" + e.getMessage());
+			result.addErrorMessage("模糊查询品类出错");
+		}
+		return result;
+	}
 }

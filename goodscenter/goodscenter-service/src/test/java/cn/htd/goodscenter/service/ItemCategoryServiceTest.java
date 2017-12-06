@@ -6,6 +6,7 @@ import cn.htd.goodscenter.domain.ItemCategory;
 import cn.htd.goodscenter.dto.CatAttrSellerDTO;
 import cn.htd.goodscenter.dto.ItemAttrDTO;
 import cn.htd.goodscenter.dto.ItemAttrValueDTO;
+import cn.htd.goodscenter.dto.ItemCategoryDTO;
 import cn.htd.goodscenter.dto.indto.QueryItemCategoryInDTO;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,7 +37,13 @@ public class ItemCategoryServiceTest {
         itemCategoryService = (ItemCategoryService) ctx.getBean("itemCategoryService");
     }
 
-
+    @Test
+    public void queryCategoryList() {
+    	ItemCategoryDTO dto = new ItemCategoryDTO();
+    	dto.setCategoryCName("拍立得运动相机");
+    	ExecuteResult<List<ItemCategoryDTO>> result = itemCategoryService.queryCategoryList(dto, null);
+        Assert.assertEquals(true, result.isSuccess());
+    }
 
     @Test
     public void testAddItemAttrSeller() {

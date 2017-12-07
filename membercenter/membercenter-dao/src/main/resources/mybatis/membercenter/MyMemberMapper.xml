@@ -28,13 +28,80 @@
 	<if test='memberSearch.belong!=null and memberSearch.belong=="1"'>
 		and m.cur_belong_seller_id =#{sellerId} and r.status = '3'
 	</if>
-	<if test="memberSearch.status!=null">
+	<if test="memberSearch.status!=null and memberSearch.status!=''">
 		and m.status = #{memberSearch.status}
 	</if>
 	 <if test="memberSearch.startTime != null and memberSearch.endTime != null and memberSearch.startTime != '' and memberSearch.endTime != ''">
 		and (ms.modify_time between #{memberSearch.startTime} and #{memberSearch.endTime}) and ms.verify_status !=1
 	</if>
   </sql>
+  
+  <sql id="VMS_Search_List">
+    <if test="memberSearch.companyName != null and memberSearch.companyName !=''" >
+        and c.company_name like CONCAT('%',#{memberSearch.companyName},'%')
+	</if>
+	 <if test="memberSearch.artificialPersonName != null and memberSearch.artificialPersonName !=''" >
+        and c.artificial_person_name like CONCAT('%',#{memberSearch.artificialPersonName},'%')
+	</if>
+	<if test="memberSearch.memberCode != null and memberSearch.memberCode !=''" >
+        and m.member_code like CONCAT('%',#{memberSearch.memberCode},'%')
+	</if>
+	<if test="memberSearch.curBelongManagerId != null and memberSearch.curBelongManagerId !=''" >
+        and m.cur_belong_manager_id=#{memberSearch.curBelongManagerId}
+	</if>
+	<if test="memberSearch.industryCategory != null and memberSearch.industryCategory != ''">
+		and m.is_diff_industry=#{memberSearch.industryCategory} 
+	</if>
+	<if test="memberSearch.belong!=null and memberSearch.belong !='' ">
+	   <choose>
+		   <when test='memberSearch.belong=="1"'>
+			  and m.cur_belong_seller_id =#{sellerId} and r.status = '3'
+		   </when>
+		   <otherwise>
+			 and ((m.cur_belong_seller_id != #{sellerId} and r.status != '9') or (m.cur_belong_seller_id = #{sellerId} and r.status != '3'))
+		   </otherwise>
+	   </choose>
+	</if>
+	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+		and p.group_id=#{memberSearch.groupId} 
+	</if>
+	<if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
+		and d.buyer_grade = #{memberSearch.buyerGrade} 
+	</if>
+	 <if test="memberSearch.startTime != null and memberSearch.endTime != null ">
+		and m.regist_time between #{memberSearch.startTime} and #{memberSearch.endTime}
+	</if>
+	 <if test="memberSearch.startTime == null and memberSearch.endTime != null ">
+		 <![CDATA[ and m.regist_time <= #{memberSearch.endTime} ]]>
+	</if>
+	 <if test="memberSearch.startTime != null and memberSearch.endTime == null ">
+		and m.regist_time between #{memberSearch.startTime} and now()
+	</if>
+	<choose>
+	  	<when test="memberSearch.locationProvince !=null and memberSearch.locationProvince !=''">
+		   <choose>
+		      	<when test="memberSearch.locationCity !=null and memberSearch.locationCity !=''">
+		      	    <choose>
+		      	        <when test="memberSearch.locationCounty !=null and memberSearch.locationCounty !=''">
+		      	           and c.location_province=#{memberSearch.locationProvince}  and c.location_city=#{memberSearch.locationCity} and c.location_county= #{memberSearch.locationCounty}
+		      	       </when>
+		      	        <otherwise>
+		      	          and c.location_province=#{memberSearch.locationProvince}  and c.location_city=#{memberSearch.locationCity}
+		      	        </otherwise>
+		            </choose>
+		      	</when>
+		      	<otherwise>
+		      	         and c.location_province=#{memberSearch.locationProvince}
+		      	 </otherwise>
+		   </choose>
+		</when>
+	</choose>
+	<if test="memberSearch.status!=null and memberSearch.status !=''">
+		and m.status = #{memberSearch.status}
+	</if>
+  </sql>
+
+  
   <select id="selectByTypeList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
     SELECT 
     m.id memberId,
@@ -82,10 +149,7 @@
     and c.member_id=o.buyer_id 
       and c.buyer_seller_type='1'
        and o.delete_flag=0 
-    and o.seller_id  = #{sellerId} 
-    <if test="memberSearch.status==null and memberSearch.status==''">
-		and m.status='1'
-	</if>
+    and o.seller_id  = #{sellerId}
     <if test="canMallLogin != null and canMallLogin != ''">
 		and m.can_mall_login = #{canMallLogin}
 	</if>
@@ -96,7 +160,14 @@
 		and m.has_guarantee_license=#{hasGuaranteeLicense} 
 	</if>
     <if test="memberSearch != null and memberSearch != ''">
-			<include refid="Search_List" />
+   	    <choose>
+			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
+	      	    <include refid="VMS_Search_List" />
+	      	 </when>
+	      	 <otherwise>
+	      	 	<include refid="Search_List" />
+	      	 </otherwise>
+	     </choose>
 	</if>
     order by m.regist_time 
     <if test="page != null and page != ''">
@@ -124,10 +195,7 @@
     and c.member_id=o.buyer_id 
      and c.buyer_seller_type='1' 
        and o.delete_flag=0 
-    and o.seller_id  = #{sellerId} 
-    <if test="memberSearch.status==null and memberSearch.status==''">
-		and m.status='1'
-	</if>
+    and o.seller_id  = #{sellerId}
     <if test="canMallLogin != null and canMallLogin != ''">
 		and m.can_mall_login = #{canMallLogin}
 	</if>
@@ -138,9 +206,15 @@
 		and m.has_guarantee_license=#{hasGuaranteeLicense} 
 	</if>
     <if test="memberSearch != null and memberSearch != ''">
-			<include refid="Search_List" />
+   	    <choose>
+	      	 <when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
+	      	    <include refid="VMS_Search_List" />
+	      	 </when>
+	      	 <otherwise>
+	      	 	<include refid="Search_List" />
+	      	 </otherwise>
+	     </choose>
 	</if>
-    order by m.regist_time 
   </select>
   
     <select id="selectNoMemberListCount" resultType="java.lang.Long">
@@ -160,7 +234,14 @@
     and o.seller_id  =  #{vendorId} and m.id = c.member_id and c.buyer_seller_type='1'
     and m.can_mall_login=#{canMallLogin}
     <if test="memberSearch != null and memberSearch != ''">
-			<include refid="Search_List" />
+   	    <choose>
+			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
+	      	    <include refid="VMS_Search_List" />
+	      	 </when>
+	      	 <otherwise>
+	      	 	<include refid="Search_List" />
+	      	 </otherwise>
+	     </choose>
 	</if>
   </select>
  
@@ -209,7 +290,14 @@
     and o.seller_id  =  #{vendorId} and m.id = c.member_id and c.buyer_seller_type='1'
     and m.can_mall_login=#{canMallLogin}
     <if test="memberSearch != null and memberSearch != ''">
-			<include refid="Search_List" />
+   	    <choose>
+			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
+	      	    <include refid="VMS_Search_List" />
+	      	 </when>
+	      	 <otherwise>
+	      	 	<include refid="Search_List" />
+	      	 </otherwise>
+	     </choose>
 	</if>
     order by m.regist_time
    <if test="page != null and page != ''">

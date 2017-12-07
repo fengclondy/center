@@ -22,6 +22,9 @@ import cn.htd.membercenter.dto.ErpSellerupDTO;
 import cn.htd.membercenter.dto.MemberAuditPendingDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
 import cn.htd.membercenter.dto.MemberVerifyStatusDTO;
+import cn.htd.membercenter.dto.MyMemberDTO;
+import cn.htd.membercenter.dto.MyMemberSearchDTO;
+import cn.htd.membercenter.dto.MyNoMemberDTO;
 
 public class MemberBusinessRelationTest {
 
@@ -31,11 +34,41 @@ public class MemberBusinessRelationTest {
 	@Resource
 	ErpService erpService;
 	MemberVerifyStatusService memberVerifyStatusService;
+	MyMemberService myMemberService;
 
 	@Before
 	public void setUp() {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
-		memberVerifyStatusService = (MemberVerifyStatusService) ctx.getBean("memberVerifyStatusService");
+		myMemberService = (MyMemberService) ctx.getBean("myMemberService");
+	}
+	
+	
+	@Test
+	public void selectMyMemberList() throws ParseException {
+		MyMemberSearchDTO memberSearch = new MyMemberSearchDTO();
+		memberSearch.setCompanyName("测试");
+		memberSearch.setSysFlag("1");
+		memberSearch.setStatus("1");
+		//memberSearch.setArtificialPersonName("南唐");
+		//memberSearch.setLocationProvince("34");
+		//memberSearch.setLocationCity("3402");
+		//memberSearch.setLocationCounty("340207");
+		String date = "2017-12-06 10:01:42";
+		String dateb = "2017-12-08 10:01:42";
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date a = dateFormat.parse(date);
+		Date b = dateFormat.parse(dateb);
+		//memberSearch.setStartTime(a);
+		//memberSearch.setEndTime(b);
+		Pager<MemberVerifyStatusDTO> pager = new Pager<MemberVerifyStatusDTO>();
+		pager.setPage(1);
+		pager.setRows(10);
+		//ExecuteResult<DataGrid<MyMemberDTO>> result = null;
+		ExecuteResult<DataGrid<MyNoMemberDTO>>  result = null;
+	    //result = myMemberService.selectMyMemberList(pager, 17606l, memberSearch, "3");
+		result = myMemberService.selectNoMemberList(pager, 17606l, memberSearch, "1");
+	    logger.info("result = " + JSON.toJSONString(result));
+
 	}
 	
 	@Test

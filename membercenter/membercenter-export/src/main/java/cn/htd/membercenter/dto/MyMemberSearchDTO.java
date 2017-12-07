@@ -22,6 +22,41 @@ public class MyMemberSearchDTO implements Serializable {
 	private String hasGuaranteeLicense;// 是否有担保证明
 	private String hasBusinessLicense;// 是否有营业执照
 
+
+	/**
+	 * 公司名称
+	 */
+	private String companyName;
+	/**
+	 * 法人姓名
+	 */
+	private String artificialPersonName;
+	/**
+	 * 当前归属客户经理Id
+	 */
+	private String curBelongManagerId;
+	/**
+	 * 会员账号
+	 */
+	private String memberCode;
+	/**
+	 * 区域 - 省
+	 */
+	private String locationProvince;
+	/**
+	 * 区域 - 市
+	 */
+	private String locationCity;
+	/**
+	 * 区域 - 区/县
+	 */
+	private String locationCounty;
+	
+	/**
+	 * VMS系统标志 - 用于区分新系统和老系统 1：新系统；其他：老系统
+	 */
+	private String sysFlag;
+
 	public String getStringName() {
 		return stringName;
 	}
@@ -118,26 +153,86 @@ public class MyMemberSearchDTO implements Serializable {
 		this.hasGuaranteeLicense = hasGuaranteeLicense;
 	}
 
-	public String getHasbussinessLicense() {
+	
+	public String getHasBusinessLicense() {
 		return hasBusinessLicense;
 	}
 
-	public void setHasbussinessLicense(String hasBusinessLicense) {
+	public void setHasBusinessLicense(String hasBusinessLicense) {
 		this.hasBusinessLicense = hasBusinessLicense;
 	}
-
-	/**
-	 * @return the groupId
-	 */
+	
 	public String getGroupId() {
 		return groupId;
 	}
 
-	/**
-	 * @param groupId
-	 *            the groupId to set
-	 */
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getArtificialPersonName() {
+		return artificialPersonName;
+	}
+
+	public void setArtificialPersonName(String artificialPersonName) {
+		this.artificialPersonName = artificialPersonName;
+	}
+
+	public String getCurBelongManagerId() {
+		return curBelongManagerId;
+	}
+
+	public void setCurBelongManagerId(String curBelongManagerId) {
+		this.curBelongManagerId = curBelongManagerId;
+	}
+
+	public String getMemberCode() {
+		return memberCode;
+	}
+
+	public void setMemberCode(String memberCode) {
+		this.memberCode = memberCode;
+	}
+
+	public String getLocationProvince() {
+		return locationProvince;
+	}
+
+	public void setLocationProvince(String locationProvince) {
+		this.locationProvince = locationProvince;
+	}
+
+	public String getLocationCity() {
+		return locationCity;
+	}
+
+	public void setLocationCity(String locationCity) {
+		this.locationCity = locationCity;
+	}
+
+	public String getLocationCounty() {
+		return locationCounty;
+	}
+
+	public void setLocationCounty(String locationCounty) {
+		this.locationCounty = locationCounty;
+	}
+
+	public String getSysFlag() {
+		return sysFlag;
+	}
+
+	public void setSysFlag(String sysFlag) {
+		this.sysFlag = sysFlag;
+	}
+	
+	
 }

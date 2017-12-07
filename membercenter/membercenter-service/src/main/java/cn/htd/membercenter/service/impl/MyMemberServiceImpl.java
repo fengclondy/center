@@ -100,17 +100,19 @@ public class MyMemberServiceImpl implements MyMemberService {
 			Long count = null;
 			if (type != null && type.equals("2")) {
 				count = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, null, 1);
-				myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, null, 1);
+				if(count !=null && count >0){
+					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, null, 1);
+				}
 			} else if (type != null && type.equals("3")) {
 				count = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, 1, 0);
-				myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, 1, 0);
+				if(count !=null && count>0){
+					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, 1, 0);
+				}
 			}
-
 			dg.setRows(myMemberDtoList);
 			dg.setTotal(count);
 			rs.setResult(dg);
 			rs.setResultMessage("success");
-
 		} catch (Exception e) {
 			logger.error("MyMemberServiceImpl----->selectByTypeList=" + e);
 			rs.setResultMessage("error");

@@ -23,6 +23,7 @@ import cn.htd.basecenter.service.SendSmsEmailService;
 import cn.htd.basecenter.service.sms.ManDaoSmsClient;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.util.SysProperties;
 
 public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<BaseSmsConfigDTO> {
@@ -38,6 +39,11 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 	 * 读取配置文件是否发送短信标识
 	 */
 	private static final String IS_SEND_SMS_FLAG = "send.sms.flag";
+	
+	/**
+	 * 标记预警短信已发送标识
+	 */
+	private static final String REDIS_NOTICE_SMS_BALANCE = "NOTICE_SMS_BALANCE";
 
 	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
@@ -49,6 +55,8 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 	private BaseSmsNoticeDAO baseSmsNoticeDAO;
 	@Resource
 	private ManDaoSmsClient manDaoSmsClient;
+	@Resource
+	private RedisDB redisDB;
 	
 	@Override
 	public Comparator<BaseSmsConfigDTO> getComparator() {
@@ -92,6 +100,11 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 				int balance = Integer.parseInt(result.getResult());
 				int balanceLimit = Integer.parseInt(balanceLimitStr);
 				if(balance <= balanceLimit){
+					String redisNotice = redisDB.get(REDIS_NOTICE_SMS_BALANCE);
+					if("YES".equals(redisNotice)){
+						logger.info("NoticeSmsBalanceScheduleTask notice_sms_balance 预警短信已发送过");
+						return null;
+					}
 					Pager<BaseSmsNoticeDTO> pager = new Pager<BaseSmsNoticeDTO>();
 					pager.setRows(100);
 					List<BaseSmsNoticeDTO> baseSmsNoticeList = baseSmsNoticeDAO.queryBaseSmsNotice(null, pager);
@@ -102,6 +115,9 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 							}
 						}
 					}
+					redisDB.set(REDIS_NOTICE_SMS_BALANCE, "YES");
+				}else{
+					redisDB.set(REDIS_NOTICE_SMS_BALANCE, "NO");
 				}
 			}
 			if(!"".equals(phoneStr)){
@@ -115,6 +131,7 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 				}
 			}
 		} catch (Exception e) {
+			redisDB.set(REDIS_NOTICE_SMS_BALANCE, "NO");
 			logger.error("\n 方法[{}]，异常：[{}]", "NoticeSmsBalanceScheduleTask-selectTasks",
 					ExceptionUtils.getStackTraceAsString(e));
 		}

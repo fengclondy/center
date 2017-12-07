@@ -33,6 +33,7 @@
 	<dubbo:service interface="cn.htd.basecenter.service.FreightTemplateAddressExportService" ref="freightTemplateAddressExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 	<!-- 关联交易服务 -->
 	<dubbo:service interface="cn.htd.basecenter.service.TransactionRelationService" ref="transactionRelationService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
-	
+	<!-- 短信预警服务 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseSmsNoticeService" ref="baseSmsNoticeService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 
 </beans>

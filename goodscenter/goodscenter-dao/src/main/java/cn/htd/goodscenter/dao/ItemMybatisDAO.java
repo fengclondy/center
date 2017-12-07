@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
+import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
 import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.ExecuteResult;
@@ -356,4 +358,7 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 
 	public List<Item> queryItemInfo(@Param("itemName")String itemName,@Param("sellerId")Long sellerId);
 
+    Long queryVmsDraftItemSkuListCount(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO);
+
+	List<QueryVmsMyItemListOutDTO> queryVmsDraftItemSkuList(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO, @Param("pager")Pager pager);
 }

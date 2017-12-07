@@ -527,4 +527,76 @@
     </set>
     where item_draft_id = #{itemDraftId,jdbcType=BIGINT}
   </update>
+
+  <select id="queryVmsDraftItemSkuList" resultType="cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO">
+    select
+    t.item_id as itemId,
+    i.item_code as itemCode,
+    sku.sku_id as skuId,
+    sku.sku_code as skuCode,
+    t.item_name as productName,
+    t.cid as categoryId,
+    t.brand as brandId,
+    brand.brand_name as brandName,
+    spu.erp_code as erpCode,
+    i.item_status as itemStatus,
+    t.status as status
+    from item_sku sku
+    join item i on sku.item_id = i.item_id
+    join item_draft t on t.item_id = sku.item_id
+    left join item_brand brand on brand.brand_id = t.brand
+    left join item_spu spu on spu.spu_id =  i.item_spu_id
+    where
+       t.status = 0
+    and i.item_status in (0, 1, 4, 5)
+    and sku.seller_id = #{param.sellerId}
+    <if test="param.productCode !=null and productCode != '' ">
+      and i.item_code=#{param.productCode}
+    </if>
+    <if test="param.productName !=null and productName != '' ">
+      and t.item_name  like concat('%',#{param.productName},'%')
+    </if>
+    <if test="param.brandName != null and brandName != '' ">
+      and brand.brand_name = #{param.brandName}
+    </if>
+    <if test="param.thirdCategoryIdList != null">
+      and t.cid IN
+      <foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+        #{item}
+      </foreach>
+    </if>
+    order by i.created desc
+    <if test="pager != null">
+    limit #{pager.pageOffset} , #{pager.rows}
+    </if>
+  </select>
+
+  <select id="queryVmsDraftItemSkuListCount" resultType="Long">
+    select
+      count(1)
+    from item_sku sku
+    join item i on sku.item_id = i.item_id
+    join item_draft t on t.item_id = sku.item_id
+    left join item_brand brand on brand.brand_id = t.brand
+    left join item_spu spu on spu.spu_id =  i.item_spu_id
+    where
+    t.status = 0
+    and i.item_status in (0, 1, 4, 5)
+    and sku.seller_id = #{param.sellerId}
+    <if test="param.productCode !=null and productCode != '' ">
+      and i.item_code=#{param.productCode}
+    </if>
+    <if test="param.productName !=null and productName != '' ">
+      and t.item_name  like concat('%',#{param.productName},'%')
+    </if>
+    <if test="param.brandName != null and brandName != '' ">
+      and brand.brand_name = #{param.brandName}
+    </if>
+    <if test="param.thirdCategoryIdList != null">
+      and t.cid IN
+      <foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+        #{item}
+      </foreach>
+    </if>
+  </select>
 </mapper>

@@ -2704,9 +2704,14 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			VenusItemMainDataInDTO venusItemSpuInDTO, Pager<String> page) {
 
 		ExecuteResult<DataGrid<VenusItemSpuDataOutDTO>> result=new ExecuteResult<DataGrid<VenusItemSpuDataOutDTO>>();
-		if(venusItemSpuInDTO==null){
+		if(venusItemSpuInDTO==null || page == null){
 			result.setCode(VenusErrorCodes.E1040009.name());
 			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040009.getErrorMsg()));
+			return result;
+		}
+		if(venusItemSpuInDTO.getSellerId() == null || venusItemSpuInDTO.getSellerId() <= 0){
+			result.setCode(VenusErrorCodes.E1040010.name());
+			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040010.getErrorMsg()));
 			return result;
 		}
 		try{

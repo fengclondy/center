@@ -13,6 +13,7 @@ public class VenusItemSpuDataOutDTO implements Serializable{
 	private String  spuCode;
 	private String  itemName;
 	private String  categoryName;
+	private Long categoryId;
 	private String  brandName;
 	private String  serial;
 	private String  color;
@@ -122,6 +123,13 @@ public class VenusItemSpuDataOutDTO implements Serializable{
 	public void setTaxRate(String taxRate) {
 		this.taxRate = taxRate;
 	}
-	
-	
+
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
 }

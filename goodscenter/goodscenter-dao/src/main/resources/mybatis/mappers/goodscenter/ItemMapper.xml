@@ -2551,5 +2551,109 @@
 		select * from item where item_name=#{itemName} and seller_id=#{sellerId} and item_status !=6
 	</select>
 	<!-- add by li.jun for 限时购 end -->
-	
+
+	<select id="queryVmsDraftItemSkuList" resultType="cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO">
+		select
+		i.item_id as itemId,
+		i.item_code as itemCode,
+		sku.sku_id as skuId,
+		sku.sku_code as skuCode,
+		i.item_name as productName,
+		i.cid as categoryId,
+		i.brand as brandId,
+		brand.brand_name as brandName,
+		spu.erp_code as erpCode,
+		i.item_status as itemStatus,
+		t.status as status
+		from item_sku sku
+		join item i on sku.item_id = i.item_id
+		join item_draft t on t.item_id = sku.item_id
+		left join item_brand brand on brand.brand_id = t.brand
+		left join item_spu spu on spu.spu_id =  i.item_spu_id
+		where
+		     i.item_status != 6
+		and sku.seller_id = #{param.sellerId}
+		<if test="param != null">
+			<if test="param.auditStatus == 0"> <!-- 待审核 -->
+				and i.item_status = 0 and t.status = 0
+			</if>
+			<if test="param.auditStatus == 1"> <!-- 审核通过 -->
+				and i.item_status in (1,4,5) and t.status = 1
+			</if>
+			<if test="param.auditStatus == 2"> <!-- 新增审核不通过 -->
+				and i.item_status = 2 and t.status = 2
+			</if>
+			<if test="param.auditStatus == 3"> <!-- 修改待审核 -->
+				and i.item_status in (1,4,5) and t.status = 0
+			</if>
+			<if test="param.auditStatus == 4"> <!-- 修改审核不通过 -->
+				and i.item_status in (1,4,5) and t.status = 2
+			</if>
+			<if test="param.productCode !=null and param.productCode != '' ">
+				and i.item_code=#{param.productCode}
+			</if>
+			<if test="param.productName !=null and param.productName != '' ">
+				and (i.item_name  like concat('%',#{param.productName},'%')  or  t.item_name  like concat('%',#{param.productName},'%'))
+			</if>
+			<if test="param.brandName != null and param.brandName != '' ">
+				and brand.brand_name = #{param.brandName}
+			</if>
+			<if test="param.thirdCategoryIdList != null">
+				and i.cid IN
+				<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</if>
+		order by i.created desc
+		<if test="pager != null">
+			limit #{pager.pageOffset} , #{pager.rows}
+		</if>
+	</select>
+
+	<select id="queryVmsDraftItemSkuListCount" resultType="Long">
+		select
+		count(1)
+		from item_sku sku
+		join item i on sku.item_id = i.item_id
+		join item_draft t on t.item_id = sku.item_id
+		left join item_brand brand on brand.brand_id = t.brand
+		left join item_spu spu on spu.spu_id =  i.item_spu_id
+		where
+		i.item_status != 6
+		and sku.seller_id = #{param.sellerId}
+		<if test="param != null">
+			<if test="param.auditStatus == 0"> <!-- 待审核 -->
+				and i.item_status = 0 and t.status = 0
+			</if>
+			<if test="param.auditStatus == 1"> <!-- 审核通过 -->
+				and i.item_status in (1,4,5) and t.status = 1
+			</if>
+			<if test="param.auditStatus == 2"> <!-- 新增审核不通过 -->
+				and i.item_status = 2 and t.status = 2
+			</if>
+			<if test="param.auditStatus == 3"> <!-- 修改待审核 -->
+				and i.item_status in (1,4,5) and t.status = 0
+			</if>
+			<if test="param.auditStatus == 4"> <!-- 修改审核不通过 -->
+				and i.item_status in (1,4,5) and t.status = 2
+			</if>
+			<if test="param.productCode !=null and param.productCode != '' ">
+				and i.item_code=#{param.productCode}
+			</if>
+			<if test="param.productName !=null and param.productName != '' ">
+				and (i.item_name  like concat('%',#{param.productName},'%')  or  t.item_name  like concat('%',#{param.productName},'%'))
+			</if>
+			<if test="param.brandName != null and param.brandName != '' ">
+				and brand.brand_name = #{param.brandName}
+			</if>
+			<if test="param.thirdCategoryIdList != null">
+				and i.cid IN
+				<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</if>
+		order by i.created desc
+	</select>
 </mapper>

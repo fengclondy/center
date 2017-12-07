@@ -599,6 +599,7 @@
 			spu.high as height,
 			spu.erp_code as erpCode,
 			spu.tax_rate as taxRate,
+            spu.category_id as categoryId,
 			ifnull((select 1 from item t2 where t2.item_spu_id=spu.spu_id and t2.seller_id=#{sellerId} and t2.item_status !=6  limit 1),0) as applyStatus
 				 from item_spu spu 
 				 join item_category cat on spu.category_id=cat.cid

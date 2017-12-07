@@ -31,6 +31,9 @@
 	<if test="memberSearch.status!=null">
 		and m.status = #{memberSearch.status}
 	</if>
+	 <if test="memberSearch.startTime != null and memberSearch.endTime != null and memberSearch.startTime != '' and memberSearch.endTime != ''">
+		and (ms.modify_time between #{memberSearch.startTime} and #{memberSearch.endTime}) and ms.verify_status !=1
+	</if>
   </sql>
   <select id="selectByTypeList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
     SELECT 
@@ -92,9 +95,6 @@
 	<if test="hasGuaranteeLicense != null ">
 		and m.has_guarantee_license=#{hasGuaranteeLicense} 
 	</if>
-	<if test="memberSearch.startTime != null and memberSearch.endTime != null and memberSearch.startTime != '' and memberSearch.endTime != ''">
-		and (ms.modify_time between #{memberSearch.startTime} and #{memberSearch.endTime})  and ms.verify_status!='1'
-	</if>
     <if test="memberSearch != null and memberSearch != ''">
 			<include refid="Search_List" />
 	</if>
@@ -137,13 +137,31 @@
 	<if test="hasGuaranteeLicense != null ">
 		and m.has_guarantee_license=#{hasGuaranteeLicense} 
 	</if>
-	 <if test="memberSearch.startTime != null and memberSearch.endTime != null and memberSearch.startTime != '' and memberSearch.endTime != ''">
-		and (ms.modify_time between #{memberSearch.startTime} and #{memberSearch.endTime}) and  ms.verify_status!='1'
-	</if>
     <if test="memberSearch != null and memberSearch != ''">
 			<include refid="Search_List" />
 	</if>
     order by m.regist_time 
+  </select>
+  
+    <select id="selectNoMemberListCount" resultType="java.lang.Long">
+    SELECT
+    count(1)
+    FROM  member_company_info c, box_relationship o,member_base_info m 
+    left join member_bank_info b on b.member_id = m.id and b.delete_flag=0
+    left join belong_relationship r on m.id = r.buyer_id  and r.status!='9' and r.seller_id = #{vendorId} 
+    left join member_invoice_info i on i.member_id = m.id and i.delete_flag=0
+    left join member_status_info ms on ms.member_id=m.id and ms.info_type=13 
+    left join member_status_info ms1 on ms1.member_id=m.id and ms1.info_type=14
+    left join member_status_info s2 on s2.member_id=m.id and s2.info_type=33
+    left join  (
+	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
+	   and  p.seller_id= #{vendorId}  and g.group_id =p.group_id and p.delete_flag=0
+    where o.buyer_id=m.id and o.delete_flag=0 
+    and o.seller_id  =  #{vendorId} and m.id = c.member_id and c.buyer_seller_type='1'
+    and m.can_mall_login=#{canMallLogin}
+    <if test="memberSearch != null and memberSearch != ''">
+			<include refid="Search_List" />
+	</if>
   </select>
  
   <select id="selectNoMemberList" resultType="cn.htd.membercenter.dto.MyNoMemberDTO">
@@ -190,9 +208,6 @@
     where o.buyer_id=m.id and o.delete_flag=0 
     and o.seller_id  =  #{vendorId} and m.id = c.member_id and c.buyer_seller_type='1'
     and m.can_mall_login=#{canMallLogin}
-    <if test="memberSearch.startTime != null and memberSearch.endTime != null and memberSearch.startTime != '' and memberSearch.endTime != ''">
-		and (ms.modify_time between #{memberSearch.startTime} and #{memberSearch.endTime}) and ms.verify_status !=1
-	</if>
     <if test="memberSearch != null and memberSearch != ''">
 			<include refid="Search_List" />
 	</if>

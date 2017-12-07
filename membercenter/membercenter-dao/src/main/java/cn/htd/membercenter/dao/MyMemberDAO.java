@@ -55,6 +55,21 @@ public interface MyMemberDAO {
 	public List<MyNoMemberDTO> selectNoMemberList(@Param("page") Pager page, @Param("sellerId") Long sellerId,
 			@Param("vendorId") Long vendorId, @Param("memberSearch") MyMemberSearchDTO memberSearch,
 			@Param("canMallLogin") Integer canMallLogin);
+	
+	/**
+	 * 查询非会员数量
+	 * 
+	 * @param pager
+	 * @param vendorId
+	 *            归属商家ID
+	 * @param memberSearch
+	 *            高级查询
+	 * @param canMallLogin
+	 * @return
+	 */
+	public Long selectNoMemberListCount(@Param("sellerId") Long sellerId,
+			@Param("vendorId") Long vendorId, @Param("memberSearch") MyMemberSearchDTO memberSearch,
+			@Param("canMallLogin") Integer canMallLogin);
 
 	/**
 	 * 查询我的会员/担保会员详细信息

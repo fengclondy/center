@@ -126,29 +126,22 @@ public class MyMemberServiceImpl implements MyMemberService {
 		DataGrid<MyNoMemberDTO> dg = new DataGrid<MyNoMemberDTO>();
 		try {
 			List<MyNoMemberDTO> myMemberDtoList = null;
-			List<MyNoMemberDTO> count = null;
+			Long count = null;
 			if (type != null && type.equals("1")) {
-				count = memberDAO.selectNoMemberList(null, vendorId, vendorId, memberSearch, 0);
-				myMemberDtoList = memberDAO.selectNoMemberList(page, vendorId, vendorId, memberSearch, 0);
-			}
-
-			try {
-				if (count != null) {
+				count = memberDAO.selectNoMemberListCount(vendorId, vendorId, memberSearch, 0);
+				if(count != null && count >0){
+					myMemberDtoList = memberDAO.selectNoMemberList(page, vendorId, vendorId, memberSearch, 0);
 					dg.setRows(myMemberDtoList);
-					dg.setTotal(new Long(count.size()));
+					dg.setTotal(count);
 					rs.setResult(dg);
-				} else {
+				}else{
 					rs.setResultMessage("要查询的数据不存在");
 				}
-				rs.setResultMessage("success");
-			} catch (Exception e) {
-				rs.setResultMessage("error");
-				throw new RuntimeException(e);
 			}
+			 rs.setResultMessage("success");
 		} catch (Exception e) {
 			logger.error("MyMemberServiceImpl----->selectNoMemberList=" + e);
 		}
-
 		return rs;
 	}
 

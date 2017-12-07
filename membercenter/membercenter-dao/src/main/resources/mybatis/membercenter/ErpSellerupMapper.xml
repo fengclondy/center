@@ -389,8 +389,8 @@
 		    <if test="dto.vendorName != null and dto.vendorName != ''">
 				company_name=#{dto.vendorName},
 			</if>	
-			<if test="dto.contactName != null and dto.contactName != ''">
-				artificial_person_name=#{dto.contactName},
+			<if test="dto.companyLeagalPersion != null and dto.companyLeagalPersion != ''">
+				artificial_person_name=#{dto.companyLeagalPersion},
 			</if>
 			<if test="dto.contactMobile != null and dto.contactMobile != ''">
 				artificial_person_mobile=#{dto.contactMobile},

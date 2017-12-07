@@ -30,4 +30,6 @@
     <bean id="addressErpDownScheduleTask" class="cn.htd.basecenter.service.task.AddressErpDownScheduleTask"/>
 
     <bean id="mailErpExceptionAddressScheduleTask" class="cn.htd.basecenter.service.task.MailErpExceptionAddressScheduleTask"/>
+    <!-- 短信预警定时任务 -->
+    <bean id="noticeSmsBalanceScheduleTask" class="cn.htd.basecenter.service.task.NoticeSmsBalanceScheduleTask"/>
 </beans>

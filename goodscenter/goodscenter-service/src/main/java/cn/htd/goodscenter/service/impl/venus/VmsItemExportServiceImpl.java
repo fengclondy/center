@@ -32,8 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static cn.htd.goodscenter.dto.enums.ShopModifyColumn.unit;
-
 /**
  * vms2.0 商品中心接口
  * @date 2017-12-06

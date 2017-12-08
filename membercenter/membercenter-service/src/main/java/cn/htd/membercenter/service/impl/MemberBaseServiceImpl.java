@@ -31,6 +31,7 @@ import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.enums.MemberTypeEnum;
 import cn.htd.membercenter.service.MemberBaseService;
 import cn.htd.usercenter.dto.LoginLogDTO;
+import cn.htd.usercenter.dto.UserDTO;
 import cn.htd.usercenter.service.UserExportService;
 
 @Service("memberBaseService")
@@ -485,6 +486,13 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 			return result;
 		}
 		CupidMemberInfoDTO cupidMemberInfoDTO=memberBaseOperationDAO.queryMemberInfoForCupid(memberCode);
+		if(cupidMemberInfoDTO!=null&&StringUtils.isNotEmpty(cupidMemberInfoDTO.getUid())){
+			//fetch password from usercenter
+			ExecuteResult<UserDTO> userResult=userExportService.queryUserByLoginId(cupidMemberInfoDTO.getUid());
+			if(userResult!=null&&userResult.isSuccess()&&userResult.getResult()!=null){
+				cupidMemberInfoDTO.setPassword(userResult.getResult().getPassword());
+			}
+		}
 		result.setResult(cupidMemberInfoDTO);
 		return result;
 	}

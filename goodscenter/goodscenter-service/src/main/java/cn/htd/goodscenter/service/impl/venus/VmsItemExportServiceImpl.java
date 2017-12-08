@@ -5,6 +5,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import cn.htd.goodscenter.common.constants.VenusErrorCodes;
 import cn.htd.goodscenter.dao.ItemDraftMapper;
@@ -13,8 +14,7 @@ import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
+import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static cn.htd.goodscenter.dto.enums.ShopModifyColumn.unit;
 
 /**
  * vms2.0 商品中心接口
@@ -162,12 +164,91 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return executeResult;
     }
 
+    /**
+     * 我的商品 - 申请商品
+     * @param spuIdList
+     * @param sellerId
+     * @param shopId
+     * @param operatorId
+     * @param operatorName
+     * @return
+     */
+    @Override
+    public ExecuteResult<String> applyItemSpu2HtdProduct(List<Long> spuIdList, String sellerId, String shopId, String operatorId, String operatorName) {
+        return this.venusItemExportService.applyItemSpu2HtdProduct(spuIdList, sellerId, shopId, operatorId, operatorName);
+    }
+
+    /**
+     * 我的商品 - 批量新增商品 （导入）
+     * @param batchAddItemInDTOList
+     * @return
+     */
+    @Override
+    public ExecuteResult<BatchAddItemOutDTO> batchAddItem(List<BatchAddItemInDTO> batchAddItemInDTOList) {
+        ExecuteResult<BatchAddItemOutDTO> executeResult = new ExecuteResult<>();
+        //前置校验
+        if(batchAddItemInDTOList == null){
+            executeResult.setCode(ErrorCodes.E10005.name());
+            executeResult.setErrorMessages(Lists.newArrayList(ErrorCodes.E10005.getErrorMsg()));
+            return  executeResult;
+        }
+        try {
+            // 失败的集合
+            List<BatchAddItemErrorListOutDTO> errorList = new ArrayList<>();
+            List<BatchAddItemInDTO> successList = new ArrayList<>();
+            // 业务校验
+            for (BatchAddItemInDTO batchAddItemInDTO : batchAddItemInDTOList) {
+                String categoryName = batchAddItemInDTO.getCategoryName();
+                validateCategoryName(categoryName);
+                String brandName = batchAddItemInDTO.getBrandName();
+                validateBrandName(brandName);
+                String modelType = batchAddItemInDTO.getModelType();
+                validateModelType(modelType);
+//                validateUnit(unit);
+//                validateTaxRate(taxRate);
+            }
+
+        } catch (Exception e) {
+            logger.error("我的商品列表查询出错, 错误信息", e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage(ResultCodeEnum.ERROR.getMessage());
+            executeResult.addErrorMessage(e.getMessage());
+        }
+        return executeResult;
+    }
+
+    private boolean validateModelType(String modelType) {
+        return false;
+    }
+
+    /**
+     * 校验品牌
+     * @param brandName
+     * @return
+     */
+    private boolean validateBrandName(String brandName) {
+        return false;
+    }
+
+    /**
+     * 校验三级类目是否合法
+     * @param categoryName
+     */
+    private boolean validateCategoryName(String categoryName) {
+        // 校验三级类目是否合法
+        if (StringUtils.isEmpty(categoryName)) {
+
+        }
+        return false;
+    }
+
 
     /**
      * 根据商品表状态和草稿表状态，计算出给前台的审核状态
      * @param itemStatus
      * @param status
      * @param erpCode
+     * // TODO : 魔法数字替换
      * @return
      */
     private Integer getAuditStatus(Integer itemStatus, Integer status, String erpCode) {

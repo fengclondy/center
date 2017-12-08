@@ -491,6 +491,7 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 			ExecuteResult<UserDTO> userResult=userExportService.queryUserByLoginId(cupidMemberInfoDTO.getUid());
 			if(userResult!=null&&userResult.isSuccess()&&userResult.getResult()!=null){
 				cupidMemberInfoDTO.setPassword(userResult.getResult().getPassword());
+				cupidMemberInfoDTO.setPasswdEncryType("1");
 			}
 		}
 		result.setResult(cupidMemberInfoDTO);

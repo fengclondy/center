@@ -337,20 +337,26 @@
     c.location_detail locationDetail,
     c.location_addr as locationAddr,
     ms.verify_status verifyStatus,
-    m.regist_time registTime
+    m.regist_time registTime,
+    i.invoice_company_name invoiceCompanyName,
+    i.contact_phone contactPhone,
+    i.invoice_address invoiceAddress,
+    i.tax_man_id taxManId,
+    c.artificial_person_pic_src artificialPersonPicSrc,
+    c.artificial_person_pic_back_src artificialPersonPicBackSrc,
+    c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc
     FROM  member_base_info m
-    
     left join member_bank_info b on b.member_id = m.id and b.delete_flag=0
     left join member_company_info c on m.id = c.member_id and c.buyer_seller_type='1' 
     left join belong_relationship r on m.id = r.buyer_id and r.status !=9
     left join buyer_grade_info d on  m.id = d.buyer_id 
     left join member_licence_info l on  l.member_id=m.id
     left join member_status_info ms on ms.member_id = m.id and ms.info_type='25'
-     left join  (
+    left join  (
 	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
 	   and  g.buyer_id= #{memberId}   and g.group_id =p.group_id and p.delete_flag=0
-    
-    WHERE     m.id=#{memberId} and c.buyer_seller_type='1'
+    left join member_invoice_info  i on i.member_id=m.id and i.channel_code=''
+    WHERE  m.id=#{memberId} and c.buyer_seller_type='1'
   </select>
   <select id="selectNoMemberInfo" resultType="cn.htd.membercenter.dto.MyNoMemberDTO">
     select 

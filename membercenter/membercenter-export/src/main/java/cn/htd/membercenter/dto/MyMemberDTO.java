@@ -49,7 +49,33 @@ public class MyMemberDTO implements Serializable {
 
 	private String belongStatus;
 	private String verifyStatus;// 审批状态
-
+	
+	/**
+	 * 发票抬头
+	 */
+	private String invoiceCompanyName;
+	/**
+	 * 发票电话
+	 */
+	private String contactPhone; 
+	/**
+	 * 发票地址
+	 */
+	private String invoiceAddress; 
+	/**
+	 * 纳税人识别号
+	 */
+	private String taxManId; 
+	/**
+	 * 法人身份证正面
+	 */
+	private String artificialPersonPicSrc;
+	/**
+	 * 法人身份证反面
+	 */
+	private String artificialPersonPicBackSrc;
+	
+	
 	/**
 	 * @return the memberCode
 	 */
@@ -372,18 +398,63 @@ public class MyMemberDTO implements Serializable {
 		this.verifyStatus = verifyStatus;
 	}
 
-	/**
-	 * @return the buyerBusinessLicenseId
-	 */
 	public String getBuyerBusinessLicenseId() {
 		return buyerBusinessLicenseId;
 	}
 
-	/**
-	 * @param buyerBusinessLicenseId the buyerBusinessLicenseId to set
-	 */
+
 	public void setBuyerBusinessLicenseId(String buyerBusinessLicenseId) {
 		this.buyerBusinessLicenseId = buyerBusinessLicenseId;
 	}
+
+	public String getInvoiceCompanyName() {
+		return invoiceCompanyName;
+	}
+
+	public void setInvoiceCompanyName(String invoiceCompanyName) {
+		this.invoiceCompanyName = invoiceCompanyName;
+	}
+
+	public String getContactPhone() {
+		return contactPhone;
+	}
+
+	public void setContactPhone(String contactPhone) {
+		this.contactPhone = contactPhone;
+	}
+
+	public String getInvoiceAddress() {
+		return invoiceAddress;
+	}
+
+	public void setInvoiceAddress(String invoiceAddress) {
+		this.invoiceAddress = invoiceAddress;
+	}
+
+	public String getTaxManId() {
+		return taxManId;
+	}
+
+	public void setTaxManId(String taxManId) {
+		this.taxManId = taxManId;
+	}
+
+	public String getArtificialPersonPicSrc() {
+		return artificialPersonPicSrc;
+	}
+
+	public void setArtificialPersonPicSrc(String artificialPersonPicSrc) {
+		this.artificialPersonPicSrc = artificialPersonPicSrc;
+	}
+
+	public String getArtificialPersonPicBackSrc() {
+		return artificialPersonPicBackSrc;
+	}
+
+	public void setArtificialPersonPicBackSrc(String artificialPersonPicBackSrc) {
+		this.artificialPersonPicBackSrc = artificialPersonPicBackSrc;
+	}
+	
+	
 
 }

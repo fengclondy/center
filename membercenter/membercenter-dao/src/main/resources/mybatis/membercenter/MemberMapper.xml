@@ -1785,5 +1785,6 @@
 	join
 	member_company_info mc on mb.id=mc.member_id
 	where mb.member_code=#{memberCode} and mb.status=1
+	and mc.buyer_seller_type=2 limit 1
 	</select>
 </mapper>

@@ -4,33 +4,40 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import cn.htd.goodscenter.common.constants.VenusErrorCodes;
-import cn.htd.goodscenter.dao.ItemDraftMapper;
-import cn.htd.goodscenter.dao.ItemMybatisDAO;
+import cn.htd.goodscenter.common.utils.DTOValidateUtil;
+import cn.htd.goodscenter.common.utils.ValidateResult;
+import cn.htd.goodscenter.dao.*;
+import cn.htd.goodscenter.dao.spu.ItemSpuMapper;
+import cn.htd.goodscenter.domain.*;
+import cn.htd.goodscenter.domain.spu.ItemSpu;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
+import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
 import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
+import cn.htd.goodscenter.service.converter.Converters;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * vms2.0 商品中心接口
@@ -49,10 +56,31 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     private ItemCategoryService itemCategoryService;
 
     @Resource
+    private ItemMybatisDAO itemMybatisDAO;
+
+    @Resource
+    private ItemCategoryDAO itemCategoryDAO;
+
+    @Resource
+    private ItemBrandDAO itemBrandDAO;
+
+    @Resource
+    private ItemSpuMapper itemSpuMapper;
+
+    @Resource
     private ItemDraftMapper itemDraftMapper;
 
     @Resource
-    private ItemMybatisDAO itemMybatisDAO;
+    private ItemDraftPictureMapper itemDraftPictureMapper;
+
+    @Resource
+    private ItemDraftDescribeMapper itemDraftDescribeMapper;
+
+    @Resource
+    private ItemPictureDAO itemPictureDAO;
+
+    @Resource
+    private ItemSkuDAO itemSkuDAO;
 
     @Resource
     private DictionaryUtils dictionaryUtils;
@@ -193,19 +221,99 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         try {
             // 失败的集合
             List<BatchAddItemErrorListOutDTO> errorList = new ArrayList<>();
-            List<BatchAddItemInDTO> successList = new ArrayList<>();
+            List<Item> successItemList = new ArrayList<>();
+            // 统计商品名称的重复数量
+            Map<String, Integer> sameProCountMap = calculateSameProductNameCount(batchAddItemInDTOList);
             // 业务校验
             for (BatchAddItemInDTO batchAddItemInDTO : batchAddItemInDTOList) {
+                // 失败DTO
+                BatchAddItemErrorListOutDTO batchAddItemErrorListOutDTO = new BatchAddItemErrorListOutDTO();
+                this.copyBatchAddItemInDTO2BatchAddItemErrorListOutDTO(batchAddItemInDTO, batchAddItemErrorListOutDTO);
+                // 待导入的ITEN
+                Item item = new Item();
+                // 校验类目
                 String categoryName = batchAddItemInDTO.getCategoryName();
-                validateCategoryName(categoryName);
+                ExecuteResult<Long> categoryResult = validateCategoryName(categoryName);
+                if (!ResultCodeEnum.SUCCESS.equals(categoryResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(categoryResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                Long cid = categoryResult.getResult();
+                // 校验品牌
                 String brandName = batchAddItemInDTO.getBrandName();
-                validateBrandName(brandName);
+                ExecuteResult<Long> brandResult = validateBrandName(brandName);
+                if (!ResultCodeEnum.SUCCESS.equals(brandResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(brandResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                Long brandId = brandResult.getResult();
+                // 校验型号
                 String modelType = batchAddItemInDTO.getModelType();
-                validateModelType(modelType);
-//                validateUnit(unit);
-//                validateTaxRate(taxRate);
+                ExecuteResult<String> modelTypeResult =  validateModelType(modelType);
+                if (!ResultCodeEnum.SUCCESS.equals(modelTypeResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(modelTypeResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                // 校验单位
+                String unit = batchAddItemInDTO.getUnit();
+                ExecuteResult<String> unitResult = validateUnit(unit);
+                if (!ResultCodeEnum.SUCCESS.equals(unitResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(unitResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                String unitCode = unitResult.getResult();
+                // 校验税率
+                String taxRate = batchAddItemInDTO.getTaxRate();
+                ExecuteResult<String> rateResult = validateTaxRate(taxRate);
+                if (!ResultCodeEnum.SUCCESS.equals(rateResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(rateResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                // 校验名称
+                String itemName = batchAddItemInDTO.getProductName();
+                ExecuteResult<String> itemResult = validateProductName(itemName);
+                if (!ResultCodeEnum.SUCCESS.equals(itemResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(itemResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                // 校验是否有重复的
+                int sameProCount = sameProCountMap.get(itemName.trim());
+                if (sameProCount > 1) {
+                    batchAddItemErrorListOutDTO.setErroMsg("存在" + sameProCount + "相同名称的商品");
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                // 封装ITEM
+                item.setItemName(itemName);
+                item.setCid(cid);
+                item.setBrand(brandId);
+                item.setWeightUnit(unitCode);
+                item.setModelType(modelType);
+                item.setTaxRate(new BigDecimal(taxRate));
+                item.setSellerId(batchAddItemInDTO.getSellerId());
+                item.setShopId(batchAddItemInDTO.getShopId());
+                item.setShopCid(batchAddItemInDTO.getShopCid());
+                item.setCreateId(batchAddItemInDTO.getOperatorId());
+                item.setCreateName(batchAddItemInDTO.getOperatorName());
+                item.setCreated(new Date());
+                successItemList.add(item);
             }
+            // TODO : 开始导入
 
+            // 结果
+            BatchAddItemOutDTO batchAddItemOutDTO = new BatchAddItemOutDTO();
+            batchAddItemOutDTO.setTotalCount(batchAddItemInDTOList.size());
+            batchAddItemOutDTO.setSuccessCount(successItemList.size());
+            batchAddItemOutDTO.setFailureCount(errorList.size());
+            batchAddItemOutDTO.setBatchAddItemListOutDTOErrorList(errorList);
+            executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+            executeResult.setResult(batchAddItemOutDTO);
         } catch (Exception e) {
             logger.error("我的商品列表查询出错, 错误信息", e);
             executeResult.setCode(ResultCodeEnum.ERROR.getCode());
@@ -215,31 +323,33 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return executeResult;
     }
 
-    private boolean validateModelType(String modelType) {
-        return false;
+    @Override
+    public ExecuteResult<String> addItem(VmsItemAddInDTO vmsItemAddInDTO) {
+
+        return null;
     }
 
     /**
-     * 校验品牌
-     * @param brandName
+     * 计算商品名称重复的数量
+     * @param batchAddItemInDTOList
      * @return
      */
-    private boolean validateBrandName(String brandName) {
-        return false;
-    }
-
-    /**
-     * 校验三级类目是否合法
-     * @param categoryName
-     */
-    private boolean validateCategoryName(String categoryName) {
-        // 校验三级类目是否合法
-        if (StringUtils.isEmpty(categoryName)) {
-
+    private Map<String, Integer> calculateSameProductNameCount(List<BatchAddItemInDTO> batchAddItemInDTOList) {
+        Map<String, Integer> map = new HashMap<>();
+        for (BatchAddItemInDTO batchAddItemInDTO : batchAddItemInDTOList) {
+            String productName = batchAddItemInDTO.getProductName();
+            if (StringUtils.isEmpty(productName)) {
+                continue;
+            }
+            if (map.containsKey(productName.trim())) {
+                int count = map.get(productName.trim());
+                map.put(productName.trim(), ++count);
+            } else {
+                map.put(productName.trim(), 1);
+            }
         }
-        return false;
+        return map;
     }
-
 
     /**
      * 根据商品表状态和草稿表状态，计算出给前台的审核状态
@@ -273,5 +383,122 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return null;
     }
 
+    private ExecuteResult<String> validateProductName(String itemName) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(itemName)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("商品名称为空");
+            return executeResult;
+        }
+        // 校验模板中有没有
+        ItemSpu itemSpu=itemSpuMapper.queryItemSpuByName(itemName);
+        if(itemSpu !=null && itemSpu.getDeleteFlag() != 1) { // 能查到模板且未删除
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("商品主数据已存在，请通过手动方式新增");
+            return executeResult;
+        }
+        executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        executeResult.setResultMessage("校验成功");
+        return executeResult;
+    }
 
+    private ExecuteResult<String> validateTaxRate(String taxRate) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(taxRate)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("税率为空");
+            return executeResult;
+        }
+        // TODO : 校验数值
+        executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        executeResult.setResultMessage("校验成功");
+        return executeResult;
+    }
+
+    private ExecuteResult<String> validateUnit(String unit) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(unit)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("单位为空");
+            return executeResult;
+        }
+        DictionaryInfo dictionaryInfo = dictionaryUtils.getDictionaryByName(DictionaryConst.TYPE_ITEM_UNIT, unit);
+        if (dictionaryInfo == null) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("单位在系统中不存在");
+            return executeResult;
+        }
+        executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        executeResult.setResult(dictionaryInfo.getCode());
+        executeResult.setResultMessage("校验成功");
+        return executeResult;
+    }
+
+    private ExecuteResult<String> validateModelType(String modelType) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(modelType)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("型号为空");
+            return executeResult;
+        }
+        // TODO : 校验型号的长度
+//        if () {
+//
+//        }
+        executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        executeResult.setResultMessage("校验成功");
+        return executeResult;
+    }
+
+    private ExecuteResult<Long> validateBrandName(String brandName) {
+        ExecuteResult<Long> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(brandName)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("品牌为空");
+            return executeResult;
+        }
+        ItemBrand itemBrand = this.itemBrandDAO.queryByName(brandName.trim());
+        if (itemBrand == null || itemBrand.getBrandId() == null || itemBrand.getBrandId() <= 0) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("品牌在系统中不存在");
+            return executeResult;
+        }
+        executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        executeResult.setResult(itemBrand.getBrandId());
+        executeResult.setResultMessage("校验成功");
+        return executeResult;
+    }
+
+    /**
+     * 校验三级类目
+     * @param categoryName
+     * @return 00000
+     */
+    private ExecuteResult<Long> validateCategoryName(String categoryName) {
+        ExecuteResult<Long> executeResult = new ExecuteResult<>();
+        if (StringUtils.isEmpty(categoryName)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("类目为空");
+            return executeResult;
+        }
+        Long cid = this.itemCategoryDAO.queryThirdCategoryIdByName(categoryName.trim());
+        if (cid == null || cid <= 0) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("类目在系统中不存在");
+            return executeResult;
+        }
+        executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        executeResult.setResult(cid);
+        executeResult.setResultMessage("校验成功");
+        return executeResult;
+    }
+
+    private void copyBatchAddItemInDTO2BatchAddItemErrorListOutDTO(BatchAddItemInDTO batchAddItemInDTO, BatchAddItemErrorListOutDTO batchAddItemErrorListOutDTO) {
+        batchAddItemErrorListOutDTO.setProductName(batchAddItemInDTO.getProductName());
+        batchAddItemErrorListOutDTO.setCategoryName(batchAddItemInDTO.getCategoryName());
+        batchAddItemErrorListOutDTO.setBrandName(batchAddItemInDTO.getBrandName());
+        batchAddItemErrorListOutDTO.setModelType(batchAddItemInDTO.getModelType());
+        batchAddItemErrorListOutDTO.setTaxRate(batchAddItemInDTO.getTaxRate());
+        batchAddItemErrorListOutDTO.setUnit(batchAddItemInDTO.getUnit());
+    }
 }

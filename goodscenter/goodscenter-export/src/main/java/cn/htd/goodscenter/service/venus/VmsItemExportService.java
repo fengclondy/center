@@ -4,13 +4,11 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.Item;
+import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
-import cn.htd.goodscenter.dto.vms.BatchAddItemInDTO;
-import cn.htd.goodscenter.dto.vms.BatchAddItemOutDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
+import cn.htd.goodscenter.dto.vms.*;
 
 import java.util.List;
 
@@ -60,4 +58,11 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<BatchAddItemOutDTO> batchAddItem(List<BatchAddItemInDTO> batchAddItemInDTOList);
+
+    /**
+     * 我的商品 - 新增商品
+     * @param vmsItemAddInDTO
+     * @return
+     */
+    ExecuteResult<String> addItem(VmsItemAddInDTO vmsItemAddInDTO);
 }

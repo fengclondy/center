@@ -8,6 +8,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.domain.MemberExtendInfo;
+import cn.htd.membercenter.dto.CupidMemberInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 
@@ -127,5 +128,7 @@ public interface MemberBaseService {
 	public ExecuteResult<List<MemberBaseInfoDTO>>  queryMmeberInfoByLittleMemberComCode(List<String> comCodeList);
 	
 	public ExecuteResult<List<MemberBaseInfoDTO>> queryMemberInfoByMemCodeList(List<String> memberCodeList);
+	
+	public ExecuteResult<CupidMemberInfoDTO> queryMemberInfoForCupid(String memberCode);
 	
 }

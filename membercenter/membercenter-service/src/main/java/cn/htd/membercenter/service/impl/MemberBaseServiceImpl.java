@@ -25,6 +25,7 @@ import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.dao.MemberCompanyInfoDao;
 import cn.htd.membercenter.domain.MemberExtendInfo;
+import cn.htd.membercenter.dto.CupidMemberInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.enums.MemberTypeEnum;
@@ -472,6 +473,19 @@ public class MemberBaseServiceImpl implements MemberBaseService {
 		}
 		List<MemberBaseInfoDTO> list=memberBaseOperationDAO.queryMemberInfoByMemCodeList(memberCodeList);
 		result.setResult(list);
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<CupidMemberInfoDTO> queryMemberInfoForCupid(String memberCode) {
+		ExecuteResult<CupidMemberInfoDTO> result=new ExecuteResult<CupidMemberInfoDTO>();
+		if(StringUtils.isEmpty(memberCode)){
+			result.setCode("0");
+			result.setResultMessage("sellerCode为空");
+			return result;
+		}
+		CupidMemberInfoDTO cupidMemberInfoDTO=memberBaseOperationDAO.queryMemberInfoForCupid(memberCode);
+		result.setResult(cupidMemberInfoDTO);
 		return result;
 	}
 }

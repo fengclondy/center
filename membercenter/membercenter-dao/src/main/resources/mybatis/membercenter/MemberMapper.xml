@@ -1773,4 +1773,17 @@
 		m.id = mc.member_id  AND
 	 mc.buyer_seller_type='1' AND m.member_code = #{memberCode}
 	</select>
+	
+	<select id="queryMemberInfoForCupid" parameterType="String" resultType="cn.htd.membercenter.dto.CupidMemberInfoDTO">
+		select mb.member_code as uid,
+	mc.location_addr as companyAddress,
+	mc.company_name as companyName,
+	mb.contact_name as contactPersonName,
+	mb.contact_mobile as contactPersonMobile
+	 from 
+	member_base_info mb
+	join
+	member_company_info mc on mb.id=mc.member_id
+	where mb.member_code=#{memberCode} and mb.status=1
+	</select>
 </mapper>

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import cn.htd.basecenter.domain.TransactionRelation;
 import cn.htd.basecenter.dto.SendSmsDTO;
@@ -24,6 +25,7 @@ import cn.htd.common.encrypt.KeygenGenerator;
 import cn.htd.common.util.DateUtils;
 import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
+import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.MemberBaseInfoDao;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
@@ -117,6 +119,10 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 
 	@Resource
 	private TransactionRelationService transactionRelationService;
+	@Resource
+	BelongRelationshipDAO belongRelationshipDao;
+	@Resource
+	private ApplyRelationshipDAO applyRelationshipDao;
 
 	@Override
 	public ExecuteResult<Boolean> verifyNonMemberToMember(MemberUncheckedDetailDTO dto) {
@@ -583,7 +589,6 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 	 */
 	@Override
 	public ExecuteResult<Boolean> verifyRemoveRelationship(MemberRemoveRelationshipDTO dto) {
-		logger.debug("--------------------会员解除归属关系待审核---------------------");
 		ExecuteResult<Boolean> rs = new ExecuteResult<Boolean>();
 		try {
 			if (dto.getMemberId() == null || dto.getBelongMemberId() == null || dto.getVerifyInfoId() == null
@@ -591,64 +596,49 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 				rs.addErrorMessage("会员id,所属商家id,审批表id,修改人id，修改人名称不能为空");
 				throw new RuntimeException();
 			}
-			// dto.setOldSellerId(dto.getBelongMemberId());
-			// 9审核通过,2审核驳回
-			if ("3".equalsIgnoreCase(dto.getStatus())) {
-				// 归属0801商家id 和归属经理
-				List<MemberBaseInfoDTO> rsList = memberBaseOperationDAO
-						.getMemberInfoByCompanyCode(GlobalConstant.DEFAULT_MEMBER_COOPERATE, GlobalConstant.IS_SELLER);
-				if (rsList != null && rsList.size() > 0) {
-					Long belongSellerID = rsList.get(0).getId();
-					dto.setBelongMemberId(belongSellerID);
-				}
-				// 获取当前客户经理iD
-				// UserDTO user =
-				// userExportService.queryUserByLoginId("08019999").getResult();
-				// if (user != null) {
-				dto.setCurBelongManagerId("08019999");
-				// }
-				// 更新基本信息表
-				memberLicenceInfoDao.updateMemberBaseInfo(dto);
-				// 查询是否是0801归属公司的，如果是执行，只修改审核状态
+			//审核状态：3 审核通过 2 审核不通过
+			String verfifyStatus = dto.getStatus();
+			if ("3".equalsIgnoreCase(verfifyStatus)) {
+				//根据memberid，查询会员当前归属商家
 				String code = memberBaseOperationDAO.getMemberCompanyInfoCodeById(dto.getBelongMemberId());
-				if (GlobalConstant.DEFAULT_MEMBER_COOPERATE.equals(code)) {
-					dto.setStatus("2");
-					// 更新审批表 审批详细信息表
-					memberLicenceInfoDao.updateVerifyInfo(dto);
-				} else {
-					// 保存与默认平台公司的包厢经营关系
-					dto.setStatus("9");// 归属删除
-					// 更新归属关系表
+				//如果不是归属0801，默认归属0801，否则只需要更改状态
+				if(!code.equals(GlobalConstant.DEFAULT_MEMBER_COOPERATE)){
+					// 归属0801商家id 和归属经理
+					List<MemberBaseInfoDTO> rsList = memberBaseOperationDAO.getMemberInfoByCompanyCode(GlobalConstant.DEFAULT_MEMBER_COOPERATE, GlobalConstant.IS_SELLER);
+					if (rsList != null && rsList.size() > 0) {
+						Long belongSellerID = rsList.get(0).getId();
+						dto.setBelongMemberId(belongSellerID);
+						dto.setCurBelongManagerId("08019999");
+					}
+					//更新当前归属商家和客户经理
+					memberLicenceInfoDao.updateMemberBaseInfo(dto);
+					// 更新归属关系表  归属删除
+					dto.setStatus("9");
 					memberLicenceInfoDao.updateBelongRelationship(dto);
-					dto.setStatus("2");
-					// 更新审批表 审批详细信息表
-					memberLicenceInfoDao.updateVerifyInfo(dto);
+					
+					//保存归属关系和包厢关系
 					saveBelongBoxRelation(dto);
 				}
-				// 更新审核状态
-				updateMemberStatus(dto);
-				// 插入操作记录
-				insertVerifyDetail(dto);
-				// 恢复成原来状态，防止执行下面判断
-				dto.setStatus("3");
+				 dto.setStatus("2"); //审核表，审核状态，通过
+				// 更新审批表 审批详细信息表
+  				 memberLicenceInfoDao.updateVerifyInfo(dto);		
 			}
-			if ("2".equalsIgnoreCase(dto.getStatus())) {
-				// 更新归属关系表
-				// memberLicenceInfoDao.updateBelongRelationship(dto);
+			if ("2".equalsIgnoreCase(verfifyStatus)) {
 				dto.setStatus("3");
 				// 更新审批表 审批详细信息表
 				memberLicenceInfoDao.updateVerifyInfo(dto);
-				// 更新审核状态
-				updateMemberStatus(dto);
-				// 插入操作记录
-				insertVerifyDetail(dto);
 			}
+			// 更新审核状态
+			updateMemberStatus(dto);
+			// 插入操作记录
+			insertVerifyDetail(dto);
 			rs.setResult(GlobalConstant.OPERATE_FLAG_SUCCESS);
 			rs.setResultMessage("success");
 		} catch (Exception e) {
 			logger.error("执行方法【MemberLicenceServiceImpl -  verifyRemoveRelationship】报错！{}", e);
 			rs.setResult(GlobalConstant.OPERATE_FLAG_FAIL);
 			rs.setResultMessage("error");
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return rs;
 	}
@@ -777,19 +767,20 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 		belongRelationshipDto.setModifyName(dto.getModifyName());
 		belongRelationshipDto.setBuyerFeature("16");// 默认电商类型
 		belongRelationshipDto.setVerifyStatus("3");
+		//新建归属关系
 		belongRelationshipDAO.insertBelongInfo(belongRelationshipDto);
 
-		ApplyBusiRelationDTO applyBusiRelationDto = new ApplyBusiRelationDTO();
-		applyBusiRelationDto.setAuditStatus("1");
-		applyBusiRelationDto.setMemberId(dto.getMemberId());
-		applyBusiRelationDto.setSellerId(dto.getBelongMemberId());
-		applyBusiRelationDto.setErpStatus(ErpStatusEnum.PENDING.getValue());
-		applyBusiRelationDto.setCreateId(Long.valueOf(dto.getModifyId()));
-		applyBusiRelationDto.setCustomerManagerId(dto.getCurBelongManagerId());
-		applyBusiRelationDto.setCreateName(dto.getModifyName());
-		applyBusiRelationDto.setModifyId(Long.valueOf(dto.getModifyId()));
-		applyBusiRelationDto.setModifyName(dto.getModifyName());
-		verifyInfoDAO.insertBusinessRelationInfo(applyBusiRelationDto);
+//		ApplyBusiRelationDTO applyBusiRelationDto = new ApplyBusiRelationDTO();
+//		applyBusiRelationDto.setAuditStatus("1");
+//		applyBusiRelationDto.setMemberId(dto.getMemberId());
+//		applyBusiRelationDto.setSellerId(dto.getBelongMemberId());
+//		applyBusiRelationDto.setErpStatus(ErpStatusEnum.PENDING.getValue());
+//		applyBusiRelationDto.setCreateId(Long.valueOf(dto.getModifyId()));
+//		applyBusiRelationDto.setCustomerManagerId(dto.getCurBelongManagerId());
+//		applyBusiRelationDto.setCreateName(dto.getModifyName());
+//		applyBusiRelationDto.setModifyId(Long.valueOf(dto.getModifyId()));
+//		applyBusiRelationDto.setModifyName(dto.getModifyName());
+//		verifyInfoDAO.insertBusinessRelationInfo(applyBusiRelationDto);
 
 		memberBusinessRelationDTO.setBuyerId(dto.getMemberId().toString());
 		memberBusinessRelationDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
@@ -798,17 +789,21 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 		memberBusinessRelationDTO.setModifyId(dto.getModifyId().toString());
 		memberBusinessRelationDTO.setCreateName(dto.getModifyName());
 		memberBusinessRelationDTO.setModifyName(dto.getModifyName());
-		memberBusinessRelationDAO.insertMeberBoxRelationInfo(memberBusinessRelationDTO);
+		ApplyBusiRelationDTO boxrelationship = applyRelationshipDao.queryBoxRelationInfo(belongRelationshipDto.getMemberId(),
+				belongRelationshipDto.getCurBelongSellerId());
+		if (boxrelationship == null) {
+			memberBusinessRelationDAO.insertMeberBoxRelationInfo(memberBusinessRelationDTO);
+		}
 
-		MemberBaseInfoDTO memberBase = new MemberBaseInfoDTO();
-		memberBase.setId(dto.getMemberId());
-		memberBase.setModifyId(dto.getModifyId());
-		memberBase.setModifyName(dto.getModifyName());
-		memberBase.setBelongManagerId(dto.getCurBelongManagerId());
-		memberBase.setCurBelongManagerId(dto.getCurBelongManagerId());
-		memberBase.setCurBelongSellerId(dto.getBelongMemberId());
-		memberBase.setBelongSellerId(dto.getBelongMemberId());
-		memberBaseOperationDAO.updateMemberIsvalid(memberBase);
+//		MemberBaseInfoDTO memberBase = new MemberBaseInfoDTO();
+//		memberBase.setId(dto.getMemberId());
+//		memberBase.setModifyId(dto.getModifyId());
+//		memberBase.setModifyName(dto.getModifyName());
+//		memberBase.setBelongManagerId(dto.getCurBelongManagerId());
+//		memberBase.setCurBelongManagerId(dto.getCurBelongManagerId());
+//		memberBase.setCurBelongSellerId(dto.getBelongMemberId());
+//		memberBase.setBelongSellerId(dto.getBelongMemberId());
+//		memberBaseOperationDAO.updateMemberIsvalid(memberBase);
 
 		return true;
 	}

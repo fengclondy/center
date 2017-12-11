@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -173,28 +174,17 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		//前置校验
 		if(venusItemDTO == null){
 			result.setCode(ErrorCodes.E10005.name());
+			result.setResultMessage(ErrorCodes.E10005.getErrorMsg());
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10005.getErrorMsg()));
 			return  result;
 		}
 		ValidateResult va1lidateResult=DTOValidateUtil.validate(venusItemDTO);
-		
 		if(!va1lidateResult.isPass()){
 			result.setCode(ErrorCodes.E10006.name());
+			result.setResultMessage(ErrorCodes.E10005.getErrorMsg());
 			result.setErrorMessages(Lists.newArrayList(StringUtils.split(va1lidateResult.getMessage(),DTOValidateUtil.ERROR_MSG_SEPERATOR)));
 			return  result;
 		}
-		
-//		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
-//			result.setCode(VenusErrorCodes.E1040001.name());
-//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
-//			return  result;
-//		}
-		
-//		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
-//			result.setCode(VenusErrorCodes.E1040002.name());
-//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040002.getErrorMsg()));
-//			return  result;
-//		}
 		try{
 			//DTO转化为domain
 			Item item=Converters.convert(venusItemDTO, Item.class);
@@ -217,11 +207,14 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		    doAddItemDescribe(venusItemDTO, item);
 		    //存储草稿
 		    doAddItemDraft(venusItemDTO, item);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::addItem:",e);
+			result.setCode(ErrorCodes.E00001.name());
+			result.setResultMessage(ErrorCodes.E00001.getErrorMsg());
+			result.addErrorMessage(e.getMessage());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-	    result.setCode(ErrorCodes.SUCCESS.name());
 		return result;
 	}
 

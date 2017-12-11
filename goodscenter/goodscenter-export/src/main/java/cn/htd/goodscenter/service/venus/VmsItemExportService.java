@@ -3,7 +3,6 @@ package cn.htd.goodscenter.service.venus;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
-import cn.htd.goodscenter.domain.Item;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
@@ -18,6 +17,8 @@ import java.util.List;
  * @author chenkang
  */
 public interface VmsItemExportService {
+    /** 我的商品 **/
+
     /**
      * 我的商品 - 商品列表
      * @param queryVmsMyItemListInDTO
@@ -61,8 +62,24 @@ public interface VmsItemExportService {
 
     /**
      * 我的商品 - 新增商品
-     * @param vmsItemAddInDTO
+     * @param venusItemDTO
      * @return
      */
-    ExecuteResult<String> addItem(VmsItemAddInDTO vmsItemAddInDTO);
+    ExecuteResult<String> addItem(VenusItemInDTO venusItemDTO);
+
+
+    /** 包厢商品 大厅商品 **/
+    /**
+     * 查询包厢商品列表
+     * 查询大厅商品列表
+     *
+     * sort字段：display_quantity ；
+     * order ：asc (从小到大) / desc （从大到小）
+     * @param queryVmsItemPublishInfoInDTO
+     * @param page 排序字段传在page中
+     * @return
+     */
+    ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page);
+
+
 }

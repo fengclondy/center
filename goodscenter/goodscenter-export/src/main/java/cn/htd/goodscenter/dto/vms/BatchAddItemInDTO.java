@@ -113,4 +113,56 @@ public class BatchAddItemInDTO implements Serializable {
     public void setOperatorName(String operatorName) {
         this.operatorName = operatorName;
     }
+
+
+    /** 接口内部使用 **/
+    private Long firstCid;
+
+    private Long secondCid;
+
+    private Long thirdCid;
+
+    private Long brandId;
+
+    private String unitCode;
+
+    public Long getFirstCid() {
+        return firstCid;
+    }
+
+    public void setFirstCid(Long firstCid) {
+        this.firstCid = firstCid;
+    }
+
+    public Long getSecondCid() {
+        return secondCid;
+    }
+
+    public void setSecondCid(Long secondCid) {
+        this.secondCid = secondCid;
+    }
+
+    public Long getThirdCid() {
+        return thirdCid;
+    }
+
+    public void setThirdCid(Long thirdCid) {
+        this.thirdCid = thirdCid;
+    }
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
+    }
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
+    }
 }

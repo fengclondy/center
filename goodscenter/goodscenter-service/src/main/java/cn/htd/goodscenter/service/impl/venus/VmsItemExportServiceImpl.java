@@ -9,8 +9,6 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import cn.htd.goodscenter.common.constants.VenusErrorCodes;
-import cn.htd.goodscenter.common.utils.DTOValidateUtil;
-import cn.htd.goodscenter.common.utils.ValidateResult;
 import cn.htd.goodscenter.dao.*;
 import cn.htd.goodscenter.dao.spu.ItemSpuMapper;
 import cn.htd.goodscenter.domain.*;
@@ -22,21 +20,17 @@ import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
 import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
-import cn.htd.goodscenter.service.converter.Converters;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -69,18 +63,6 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Resource
     private ItemDraftMapper itemDraftMapper;
-
-    @Resource
-    private ItemDraftPictureMapper itemDraftPictureMapper;
-
-    @Resource
-    private ItemDraftDescribeMapper itemDraftDescribeMapper;
-
-    @Resource
-    private ItemPictureDAO itemPictureDAO;
-
-    @Resource
-    private ItemSkuDAO itemSkuDAO;
 
     @Resource
     private DictionaryUtils dictionaryUtils;
@@ -221,7 +203,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         try {
             // 失败的集合
             List<BatchAddItemErrorListOutDTO> errorList = new ArrayList<>();
-            List<Item> successItemList = new ArrayList<>();
+            // 准备导入的商品集合
+            List<BatchAddItemInDTO> preImportItemList = new ArrayList<>();
             // 统计商品名称的重复数量
             Map<String, Integer> sameProCountMap = calculateSameProductNameCount(batchAddItemInDTOList);
             // 业务校验
@@ -230,7 +213,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 BatchAddItemErrorListOutDTO batchAddItemErrorListOutDTO = new BatchAddItemErrorListOutDTO();
                 this.copyBatchAddItemInDTO2BatchAddItemErrorListOutDTO(batchAddItemInDTO, batchAddItemErrorListOutDTO);
                 // 待导入的ITEN
-                Item item = new Item();
+                BatchAddItemInDTO preImportItem = new BatchAddItemInDTO();
                 // 校验类目
                 String categoryName = batchAddItemInDTO.getCategoryName();
                 ExecuteResult<Long> categoryResult = validateCategoryName(categoryName);
@@ -290,26 +273,50 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     continue;
                 }
                 // 封装ITEM
-                item.setItemName(itemName);
-                item.setCid(cid);
-                item.setBrand(brandId);
-                item.setWeightUnit(unitCode);
-                item.setModelType(modelType);
-                item.setTaxRate(new BigDecimal(taxRate));
-                item.setSellerId(batchAddItemInDTO.getSellerId());
-                item.setShopId(batchAddItemInDTO.getShopId());
-                item.setShopCid(batchAddItemInDTO.getShopCid());
-                item.setCreateId(batchAddItemInDTO.getOperatorId());
-                item.setCreateName(batchAddItemInDTO.getOperatorName());
-                item.setCreated(new Date());
-                successItemList.add(item);
+                // 补充三级类目信息
+                ExecuteResult<Map<String, Object>> categoryResult1 = itemCategoryService.queryItemOneTwoThreeCategoryName(cid, ">");
+                if (categoryResult1 != null && MapUtils.isNotEmpty(categoryResult1.getResult())) {
+                    preImportItem.setFirstCid((Long) categoryResult1.getResult().get("firstCategoryId"));
+                    preImportItem.setSecondCid((Long) categoryResult1.getResult().get("secondCategoryId"));
+                }
+                preImportItem.setBrandId(brandId);
+                preImportItem.setThirdCid(cid);
+                preImportItem.setUnitCode(unitCode);
+                preImportItemList.add(preImportItem);
             }
-            // TODO : 开始导入
-
+            // 开始导入
+            for (BatchAddItemInDTO preImportItem : preImportItemList) {
+                VenusItemInDTO venusItemDTO = new VenusItemInDTO();
+                venusItemDTO.setProductName(preImportItem.getProductName());
+                venusItemDTO.setFirstLevelCategoryId(preImportItem.getFirstCid());
+                venusItemDTO.setSecondLevelCategoryId(preImportItem.getSecondCid());
+                venusItemDTO.setThirdLevelCategoryId(preImportItem.getThirdCid());
+                venusItemDTO.setBrandId(preImportItem.getBrandId());
+                venusItemDTO.setUnit(preImportItem.getUnitCode());
+                venusItemDTO.setSerial(preImportItem.getModelType());
+                venusItemDTO.setTaxRate(preImportItem.getTaxRate());
+                venusItemDTO.setHtdVendorId(preImportItem.getSellerId());
+                venusItemDTO.setShopId(preImportItem.getShopId());
+                venusItemDTO.setShopCid(preImportItem.getShopCid());
+                venusItemDTO.setOperatorId(preImportItem.getOperatorId());
+                venusItemDTO.setOperatorName(preImportItem.getOperatorName());
+                ExecuteResult<String> addResult = this.addItem(venusItemDTO);
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(addResult.getCode())) {
+                    BatchAddItemErrorListOutDTO batchAddItemErrorListOutDTO = new BatchAddItemErrorListOutDTO();
+                    batchAddItemErrorListOutDTO.setProductName(preImportItem.getProductName());
+                    batchAddItemErrorListOutDTO.setCategoryName(preImportItem.getCategoryName());
+                    batchAddItemErrorListOutDTO.setBrandName(preImportItem.getBrandName());
+                    batchAddItemErrorListOutDTO.setModelType(preImportItem.getModelType());
+                    batchAddItemErrorListOutDTO.setTaxRate(preImportItem.getTaxRate());
+                    batchAddItemErrorListOutDTO.setUnit(preImportItem.getUnit());
+                    batchAddItemErrorListOutDTO.setErroMsg(addResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                }
+            }
             // 结果
             BatchAddItemOutDTO batchAddItemOutDTO = new BatchAddItemOutDTO();
             batchAddItemOutDTO.setTotalCount(batchAddItemInDTOList.size());
-            batchAddItemOutDTO.setSuccessCount(successItemList.size());
+            batchAddItemOutDTO.setSuccessCount(batchAddItemInDTOList.size() - errorList.size());
             batchAddItemOutDTO.setFailureCount(errorList.size());
             batchAddItemOutDTO.setBatchAddItemListOutDTOErrorList(errorList);
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
@@ -323,9 +330,18 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return executeResult;
     }
 
+    /**
+     * 我的商品 - 新增商品
+     * @param venusItemDTO
+     * @return
+     */
     @Override
-    public ExecuteResult<String> addItem(VmsItemAddInDTO vmsItemAddInDTO) {
+    public ExecuteResult<String> addItem(VenusItemInDTO venusItemDTO) {
+        return this.venusItemExportService.addItem(venusItemDTO);
+    }
 
+    @Override
+    public ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page) {
         return null;
     }
 

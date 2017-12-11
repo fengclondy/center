@@ -75,7 +75,7 @@ public class VenusItemInDTO implements Serializable{
 	//图片
 	private List<ItemPicture> pictures;
 	//目录属性
-	@NotEmpty(message="商品目录属性不能为空")
+//	@NotEmpty(message="商品目录属性不能为空")
 	private String categoryAttribute;
 	//商品描述
 	private ItemDescribe describe;

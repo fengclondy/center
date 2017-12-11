@@ -42,10 +42,10 @@ public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Se
 
 	/**
 	 * 上架状态
-	 * 0 全部
-	 * 1 下架 （上架过，但是下架了）
-	 * 2 上架
-	 * 3 未上架（从来没有上架过）
+	 * null 全部
+	 * 0 下架 （上架过，但是下架了）
+	 * 1 上架
+	 * 2 未上架（从来没有上架过）
 	 */
 	private String shelfStatus;
 	/**

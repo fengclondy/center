@@ -1,6 +1,7 @@
 package cn.htd.goodscenter.dto.vms;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
@@ -40,6 +41,8 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	private Integer isBoxFlag;
 	//商品spuCode
 	private String spuCode;
+	//创建时间
+	private Date createTime;
 
 	public String getItemName() {
 		return itemName;
@@ -139,5 +142,13 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 
 	public void setIsBoxFlag(Integer isBoxFlag) {
 		this.isBoxFlag = isBoxFlag;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 }

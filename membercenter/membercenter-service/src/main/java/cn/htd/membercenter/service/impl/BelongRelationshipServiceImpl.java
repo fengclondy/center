@@ -116,9 +116,15 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 		try {
 
 			if (belongRelationshipDto.getMemberId() != null) {
+				BelongRelationshipDTO dto = belongRelationshipDao.queryBelongInfo(belongRelationshipDto.getMemberId());
+				if(dto ==null){
+					rs.addErrorMessage("该会员不存在归属关系或归属关系已经被删除");
+					return rs;
+				}
 				belongRelationshipDao.updateBaseInfo(belongRelationshipDto);
 				belongRelationshipDao.updateBelongInfo(belongRelationshipDto);
 				belongRelationshipDto.setVerifyStatus("3");
+				belongRelationshipDto.setBuyerFeature(dto.getBuyerFeature());
 				belongRelationshipDao.insertBelongInfo(belongRelationshipDto);
 				ApplyBusiRelationDTO applyBusiRelationDto = null;
 				applyBusiRelationDto = applyRelationshipDao.queryBoxRelationInfo(belongRelationshipDto.getMemberId(),
@@ -134,11 +140,10 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 					applyRelationshipDao.insertBoxRelationInfo(applyBusiRelationDto);
 					addDownErpStatus(belongRelationshipDto);
 				}
-
 				rs.setResultMessage("success");
 
 			} else {
-				rs.setResultMessage("请输入要修改的会员ID！！！");
+				rs.addErrorMessage("请输入要修改的会员ID！！！");
 			}
 
 		} catch (Exception e) {
@@ -146,6 +151,7 @@ public class BelongRelationshipServiceImpl implements BelongRelationshipService 
 			e.printStackTrace();
 			logger.error("BelongRelationshipServiceImpl----->updateBelongRelationInfo=" + e);
 			rs.setResultMessage("error");
+			rs.addErrorMessage("修改归属关系出错!");
 
 		}
 		return rs;

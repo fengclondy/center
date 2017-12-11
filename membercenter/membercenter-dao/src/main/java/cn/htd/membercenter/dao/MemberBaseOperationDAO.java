@@ -17,6 +17,7 @@ import cn.htd.membercenter.domain.VerifyDetailInfo;
 import cn.htd.membercenter.domain.VerifyInfo;
 import cn.htd.membercenter.dto.BuyerGroupInfo;
 import cn.htd.membercenter.dto.BuyerHisPointDTO;
+import cn.htd.membercenter.dto.CupidMemberInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
@@ -286,4 +287,6 @@ public interface MemberBaseOperationDAO {
 	public List<MemberBaseInfoDTO> queryMemberInfoByMemCodeList(List<String> list);
 
 	public MemberBaseInfoDTO queryMemberCompanyInfo(String memberCode);
+	
+	public CupidMemberInfoDTO queryMemberInfoForCupid(String memberCode);
  }

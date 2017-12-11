@@ -40,6 +40,7 @@
 			<tx:method name="*" propagation="SUPPORTS" />
 			<tx:method name="insert*" propagation="REQUIRED"   />
 			<tx:method name="modify*" propagation="REQUIRED"   />
+			<tx:method name="verify*" propagation="REQUIRED"   />
 			
 		</tx:attributes>
 	</tx:advice>

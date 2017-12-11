@@ -594,10 +594,15 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 			if (dto.getMemberId() == null || dto.getBelongMemberId() == null || dto.getVerifyInfoId() == null
 					|| dto.getModifyId() == null || dto.getModifyName() == null) {
 				rs.addErrorMessage("会员id,所属商家id,审批表id,修改人id，修改人名称不能为空");
-				throw new RuntimeException();
+				throw new Exception();
 			}
 			//审核状态：3 审核通过 2 审核不通过
 			String verfifyStatus = dto.getStatus();
+			//如果状态不是审核通过和不通过，直接报异常
+			if(!verfifyStatus.equals("2") && !verfifyStatus.equals("3")){
+				rs.addErrorMessage("解除归属关系审核状态不对!");
+				throw new Exception();
+			}
 			if ("3".equalsIgnoreCase(verfifyStatus)) {
 				//根据memberid，查询会员当前归属商家
 				String code = memberBaseOperationDAO.getMemberCompanyInfoCodeById(dto.getBelongMemberId());
@@ -605,11 +610,13 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 				if(!code.equals(GlobalConstant.DEFAULT_MEMBER_COOPERATE)){
 					// 归属0801商家id 和归属经理
 					List<MemberBaseInfoDTO> rsList = memberBaseOperationDAO.getMemberInfoByCompanyCode(GlobalConstant.DEFAULT_MEMBER_COOPERATE, GlobalConstant.IS_SELLER);
-					if (rsList != null && rsList.size() > 0) {
-						Long belongSellerID = rsList.get(0).getId();
-						dto.setBelongMemberId(belongSellerID);
-						dto.setCurBelongManagerId("08019999");
+					if(rsList == null || rsList.size() <=0){
+						rs.addErrorMessage("0801商家不存在!");
+						throw new Exception();
 					}
+					Long belongSellerID = rsList.get(0).getId();
+					dto.setBelongMemberId(belongSellerID);
+					dto.setCurBelongManagerId("08019999");
 					//更新当前归属商家和客户经理
 					memberLicenceInfoDao.updateMemberBaseInfo(dto);
 					// 更新归属关系表  归属删除
@@ -619,15 +626,13 @@ public class MemberLicenceServiceImpl implements MemberLicenceService {
 					//保存归属关系和包厢关系
 					saveBelongBoxRelation(dto);
 				}
-				 dto.setStatus("2"); //审核表，审核状态，通过
-				// 更新审批表 审批详细信息表
-  				 memberLicenceInfoDao.updateVerifyInfo(dto);		
+				 dto.setStatus("2"); //审核表，审核状态，通过	
 			}
 			if ("2".equalsIgnoreCase(verfifyStatus)) {
 				dto.setStatus("3");
-				// 更新审批表 审批详细信息表
-				memberLicenceInfoDao.updateVerifyInfo(dto);
 			}
+			// 更新审批表 审批详细信息表
+			memberLicenceInfoDao.updateVerifyInfo(dto);
 			// 更新审核状态
 			updateMemberStatus(dto);
 			// 插入操作记录

@@ -2,6 +2,11 @@ package cn.htd.goodscenter.dto.vms;
 
 import java.io.Serializable;
 
+/**
+ * 我的商品 - 批量申请商品
+ * @author chenkang
+ * @date 2017-12-11
+ */
 public class BatchAddItemInDTO implements Serializable {
     //商品名称
     private String productName;

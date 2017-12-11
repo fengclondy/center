@@ -3,6 +3,8 @@ package cn.htd.goodscenter.dao;
 import java.util.Date;
 import java.util.List;
 
+import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoInDTO;
+import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoOutDTO;
 import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.Pager;
@@ -173,4 +175,19 @@ public interface ItemSkuDAO extends BaseDAO<ItemSku> {
 	List<VenusItemSkuOutDTO> selectItemSkuByItemId(@Param("itemId") Long itemId);
 
     List<ItemSkuPicture> queryItemSKUPicsFirst(@Param("itemId") Long itemId);
+
+	/**
+	 * 包厢商品列表查询
+	 * @param queryVmsItemPublishInfoInDTO
+	 * @return
+	 */
+	Long queryVmsItemSkuPublishInfoListCount(@Param("param") QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO);
+
+	/**
+	 * 包厢商品列表查询
+	 * @param queryVmsItemPublishInfoInDTO
+	 * @param page
+	 * @return
+	 */
+	List<QueryVmsItemPublishInfoOutDTO> queryVmsItemSkuPublishInfoList(@Param("param") QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, @Param("page") Pager<String> page);
 }

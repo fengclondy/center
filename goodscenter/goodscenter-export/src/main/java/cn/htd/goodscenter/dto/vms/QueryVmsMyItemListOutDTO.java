@@ -2,6 +2,11 @@ package cn.htd.goodscenter.dto.vms;
 
 import java.io.Serializable;
 
+/**
+ * 我的商品 - 列表查询入参DTO
+ * @author chenkang
+ * @date 2017-12-11
+ */
 public class QueryVmsMyItemListOutDTO implements Serializable {
     //商品编码
     private Long itemId;

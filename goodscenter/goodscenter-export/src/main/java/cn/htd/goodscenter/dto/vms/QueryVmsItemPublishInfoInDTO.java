@@ -3,11 +3,12 @@ package cn.htd.goodscenter.dto.vms;
 import cn.htd.goodscenter.dto.common.AbstractPagerDTO;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 
- * @author zhangxiaolong
- *
+ * 包厢列表查询
+ * @author chenkang
+ * @date 2017-12-11
  */
 public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Serializable{
 	/**
@@ -47,17 +48,19 @@ public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Se
 	 * 1 上架
 	 * 2 未上架（从来没有上架过）
 	 */
-	private String shelfStatus;
+	private Integer shelfStatus;
 	/**
 	 * 上架类型
 	 * 1 包厢
 	 * 0 大厅
 	 */
-	private Long isBoxFlag;
+	private Integer isBoxFlag;
 	/**
 	 * 供应商编码
 	 */
 	private String supplierCode;
+
+	private List<Long> thirdCategoryIdList;
 
 	public Long getSellerId() {
 		return sellerId;
@@ -107,19 +110,19 @@ public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Se
 		this.thirdCid = thirdCid;
 	}
 
-	public String getShelfStatus() {
+	public Integer getShelfStatus() {
 		return shelfStatus;
 	}
 
-	public void setShelfStatus(String shelfStatus) {
+	public void setShelfStatus(Integer shelfStatus) {
 		this.shelfStatus = shelfStatus;
 	}
 
-	public Long getIsBoxFlag() {
+	public Integer getIsBoxFlag() {
 		return isBoxFlag;
 	}
 
-	public void setIsBoxFlag(Long isBoxFlag) {
+	public void setIsBoxFlag(Integer isBoxFlag) {
 		this.isBoxFlag = isBoxFlag;
 	}
 
@@ -137,5 +140,13 @@ public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Se
 
 	public void setBrandId(Long brandId) {
 		this.brandId = brandId;
+	}
+
+	public List<Long> getThirdCategoryIdList() {
+		return thirdCategoryIdList;
+	}
+
+	public void setThirdCategoryIdList(List<Long> thirdCategoryIdList) {
+		this.thirdCategoryIdList = thirdCategoryIdList;
 	}
 }

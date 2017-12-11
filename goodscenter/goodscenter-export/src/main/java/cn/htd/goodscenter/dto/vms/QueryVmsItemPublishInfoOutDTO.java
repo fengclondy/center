@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
- * @author zhangxiaolong
- *
+ * 包厢列表查询
+ * @author chenkang
+ * @date 2017-12-11
  */
 public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 
@@ -20,11 +20,11 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	//商品SKU编码
 	private String skuCode;
 	//商品目录id
-	private String categoryId;
+	private Long categoryId;
     //商品目录名称
 	private String categoryName;
 	//品牌id
-	private String brandId;
+	private Long brandId;
 	//品牌名称
 	private String brandName;
 	//分销限价
@@ -36,7 +36,7 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	//可见库存
 	private Long publishStock;
 	//上架状态
-	private String shelfStatus;
+	private Integer shelfStatus;
 	//是否包厢  0 大厅上架 1 包厢上架
 	private Integer isBoxFlag;
 	//商品spuCode
@@ -62,10 +62,10 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	public void setSkuCode(String skuCode) {
 		this.skuCode = skuCode;
 	}
-	public String getCategoryId() {
+	public Long getCategoryId() {
 		return categoryId;
 	}
-	public void setCategoryId(String categoryId) {
+	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
 	}
 	public String getCategoryName() {
@@ -74,10 +74,10 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
 	}
-	public String getBrandId() {
+	public Long getBrandId() {
 		return brandId;
 	}
-	public void setBrandId(String brandId) {
+	public void setBrandId(Long brandId) {
 		this.brandId = brandId;
 	}
 	public String getBrandName() {
@@ -110,10 +110,10 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	public void setPublishStock(Long publishStock) {
 		this.publishStock = publishStock;
 	}
-	public String getShelfStatus() {
+	public Integer getShelfStatus() {
 		return shelfStatus;
 	}
-	public void setShelfStatus(String shelfStatus) {
+	public void setShelfStatus(Integer shelfStatus) {
 		this.shelfStatus = shelfStatus;
 	}
 	public Long getItemId() {

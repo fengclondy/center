@@ -3,6 +3,11 @@ package cn.htd.goodscenter.dto.vms;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 我的商品 - 批量申请商品
+ * @author chenkang
+ * @date 2017-12-11
+ */
 public class BatchAddItemOutDTO implements Serializable {
     // 总数
     private int totalCount;

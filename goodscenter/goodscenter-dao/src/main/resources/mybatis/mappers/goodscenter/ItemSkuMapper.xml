@@ -1263,5 +1263,120 @@
 		item_sku_picture t 
 		where t.item_id=#{itemId} AND picture_status = 1  and delete_flag=0
 	</select>
-  
+
+	<select id="queryVmsItemSkuPublishInfoList" resultType="cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoOutDTO">
+		SELECT
+			t.item_id AS itemId,
+			t.item_name AS itemName,
+			sku.sku_id AS skuId,
+			sku.sku_code AS skuCode,
+			cat.cid AS categoryId,
+			cat.c_name AS categoryName,
+			brand.brand_id AS brandId,
+			brand.brand_name AS brandName,
+			publish.display_quantity AS publishStock,
+			CASE WHEN publish.is_visable IS NULL THEN 2
+			WHEN publish.is_visable = 0 THEN 0
+			WHEN publish.is_visable = 1 THEN 1 END AS shelfStatus,
+			spu.spu_code AS spuCode,
+			t.item_code AS itemCode,
+			t.created as createTime
+		FROM
+			item_sku sku
+		JOIN item t ON sku.item_id = t.item_id
+		AND t.item_status != 6
+		JOIN item_category cat ON t.cid = cat.cid
+		JOIN item_brand brand ON t.brand = brand.brand_id
+		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id
+		AND (
+			publish.is_box_flag = #{param.isBoxFlag}
+			OR publish.is_box_flag IS NULL
+		)
+		LEFT JOIN item_spu spu ON spu.spu_id = t.item_spu_id
+		WHERE
+			1 = 1
+		AND t.item_status IN (1, 4, 5)
+		AND t.seller_id = #{param.sellerId}
+		<if test="param.productCode !=null and param.productCode != '' ">
+			AND t.item_code = #{param.productCode}
+		</if>
+		<if test="param.productName !=null and param.productName != '' ">
+			AND t.item_name  like concat('%',#{param.productName},'%')
+		</if>
+		<if test="param.shelfStatus != null">
+			<if test="param.shelfStatus == 2"> <!-- 未上架过-->
+				AND publish.is_visable IS NULL
+			</if>
+			<if test="param.shelfStatus == 1"> <!-- 上架-->
+				AND t.item_status = 5 AND publish.is_visable = 1
+			</if>
+			<if test="param.shelfStatus == 0"> <!-- 下架-->
+				AND publish.is_visable = 0
+			</if>
+		</if>
+		<if test="param.thirdCategoryIdList != null">
+			and t.cid IN
+			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="param.brandId != null">
+			and t.brand = #{param.brandId}
+		</if>
+		ORDER BY
+			<if test="page != null and page.sort != null">
+				publish.display_quantity #{page.order},
+			</if>
+			sku.created DESC
+			<if test="page != null">
+				limit #{page.pageOffset} , #{page.rows}
+			</if>
+	</select>
+
+	<select id="queryVmsItemSkuPublishInfoListCount" resultType="Long">
+		SELECT
+			count(1)
+		FROM
+		item_sku sku
+		JOIN item t ON sku.item_id = t.item_id
+		AND t.item_status != 6
+		JOIN item_category cat ON t.cid = cat.cid
+		JOIN item_brand brand ON t.brand = brand.brand_id
+		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id
+		AND (
+		publish.is_box_flag = #{param.isBoxFlag}
+		OR publish.is_box_flag IS NULL
+		)
+		LEFT JOIN item_spu spu ON spu.spu_id = t.item_spu_id
+		WHERE
+		1 = 1
+		AND t.item_status IN (1, 4, 5)
+		AND t.seller_id = #{param.sellerId}
+		<if test="param.productCode !=null and param.productCode != '' ">
+			AND t.item_code = #{param.productCode}
+		</if>
+		<if test="param.productName !=null and param.productName != '' ">
+			AND t.item_name  like concat('%',#{param.productName},'%')
+		</if>
+		<if test="param.shelfStatus != null">
+			<if test="param.shelfStatus == 2"> <!-- 未上架过-->
+				AND publish.is_visable IS NULL
+			</if>
+			<if test="param.shelfStatus == 1"> <!-- 上架-->
+				AND t.item_status = 5 AND publish.is_visable = 1
+			</if>
+			<if test="param.shelfStatus == 0"> <!-- 下架-->
+				AND publish.is_visable = 0
+			</if>
+		</if>
+		<if test="param.thirdCategoryIdList != null">
+			and t.cid IN
+			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="param.brandId != null">
+			and t.brand = #{param.brandId}
+		</if>
+	</select>
 </mapper>

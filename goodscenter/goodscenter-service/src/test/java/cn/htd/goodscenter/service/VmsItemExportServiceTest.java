@@ -6,6 +6,8 @@ import cn.htd.common.Pager;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
+import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoInDTO;
+import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoOutDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
@@ -45,6 +47,18 @@ public class VmsItemExportServiceTest extends CommonTest {
         venusItemSpuInDTO.setSellerId(517L);
         Pager<String> page = new Pager<>();
         ExecuteResult<DataGrid<VenusItemSpuDataOutDTO>>  executeResult = this.vmsItemExportService.queryItemSpuDataList(venusItemSpuInDTO, page);
+        System.out.println(JSON.toJSONString(executeResult));
+    }
+
+
+    @Test
+    public void testqueryItemSkuPublishInfoList() {
+        QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO = new QueryVmsItemPublishInfoInDTO();
+        queryVmsItemPublishInfoInDTO.setIsBoxFlag(0);
+        queryVmsItemPublishInfoInDTO.setSellerId(517L);
+        queryVmsItemPublishInfoInDTO.setShelfStatus(1);
+        Pager<String> page = new Pager<>();
+        ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>>  executeResult = this.vmsItemExportService.queryItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, page);
         System.out.println(JSON.toJSONString(executeResult));
     }
 }

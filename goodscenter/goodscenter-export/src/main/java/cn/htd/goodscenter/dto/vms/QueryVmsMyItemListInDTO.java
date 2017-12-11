@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * 我的商品 - 列表查询入参DTO
+ * @author chenkang
+ * @date 2017-12-11
  */
 public class QueryVmsMyItemListInDTO extends AbstractPagerDTO implements Serializable {
     // 大BID

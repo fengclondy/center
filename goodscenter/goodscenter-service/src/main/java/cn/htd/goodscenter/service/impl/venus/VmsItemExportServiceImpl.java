@@ -22,7 +22,10 @@ import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
+import cn.htd.pricecenter.domain.ItemSkuBasePrice;
+import cn.htd.pricecenter.service.ItemSkuPriceService;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -63,6 +66,12 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Resource
     private ItemDraftMapper itemDraftMapper;
+
+    @Resource
+    private ItemSkuDAO itemSkuDAO;
+
+    @Resource
+    private ItemSkuPriceService itemSkuPriceService;
 
     @Resource
     private DictionaryUtils dictionaryUtils;
@@ -340,9 +349,51 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return this.venusItemExportService.addItem(venusItemDTO);
     }
 
+    /** 包厢商品 大厅商品 **/
+    /**
+     * 查询包厢商品列表
+     * 查询大厅商品列表
+     *
+     * sort字段：display_quantity ；
+     * order ：asc (从小到大) / desc （从大到小）
+     * @param queryVmsItemPublishInfoInDTO
+     * @param page 排序字段传在page中
+     * @return
+     */
     @Override
     public ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page) {
-        return null;
+        ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> result = new ExecuteResult<>();
+        DataGrid<QueryVmsItemPublishInfoOutDTO> dataGrid = new DataGrid<>();
+        if(queryVmsItemPublishInfoInDTO == null || page == null){
+            result.setCode(VenusErrorCodes.E1040009.name());
+            result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040009.getErrorMsg()));
+            return result;
+        }
+        try{
+            List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList = new ArrayList<>();
+            // 封装三级类目集合
+            Long[] thirdCategoryIds  = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsItemPublishInfoInDTO.getFirstCid(),
+                    queryVmsItemPublishInfoInDTO.getSecondCid(), queryVmsItemPublishInfoInDTO.getThirdCid());
+            if (thirdCategoryIds != null) {
+                queryVmsItemPublishInfoInDTO.setThirdCategoryIdList(Arrays.asList(thirdCategoryIds));
+            }
+            Long totalCount = itemSkuDAO.queryVmsItemSkuPublishInfoListCount(queryVmsItemPublishInfoInDTO);
+            if(totalCount > 0){
+                queryVmsItemPublishInfoOutDTOList = itemSkuDAO.queryVmsItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, page);
+                //获取价格
+                makeUpPriceInfo4ItemSku(queryVmsItemPublishInfoOutDTOList);
+            }
+            dataGrid.setTotal(totalCount);
+            dataGrid.setRows(queryVmsItemPublishInfoOutDTOList);
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
+            result.setResult(dataGrid);
+        }catch(Exception e){
+            logger.error("包厢/大厅商品列表查询出错, 错误信息:", e);
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setResultMessage(ErrorCodes.E00001.getErrorMsg());
+            result.addErrorMessage(e.getMessage());
+        }
+        return result;
     }
 
     /**
@@ -516,5 +567,52 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         batchAddItemErrorListOutDTO.setModelType(batchAddItemInDTO.getModelType());
         batchAddItemErrorListOutDTO.setTaxRate(batchAddItemInDTO.getTaxRate());
         batchAddItemErrorListOutDTO.setUnit(batchAddItemInDTO.getUnit());
+    }
+
+    private void makeUpPriceInfo4ItemSku(List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList) {
+        if(CollectionUtils.isEmpty(queryVmsItemPublishInfoOutDTOList)){
+            return;
+        }
+        List<Long> skuIdList=Lists.newArrayList();
+        for(QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList){
+            if(venusItemSkuPublishInfoOutDTO.getSkuId() != null){
+                skuIdList.add(venusItemSkuPublishInfoOutDTO.getSkuId());
+            }
+        }
+        ExecuteResult<List<ItemSkuBasePrice>> basePriceList = itemSkuPriceService.batchQueryItemSkuBasePrice(skuIdList);
+        if(basePriceList == null || CollectionUtils.isEmpty(basePriceList.getResult())){
+            return;
+        }
+        for(QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
+            for(ItemSkuBasePrice price : basePriceList.getResult()) {
+                if(price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())){
+                    //分销限价
+                    price.getSaleLimitedPrice();
+                    if(price.getSaleLimitedPrice() != null){
+                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(price.getSaleLimitedPrice()));
+                    }
+                    //包厢价格
+                    if(null != price.getBoxSalePrice() && "1".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())){
+                        venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getBoxSalePrice()));
+                    }
+                    //大厅价格
+                    if(null != price.getAreaSalePrice()&& "2".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())){
+                        venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getAreaSalePrice()));
+                    }
+                    //零售价
+                    if(null != price.getRetailPrice()){
+                        venusItemSkuPublishInfoOutDTO.setRetailPrice(String.valueOf(price.getRetailPrice()));
+                    }
+                    break;
+                }
+            }
+            // 设置类目名称
+            // 补充三级类目信息
+            ExecuteResult<Map<String, Object>> categoryResult = itemCategoryService.queryItemOneTwoThreeCategoryName(venusItemSkuPublishInfoOutDTO.getCategoryId(), ">");
+            if (categoryResult != null && MapUtils.isNotEmpty(categoryResult.getResult())) {
+                String catName = (String) categoryResult.getResult().get("categoryName");
+                venusItemSkuPublishInfoOutDTO.setCategoryName(catName);
+            }
+        }
     }
 }

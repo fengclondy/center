@@ -2236,23 +2236,13 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			   querySpecialItemInDTO.setCanSellNum("0"); 
 		   }
 		   sb.append("&canSellNum="+querySpecialItemInDTO.getCanSellNum());
-//		   if(querySpecialItemInDTO.getDistributionNum()==null){
-//			   querySpecialItemInDTO.setDistributionNum("0"); 
-//		   }
-//		   sb.append("&distributionNum="+querySpecialItemInDTO.getDistributionNum());
-//		   if(querySpecialItemInDTO.getSurplusNum()==null){
-//			   querySpecialItemInDTO.setSurplusNum("0");
-//		   }
-//		   sb.append("&surplusNum="+querySpecialItemInDTO.getSurplusNum());
 		   //productName
 		   if(StringUtils.isNotEmpty(querySpecialItemInDTO.getProductName())){
-			   if(StringUtils.isNumeric(querySpecialItemInDTO.getProductName())){
-				   sb.append("&productCode="+querySpecialItemInDTO.getProductName());
-			   }else{
-				   sb.append("&productName="+querySpecialItemInDTO.getProductName());
-			   }
+			   sb.append("&productName="+querySpecialItemInDTO.getProductName());
 		   }
-		   
+		   if(StringUtils.isNotEmpty(querySpecialItemInDTO.getProductCode())) {
+			   sb.append("&productCode=" + querySpecialItemInDTO.getProductCode());
+		   }
 		   if(StringUtils.isNotEmpty(querySpecialItemInDTO.getCategroyName())){
 			   sb.append("&categroyName="+querySpecialItemInDTO.getCategroyName());
 		   }

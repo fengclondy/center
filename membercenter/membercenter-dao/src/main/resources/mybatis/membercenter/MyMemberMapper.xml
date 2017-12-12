@@ -38,44 +38,44 @@
   
   <sql id="VMS_Search_List">
     <if test="memberSearch.companyName != null and memberSearch.companyName !=''" >
-        and c.company_name like CONCAT('%',#{memberSearch.companyName},'%')
+       <![CDATA[ and c.company_name like CONCAT('%',#{memberSearch.companyName},'%') ]]>
 	</if>
 	 <if test="memberSearch.artificialPersonName != null and memberSearch.artificialPersonName !=''" >
-        and c.artificial_person_name like CONCAT('%',#{memberSearch.artificialPersonName},'%')
+       <![CDATA[ and c.artificial_person_name like CONCAT('%',#{memberSearch.artificialPersonName},'%') ]]>
 	</if>
 	<if test="memberSearch.memberCode != null and memberSearch.memberCode !=''" >
-        and m.member_code like CONCAT('%',#{memberSearch.memberCode},'%')
+       <![CDATA[ and m.member_code like CONCAT('%',#{memberSearch.memberCode},'%') ]]>
 	</if>
 	<if test="memberSearch.curBelongManagerId != null and memberSearch.curBelongManagerId !=''" >
-        and m.cur_belong_manager_id=#{memberSearch.curBelongManagerId}
+       <![CDATA[  and m.cur_belong_manager_id=#{memberSearch.curBelongManagerId} ]]>
 	</if>
 	<if test="memberSearch.industryCategory != null and memberSearch.industryCategory != ''">
-		and m.is_diff_industry=#{memberSearch.industryCategory} 
+	 <![CDATA[ 	and m.is_diff_industry=#{memberSearch.industryCategory} ]]>
 	</if>
 	<if test="memberSearch.belong!=null and memberSearch.belong !='' ">
 	   <choose>
 		   <when test='memberSearch.belong=="1"'>
-			  and m.cur_belong_seller_id =#{sellerId} and r.status = '3'
+			   <![CDATA[ and m.cur_belong_seller_id =#{sellerId} and r.status = '3' ]]>
 		   </when>
 		   <otherwise>
-			 and ((m.cur_belong_seller_id != #{sellerId} and r.status != '9') or (m.cur_belong_seller_id = #{sellerId} and r.status != '3'))
+			   <![CDATA[ and ((m.cur_belong_seller_id != #{sellerId} and r.status != '9') or (m.cur_belong_seller_id = #{sellerId} and r.status != '3')) ]]>
 		   </otherwise>
 	   </choose>
 	</if>
 	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
-		and p.group_id=#{memberSearch.groupId} 
+		<![CDATA[ and p.group_id=#{memberSearch.groupId} ]]>
 	</if>
 	<if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
-		and d.buyer_grade = #{memberSearch.buyerGrade} 
+		<![CDATA[ and d.buyer_grade = #{memberSearch.buyerGrade} ]]>
 	</if>
 	 <if test="memberSearch.startTime != null and memberSearch.endTime != null ">
-		and m.regist_time between #{memberSearch.startTime} and #{memberSearch.endTime}
+		<![CDATA[ and m.regist_time between #{memberSearch.startTime} and #{memberSearch.endTime} ]]>
 	</if>
 	 <if test="memberSearch.startTime == null and memberSearch.endTime != null ">
 		 <![CDATA[ and m.regist_time <= #{memberSearch.endTime} ]]>
 	</if>
 	 <if test="memberSearch.startTime != null and memberSearch.endTime == null ">
-		and m.regist_time between #{memberSearch.startTime} and now()
+		<![CDATA[ and m.regist_time between #{memberSearch.startTime} and now() ]]>
 	</if>
 	<choose>
 	  	<when test="memberSearch.locationProvince !=null and memberSearch.locationProvince !=''">
@@ -83,21 +83,21 @@
 		      	<when test="memberSearch.locationCity !=null and memberSearch.locationCity !=''">
 		      	    <choose>
 		      	        <when test="memberSearch.locationCounty !=null and memberSearch.locationCounty !=''">
-		      	           and c.location_province=#{memberSearch.locationProvince}  and c.location_city=#{memberSearch.locationCity} and c.location_county= #{memberSearch.locationCounty}
+		      	           <![CDATA[ and c.location_province=#{memberSearch.locationProvince}  and c.location_city=#{memberSearch.locationCity} and c.location_county= #{memberSearch.locationCounty} ]]>
 		      	       </when>
 		      	        <otherwise>
-		      	          and c.location_province=#{memberSearch.locationProvince}  and c.location_city=#{memberSearch.locationCity}
+		      	           <![CDATA[ and c.location_province=#{memberSearch.locationProvince}  and c.location_city=#{memberSearch.locationCity} ]]>
 		      	        </otherwise>
 		            </choose>
 		      	</when>
 		      	<otherwise>
-		      	         and c.location_province=#{memberSearch.locationProvince}
+		      	        <![CDATA[ and c.location_province=#{memberSearch.locationProvince} ]]>
 		      	 </otherwise>
 		   </choose>
 		</when>
 	</choose>
 	<if test="memberSearch.status!=null and memberSearch.status !=''">
-		and m.status = #{memberSearch.status}
+		<![CDATA[ and m.status = #{memberSearch.status} ]]>
 	</if>
   </sql>
 

@@ -116,6 +116,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 		} catch (Exception e) {
 			logger.error("MyMemberServiceImpl----->selectByTypeList=" + e);
 			rs.setResultMessage("error");
+			rs.addErrorMessage("查询我的会员、担保会员出错");
 		}
 
 		return rs;

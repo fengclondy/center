@@ -86,15 +86,8 @@ public class MyMemberInfoServiceImpl implements MyMemberInfoService {
 					url = myMemberDTO.getBuyerBusinessLicensePicSrc();
 					myMemberDTO.setQualificationDocuments(url);
 				}
-				// if (null != myMemberDTO.getBelongManagerId() &&
-				// !"0".equals(myMemberDTO.getBelongManagerId())) {
-				// EmployeeDTO employeeDTO =
-				// employeeService.getEmployeeInfo(myMemberDTO.getBelongManagerId());
-				// if (null != employeeDTO) {
 				myMemberDTO.setBelongManagerName(memberBaseInfoService
 						.getManagerName(myMemberDTO.getSellerId().toString(), myMemberDTO.getBelongManagerId()));
-				// }
-				// }
 				// 拼接省市区镇详细地址
 				String locationAddr = "";
 				if (!StringUtils.isEmpty(myMemberDTO.getLocationTown()) && !myMemberDTO.getLocationTown().equals("0")) {
@@ -104,19 +97,18 @@ public class MyMemberInfoServiceImpl implements MyMemberInfoService {
 					locationAddr = memberBaseService.getAddressBaseByCode(myMemberDTO.getLocationCounty())
 							+ myMemberDTO.getLocationDetail();
 				}
-
 				myMemberDTO.setLocationAddr(locationAddr);
-
 				rs.setResult(myMemberDTO);
 				rs.setResultMessage("success");
 			} else {
-				rs.setResultMessage("请选择要查询的数据");
+				rs.addErrorMessage("请选择要查询的数据");
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("MyMemberInfoServiceImpl----->selectMyMemberInfo=" + e);
 			rs.setResultMessage("error");
+			rs.addErrorMessage("查询会员详情出错");
 		}
 		return rs;
 	}

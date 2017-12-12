@@ -22,7 +22,6 @@ public class MyMemberSearchDTO implements Serializable {
 	private String hasGuaranteeLicense;// 是否有担保证明
 	private String hasBusinessLicense;// 是否有营业执照
 
-
 	/**
 	 * 公司名称
 	 */
@@ -56,6 +55,11 @@ public class MyMemberSearchDTO implements Serializable {
 	 * VMS系统标志 - 用于区分新系统和老系统 1：新系统；其他：老系统
 	 */
 	private String sysFlag;
+	
+	/**
+	 * 会员类型 1：非会员；2：会员；3：担保会员；
+	 */
+	private String memberType;
 
 	public String getStringName() {
 		return stringName;
@@ -232,6 +236,14 @@ public class MyMemberSearchDTO implements Serializable {
 
 	public void setSysFlag(String sysFlag) {
 		this.sysFlag = sysFlag;
+	}
+
+	public String getMemberType() {
+		return memberType;
+	}
+
+	public void setMemberType(String memberType) {
+		this.memberType = memberType;
 	}
 	
 	

@@ -129,22 +129,13 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		try {
 			if (belongRelationshipDto != null) {
-				// applyRelationshipDao.applyNoBelongRelationship(belongRelationshipDto);
-				Long num = applyRelationshipDao.insertVerifyInfo(belongRelationshipDto,
-						GlobalConstant.REMOVE_RELATION_VERIFY);
+				applyRelationshipDao.insertVerifyInfo(belongRelationshipDto,GlobalConstant.REMOVE_RELATION_VERIFY);
 				saveRemoveRelationStatus(belongRelationshipDto);
-				if (num != null) {
-					/// applyRelationshipDao.insertVerifyDetailInfo(belongRelationshipDto,
-					/// "25");
-				}
-				rs.setResultMessage("success");
 				rs.setResultMessage("保存解除会员归属关系为待审核信息成功！！");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("ApplyRelationshipServiceImpl----->ApplyNoBelongRelationship=" + "申请解除会员归属关系失败！！");
-			rs.setResultMessage("error");
-			throw new RuntimeException("申请解除会员归属关系失败！！");
+			rs.addErrorMessage("申请解除会员归属关系失败！！");
 		}
 		return rs;
 	}

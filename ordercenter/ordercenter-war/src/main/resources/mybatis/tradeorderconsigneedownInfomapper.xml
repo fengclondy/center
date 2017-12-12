@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.zeus.tc.biz.dao.TradeOrderConsigneeDownInfoDAO" >
+  <resultMap id="BaseResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderConsigneeDownInfoDMO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="erp_lock_balance_code" property="erpLockBalanceCode" jdbcType="VARCHAR" />
+    <result column="consignee_time" property="consigneeTime" jdbcType="TIMESTAMP" />
+    <result column="down_status" property="downStatus" jdbcType="TINYINT" />
+    <result column="down_times" property="downTimes" jdbcType="BIGINT" />
+    <result column="down_time" property="downTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_no, erp_lock_balance_code, consignee_time, down_status, down_times, down_time, 
+    create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  
+  <select id="selectTradeOrderConsigneeDownInfoList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    consignee_time,
+    erp_lock_balance_code
+    from trade_order_consignee_down_info
+    where 1=1
+	AND mod(id,#{taskQueueNum})in
+	<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
+         #{taskId} 
+    </foreach> 
+    AND down_status != 2
+    <![CDATA[ and create_time >= #{startTime} ]]>
+    limit #{startLine},#{endLine}
+  </select>
+  
+  <insert id="insertTradeOrderConsigneeDownInfo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderConsigneeDownInfoDMO" >
+    insert into trade_order_consignee_down_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="erpLockBalanceCode != null" >
+        erp_lock_balance_code,
+      </if>
+      <if test="consigneeTime != null" >
+        consignee_time,
+      </if>
+      <if test="downStatus != null" >
+        down_status,
+      </if>
+      <if test="downTimes != null" >
+        down_times,
+      </if>
+      <if test="downTime != null" >
+        down_time,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="erpLockBalanceCode != null" >
+        #{erpLockBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="consigneeTime != null" >
+        #{consigneeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downStatus != null" >
+        #{downStatus,jdbcType=TINYINT},
+      </if>
+      <if test="downTimes != null" >
+        #{downTimes,jdbcType=BIGINT},
+      </if>
+      <if test="downTime != null" >
+        #{downTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateTradeOrderConsigneeDownInfo" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderConsigneeDownInfoDMO" >
+    update trade_order_consignee_down_info
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="erpLockBalanceCode != null" >
+        erp_lock_balance_code = #{erpLockBalanceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="consigneeTime != null" >
+        consignee_time = #{consigneeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downStatus != null" >
+        down_status = #{downStatus,jdbcType=TINYINT},
+      </if>
+      <if test="downTimes != null" >
+        down_times = #{downTimes,jdbcType=BIGINT},
+      </if>
+      <if test="downTime != null" >
+        down_time = #{downTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where erp_lock_balance_code = #{erpLockBalanceCode,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

@@ -450,10 +450,7 @@ public class TimelimitedPurchaseServiceImpl implements
 				result.addErrorMessage(resultMap.get("ERROR2"));
 				return result;
 			}
-			int index = 0;
 			for (String promotionId : promotionIdList) {
-				index  ++;
-				System.out.println(index + "===" + promotionId);
 				timelimitedJSONStr = marketRedisDB.getHash(RedisConst.REDIS_TIMELIMITED, promotionId);
 				timelimitedInfoDTO = JSON.parseObject(timelimitedJSONStr, TimelimitedInfoDTO.class);
 				if(null == timelimitedInfoDTO){

@@ -59,6 +59,10 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 	 * 读取配置文件是否发送短信标识
 	 */
 	private static final String IS_SEND_SMS_FLAG = "send.sms.flag";
+    /**
+     * 读取配置文件预警上限数
+     */
+    private static final String NOTICE_SMS_BALANCE = "notice_sms_balance";
 
 	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
@@ -193,7 +197,26 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		try {
 			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_SMS_FLAG))) {
 				if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
-					result = manDaoSmsClient.sendSms(config, phoneNum, content);
+					//xmz for 2017-12-12 start
+					String balanceResult =  queryBalanceByChannel(config);
+					if(StringUtils.isNotEmpty(balanceResult)){
+						int balance = Integer.parseInt(balanceResult);
+						int balanceLimit = Integer.parseInt(SysProperties.getProperty(NOTICE_SMS_BALANCE));
+						if(balance <= balanceLimit){
+							config.setUsedFlag(0);
+							baseSmsConfigDAO.update(config);
+							BaseSmsConfigDTO configWMSelect = new BaseSmsConfigDTO();
+							configWMSelect.setChannelCode(SmsChannelTypeEnum.MENGWANG.getCode());
+							List<BaseSmsConfigDTO> configMWList = baseSmsConfigDAO.queryByTypeCode(configWMSelect);
+							BaseSmsConfigDTO configMW = configMWList.get(0);
+							configMW.setUsedFlag(1);
+							baseSmsConfigDAO.update(configMW);
+							result = mengWangSmsClient.sendSms(configMW, phoneNum, content);
+						}else{
+							result = manDaoSmsClient.sendSms(config, phoneNum, content);
+						}
+					}
+					//xmz for 2017-12-12 end
 				} else if (SmsChannelTypeEnum.TIANXUNTONG.getCode().equals(config.getChannelCode())) {
 					result = tianXunTongSmsClient.sendSms(config, phoneNum, content);
 				} else if (SmsChannelTypeEnum.MENGWANG.getCode().equals(config.getChannelCode())) {

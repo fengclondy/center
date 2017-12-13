@@ -28,9 +28,8 @@ public class ShopBannerExportServiceTest {
 
     @Test
     public void testQueryBySellerCode(){ 
-    	ShopBannerDTO banner=null;
-    	ShopBannerDTO shop = new ShopBannerDTO();
-        shop.setShopId("htd100000");
+    	ShopBannerDTO banner = new ShopBannerDTO();
+    	banner.setShopId("532");
         ExecuteResult<List<ShopBannerDTO>> result =shopBannerService.queryVMSBannerBySellerCode(banner);
         System.out.println(result.toString());
     }

@@ -2207,9 +2207,19 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 							}
 							
 						}
-						
+
 						mapData.put("storeList", querySpecialItemList);
 						map.put("data",mapData);
+						List<QuerySpecialItemOutDTO> newQuerySpecialItemList = new ArrayList<>();
+						if (venusStockItemInDTO.isNewVms() && StringUtils.isNotEmpty(venusStockItemInDTO.getItemCode())) {
+							for (QuerySpecialItemOutDTO querySpecialItemOutDTO : querySpecialItemList) {
+								if (querySpecialItemOutDTO.getProductCode().equals(venusStockItemInDTO.getItemCode())) {
+									newQuerySpecialItemList.add(querySpecialItemOutDTO);
+								}
+							}
+							mapData.put("storeList", newQuerySpecialItemList);
+							map.put("data",mapData);
+						}
 					}
 					
 				}

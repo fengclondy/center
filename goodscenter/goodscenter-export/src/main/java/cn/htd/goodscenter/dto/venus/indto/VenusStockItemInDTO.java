@@ -106,5 +106,24 @@ public class VenusStockItemInDTO implements Serializable{
 	public void setSupplierId(Long supplierId) {
 		this.supplierId = supplierId;
 	}
-	
+
+	private String itemCode;
+
+	private boolean isNewVms;
+
+	public String getItemCode() {
+		return itemCode;
+	}
+
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
+	}
+
+	public boolean isNewVms() {
+		return isNewVms;
+	}
+
+	public void setNewVms(boolean newVms) {
+		isNewVms = newVms;
+	}
 }

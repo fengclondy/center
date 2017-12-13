@@ -5,6 +5,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
+import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
 import cn.htd.goodscenter.dto.vms.*;
@@ -66,6 +67,21 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<String> addItem(VenusItemInDTO venusItemDTO);
+
+    /**
+     * 我的商品 - 修改商品
+     * @param venusItemDTO
+     * @return
+     */
+    ExecuteResult<String> updateItem(VenusItemInDTO venusItemDTO);
+
+    /**
+     * 我的商品 - 库存商品
+     * @param venusStockItemInDTO
+     * @return
+     */
+    ExecuteResult<String> queryErpStockItemList(VenusStockItemInDTO venusStockItemInDTO);
+
 
 
     /** 包厢商品 大厅商品 **/

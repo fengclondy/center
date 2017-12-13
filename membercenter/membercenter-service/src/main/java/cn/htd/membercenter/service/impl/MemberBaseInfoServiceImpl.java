@@ -3256,4 +3256,27 @@ public class MemberBaseInfoServiceImpl implements MemberBaseInfoService {
 			return result;
 		}
 
+		/**
+		 * 根据memberId查询会员基本信息
+		 * @author li.jun
+		 * @time 2017-12-12
+		 */
+		@Override
+		public ExecuteResult<MemberBaseInfoDTO> queryMemberInfoByMemberId(Long memberId) {
+			ExecuteResult<MemberBaseInfoDTO> result = new ExecuteResult<MemberBaseInfoDTO>();
+			try {
+			  MemberBaseInfoDTO memberBaseInfoDTO = memberBaseOperationDAO.getMemberbaseBySellerId(memberId,GlobalConstant.IS_SELLER);// 查询会员基本信息
+			  if(null !=memberBaseInfoDTO){
+				  result.setResult(memberBaseInfoDTO);
+			  }else{
+				  result.addErrorMessage("没有查询到该会员相关的信息");
+			  }
+			}catch (Exception e) {
+				result.addErrorMessage("查询会员基本信息失败");
+				logger.error("查询会员基本信息失败" + e);
+			}
+			return result;
+		}
+		
+
 }

@@ -418,7 +418,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     public ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page) {
         ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> result = new ExecuteResult<>();
         DataGrid<QueryVmsItemPublishInfoOutDTO> dataGrid = new DataGrid<>();
-        if(queryVmsItemPublishInfoInDTO == null || page == null){
+        if(queryVmsItemPublishInfoInDTO == null){
             result.setCode(VenusErrorCodes.E1040009.name());
             result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040009.getErrorMsg()));
             return result;

@@ -244,5 +244,14 @@
       </if>
 	</select>
 	
+	<select id="queryBelongInfo" resultType="cn.htd.membercenter.dto.BelongRelationshipDTO">
+			select 
+			b.belong_id belongId,
+			b.buyer_id memberId,
+			b.seller_id sellerId,
+			b.buyer_feature buyerFeature
+		from belong_relationship b
+		where b.buyer_id = #{memberId} and b.status = '3'
+	</select>
 	
 </mapper>

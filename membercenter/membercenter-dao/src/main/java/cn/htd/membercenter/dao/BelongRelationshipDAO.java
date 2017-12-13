@@ -92,5 +92,11 @@ public interface BelongRelationshipDAO {
 
 	public List<SellerBelongRelationDTO> queryBelongRelation4Task(@Param("condition")MemberDownCondition condition, @Param("pager")Pager pager);
 
-	
+	/**
+	 * 根据会员ID修改会员归属关系表信息
+	 * 
+	 * @param belongRelationshipDto
+	 * @return
+	 */
+	public BelongRelationshipDTO queryBelongInfo(@Param("memberId") Long memberId);
 }

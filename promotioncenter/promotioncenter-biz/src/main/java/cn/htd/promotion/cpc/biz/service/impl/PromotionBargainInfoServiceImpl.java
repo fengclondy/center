@@ -336,10 +336,10 @@ public class PromotionBargainInfoServiceImpl implements
 				historyDTO.setPromotionId(promotionExtendInfoDTO
 						.getPromotionId());
 				historyDTO.setPromotionStatus(promotionExtendInfoDTO
-						.getShowStatus());
+						.getStatus());
 				historyDTO.setPromotionStatusText(dictionary.getNameByValue(
-						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-						promotionExtendInfoDTO.getShowStatus()));
+						DictionaryConst.TYPE_PROMOTION_STATUS,
+						promotionExtendInfoDTO.getStatus()));
 				historyDTO.setCreateId(promotionExtendInfoDTO.getCreateId());
 				historyDTO
 						.setCreateName(promotionExtendInfoDTO.getCreateName());
@@ -476,6 +476,10 @@ public class PromotionBargainInfoServiceImpl implements
 		List<PromotionBargainInfoResDTO> datagrid = null;
 		try {
 			datagrid = promotionBargainRedisHandle.getRedisBargainInfoList(dto);
+			if(null != datagrid && !datagrid.isEmpty()){
+				PromotionInfoDTO promotionInfoDTO = promotionInfoDAO.queryById(datagrid.get(0).getPromotionId());
+				datagrid.get(0).setHasUpFlag(promotionInfoDTO.getHasUpFlag());
+			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException pbe) {
 			result.setCode(pbe.getCode());
@@ -498,9 +502,6 @@ public class PromotionBargainInfoServiceImpl implements
 				JSON.toJSONString(promotionExtendInfoDTO));
 		ExecuteResult<PromotionExtendInfoDTO> result = new ExecuteResult<PromotionExtendInfoDTO>();
 		String promotionId = promotionExtendInfoDTO.getPromotionId();
-		String status = dictionary.getValueByCode(
-				DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
-				DictionaryConst.OPT_PROMOTION_STATUS_END);
 		try {
 			if (null != promotionExtendInfoDTO.getPromotionAccumulatyList()
 					&& !promotionExtendInfoDTO.getPromotionAccumulatyList()
@@ -572,7 +573,8 @@ public class PromotionBargainInfoServiceImpl implements
 							ResultCodeEnum.PROMOTION_NOT_EXIST.getCode(),
 							"砍价活动不存在");
 				}
-				if (status.equals(promotionInfoDTO.getShowStatus())) {
+				// 不能修改已结束的活动
+				if ((new Date()).after(promotionInfoDTO.getInvalidTime())) {
 					throw new PromotionCenterBusinessException(
 							ResultCodeEnum.PROMOTION_STATUS_NOT_CORRECT
 									.getCode(),
@@ -604,6 +606,7 @@ public class PromotionBargainInfoServiceImpl implements
 				}
 				promotionExtendInfoDTO.setShowStatus(promotionInfoDTO
 						.getShowStatus());
+				promotionExtendInfoDTO.setStatus(promotionInfoDTO.getStatus());
 				PromotionExtendInfoDTO updateResult = baseService
 						.updatePromotionInfo(promotionExtendInfoDTO);
 				for (int i = 0; i < promotionExtendInfoDTO
@@ -625,13 +628,14 @@ public class PromotionBargainInfoServiceImpl implements
 					}
 				}
 
-				PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
-				historyDTO.setPromotionId(promotionExtendInfoDTO
-						.getPromotionId());
-				historyDTO.setPromotionStatus(promotionExtendInfoDTO
-						.getShowStatus());
-				historyDTO.setPromotionStatusText("修改砍价活动信息");
-				promotionStatusHistoryDAO.update(historyDTO);
+				// 更新处理不用修改状态日志
+//				PromotionStatusHistoryDTO historyDTO = new PromotionStatusHistoryDTO();
+//				historyDTO.setPromotionId(promotionExtendInfoDTO
+//						.getPromotionId());
+//				historyDTO.setPromotionStatus(promotionExtendInfoDTO
+//						.getShowStatus());
+//				historyDTO.setPromotionStatusText("修改砍价活动信息");
+//				promotionStatusHistoryDAO.update(historyDTO);
 				List<PromotionBargainInfoResDTO> promotionBargainInfoList = new ArrayList<PromotionBargainInfoResDTO>();
 				for (PromotionAccumulatyDTO accumulatyDTO : updateResult
 						.getPromotionAccumulatyList()) {
@@ -865,10 +869,6 @@ public class PromotionBargainInfoServiceImpl implements
 					LaunchTimeDTO.setPromotionId(dmo.getPromotionId());
 					List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO
 							.queryLaunchBargainInfoList(LaunchTimeDTO, null);
-					LOGGER.info("LaunchTimeDTO====",
-							JSON.toJSONString(LaunchTimeDTO));
-					LOGGER.info("LaunchTimes=====", launchList == null ? 0
-							: launchList.size());
 					resDTO.setLaunchTimes(launchList == null ? 0 : launchList
 							.size());
 					// 已砍完数量

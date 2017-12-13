@@ -584,4 +584,11 @@
     </if>
   </select>
   
+  <select id="queryBargainHasUpFlag" resultType="java.lang.Integer">
+  	SELECT has_up_flag
+  	FROM promotion_info
+  	WHERE promotion_id = #{promotionId,jdbcType=VARCHAR}
+  	limit 0,1
+  </select>
+  
 </mapper>

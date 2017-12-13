@@ -477,11 +477,8 @@ public class PromotionBargainInfoServiceImpl implements
 		try {
 			datagrid = promotionBargainRedisHandle.getRedisBargainInfoList(dto);
 			if(null != datagrid && !datagrid.isEmpty()){
-				for (PromotionBargainInfoResDTO promotionBargainInfoResDTO : datagrid) {
-					int hasUpFlag = promotionInfoDAO.queryBargainHasUpFlag(promotionBargainInfoResDTO.getPromotionId());
-					promotionBargainInfoResDTO.setHasUpFlag(hasUpFlag);
-					break;
-				}
+				int hasUpFlag = promotionInfoDAO.queryBargainHasUpFlag(datagrid.get(0).getPromotionId());
+				datagrid.get(0).setHasUpFlag(hasUpFlag);
 			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException pbe) {

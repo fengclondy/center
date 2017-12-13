@@ -1,5 +1,7 @@
 package cn.htd.zeus.tc.biz.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO;
@@ -60,4 +62,11 @@ public interface TradeOrderErpDistributionDAO {
 	 * 根据erp分销单号更新分销单表
 	 */
 	int updateTradeOrderErpDistributionByErpSholesalerCode(TradeOrderErpDistributionDMO record);
+	
+	/**
+	 * 根据订单号查询分销单号List
+	 * @param record
+	 * @return
+	 */
+	List<TradeOrderErpDistributionDMO> selectErpLockBalanceCodeByOrderNo(TradeOrderErpDistributionDMO record); 
 }

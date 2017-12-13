@@ -443,5 +443,12 @@
     and brand_id = #{brandId}
     and erp_first_category_code = #{erpFirstCategoryCode}
   </update>
+  
+   <select id="selectErpLockBalanceCodeByOrderNo" resultMap="BaseResultMap" parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO" >
+    select
+    erp_lock_balance_code
+    from trade_order_erp_distribution
+    where order_no = #{orderNo}
+  </select>
 
 </mapper>

@@ -21,7 +21,6 @@
 		</property>
 	</bean>
 	<!-- 公告处理定时任务 -->
-	<!-- 将定时任务转移到tradecenter by张丁 2017-02-04 开始 -->
 	<bean id="orderCompensateERPTask" class="cn.htd.zeus.tc.biz.task.OrderCompensateERPTask" />
 	<bean id="preSalesOrderDownJDCreateOrderTask"
 		class="cn.htd.zeus.tc.biz.task.PreSalesOrderDownERPJDCreateOrderTask" />
@@ -35,8 +34,8 @@
 	<bean id="preSalesOrderExceptionOrderNoticeTask" class="cn.htd.zeus.tc.biz.task.PreSalesOrderExceptionOrderNoticeTask" />
 	<!-- 收付款下行失败告警 -->
 	<bean id="postStrikeaExceptionOrderNoticeTask" class="cn.htd.zeus.tc.biz.task.PostStrikeaExceptionOrderNoticeTask" />
-	<!-- 将定时任务转移到tradecenter by张丁 2017-02-04 结束 -->
-	
+	<!-- 确认收货时间下行到erp -->
+	<bean id="orderConsigneeDownTask" class="cn.htd.zeus.tc.biz.task.OrderConsigneeDownTask" />
 	
 	<bean id="orderManagementAnalysisTask"
 		class="cn.htd.zeus.tc.biz.task.OrderManagementAnalysisTask" />

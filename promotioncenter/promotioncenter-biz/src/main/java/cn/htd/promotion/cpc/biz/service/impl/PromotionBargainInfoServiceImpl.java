@@ -476,6 +476,10 @@ public class PromotionBargainInfoServiceImpl implements
 		List<PromotionBargainInfoResDTO> datagrid = null;
 		try {
 			datagrid = promotionBargainRedisHandle.getRedisBargainInfoList(dto);
+			if(null != datagrid && !datagrid.isEmpty()){
+				PromotionInfoDTO promotionInfoDTO = promotionInfoDAO.queryById(datagrid.get(0).getPromotionId());
+				datagrid.get(0).setHasUpFlag(promotionInfoDTO.getHasUpFlag());
+			}
 			result.setResult(datagrid);
 		} catch (PromotionCenterBusinessException pbe) {
 			result.setCode(pbe.getCode());
@@ -865,10 +869,6 @@ public class PromotionBargainInfoServiceImpl implements
 					LaunchTimeDTO.setPromotionId(dmo.getPromotionId());
 					List<BuyerLaunchBargainInfoDMO> launchList = buyerLaunchBargainInfoDAO
 							.queryLaunchBargainInfoList(LaunchTimeDTO, null);
-					LOGGER.info("LaunchTimeDTO====",
-							JSON.toJSONString(LaunchTimeDTO));
-					LOGGER.info("LaunchTimes=====", launchList == null ? 0
-							: launchList.size());
 					resDTO.setLaunchTimes(launchList == null ? 0 : launchList
 							.size());
 					// 已砍完数量

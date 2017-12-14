@@ -211,7 +211,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::addItem:",e);
-			result.setCode(ErrorCodes.E00001.name());
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setResultMessage(ErrorCodes.E00001.getErrorMsg());
 			result.addErrorMessage(e.getMessage());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -477,13 +477,14 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			//ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemFromDb.getItemId());
 			
 			//ModifyDetailInfoUtil.saveChangedRecordForVenusItem((ItemDTO)Converters.convert(venusItemDTO,ItemDTO.class), dbItem);
-			
+
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::updateItem:",e);
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.addErrorMessage(e.getMessage());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-		
-		result.setCode(ErrorCodes.SUCCESS.name());
 		return result;
 	}
 
@@ -835,7 +836,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			venusItemSkuDetailOutDTO.setSecondCatId(venusOrderItemSkuDetailOutDTO.getSecondCatId());
 			venusItemSkuDetailOutDTO.setSecondCatName(venusOrderItemSkuDetailOutDTO.getSecondCatName());
 			result.setResult(venusItemSkuDetailOutDTO);
-			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::queryItemSkuDetail:",e);
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E00001.getErrorMsg()));
@@ -2226,11 +2227,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				}
 				
 			}
-			result.setCode(ErrorCodes.SUCCESS.name());
-			System.out.println(JSONObject.fromObject(map).toString());
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResult(JSONObject.fromObject(map).toString());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::queryVenusStockItemList:",e);
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E00001.getErrorMsg()));
 		}
 		
@@ -2724,9 +2725,10 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			dataGrid.setTotal(totalCount);
 			dataGrid.setPageSize(page.getRows());
 			result.setResult(dataGrid);
-			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::queryItemSpuDataList:",e);
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E00001.getErrorMsg()));
 		}
 		return result;
@@ -2812,12 +2814,14 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				
 				//再次下行erp
 				doItemDownErp(itemSpu,newItem);
+				result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			}
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::applyItemSpu2HtdProduct:",e);
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.addErrorMessage(e.getMessage());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-		result.setCode(ErrorCodes.SUCCESS.name());
 		return result;
 	
 	}

@@ -60,8 +60,8 @@ public class VmsItemExportServiceTest extends CommonTest {
         queryVmsItemPublishInfoInDTO.setIsBoxFlag(0);
         queryVmsItemPublishInfoInDTO.setSellerId(517L);
         queryVmsItemPublishInfoInDTO.setShelfStatus(1);
-        Pager<String> page = new Pager<>();
-        ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>>  executeResult = this.vmsItemExportService.queryItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, page);
+//        Pager<String> page = new Pager<>();
+        ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>>  executeResult = this.vmsItemExportService.queryItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, null);
         System.out.println(JSON.toJSONString(executeResult));
     }
 

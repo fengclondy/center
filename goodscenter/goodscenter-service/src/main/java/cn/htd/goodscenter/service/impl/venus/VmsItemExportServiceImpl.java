@@ -138,6 +138,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             }
             dtoDataGrid.setTotal(count);
             dtoDataGrid.setRows(queryVmsMyItemListOutDTOS);
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
             result.setResult(dtoDataGrid);
         } catch (Exception e) {
             logger.error("我的商品列表查询出错, 错误信息", e);

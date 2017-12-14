@@ -16,7 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.htd.zeus.tc.biz.dao.TradeOrderConsigneeDownInfoDAO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderConsigneeDownInfoDMO;
 import cn.htd.zeus.tc.biz.service.OrderConsigneeDownService;
+import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
+import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.middleware.MiddlewareHttpUrlConfig;
+import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.HttpClientCommon;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
 import cn.htd.zeus.tc.dto.response.JDResDTO;
@@ -63,7 +66,7 @@ public class OrderConsigneeDownServiceImpl implements OrderConsigneeDownService 
 								+ "?merchOrderNo="
 								+ merchOrderNo
 								+"&receiptDate"
-								+ receiptDate
+								+ DateUtil.dateToString(receiptDate)
 								+ "&token="
 								+ token;
 						LOGGER.info("确认收货-请求中间件url:{}",url);
@@ -73,11 +76,17 @@ public class OrderConsigneeDownServiceImpl implements OrderConsigneeDownService 
 					    if(StringUtilHelper.allIsNotNull(httpRes)){
 						   JSONObject jsonObj = (JSONObject)JSONObject.parse(httpRes);
 						   jdResDTO = JSONObject.toJavaObject(jsonObj, JDResDTO.class);
-						   if(null != jdResDTO.getData()){		
-							   TradeOrderConsigneeDownInfoDMO record = new TradeOrderConsigneeDownInfoDMO();
-							   record.setErpLockBalanceCode(merchOrderNo);
+						   String code = jdResDTO.getCode();
+						   TradeOrderConsigneeDownInfoDMO record = new TradeOrderConsigneeDownInfoDMO();
+						   record.setErpLockBalanceCode(merchOrderNo);
+						   if(MiddleWareEnum.SUCCESS_ONE.getCode().equals(code)){		
+							   record.setDownStatus(Integer.valueOf(OrderStatusEnum.DOWN_STATUS_SUCCESS.getCode()));
 							   int updateRes =tradeOrderConsigneeDownInfoDAO.updateTradeOrderConsigneeDownInfo(record);
-							   LOGGER.info("确认收货-跟新数据库结果:{}",updateRes);
+							   LOGGER.info("确认收货-中间件回调-处理成功-跟新数据库结果:{}",updateRes);
+						   }else{
+							   record.setDownStatus(Integer.valueOf(OrderStatusEnum.DOWN_STATUS_FAIL.getCode()));
+							   int updateRes =tradeOrderConsigneeDownInfoDAO.updateTradeOrderConsigneeDownInfo(record);
+							   LOGGER.info("确认收货-中间件回调-处理失败-跟新数据库结果:{}",updateRes);
 						   }
 					    }
 					} catch (Exception e) {
@@ -92,5 +101,4 @@ public class OrderConsigneeDownServiceImpl implements OrderConsigneeDownService 
 			}
 		}
 	}
-
 }

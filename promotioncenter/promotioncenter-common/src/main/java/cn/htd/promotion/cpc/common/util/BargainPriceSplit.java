@@ -19,8 +19,9 @@ public class BargainPriceSplit {
     private static final int MINMONEY = 1;
     /**
      * 这里为了避免某一个红包占用大量资金，我们需要设定非最后一个红包的最大金额，我们把他设置为红包金额平均值的N倍；
+     * 为了避免份数过多时，大量随机到最小值。人数越多的时候，最大金额的倍数越低；人数越少，最大金额的倍数越高
      */
-    private static final String TIMES_CNF = "{'1-30':'3','31-100':'2','101-300':'1.5','301-':'1.2'}";
+    private static final String TIMES_CONFIG = "{'1-10':'5','11-20':'3','21-100':'2','101-300':'1.5','301-':'1.2'}";
     /**
      * 默认最大金额倍数
      */
@@ -28,47 +29,6 @@ public class BargainPriceSplit {
 
     /** 金额为分的格式 */
     public static final String CURRENCY_FEN_REGEX = "\\-?[0-9]+";
-
-    /**
-     * 根据拆分件数确定最大金额倍数
-     * 
-     * @param count 拆分件数
-     * @return 最大金额倍数
-     */
-    private double[] getTimes(int count) {
-        double[] times = new double[count];
-        try {
-            @SuppressWarnings("unchecked")
-            Map<String, String> timesCnf = (Map<String, String>) JSON.parse(TIMES_CNF);
-            for (String key : timesCnf.keySet()) {
-                String[] ranges = key.split("-", -1);
-                int minIdx = Integer.parseInt(ranges[0]);
-                int maxIdx = 0;
-                if (StringUtils.isEmpty(ranges[1])) {
-                    maxIdx = count;
-                } else {
-                    maxIdx = Integer.parseInt(ranges[1]);
-                }
-                for (int i = minIdx - 1; i < maxIdx; i++) {
-                    times[i] = Double.parseDouble(timesCnf.get(key));
-                }
-            }
-            
-            for (int i = 0; i < count; i++) {
-                // 无效配置用默认最大倍数
-                if (times[i] == 0) {
-                    times[i] = DEFAULT_TIMES;
-                } 
-            }
-        } catch (Exception e) {
-            // 发生异常时全部用默认最大倍数
-            for (int i = 0; i < count; i++) {
-                times[i] = DEFAULT_TIMES;
-            }
-        }
-        return times;
-    }
-    
     /**
      * 拆分红包
      * 
@@ -107,15 +67,53 @@ public class BargainPriceSplit {
     }
 
     /**
+     * 根据拆分份数确定最大金额倍数
+     * 
+     * @param count 拆分份数
+     * @return 最大金额倍数
+     */
+    private double[] getTimes(int count) {
+        double[] times = new double[count];
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, String> timesCnf = (Map<String, String>) JSON.parse(TIMES_CONFIG);
+            for (String key : timesCnf.keySet()) {
+                String[] ranges = key.split("-", -1);
+                int minIdx = Integer.parseInt(ranges[0]);
+                int maxIdx = 0;
+                if (StringUtils.isEmpty(ranges[1])) {
+                    maxIdx = count;
+                } else {
+                    maxIdx = Integer.parseInt(ranges[1]);
+                }
+                for (int i = minIdx - 1; i < maxIdx; i++) {
+                    times[i] = Double.parseDouble(timesCnf.get(key));
+                }
+            }
+            
+            for (int i = 0; i < count; i++) {
+                // 无效配置用默认最大倍数
+                if (times[i] == 0) {
+                    times[i] = DEFAULT_TIMES;
+                } 
+            }
+        } catch (Exception e) {
+            // 发生异常时全部用默认最大倍数
+            for (int i = 0; i < count; i++) {
+                times[i] = DEFAULT_TIMES;
+            }
+        }
+        return times;
+    }
+    
+    /**
      * 随机分配一个红包
      * 
-     * @param money
-     * @param minS
-     *            :最小金额
-     * @param maxS
-     *            ：最大金额(每个红包的默认Times倍最大值)
-     * @param count
-     * @return
+     * @param money 剩余总金额
+     * @param minS 最小金额
+     * @param maxS 最大金额
+     * @param count 份数
+     * @return 红包金额
      */
     private int randomRedPacket(int money, int minS, int maxS, int count) {
         // 若是只有一个，直接返回红包
@@ -130,7 +128,7 @@ public class BargainPriceSplit {
         if (minS + 1 == maxS) {
             return minS;
         }
-        // 校验 最大值 max 要是比money 金额高的话？ 去 money 金额
+        // 最大金额大于剩余总金额时，用总金额作为最大值
         int max = maxS > money ? money : maxS;
         // 随机一个红包 = 随机一个数* (金额-最小)+最小
         int one = (int) (Math.random() * (max - minS)) + minS;
@@ -149,7 +147,7 @@ public class BargainPriceSplit {
 
             } else {
                 // 递归调用，修改红包最小金额
-                return randomRedPacket(money, one, maxS, count);
+                return randomRedPacket(money, one, max, count);
             }
         }
     }

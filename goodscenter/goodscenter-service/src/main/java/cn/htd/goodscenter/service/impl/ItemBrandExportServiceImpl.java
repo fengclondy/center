@@ -315,7 +315,7 @@ public class ItemBrandExportServiceImpl implements ItemBrandExportService {
 		ExecuteResult<DataGrid<ItemBrandDTO>> result = new ExecuteResult<DataGrid<ItemBrandDTO>>();
 		try {
 			DataGrid<ItemBrandDTO> dataGrid = new DataGrid<ItemBrandDTO>();
-			List<ItemBrandDTO> list = itemBrandDAO.queryBrandList(itemBrandDTO, page);
+			List<ItemBrandDTO> list = itemBrandDAO.\(itemBrandDTO, page);
 			Long count = itemBrandDAO.queryCountBrandList(itemBrandDTO);
 			dataGrid.setRows(list);
 			dataGrid.setTotal(count);
@@ -548,8 +548,10 @@ public class ItemBrandExportServiceImpl implements ItemBrandExportService {
 			dataGrid.setRows(list);
 			dataGrid.setTotal(count);
 			result.setResult(dataGrid);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			logger.error("error:：" + e.getMessage());
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.addErrorMessage(e.getMessage());
 		}
 		return result;

@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 
 @Service("bargainPriceSplit")
 public class BargainPriceSplit {
@@ -16,12 +19,16 @@ public class BargainPriceSplit {
     private static final int MINMONEY = 1;
     /**
      * 这里为了避免某一个红包占用大量资金，我们需要设定非最后一个红包的最大金额，我们把他设置为红包金额平均值的N倍；
+     * 为了避免份数过多时，大量随机到最小值。人数越多的时候，最大金额的倍数越低；人数越少，最大金额的倍数越高
      */
-    private static final double TIMES = 2;
+    private static final String TIMES_CONFIG = "{'1-10':'5','11-20':'3','21-100':'2','101-300':'1.5','301-':'1.2'}";
+    /**
+     * 默认最大金额倍数
+     */
+    private static final double DEFAULT_TIMES = 2.0;
 
     /** 金额为分的格式 */
     public static final String CURRENCY_FEN_REGEX = "\\-?[0-9]+";
-
     /**
      * 拆分红包
      * 
@@ -33,8 +40,10 @@ public class BargainPriceSplit {
      * @throws Exception
      */
     public List<String> splitRedPackets(int money, int count) throws Exception {
+        // 根据拆分次数判断最大倍数
+        double[] times = getTimes(count);
         // 每个红包最大的金额为平均金额的Times 倍
-        int maxMoney = (int) (money * TIMES / count);
+        int maxMoney = (int) (money * times[count - 1] / count);
         // 红包 合法性校验
         if (!isRight(money, count, MINMONEY, maxMoney)) {
             return null;
@@ -42,11 +51,15 @@ public class BargainPriceSplit {
         // 红包列表
         List<String> list = new ArrayList<String>();
         // 分配红包
-        for (int i = 0; i < count; i++) {
-            int one = randomRedPacket(money, MINMONEY, maxMoney, count - i, maxMoney);
+        for (int i = count; i > 0; i--) {
+            int one = randomRedPacket(money, MINMONEY, maxMoney, i);
             String oneStr = changeF2Y(String.valueOf(one));
             list.add(oneStr);
             money -= one;
+            if (i > 1) {
+                // 取下一次计算的最大金额
+                maxMoney = (int) (money * times[i - 2] / (i - 1));
+            }
         }
         // 再次打乱红包列表
         Collections.shuffle(list);
@@ -54,19 +67,55 @@ public class BargainPriceSplit {
     }
 
     /**
+     * 根据拆分份数确定最大金额倍数
+     * 
+     * @param count 拆分份数
+     * @return 最大金额倍数
+     */
+    private double[] getTimes(int count) {
+        double[] times = new double[count];
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, String> timesCnf = (Map<String, String>) JSON.parse(TIMES_CONFIG);
+            for (String key : timesCnf.keySet()) {
+                String[] ranges = key.split("-", -1);
+                int minIdx = Integer.parseInt(ranges[0]);
+                int maxIdx = 0;
+                if (StringUtils.isEmpty(ranges[1])) {
+                    maxIdx = count;
+                } else {
+                    maxIdx = Integer.parseInt(ranges[1]);
+                }
+                for (int i = minIdx - 1; i < maxIdx; i++) {
+                    times[i] = Double.parseDouble(timesCnf.get(key));
+                }
+            }
+            
+            for (int i = 0; i < count; i++) {
+                // 无效配置用默认最大倍数
+                if (times[i] == 0) {
+                    times[i] = DEFAULT_TIMES;
+                } 
+            }
+        } catch (Exception e) {
+            // 发生异常时全部用默认最大倍数
+            for (int i = 0; i < count; i++) {
+                times[i] = DEFAULT_TIMES;
+            }
+        }
+        return times;
+    }
+    
+    /**
      * 随机分配一个红包
      * 
-     * @param money
-     * @param minS
-     *            :最小金额
-     * @param maxS
-     *            ：最大金额(每个红包的默认Times倍最大值)
-     * @param count
-     * @param maxMoney
-     *            : 金额最大限制
-     * @return
+     * @param money 剩余总金额
+     * @param minS 最小金额
+     * @param maxS 最大金额
+     * @param count 份数
+     * @return 红包金额
      */
-    private int randomRedPacket(int money, int minS, int maxS, int count, int maxMoney) {
+    private int randomRedPacket(int money, int minS, int maxS, int count) {
         // 若是只有一个，直接返回红包
         if (count == 1) {
             return money;
@@ -75,33 +124,32 @@ public class BargainPriceSplit {
         if (minS == maxS) {
             return minS;
         }
-        // 为了避免死循环，最大最小值相差1时直接返回最大值
+        // 为了避免死循环，最大最小值相差1时直接返回最小值
         if (minS + 1 == maxS) {
-            return maxS;
+            return minS;
         }
-        // 校验 最大值 max 要是比money 金额高的话？ 去 money 金额
+        // 最大金额大于剩余总金额时，用总金额作为最大值
         int max = maxS > money ? money : maxS;
         // 随机一个红包 = 随机一个数* (金额-最小)+最小
         int one = (int) (Math.random() * (max - minS)) + minS;
         // 剩下的金额
         int moneyOther = money - one;
         // 校验这种随机方案是否可行，不合法的话，就要重新分配方案
-        if (isRight(moneyOther, count - 1, minS, maxS)) {
+        if (isRight(moneyOther, count - 1, minS, max)) {
             return one;
         } else {
             // 重新分配
             int avg = moneyOther / (count - 1);
             // 本次红包过大，导致下次的红包过小；如果红包过大，下次就随机一个小值到本次红包金额的一个红包
-            if (avg < MINMONEY) {
+            if (avg < minS) {
                 // 递归调用，修改红包最大金额
-                return randomRedPacket(money, minS, one, count, maxMoney);
+                return randomRedPacket(money, minS, one, count);
 
-            } else if (avg > maxMoney) {
+            } else {
                 // 递归调用，修改红包最小金额
-                return randomRedPacket(money, one, maxS, count, maxMoney);
+                return randomRedPacket(money, one, max, count);
             }
         }
-        return one;
     }
 
     /**
@@ -149,8 +197,9 @@ public class BargainPriceSplit {
 //        BargainPriceSplit dd = new BargainPriceSplit();
 //        // 单位是分
 //        try {
+//            System.out.println(dd.splitRedPackets(300000, 1000));
 //            for (int count = 1; count <= 100; count++) {
-//                System.out.println(dd.splitRedPackets(30000, count));
+//                System.out.println(dd.splitRedPackets(10000, count));
 //            }
 //            System.out.println("test finished!");
 //        } catch (Exception e) {

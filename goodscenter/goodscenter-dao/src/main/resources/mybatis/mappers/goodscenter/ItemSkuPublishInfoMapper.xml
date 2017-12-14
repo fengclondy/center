@@ -587,7 +587,16 @@
 		info.automatic_endtime as automaticVisibleDownTime,
 		spu.spu_code as spuCode,
 		t.item_code as itemCode,
-		t.is_pre_sale as preSaleFlag
+		t.is_pre_sale as preSaleFlag,
+        t.origin as origin,
+        t.weight as weight,
+        t.net_weight as newWeight,
+        t.weight_unit as unit,
+        t.tax_rate as taxRate,
+        t.length as length,
+        t.width as width,
+        t.height as height,
+        sku.attributes as color
 		 from item_sku sku
 		join item t on sku.item_id=t.item_id
 		join item_category cat on cat.cid=t.cid

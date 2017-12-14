@@ -7,7 +7,9 @@ import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
+import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
+import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
 import cn.htd.goodscenter.dto.vms.*;
 
 import java.util.List;
@@ -81,7 +83,7 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<String> queryErpStockItemList(VenusStockItemInDTO venusStockItemInDTO);
-    
+
     /** 包厢商品 大厅商品 **/
     /**
      * 查询包厢商品列表
@@ -95,5 +97,11 @@ public interface VmsItemExportService {
      */
     ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page);
 
-
+    /**
+     * 包厢商品详情
+     * 大厅商品详情
+     * @param querySkuPublishInfoDetailParamDTO
+     * @return
+     */
+    ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO);
 }

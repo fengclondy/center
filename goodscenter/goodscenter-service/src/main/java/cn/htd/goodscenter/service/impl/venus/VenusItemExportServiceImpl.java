@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -1118,7 +1119,14 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 					timelimitedInfoDTOResult.getResult() + "";
 				venusItemSkuPublishInfoDetailOutDTO.setPromotionReserveQty(promotionQty);
 			}
-			
+			//设置单位
+			String unitValue = dictionaryUtils.getNameByValue(DictionaryConst.TYPE_ITEM_UNIT, venusItemSkuPublishInfoDetailOutDTO.getUnit());
+			venusItemSkuPublishInfoDetailOutDTO.setUnit(unitValue);
+			//设置类目名称
+			ExecuteResult<Map<String, Object>> categoryResult1 = itemCategoryService.queryItemOneTwoThreeCategoryName(venusItemSkuPublishInfoDetailOutDTO.getCategoryId(), ">");
+			if (categoryResult1 != null && MapUtils.isNotEmpty(categoryResult1.getResult())) {
+				venusItemSkuPublishInfoDetailOutDTO.setCategoryName((String) categoryResult1.getResult().get("categoryName"));
+			}
 			result.setCode(ErrorCodes.SUCCESS.name());
 			result.setResult(venusItemSkuPublishInfoDetailOutDTO);
 		}catch(Exception e){

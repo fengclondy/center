@@ -1,6 +1,7 @@
 package cn.htd.goodscenter.dto.venus.outdto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -23,12 +24,65 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	private Long categoryId;
     //目录名称
 	private String categoryName;
+	//商品item编码
+	private String itemCode;
 	//商品名称
 	private String itemName;
 	//品牌id
 	private String brandId;
 	//品牌名称
 	private String brandName;
+	//产地
+	private String origin;
+	//毛重
+	private BigDecimal weight;
+	//净重
+	private BigDecimal newWeight;
+	//单位
+	private String unit;
+	//税率
+	private BigDecimal taxRate;
+	//长
+	private String length;
+	//宽
+	private String width;
+	//高
+	private String height;
+	//颜色
+	private String color;
+
+	public String getLength() {
+		return length;
+	}
+
+	public void setLength(String length) {
+		this.length = length;
+	}
+
+	public String getWidth() {
+		return width;
+	}
+
+	public void setWidth(String width) {
+		this.width = width;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
 	//类目属性
 	private String categoryAttr;
 	//商品sku编码
@@ -86,11 +140,10 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	private String spuCode;
 	//促销锁定库存数量
 	private String promotionReserveQty;
-	//商品item编码
-	private String itemCode;
+
 	//预售标志：0 非预售 1 是预售 
 	private Integer preSaleFlag;
-	
+
 	public String getItemCode() {
 		return itemCode;
 	}
@@ -320,5 +373,44 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	public void setPreSaleFlag(Integer preSaleFlag) {
 		this.preSaleFlag = preSaleFlag;
 	}
-	
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	public BigDecimal getWeight() {
+		return weight;
+	}
+
+	public void setWeight(BigDecimal weight) {
+		this.weight = weight;
+	}
+
+	public BigDecimal getNewWeight() {
+		return newWeight;
+	}
+
+	public void setNewWeight(BigDecimal newWeight) {
+		this.newWeight = newWeight;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public BigDecimal getTaxRate() {
+		return taxRate;
+	}
+
+	public void setTaxRate(BigDecimal taxRate) {
+		this.taxRate = taxRate;
+	}
 }

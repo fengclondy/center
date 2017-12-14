@@ -4,6 +4,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.htd.membercenter.dao.MemberBusinessRelationDAO">
+
+	<!-- 查询会员经营关系记录数 -->
+	<select id="queryMemberBusinessRelationListInfoCount" resultType="java.lang.Long" parameterType="Object">
+		select count(0)
+            from business_relationship a
+        where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
+			and a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
+			<if test="memberBusinessRelationDTO.brandId != null and memberBusinessRelationDTO.brandId != ''">
+				and a.brand_id = #{memberBusinessRelationDTO.brandId}
+			</if>
+			<if test="memberBusinessRelationDTO.categoryId != null and memberBusinessRelationDTO.categoryId != ''">
+				and a.category_id = #{memberBusinessRelationDTO.categoryId}
+			</if>
+		    <if test="memberBusinessRelationDTO.brandIdList != null and memberBusinessRelationDTO.brandIdList != ''">
+               <![CDATA[ and a.brand_id in]]>
+		        <foreach collection="memberBusinessRelationDTO.brandIdList" index="index" item="brandId" open="(" separator="," close=")">
+		          #{brandId}
+		        </foreach>
+             </if>
+		    <if test="memberBusinessRelationDTO.categoryIdList != null and memberBusinessRelationDTO.categoryIdList != ''">
+               <![CDATA[ and a.category_id in]]>
+		        <foreach collection="memberBusinessRelationDTO.categoryIdList" index="index" item="categoryId" open="(" separator="," close=")">
+		          #{categoryId}
+		        </foreach>
+             </if>			
+			and a.audit_status = #{memberBusinessRelationDTO.auditStatus}
+			and (a.category_id !=0 and a.brand_id !=0)
+	</select>
+
 	<!-- 查询会员经营关系列表信息 -->
 	<select id="queryMemberBusinessRelationListInfo" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
 		parameterType="Object">
@@ -31,6 +61,18 @@
 			<if test="memberBusinessRelationDTO.categoryId != null and memberBusinessRelationDTO.categoryId != ''">
 				and a.category_id = #{memberBusinessRelationDTO.categoryId}
 			</if>
+		    <if test="memberBusinessRelationDTO.brandIdList != null and memberBusinessRelationDTO.brandIdList != ''">
+               <![CDATA[ and a.brand_id in]]>
+		        <foreach collection="memberBusinessRelationDTO.brandIdList" index="index" item="brandId" open="(" separator="," close=")">
+		          #{brandId}
+		        </foreach>
+             </if>
+		    <if test="memberBusinessRelationDTO.categoryIdList != null and memberBusinessRelationDTO.categoryIdList != ''">
+               <![CDATA[ and a.category_id in]]>
+		        <foreach collection="memberBusinessRelationDTO.categoryIdList" index="index" item="categoryId" open="(" separator="," close=")">
+		          #{categoryId}
+		        </foreach>
+             </if>             
 			and a.audit_status = #{memberBusinessRelationDTO.auditStatus}
 			and (a.category_id !=0 and a.brand_id !=0)
 
@@ -65,20 +107,6 @@
 			and a.category_id = #{memberBusinessRelationDTO.categoryId}
 			and (a.category_id !=0 and a.brand_id !=0)
 			limit 0,1
-	</select>
-	
-	<!-- 查询会员经营关系记录数 -->
-	<select id="queryMemberBusinessRelationListInfoCount" resultType="java.lang.Long" parameterType="Object">
-		select count(0)
-            from business_relationship a
-        where a.buyer_id = #{memberBusinessRelationDTO.buyerId}
-			and a.seller_id = #{memberBusinessRelationDTO.sellerId}
-			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
-			<if test="memberBusinessRelationDTO.brandId != null and memberBusinessRelationDTO.brandId != ''">
-				and a.brand_id = #{memberBusinessRelationDTO.brandId}
-			</if>
-			and a.audit_status = #{memberBusinessRelationDTO.auditStatus}
-			and (a.category_id !=0 and a.brand_id !=0)
 	</select>
 	
 	<!-- 更新商家会员经营关系 -->

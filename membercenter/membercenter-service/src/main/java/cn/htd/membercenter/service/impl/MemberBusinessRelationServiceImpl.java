@@ -87,8 +87,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 
 					rs.setResultMessage("success");
 				} catch (Exception e) {
+					rs.addErrorMessage("查询品牌品类名称出错" + e);
 					rs.setResultMessage("error");
-					throw new RuntimeException(e);
 				}
 			} else {
 				rs.setResultMessage("参数不全");

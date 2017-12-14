@@ -41,6 +41,7 @@
 	    <property name="ordercenterMiddleware4JDStatusCallback" value="${ordercenterMiddleware4JDStatusCallback}"></property>
 	 	<property name="ordercenterMiddleware4unLockBalance" value="${ordercenterMiddleware4unLockBalance}"></property>
 	 	<property name="ordercenterMiddleware4ConsigneeDown" value="${ordercenterMiddleware4ConsigneeDown}"></property>
+	 	<property name="ordercenterMiddleware4ERPtoken" value="${ordercenterMiddleware4ERPtoken}"></property>
 	 </bean>
 
 	 <!-- 京东品牌品类常量 -->

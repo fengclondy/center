@@ -31,7 +31,7 @@
 	<foreach collection="taskIdList" index="index" item="taskId" open="(" separator="," close=")"> 
          #{taskId} 
     </foreach> 
-    AND down_status != 2
+    AND down_status != 1
     <![CDATA[ and create_time >= #{startTime} ]]>
     limit #{startLine},#{endLine}
   </select>
@@ -133,10 +133,10 @@
       <if test="consigneeTime != null" >
         consignee_time = #{consigneeTime,jdbcType=TIMESTAMP},
       </if>
-        down_status = down_status+1,
-      <if test="downTimes != null" >
-        down_times = #{downTimes,jdbcType=BIGINT},
+      <if test="downStatus != null" >
+       down_status = #{downStatus,jdbcType=TINYINT},
       </if>
+        down_times = down_times +1,
       <if test="downTime != null" >
         down_time = #{downTime,jdbcType=TIMESTAMP},
       </if>

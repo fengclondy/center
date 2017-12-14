@@ -14,6 +14,7 @@ public class MiddlewareHttpUrlConfig {
 	
 	/*
 	 * 中间件的token
+	 * jd专用的
 	 */
 	private String ordercenterMiddleware4token;
 	
@@ -46,6 +47,12 @@ public class MiddlewareHttpUrlConfig {
 	 * 订单收货下行erp
 	 */
 	private String ordercenterMiddleware4ConsigneeDown;
+	
+	/**
+	 * 请求的token
+	 * 和京东的token区别开
+	 */
+	private String ordercenterMiddleware4ERPtoken;
 	
 	
 	/**
@@ -145,6 +152,15 @@ public class MiddlewareHttpUrlConfig {
 	public void setOrdercenterMiddleware4ConsigneeDown(
 			String ordercenterMiddleware4ConsigneeDown) {
 		this.ordercenterMiddleware4ConsigneeDown = ordercenterMiddleware4ConsigneeDown;
+	}
+
+	public String getOrdercenterMiddleware4ERPtoken() {
+		return ordercenterMiddleware4ERPtoken;
+	}
+
+	public void setOrdercenterMiddleware4ERPtoken(
+			String ordercenterMiddleware4ERPtoken) {
+		this.ordercenterMiddleware4ERPtoken = ordercenterMiddleware4ERPtoken;
 	}
 	
 }

@@ -56,7 +56,7 @@ public class OrderConsigneeDownServiceImpl implements OrderConsigneeDownService 
 				if (null != receiptDate && StringUtils.isNotEmpty(merchOrderNo)) {
 					try {
 						String urlToken = middlewareHttpUrlConfig
-								.getOrdercenterMiddleware4token();
+								.getOrdercenterMiddleware4ERPtoken();
 						String tokenRes = HttpClientCommon.httpGet(urlToken);
 						LOGGER.info("http请求中间件token返回结果:"+tokenRes);
 						JSONObject tokenJson = (JSONObject)JSONObject.parseObject(tokenRes, JSONObject.class);
@@ -65,8 +65,8 @@ public class OrderConsigneeDownServiceImpl implements OrderConsigneeDownService 
 								.getOrdercenterMiddleware4ConsigneeDown()
 								+ "?merchOrderNo="
 								+ merchOrderNo
-								+"&receiptDate"
-								+ DateUtil.dateToString(receiptDate)
+								+"&receiptDate="
+								+ java.net.URLEncoder.encode(DateUtil.dateToString(receiptDate))
 								+ "&token="
 								+ token;
 						LOGGER.info("确认收货-请求中间件url:{}",url);

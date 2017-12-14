@@ -315,7 +315,7 @@ public class ItemBrandExportServiceImpl implements ItemBrandExportService {
 		ExecuteResult<DataGrid<ItemBrandDTO>> result = new ExecuteResult<DataGrid<ItemBrandDTO>>();
 		try {
 			DataGrid<ItemBrandDTO> dataGrid = new DataGrid<ItemBrandDTO>();
-			List<ItemBrandDTO> list = itemBrandDAO.\(itemBrandDTO, page);
+			List<ItemBrandDTO> list = itemBrandDAO.(itemBrandDTO, page);
 			Long count = itemBrandDAO.queryCountBrandList(itemBrandDTO);
 			dataGrid.setRows(list);
 			dataGrid.setTotal(count);

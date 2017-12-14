@@ -131,6 +131,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
 				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));
 				shopBrandDTO.setBrandId(memberBusinessRelationDTO.getBrandId());
+				shopBrandDTO.setBrandIdList(memberBusinessRelationDTO.getBrandIdList());
+				shopBrandDTO.setCategoryIdList(memberBusinessRelationDTO.getCategoryIdList());
 				ExecuteResult<DataGrid<ShopBrandDTO>> result = shopBrandExportService.queryShopBrandAll(shopBrandDTO,
 						null);
 				List<ShopBrandDTO> shopList = result.getResult().getRows();

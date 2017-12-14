@@ -172,6 +172,18 @@
 			<if test="entity.modifyName != null  and entity.modifyName !=''">
 				<![CDATA[ and shop_category_brand_.modify_name  = #{entity.modifyName} ]]>
 			</if>
+		    <if test="entity.brandIdList != null and entity.brandIdList.size != 0 ">
+               <![CDATA[ and shop_category_brand_.brand_id in]]>
+		        <foreach collection="entity.brandIdList" index="index" item="brandId" open="(" separator="," close=")">
+		          #{brandId}
+		        </foreach>
+             </if>
+		    <if test="entity.categoryIdList != null and entity.categoryIdList.size != 0 ">
+               <![CDATA[ and shop_category_brand_.category_id in]]>
+		        <foreach collection="entity.categoryIdList" index="index" item="categoryId" open="(" separator="," close=")">
+		          #{categoryId}
+		        </foreach>
+             </if>
 		</if>
 		and shop_category_brand_.status != '5'
 		<![CDATA[ ORDER BY shop_category_brand_.modify_time desc ]]>

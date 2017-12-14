@@ -18,13 +18,13 @@
 			<if test="memberBusinessRelationDTO.categoryId != null and memberBusinessRelationDTO.categoryId != ''">
 				and a.category_id = #{memberBusinessRelationDTO.categoryId}
 			</if>
-		    <if test="memberBusinessRelationDTO.brandIdList != null and memberBusinessRelationDTO.brandIdList != ''">
+		    <if test="memberBusinessRelationDTO.brandIdList != null and memberBusinessRelationDTO.brandIdList.size != 0 ">
                <![CDATA[ and a.brand_id in]]>
 		        <foreach collection="memberBusinessRelationDTO.brandIdList" index="index" item="brandId" open="(" separator="," close=")">
 		          #{brandId}
 		        </foreach>
              </if>
-		    <if test="memberBusinessRelationDTO.categoryIdList != null and memberBusinessRelationDTO.categoryIdList != ''">
+		    <if test="memberBusinessRelationDTO.categoryIdList != null and memberBusinessRelationDTO.categoryIdList.size != 0 ">
                <![CDATA[ and a.category_id in]]>
 		        <foreach collection="memberBusinessRelationDTO.categoryIdList" index="index" item="categoryId" open="(" separator="," close=")">
 		          #{categoryId}
@@ -61,13 +61,13 @@
 			<if test="memberBusinessRelationDTO.categoryId != null and memberBusinessRelationDTO.categoryId != ''">
 				and a.category_id = #{memberBusinessRelationDTO.categoryId}
 			</if>
-		    <if test="memberBusinessRelationDTO.brandIdList != null and memberBusinessRelationDTO.brandIdList != ''">
+		    <if test="memberBusinessRelationDTO.brandIdList != null and memberBusinessRelationDTO.brandIdList.size != 0">
                <![CDATA[ and a.brand_id in]]>
 		        <foreach collection="memberBusinessRelationDTO.brandIdList" index="index" item="brandId" open="(" separator="," close=")">
 		          #{brandId}
 		        </foreach>
              </if>
-		    <if test="memberBusinessRelationDTO.categoryIdList != null and memberBusinessRelationDTO.categoryIdList != ''">
+		    <if test="memberBusinessRelationDTO.categoryIdList != null and memberBusinessRelationDTO.categoryIdList.size != 0 ">
                <![CDATA[ and a.category_id in]]>
 		        <foreach collection="memberBusinessRelationDTO.categoryIdList" index="index" item="categoryId" open="(" separator="," close=")">
 		          #{categoryId}

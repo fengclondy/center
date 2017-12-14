@@ -154,6 +154,7 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 			orderCompensateERPDTO = JSONObject.toJavaObject(jsonObj, OrderCompensateERPDTO.class);
 			orderCompensateERPDTO.setOperateCode(Constant.OPERATE_CODE);
 			orderCompensateERPDTO.setOperateName(Constant.OPERATER_NAME);
+			orderCompensateERPDTO.setShippingMethod(requestInfo.getDeliveryType());
 			// 五合一下行订单号 实际是erp锁定余额编号
 			orderCompensateERPDTO.setOrderNo(requestInfo.getErpLockBalanceCode());
 			orderCompensateERPDTO.setMasterOrderNo(requestInfo.getOrderNo());

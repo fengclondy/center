@@ -133,9 +133,7 @@
       <if test="consigneeTime != null" >
         consignee_time = #{consigneeTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="downStatus != null" >
-        down_status = #{downStatus,jdbcType=TINYINT},
-      </if>
+        down_status = down_status+1,
       <if test="downTimes != null" >
         down_times = #{downTimes,jdbcType=BIGINT},
       </if>

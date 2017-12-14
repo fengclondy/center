@@ -42,6 +42,11 @@ public class MiddlewareHttpUrlConfig {
 	 */
 	private String ordercenterMiddleware4unLockBalance;
 	
+	/**
+	 * 订单收货下行erp
+	 */
+	private String ordercenterMiddleware4ConsigneeDown;
+	
 	
 	/**
 	 * @return the ordercenterMiddleware4JDStock
@@ -131,6 +136,15 @@ public class MiddlewareHttpUrlConfig {
 	public void setOrdercenterMiddleware4unLockBalance(
 			String ordercenterMiddleware4unLockBalance) {
 		this.ordercenterMiddleware4unLockBalance = ordercenterMiddleware4unLockBalance;
+	}
+
+	public String getOrdercenterMiddleware4ConsigneeDown() {
+		return ordercenterMiddleware4ConsigneeDown;
+	}
+
+	public void setOrdercenterMiddleware4ConsigneeDown(
+			String ordercenterMiddleware4ConsigneeDown) {
+		this.ordercenterMiddleware4ConsigneeDown = ordercenterMiddleware4ConsigneeDown;
 	}
 	
 }

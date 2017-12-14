@@ -2,6 +2,7 @@ package cn.htd.promotion.cpc.common.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +48,8 @@ public class BargainPriceSplit {
             list.add(oneStr);
             money -= one;
         }
+        // 再次打乱红包列表
+        Collections.shuffle(list);
         return list;
     }
 
@@ -146,7 +149,10 @@ public class BargainPriceSplit {
 //        BargainPriceSplit dd = new BargainPriceSplit();
 //        // 单位是分
 //        try {
-//            System.out.println(dd.splitRedPackets(30000, 300));
+//            for (int count = 1; count <= 100; count++) {
+//                System.out.println(dd.splitRedPackets(30000, count));
+//            }
+//            System.out.println("test finished!");
 //        } catch (Exception e) {
 //            // TODO Auto-generated catch block
 //            e.printStackTrace();

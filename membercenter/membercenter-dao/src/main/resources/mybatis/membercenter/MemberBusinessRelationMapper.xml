@@ -307,7 +307,7 @@
 		</if>
 	</select>
 	
-	<select id="queryMemberBussinessByCategoryId" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+	<select id="countQueryMemberBussinessByCategoryId" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
 		parameterType="Object">
 		select distinct category_id categoryId,brand_id brandId from business_relationship a
 		where a.seller_id = #{memberBusinessRelationDTO.sellerId}

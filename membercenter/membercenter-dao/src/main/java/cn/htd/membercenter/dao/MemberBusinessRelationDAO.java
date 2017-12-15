@@ -44,4 +44,13 @@ public interface MemberBusinessRelationDAO {
 			@Param("memberBusinessRelationDTO") MemberBusinessRelationDTO memberBusinessRelationDTO);
 	
 	public List<MemberBusinessRelationDTO> selectMemberBussinsessRelationShip(@Param("memberId") Long memberId);
+	
+	public List<MemberBusinessRelationDTO> queryCategoryIdAndBrandIdBySellerId(@Param("memberBusinessRelationDTO") MemberBusinessRelationDTO memberBusinessRelationDTO);
+	
+	public List<MemberBusinessRelationDTO> queryMemberBussinessByCategoryId(
+			@Param("dto") MemberBusinessRelationDTO dto,
+			@Param("pager") Pager<MemberBusinessRelationDTO> pager);
+
+	public long countQueryMemberBussinessByCategoryId(
+			@Param("dto") MemberBusinessRelationDTO dto);
 }

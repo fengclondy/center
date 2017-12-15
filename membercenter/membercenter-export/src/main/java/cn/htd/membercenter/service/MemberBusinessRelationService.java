@@ -87,4 +87,19 @@ public interface MemberBusinessRelationService {
 	 * 根据买家id查询经营关系列表
 	 */
 	public ExecuteResult<List<MemberBusinessRelationDTO>> selectMemberBussinsessRelationShip(Long memberId);
+	
+	/**
+	 * 查询商家所以的关联关系品牌品类
+	 * @param SellerId
+	 * @return
+	 */
+	public ExecuteResult<List<MemberBusinessRelationDTO>> queryCategoryIdAndBrandIdBySellerId(MemberBusinessRelationDTO memberBusinessRelationDTO);
+	
+	/**
+	 * 根据品牌品类查询经营关系
+	 * @param memberBusinessRelationDTO
+	 * @return
+	 */
+	public ExecuteResult<DataGrid<MemberBusinessRelationDTO>> queryMemberBussinessByCategoryId(MemberBusinessRelationDTO memberBusinessRelationDTO,
+			Pager<MemberBusinessRelationDTO> pager);
 }

@@ -257,4 +257,34 @@
 		and b.buyer_id = #{memberId}
 		and (b.category_id !=0 and b.brand_id !=0)
 	</select>
+	
+	<select id="queryCategoryIdAndBrandIdBySellerId" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select distinct category_id categoryId,brand_id brandId from business_relationship a
+		where a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
+			and (a.category_id !=0 and a.brand_id !=0)
+			order by a.category_id desc 
+	</select>
+	
+	<select id="queryMemberBussinessByCategoryId" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select distinct category_id categoryId,brand_id brandId from business_relationship a
+		where a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
+			and (a.category_id !=0 and a.brand_id !=0)
+			order by a.category_id desc 
+		<if test="pager != null">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+	
+	<select id="queryMemberBussinessByCategoryId" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"
+		parameterType="Object">
+		select distinct category_id categoryId,brand_id brandId from business_relationship a
+		where a.seller_id = #{memberBusinessRelationDTO.sellerId}
+			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
+			and (a.category_id !=0 and a.brand_id !=0)
+			order by a.category_id desc 
+	</select>
 </mapper>

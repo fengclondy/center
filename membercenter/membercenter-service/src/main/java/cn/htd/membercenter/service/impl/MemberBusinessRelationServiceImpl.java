@@ -443,4 +443,76 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 		}
 		return rs;
 	}
+
+	@Override
+	public ExecuteResult<List<MemberBusinessRelationDTO>> queryCategoryIdAndBrandIdBySellerId(
+			MemberBusinessRelationDTO memberBusinessRelationDTO) {
+		ExecuteResult<List<MemberBusinessRelationDTO>> rs = new ExecuteResult<List<MemberBusinessRelationDTO>>();
+		try {
+			String sellerId = memberBusinessRelationDTO.getSellerId();
+			if (StringUtils.isNotBlank(sellerId)) {
+				//memberBusinessRelationDTO.setAuditStatus(AuditStatusEnum.PASSING_AUDIT.getCode());
+				memberBusinessRelationDTO.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
+				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
+						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
+				try {
+					if (businessList != null) {
+						setValue4Relation(businessList);
+					}else{
+						rs.setResultMessage("要查询的数据不存在");
+					}
+					rs.setResultMessage("success");
+				} catch (Exception e) {
+					rs.setResultMessage("error");
+					throw new RuntimeException(e);
+				}
+			} else {
+				rs.setResultMessage("参数不全");
+				rs.setResultMessage("error");
+			}
+		} catch (Exception e) {
+			logger.error("MemberBusinessRelationServiceImpl----->queryCategoryIdAndBrandIdBySellerId=" + e);
+			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", e.getMessage()));
+		}
+		return rs;
+	}
+
+	@Override
+	public ExecuteResult<DataGrid<MemberBusinessRelationDTO>> queryMemberBussinessByCategoryId(
+			MemberBusinessRelationDTO dto , Pager<MemberBusinessRelationDTO> pager) {
+		ExecuteResult<DataGrid<MemberBusinessRelationDTO>> rs = new ExecuteResult<DataGrid<MemberBusinessRelationDTO>>();
+		try {
+			DataGrid<MemberBusinessRelationDTO> dg = new DataGrid<MemberBusinessRelationDTO>();
+			String buyerId = dto.getBuyerId();
+			String sellerId = dto.getSellerId();
+			if (StringUtils.isNotBlank(buyerId) && StringUtils.isNotBlank(sellerId)) {
+				dto.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
+				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
+						.queryMemberBussinessByCategoryId(dto, pager);
+				long count = memberBusinessRelationDAO
+						.countQueryMemberBussinessByCategoryId(dto);
+				try {
+					if (businessList != null) {
+						dg.setRows(setValue4Relation(businessList));
+						dg.setTotal(count);
+						rs.setResult(dg);
+					} else {
+						rs.setResultMessage("要查询的数据不存在");
+					}
+
+					rs.setResultMessage("success");
+				} catch (Exception e) {
+					rs.setResultMessage("error");
+					throw new RuntimeException(e);
+				}
+			} else {
+				rs.setResultMessage("参数不全");
+				rs.setResultMessage("error");
+			}
+		} catch (Exception e) {
+			logger.error("MemberBusinessRelationServiceImpl----->queryMemberBussinessByCategoryId=" + e);
+			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", e.getMessage()));
+		}
+		return rs;
+	}
 }

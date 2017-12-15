@@ -254,14 +254,14 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (memberId != null) {
 				String companyName = myNoMemberDto.getCompanyName();
-				if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
-					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
-							myNoMemberDto.getMemberId());
-					if (nmDto != null && nmDto.size() >= 1) {
-						rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
-						return rs;
-					}
-				}
+//				if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
+//					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
+//							myNoMemberDto.getMemberId());
+//					if (nmDto != null && nmDto.size() >= 1) {
+//						rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
+//						return rs;
+//					}
+//				}
 				if (myNoMemberDto.getTaxManId() != null) {
 					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(),
 							myNoMemberDto.getMemberId());

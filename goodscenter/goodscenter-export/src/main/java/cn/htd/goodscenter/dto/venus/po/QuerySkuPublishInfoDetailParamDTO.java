@@ -30,5 +30,13 @@ public class QuerySkuPublishInfoDetailParamDTO implements Serializable{
 	public void setSupplierCode(String supplierCode) {
 		this.supplierCode = supplierCode;
 	}
-	
+	private Boolean isNewVms;
+
+	public Boolean getNewVms() {
+		return isNewVms;
+	}
+
+	public void setNewVms(Boolean newVms) {
+		isNewVms = newVms;
+	}
 }

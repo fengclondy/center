@@ -14,6 +14,7 @@ import cn.htd.goodscenter.dao.spu.ItemSpuMapper;
 import cn.htd.goodscenter.domain.*;
 import cn.htd.goodscenter.domain.spu.ItemSpu;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
+import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
@@ -72,6 +73,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Resource
     private ItemSkuDAO itemSkuDAO;
+
+    @Resource
+    private ItemSkuPublishInfoMapper itemSkuPublishInfoMapper;
 
     @Resource
     private ItemSkuPriceService itemSkuPriceService;
@@ -453,9 +457,65 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return result;
     }
 
+    /**
+     * 包厢商品详情
+     * 大厅商品详情
+     * @param querySkuPublishInfoDetailParamDTO
+     * @return
+     */
     @Override
     public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
+        querySkuPublishInfoDetailParamDTO.setNewVms(true);
         return this.venusItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
+    }
+
+    /**
+     * 下架商品
+     * @param skuCode
+     * @param isBoxFlag 是否包厢   0：大厅 ；  1：包厢
+     * @return
+     */
+    @Override
+    public ExecuteResult<String> offShelves(String skuCode, Integer isBoxFlag, Long operateId, String operateName) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        try {
+            // 校验入参
+            if (StringUtils.isEmpty(skuCode) || isBoxFlag == null || operateId == null || StringUtils.isEmpty(operateName)) {
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+                executeResult.setResultMessage("inputParam is empty");
+                return executeResult;
+            }
+            // 修改库存表记录；可见库存请0；如果存在锁定库存，可见库存和锁定库存一致
+            ItemSkuPublishInfo  itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectBySkuCodeAndShelfType(skuCode, isBoxFlag);
+            if (itemSkuPublishInfo == null) { // 库存信息不存在
+                executeResult.setCode(ResultCodeEnum.STOCK_PUBLISH_INFO_IS_NULL.getCode());
+                executeResult.setResultMessage(ResultCodeEnum.STOCK_PUBLISH_INFO_IS_NULL.getMessage());
+                return executeResult;
+            }
+            if (itemSkuPublishInfo.getIsVisable() == 1) { // 如果库存存在，且上架，进行下架操作
+                int result = this.itemSkuPublishInfoMapper.updateSkuOffShelf(skuCode, isBoxFlag);
+                if (result == 0) {
+                    executeResult.setCode(ResultCodeEnum.STOCK_OFF_SHELF_FALI.getCode());
+                    executeResult.setResultMessage("下架失败");
+                }
+            }
+            List<ItemSkuPublishInfo> itemSkuPublishInfos = this.itemSkuPublishInfoMapper.queryBySkuId(itemSkuPublishInfo.getSkuId());
+            int offShelfCount = 0;// 下架数量
+            for (ItemSkuPublishInfo itemSkuPublishInfo1 : itemSkuPublishInfos) { // 遍历sku，包厢和大厅是否都下架
+                if (itemSkuPublishInfo1.getIsVisable() == 0) {
+                    offShelfCount++;
+                }
+            }
+            if (itemSkuPublishInfos.size() == offShelfCount) { // 如果都下架，更新itemStatus = 4
+                this.itemMybatisDAO.updateItemStatusByPk(itemSkuPublishInfo.getItemId(), HtdItemStatusEnum.NOT_SHELVES.getCode(), operateId, operateName);
+            }
+            executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+            executeResult.setResultMessage("下架成功");
+        } catch (Exception e) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.addErrorMessage(e.getMessage());
+        }
+        return executeResult;
     }
 
     /**

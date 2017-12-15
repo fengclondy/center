@@ -611,10 +611,16 @@
 		left join item_spu spu on spu.spu_id=t.item_spu_id
 		left join item_sku_publish_info info2 on info2.sku_id=sku.sku_id
 		<if test="shelfType == 1">
-		and info2.is_box_flag='0' and info2.is_visable =1
+		  and info2.is_box_flag='0'
+          <if test="isNewVms == null">
+          and info2.is_visable =1
+          </if>
 		</if>
 		<if test="shelfType == 2">
-		and info2.is_box_flag='1' and info2.is_visable =1
+		  and info2.is_box_flag='1'
+          <if test="isNewVms == null">
+          and info2.is_visable =1
+          </if>
 		</if>
 		left join item_sku_total_stock stock on t.item_id=stock.item_id
 		where sku.sku_id=#{skuId} limit 1
@@ -804,4 +810,8 @@
         </foreach>
     </if> 
   </select>
+
+  <update id="updateSkuOffShelf">
+    update item_sku_publish_info set display_quantity = reserve_quantity, is_visable = 0 where sku_code = #{skuCode} and is_box_flag = #{isBoxFlag}
+  </update>
 </mapper>

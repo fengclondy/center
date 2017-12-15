@@ -31,6 +31,8 @@ public enum ResultCodeEnum {
 
     STOCK_NO_REDUCE_REOCRD("12107", "此操作之前没有扣减库存，请先扣减库存"),
 
+    STOCK_OFF_SHELF_FALI("12108", "下架失败"),
+
     ERROR("99999", "系统错误");
 
 

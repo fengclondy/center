@@ -81,4 +81,13 @@ public interface ItemSkuPublishInfoMapper {
     QueryItemStockDetailOutDTO queryItemStockDetailInDTO(@Param("param")QueryItemStockDetailInDTO queryItemStockDetailInDTO );
 
 	ItemSkuPublishInfo queryMobileExternalPublishInfoBySkuId(@Param("skuIds") List<String> skuIds);
+
+    /**
+     * 更新sku下架
+     * 可卖数为0
+     * @param skuCode
+     * @param isBoxFlag
+     * @return
+     */
+    int updateSkuOffShelf(@Param("skuCode") String skuCode, @Param("isBoxFlag") Integer isBoxFlag);
 }

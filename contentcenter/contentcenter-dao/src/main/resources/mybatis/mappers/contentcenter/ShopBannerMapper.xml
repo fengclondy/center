@@ -283,6 +283,14 @@
         FROM shop_banner
         WHERE id = #{id,jdbcType=BIGINT}
     </select>
+    
+    <select id="queryByShopId" resultMap="propMap">
+        SELECT
+        <include refid="allColumn"/>
+        FROM shop_banner 
+        WHERE flag = 0 and shop_id = #{shopId,jdbcType=VARCHAR}  
+        order by sort_num DESC  
+    </select>
 
     <select id="queryForPage" parameterType="java.lang.Long" resultMap="propMap">
         SELECT

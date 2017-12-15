@@ -1,6 +1,8 @@
 package com.bjucloud.contentcenter.service;
 
 import cn.htd.common.ExecuteResult;
+import cn.htd.goodscenter.common.constants.ResultCodeEnum;
+
 import com.bjucloud.contentcenter.dto.ShopBannerDTO;
 
 import java.util.List;
@@ -33,5 +35,20 @@ public class ShopBannerExportServiceTest {
         ExecuteResult<List<ShopBannerDTO>> result =shopBannerService.queryVMSBannerBySellerCode(banner);
         System.out.println(result.toString());
     }
+    
+    /**
+     * 根据shopId查询banner信息
+     */
+    @Test
+    public void queryByShopIdTest(){ 
+    	String shopId = "532";
+        ExecuteResult<List<ShopBannerDTO>> executeResult =shopBannerService.queryByShopId(shopId);
+    	if(executeResult.isSuccess()){
+    		System.out.println("===>executeResult:" + executeResult.getResult());
+    	}else{
+    		System.out.println("===>查询失败！！！");
+    	}
+    }
+    
 
 }

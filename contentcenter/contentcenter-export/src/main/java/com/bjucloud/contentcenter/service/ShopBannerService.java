@@ -19,6 +19,14 @@ public interface ShopBannerService {
      * @return
      */
     ExecuteResult<ShopBannerDTO> queryById(Long id);
+    
+    /**
+     * 根据shopId查询banner信息
+     *
+     * @param shopId
+     * @return
+     */
+    ExecuteResult<List<ShopBannerDTO>> queryByShopId(String shopId);
 
     /**
      * 分页查询banner

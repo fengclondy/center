@@ -18,6 +18,14 @@ public interface ShopBannerDAO {
      * @return
      */
     ShopBannerDTO queryById(Long id);
+    
+    /**
+     * 根据shopId查询banner信息
+     *
+     * @param shopId
+     * @return
+     */
+    List<ShopBannerDTO> queryByShopId(@Param("shopId") String shopId);
 
     /**
      * 按条件分页查询banner信息

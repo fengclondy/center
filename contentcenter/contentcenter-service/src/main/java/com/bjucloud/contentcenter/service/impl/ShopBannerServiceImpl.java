@@ -7,16 +7,24 @@ import com.bjucloud.contentcenter.constant.UtilsConstant;
 import com.bjucloud.contentcenter.dao.ShopBannerDAO;
 import com.bjucloud.contentcenter.dto.ShopBannerDTO;
 import com.bjucloud.contentcenter.service.ShopBannerService;
+
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Resource;
+
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by taolei on 2017/6/29.
  */
 @Service("shopBannerService")
 public class ShopBannerServiceImpl implements ShopBannerService {
+	
+    private static final Logger logger = LoggerFactory.getLogger(ShopBannerServiceImpl.class);
+    
     @Resource
     private ShopBannerDAO shopBannerDAO;
 
@@ -33,6 +41,19 @@ public class ShopBannerServiceImpl implements ShopBannerService {
         } catch (Exception e) {
             result.addErrorMessage("执行该方法【queryById】报错：" + e.getMessage());
             throw new RuntimeException(e);
+        }
+        return result;
+    }
+    
+    @Override
+    public ExecuteResult<List<ShopBannerDTO>> queryByShopId(String shopId) {
+        ExecuteResult<List<ShopBannerDTO>> result = new ExecuteResult<List<ShopBannerDTO>>();
+        try {
+        	List<ShopBannerDTO> shopBannerList = shopBannerDAO.queryByShopId(shopId);
+            result.setResult(shopBannerList);
+        } catch (Exception e) {
+            result.addErrorMessage(e.toString());
+            logger.error("执行方法【queryByShopId】报错：{}", e.toString());
         }
         return result;
     }

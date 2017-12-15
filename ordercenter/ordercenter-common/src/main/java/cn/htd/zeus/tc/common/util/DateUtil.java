@@ -245,9 +245,18 @@ public class DateUtil {
 		calendar.set(Calendar.SECOND, 59);
 		return sdf.format(calendar.getTime());
 	}
+	
+	/**
+	 * date 转成 String
+	 * @param date
+	 * @return
+	 */
+	public static String dateToString(Date date){
+		return df.format(date);
+	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(getLastDayStart());
+		System.out.println(dateToString(new Date()));
 		// String date1="20161129153852"; //
 		// System.out.println("20161201200101".substring(0,8));
 		// // String date2="20161116150201";

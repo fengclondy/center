@@ -113,7 +113,9 @@ public enum OrderStatusEnum {
 	COUPON_TYPE_SKILL("3","秒杀"),
 	
 	IS_LIMITED_TIME_PURCHASE("1","是限时购商品"),
-	HAS_LIMITED_TIME_PURCHASE("1","含有限时购商品");
+	HAS_LIMITED_TIME_PURCHASE("1","含有限时购商品"),
+	DOWN_STATUS_SUCCESS("1","成功"),
+	DOWN_STATUS_FAIL("2","失败");
 	
     // 成员变量
     private String code;

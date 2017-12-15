@@ -87,8 +87,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 
 					rs.setResultMessage("success");
 				} catch (Exception e) {
+					rs.addErrorMessage("查询品牌品类名称出错" + e);
 					rs.setResultMessage("error");
-					throw new RuntimeException(e);
 				}
 			} else {
 				rs.setResultMessage("参数不全");
@@ -131,6 +131,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
 				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));
 				shopBrandDTO.setBrandId(memberBusinessRelationDTO.getBrandId());
+				shopBrandDTO.setBrandIdList(memberBusinessRelationDTO.getBrandIdList());
+				shopBrandDTO.setCategoryIdList(memberBusinessRelationDTO.getCategoryIdList());
 				ExecuteResult<DataGrid<ShopBrandDTO>> result = shopBrandExportService.queryShopBrandAll(shopBrandDTO,
 						null);
 				List<ShopBrandDTO> shopList = result.getResult().getRows();

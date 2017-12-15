@@ -320,8 +320,10 @@ public class ItemBrandExportServiceImpl implements ItemBrandExportService {
 			dataGrid.setRows(list);
 			dataGrid.setTotal(count);
 			result.setResult(dataGrid);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			logger.error("error:：" + e.getMessage());
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.addErrorMessage(e.getMessage());
 		}
 		return result;
@@ -548,8 +550,10 @@ public class ItemBrandExportServiceImpl implements ItemBrandExportService {
 			dataGrid.setRows(list);
 			dataGrid.setTotal(count);
 			result.setResult(dataGrid);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			logger.error("error:：" + e.getMessage());
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.addErrorMessage(e.getMessage());
 		}
 		return result;

@@ -386,5 +386,11 @@ public interface MemberBaseInfoService {
 	 * @return
 	 */
 	public ExecuteResult<MemberBaseInfoDTO> queryMemberCompanyInfo(String memberCode);
+	/**
+	 * 根据id(member_info_base表的id)查询公司信息
+	 * 
+	 * @return
+	 */
+	public ExecuteResult<MemberBaseInfoDTO> queryMemberInfoByMemberId(Long memberId);
 	
 }

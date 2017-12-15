@@ -16,8 +16,11 @@ import cn.htd.goodscenter.domain.spu.ItemSpu;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
+import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
+import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
+import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
 import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
@@ -137,6 +140,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             }
             dtoDataGrid.setTotal(count);
             dtoDataGrid.setRows(queryVmsMyItemListOutDTOS);
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
             result.setResult(dtoDataGrid);
         } catch (Exception e) {
             logger.error("我的商品列表查询出错, 错误信息", e);
@@ -349,6 +353,59 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return this.venusItemExportService.addItem(venusItemDTO);
     }
 
+    /**
+     * 我的商品 - 修改商品
+     * @param venusItemDTO
+     * @return
+     */
+    @Override
+    public ExecuteResult<String> updateItem(VenusItemInDTO venusItemDTO) {
+        return this.venusItemExportService.updateItem(venusItemDTO);
+    }
+
+    /**
+     * 我的商品 - 库存商品
+     * @param venusStockItemInDTO
+     * @return
+     */
+    @Override
+    public ExecuteResult<String> queryErpStockItemList(VenusStockItemInDTO venusStockItemInDTO) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        if (venusStockItemInDTO == null) {
+            executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+            executeResult.addErrorMessage("入参对象为空");
+            return executeResult;
+        }
+        if (StringUtils.isEmpty(venusStockItemInDTO.getSupplierCode())) {
+            executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+            executeResult.addErrorMessage("中台供应商编号必填");
+            return executeResult;
+        }
+        if (StringUtils.isEmpty(venusStockItemInDTO.getPageCount())) {
+            executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+            executeResult.addErrorMessage("pageCount必填");
+            return executeResult;
+        }
+        if (StringUtils.isEmpty(venusStockItemInDTO.getPageIndex())) {
+            executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+            executeResult.addErrorMessage("pageIndex必填");
+            return executeResult;
+        }
+        // 商品编码转模板编码
+        String itemCode = venusStockItemInDTO.getProductCode();
+        if (StringUtils.isNotEmpty(itemCode)) {
+            Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);
+            ItemSpu itemSpu = this.itemSpuMapper.selectByPrimaryKey(item.getItemSpuId());
+            venusStockItemInDTO.setProductCode(itemSpu.getSpuCode()); // 模板编码
+            venusStockItemInDTO.setItemCode(itemCode); // 商品编码
+        }
+        venusStockItemInDTO.setNewVms(true);
+        venusStockItemInDTO.setHasPage("1");
+        venusStockItemInDTO.setIsAgreement("0");
+        executeResult = this.venusItemExportService.queryVenusStockItemList(venusStockItemInDTO);
+        return executeResult;
+    }
+
     /** 包厢商品 大厅商品 **/
     /**
      * 查询包厢商品列表
@@ -364,7 +421,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     public ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page) {
         ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> result = new ExecuteResult<>();
         DataGrid<QueryVmsItemPublishInfoOutDTO> dataGrid = new DataGrid<>();
-        if(queryVmsItemPublishInfoInDTO == null || page == null){
+        if(queryVmsItemPublishInfoInDTO == null){
             result.setCode(VenusErrorCodes.E1040009.name());
             result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040009.getErrorMsg()));
             return result;
@@ -394,6 +451,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             result.addErrorMessage(e.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
+        return this.venusItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
     }
 
     /**

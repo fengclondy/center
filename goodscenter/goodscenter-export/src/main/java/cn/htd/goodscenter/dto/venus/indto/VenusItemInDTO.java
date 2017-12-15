@@ -78,6 +78,7 @@ public class VenusItemInDTO implements Serializable{
 //	@NotEmpty(message="商品目录属性不能为空")
 	private String categoryAttribute;
 	//商品描述
+	@NotNull(message="describe不能为空")
 	private ItemDescribe describe;
 	//操作者ID
 	private Long operatorId;

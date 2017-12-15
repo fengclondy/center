@@ -28,6 +28,16 @@ public class ShopBrandDTO implements Serializable {
 	private String brandName;
 	private String categoryName;
 
+	/**
+	 *  品类编码集合 - 目前供新系统VMS用
+	 */
+	private List<Long> categoryIdList;
+	
+	/**
+	 *  品牌编码集合 - 目前供新系统VMS用
+	 */
+	private List<Long> brandIdList;
+	
 
 	public Long getIsGroupBy() {
 		return isGroupBy;
@@ -181,6 +191,23 @@ public class ShopBrandDTO implements Serializable {
 
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+	
+
+	public List<Long> getCategoryIdList() {
+		return categoryIdList;
+	}
+
+	public void setCategoryIdList(List<Long> categoryIdList) {
+		this.categoryIdList = categoryIdList;
+	}
+
+	public List<Long> getBrandIdList() {
+		return brandIdList;
+	}
+
+	public void setBrandIdList(List<Long> brandIdList) {
+		this.brandIdList = brandIdList;
 	}
 
 	@Override

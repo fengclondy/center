@@ -2,6 +2,7 @@ package cn.htd.membercenter.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class MemberBusinessRelationDTO extends BaseDTO implements Serializable {
 
@@ -46,6 +47,16 @@ public class MemberBusinessRelationDTO extends BaseDTO implements Serializable {
 	private Date auditTime;
 	private Date deleteTime;
 	private String remark;
+	
+	/**
+	 *  品类编码集合 - 目前供新系统VMS用
+	 */
+	private List<Long> categoryIdList;
+	
+	/**
+	 *  品牌编码集合 - 目前供新系统VMS用
+	 */
+	private List<Long> brandIdList;
 
 	/**
 	 * @return the businessId
@@ -412,6 +423,22 @@ public class MemberBusinessRelationDTO extends BaseDTO implements Serializable {
 	 */
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public List<Long> getCategoryIdList() {
+		return categoryIdList;
+	}
+
+	public void setCategoryIdList(List<Long> categoryIdList) {
+		this.categoryIdList = categoryIdList;
+	}
+
+	public List<Long> getBrandIdList() {
+		return brandIdList;
+	}
+
+	public void setBrandIdList(List<Long> brandIdList) {
+		this.brandIdList = brandIdList;
 	}
 
 }

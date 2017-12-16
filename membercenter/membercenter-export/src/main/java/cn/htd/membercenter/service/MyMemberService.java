@@ -122,4 +122,5 @@ public interface MyMemberService {
 	 */
 	public ExecuteResult<List<AthenaEventDTO>> calculationAthenaDealEvent();
 
+	public ExecuteResult<Boolean> getNoMemberName(MyNoMemberDTO myNoMemberDTO);
 }

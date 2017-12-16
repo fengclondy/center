@@ -156,13 +156,13 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (myNoMemberDto != null) {
 				try {
-					if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
-						List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(), 0l);
-						if (nmDto != null && nmDto.size() >= 1) {
-							rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
-							return rs;
-						}
-					}
+//					if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
+//						List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(), 0l);
+//						if (nmDto != null && nmDto.size() >= 1) {
+//							rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
+//							return rs;
+//						}
+//					}
 					if (myNoMemberDto.getCompanyName() != null) {
 						List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(), 0l);
 						if (nmDto != null && nmDto.size() >= 1) {
@@ -250,14 +250,14 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (memberId != null) {
 				String companyName = myNoMemberDto.getCompanyName();
-				if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
-					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
-							myNoMemberDto.getMemberId());
-					if (nmDto != null && nmDto.size() >= 1) {
-						rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
-						return rs;
-					}
-				}
+//				if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
+//					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
+//							myNoMemberDto.getMemberId());
+//					if (nmDto != null && nmDto.size() >= 1) {
+//						rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
+//						return rs;
+//					}
+//				}
 				if (myNoMemberDto.getTaxManId() != null) {
 					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(),
 							myNoMemberDto.getMemberId());
@@ -734,6 +734,29 @@ public class MyMemberServiceImpl implements MyMemberService {
 		}
 		rs.setResult(list);
 		return rs;
+	}
+
+	@Override
+	public ExecuteResult<Boolean> getNoMemberName(MyNoMemberDTO myNoMemberDto) {
+		ExecuteResult<Boolean> rs = new ExecuteResult<Boolean>();
+		try{
+			if(myNoMemberDto.getMemberId() == null){
+				myNoMemberDto.setMemberId(0L);
+			}
+			List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(),
+					myNoMemberDto.getMemberId());
+			rs.setCode("00000");
+			if (nmDto != null && nmDto.size() >= 1) {
+				rs.setResult(Boolean.TRUE);
+				rs.addErrorMessage("会员名称已存在");
+				return rs;
+			}
+			rs.setResult(Boolean.FALSE);
+		}catch(Exception e){
+			rs.setCode("99999");
+			rs.addErrorMessage(e.getMessage());
+		}
+		return null;
 	}
 
 }

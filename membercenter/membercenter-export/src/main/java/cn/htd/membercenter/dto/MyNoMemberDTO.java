@@ -75,6 +75,8 @@ public class MyNoMemberDTO implements Serializable {
 	private String modifyType;// 修改类型，1：修改非会员信息重新提交运营审核，2：修改非会员基本信息
 	private String newCompanyName;// 修改后公司名称
 
+	private String belongManagerName;// 客户经理
+	
 	public String getContactName() {
 		return contactName;
 	}
@@ -636,6 +638,14 @@ public class MyNoMemberDTO implements Serializable {
 	 */
 	public void setCompanyNameModifyStatus(String companyNameModifyStatus) {
 		this.companyNameModifyStatus = companyNameModifyStatus;
+	}
+
+	public String getBelongManagerName() {
+		return belongManagerName;
+	}
+
+	public void setBelongManagerName(String belongManagerName) {
+		this.belongManagerName = belongManagerName;
 	}
 
 }

@@ -8,7 +8,9 @@ import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
+import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
+import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoInDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoOutDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
@@ -99,6 +101,24 @@ public class VmsItemExportServiceTest extends CommonTest {
         ItemDescribe itemDescribe = new ItemDescribe();
         venusItemDTO.setDescribe(itemDescribe);
         ExecuteResult<String>  executeResult = this.vmsItemExportService.addItem(venusItemDTO);
+        System.out.println(JSON.toJSONString(executeResult));
+    }
+
+    @Test
+    public void testqueryItemSkuPublishInfoDetail() {
+        QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO = new QuerySkuPublishInfoDetailParamDTO();
+        querySkuPublishInfoDetailParamDTO.setSkuId(270101L);
+        querySkuPublishInfoDetailParamDTO.setShelfType("2");
+        ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> executeResult = this.vmsItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
+        System.out.println(JSON.toJSONString(executeResult));
+    }
+
+
+    @Test
+    public void testoffShelves() {
+        String skuCode = "1000032709";
+        Integer isBoxFlag = 1;
+        ExecuteResult<String>  executeResult = this.vmsItemExportService.offShelves(skuCode, isBoxFlag, 0L, "CHENKANG");
         System.out.println(JSON.toJSONString(executeResult));
     }
 }

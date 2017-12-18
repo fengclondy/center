@@ -65,7 +65,7 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	private String displayQty;
 	//锁定库存
 	private String reserveQty;
-	//总库存
+	//实际库存
 	private String totalStock;
 	//同步erp库存标志 0
 	private String erpSync;

@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -475,6 +477,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
      * @param isBoxFlag 是否包厢   0：大厅 ；  1：包厢
      * @return
      */
+    @Transactional
     @Override
     public ExecuteResult<String> offShelves(String skuCode, Integer isBoxFlag, Long operateId, String operateName) {
         ExecuteResult<String> executeResult = new ExecuteResult<>();
@@ -514,6 +517,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         } catch (Exception e) {
             executeResult.setCode(ResultCodeEnum.ERROR.getCode());
             executeResult.addErrorMessage(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return executeResult;
     }

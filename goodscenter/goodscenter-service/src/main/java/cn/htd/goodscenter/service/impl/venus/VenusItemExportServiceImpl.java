@@ -1127,10 +1127,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			if (categoryResult1 != null && MapUtils.isNotEmpty(categoryResult1.getResult())) {
 				venusItemSkuPublishInfoDetailOutDTO.setCategoryName((String) categoryResult1.getResult().get("categoryName"));
 			}
-			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResult(venusItemSkuPublishInfoDetailOutDTO);
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::queryItemSkuPublishInfoDetail:",e);
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E00001.getErrorMsg()));
 		}
 		return result;

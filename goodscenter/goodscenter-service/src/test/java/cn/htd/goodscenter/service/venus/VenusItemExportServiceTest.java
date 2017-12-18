@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
 import junit.framework.Assert;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -207,12 +208,11 @@ public class VenusItemExportServiceTest extends CommonTest {
 	@Test
 	public void testQueryItemSkuPublishInfoDetail_withParam(){
 		QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO=new QuerySkuPublishInfoDetailParamDTO();
-		querySkuPublishInfoDetailParamDTO.setShelfType("1");
-		querySkuPublishInfoDetailParamDTO.setSkuId(1000029361L);
+		querySkuPublishInfoDetailParamDTO.setShelfType("2");
+		querySkuPublishInfoDetailParamDTO.setSkuId(270101L);
 		ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> result=
 				venusItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
-		System.out.println(result.getResult().getSkuCode());
-		Assert.assertTrue(result.isSuccess());
+		System.out.println(JSON.toJSONString(result));
 	}
 	
 	@Test

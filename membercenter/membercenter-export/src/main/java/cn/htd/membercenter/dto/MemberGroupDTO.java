@@ -53,6 +53,8 @@ public class MemberGroupDTO extends BaseDTO implements Serializable {
 	private List<String> gradeList;
 	// 会员分组编码集合
 	private List<String> groupList;
+	//新vms标志 1:新系统
+	private String newFlag;
 
 	/**
 	 * @return the id
@@ -466,4 +468,11 @@ public class MemberGroupDTO extends BaseDTO implements Serializable {
 		this.groupList = groupList;
 	}
 
+	public String getNewFlag() {
+		return newFlag;
+	}
+
+	public void setNewFlag(String newFlag) {
+		this.newFlag = newFlag;
+	}
 }

@@ -83,6 +83,21 @@
 		where a.buyer_id = b.member_id and a.buyer_id = c.id and b.buyer_seller_type = '1'
 		and a.delete_flag = '0'
 		and a.group_id = #{memberGroupDTO.groupId}
+		<if test="memberGroupDTO.newFlag == '1' ">
+			and c.status !=0
+		</if>
+		<if test="memberGroupDTO.companyName != null and memberGroupDTO.companyName != ''">
+			<![CDATA[ and b.company_name like concat('%', #{memberGroupDTO.companyName}, '%') ]]>
+		</if>
+		<if test="memberGroupDTO.locationProvince != null and memberGroupDTO.locationProvince != ''">
+			and b.location_province = #{memberGroupDTO.locationProvince}
+		</if>
+		<if test="memberGroupDTO.locationCity != null and memberGroupDTO.locationCity != ''">
+			and b.location_city = #{memberGroupDTO.locationCity}
+		</if>
+		<if test="memberGroupDTO.locationCounty != null and memberGroupDTO.locationCounty != ''">
+			and b.location_county = #{memberGroupDTO.locationCounty}
+		</if>
 	</select>
 	
 	<!-- 删除会员分组信息 -->

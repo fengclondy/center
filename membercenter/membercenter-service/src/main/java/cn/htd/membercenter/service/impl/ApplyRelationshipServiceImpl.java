@@ -21,10 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
+import cn.htd.common.Pager;
 import cn.htd.common.encrypt.KeygenGenerator;
 import cn.htd.goodscenter.domain.ItemBrand;
 import cn.htd.goodscenter.dto.ItemCategoryDTO;
@@ -1370,6 +1372,64 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 			rs.addErrorMessage("校验异常");
 			logger.info("applyRelationshipService---------checkOutCompanyRegister服务执行异常，参数："
 					+ JSONObject.toJSONString(outCompanyDto));
+		}
+		return rs;
+	}
+	
+	@Override
+	public ExecuteResult<QueryRegistProcessDTO> queryRegistProcessDetail(Long memberId, Long curBelongSellerId) {
+		ExecuteResult<QueryRegistProcessDTO> rs = new ExecuteResult<QueryRegistProcessDTO>();
+		try {
+			List<QueryRegistProcessDTO> registProcessDtoDetail = applyRelationshipDao.queryRegistProcessDetail(memberId,curBelongSellerId);
+			if (CollectionUtils.isNotEmpty(registProcessDtoDetail)) {
+				for(QueryRegistProcessDTO queryRegistProcessDTO :registProcessDtoDetail){
+					if ("11".equals(queryRegistProcessDTO.getInfoType())) {
+						rs.setResult(queryRegistProcessDTO);
+					} else if ("12".equals(queryRegistProcessDTO.getInfoType())) {
+						rs.setResult(queryRegistProcessDTO);
+					}
+				}
+			} else {
+				rs.setResultMessage("要查询的数据不存在!!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("ApplyRelationshipServiceImpl----->queryRegistProcessDetail=" + e);
+			rs.setResultMessage("error");
+		}
+		return rs;
+	}
+
+	@Override
+	public ExecuteResult<DataGrid<QueryRegistProcessDTO>> queryRegistProcessList(QueryRegistProcessDTO dto, Pager pager, Long cusCompanyId) {
+		ExecuteResult<DataGrid<QueryRegistProcessDTO>> rs = new ExecuteResult<DataGrid<QueryRegistProcessDTO>>();
+		try {
+			DataGrid<QueryRegistProcessDTO> dg = new DataGrid<QueryRegistProcessDTO>();
+			long count = applyRelationshipDao.queryRegistProcessListCount(dto,cusCompanyId);
+			List<QueryRegistProcessDTO> memberlist = applyRelationshipDao.queryRegistProcessMember(dto, pager,cusCompanyId);
+			List<QueryRegistProcessDTO> resultlist = new ArrayList<QueryRegistProcessDTO>();
+			for(QueryRegistProcessDTO queryRegistProcessDTO :memberlist){
+				QueryRegistProcessDTO result = applyRelationshipDao.queryRegistProcessStatus(queryRegistProcessDTO.getMemberId(),dto);
+				queryRegistProcessDTO.setVerifyStatus(result.getVerifyStatus());
+				queryRegistProcessDTO.setInfoType(result.getInfoType());
+				resultlist.add(queryRegistProcessDTO);
+			}
+			try {
+				if (CollectionUtils.isNotEmpty(resultlist)) {
+					dg.setRows(resultlist);
+					dg.setTotal(count);
+					rs.setResult(dg);
+				} else {
+					rs.setResultMessage("查询的数据不存在");
+				}
+				rs.setResultMessage("success");
+			} catch (Exception e) {
+				rs.setResultMessage("error");
+				throw new RuntimeException(e);
+			}
+		} catch (Exception e) {
+			logger.error("ApplyRelationshipServiceImpl----->queryRegistProcessList =" + e);
+			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", e.getMessage()));
 		}
 		return rs;
 	}

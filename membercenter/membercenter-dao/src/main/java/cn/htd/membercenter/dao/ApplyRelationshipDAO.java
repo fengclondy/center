@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.MemberContractInfo;
@@ -246,4 +247,38 @@ public interface ApplyRelationshipDAO {
 	 * @return
 	 */
 	public Long selectOutCompanyCheckCount(@Param("dto") MemberOutsideSupplierCompanyDTO outCompanyDto);
+	
+	/**
+	 * 会员注册进度会员列表
+	 * @param dto
+	 * @param pager
+	 * @param curBelongSellerId
+	 * @return
+	 */
+	List<QueryRegistProcessDTO> queryRegistProcessMember(@Param("dto") QueryRegistProcessDTO dto, @Param("page") Pager pager,
+													   @Param("curBelongSellerId") Long curBelongSellerId);
+
+	/**
+	 * 会员注册进度查询列表数量
+	 * @param dto
+	 * @param curBelongSellerId
+	 * @return
+	 */
+	long queryRegistProcessListCount(@Param("dto") QueryRegistProcessDTO dto, @Param("curBelongSellerId") Long curBelongSellerId);
+
+	/**
+	 * 会员注册进度详情
+	 * @param memberId
+	 * @param curBelongSellerId
+	 * @return
+	 */
+	List<QueryRegistProcessDTO> queryRegistProcessDetail(@Param("memberId") Long memberId, @Param("curBelongSellerId") Long curBelongSellerId);
+
+	/**
+	 * 查询注册进度会员审核状态
+	 * @param memberId
+	 * @param dto
+	 * @return
+	 */
+	QueryRegistProcessDTO queryRegistProcessStatus(@Param("memberId") Integer memberId, @Param("dto") QueryRegistProcessDTO dto);
 }

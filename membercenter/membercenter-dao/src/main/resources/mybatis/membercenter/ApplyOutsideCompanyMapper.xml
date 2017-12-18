@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.htd.membercenter.dao.ApplyRelationshipDAO">
-  
-	
+
+	<sql id="process_mid">
+		<if test="curBelongSellerId != null and  curBelongSellerId !=''">
+			and m.cur_belong_seller_id = #{curBelongSellerId}
+		</if>
+		<if test="dto.companyName != null and dto.companyName != ''">
+			and c.company_name = #{companyName}
+		</if>
+		<if test="dto.artificialPersonName != null and dto.artificialPersonName != ''">
+			and c.artificial_person_name = #{dto.artificialPersonName}
+		</if>
+		<if test="dto.artificialPersonMobile != null and dto.artificialPersonMobile != ''">
+			and c.artificial_person_mobile = #{dto.artificialPersonMobile}
+		</if>
+		<if test="dto.isDiffIndustry != null and dto.isDiffIndustry != ''">
+			and m.is_diff_industry = #{dto.isDiffIndustry}
+		</if>
+		<if test="dto.regisTimeStart!=null and dto.regisTimeStart!=''">
+			and m.regist_time >= str_to_date(#{dto.regisTimeStart}, '%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="dto.regisTimeEnd!=null and dto.regisTimeEnd!=''">
+			and m.regist_time &lt;= str_to_date(#{dto.regisTimeEnd}, '%Y-%m-%d %H:%i:%s')
+		</if>
+	</sql>
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit #{page.pageOffset} , #{page.rows}
+	</sql>
+
 <!-- 外部商家入驻申请——会员基本信息表里新增一条数据 -->
   <insert id="insertMemberBaseInfo" parameterType="cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO">
      <selectKey resultType="Long" order="AFTER" keyProperty="memberId">
@@ -934,6 +961,83 @@
 		</if>
 		<if test="dto.artificialPersonMobile !=null and dto.artificialPersonMobile !=''">
 			and a.artificial_person_mobile = #{dto.artificialPersonMobile} 
+		</if>
+	</select>
+
+	<select id="queryRegistProcessMember" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">
+		select
+		m.id memberId,
+		c.company_name companyName,
+		c.artificial_person_name artificialPersonName,
+		c.location_addr as locationAddr,
+		c.artificial_person_mobile artificialPersonMobile,
+		m.is_diff_industry isDiffIndustry,
+		m.industry_category industryCategory,
+		m.regist_time registime
+		from member_base_info m,member_company_info c
+		where m.id = c.member_id
+		and c.buyer_seller_type='1'
+		<include refid="process_mid"/>
+		order by m.regist_time desc
+		<if test="page!=null">
+			<include refid="pagination_tail"/>
+		</if>
+
+	</select>
+
+	<select id="queryRegistProcessListCount" resultType="java.lang.Long">
+		select
+		count(1)
+		from (member_base_info m,member_company_info c)
+		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
+			left JOIN member_status_info s
+		</if>
+		where m.id = c.member_id and c.buyer_seller_type='1'
+		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
+			and m.id = s.member_id
+			and s.info_type = #{dto.infoTyp}
+			and s.verify_status = #{dto.verifyStatus}
+		</if>
+		<include refid="process_mid"/>
+	</select>
+
+	<select id="queryRegistProcessDetail" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">
+		select
+		m.id memberId,
+		c.company_name companyName,
+		c.artificial_person_name artificialPersonName,
+		c.artificial_person_mobile artificialPersonMobile,
+		c.artificial_person_idcard artificialPersonIdcard,
+		c.artificial_person_pic_src artificialPersonPicSrc,
+		c.artificial_person_pic_back_src artificialPersonPicBackSrc,
+		m.industry_category industryCategory,
+		case when l.buyer_business_license_pic_src !='' then l.buyer_business_license_pic_src
+		else l.buyer_guarantee_license_pic_src end as buyerBusinessLicensePicSrc,
+		l.buyer_business_license_id buyerBusinessLicenseId,
+		s.verify_status verifyStatus,
+		c.location_addr as locationAddr,
+		s.info_type infoType,
+		m.regist_time registime,
+		m.is_diff_industry isDiffIndustry,
+		s.sync_error_msg registProcess
+		from (member_base_info m,member_company_info c,member_status_info s)
+		left join member_licence_info l on m.id = l.member_id
+		where m.id = c.member_id and m.id = s.member_id and (s.info_type='11' or s.info_type='12')
+		and c.buyer_seller_type='1'
+		and m.id = #{memberId}
+		and m.cur_belong_seller_id = #{curBelongSellerId}
+	</select>
+
+	<select id="queryRegistProcessStatus" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">
+		select
+		s.verify_status verifyStatus,
+		s.info_type infoType,
+		s.member_id memberId
+		from member_status_info s
+		where s.member_id = #{memberId}
+		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
+			and s.info_type = #{dto.infoTyp}
+			and s.verify_status = #{dto.verifyStatus}
 		</if>
 	</select>
 </mapper>

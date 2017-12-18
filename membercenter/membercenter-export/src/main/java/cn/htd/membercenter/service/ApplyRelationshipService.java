@@ -1,7 +1,10 @@
 package cn.htd.membercenter.service;
 
+import java.util.List;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
+import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.MemberContractInfo;
@@ -100,5 +103,20 @@ public interface ApplyRelationshipService {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> checkOutCompanyRegister(MemberOutsideSupplierCompanyDTO outCompanyDto);
+	/**
+	 * 根据供应商查询会员注册进度列表
+	 *  @param dto
+	 * @param pager
+	 * @param cusCompanyId  @return
+	 */
+	ExecuteResult<DataGrid<QueryRegistProcessDTO>> queryRegistProcessList(QueryRegistProcessDTO dto, Pager pager, Long cusCompanyId);
+
+	/**
+	 * 会员注册进度详情
+	 * @param memberId
+	 * @param cusCompanyId
+	 * @return
+	 */
+	ExecuteResult<QueryRegistProcessDTO> queryRegistProcessDetail(Long memberId, Long cusCompanyId);
 
 }

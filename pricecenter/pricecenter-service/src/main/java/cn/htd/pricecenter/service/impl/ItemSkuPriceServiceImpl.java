@@ -1090,13 +1090,12 @@ public class ItemSkuPriceServiceImpl implements ItemSkuPriceService {
 		paramMap.put("skuId",skuId);
 		
 		List<ItemSkuTerminalPrice> itemSkuTerminalPriceList=itemSkuTerminalPriceMapper.selectBySkuIdAndTerminalType(paramMap);
-		
+		HzgPriceDTO hzgPrice=new HzgPriceDTO();
 		if(CollectionUtils.isEmpty(itemSkuTerminalPriceList)){
 			result.setCode(ErrorCodes.SUCCESS.name());
+			result.setResult(hzgPrice);
 			return result;
 		}
-		
-		HzgPriceDTO hzgPrice=new HzgPriceDTO();
 		
 		for(ItemSkuTerminalPrice itemSkuTerminalPrice:itemSkuTerminalPriceList){
 			if("0".equals(itemSkuTerminalPrice.getPriceType())){

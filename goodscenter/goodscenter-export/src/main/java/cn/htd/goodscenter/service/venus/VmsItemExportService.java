@@ -5,6 +5,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
+import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
@@ -106,10 +107,20 @@ public interface VmsItemExportService {
     ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO);
 
     /**
-     * 下架商品
+     *
+     * 包厢商品下架商品
+     * 大厅商品下架商品
      * @param skuCode
      * @param isBoxFlag 是否包厢   0：大厅 ；  1：包厢
      * @return
      */
     ExecuteResult<String> offShelves(String skuCode, Integer isBoxFlag, Long operateId, String operateName);
+
+    /**
+     * 包厢商品上架商品
+     * 大厅商品上架商品
+     * @param venusItemSkuPublishInDTO
+     * @return
+     */
+    ExecuteResult<String> onShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO);
 }

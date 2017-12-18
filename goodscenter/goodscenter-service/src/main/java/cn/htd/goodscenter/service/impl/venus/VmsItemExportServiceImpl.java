@@ -17,6 +17,7 @@ import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
+import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
@@ -512,6 +513,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             if (itemSkuPublishInfos.size() == offShelfCount) { // 如果都下架，更新itemStatus = 4
                 this.itemMybatisDAO.updateItemStatusByPk(itemSkuPublishInfo.getItemId(), HtdItemStatusEnum.NOT_SHELVES.getCode(), operateId, operateName);
             }
+            //修改商品更新时间
+            itemMybatisDAO.updateItemModifyTimeByItemId(itemSkuPublishInfo.getItemId(), 0);
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
             executeResult.setResultMessage("下架成功");
         } catch (Exception e) {
@@ -520,6 +523,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<String> onShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
+        return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 
     /**

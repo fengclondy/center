@@ -3,18 +3,24 @@ package cn.htd.basecenter.service.task;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.StringUtil;
 import com.taobao.pamirs.schedule.IScheduleTaskDealMulti;
 import com.taobao.pamirs.schedule.TaskItemDefine;
+
 import cn.htd.basecenter.common.enums.YesNoEnum;
 import cn.htd.basecenter.common.utils.ExceptionUtils;
+import cn.htd.basecenter.dao.BaseSendMessageDAO;
 import cn.htd.basecenter.dao.BaseSmsClientDAO;
 import cn.htd.basecenter.dao.BaseSmsConfigDAO;
 import cn.htd.basecenter.dao.BaseSmsNoticeDAO;
+import cn.htd.basecenter.dto.BaseSendMessageDTO;
 import cn.htd.basecenter.dto.BaseSmsConfigDTO;
 import cn.htd.basecenter.dto.BaseSmsNoticeDTO;
 import cn.htd.basecenter.enums.SmsChannelTypeEnum;
@@ -57,6 +63,8 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 	private ManDaoSmsClient manDaoSmsClient;
 	@Resource
 	private RedisDB redisDB;
+	@Resource
+	private BaseSendMessageDAO baseSendMessageDAO;
 
 	@Override
 	public Comparator<BaseSmsConfigDTO> getComparator() {
@@ -126,6 +134,13 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 						content = content + "漫道短信通道短信余额已不足" + balanceLimitStr + "条，请尽快充值";
 						String smsResult = manDaoSmsClient.sendSms(targetObj, phoneStr, content);
 						logger.info("NoticeSmsBalanceScheduleTask " + smsResult);
+						BaseSendMessageDTO message = new BaseSendMessageDTO();
+						message.setAddress(phoneStr);
+						message.setContent(content);
+						message.setType(SmsEmailTypeEnum.SMS.getCode());
+						message.setIsSend(YesNoEnum.YES.getValue());
+						message.setSendResult(smsResult);
+						baseSendMessageDAO.add(message);
 					}
 				}
 			}

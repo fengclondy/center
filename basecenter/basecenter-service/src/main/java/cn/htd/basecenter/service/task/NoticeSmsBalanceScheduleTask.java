@@ -27,19 +27,19 @@ import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.util.SysProperties;
 
 public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<BaseSmsConfigDTO> {
-	
-    protected static transient Logger logger = LoggerFactory.getLogger(NoticeSmsBalanceScheduleTask.class);
-    
-    /**
-     * 读取配置文件预警上限数
-     */
-    private static final String NOTICE_SMS_BALANCE = "notice_sms_balance";
-    
-    /**
+
+	protected static transient Logger logger = LoggerFactory.getLogger(NoticeSmsBalanceScheduleTask.class);
+
+	/**
+	 * 读取配置文件预警上限数
+	 */
+	private static final String NOTICE_SMS_BALANCE = "notice_sms_balance";
+
+	/**
 	 * 读取配置文件是否发送短信标识
 	 */
 	private static final String IS_SEND_SMS_FLAG = "send.sms.flag";
-	
+
 	/**
 	 * 标记预警短信已发送标识
 	 */
@@ -57,7 +57,7 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 	private ManDaoSmsClient manDaoSmsClient;
 	@Resource
 	private RedisDB redisDB;
-	
+
 	@Override
 	public Comparator<BaseSmsConfigDTO> getComparator() {
 		return new Comparator<BaseSmsConfigDTO>() {
@@ -71,8 +71,7 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 
 	@Override
 	public List<BaseSmsConfigDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
-			List<TaskItemDefine> taskItemList, int eachFetchDataNum)
-			throws Exception {
+			List<TaskItemDefine> taskItemList, int eachFetchDataNum) throws Exception {
 		logger.info("\n 方法[{}]，入参：[{}][{}][{}][{}][{}]", "NoticeSmsBalanceScheduleTask-selectTasks",
 				"taskParameter=" + taskParameter, "ownSign=" + ownSign, "taskQueueNum=" + taskQueueNum,
 				JSONObject.toJSONString(taskItemList), "eachFetchDataNum=" + eachFetchDataNum);
@@ -80,47 +79,47 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 		String phoneStr = "";
 		try {
 			String balanceLimitStr = SysProperties.getProperty(NOTICE_SMS_BALANCE);
-			if(StringUtil.isEmpty(balanceLimitStr)){
+			if (StringUtil.isEmpty(balanceLimitStr)) {
 				logger.info("NoticeSmsBalanceScheduleTask notice_sms_balance is null");
 				return null;
 			}
-			//查询配置信息
+			// 查询配置信息
 			BaseSmsConfigDTO configCondition = new BaseSmsConfigDTO();
 			List<BaseSmsConfigDTO> validSmsConfigList = null;
 			configCondition.setType(SmsEmailTypeEnum.SMS.getCode());
-			//configCondition.setUsedFlag(YesNoEnum.YES.getValue());
+			configCondition.setChannelCode(SmsChannelTypeEnum.MANDAO.getCode());
 			validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(configCondition);
 			if (validSmsConfigList == null || validSmsConfigList.size() == 0) {
 				logger.info("NoticeSmsBalanceScheduleTask 启用的短信通道配置信息不存在");
 				return null;
 			}
 			BaseSmsConfigDTO targetObj = validSmsConfigList.get(0);
-			ExecuteResult<String> result = sendSmsEmailService.queryBalance();
-			if(result.isSuccess() && !StringUtil.isEmpty(result.getResult())){
+			ExecuteResult<String> result = sendSmsEmailService.queryBalance(targetObj);
+			if (result.isSuccess() && !StringUtil.isEmpty(result.getResult())) {
 				int balance = Integer.parseInt(result.getResult());
 				int balanceLimit = Integer.parseInt(balanceLimitStr);
-				if(balance <= balanceLimit){
+				if (balance <= balanceLimit) {
 					String redisNotice = redisDB.get(REDIS_NOTICE_SMS_BALANCE);
-					if("YES".equals(redisNotice)){
+					if ("YES".equals(redisNotice)) {
 						logger.info("NoticeSmsBalanceScheduleTask notice_sms_balance 预警短信已发送过");
 						return null;
 					}
 					Pager<BaseSmsNoticeDTO> pager = new Pager<BaseSmsNoticeDTO>();
 					pager.setRows(100);
 					List<BaseSmsNoticeDTO> baseSmsNoticeList = baseSmsNoticeDAO.queryBaseSmsNotice(null, pager);
-					if(null != baseSmsNoticeList && !baseSmsNoticeList.isEmpty()){
+					if (null != baseSmsNoticeList && !baseSmsNoticeList.isEmpty()) {
 						for (BaseSmsNoticeDTO dto : baseSmsNoticeList) {
-							if(StringUtil.isNotEmpty(dto.getNoticePhone())){
+							if (StringUtil.isNotEmpty(dto.getNoticePhone())) {
 								phoneStr += dto.getNoticePhone() + ",";
 							}
 						}
 					}
 					redisDB.set(REDIS_NOTICE_SMS_BALANCE, "YES");
-				}else{
+				} else {
 					redisDB.set(REDIS_NOTICE_SMS_BALANCE, "NO");
 				}
 			}
-			if(!"".equals(phoneStr)){
+			if (!"".equals(phoneStr)) {
 				String content = "【汇通达】";
 				if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_SMS_FLAG))) {
 					if (SmsChannelTypeEnum.MANDAO.getCode().equals(targetObj.getChannelCode())) {
@@ -140,7 +139,7 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 
 	@Override
 	public boolean execute(BaseSmsConfigDTO[] arg0, String arg1) throws Exception {
-		 return true;
+		return true;
 	}
 
 }

@@ -88,7 +88,7 @@ public class NoticeSmsBalanceScheduleTask implements IScheduleTaskDealMulti<Base
 			BaseSmsConfigDTO configCondition = new BaseSmsConfigDTO();
 			List<BaseSmsConfigDTO> validSmsConfigList = null;
 			configCondition.setType(SmsEmailTypeEnum.SMS.getCode());
-			configCondition.setUsedFlag(YesNoEnum.YES.getValue());
+			//configCondition.setUsedFlag(YesNoEnum.YES.getValue());
 			validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(configCondition);
 			if (validSmsConfigList == null || validSmsConfigList.size() == 0) {
 				logger.info("NoticeSmsBalanceScheduleTask 启用的短信通道配置信息不存在");

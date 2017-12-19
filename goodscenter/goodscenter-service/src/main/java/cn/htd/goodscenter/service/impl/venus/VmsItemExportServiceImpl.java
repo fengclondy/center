@@ -529,14 +529,19 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     @Override
     public ExecuteResult<String> onShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
         ExecuteResult<String> result=new ExecuteResult<>();
-        if(venusItemSkuPublishInDTO == null || venusItemSkuPublishInDTO.getSkuId() == null || venusItemSkuPublishInDTO.getSkuId() <= 0){
+        if(venusItemSkuPublishInDTO == null){
             result.setCode(ErrorCodes.E10000.name());
             result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
             return result;
         }
-//        if (venusItemSkuPublishInDTO.getIsVisible().equals()) {
-//
-//        }
+        // 上架
+        venusItemSkuPublishInDTO.setIsVisible("1");
+        return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
+    }
+
+    @Override
+    public ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
+        venusItemSkuPublishInDTO.setUpdate(true);
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 

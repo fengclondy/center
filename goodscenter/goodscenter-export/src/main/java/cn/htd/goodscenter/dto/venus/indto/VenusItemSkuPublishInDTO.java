@@ -341,4 +341,15 @@ public class VenusItemSkuPublishInDTO implements Serializable{
 	public void setPreSaleFlag(Integer preSaleFlag) {
 		this.preSaleFlag = preSaleFlag;
 	}
+
+	// 是否修改页面，不涉及上下架
+	private Boolean isUpdate;
+
+	public Boolean getUpdate() {
+		return isUpdate;
+	}
+
+	public void setUpdate(Boolean update) {
+		isUpdate = update;
+	}
 }

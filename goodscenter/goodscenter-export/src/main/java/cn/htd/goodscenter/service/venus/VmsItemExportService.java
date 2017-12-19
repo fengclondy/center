@@ -123,4 +123,12 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<String> onShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO);
+
+    /**
+     * 包厢商品修改商品
+     * 大厅商品修改商品
+     * @param venusItemSkuPublishInDTO
+     * @return
+     */
+    ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO);
 }

@@ -2994,7 +2994,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	        logger.info("ERPdoItemDownErp end "+itemSpu.getSpuCode());
 	    }
 
-	private String parseCategoryAttr(String categoryAttr) {
+	private Map<String, String[]> parseCategoryAttr(String categoryAttr) {
 		Map<String, String[]> paresMapResult = new HashMap<>();
 		try {
 			Map<String, JSONArray> map = (Map<String, JSONArray>) JSONObject.fromObject("{\"1889\":[15259,15263],\"1891\":[15269],\"1893\":[15277],\"1895\":[15283],\"1897\":[15287],\"1899\":[15299]}");
@@ -3014,7 +3014,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		} catch (Exception e) {
 			logger.error("parseCategoryAttr出错，", e);
 		}
-		return JSON.toJSONString(paresMapResult);
+		return paresMapResult;
 	}
 
 	private String getAttributeName(Long attributeId) {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import cn.htd.goodscenter.domain.ItemDescribe;
 import cn.htd.goodscenter.domain.ItemPicture;
@@ -54,7 +55,7 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	//类目属性(码)
 	private String categoryAttr;
 	//类目属性(解析后的值)
-	private String categoryAttrHandled;
+	private Map<String, String[]> categoryAttrHandled;
 	//商品sku编码
 	private Long skuId;
 	//商品编码
@@ -416,11 +417,11 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 		this.color = color;
 	}
 
-	public String getCategoryAttrHandled() {
+	public Map<String, String[]> getCategoryAttrHandled() {
 		return categoryAttrHandled;
 	}
 
-	public void setCategoryAttrHandled(String categoryAttrHandled) {
+	public void setCategoryAttrHandled(Map<String, String[]> categoryAttrHandled) {
 		this.categoryAttrHandled = categoryAttrHandled;
 	}
 }

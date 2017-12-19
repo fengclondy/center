@@ -51,8 +51,10 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	//颜色
 	private String color;
 
-	//类目属性
+	//类目属性(码)
 	private String categoryAttr;
+	//类目属性(解析后的值)
+	private String categoryAttrHandled;
 	//商品sku编码
 	private Long skuId;
 	//商品编码
@@ -412,5 +414,13 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public String getCategoryAttrHandled() {
+		return categoryAttrHandled;
+	}
+
+	public void setCategoryAttrHandled(String categoryAttrHandled) {
+		this.categoryAttrHandled = categoryAttrHandled;
 	}
 }

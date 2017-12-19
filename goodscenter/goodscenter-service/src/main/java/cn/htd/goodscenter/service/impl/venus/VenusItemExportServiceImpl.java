@@ -2,15 +2,13 @@ package cn.htd.goodscenter.service.impl.venus;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
-import cn.htd.common.dto.DictionaryInfo;
+import cn.htd.common.dao.util.RedisDB;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
+import cn.htd.goodscenter.dao.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -19,6 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -41,18 +40,6 @@ import cn.htd.goodscenter.common.constants.VenusErrorCodes;
 import cn.htd.goodscenter.common.utils.DTOValidateUtil;
 import cn.htd.goodscenter.common.utils.SpringUtils;
 import cn.htd.goodscenter.common.utils.ValidateResult;
-import cn.htd.goodscenter.dao.ItemDescribeDAO;
-import cn.htd.goodscenter.dao.ItemDraftDescribeMapper;
-import cn.htd.goodscenter.dao.ItemDraftMapper;
-import cn.htd.goodscenter.dao.ItemDraftPictureMapper;
-import cn.htd.goodscenter.dao.ItemMybatisDAO;
-import cn.htd.goodscenter.dao.ItemPictureDAO;
-import cn.htd.goodscenter.dao.ItemSalesAreaDetailMapper;
-import cn.htd.goodscenter.dao.ItemSalesAreaMapper;
-import cn.htd.goodscenter.dao.ItemSalesDefaultAreaMapper;
-import cn.htd.goodscenter.dao.ItemSkuDAO;
-import cn.htd.goodscenter.dao.ItemSkuPublishInfoMapper;
-import cn.htd.goodscenter.dao.ItemSkuTotalStockMapper;
 import cn.htd.goodscenter.dao.spu.ItemSpuDescribeMapper;
 import cn.htd.goodscenter.dao.spu.ItemSpuMapper;
 import cn.htd.goodscenter.dao.spu.ItemSpuPictureMapper;
@@ -167,8 +154,11 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	private DictionaryUtils dictionaryUtils;
 	@Resource
 	private MemberBaseInfoService memberBaseInfoService;
-	
-	
+	@Autowired
+	private RedisDB redisDB;
+	@Autowired
+	private CategoryAttrDAO categoryAttrDAO;
+
 	@Transactional
 	@Override
 	public ExecuteResult<String> addItem(VenusItemInDTO venusItemDTO) {
@@ -1127,6 +1117,8 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			if (categoryResult1 != null && MapUtils.isNotEmpty(categoryResult1.getResult())) {
 				venusItemSkuPublishInfoDetailOutDTO.setCategoryName((String) categoryResult1.getResult().get("categoryName"));
 			}
+			//解析类目属性TODO
+			venusItemSkuPublishInfoDetailOutDTO.setCategoryAttrHandled(parseCategoryAttr(venusItemSkuPublishInfoDetailOutDTO.getCategoryAttr()));
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 			result.setResult(venusItemSkuPublishInfoDetailOutDTO);
 		}catch(Exception e){
@@ -3002,4 +2994,52 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	        logger.info("ERPdoItemDownErp end "+itemSpu.getSpuCode());
 	    }
 
+	private String parseCategoryAttr(String categoryAttr) {
+		Map<String, String[]> paresMapResult = new HashMap<>();
+		try {
+			Map<String, JSONArray> map = (Map<String, JSONArray>) JSONObject.fromObject("{\"1889\":[15259,15263],\"1891\":[15269],\"1893\":[15277],\"1895\":[15283],\"1897\":[15287],\"1899\":[15299]}");
+			for (Map.Entry<String, JSONArray> entry : map.entrySet()) {
+				String attrCode = entry.getKey();
+				String attrName = this.getAttributeName(Long.valueOf(attrCode));
+				JSONArray attrValueCodeArray = entry.getValue();
+				String[] array = new String[attrValueCodeArray.size()];
+				if (attrValueCodeArray != null) {
+					for (int i = 0; i < attrValueCodeArray.size(); i++) {
+						Integer attrValueCode = (Integer) attrValueCodeArray.get(i);
+						array[i] = this.getAttributeValueName(attrValueCode);
+					}
+				}
+				paresMapResult.put(attrName, array);
+			}
+		} catch (Exception e) {
+			logger.error("parseCategoryAttr出错，", e);
+		}
+		return JSON.toJSONString(paresMapResult);
+	}
+
+	private String getAttributeName(Long attributeId) {
+		if (attributeId != null) {
+			String attributeName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE + attributeId);
+			if (org.apache.commons.lang3.StringUtils.isEmpty(attributeName)) {
+				return this.categoryAttrDAO.getAttrNameByAttrId(attributeId);
+			} else {
+				return attributeName;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	private String getAttributeValueName(Integer attributeValueId) {
+		if (attributeValueId != null) {
+			String attributeValueName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE_VALUE + attributeValueId);
+			if (org.apache.commons.lang3.StringUtils.isEmpty(attributeValueName)) {
+				return this.categoryAttrDAO.getAttrValueNameByAttrValueId(Long.valueOf(attributeValueId));
+			} else {
+				return attributeValueName;
+			}
+		} else {
+			return null;
+		}
+	}
 }

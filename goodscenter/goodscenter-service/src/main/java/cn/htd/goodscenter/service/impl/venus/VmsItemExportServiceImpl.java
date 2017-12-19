@@ -469,7 +469,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     @Override
     public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
         querySkuPublishInfoDetailParamDTO.setNewVms(true);
-        return this.venusItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
+        ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> executeResult = this.venusItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
+        return executeResult;
     }
 
     /**
@@ -527,6 +528,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Override
     public ExecuteResult<String> onShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
+        ExecuteResult<String> result=new ExecuteResult<>();
+        if(venusItemSkuPublishInDTO == null || venusItemSkuPublishInDTO.getSkuId() == null || venusItemSkuPublishInDTO.getSkuId() <= 0){
+            result.setCode(ErrorCodes.E10000.name());
+            result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
+            return result;
+        }
+//        if (venusItemSkuPublishInDTO.getIsVisible().equals()) {
+//
+//        }
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 

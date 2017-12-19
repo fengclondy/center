@@ -1153,21 +1153,19 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	@Transactional
 	@Override
 	public ExecuteResult<String> txPublishItemSkuInfo(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
-		ExecuteResult<String> result=new ExecuteResult<String>();
-		result=validatePublishData(venusItemSkuPublishInDTO);
+		ExecuteResult<String> result = new ExecuteResult<>();
+		result = validatePublishData(venusItemSkuPublishInDTO);
 		if(!result.isSuccess()){
 			return result;
 		}
 		try{
 			//从数据库中查询sku
-			ItemSku itemSkuFromDb=itemSkuDAO.queryById(venusItemSkuPublishInDTO.getSkuId());
-			
-			if(itemSkuFromDb==null){
+			ItemSku itemSkuFromDb = itemSkuDAO.queryById(venusItemSkuPublishInDTO.getSkuId());
+			if(itemSkuFromDb == null){
 				result.setCode(ErrorCodes.E10000.name());
 				result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("itemSku")));
 				return result;
 			}
-			
 			//校验状态
 			Item item=itemMybatisDAO.queryItemByPk(itemSkuFromDb.getItemId());
 			if(item==null||Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
@@ -1188,39 +1186,32 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				itemSkuDAO.update(itemSkuFromDb);
 			}
 			//数据库中查询PublishInfo
-			ItemSkuPublishInfo itemSkuPublishInfoFromDb=itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(venusItemSkuPublishInDTO.getSkuId(), venusItemSkuPublishInDTO.getShelfType(),"0");
-			//已锁定数量
-			Integer alreadyReserve=itemSkuPublishInfoFromDb==null?0:itemSkuPublishInfoFromDb.getReserveQuantity();
-			//校验库存
-			boolean isPublishDisplayQtyIsEnough=checkPublishDisplayQtyIsEnough(Integer.parseInt(venusItemSkuPublishInDTO.getDisplayQty()),alreadyReserve, 
-					venusItemSkuPublishInDTO.getSkuId(), venusItemSkuPublishInDTO.getShelfType(),venusItemSkuPublishInDTO.getItemId(),
-					venusItemSkuPublishInDTO.getSupplierCode(),itemSkuFromDb.getSkuCode());
-			if(!"0".equals(venusItemSkuPublishInDTO.getIsVisible())&&isPublishDisplayQtyIsEnough
-					&&Integer.parseInt(venusItemSkuPublishInDTO.getDisplayQty())==0){//非下架
-				isPublishDisplayQtyIsEnough=false;
+			ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(venusItemSkuPublishInDTO.getSkuId(), venusItemSkuPublishInDTO.getShelfType(),"0");
+			Boolean isUpdate = venusItemSkuPublishInDTO.getUpdate();
+			if (isUpdate && itemSkuPublishInfoFromDb != null) { // 如果是修改页面
+				venusItemSkuPublishInDTO.setIsVisible(itemSkuPublishInfoFromDb.getIsVisable() + "");
 			}
-			
-			if(!isPublishDisplayQtyIsEnough){
-				result.setCode(VenusErrorCodes.E1040015.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040015.getErrorMsg()));
-				return result;
+			if (!isUpdate || itemSkuPublishInfoFromDb == null || itemSkuPublishInfoFromDb.getIsVisable() != 0) {// 如果是修改页面且isVisable为0不走一下逻辑
+				//已锁定数量
+				Integer alreadyReserve = itemSkuPublishInfoFromDb == null ? 0 : itemSkuPublishInfoFromDb.getReserveQuantity();
+				//校验库存
+				boolean isPublishDisplayQtyIsEnough = checkPublishDisplayQtyIsEnough(Integer.parseInt(venusItemSkuPublishInDTO.getDisplayQty()), alreadyReserve,
+						venusItemSkuPublishInDTO.getSkuId(), venusItemSkuPublishInDTO.getShelfType(), item.getItemId(),
+						venusItemSkuPublishInDTO.getSupplierCode(), itemSkuFromDb.getSkuCode());
+				if (!"0".equals(venusItemSkuPublishInDTO.getIsVisible()) && isPublishDisplayQtyIsEnough && Integer.parseInt(venusItemSkuPublishInDTO.getDisplayQty()) == 0) {//非下架
+					isPublishDisplayQtyIsEnough = false;
+				}
+				if (!isPublishDisplayQtyIsEnough) {
+					result.setCode(VenusErrorCodes.E1040015.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040015.getErrorMsg()));
+					return result;
+				}
+				dealWithItemSkuPublishInfo(venusItemSkuPublishInDTO, itemSkuFromDb, itemSkuPublishInfoFromDb);
 			}
-			
-			dealWithItemSkuPublishInfo(venusItemSkuPublishInDTO, itemSkuFromDb,
-					itemSkuPublishInfoFromDb);
-			//同步库存
-//			ItemDTO itemDTO=itemMybatisDAO.getItemDTOById(itemSkuFromDb.getItemId());
-//			if(itemDTO!=null&&StringUtils.isNotEmpty(itemDTO.getItemCode())){
-//				ExecutorService threadPool=Executors.newSingleThreadExecutor();
-//				threadPool.execute(new AsyncFetchItemStockThread(itemDTO.getItemCode(),itemSkuTotalStockMapper,
-//						venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName()));
-//				threadPool.shutdown();
-//			}
+			// 处理预售标记
 			if (venusItemSkuPublishInDTO.getPreSaleFlag() != null) {
-				itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(),
-						venusItemSkuPublishInDTO.getItemId());
+				itemMybatisDAO.updatePreSaleFlagByItemId(venusItemSkuPublishInDTO.getPreSaleFlag(), venusItemSkuPublishInDTO.getItemId());
 			}
-
 			//更新价格
 			if(venusItemSkuPublishInDTO.getStandardPrice()!=null){
 				Integer isBoxFlag="1".equals(venusItemSkuPublishInDTO.getShelfType()) ? 1 : 0;
@@ -1244,18 +1235,14 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			}
 			//销售区域
 			dealWithPublishSalesArea(venusItemSkuPublishInDTO, itemSkuFromDb);
-						
 			//处理item表的主状态,判断当前商品如果是非上架状态，则要修改为上架状态
-			dealWithPublishItemStatus(venusItemSkuPublishInDTO.getSkuId(),venusItemSkuPublishInDTO.getIsVisible(),
-					venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName(), item);
-			
-			
+			dealWithPublishItemStatus(venusItemSkuPublishInDTO.getSkuId(),venusItemSkuPublishInDTO.getIsVisible(), venusItemSkuPublishInDTO.getOperatorId(),venusItemSkuPublishInDTO.getOperatorName(), item);
+			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::txPublishItemSkuInfo:",e);
+			result.setCode(ResultCodeEnum.ERROR.getCode());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-		
-		result.setCode(ErrorCodes.SUCCESS.name());
 		return result;
 	}
 

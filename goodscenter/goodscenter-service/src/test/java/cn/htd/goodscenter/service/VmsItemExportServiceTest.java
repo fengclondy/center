@@ -6,6 +6,7 @@ import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.ItemDescribe;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
+import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusStockItemInDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
@@ -17,9 +18,13 @@ import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.goodscenter.test.common.CommonTest;
+import cn.htd.pricecenter.domain.ItemSkuBasePrice;
+import cn.htd.pricecenter.dto.StandardPriceDTO;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
 
 public class VmsItemExportServiceTest extends CommonTest {
 
@@ -107,8 +112,8 @@ public class VmsItemExportServiceTest extends CommonTest {
     @Test
     public void testqueryItemSkuPublishInfoDetail() {
         QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO = new QuerySkuPublishInfoDetailParamDTO();
-        querySkuPublishInfoDetailParamDTO.setSkuId(270101L);
-        querySkuPublishInfoDetailParamDTO.setShelfType("2");
+        querySkuPublishInfoDetailParamDTO.setSkuId(269879L);
+        querySkuPublishInfoDetailParamDTO.setShelfType("1");
         ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> executeResult = this.vmsItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
         System.out.println(JSON.toJSONString(executeResult));
     }
@@ -116,9 +121,36 @@ public class VmsItemExportServiceTest extends CommonTest {
 
     @Test
     public void testoffShelves() {
-        String skuCode = "1000032709";
+        String skuCode = "1000026525";
         Integer isBoxFlag = 1;
         ExecuteResult<String>  executeResult = this.vmsItemExportService.offShelves(skuCode, isBoxFlag, 0L, "CHENKANG");
+        System.out.println(JSON.toJSONString(executeResult));
+    }
+
+
+    @Test
+    public void testonShelves() {
+        VenusItemSkuPublishInDTO venusItemSkuPublishInDTO = new VenusItemSkuPublishInDTO();
+        venusItemSkuPublishInDTO.setSkuCode("1000026525"); // 10033904  272699
+        venusItemSkuPublishInDTO.setSkuId(257733L);
+        venusItemSkuPublishInDTO.setDisplayQty("10");
+        venusItemSkuPublishInDTO.setShelfType("1");
+        venusItemSkuPublishInDTO.setOperatorId(0L);
+        venusItemSkuPublishInDTO.setOperatorName("ckck");
+        venusItemSkuPublishInDTO.setSupplierCode("htd100000");
+        StandardPriceDTO standardPriceDTO = new StandardPriceDTO();
+        ItemSkuBasePrice itemSkuBasePrice = new ItemSkuBasePrice();
+        itemSkuBasePrice.setRetailPrice(new BigDecimal(140));
+        itemSkuBasePrice.setBoxSalePrice(new BigDecimal(130));
+        itemSkuBasePrice.setItemId(262601L);
+        itemSkuBasePrice.setSkuId(257733L   );
+        itemSkuBasePrice.setCreateId(0l);
+        itemSkuBasePrice.setCreateName("ck");
+        itemSkuBasePrice.setSellerId(17606l);
+        itemSkuBasePrice.setShopId(0l);
+        standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
+        venusItemSkuPublishInDTO.setStandardPrice(standardPriceDTO);
+        ExecuteResult<String>  executeResult = this.vmsItemExportService.onShelves(venusItemSkuPublishInDTO);
         System.out.println(JSON.toJSONString(executeResult));
     }
 }

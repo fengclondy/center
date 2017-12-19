@@ -541,6 +541,12 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Override
     public ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
+        ExecuteResult<String> result=new ExecuteResult<>();
+        if(venusItemSkuPublishInDTO == null){
+            result.setCode(ErrorCodes.E10000.name());
+            result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
+            return result;
+        }
         venusItemSkuPublishInDTO.setUpdate(true);
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }

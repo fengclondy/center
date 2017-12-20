@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -11,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSON;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * redis工具类，现在只有简单的set，get，del方法
@@ -576,6 +577,22 @@ public class RedisDB {
 		} finally {
 			releaseResource(jedis);
 			logger.debug("\n 方法:[{}]，出参:[{}]", "redisDB-incrHashBy", "returnValue=" + returnValue);
+		}
+		return returnValue;
+	}
+	
+	public Set<String> getAllHKeys(String key){
+		logger.debug("\n 方法:[{}]，入参:[{}][{}][{}]", "redisDB-incrHashBy", "key=" + key);
+		Set<String> returnValue = null;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			returnValue = jedis.hkeys(key);
+		} catch (Exception e) {
+			logger.error("\n 方法:[{}]，异常:[{}]", "redisDB-getAllHKeys", getStackTraceAsString(e));
+		} finally {
+			releaseResource(jedis);
+			logger.debug("\n 方法:[{}]，出参:[{}]", "redisDB-getAllHKeys", "returnValue=" + returnValue);
 		}
 		return returnValue;
 	}

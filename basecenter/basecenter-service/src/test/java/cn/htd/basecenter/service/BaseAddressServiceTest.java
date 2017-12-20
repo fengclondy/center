@@ -69,7 +69,10 @@ public class BaseAddressServiceTest {
 	// addressBaseService.queryNameByCode(code);
 	// System.out.println(JSON.toJSONString(er.getResult()));
 	// }
-
+	@Test
+	public void testQueryListByName() throws Exception {
+		addressBaseService.getAddressListByName("江" , 1);
+	}
 
 
 

@@ -551,6 +551,29 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 
+    @Override
+    public ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>> queryOffShelfItemBySellerId(QueryOffShelfItemInDTO queryOffShelfItemInDTO, Pager pager) {
+        ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>> executeResult = new ExecuteResult<>();
+        DataGrid<QueryOffShelfItemOutDTO> dtoDataGrid = new DataGrid<>();
+        try {
+            // TODO : 同步大B下面所有ERP实际库存
+            Long count = this.itemSkuDAO.queryVmsOffShelfItemSkuPublishInfoListCount(queryOffShelfItemInDTO);
+            List<QueryOffShelfItemOutDTO> queryOffShelfItemOutDTOList = new ArrayList<>();
+            if (count > 0) {
+                queryOffShelfItemOutDTOList = this.itemSkuDAO.queryVmsOffShelfItemSkuPublishInfoList(queryOffShelfItemInDTO, pager);
+            }
+            dtoDataGrid.setTotal(count);
+            dtoDataGrid.setRows(queryOffShelfItemOutDTOList);
+            executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+            executeResult.setResult(dtoDataGrid);
+        } catch (Exception e) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.addErrorMessage(e.getMessage());
+            logger.error("查询供应商所有下架数据, 错误信息：", e);
+        }
+        return executeResult;
+    }
+
     /**
      * 计算商品名称重复的数量
      * @param batchAddItemInDTOList

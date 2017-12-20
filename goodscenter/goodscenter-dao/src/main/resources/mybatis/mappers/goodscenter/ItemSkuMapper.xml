@@ -1288,10 +1288,7 @@
 		JOIN item_category cat ON t.cid = cat.cid
 		JOIN item_brand brand ON t.brand = brand.brand_id
 		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id
-		AND (
-			publish.is_box_flag = #{param.isBoxFlag}
-			OR publish.is_box_flag IS NULL
-		)
+		AND publish.is_box_flag = #{param.isBoxFlag}
 		LEFT JOIN item_spu spu ON spu.spu_id = t.item_spu_id
 		WHERE
 			1 = 1
@@ -1343,10 +1340,7 @@
 		JOIN item_category cat ON t.cid = cat.cid
 		JOIN item_brand brand ON t.brand = brand.brand_id
 		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id
-		AND (
-		publish.is_box_flag = #{param.isBoxFlag}
-		OR publish.is_box_flag IS NULL
-		)
+		AND publish.is_box_flag = #{param.isBoxFlag}
 		LEFT JOIN item_spu spu ON spu.spu_id = t.item_spu_id
 		WHERE
 		1 = 1
@@ -1369,6 +1363,86 @@
 				AND publish.is_visable = 0
 			</if>
 		</if>
+		<if test="param.thirdCategoryIdList != null">
+			and t.cid IN
+			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="param.brandId != null">
+			and t.brand = #{param.brandId}
+		</if>
+	</select>
+
+	<select id="queryVmsOffShelfItemSkuPublishInfoList" resultType="cn.htd.goodscenter.dto.vms.QueryOffShelfItemOutDTO">
+		SELECT
+		t.item_id AS itemId,
+		t.item_name AS itemName,
+		sku.sku_id AS skuId,
+		sku.sku_code AS skuCode,
+		t.item_code AS itemCode,
+		ifnull(publish.display_quantity, 0) AS currentDisplayQuantity,
+		ifnull(publish.reserve_quantity, 0) AS currentReserveQuantity,
+		ifnull(publish1.display_quantity, 0) AS otherDisplayQuantity,
+		ifnull(publish1.reserve_quantity, 0) AS otherReserveQuantity,
+		ifnull(total.inventory - total.reserve_quantity, 0) AS totalStock
+		FROM
+		item_sku sku
+		JOIN item t ON sku.item_id = t.item_id
+		AND t.item_status != 6
+		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id
+		AND publish.is_box_flag = #{param.isBoxFlag}
+		LEFT JOIN item_sku_publish_info publish1 ON sku.sku_id = publish1.sku_id
+		<if test="param.isBoxFlag == 0">
+			AND publish1.is_box_flag = 1
+		</if>
+		<if test="param.isBoxFlag == 1">
+			AND publish1.is_box_flag = 0
+		</if>
+		LEFT JOIN item_sku_total_stock total ON total.item_id = t.item_id
+		WHERE
+		1 = 1
+		AND t.item_status IN (1, 4, 5)
+		AND t.seller_id = #{param.sellerId}
+		AND (publish.is_visable IS NULL OR publish.is_visable = 0)
+		<if test="param.thirdCategoryIdList != null">
+			and t.cid IN
+			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
+		</if>
+		<if test="param.brandId != null">
+			and t.brand = #{param.brandId}
+		</if>
+		ORDER BY
+		sku.created DESC
+		<if test="page != null">
+			limit #{page.pageOffset} , #{page.rows}
+		</if>
+	</select>
+
+	<select id="queryVmsOffShelfItemSkuPublishInfoListCount" resultType="Long">
+		SELECT
+			count(1)
+		FROM
+		item_sku sku
+		JOIN item t ON sku.item_id = t.item_id
+		AND t.item_status != 6
+		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id
+		AND publish.is_box_flag = #{param.isBoxFlag}
+		LEFT JOIN item_sku_publish_info publish1 ON sku.sku_id = publish1.sku_id
+		<if test="param.isBoxFlag == 0">
+			AND publish1.is_box_flag = 1
+		</if>
+		<if test="param.isBoxFlag == 1">
+			AND publish1.is_box_flag = 0
+		</if>
+		LEFT JOIN item_sku_total_stock total ON total.item_id = t.item_id
+		WHERE
+		1 = 1
+		AND t.item_status IN (1, 4, 5)
+		AND t.seller_id = #{param.sellerId}
+		AND (publish.is_visable IS NULL OR publish.is_visable = 0)
 		<if test="param.thirdCategoryIdList != null">
 			and t.cid IN
 			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">

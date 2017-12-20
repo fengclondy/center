@@ -94,4 +94,11 @@ public interface BaseAddressDAO extends BaseDAO<BaseAddress> {
 	 * @return
 	 */
 	public Long queryAddressCount4ErpException(@Param("entity") BaseAddress condition);
+
+	/**
+	 * 查询
+	 * @param condition
+	 * @return
+	 */
+	List<BaseAddress> queryList(@Param("entity") BaseAddress condition, @Param("page") Pager<BaseAddress> page);
 }

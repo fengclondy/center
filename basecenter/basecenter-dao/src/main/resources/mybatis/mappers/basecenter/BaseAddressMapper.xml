@@ -67,6 +67,9 @@
 			<if test="entity.deleteFlag != null">
 				and delete_flag = #{entity.deleteFlag}
 			</if>
+			<if test="entity.name != null">
+				and name like concat('%', #{entity.name}, '%')
+			</if>
 		</if>
 	</sql>
 	<!-- mysql 分页尾 -->

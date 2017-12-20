@@ -1,5 +1,8 @@
 package cn.htd.basecenter.service;
 
+import java.util.List;
+
+import cn.htd.basecenter.dto.BaseSmsConfigDTO;
 import cn.htd.basecenter.dto.MailWarnInDTO;
 import cn.htd.basecenter.dto.SendEmailDTO;
 import cn.htd.basecenter.dto.SendSmsDTO;
@@ -28,6 +31,6 @@ public interface SendSmsEmailService {
 	
 	public ExecuteResult<String> doSendEmailByTemplate(MailWarnInDTO mailWarnInDTO);
 	
-	public ExecuteResult<String> queryBalance();
+	public ExecuteResult<String> queryBalance(BaseSmsConfigDTO targetObj);
 
 }

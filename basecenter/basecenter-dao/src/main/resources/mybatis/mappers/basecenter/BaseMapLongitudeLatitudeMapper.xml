@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.basecenter.dao.BaseMapLongitudeLatitudeDAO">
+ 	<resultMap id="BaseResultMap" type="cn.htd.basecenter.domain.BaseMapLongitudeLatitude" >
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="BIGINT" />
+		<result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+		<result column="data" property="data" jdbcType="VARCHAR" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="queryMapLongitudeAndLatitudeByAreaCode" resultMap="BaseResultMap">
+		select * from base_map_longitude_latitude where type=#{type} and area_code=#{areaCode} limit 1
+	</select>
+	
+	<insert id="insertBaseMapLongitudeLatitude" parameterType="cn.htd.basecenter.domain.BaseMapLongitudeLatitude">
+		insert into base_map_longitude_latitude (
+	      type, 
+	      area_code,
+	      data,
+	      create_id, 
+	      create_name, 
+	      create_time,
+	      modify_id,
+	      modify_name,
+	      modify_time
+	      )
+	    values
+	    (
+	      #{type},
+	      #{areaCode},
+	      #{data,jdbcType=VARCHAR}, 
+	      0,
+	      'system',
+	       now(),
+	        0,
+	      'system',
+	       now()
+	      )
+	    ON DUPLICATE KEY UPDATE
+	    data = #{data},
+	    modify_time = now()
+	</insert>
+	
+ </mapper>

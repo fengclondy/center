@@ -85,4 +85,10 @@ public  interface BaseAddressService {
 	 */
 	public ExecuteResult<String> downBaseAddress2Erp(BaseAddressDTO baseAddressDTO);
 
+	/**
+	 * 根据名字模糊查询
+	 * @return
+	 */
+	List<AddressInfo> getAddressListByName(String name, int level);
+
 }

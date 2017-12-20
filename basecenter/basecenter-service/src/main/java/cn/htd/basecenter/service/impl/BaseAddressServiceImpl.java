@@ -545,4 +545,26 @@ public class BaseAddressServiceImpl implements BaseAddressService {
 		}
 		return executeResult;
 	}
+
+	@Override
+	public List<AddressInfo> getAddressListByName(String name, int level) {
+		List<AddressInfo> addressInfoList = new ArrayList<>();
+		try {
+			BaseAddress condition = new BaseAddress();
+			condition.setName(StringUtils.isEmpty(name) ? null : name);
+			condition.setLevel(level);
+			condition.setDeleteFlag(0);
+			List<BaseAddress> addresses = this.baseAddressDAO.queryList(condition, null);
+			for (BaseAddress baseAddress : addresses) {
+				AddressInfo addressInfo = new AddressInfo();
+				addressInfo.setCode(baseAddress.getCode());
+				addressInfo.setLevel(baseAddress.getLevel());
+				addressInfo.setName(baseAddress.getName());
+				addressInfoList.add(addressInfo);
+			}
+		} catch (Exception e) {
+			logger.error("下行城市基本信息到ERP出错，错误信息：", e);
+		}
+		return addressInfoList;
+	}
 }

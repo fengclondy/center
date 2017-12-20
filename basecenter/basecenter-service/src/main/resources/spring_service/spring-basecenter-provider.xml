@@ -35,5 +35,6 @@
 	<dubbo:service interface="cn.htd.basecenter.service.TransactionRelationService" ref="transactionRelationService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 	<!-- 短信预警服务 -->
 	<dubbo:service interface="cn.htd.basecenter.service.BaseSmsNoticeService" ref="baseSmsNoticeService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
-
+	<!-- 地图基础数据 -->
+	<dubbo:service interface="cn.htd.basecenter.service.BaseMapLongitudeLatitudeService" ref="baseMapLongitudeLatitudeService" version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 </beans>

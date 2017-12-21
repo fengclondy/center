@@ -58,7 +58,7 @@
 			   <![CDATA[ and m.cur_belong_seller_id =#{sellerId} and r.status = '3' ]]>
 		   </when>
 		   <otherwise>
-			   <![CDATA[ and ((m.cur_belong_seller_id != #{sellerId} and r.status != '9') or (m.cur_belong_seller_id = #{sellerId} and r.status != '3')) ]]>
+			   <![CDATA[ and (m.cur_belong_seller_id != #{sellerId} or (m.cur_belong_seller_id = #{sellerId} and r.status != '3')) ]]>
 		   </otherwise>
 	   </choose>
 	</if>

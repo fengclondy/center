@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,13 @@ import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
+import cn.htd.membercenter.dao.ContractDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.domain.BoxRelationship;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.BoxRelationImportDTO;
+import cn.htd.membercenter.dto.ContractSignRemindInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberShipDTO;
@@ -40,6 +43,9 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	private BelongRelationshipDAO belongRelationshipDao;
 	@Resource
 	private MemberBaseOperationDAO memberBaseOperationDAO;
+	
+	@Resource
+	private ContractDAO contractDAO;
 
 	@Override
 	public ExecuteResult<DataGrid<BelongRelationshipDTO>> selectBoxRelationList(Pager page, String companyName,
@@ -207,6 +213,7 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 									applyBusiRelationDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
 									try {
 										Long num = applyRelationshipDao.insertBoxRelationInfo(applyBusiRelationDTO);
+										updateSignRemindFlagToIsNeed(memberCode,applyBusiRelationDTO.getCreateId(),applyBusiRelationDTO.getCreateName());
 										if (num != null) {
 											boxIds.add(applyBusiRelationDTO.getBoxId());
 											sList.add(applyBusiRelationDTO);
@@ -379,6 +386,41 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 			logger.error("根据会员code查询包厢关系名称和code：BoxRelationshipServiceImpl=====>selectBoxRelationship=" + e);
 		}
 		return rs;
+	}
+	
+	/**
+	 * Description: 重置会员店提醒信息 <br> 
+	 *  
+	 * @author zhoutong <br>
+	 * @taskId <br>
+	 * @param memberCode
+	 * @param operationId
+	 * @param operationName
+	 * @return <br>
+	 */ 
+	public void updateSignRemindFlagToIsNeed(String memberCode, Long operationId, String operationName) {
+		logger.info("updateSignRemindFlag方法已进入会员店编码memberCode=" + memberCode);
+		if (StringUtils.isEmpty(memberCode)) {
+			logger.error("会员店编码为空  重置会员店提醒信息失败");
+			return;
+		}
+		try {
+			Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
+			ContractSignRemindInfoDTO contractSignRemindInfoDTO = new ContractSignRemindInfoDTO();
+			contractSignRemindInfoDTO.setMemberCode(memberCode);
+			contractSignRemindInfoDTO.setModifyId(operationId);
+			contractSignRemindInfoDTO.setModifyName(operationName);
+			//重置为需要提醒
+			contractSignRemindInfoDTO.setIsNeedRemind(0);
+			if (remindFlag != null && remindFlag != 0) {
+				//查询到的提醒标志不为空 且标志不为0 表示需要提醒更新为0 
+				contractDAO.updateContractSignRemindInfo(contractSignRemindInfoDTO);
+			}
+			//其他情况标识需要提醒 无需重置
+		} catch (Exception e) {
+			logger.error("updateSignRemindFlag 方法保存或者重置提醒信息异常 异常信息:" + e);
+		}
+		logger.info("updateSignRemindFlag方法已结束");
 	}
 
 }

@@ -23,7 +23,6 @@ import com.alibaba.fastjson.JSON;
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockEntryDTO;
 import cn.htd.goodscenter.dto.stock.StockTypeEnum;
-import cn.htd.marketcenter.dto.OrderItemPromotionDTO;
 import cn.htd.zeus.tc.biz.dao.OrderCancelDAO;
 import cn.htd.zeus.tc.biz.dao.OrderItemCancelDAO;
 import cn.htd.zeus.tc.biz.dao.PayOrderInfoDAO;
@@ -129,7 +128,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			}
 			if (!OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
 					&& !OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
-					&& !OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
+					&& !OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)
+					&& !OrderStatusEnum.PRE_CONFIRM.getCode().equals(orderStatus)) {
 				tradeOrdersDMO
 						.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getCode());
 				tradeOrdersDMO
@@ -143,7 +143,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			String memberName = orderCancelInfoDTO.getOrderCancelMemberName();
 			if (OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
+					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PRE_CONFIRM.getCode().equals(orderStatus)) {
 				tradeOrdersDMO = reservseResource(tradeOrdersDMO, orderNo, messageId, memberID,
 						memberName, Constant.ORDER_TYPE_PARENT, null);
 				String reserveResultCode = tradeOrdersDMO.getResultCode();
@@ -721,7 +722,7 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				messageId, orderNo, JSON.toJSONString(tradeOrdersDMO));
 		// 订单状态有311 和 312的 所以必须截取后判断订单状态
 		String orderstatus = tradeOrdersDMO.getOrderStatus().substring(0, 2);
-		//如果有促销就进入下面的逻辑(因为限时购的标志位在trade_order_items_discount表里)
+		// 如果有促销就进入下面的逻辑(因为限时购的标志位在trade_order_items_discount表里)
 		List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountDMOList = new ArrayList<TradeOrderItemsDiscountDMO>();
 		if (Constant.ORDER_TYPE_PARENT.equals(orderType)) {
 			tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
@@ -730,11 +731,12 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			tradeOrderItemsDiscountDMOList = tradeOrderItemsDiscountDAO
 					.selectBuyerCouponCodeByOrderItemNo(orderNo);
 		}
-		
+
 		if ((isTimeLimitedOrder == Constant.IS_TIMELIMITED_ORDER
-				|| hasUsedCoupon == Constant.HAS_USED_COUPON || CollectionUtils.isNotEmpty(tradeOrderItemsDiscountDMOList))
+				|| hasUsedCoupon == Constant.HAS_USED_COUPON
+				|| CollectionUtils.isNotEmpty(tradeOrderItemsDiscountDMOList))
 				&& Integer.valueOf(orderstatus) < 30) {
-			
+
 			List<OrderItemPromotionDTO> orderItemPromotionDTOList = new ArrayList<OrderItemPromotionDTO>();
 			for (TradeOrderItemsDiscountDMO tradeOrderItemsDiscountDMO : tradeOrderItemsDiscountDMOList) {
 				OrderItemPromotionDTO orderItemPromotionDTO = new OrderItemPromotionDTO();
@@ -807,23 +809,21 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 				order4StockEntryDTO.setStockTypeEnum(StockTypeEnum.RELEASE);
 				int isBoxFlag = tradeOrderItemsDMO.getIsBoxFlag();
 				order4StockEntryDTO.setIsBoxFlag(isBoxFlag);
-				//如果没有从优惠表里查到数据，说明可以锁定商品中心库存，如果查到数据且活动类型不是3(限时购)，也可以锁定商品中心库存
+				// 如果没有从优惠表里查到数据，说明可以锁定商品中心库存，如果查到数据且活动类型不是3(限时购)，也可以锁定商品中心库存
 				List<TradeOrderItemsDiscountDMO> tradeOrderItemsDiscountPurchaseList = tradeOrderItemsDiscountDAO
 						.selectBuyerCouponCodeByOrderItemNo(tradeOrderItemsDMO.getOrderItemNo());
 				if (null == tradeOrderItemsDiscountPurchaseList
 						|| tradeOrderItemsDiscountPurchaseList.size() == 0) {
 					order4StockEntryDTOList.add(order4StockEntryDTO);
-				}else{
+				} else {
 					TradeOrderItemsDiscountDMO tradeOrderItemsDiscountDMO = tradeOrderItemsDiscountPurchaseList
 							.get(0);
-					if (!OrderStatusEnum.PROMOTION_TYPE_LIMITED_TIME_PURCHASE
-							.getCode().equals(
-									tradeOrderItemsDiscountDMO
-											.getPromotionType())) {
+					if (!OrderStatusEnum.PROMOTION_TYPE_LIMITED_TIME_PURCHASE.getCode()
+							.equals(tradeOrderItemsDiscountDMO.getPromotionType())) {
 						order4StockEntryDTOList.add(order4StockEntryDTO);
 					}
 				}
-				
+
 			}
 			if (order4StockEntryDTOList != null && order4StockEntryDTOList.size() != 0) {
 				order4StockChangeDTO.setOrderNo(tradeOrdersDMO.getOrderNo());

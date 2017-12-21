@@ -83,6 +83,7 @@
     <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
     id,
@@ -165,7 +166,8 @@
 	create_time,
 	modify_id,
 	modify_name,
-	modify_time
+	modify_time,
+	confirm_time
   </sql>
   <sql id="pagination_tail">
    	limit #{page.pageOffset} , #{page.rows}
@@ -696,6 +698,9 @@
       </if>
       <if test="orderErrorReason != null and orderErrorReason != ''">
       order_error_reason = #{orderErrorReason,jdbcType=VARCHAR},
+      </if>
+      <if test="confirmTime != null and confirmTime != ''">
+      confirm_time = now(),
       </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},

@@ -177,6 +177,8 @@ public class TradeOrdersDTO implements Serializable {
 
 	private Date modifyTime;
 
+	private Date confirmTime;
+
 	private List<TradeOrderItemsDTO> orderItemList;
 
 	private List<TradeOrderErpDistributionDTO> erpDistributionDTOList;
@@ -863,6 +865,21 @@ public class TradeOrdersDTO implements Serializable {
 		this.modifyTime = modifyTime;
 	}
 
+	/**
+	 * @return the confirmTime
+	 */
+	public Date getConfirmTime() {
+		return confirmTime;
+	}
+
+	/**
+	 * @param confirmTime
+	 *            the confirmTime to set
+	 */
+	public void setConfirmTime(Date confirmTime) {
+		this.confirmTime = confirmTime;
+	}
+
 	public List<TradeOrderItemsDTO> getOrderItemList() {
 		return orderItemList;
 	}
@@ -1007,6 +1024,7 @@ public class TradeOrdersDTO implements Serializable {
 		this.modifyId = orderDTO.getModifyId();
 		this.modifyName = orderDTO.getModifyName();
 		this.modifyTime = orderDTO.getModifyTime();
+		this.confirmTime = orderDTO.getConfirmTime();
 		this.orderItemList = orderDTO.getOrderItemList();
 		this.erpDistributionDTOList = orderDTO.getErpDistributionDTOList();
 		this.orderStatusHistoryDTOList = orderDTO.getOrderStatusHistoryDTOList();

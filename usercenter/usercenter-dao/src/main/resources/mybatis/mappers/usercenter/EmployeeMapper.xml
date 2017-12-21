@@ -164,6 +164,9 @@
 		<if test="dto.gw != null and dto.gw != ''">
 			and e.gw = #{dto.gw}
 		</if>
+        <if test="dto.superiorEmpNo != null and dto.superiorEmpNo != ''">
+            and e.superior_emp_no = #{dto.superiorEmpNo}
+        </if>
 		limit #{pager.pageOffset},#{pager.rows}
 	</select>
 	

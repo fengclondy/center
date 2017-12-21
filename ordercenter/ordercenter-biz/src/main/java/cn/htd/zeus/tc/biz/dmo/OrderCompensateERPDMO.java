@@ -33,6 +33,8 @@ public class OrderCompensateERPDMO {
     
     private String erpStatus;
     
+    private String deliveryType;//配送方式1:供应商配送  2:自提
+    
 	public Long getId() {
 		return id;
 	}
@@ -188,6 +190,12 @@ public class OrderCompensateERPDMO {
 	}
 	public void setErpStatus(String erpStatus) {
 		this.erpStatus = erpStatus;
+	}
+	public String getDeliveryType() {
+		return deliveryType;
+	}
+	public void setDeliveryType(String deliveryType) {
+		this.deliveryType = deliveryType;
 	}
 	
 }

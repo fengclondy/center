@@ -102,7 +102,10 @@ public class BaseSmsConfigServiceImpl implements BaseSmsConfigService {
 				throw new BaseCenterBusinessException(ReturnCodeConst.NO_SMS_CONFIG_ERROR, "启用的短信通道配置信息不存在");
 			}
 			configCondition.setUsedFlag(YesNoEnum.YES.getValue());
-			validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(configCondition);
+			BaseSmsConfigDTO paramDTO = new BaseSmsConfigDTO();
+			paramDTO.setUsedFlag(YesNoEnum.YES.getValue());
+			paramDTO.setType(SmsEmailTypeEnum.SMS.getCode());
+			validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(paramDTO);
 			if (validSmsConfigList != null && !validSmsConfigList.isEmpty()) {
 				for (BaseSmsConfigDTO smsConfig : validSmsConfigList) {
 					smsConfig.setUsedFlag(YesNoEnum.NO.getValue());

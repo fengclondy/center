@@ -240,6 +240,8 @@
 	    where 
 	    a.buyer_id=#{buyerId}
 	    and b.seller_id=#{sellerId}
+	    and a.delete_flag=0
+	    and b.delete_flag=0
 	</select>
 	
 </mapper>

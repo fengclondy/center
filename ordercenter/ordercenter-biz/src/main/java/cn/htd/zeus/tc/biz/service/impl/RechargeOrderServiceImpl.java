@@ -197,7 +197,12 @@ public class RechargeOrderServiceImpl implements RechargeOrderService {
 		try {
 			PayOrderInfoDMO payOrderInfoDMO = new PayOrderInfoDMO();
 			payOrderInfoDMO.setDownOrderNo(paymentOrderInfoReqDTO.getRechargeOrderNo());
-			payOrderInfoDMO.setPayResultMsg(paymentOrderInfoReqDTO.getResultMessage());
+			String payResultMsg= paymentOrderInfoReqDTO.getResultMessage();
+			if(org.apache.commons.lang.StringUtils.isNotEmpty(payResultMsg)){
+				int payResultMsgLength = payResultMsg.length();
+				payResultMsg = payResultMsgLength>1000?payResultMsg.substring(0, 1000):payResultMsg;
+				payOrderInfoDMO.setPayResultMsg(payResultMsg);
+			}
 			payOrderInfoDMO.setPayLastMessageId(messageId);
 			payOrderInfoDMO.setPayResultStatus(
 					paymentOrderInfoReqDTO.getPaymentResultStatus().byteValue());

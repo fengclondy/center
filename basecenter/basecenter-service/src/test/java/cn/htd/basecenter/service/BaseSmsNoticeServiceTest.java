@@ -1,5 +1,7 @@
 package cn.htd.basecenter.service;
 
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -12,15 +14,18 @@ import cn.htd.basecenter.dto.BaseSmsNoticeDTO;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.dao.util.RedisDB;
 
 public class BaseSmsNoticeServiceTest {
 	ApplicationContext ctx = null;
 	BaseSmsNoticeService baseSmsNoticeService = null;
+	private RedisDB redisDB;
 	
 	@Before
 	public void setUp() throws Exception {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
 		baseSmsNoticeService = (BaseSmsNoticeService) ctx.getBean("baseSmsNoticeService");
+		redisDB = (RedisDB) ctx.getBean("redisDB");
 	}
 	
 	@Test
@@ -49,5 +54,12 @@ public class BaseSmsNoticeServiceTest {
 		noticeDTO.setModifyName("sa");
 		ExecuteResult<String> result = baseSmsNoticeService.deleteBaseSmsNotice(noticeDTO);
 		System.out.println("-------------" + JSONObject.toJSONString(result));
+	}
+	
+	@Test
+	public void redisTest(){
+		redisDB.incrHash("NOTICE", "YES");
+		String value = redisDB.get("NOTICE");
+		System.out.println("value == " + value);
 	}
 }

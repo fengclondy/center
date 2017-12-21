@@ -27,6 +27,7 @@
 		<result column="order_remarks" property="orderRemarks"/>
 		<result column="modify_time" property="modifyTime" />
 		<result column="erp_status" property="erpStatus" />
+		<result column="delivery_type" property="deliveryType" />
 	</resultMap>
 	<select id="selectErpDistributionOrdersList" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
@@ -53,7 +54,8 @@
 			t.is_timelimited_order,
 			t.promotion_id,
 			t.order_from,
-            t.buyer_remarks
+            t.buyer_remarks,
+            t.delivery_type
 		FROM
 			trade_order_erp_distribution e
 		INNER JOIN 

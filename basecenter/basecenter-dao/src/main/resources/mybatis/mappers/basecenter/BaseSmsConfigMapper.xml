@@ -50,8 +50,16 @@
     select 
     <include refid="Base_Column_List" />
     from base_sms_config
-    where type = #{type,jdbcType=VARCHAR}
-      and used_flag = #{usedFlag,jdbcType=TINYINT}
+    where 1=1 
+    <if test="type != null">
+    	and	type = #{type,jdbcType=VARCHAR}  	
+    </if>
+    <if test="usedFlag != null and usedFlag != 0">
+    	and used_flag = #{usedFlag,jdbcType=TINYINT}
+    </if>
+    <if test="channelCode != null">
+		and channel_code = #{channelCode,jdbcType=VARCHAR}  
+    </if>
   </select>
   <select id="queryCount" resultType="java.lang.Long">
     select count(1)

@@ -11,12 +11,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
-import cn.htd.basecenter.common.exception.BaseCenterBusinessException;
+import cn.htd.basecenter.dao.BaseSmsConfigDAO;
+import cn.htd.basecenter.dto.BaseSmsConfigDTO;
 import cn.htd.basecenter.dto.MailWarnColumn;
 import cn.htd.basecenter.dto.MailWarnInDTO;
 import cn.htd.basecenter.dto.MailWarnRow;
 import cn.htd.basecenter.dto.SendSmsDTO;
-import cn.htd.basecenter.service.sms.MengWangSmsClient;
+import cn.htd.basecenter.enums.SmsChannelTypeEnum;
+import cn.htd.basecenter.enums.SmsEmailTypeEnum;
 import cn.htd.common.ExecuteResult;
 
 /**
@@ -26,11 +28,13 @@ public class SendSmsEmailServiceTest {
 
 	ApplicationContext ctx = null;
 	SendSmsEmailService sendSmsEmailService = null;
+	BaseSmsConfigDAO baseSmsConfigDAO = null;
 
 	@Before
 	public void setUp() throws Exception {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
 		sendSmsEmailService = (SendSmsEmailService) ctx.getBean("sendSmsEmailService");
+		baseSmsConfigDAO = (BaseSmsConfigDAO) ctx.getBean("baseSmsConfigDAO");
 	}
 
 	@Test
@@ -116,7 +120,13 @@ public class SendSmsEmailServiceTest {
 	
 	@Test
 	public void test2(){
-		ExecuteResult<String> result = sendSmsEmailService.queryBalance();
+		BaseSmsConfigDTO configCondition = new BaseSmsConfigDTO();
+		configCondition.setType(SmsEmailTypeEnum.SMS.getCode());
+		configCondition.setChannelCode(SmsChannelTypeEnum.MANDAO.getCode());
+		System.out.println("----" + JSONObject.toJSONString(configCondition));
+		List<BaseSmsConfigDTO> validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(configCondition);
+		System.out.println(JSONObject.toJSONString(validSmsConfigList) + "==");
+		ExecuteResult<String> result = sendSmsEmailService.queryBalance(validSmsConfigList.get(0));
 		System.out.println(JSONObject.toJSONString(result));
 		 
 	}

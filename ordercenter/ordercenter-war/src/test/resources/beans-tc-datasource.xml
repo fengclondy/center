@@ -9,10 +9,10 @@
 	default-autowire="byName">
 	<bean id="dataSource" class="cn.htd.zeus.tc.common.util.XBasicDataSource"
 		destroy-method="close">
-		<property name="url" value="jdbc:mysql://172.16.1.178:3306/zeus?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="url" value="jdbc:mysql://172.16.1.223:3306/tradecenter?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull" />
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="username" value="htdzt" />
-		<property name="password" value="Ztdep2017" />
+		<property name="username" value="htd_zeus" />
+		<property name="password" value="htd_zeus" />
 	</bean>
 	<!-- delete by 张丁 开始 -->
 	<!-- <jee:jndi-lookup id="dataSource" jndi-name="java:jboss/DS-cps" /> -->

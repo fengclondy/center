@@ -1,11 +1,16 @@
 package cn.htd.common.util;
 
-import org.apache.commons.lang.StringUtils;
-
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 public class DateUtils {
 	public static final String YMD = "yyyyMMdd";
@@ -19,10 +24,21 @@ public class DateUtils {
 	public static final String HM_COLON = "HH:mm";
 	public static final String YMDHMS = "yyyyMMddHHmmss";
 	public static final long DAY = 24 * 60 * 60 * 1000L;
+	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static final Map<String, DateFormat> DFS = new HashMap<String, DateFormat>();
 
 	private DateUtils() {
+	}
+
+	/*
+	 * 获取系统当前时间
+	 */
+	public static Timestamp getSystemTime() {
+		Date dt = new Date();
+		String nowTime = df.format(dt);
+		java.sql.Timestamp buydate = java.sql.Timestamp.valueOf(nowTime);
+		return buydate;
 	}
 
 	public static DateFormat getFormat(String pattern) {
@@ -70,9 +86,12 @@ public class DateUtils {
 	/**
 	 * 返回指定日期相应位移后的日期
 	 * 
-	 * @param date     参考日期
-	 * @param field    位移单位，见 {@link Calendar}
-	 * @param offset   位移数量，正数表示之后的时间，负数表示之前的时间
+	 * @param date
+	 *            参考日期
+	 * @param field
+	 *            位移单位，见 {@link Calendar}
+	 * @param offset
+	 *            位移数量，正数表示之后的时间，负数表示之前的时间
 	 * @return 位移后的日期
 	 */
 	public static Date offsetDate(Date date, int field, int offset) {
@@ -84,8 +103,10 @@ public class DateUtils {
 	/**
 	 * 返回两个日期间的差异天数
 	 * 
-	 * @param date1   参照日期
-	 * @param date2   比较日期
+	 * @param date1
+	 *            参照日期
+	 * @param date2
+	 *            比较日期
 	 * @return 参照日期与比较日期之间的天数差异，正数表示参照日期在比较日期之后，0表示两个日期同天，负数表示参照日期在比较日期之前
 	 */
 	public static int dayDiff(Date date1, Date date2) {

@@ -61,6 +61,15 @@ public class MyMemberSearchDTO implements Serializable {
 	 */
 	private String memberType;
 
+	/**
+	 * 开始时间 - 字符串格式
+	 */
+	private String beginTime;
+	/**
+	 * 结束时间 - 字符串格式
+	 */
+	private String finishTime;
+	
 	public String getStringName() {
 		return stringName;
 	}
@@ -244,6 +253,22 @@ public class MyMemberSearchDTO implements Serializable {
 
 	public void setMemberType(String memberType) {
 		this.memberType = memberType;
+	}
+
+	public String getBeginTime() {
+		return beginTime;
+	}
+
+	public void setBeginTime(String beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	public String getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(String finishTime) {
+		this.finishTime = finishTime;
 	}
 	
 	

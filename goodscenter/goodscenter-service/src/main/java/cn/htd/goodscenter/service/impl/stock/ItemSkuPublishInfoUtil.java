@@ -54,7 +54,7 @@ public class ItemSkuPublishInfoUtil {
 		   
 		}
 		
-		//只判断小于的逻辑，如果不足且处于上架状态，则下架
+		//只判断小于的逻辑，如果不足且处于上架状态，则下架 TODO : 不下架 缩减库存
 		if(stockNum<itemSkuPublishInfo.getDisplayQuantity()&&itemSkuPublishInfo.getIsVisable()==1){
 		 	 //执行下架
 //		 	 itemSkuPublishInfo.setModifyId(operatorId);

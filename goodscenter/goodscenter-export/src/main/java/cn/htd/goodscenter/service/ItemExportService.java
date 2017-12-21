@@ -235,6 +235,9 @@ public interface ItemExportService {
 	 * @return
 	 */
 	public ExecuteResult<String> syncItemStock(SyncItemStockInDTO syncItemStockInDTO);
+
+
+	public ExecuteResult<String> batchsyncItemStock(List<String> spuCodeList, String supplerCode, Long sellerId);
 	
 	/**
 	 * 根据店铺id下架商品

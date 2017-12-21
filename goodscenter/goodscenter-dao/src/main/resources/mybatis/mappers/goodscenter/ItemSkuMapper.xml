@@ -1385,7 +1385,10 @@
 		ifnull(publish.reserve_quantity, 0) AS currentReserveQuantity,
 		ifnull(publish1.display_quantity, 0) AS otherDisplayQuantity,
 		ifnull(publish1.reserve_quantity, 0) AS otherReserveQuantity,
-		ifnull(total.inventory - total.reserve_quantity, 0) AS totalStock
+		ifnull(total.inventory - total.reserve_quantity, 0) AS totalStock,
+		t.item_status AS itemStatus,
+		ifnull(publish.is_visable, 0) AS currentIsVisable,
+		ifnull(publish1.is_visable, 0) AS otherIsVisable
 		FROM
 		item_sku sku
 		JOIN item t ON sku.item_id = t.item_id
@@ -1405,6 +1408,7 @@
 		AND t.item_status IN (1, 4, 5)
 		AND t.seller_id = #{param.sellerId}
 		AND (publish.is_visable IS NULL OR publish.is_visable = 0)
+		AND (total.inventory - total.reserve_quantity) > 0
 		<if test="param.thirdCategoryIdList != null">
 			and t.cid IN
 			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
@@ -1443,6 +1447,7 @@
 		AND t.item_status IN (1, 4, 5)
 		AND t.seller_id = #{param.sellerId}
 		AND (publish.is_visable IS NULL OR publish.is_visable = 0)
+		AND (total.inventory - total.reserve_quantity) > 0
 		<if test="param.thirdCategoryIdList != null">
 			and t.cid IN
 			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
@@ -1452,5 +1457,21 @@
 		<if test="param.brandId != null">
 			and t.brand = #{param.brandId}
 		</if>
+	</select>
+
+	<select id="queryALLOffShelfItemList" resultType="Map">
+		SELECT
+		spu.spu_code AS spucode
+		FROM
+		item_sku sku
+		JOIN item t ON sku.item_id = t.item_id AND t.item_status != 6
+		LEFT JOIN item_sku_publish_info publish ON sku.sku_id = publish.sku_id AND publish.is_box_flag = #{isBoxFlag}
+		LEFT JOIN item_spu spu ON spu.spu_id = t.item_spu_id
+		WHERE
+		    t.item_status IN (1, 4, 5)
+		AND t.seller_id = #{sellerId}
+		AND (publish.is_visable IS NULL OR publish.is_visable = 0)
+		ORDER BY
+		sku.created DESC
 	</select>
 </mapper>

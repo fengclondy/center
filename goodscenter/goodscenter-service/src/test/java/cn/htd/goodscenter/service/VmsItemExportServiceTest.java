@@ -12,10 +12,7 @@ import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
 import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoInDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsItemPublishInfoOutDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
-import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
+import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.goodscenter.test.common.CommonTest;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
@@ -64,9 +61,10 @@ public class VmsItemExportServiceTest extends CommonTest {
     @Test
     public void testqueryItemSkuPublishInfoList() {
         QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO = new QueryVmsItemPublishInfoInDTO();
-        queryVmsItemPublishInfoInDTO.setIsBoxFlag(0);
-        queryVmsItemPublishInfoInDTO.setSellerId(517L);
-        queryVmsItemPublishInfoInDTO.setShelfStatus(1);
+        queryVmsItemPublishInfoInDTO.setIsBoxFlag(1);
+        queryVmsItemPublishInfoInDTO.setSellerId(17606L);
+//        queryVmsItemPublishInfoInDTO.seti
+//        queryVmsItemPublishInfoInDTO.setShelfStatus(1);
 //        Pager<String> page = new Pager<>();
         ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>>  executeResult = this.vmsItemExportService.queryItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, null);
         System.out.println(JSON.toJSONString(executeResult));
@@ -152,5 +150,18 @@ public class VmsItemExportServiceTest extends CommonTest {
         venusItemSkuPublishInDTO.setStandardPrice(standardPriceDTO);
         ExecuteResult<String>  executeResult = this.vmsItemExportService.onShelves(venusItemSkuPublishInDTO);
         System.out.println(JSON.toJSONString(executeResult));
+    }
+
+    @Test
+    public void testqueryOffShelfItemBySellerId() {
+        QueryOffShelfItemInDTO queryOffShelfItemInDTO = new QueryOffShelfItemInDTO();
+        queryOffShelfItemInDTO.setSellerId(17606L);
+        queryOffShelfItemInDTO.setIsBoxFlag(1);
+        queryOffShelfItemInDTO.setSupplyCode("htd1000000");
+        Pager pager = new Pager();
+        ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>>  executeResult = this.vmsItemExportService.queryOffShelfItemBySellerId(queryOffShelfItemInDTO, null);
+        System.out.println(JSON.toJSONString(executeResult));
+
+
     }
 }

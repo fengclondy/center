@@ -22,6 +22,8 @@ public class QueryOffShelfItemOutDTO implements Serializable {
     private BigDecimal salePrice;
     //是否包厢
     private Integer isBoxFlag;
+    //如果上架做少库存，可能存在锁定的
+    private int minStock;
     //可上架库存
     private int aviableStock;
     //实际库存
@@ -116,8 +118,11 @@ public class QueryOffShelfItemOutDTO implements Serializable {
     }
 
     /** 用来计算可上架库存 **/
+    private Integer itemStatus;
+    private Integer currentIsVisable;
     private int currentDisplayQuantity; // 当前可见库存
     private int currentReserveQuantity; // 当前锁定库存
+    private Integer otherIsVisable;
     private int otherDisplayQuantity; // 其他可见库存
     private int otherReserveQuantity; // 其他锁定库存
 
@@ -151,5 +156,37 @@ public class QueryOffShelfItemOutDTO implements Serializable {
 
     public void setOtherReserveQuantity(int otherReserveQuantity) {
         this.otherReserveQuantity = otherReserveQuantity;
+    }
+
+    public Integer getItemStatus() {
+        return itemStatus;
+    }
+
+    public void setItemStatus(Integer itemStatus) {
+        this.itemStatus = itemStatus;
+    }
+
+    public Integer getCurrentIsVisable() {
+        return currentIsVisable;
+    }
+
+    public void setCurrentIsVisable(Integer currentIsVisable) {
+        this.currentIsVisable = currentIsVisable;
+    }
+
+    public Integer getOtherIsVisable() {
+        return otherIsVisable;
+    }
+
+    public void setOtherIsVisable(Integer otherIsVisable) {
+        this.otherIsVisable = otherIsVisable;
+    }
+
+    public int getMinStock() {
+        return minStock;
+    }
+
+    public void setMinStock(int minStock) {
+        this.minStock = minStock;
     }
 }

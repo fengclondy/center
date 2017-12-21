@@ -12,6 +12,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -302,6 +303,30 @@ public class MiddlewareInterfaceUtil {
 				itemStockResponse = (ItemStockResponseDTO) list.get(0);
 			}
 			return itemStockResponse;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static List<ItemStockResponseDTO> getBatchItemStock(String supplyierCode, List<String> spuCodeList) {
+		StringBuilder productCodes = new StringBuilder();
+		int i = 0;
+		for (String productCode : spuCodeList) {
+			productCodes.append(productCode);
+			if (i != spuCodeList.size() - 1) {
+				productCodes.append(",");
+			}
+			i++;
+		}
+		String param = "?supplierCode=" + supplyierCode + "&productCodes="+ productCodes.toString() + "&token="
+				+ MiddlewareInterfaceUtil.getAccessToken();
+		try{
+			String responseJson = MiddlewareInterfaceUtil.httpGet(MiddlewareInterfaceConstant.MIDDLEWARE_GET_ITEM_STOCK_URL + param, Boolean.TRUE);
+			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+			JSONArray jsonArray=JSONArray.fromObject(map.get("data"));
+			List<ItemStockResponseDTO> list =JSONArray.toList(jsonArray,ItemStockResponseDTO.class);
+			return list;
 		}catch(Exception e){
 			e.printStackTrace();
 		}

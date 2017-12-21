@@ -1,6 +1,8 @@
 package cn.htd.goodscenter.dto.vms;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 public class QueryOffShelfItemInDTO implements Serializable {
 
@@ -11,11 +13,14 @@ public class QueryOffShelfItemInDTO implements Serializable {
     private Long thirdCategoryId;
 
     private Long brandId;
-
+    @NotNull(message = "sellerId必填")
     private Long sellerId;
-
-    // 0 : 区域   1：包厢
+    @NotNull(message = "供应商编码必填")
+    private String supplyCode;
+    @NotNull(message = "isBoxFlag必填")
     private Integer isBoxFlag;
+
+    private List<Long> thirdCategoryIdList;
 
     public Long getFirstCategoryId() {
         return firstCategoryId;
@@ -63,5 +68,21 @@ public class QueryOffShelfItemInDTO implements Serializable {
 
     public void setIsBoxFlag(Integer isBoxFlag) {
         this.isBoxFlag = isBoxFlag;
+    }
+
+    public List<Long> getThirdCategoryIdList() {
+        return thirdCategoryIdList;
+    }
+
+    public void setThirdCategoryIdList(List<Long> thirdCategoryIdList) {
+        this.thirdCategoryIdList = thirdCategoryIdList;
+    }
+
+    public String getSupplyCode() {
+        return supplyCode;
+    }
+
+    public void setSupplyCode(String supplyCode) {
+        this.supplyCode = supplyCode;
     }
 }

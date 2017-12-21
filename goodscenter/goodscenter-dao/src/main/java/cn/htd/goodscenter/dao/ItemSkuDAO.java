@@ -2,6 +2,7 @@ package cn.htd.goodscenter.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import cn.htd.goodscenter.dto.vms.QueryOffShelfItemInDTO;
 import cn.htd.goodscenter.dto.vms.QueryOffShelfItemOutDTO;
@@ -164,7 +165,7 @@ public interface ItemSkuDAO extends BaseDAO<ItemSku> {
 	
 	Long queryItemCountBySaleAreaCode(JudgeRecevieAddressInDTO judgeRecevieAddressInDTO);
 	
-	ItemSku queryItemSkuBySellerIdAndSpuId(@Param("itemSpuId") Long itemSpuId,@Param("sellerId") Long sellerId );
+	List<ItemSku> queryItemSkuBySellerIdAndSpuId(@Param("itemSpuId") Long itemSpuId,@Param("sellerId") Long sellerId );
 	
 	
 	VenusOrderImportItemOutDTO queryVenusOrderImportItemInfo(@Param("itemCode")  String itemCode);
@@ -196,4 +197,7 @@ public interface ItemSkuDAO extends BaseDAO<ItemSku> {
     Long queryVmsOffShelfItemSkuPublishInfoListCount(@Param("param") QueryOffShelfItemInDTO queryOffShelfItemInDTO);
 
 	List<QueryOffShelfItemOutDTO> queryVmsOffShelfItemSkuPublishInfoList(@Param("param") QueryOffShelfItemInDTO queryOffShelfItemInDTO, @Param("page")Pager pager);
+
+	List<Map<String, Object>> queryALLOffShelfItemList(@Param("sellerId") Long sellerId, @Param("isBoxFlag")Integer isBoxFlag);
+
 }

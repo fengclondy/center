@@ -9,12 +9,15 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import cn.htd.goodscenter.common.constants.VenusErrorCodes;
+import cn.htd.goodscenter.common.utils.DTOValidateUtil;
+import cn.htd.goodscenter.common.utils.ValidateResult;
 import cn.htd.goodscenter.dao.*;
 import cn.htd.goodscenter.dao.spu.ItemSpuMapper;
 import cn.htd.goodscenter.domain.*;
 import cn.htd.goodscenter.domain.spu.ItemSpu;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
+import cn.htd.goodscenter.dto.indto.SyncItemStockInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
@@ -25,6 +28,7 @@ import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
 import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
 import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
+import cn.htd.goodscenter.service.ItemExportService;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
@@ -85,6 +89,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Resource
     private DictionaryUtils dictionaryUtils;
+
+    @Resource
+    private ItemExportService itemExportService;
 
     /**
      * 我的商品 - 商品列表
@@ -465,6 +472,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
      * 大厅商品详情
      * @param querySkuPublishInfoDetailParamDTO
      * @return
+     * // TODO : 其他区域占用的库存，如果其他类型是上架则看可见库存，如果是下架则看锁定库存（新版本下架可见库存和锁定库存一致，但是老版本不是）
      */
     @Override
     public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
@@ -556,11 +564,47 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>> executeResult = new ExecuteResult<>();
         DataGrid<QueryOffShelfItemOutDTO> dtoDataGrid = new DataGrid<>();
         try {
-            // TODO : 同步大B下面所有ERP实际库存
+            // 参数校验
+            if (queryOffShelfItemInDTO == null) {
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+                return executeResult;
+            }
+            ValidateResult validateResult = DTOValidateUtil.validate(queryOffShelfItemInDTO);
+            if (!validateResult.isPass()) {
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+                executeResult.setResultMessage(validateResult.getMessage());
+                return executeResult;
+            }
+            String supplierCode = queryOffShelfItemInDTO.getSupplyCode();
+            Long sellerId = queryOffShelfItemInDTO.getSellerId();
+            // 同步大B下面所有ERP实际库存
+            // 1. 查询所有该大B下包厢或者大厅的下架商品
+            List<Map<String, Object>> allOffItemList = this.itemSkuDAO.queryALLOffShelfItemList(queryOffShelfItemInDTO.getSellerId(), queryOffShelfItemInDTO.getIsBoxFlag());
+            List<String> spuCodeList = new ArrayList<>();
+            if (allOffItemList != null) {
+                for (Map offItemMap : allOffItemList) {
+                    Map<String,Object> map = new HashMap<>();
+                    String spuCode = (String) offItemMap.get("spucode");
+                    if (StringUtils.isEmpty(spuCode)) {
+                        continue;
+                    }
+                    spuCodeList.add(spuCode);
+                }
+            }
+            // 2. 同步实际库存
+            this.itemExportService.batchsyncItemStock(spuCodeList, supplierCode, sellerId);
+            // 封装三级类目集合
+            Long[] thirdCategoryIds  = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryOffShelfItemInDTO.getFirstCategoryId(),
+                    queryOffShelfItemInDTO.getSecondCategoryId(), queryOffShelfItemInDTO.getThirdCategoryId());
+            if (thirdCategoryIds != null) {
+                queryOffShelfItemInDTO.setThirdCategoryIdList(Arrays.asList(thirdCategoryIds));
+            }
             Long count = this.itemSkuDAO.queryVmsOffShelfItemSkuPublishInfoListCount(queryOffShelfItemInDTO);
             List<QueryOffShelfItemOutDTO> queryOffShelfItemOutDTOList = new ArrayList<>();
             if (count > 0) {
                 queryOffShelfItemOutDTOList = this.itemSkuDAO.queryVmsOffShelfItemSkuPublishInfoList(queryOffShelfItemInDTO, pager);
+                // 获取最大可上架数量和最小上架数量
+                // 最大可上架库存 =  实际库存 - 
             }
             dtoDataGrid.setTotal(count);
             dtoDataGrid.setRows(queryOffShelfItemOutDTOList);
@@ -573,6 +617,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         }
         return executeResult;
     }
+
+
 
     /**
      * 计算商品名称重复的数量

@@ -92,7 +92,7 @@ public class OrderConsigneeDownTask implements
 		if(null != taskParameterMap && StringUtilHelper.isNotNull(taskParameterMap.get("days"))){
 			paramMap.put("startTime", DateUtil.getDaysTime(Integer.valueOf(taskParameterMap.get("days").toString()).intValue()));
 		}else{
-			paramMap.put("startTime", DateUtil.getDaysTime(1));
+			paramMap.put("startTime", DateUtil.getDaysTime(-1));
 		}
 		
 		try{

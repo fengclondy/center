@@ -2,7 +2,6 @@ package cn.htd.zeus.tc.biz.service.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,6 +19,7 @@ import cn.htd.zeus.tc.biz.dao.TradeOrderErpDistributionDAO;
 import cn.htd.zeus.tc.biz.dao.TradeOrderItemsDAO;
 import cn.htd.zeus.tc.biz.dao.TradeOrderItemsStatusHistoryDAO;
 import cn.htd.zeus.tc.biz.dao.TradeOrderStatusHistoryDAO;
+import cn.htd.zeus.tc.biz.dao.TradeOrdersDAO;
 import cn.htd.zeus.tc.biz.dmo.OrderPaymentResultDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderConsigneeDownInfoDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderErpDistributionDMO;
@@ -28,10 +28,12 @@ import cn.htd.zeus.tc.biz.dmo.TradeOrderItemsStatusHistoryDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderItemsStatusHistoryListDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrderStatusHistoryListDMO;
+import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
 import cn.htd.zeus.tc.biz.service.TradeOrderItemStatusHistoryService;
 import cn.htd.zeus.tc.biz.service.TradeOrderStatusHistoryService;
 import cn.htd.zeus.tc.common.constant.Constant;
 import cn.htd.zeus.tc.common.enums.MemberCenterEnum;
+import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.dto.response.UpdateOrderStatusResDTO;
@@ -65,6 +67,9 @@ public class TradeOrderStatusHistoryServiceImpl implements TradeOrderStatusHisto
 
 	@Autowired
 	private TradeOrderItemsDAO tradeOrderItemsDAO;
+	
+	@Autowired
+	private TradeOrdersDAO tradeOrdersDAO;
 	
 	@Autowired
 	private TradeOrderConsigneeDownInfoDAO tradeOrderConsigneeDownInfoDAO;
@@ -223,8 +228,16 @@ public class TradeOrderStatusHistoryServiceImpl implements TradeOrderStatusHisto
 		try {
 			new Thread(new Runnable() {
 				public void run() {
-					TradeOrderConsigneeDownInfoDMO record = new TradeOrderConsigneeDownInfoDMO();
 					String orderNo = orderPaymentResultDMO.getOrderNo();
+					TradeOrdersDMO tradeOrdersDMO = tradeOrdersDAO.selectOrderByOrderNo(orderNo);
+					if (null == tradeOrdersDMO
+							|| OrderStatusEnum.ORDER_DELIVERY_TYPE_SINCE
+									.getCode().equals(
+											tradeOrdersDMO.getDeliveryType())) {
+						LOGGER.info("该订单:{}配送方式为自提,不需要下行给erp",orderNo);
+						return;
+					}
+					TradeOrderConsigneeDownInfoDMO record = new TradeOrderConsigneeDownInfoDMO();
 					record.setOrderNo(orderNo);
 					record.setConsigneeTime(orderPaymentResultDMO
 							.getOrderReceiptTime());
@@ -241,7 +254,14 @@ public class TradeOrderStatusHistoryServiceImpl implements TradeOrderStatusHisto
 						return;
 					}
 					for(TradeOrderErpDistributionDMO erpDistributionTemp : erpDistributionList){
-						record.setErpLockBalanceCode(erpDistributionTemp.getErpLockBalanceCode());
+						String erpLockBalanceCode = erpDistributionTemp.getErpLockBalanceCode();
+						record.setErpLockBalanceCode(erpLockBalanceCode);
+						TradeOrderConsigneeDownInfoDMO TradeOrderConsigneeDownInfoDMO = tradeOrderConsigneeDownInfoDAO
+								.selectTradeOrderConsigneeDownInfo(record);
+						if(null != TradeOrderConsigneeDownInfoDMO){
+							LOGGER.warn("订单收货时间下行erp表已经存在该数据,锁定余额号:{}",erpLockBalanceCode);
+							return;
+						}
 						int result = tradeOrderConsigneeDownInfoDAO.insertTradeOrderConsigneeDownInfo(record);
 						LOGGER.info("插入订单收货时间下行erp表参数：{} 结果：{}",JSONObject.toJSONString(orderPaymentResultDMO),result);
 					}

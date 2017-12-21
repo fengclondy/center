@@ -430,21 +430,17 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 	}
 
 	@Override
-	public ExecuteResult<String> queryBalance() {
+	public ExecuteResult<String> queryBalance(BaseSmsConfigDTO targetObj) {
 		ExecuteResult<String> result = new ExecuteResult<String>();
-		BaseSmsConfigDTO configCondition = new BaseSmsConfigDTO();
-		List<BaseSmsConfigDTO> validSmsConfigList = null;
 		String queryResult = "";
 		try {
-			configCondition.setType(SmsEmailTypeEnum.SMS.getCode());
-			configCondition.setUsedFlag(YesNoEnum.YES.getValue());
-			validSmsConfigList = baseSmsConfigDAO.queryByTypeCode(configCondition);
-			if (validSmsConfigList == null || validSmsConfigList.size() == 0) {
+			if (targetObj == null) {
 				throw new BaseCenterBusinessException(ReturnCodeConst.NO_SMS_CONFIG_ERROR, "启用的短信通道配置信息不存在");
 			}
-			configCondition = validSmsConfigList.get(0);
-			queryResult = queryBalanceByChannel(configCondition);
-			result.setResult(queryResult);
+			if(SmsChannelTypeEnum.MANDAO.getCode().equals(targetObj.getChannelCode())){
+				queryResult = queryBalanceByChannel(targetObj);
+				result.setResult(queryResult);
+			}
 		} catch (BaseCenterBusinessException bcbe) {
 			result.setCode(bcbe.getCode());
 			result.addErrorMessage(bcbe.getMessage());

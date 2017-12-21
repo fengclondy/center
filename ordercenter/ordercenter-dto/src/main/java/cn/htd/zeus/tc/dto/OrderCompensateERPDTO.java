@@ -43,6 +43,8 @@ public class OrderCompensateERPDTO implements Serializable {
 	
 	private String masterOrderNo;
 	
+	private String shippingMethod;//1-供货商配送,2自提
+	
 	public Long getId() {
 		return id;
 	}
@@ -216,6 +218,12 @@ public class OrderCompensateERPDTO implements Serializable {
 	}
 	public void setMasterOrderNo(String masterOrderNo) {
 		this.masterOrderNo = masterOrderNo;
+	}
+	public String getShippingMethod() {
+		return shippingMethod;
+	}
+	public void setShippingMethod(String shippingMethod) {
+		this.shippingMethod = shippingMethod;
 	}
 	
 }

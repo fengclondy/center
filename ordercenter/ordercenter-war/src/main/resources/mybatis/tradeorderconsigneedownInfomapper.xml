@@ -162,4 +162,12 @@
     where erp_lock_balance_code = #{erpLockBalanceCode,jdbcType=VARCHAR}
   </update>
   
+  <select id="selectTradeOrderConsigneeDownInfo" resultMap="BaseResultMap"
+		parameterType="cn.htd.zeus.tc.biz.dmo.TradeOrderConsigneeDownInfoDMO">
+		select
+		<include refid="Base_Column_List" />
+		from trade_order_consignee_down_info
+		where erp_lock_balance_code = #{erpLockBalanceCode,jdbcType=VARCHAR}
+	</select>
+  
 </mapper>

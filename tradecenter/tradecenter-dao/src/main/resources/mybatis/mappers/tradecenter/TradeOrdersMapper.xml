@@ -212,6 +212,9 @@
 	  		and order_no in (select distinct(s.order_no) from trade_order_items s 
 			where s.third_category_id = #{entity.thirdCategoryId})
 	  </if>
+	  <if test="entity.orderFrom != null and entity.orderFrom != '' ">
+	    <![CDATA[ and order_from = #{entity.orderFrom} ]]>
+	  </if>
     </if>
   </sql>
   <select id="queryTradeOrderByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >

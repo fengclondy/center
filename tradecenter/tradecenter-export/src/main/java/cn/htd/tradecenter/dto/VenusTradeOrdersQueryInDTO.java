@@ -55,6 +55,8 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 
 	private String thirdCategoryId;
 
+	private String orderFrom;
+
 	public String getSellerCode() {
 		return sellerCode;
 	}
@@ -148,6 +150,21 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 	 */
 	public void setThirdCategoryId(String thirdCategoryId) {
 		this.thirdCategoryId = thirdCategoryId;
+	}
+
+	/**
+	 * @return the orderFrom
+	 */
+	public String getOrderFrom() {
+		return orderFrom;
+	}
+
+	/**
+	 * @param orderFrom
+	 *            the orderFrom to set
+	 */
+	public void setOrderFrom(String orderFrom) {
+		this.orderFrom = orderFrom;
 	}
 
 }

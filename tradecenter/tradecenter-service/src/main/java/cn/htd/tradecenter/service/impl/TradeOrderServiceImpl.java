@@ -49,6 +49,9 @@ import cn.htd.goodscenter.service.ItemExportService;
 import cn.htd.marketcenter.dto.PromotionInfoDTO;
 import cn.htd.marketcenter.service.PromotionInfoService;
 import cn.htd.membercenter.common.constant.ErpStatusEnum;
+import cn.htd.membercenter.dto.MemberBaseInfoDTO;
+import cn.htd.membercenter.dto.MemberDetailInfo;
+import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.tradecenter.common.constant.ReturnCodeConst;
 import cn.htd.tradecenter.common.enums.YesNoEnum;
 import cn.htd.tradecenter.common.exception.TradeCenterBusinessException;
@@ -158,6 +161,9 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 	private DictionaryUtils dictionary;
 
 	@Resource
+	private MemberBaseInfoService memberBaseInfoService;
+
+	@Resource
 	private TradeOrderErpDistributionDAO erpDistributionDAO;
 
 	public ExecuteResult<TradeOrdersDTO> createVenusTradeOrderInfo(VenusCreateTradeOrderDTO venusInDTO) {
@@ -217,8 +223,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			tradeOrdersDTO.setSalesType(venusInDTO.getSalesType());
 			tradeOrdersDTO.setSalesDepartmentCode(venusInDTO.getSalesDepartmentCode());
 			// VMS开单订单默认创建状态为待确认
-			tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
-					DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
+			setOrderStatusByCondition(tradeOrdersDTO, dictMap);
 			tradeOrdersDTO.setCreateOrderTime(new Date());
 			tradeOrdersDTO.setPayTimeLimit(DateUtils.parse("9999-12-31 23:59:59", DateUtils.YYDDMMHHMMSS));
 			tradeOrdersDTO.setPayType(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_TYPE,
@@ -266,6 +271,34 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			}
 		}
 		return result;
+	}
+
+	private void setOrderStatusByCondition(TradeOrdersDTO tradeOrdersDTO, Map<String, DictionaryInfo> dictMap)
+			throws Exception {
+		String memberCode = tradeOrdersDTO.getBuyerCode();
+		ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);
+		if (id.isSuccess()) {
+			ExecuteResult<MemberDetailInfo> memberInfo = memberBaseInfoService.getMemberDetailById(id.getResult());
+			if (memberInfo.isSuccess()) {
+				MemberBaseInfoDTO memberDTO = memberInfo.getResult().getMemberBaseInfoDTO();
+				// 含有内部供应商身份的会员以及担保会员以及非会员
+				if ((("2".equals(memberDTO.getMemberType()) || "3".equals(memberDTO.getMemberType()))
+						&& "1".equals(memberDTO.getSellerType()) && memberDTO.getIsSeller() == 1)
+						|| "1".equals(memberDTO.getMemberType())) {
+					tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
+							DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
+				} else {
+					tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
+							DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
+				}
+			} else {
+				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_SEARCH_FOR_MEMBERID_ERROR,
+						"VMS开单查询会员信息失败");
+			}
+		} else {
+			throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_SEARCH_FOR_MEMBERINFO_ERROR,
+					"VMS开单查询会员code失败");
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -1012,7 +1045,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		List<String> orderStatusList = new ArrayList<String>();
 		List<DictionaryInfo> statusInfoList = baseService.getDictOptList(dictMap, DictionaryConst.TYPE_ORDER_STATUS);
 		String payPendingStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
-				DictionaryConst.OPT_ORDER_STATUS_WAIT_PAY);
+				DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM);
 		String completeStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 				DictionaryConst.OPT_ORDER_STATUS_COMPLETE);
 		try {
@@ -1421,10 +1454,12 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 				isCancelOrder = orderShowDTO.getIsCancelOrder();
 				itemDTOList = orderShowDTO.getOrderItemList();
 				itemShowDTOList = orderShowDTO.getOrderItemShowList();
+				String rebateNo = "";
 				itemIt = itemDTOList.iterator();
 				itemShowIt = itemShowDTOList.iterator();
 				while (itemIt.hasNext()) {
 					itemDTO = itemIt.next();
+					rebateNo += itemDTO.getErpRebateNo() + ",";
 					itemShowDTO = itemShowIt.next();
 					if (isCancelOrder != itemDTO.getIsCancelOrderItem()) {
 						itemIt.remove();
@@ -1444,6 +1479,12 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 					}
 					itemShowDTO.setWarehouseShowDTOList(warehouseShowDTOList);
 				}
+				if (StringUtils.isNotBlank(orderShowDTO.getSalesDepartmentCode())) {
+					orderShowDTO.setSalesDepartmentName(
+							querySalesDepartmentNameByCode(orderShowDTO.getSalesDepartmentCode()));
+				}
+				orderShowDTO.setRebateNo(
+						StringUtils.isNotBlank(rebateNo) ? rebateNo.substring(0, rebateNo.length() - 1) : "");
 			}
 		} catch (TradeCenterBusinessException tcbe) {
 			result.setCode(tcbe.getCode());
@@ -1453,6 +1494,29 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
 		}
 		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private String querySalesDepartmentNameByCode(String salesDepartmentCode) {
+		// 判断需要支付的金额与账户余额比较
+		String tokenUrl = middleware.getPath() + "/token/" + MiddlewareInterfaceConstant.MIDDLE_PLATFORM_APP_ID;
+		String accessTokenErp = MiddlewareInterfaceUtil.httpGet(tokenUrl, Boolean.TRUE);
+		if (StringUtils.isEmpty(accessTokenErp)) {
+			return null;
+		}
+		Map accessTokenMap = (Map) JSONObject.parseObject(accessTokenErp, Map.class);
+		String param = null;
+		;
+		String url = null;
+		String accessToken = String.valueOf(accessTokenMap.get("data"));
+		if (StringUtils.isNotBlank(salesDepartmentCode)) {
+			param = "?token=" + accessToken + "&departmentCode=" + salesDepartmentCode;
+			url = middleware.getPath() + "/member/getSaleDepartmentName";
+		}
+		String responseJson = MiddlewareInterfaceUtil.httpGet(url + param, Boolean.TRUE);
+		JSONObject jsonObject = JSONObject.parseObject(responseJson);
+		String department = jsonObject.getString("data");
+		return department;
 	}
 
 	@Override
@@ -1591,6 +1655,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			erpDistributionDTOList = orderErpDistributionDAO.queryOrderErpDistributionByOrderNo(orderNo);
 			orderDTO.setErpDistributionDTOList(erpDistributionDTOList);
 			orderShowDTO = baseService.exchangeTradeOrdersDTO2Show(dictMap, orderDTO);
+			orderShowDTO.setSalesDepartmentCode(orderDTO.getSalesDepartmentCode());
 			tradeNo = orderShowDTO.getTradeNo();
 			for (TradeOrderItemsDTO orderItemDTO : orderItemsDTOList) {
 				tmpOrderItemShowDTO = baseService.exchangeTradeOrderItemsDTO2Show(dictMap, orderItemDTO);

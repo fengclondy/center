@@ -1032,5 +1032,6 @@ public class TradeOrdersDTO implements Serializable {
 		this.erpLockBalanceCodeList = orderDTO.getErpLockBalanceCodeList();
 		this.erpSholesalerCodeList = orderDTO.getErpSholesalerCodeList();
 		this.promotionNameList = orderDTO.getPromotionNameList();
+		this.salesDepartmentCode = orderDTO.getSalesDepartmentCode();
 	}
 }

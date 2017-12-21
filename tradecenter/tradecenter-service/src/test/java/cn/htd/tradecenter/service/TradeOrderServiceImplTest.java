@@ -21,6 +21,9 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
+import cn.htd.membercenter.dto.MemberBaseInfoDTO;
+import cn.htd.membercenter.dto.MemberDetailInfo;
+import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.tradecenter.dto.TradeOrderItemStockDTO;
 import cn.htd.tradecenter.dto.TradeOrderItemsShowDTO;
 import cn.htd.tradecenter.dto.TradeOrderQueryInForSellerDTO;
@@ -34,6 +37,7 @@ import cn.htd.tradecenter.dto.VenusConfirmTradeOrderItemWarehouseDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderItemDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderRebateDTO;
+import cn.htd.tradecenter.dto.VenusTradeOrdersQueryInDTO;
 
 public class TradeOrderServiceImplTest {
 
@@ -44,6 +48,7 @@ public class TradeOrderServiceImplTest {
 	private DictionaryUtils dictionary;
 	private TransactionRelationService transactionRelationService;
 	private TradeOrderExportService tradeOrderExportService;
+	private MemberBaseInfoService memberBaseInfoService;
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,6 +57,7 @@ public class TradeOrderServiceImplTest {
 		dictionary = (DictionaryUtils) ctx.getBean("dictionaryUtils");
 		transactionRelationService = (TransactionRelationService) ctx.getBean("transactionRelationService");
 		tradeOrderExportService = (TradeOrderExportService) ctx.getBean("tradeOrderExportService");
+		memberBaseInfoService = (MemberBaseInfoService) ctx.getBean("memberBaseInfoService");
 	}
 
 	@Test
@@ -70,7 +76,36 @@ public class TradeOrderServiceImplTest {
 	}
 
 	@Test
+	public void queryVenusDealTradeOrderListByConditionTest() {
+		Pager<VenusTradeOrdersQueryInDTO> pager = new Pager<VenusTradeOrdersQueryInDTO>();
+		VenusTradeOrdersQueryInDTO conditionDTO = new VenusTradeOrdersQueryInDTO();
+		conditionDTO.setOrderFrom("2");
+		conditionDTO.setSellerCode("htd141619");
+		ExecuteResult<DataGrid<TradeOrdersShowDTO>> data = tradeOrderService
+				.queryVenusDealTradeOrderListByCondition(conditionDTO, pager);
+		System.out.println("运营系统订单查询结果:" + JSON.toJSONString(data));
+	}
+
+	@Test
 	public void queryTradeOrderShowDTOByOrderNoTest() {
+		String memberCode = "htd1087000";
+		ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);
+		if (id.isSuccess()) {
+			ExecuteResult<MemberDetailInfo> memberInfo = memberBaseInfoService.getMemberDetailById(id.getResult());
+			if (memberInfo.isSuccess()) {
+				MemberBaseInfoDTO memberDTO = memberInfo.getResult().getMemberBaseInfoDTO();
+				// 含有内部供应商身份的会员以及担保会员以及非会员
+				if ((("2".equals(memberDTO.getMemberType()) || "3".equals(memberDTO.getMemberType()))
+						&& "1".equals(memberDTO.getSellerType()) && memberDTO.getIsSeller() == 1)
+						|| "1".equals(memberDTO.getMemberType())) {
+					System.out.println("1");
+				} else {
+					System.out.println("2");
+				}
+			}
+
+		}
+
 		String orderNo = "1017121417495030647";
 		ExecuteResult<TradeOrdersShowDTO> dto = tradeOrderService.queryVenusTradeOrderInfo(orderNo);
 		System.out.println("订单详情查询结果:" + JSON.toJSONString(dto));

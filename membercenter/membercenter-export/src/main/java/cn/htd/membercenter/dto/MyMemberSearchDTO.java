@@ -70,6 +70,16 @@ public class MyMemberSearchDTO implements Serializable {
 	 */
 	private String finishTime;
 	
+	/**
+	 * 分页参数 - 当前页
+	 */
+	private Integer start;
+	
+	/**
+	 * 分页参数 - 每页显示记录数
+	 */
+	private Integer length;
+	
 	public String getStringName() {
 		return stringName;
 	}
@@ -270,6 +280,21 @@ public class MyMemberSearchDTO implements Serializable {
 	public void setFinishTime(String finishTime) {
 		this.finishTime = finishTime;
 	}
-	
-	
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+
 }

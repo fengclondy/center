@@ -45,7 +45,7 @@ public class ContractServiceTest {
 		pager.setPage(1);
 		pager.setRows(10);
 
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractListByMemberCode("926386",pager);
+		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractListByMemberCode("926386","",pager);
 		if (result.isSuccess()) {
 			List<ContractInfoDTO> ContractInfoDTOList = result.getResult().getRows();
 			for (ContractInfoDTO contractInfoDTO : ContractInfoDTOList) {
@@ -63,7 +63,7 @@ public class ContractServiceTest {
 		List<String> memberCodeList = new ArrayList<String>();
 		memberCodeList.add("926386");
 		memberCodeList.add("928123");
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractInfoListByMemberAndVendorCode("htd493085",memberCodeList);
+		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractInfoListByMemberAndVendorCode("0110",memberCodeList);
 		if (result.isSuccess()) {
 			List<ContractInfoDTO> ContractInfoDTOList = result.getResult().getRows();
 			for (ContractInfoDTO contractInfoDTO : ContractInfoDTOList) {

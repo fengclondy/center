@@ -62,11 +62,15 @@ public class ContractServiceImpl implements ContractService {
 	 * @return <br>
 	 */ 
 	@Override
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryContractListByMemberCode(String memberCode, Pager<String> pager) {
+	public ExecuteResult<DataGrid<ContractInfoDTO>> queryContractListByMemberCode(String memberCode, String contractStatus, Pager<String> pager) {
 		logger.info("queryContractListBySellerId方法已进入");
 		ExecuteResult<DataGrid<ContractInfoDTO>> result = new ExecuteResult<DataGrid<ContractInfoDTO>>();
 		if (StringUtils.isEmpty(memberCode)) {
 			result.addErrorMessage("会员店编码为空 查询失败");
+			return result;
+		}
+		if (pager == null) {
+			result.addErrorMessage("分页信息为空");
 			return result;
 		}
 		DataGrid<ContractInfoDTO> datagrid = new DataGrid<ContractInfoDTO>();
@@ -100,7 +104,7 @@ public class ContractServiceImpl implements ContractService {
 			//查询出已经签订的合同
 			contractInfoDTOList = contractDAO.queryContractBymemberCode(memberCode, vendorCodeList);
 			List<ContractInfoDTO> returnContractInfoDTOList = new ArrayList<ContractInfoDTO>();
-			List<ContractInfoDTO> contractInfoDTOHandleList = resultHandle(memberCode, memberShipList,contractInfoDTOList);
+			List<ContractInfoDTO> contractInfoDTOHandleList = resultHandle(memberCode, contractStatus, memberShipList,contractInfoDTOList);
 			for (int i = 0;i < contractInfoDTOHandleList.size(); i++) {
 				if (i >= startIndex && i <= endIndex) {
 					returnContractInfoDTOList.add(contractInfoDTOHandleList.get(i));
@@ -127,7 +131,7 @@ public class ContractServiceImpl implements ContractService {
 	 * @param contractInfoDTOList
 	 * @return <br>
 	 */ 
-	public List<ContractInfoDTO> resultHandle(String memberCode,List<MemberShipDTO> memberShipList,
+	public List<ContractInfoDTO> resultHandle(String memberCode, String contractStatus, List<MemberShipDTO> memberShipList,
 											  List<ContractInfoDTO> contractInfoDTOList) throws Exception {
 		logger.info("resultHandle方法已进入 对查询合同列表结果进行处理");
 		List<ContractInfoDTO> returnContractInfoDTOList = new ArrayList<ContractInfoDTO>();
@@ -135,18 +139,21 @@ public class ContractServiceImpl implements ContractService {
 			logger.info("该会员店没有查询到合同");
 			//没有查询到合同表示具有包厢关系的供应商全部未签约合同
 			for (MemberShipDTO memberShip : memberShipList) {
-				ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
-				contractInfoDTO.setContractId(null);
-				contractInfoDTO.setContractCode(null);
-				contractInfoDTO.setSignTime(null);
-				contractInfoDTO.setContractStatus("0");
-				contractInfoDTO.setVendorName(memberShip.getCompanyName());
-				contractInfoDTO.setVendorCode(memberShip.getMemberCode());
-				contractInfoDTO.setMemberCode(memberCode);
-				contractInfoDTO.setContractUrl(null);
-				contractInfoDTO.setContractCredit(null);
-				contractInfoDTO.setContractTitle(null);
-				returnContractInfoDTOList.add(contractInfoDTO);
+				//签约类型为空或者为0表示未签约的时候添加进去
+				if (StringUtils.isEmpty(contractStatus) || "0".equals(contractStatus)) {
+					ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
+					contractInfoDTO.setContractId(null);
+					contractInfoDTO.setContractCode(null);
+					contractInfoDTO.setSignTime(null);
+					contractInfoDTO.setContractStatus("0");
+					contractInfoDTO.setVendorName(memberShip.getCompanyName());
+					contractInfoDTO.setVendorCode(memberShip.getMemberCode());
+					contractInfoDTO.setMemberCode(memberCode);
+					contractInfoDTO.setContractUrl(null);
+					contractInfoDTO.setContractCredit(null);
+					contractInfoDTO.setContractTitle(null);
+					returnContractInfoDTOList.add(contractInfoDTO);
+				}
 			}
 			logger.info("resultHandle方法已结束");
 			return returnContractInfoDTOList;
@@ -156,8 +163,9 @@ public class ContractServiceImpl implements ContractService {
 			boolean checkFlag = true;
 			for (ContractInfoDTO contractInfoDTO : contractInfoDTOList) {
 				//遍历查询到的合同
-				if (memberShip.getMemberCode().equals(contractInfoDTO.getVendorCode())) {
-					//如果编码相同即代表与当前供应商存在合同
+				if (memberShip.getMemberCode().equals(contractInfoDTO.getVendorCode()) 
+						&& ((StringUtils.isEmpty(contractStatus) || "1".equals(contractStatus)))) {
+					//如果编码相同即代表与当前供应商存在合同  
 					ContractInfoDTO returnContractInfoDTO = new ContractInfoDTO();
 					returnContractInfoDTO.setContractId(contractInfoDTO.getContractId());
 					returnContractInfoDTO.setContractCode(contractInfoDTO.getContractCode());
@@ -177,10 +185,15 @@ public class ContractServiceImpl implements ContractService {
 					returnContractInfoDTOList.add(returnContractInfoDTO);
 					checkFlag = false;
 					break;
+				} else if (memberShip.getMemberCode().equals(contractInfoDTO.getVendorCode())
+						&& "0".equals(contractStatus)) {
+					//编码相同存在合同 但是查询类型为0表示未签约时checkFlag应置为false 否则会导致所有已签订合同的也被归纳到未签订合同的里面
+					checkFlag = false;
+					break;
 				}
 			}
-			//经过遍历 查询出的合同并不包含当前供应商
-			if (checkFlag) {
+			//经过遍历 查询出的合同并不包含当前供应商 签约类型为空或者为0表示未签约的时候添加
+			if (checkFlag && ((StringUtils.isEmpty(contractStatus) || "0".equals(contractStatus)))) {
 				ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
 				contractInfoDTO.setContractId(null);
 				contractInfoDTO.setContractCode(null);
@@ -256,7 +269,7 @@ public class ContractServiceImpl implements ContractService {
 		ExecuteResult<String> result = new ExecuteResult<String>();
 		try {
 			//根据会员店编码和提供的供应商编码查询到的合同
-			List<ContractInfoDTO> contractInfoDTOList = contractDAO.queryContractBymemberCode(memberCode, vendorCodeList);
+			List<ContractInfoDTO> contractInfoDTOList = contractDAO.queryContractBymemberCodeAndVendorCodeList(memberCode, vendorCodeList);
 			result.setResult("noExists");
 			//遍历供应商编码
 			for (String vendorCode : vendorCodeList) {

@@ -30,6 +30,17 @@ public interface ContractDAO {
 	public List<ContractInfoDTO> queryContractBymemberCode(@Param("memberCode") String memberCode, @Param("vendorCodeList") List<String> vendorCodeList);
 
 	/**
+	 * Description: 查询该会员店和部分供应商下已签订的合同  <br>
+	 *  
+	 * @author zhoutong<br>
+	 * @taskId <br>
+	 * @param memberCode
+	 * @param vendorCodeList
+	 * @return <br>
+	 */ 
+	public List<ContractInfoDTO> queryContractBymemberCodeAndVendorCodeList(@Param("memberCode") String memberCode, @Param("erpVendorCodeList") List<String> erpVendorCodeList);
+	
+	/**
 	 * Description: 查询该会员店是否需要提醒 <br>
 	 *
 	 * @author zhoutong<br>

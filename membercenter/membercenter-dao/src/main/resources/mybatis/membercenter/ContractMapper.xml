@@ -44,6 +44,57 @@
 				#{item}
 			</foreach>
 	</select>
+	<!-- 查询该会员店和当前具有包厢关系的供应商下已签订的合同 -->
+	<select id="queryContractBymemberCodeAndVendorCodeList" resultType="cn.htd.membercenter.dto.ContractInfoDTO">
+		SELECT
+			sci.contract_id AS contractId,
+			sci.contract_code AS contractCode,
+			sci.contract_status AS contractStatus,
+			sci.sign_time AS signTime,
+			sci.member_code AS memberCode,
+			sci.vendor_code AS vendorCode,
+			sci.contract_url AS contractUrl,
+			sci.contract_credit AS contractCredit,
+			sci.contract_title AS contractTitle,
+			mci.location_addr AS vendorLocationAddr,
+			mci.artificial_person_name AS vendorArtificialPersonName,
+			a.memberLocationAddr,
+			a.memberArtificialPersonName,
+			a.memberName
+		FROM
+			(
+				SELECT
+					mci1.location_addr AS memberLocationAddr,
+					mci1.artificial_person_name AS memberArtificialPersonName,
+					mci1.company_name AS memberName
+				FROM
+					member_company_info mci1,
+					member_base_info mbi1
+				WHERE
+					mbi1.member_code = #{memberCode}
+				AND mbi1.id = mci1.member_id
+				AND mci1.buyer_seller_type = 1
+			) a,
+			supply_contract_info sci
+		LEFT JOIN member_base_info mbi ON mbi.member_code = sci.vendor_code
+		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id
+		WHERE
+			sci.member_code = #{memberCode}
+		AND sci.contract_status = '1'
+		AND mci.buyer_seller_type = 2
+		AND sci.vendor_code IN 
+			<foreach collection = "erpVendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
+				(SELECT
+					mbi2.member_code 
+				FROM
+					member_company_info mci2,
+					member_base_info mbi2 
+				WHERE
+					mci2.company_code = #{item}
+					AND mci2.buyer_seller_type = 2 
+					AND mbi2.id = mci2.member_id)
+			</foreach>
+	</select>
 	<!-- 查询该会员店是否需要提醒 -->
 	<select id="queryRemindFlagByMemberCode" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT
@@ -172,7 +223,15 @@
 				NOW(),
 				(select date_add(NOW(),interval 100 year)),
 				#{item.memberCode},
-				#{item.vendorCode},
+				(SELECT
+					mbi2.member_code 
+				FROM
+					member_company_info mci2,
+					member_base_info mbi2 
+				WHERE
+					mci2.company_code = #{item.vendorCode}
+					AND mci2.buyer_seller_type = 2 
+					AND mbi2.id = mci2.member_id),
 				#{item.createId},
 				#{item.createName},
 				NOW(),

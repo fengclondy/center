@@ -43,6 +43,11 @@ public class MemberVerifyInfoDTO implements Serializable {
 	private String artificialPersonIdcardPicSrc;
 
 	/**
+	 * 会员营业执照号
+	 */
+	private String buyerBusinessLicenseId;
+	
+	/**
 	 * @return the memberType
 	 */
 	public String getMemberType() {
@@ -241,6 +246,14 @@ public class MemberVerifyInfoDTO implements Serializable {
 
 	public void setArtificialPersonIdcardPicSrc(String artificialPersonIdcardPicSrc) {
 		this.artificialPersonIdcardPicSrc = artificialPersonIdcardPicSrc;
+	}
+
+	public String getBuyerBusinessLicenseId() {
+		return buyerBusinessLicenseId;
+	}
+
+	public void setBuyerBusinessLicenseId(String buyerBusinessLicenseId) {
+		this.buyerBusinessLicenseId = buyerBusinessLicenseId;
 	}
 	
 }

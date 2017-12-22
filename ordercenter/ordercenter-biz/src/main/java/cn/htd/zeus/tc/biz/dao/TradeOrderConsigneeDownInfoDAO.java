@@ -15,5 +15,7 @@ public interface TradeOrderConsigneeDownInfoDAO {
     List<TradeOrderConsigneeDownInfoDMO> selectTradeOrderConsigneeDownInfoList(Map paramMap);
 
     int updateTradeOrderConsigneeDownInfo(TradeOrderConsigneeDownInfoDMO record);
+    
+    TradeOrderConsigneeDownInfoDMO selectTradeOrderConsigneeDownInfo(TradeOrderConsigneeDownInfoDMO record);
 
 }

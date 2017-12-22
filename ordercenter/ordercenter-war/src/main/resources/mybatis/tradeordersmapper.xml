@@ -885,7 +885,7 @@
 				and order_delete_status = #{orderDeleteStatus}
 			</if>
 			and order_delete_status != 2
-			and (order_from != 2 or (order_from = 2 and order_status >= 40))
+			and (order_from != 2 or (order_from = 2 and order_status >= 40) or (order_from =2 and order_status = 19))
 			ORDER BY create_order_time DESC
 			LIMIT #{start},#{rows}
 	</select>
@@ -931,7 +931,7 @@
 		<if test="orderDeleteStatus != null">
 			and t.order_delete_status = #{orderDeleteStatus}
 		</if>
-		and (order_from != 2 or (order_from = 2 and order_status >= 40))
+		and (order_from != 2 or (order_from = 2 and order_status >= 40) or (order_from =2 and order_status = 19))
 		and t.order_delete_status != 2
 	</select>
 	
@@ -1028,7 +1028,7 @@
 				and order_delete_status = #{orderDeleteStatus}
 			</if>
 				and order_delete_status != 2
-				and (order_from != 2 or (order_from = 2 and order_status >= 40))
+				and (order_from != 2 or (order_from = 2 and order_status >= 40) or (order_from = 2 and order_status = 19))
 			ORDER BY create_order_time DESC
 			<if test="start !=null and rows != null ">
 	 			LIMIT #{start},#{rows}

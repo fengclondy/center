@@ -89,6 +89,9 @@ public class TradeOrderServiceImplTest {
 	@Test
 	public void queryTradeOrderShowDTOByOrderNoTest() {
 		String memberCode = "htd1087000";
+		VenusTradeOrdersQueryInDTO conditionDTO = new VenusTradeOrdersQueryInDTO();
+		conditionDTO.setBuyerCode(memberCode);
+		ExecuteResult<Long> count = tradeOrderService.queryWaitconfirmOrderCount(conditionDTO);
 		ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);
 		if (id.isSuccess()) {
 			ExecuteResult<MemberDetailInfo> memberInfo = memberBaseInfoService.getMemberDetailById(id.getResult());

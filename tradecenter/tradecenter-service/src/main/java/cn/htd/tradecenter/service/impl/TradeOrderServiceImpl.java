@@ -2524,4 +2524,27 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 
 	}
 
+	@Override
+	public ExecuteResult<Long> queryWaitconfirmOrderCount(VenusTradeOrdersQueryInDTO conditionDTO) {
+		ExecuteResult<Long> result = new ExecuteResult<Long>();
+		try {
+			// 有错误信息时返回错误信息
+			if (conditionDTO == null || StringUtils.isBlank(conditionDTO.getBuyerCode())) {
+				throw new TradeCenterBusinessException(ReturnCodeConst.PARAMETER_ERROR, "买家编码为空");
+			}
+			Map<String, DictionaryInfo> dictMap = baseService.getTradeOrderDictionaryMap();
+			List<String> orderStatusList = new ArrayList<String>();
+			orderStatusList.add(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
+					DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
+			conditionDTO.setIsCancelFlag(YesNoEnum.NO.getValue());
+			conditionDTO.setOrderStatusList(orderStatusList);
+			long count = orderDAO.queryTradeOrderCountByCondition(conditionDTO);
+			result.setResult(count);
+		} catch (Exception e) {
+			result.setCode(ReturnCodeConst.SYSTEM_ERROR);
+			result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+		}
+		return result;
+	}
+
 }

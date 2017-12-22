@@ -177,6 +177,9 @@
       <if test="entity.sellerCode != null and entity.sellerCode != ''">
       	and seller_code = #{entity.sellerCode}
       </if>
+      <if test="entity.buyerCode != null and entity.buyerCode != ''">
+      	and buyer_code = #{entity.buyerCode}
+      </if>
       <if test="entity.searchStr != null and entity.searchStr != ''">
 	   	and ( 
 	   		 order_no = #{entity.searchStr}

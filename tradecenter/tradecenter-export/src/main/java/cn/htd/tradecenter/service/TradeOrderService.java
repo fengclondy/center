@@ -65,6 +65,14 @@ public interface TradeOrderService {
 			VenusTradeOrdersQueryInDTO conditionDTO, Pager<VenusTradeOrdersQueryInDTO> pager);
 
 	/**
+	 * 查询待确认订单数量
+	 * 
+	 * @param conditionDTO
+	 * @return
+	 */
+	public ExecuteResult<Long> queryWaitconfirmOrderCount(VenusTradeOrdersQueryInDTO conditionDTO);
+
+	/**
 	 * VMS订单审核列表导出
 	 * 
 	 * @param conditionDTO

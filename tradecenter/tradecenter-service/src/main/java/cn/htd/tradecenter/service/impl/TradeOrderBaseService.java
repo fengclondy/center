@@ -485,8 +485,7 @@ public class TradeOrderBaseService {
 				erpDistributionDTO.setCustomerManagerName(itemDTO.getCustomerManagerName());
 				erpDistributionDTO.setOrderItemNos(itemDTO.getOrderItemNo());
 				// VMS开单新增分销单待确认状态
-				erpDistributionDTO.setErpStatus(getDictValueByCode(dictMap, DictionaryConst.TYPE_ERP_STATUS,
-						DictionaryConst.OPT_ERP_STATUS_WAIT_CONFIRM));
+				setERPStatusByCondition(erpDistributionDTO, dictMap);
 				erpDistributionDTO.setCreateId(order.getCreateId());
 				erpDistributionDTO.setCreateName(order.getCreateName());
 				erpDistributionDTO.setModifyId(order.getModifyId());
@@ -499,6 +498,34 @@ public class TradeOrderBaseService {
 			erpDistributionList.add(entry.getValue());
 		}
 		return erpDistributionList;
+	}
+
+	private void setERPStatusByCondition(TradeOrderErpDistributionDTO erpDistributionDTO,
+			Map<String, DictionaryInfo> dictMap) throws TradeCenterBusinessException {
+		String memberCode = erpDistributionDTO.getBuyerCode();
+		ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);
+		if (id.isSuccess()) {
+			ExecuteResult<MemberDetailInfo> memberInfo = memberBaseInfoService.getMemberDetailById(id.getResult());
+			if (memberInfo.isSuccess()) {
+				MemberBaseInfoDTO memberDTO = memberInfo.getResult().getMemberBaseInfoDTO();
+				// 含有内部供应商身份的会员以及担保会员以及非会员
+				if ((("2".equals(memberDTO.getMemberType()) || "3".equals(memberDTO.getMemberType()))
+						&& "1".equals(memberDTO.getSellerType()) && memberDTO.getIsSeller() == 1)
+						|| "1".equals(memberDTO.getMemberType())) {
+					erpDistributionDTO.setErpStatus(getDictValueByCode(dictMap, DictionaryConst.TYPE_ERP_STATUS,
+							DictionaryConst.OPT_ERP_STATUS_PENDING));
+				} else {
+					erpDistributionDTO.setErpStatus(getDictValueByCode(dictMap, DictionaryConst.TYPE_ERP_STATUS,
+							DictionaryConst.OPT_ERP_STATUS_WAIT_CONFIRM));
+				}
+			} else {
+				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_SEARCH_FOR_MEMBERID_ERROR,
+						"VMS开单查询会员信息失败");
+			}
+		} else {
+			throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_SEARCH_FOR_MEMBERINFO_ERROR,
+					"VMS开单查询会员code失败");
+		}
 	}
 
 	/**

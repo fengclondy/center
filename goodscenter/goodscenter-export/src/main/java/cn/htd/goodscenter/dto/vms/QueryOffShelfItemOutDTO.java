@@ -16,6 +16,8 @@ public class QueryOffShelfItemOutDTO implements Serializable {
     private String skuCode;
     //分销限价
     private BigDecimal saleLimitedPrice;
+    //ERP零售价
+    private BigDecimal wsaleUtprice;
     //零售价
     private BigDecimal retailPrice;
     //销售价
@@ -125,7 +127,8 @@ public class QueryOffShelfItemOutDTO implements Serializable {
     private Integer otherIsVisable;
     private int otherDisplayQuantity; // 其他可见库存
     private int otherReserveQuantity; // 其他锁定库存
-
+    //促销占用库存
+    private int promtionStock;
     public int getCurrentDisplayQuantity() {
         return currentDisplayQuantity;
     }
@@ -188,5 +191,21 @@ public class QueryOffShelfItemOutDTO implements Serializable {
 
     public void setMinStock(int minStock) {
         this.minStock = minStock;
+    }
+
+    public BigDecimal getWsaleUtprice() {
+        return wsaleUtprice;
+    }
+
+    public void setWsaleUtprice(BigDecimal wsaleUtprice) {
+        this.wsaleUtprice = wsaleUtprice;
+    }
+
+    public int getPromtionStock() {
+        return promtionStock;
+    }
+
+    public void setPromtionStock(int promtionStock) {
+        this.promtionStock = promtionStock;
     }
 }

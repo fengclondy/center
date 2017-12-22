@@ -362,6 +362,7 @@
   <select id="selectNoMemberInfo" resultType="cn.htd.membercenter.dto.MyNoMemberDTO">
     select 
     m.id memberId,
+    m.member_code memberCode ,
     i.invoice_notify invoiceNotify,
     i.tax_man_id taxManId,
     i.contact_phone contactPhone,

@@ -470,6 +470,7 @@ public class ContractServiceImpl implements ContractService {
 			for (SaveContractInfoDTO saveContractInfoDTO : saveContractInfoDTOList) {
 				String contractCode = getContractCode(contractType, dateYMD, supplyContractNoKey);
 				saveContractInfoDTO.setContractCode(contractCode);
+				saveContractInfoDTO.setContractStatus(1);
 			}
 			contractDAO.insertContractInfo(saveContractInfoDTOList);
 		} catch (Exception e) {

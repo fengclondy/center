@@ -15,6 +15,7 @@
 			sci.contract_title AS contractTitle,
 			mci.location_addr AS vendorLocationAddr,
 			mci.artificial_person_name AS vendorArtificialPersonName,
+			mci.company_name AS vendorName,
 			a.memberLocationAddr,
 			a.memberArtificialPersonName,
 			a.memberName
@@ -57,6 +58,7 @@
 			sci.contract_title AS contractTitle,
 			mci.location_addr AS vendorLocationAddr,
 			mci.artificial_person_name AS vendorArtificialPersonName,
+			mci.company_name AS vendorName,
 			a.memberLocationAddr,
 			a.memberArtificialPersonName,
 			a.memberName
@@ -193,12 +195,14 @@
 			mci.artificial_person_name AS memberArtificialPersonName,
 			mci.company_name AS memberName,
 			a.vendorLocationAddr,
-			a.vendorArtificialPersonName
+			a.vendorArtificialPersonName,
+			a.vendorName
 		FROM
 			(
 				SELECT
 					mci1.location_addr AS vendorLocationAddr,
-					mci1.artificial_person_name AS vendorArtificialPersonName
+					mci1.artificial_person_name AS vendorArtificialPersonName,
+					mci1.company_name AS vendorName
 				FROM
 					member_company_info mci1,
 					member_base_info mbi1

@@ -87,10 +87,7 @@ public class ContractServiceImpl implements ContractService {
 		}
 		int startIndex = (page - 1) * pageSize;
 		int endIndex = startIndex + pageSize - 1;
-		if (page == 1) {
-			//第一页比较特殊   所有未签订的会被当成一条展示在最上面  页展示已签订数据应-1
-			endIndex -= 1;
-		}
+		
 		List<ContractInfoDTO> contractInfoDTOList = null;
 		try {
 			//首先根据会员编码查询一圈包厢关系
@@ -122,11 +119,15 @@ public class ContractServiceImpl implements ContractService {
 			contractListInfo.setNoSignContractInfoList(nosignContractInfoDTOList);
 			
 			List<ContractInfoDTO> returnSignContractInfoDTOList = new ArrayList<ContractInfoDTO>();
-			if (returnSignContractInfoDTOList.isEmpty()) {
+			if (signContractInfoDTOList.isEmpty()) {
 				contractListInfo.setAlreadySignContractInfoCount(0);
 				contractListInfo.setAlreadySignContractInfoList(null);
 			} else {
-				for (int i = 0; i <= returnSignContractInfoDTOList.size(); i++) {
+				if (page == 1 && !nosignContractInfoDTOList.isEmpty()) {
+					//第一页比较特殊   所有未签订的会被当成一条展示在最上面  页展示已签订数据应-1 没有未签订的则不需要-1
+					endIndex -= 1;
+				}
+				for (int i = 0; i < signContractInfoDTOList.size(); i++) {
 					if (i >= startIndex && i <= endIndex) {
 						returnSignContractInfoDTOList.add(signContractInfoDTOList.get(i));
 					}

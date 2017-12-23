@@ -65,13 +65,31 @@ public class ContractServiceImpl implements ContractService {
 	 * @return <br>
 	 */ 
 	@Override
-	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, String contractStatus, Pager<String> pager) {
+	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, Pager<String> pager) {
 		logger.info("queryContractListBySellerId方法已进入");
 		ExecuteResult<ContractListInfo> result = new ExecuteResult<ContractListInfo>();
 		ContractListInfo contractListInfo = new ContractListInfo();
 		if (StringUtils.isEmpty(memberCode)) {
 			result.addErrorMessage("会员店编码为空 查询失败");
 			return result;
+		}
+		if (pager == null) {
+			result.addErrorMessage("分页信息为空");
+			return result;
+		}
+		int page = pager.getPage();
+		int pageSize = pager.getRows();
+		if (page < 1) {
+			page = 1;
+		}
+		if (pageSize < 10) {
+			pageSize = 10;
+		}
+		int startIndex = (page - 1) * pageSize;
+		int endIndex = startIndex + pageSize - 1;
+		if (page == 1) {
+			//第一页比较特殊   所有未签订的会被当成一条展示在最上面  页展示已签订数据应-1
+			endIndex -= 1;
 		}
 		List<ContractInfoDTO> contractInfoDTOList = null;
 		try {
@@ -97,13 +115,29 @@ public class ContractServiceImpl implements ContractService {
 					contractInfoDTO.setContractStatus("0");
 				}
 			}
-			Map<String, List<ContractInfoDTO>> map = resultHandle(memberCode, contractStatus, contractInfoDTOList);
+			Map<String, List<ContractInfoDTO>> map = resultHandle(memberCode, contractInfoDTOList);
 			List<ContractInfoDTO> signContractInfoDTOList = map.get("signContractInfoDTOList");
 			List<ContractInfoDTO> nosignContractInfoDTOList = map.get("nosignContractInfoDTOList");
-			contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
-			contractListInfo.setNoSignContractInfoList(nosignContractInfoDTOList);
-			contractListInfo.setAlreadySignContractInfoCount(signContractInfoDTOList.size());
-			contractListInfo.setAlreadySignContractInfoList(signContractInfoDTOList);
+			if (page == 1) {
+				contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
+				contractListInfo.setNoSignContractInfoList(nosignContractInfoDTOList);
+			} else {
+				contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
+				contractListInfo.setNoSignContractInfoList(null);
+			}
+			List<ContractInfoDTO> returnSignContractInfoDTOList = new ArrayList<ContractInfoDTO>();
+			if (returnSignContractInfoDTOList.isEmpty()) {
+				contractListInfo.setAlreadySignContractInfoCount(0);
+				contractListInfo.setAlreadySignContractInfoList(null);
+			} else {
+				for (int i = 0; i <= returnSignContractInfoDTOList.size(); i++) {
+					if (i >= startIndex && i <= endIndex) {
+						returnSignContractInfoDTOList.add(signContractInfoDTOList.get(i));
+					}
+				}
+				contractListInfo.setAlreadySignContractInfoList(returnSignContractInfoDTOList);
+				contractListInfo.setAlreadySignContractInfoCount(returnSignContractInfoDTOList.size());
+			}
 			result.setResult(contractListInfo);
 		} catch (Exception e) {
 			result.addErrorMessage("查询异常 异常信息 :" + e);
@@ -122,7 +156,7 @@ public class ContractServiceImpl implements ContractService {
 	 * @param contractInfoDTOList
 	 * @return <br>
 	 */ 
-	public Map<String, List<ContractInfoDTO>> resultHandle(String memberCode, String contractStatus,
+	public Map<String, List<ContractInfoDTO>> resultHandle(String memberCode,
 											  List<ContractInfoDTO> contractInfoDTOList) throws Exception {
 		logger.info("resultHandle方法已进入 对查询合同列表结果进行处理");
 		List<ContractInfoDTO> signContractInfoDTOList = new ArrayList<ContractInfoDTO>();
@@ -134,10 +168,10 @@ public class ContractServiceImpl implements ContractService {
 				//合同状态为空重置合同状态为0表示未签订
 				contractInfoDTO.setContractStatus("0");
 			}
-			if ("1".equals(contractStatus) && "1".equals(contractStatusInfo)) {
+			if ("1".equals(contractStatusInfo)) {
 				//需要查询的合同状态为1并且的话查询到的合同状态为1则收入returnList里
 				signContractInfoDTOList.add(contractInfoDTO);
-			} else if ("0".equals(contractStatus) && "0".equals(contractInfoDTO.getContractStatus())) {
+			} else if ("0".equals(contractInfoDTO.getContractStatus())) {
 				//需要查询的合同状态为0并且的话查询到的合同状态为0则收入returnList里
 				nosignContractInfoDTOList.add(contractInfoDTO);
 			}

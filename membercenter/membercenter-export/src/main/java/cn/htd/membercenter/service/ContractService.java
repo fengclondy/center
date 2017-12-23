@@ -23,7 +23,7 @@ public interface ContractService {
 	 * <Description> 合同列表  <br>
 	 * @param memberCode 会员店编码
 	 */
-	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, String contractStatus, Pager<String> pager);
+	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, Pager<String> pager);
 
 	/**
 	 * <Description> 提醒查询  <br>

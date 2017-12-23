@@ -12,6 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.membercenter.dto.ContractInfoDTO;
+import cn.htd.membercenter.dto.ContractListInfo;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
 
 /** 
@@ -42,19 +43,12 @@ public class ContractServiceTest {
 	@Test
 	public void queryContractList() {
 		Pager<String> pager = new Pager<String>();
-		pager.setPage(1);
+		pager.setPage(2);
 		pager.setRows(10);
 
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractListByMemberCode("926386","",pager);
+		ExecuteResult<ContractListInfo> result = contractService.queryContractListByMemberCode("926386",pager);
 		if (result.isSuccess()) {
-			List<ContractInfoDTO> ContractInfoDTOList = result.getResult().getRows();
-			for (ContractInfoDTO contractInfoDTO : ContractInfoDTOList) {
-				System.out.println(contractInfoDTO.getContractStatus());
-			}
-		} else {
-			for (String e : result.getErrorMessages()) {
-				System.out.println(e);
-			}
+		
 		}
 	} 
 

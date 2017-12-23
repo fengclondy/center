@@ -24,7 +24,7 @@ public class ContractListInfo implements Serializable {
 	public List<ContractInfoDTO> noSignContractInfoList;
 	
 	/**
-	 * 未签订合同数量 <br>
+	 * 未签订合同数量总量 <br>
 	 */
 	public int noSignContractInfoCount;
 	
@@ -34,7 +34,7 @@ public class ContractListInfo implements Serializable {
 	public List<ContractInfoDTO> alreadySignContractInfoList;
 	
 	/**
-	 * 已签订合同数量 <br>
+	 * 已签订合同数量总量 <br>
 	 */
 	public int alreadySignContractInfoCount;
 

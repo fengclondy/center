@@ -774,6 +774,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 	 */
 	@Override
 	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId) {
+		long startTime = System.currentTimeMillis(); 
 		ExecuteResult<MemberCountDTO> result = new ExecuteResult<MemberCountDTO>();
 		MyMemberSearchDTO memberSearch = new MyMemberSearchDTO();
 		MemberCountDTO memberCount = new MemberCountDTO();
@@ -795,7 +796,10 @@ public class MyMemberServiceImpl implements MyMemberService {
 			if (noMemberCount != null) {
 				memberCount.setNoMemberCount(noMemberCount.intValue());
 			}
+			long endTime = System.currentTimeMillis();
+			logger.info("程序运行时间：" + (endTime - startTime)/1000 + "s");
 		} catch (Exception e) {
+			logger.error("查询会员数量报错-->" + e);
 			result.addErrorMessage(e.getMessage());
 		}
 		result.setResult(memberCount);

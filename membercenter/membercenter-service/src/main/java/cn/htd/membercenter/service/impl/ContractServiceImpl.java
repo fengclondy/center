@@ -118,13 +118,9 @@ public class ContractServiceImpl implements ContractService {
 			Map<String, List<ContractInfoDTO>> map = resultHandle(memberCode, contractInfoDTOList);
 			List<ContractInfoDTO> signContractInfoDTOList = map.get("signContractInfoDTOList");
 			List<ContractInfoDTO> nosignContractInfoDTOList = map.get("nosignContractInfoDTOList");
-			if (page == 1) {
-				contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
-				contractListInfo.setNoSignContractInfoList(nosignContractInfoDTOList);
-			} else {
-				contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
-				contractListInfo.setNoSignContractInfoList(null);
-			}
+			contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
+			contractListInfo.setNoSignContractInfoList(nosignContractInfoDTOList);
+			
 			List<ContractInfoDTO> returnSignContractInfoDTOList = new ArrayList<ContractInfoDTO>();
 			if (returnSignContractInfoDTOList.isEmpty()) {
 				contractListInfo.setAlreadySignContractInfoCount(0);

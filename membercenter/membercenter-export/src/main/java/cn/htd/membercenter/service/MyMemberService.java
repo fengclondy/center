@@ -6,6 +6,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.AthenaEventDTO;
+import cn.htd.membercenter.dto.MemberCountDTO;
 import cn.htd.membercenter.dto.MyMemberDTO;
 import cn.htd.membercenter.dto.MyMemberSearchDTO;
 import cn.htd.membercenter.dto.MyNoMemberDTO;
@@ -123,4 +124,12 @@ public interface MyMemberService {
 	public ExecuteResult<List<AthenaEventDTO>> calculationAthenaDealEvent();
 
 	public ExecuteResult<Boolean> getNoMemberName(MyNoMemberDTO myNoMemberDTO);
+	
+	/**
+	 * VMS - 根据供应商Id查询该供应商下的会员、担保会员、非会员数量
+	 * @author li.jun
+	 * @param sellerId
+	 * @return
+	 */
+	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId);
 }

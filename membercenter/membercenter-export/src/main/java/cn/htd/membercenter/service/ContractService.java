@@ -49,7 +49,7 @@ public interface ContractService {
 	 * @param memberCode 会员店编码
 	 * @param vendorCode 供应商编码
 	 */
-	public ExecuteResult<String> queryEntranceExists(List<String> vendorCodeList, String memberCode);
+	public ExecuteResult<DataGrid<ContractInfoDTO>> queryEntranceExists(List<String> vendorCodeList, String memberCode);
 	
 	/**
 	 * <Description> 批量查询某供应商下会员店的合同情况  <br>

@@ -3,7 +3,9 @@ package cn.htd.membercenter.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -19,6 +21,7 @@ import cn.htd.common.dao.util.RedisDB;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
 import cn.htd.membercenter.dao.ContractDAO;
 import cn.htd.membercenter.dto.ContractInfoDTO;
+import cn.htd.membercenter.dto.ContractListInfo;
 import cn.htd.membercenter.dto.ContractSignRemindInfoDTO;
 import cn.htd.membercenter.dto.MemberShipDTO;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
@@ -62,29 +65,15 @@ public class ContractServiceImpl implements ContractService {
 	 * @return <br>
 	 */ 
 	@Override
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryContractListByMemberCode(String memberCode, String contractStatus, Pager<String> pager) {
+	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, String contractStatus, Pager<String> pager) {
 		logger.info("queryContractListBySellerId方法已进入");
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = new ExecuteResult<DataGrid<ContractInfoDTO>>();
+		ExecuteResult<ContractListInfo> result = new ExecuteResult<ContractListInfo>();
+		ContractListInfo contractListInfo = new ContractListInfo();
 		if (StringUtils.isEmpty(memberCode)) {
 			result.addErrorMessage("会员店编码为空 查询失败");
 			return result;
 		}
-		if (pager == null) {
-			result.addErrorMessage("分页信息为空");
-			return result;
-		}
-		DataGrid<ContractInfoDTO> datagrid = new DataGrid<ContractInfoDTO>();
 		List<ContractInfoDTO> contractInfoDTOList = null;
-		int page = pager.getPage();
-		int size = pager.getRows();
-		if (page < 1) {
-			page = 1;
-		}
-		if (size < 1) {
-			size = 10;
-		}
-		int startIndex = (page - 1) * size;
-		int endIndex = (startIndex - 1) + size;
 		try {
 			//首先根据会员编码查询一圈包厢关系
 			List<MemberShipDTO> memberShipList = boxRelationshipDAO.queryBoxRelationshipList(memberCode);
@@ -108,17 +97,14 @@ public class ContractServiceImpl implements ContractService {
 					contractInfoDTO.setContractStatus("0");
 				}
 			}
-			List<ContractInfoDTO> returnContractInfoDTOList = new ArrayList<ContractInfoDTO>();
-			List<ContractInfoDTO> contractInfoDTOHandleList = resultHandle(memberCode, contractStatus, contractInfoDTOList);
-			for (int i = 0;i < contractInfoDTOHandleList.size(); i++) {
-				if (i >= startIndex && i <= endIndex) {
-					returnContractInfoDTOList.add(contractInfoDTOHandleList.get(i));
-				}
-			}
-			datagrid.setRows(returnContractInfoDTOList);
-			datagrid.setSize(returnContractInfoDTOList.size());
-			datagrid.setTotal((long)contractInfoDTOHandleList.size());
-			result.setResult(datagrid);
+			Map<String, List<ContractInfoDTO>> map = resultHandle(memberCode, contractStatus, contractInfoDTOList);
+			List<ContractInfoDTO> signContractInfoDTOList = map.get("signContractInfoDTOList");
+			List<ContractInfoDTO> nosignContractInfoDTOList = map.get("nosignContractInfoDTOList");
+			contractListInfo.setNoSignContractInfoCount(nosignContractInfoDTOList.size());
+			contractListInfo.setNoSignContractInfoList(nosignContractInfoDTOList);
+			contractListInfo.setAlreadySignContractInfoCount(signContractInfoDTOList.size());
+			contractListInfo.setAlreadySignContractInfoList(signContractInfoDTOList);
+			result.setResult(contractListInfo);
 		} catch (Exception e) {
 			result.addErrorMessage("查询异常 异常信息 :" + e);
 			logger.error("queryContractListBySellerId 方法查询合同列表异常 异常信息:" + e);
@@ -136,29 +122,30 @@ public class ContractServiceImpl implements ContractService {
 	 * @param contractInfoDTOList
 	 * @return <br>
 	 */ 
-	public List<ContractInfoDTO> resultHandle(String memberCode, String contractStatus,
+	public Map<String, List<ContractInfoDTO>> resultHandle(String memberCode, String contractStatus,
 											  List<ContractInfoDTO> contractInfoDTOList) throws Exception {
 		logger.info("resultHandle方法已进入 对查询合同列表结果进行处理");
-		List<ContractInfoDTO> returnContractInfoDTOList = new ArrayList<ContractInfoDTO>();
+		List<ContractInfoDTO> signContractInfoDTOList = new ArrayList<ContractInfoDTO>();
+		List<ContractInfoDTO> nosignContractInfoDTOList = new ArrayList<ContractInfoDTO>();
+		Map<String, List<ContractInfoDTO>> map = new HashMap<String, List<ContractInfoDTO>>();
 		for (ContractInfoDTO contractInfoDTO : contractInfoDTOList) {
 			String contractStatusInfo = contractInfoDTO.getContractStatus();
 			if (StringUtils.isEmpty(contractStatusInfo)) {
 				//合同状态为空重置合同状态为0表示未签订
 				contractInfoDTO.setContractStatus("0");
 			}
-			if ((StringUtils.isEmpty(contractStatus))) {
-				//需要查询的合同状态为空的话则全部收入returnList里	
-				returnContractInfoDTOList.add(contractInfoDTO);
-			} else if ("1".equals(contractStatus) && "1".equals(contractStatusInfo)) {
+			if ("1".equals(contractStatus) && "1".equals(contractStatusInfo)) {
 				//需要查询的合同状态为1并且的话查询到的合同状态为1则收入returnList里
-				returnContractInfoDTOList.add(contractInfoDTO);
+				signContractInfoDTOList.add(contractInfoDTO);
 			} else if ("0".equals(contractStatus) && "0".equals(contractInfoDTO.getContractStatus())) {
 				//需要查询的合同状态为0并且的话查询到的合同状态为0则收入returnList里
-				returnContractInfoDTOList.add(contractInfoDTO);
+				nosignContractInfoDTOList.add(contractInfoDTO);
 			}
 		}
+		map.put("signContractInfoDTOList", signContractInfoDTOList);
+		map.put("nosignContractInfoDTOList", nosignContractInfoDTOList);
 		logger.info("resultHandle方法已结束");
-		return returnContractInfoDTOList;
+		return map;
 	}
 
 	/**

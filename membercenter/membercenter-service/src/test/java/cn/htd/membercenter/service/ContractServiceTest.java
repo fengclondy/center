@@ -90,10 +90,10 @@ public class ContractServiceTest {
 		List<String> vendorCodeList = new ArrayList<String>();
 		vendorCodeList.add("htd493085");
 		vendorCodeList.add("htd238861");
-		ExecuteResult<String> result = contractService.queryEntranceExists(vendorCodeList, "926386");
+		/*ExecuteResult<String> result = contractService.queryEntranceExists(vendorCodeList, "926386");
 		if (result.isSuccess()) {
 			System.out.println(result.getResult());
-		}
+		}*/
 	}
 	
 	@Test

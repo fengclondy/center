@@ -39,6 +39,7 @@ import cn.htd.membercenter.dto.AthenaEventDTO;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
+import cn.htd.membercenter.dto.MemberCountDTO;
 import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 import cn.htd.membercenter.dto.MemberRemoveRelationshipDTO;
 import cn.htd.membercenter.dto.MemberUncheckedDTO;
@@ -100,12 +101,12 @@ public class MyMemberServiceImpl implements MyMemberService {
 			Long count = null;
 			if (type != null && type.equals("2")) {
 				count = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, null, 1);
-				if(count !=null && count >0){
+				if (count != null && count > 0) {
 					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, null, 1);
 				}
 			} else if (type != null && type.equals("3")) {
 				count = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, 1, 0);
-				if(count !=null && count>0){
+				if (count != null && count > 0) {
 					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, 1, 0);
 				}
 			}
@@ -132,16 +133,16 @@ public class MyMemberServiceImpl implements MyMemberService {
 			Long count = null;
 			if (type != null && type.equals("1")) {
 				count = memberDAO.selectNoMemberListCount(vendorId, vendorId, memberSearch, 0);
-				if(count != null && count >0){
+				if (count != null && count > 0) {
 					myMemberDtoList = memberDAO.selectNoMemberList(page, vendorId, vendorId, memberSearch, 0);
 					dg.setRows(myMemberDtoList);
 					dg.setTotal(count);
 					rs.setResult(dg);
-				}else{
+				} else {
 					rs.setResultMessage("要查询的数据不存在");
 				}
 			}
-			 rs.setResultMessage("success");
+			rs.setResultMessage("success");
 		} catch (Exception e) {
 			logger.error("MyMemberServiceImpl----->selectNoMemberList=" + e);
 		}
@@ -156,13 +157,16 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (myNoMemberDto != null) {
 				try {
-//					if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
-//						List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(), 0l);
-//						if (nmDto != null && nmDto.size() >= 1) {
-//							rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
-//							return rs;
-//						}
-//					}
+					// if (myNoMemberDto.getTaxManId() != null &&
+					// !myNoMemberDto.getTaxManId().equals("")) {
+					// List<MyNoMemberDTO> nmDto =
+					// memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
+					// 0l);
+					// if (nmDto != null && nmDto.size() >= 1) {
+					// rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
+					// return rs;
+					// }
+					// }
 					if (myNoMemberDto.getCompanyName() != null) {
 						List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(), 0l);
 						if (nmDto != null && nmDto.size() >= 1) {
@@ -250,14 +254,16 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (memberId != null) {
 				String companyName = myNoMemberDto.getCompanyName();
-//				if (myNoMemberDto.getTaxManId() != null && !myNoMemberDto.getTaxManId().equals("")) {
-//					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
-//							myNoMemberDto.getMemberId());
-//					if (nmDto != null && nmDto.size() >= 1) {
-//						rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
-//						return rs;
-//					}
-//				}
+				// if (myNoMemberDto.getTaxManId() != null &&
+				// !myNoMemberDto.getTaxManId().equals("")) {
+				// List<MyNoMemberDTO> nmDto =
+				// memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
+				// myNoMemberDto.getMemberId());
+				// if (nmDto != null && nmDto.size() >= 1) {
+				// rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
+				// return rs;
+				// }
+				// }
 				if (myNoMemberDto.getTaxManId() != null) {
 					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(),
 							myNoMemberDto.getMemberId());
@@ -516,8 +522,8 @@ public class MyMemberServiceImpl implements MyMemberService {
 					transactionRelationDTO.setId(transactionRelation.getId());
 					transactionRelationDTO.setBuyerCode(
 							memberBaseInfoService.getMemberCodeById(myNoMemberDto.getMemberId()).getResult());
-					transactionRelationDTO.setIsExist("1");//1.true 0.false
-					transactionRelationDTO.setModifyId(myNoMemberDto.getModifyId()+"");
+					transactionRelationDTO.setIsExist("1");// 1.true 0.false
+					transactionRelationDTO.setModifyId(myNoMemberDto.getModifyId() + "");
 					transactionRelationDTO.setModifyName(myNoMemberDto.getModifyName());
 					transactionRelationDTO.setModifyTime(new Date());
 					transactionRelationService.updateTransactionRelation(transactionRelationDTO);
@@ -757,11 +763,52 @@ public class MyMemberServiceImpl implements MyMemberService {
 				return rs;
 			}
 			rs.setResult(Boolean.FALSE);
-		}catch(Exception e){
+		} catch (Exception e) {
 			rs.setCode("99999");
 			rs.addErrorMessage(e.getMessage());
 		}
 		return rs;
+	}
+
+	/**
+	 * VMS - 根据供应商Id查询该供应商下的会员、担保会员、非会员数量
+	 * 
+	 * @author li.jun
+	 * @param sellerId
+	 * @return
+	 */
+	@Override
+	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId) {
+		long startTime = System.currentTimeMillis(); 
+		ExecuteResult<MemberCountDTO> result = new ExecuteResult<MemberCountDTO>();
+		MyMemberSearchDTO memberSearch = new MyMemberSearchDTO();
+		MemberCountDTO memberCount = new MemberCountDTO();
+		memberSearch.setSysFlag("1");
+		memberSearch.setStatus("1");
+		try {
+			// 我的会员
+			Long myMemberCount = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, null, 1);
+			if (myMemberCount != null) {
+				memberCount.setMyMemberCount(myMemberCount.intValue());
+			}
+			// 担保会员
+			Long guaranteeMemberCount = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, 1, 0);
+			if (guaranteeMemberCount != null) {
+				memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
+			}
+			// 非会员
+			Long noMemberCount = memberDAO.selectNoMemberListCount(sellerId, sellerId, memberSearch, 0);
+			if (noMemberCount != null) {
+				memberCount.setNoMemberCount(noMemberCount.intValue());
+			}
+			long endTime = System.currentTimeMillis();
+			logger.info("程序运行时间：" + (endTime - startTime)/1000 + "s");
+		} catch (Exception e) {
+			logger.error("查询会员数量报错-->" + e);
+			result.addErrorMessage(e.getMessage());
+		}
+		result.setResult(memberCount);
+		return result;
 	}
 
 }

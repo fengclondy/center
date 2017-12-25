@@ -65,7 +65,7 @@ public class ContractServiceImpl implements ContractService {
 	 * @return <br>
 	 */ 
 	@Override
-	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, Pager<String> pager) {
+	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, String contractSttatus, Pager<String> pager) {
 		logger.info("queryContractListBySellerId方法已进入");
 		ExecuteResult<ContractListInfo> result = new ExecuteResult<ContractListInfo>();
 		ContractListInfo contractListInfo = new ContractListInfo();
@@ -123,8 +123,9 @@ public class ContractServiceImpl implements ContractService {
 				contractListInfo.setAlreadySignContractInfoCount(0);
 				contractListInfo.setAlreadySignContractInfoList(null);
 			} else {
-				if (page == 1 && !nosignContractInfoDTOList.isEmpty()) {
+				if (page == 1 && !nosignContractInfoDTOList.isEmpty() && !"1".equals(contractSttatus)) {
 					//第一页比较特殊   所有未签订的会被当成一条展示在最上面  页展示已签订数据应-1 没有未签订的则不需要-1
+					//而且只是在非查询已签订合同的时候需要-1
 					endIndex -= 1;
 				}
 				for (int i = 0; i < signContractInfoDTOList.size(); i++) {

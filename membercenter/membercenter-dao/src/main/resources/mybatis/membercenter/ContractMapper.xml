@@ -46,7 +46,7 @@
 	<!-- 查询该会员店和当前具有包厢关系的供应商下已签订的合同 -->
 	<select id="queryContractBymemberCodeAndVendorCodeList" resultType="cn.htd.membercenter.dto.ContractInfoDTO">
 		<!-- 若是使用erp供应商编码 启用以下代码 -->
-		SELECT
+		<!-- SELECT
 			sci.contract_id AS contractId,
 			sci.contract_code AS contractCode,
 			sci.contract_status AS contractStatus,
@@ -84,9 +84,9 @@
 		AND mci.company_code IN
 			<foreach collection = "erpVendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
 				#{item}
-			</foreach>
+			</foreach> -->
 		<!-- 若是传供应商编码 启用以下代码  -->
-		<!--SELECT
+		SELECT
 			sci.contract_id AS contractId,
 			sci.contract_code AS contractCode,
 			sci.contract_status AS contractStatus,
@@ -124,7 +124,7 @@
 		AND mbi.member_code IN 
 			<foreach collection = "vendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
 				#{item}
-			</foreach>  -->
+			</foreach> 
 	</select>
 	<!-- 查询该会员店是否需要提醒 -->
 	<select id="queryRemindFlagByMemberCode" parameterType="java.lang.String" resultType="java.lang.Integer">

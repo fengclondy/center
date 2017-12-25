@@ -175,7 +175,7 @@ public class ErpServiceImpl implements ErpService {
 		memberBaseDto.setBelongManagerId("");
 		memberBaseDto.setCurBelongManagerId("");
 		memberBaseDto.setCompanyLeagalPersionFlag("");
-		memberBaseDto.setIsBuyer(GlobalConstant.FLAG_NO);
+		memberBaseDto.setIsBuyer(GlobalConstant.FLAG_YES);
 		memberBaseDto.setIsSeller(GlobalConstant.FLAG_YES);
 		memberBaseDto.setCanMallLogin(GlobalConstant.FLAG_YES);
 		memberBaseDto.setHasBusinessLicense(GlobalConstant.FLAG_YES);

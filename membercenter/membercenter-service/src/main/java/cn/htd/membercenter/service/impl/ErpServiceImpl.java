@@ -32,6 +32,7 @@ import cn.htd.membercenter.domain.MemberInvoiceInfo;
 import cn.htd.membercenter.domain.MemberLicenceInfo;
 import cn.htd.membercenter.domain.MemberStatusInfo;
 import cn.htd.membercenter.dto.BelongRelationshipDTO;
+import cn.htd.membercenter.dto.BuyerGradeInfoDTO;
 import cn.htd.membercenter.dto.ErpSellerupDTO;
 import cn.htd.membercenter.dto.LegalPerson;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
@@ -43,6 +44,7 @@ import cn.htd.membercenter.dto.YijifuCorporateModifyDTO;
 import cn.htd.membercenter.service.ErpService;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.membercenter.service.MemberBaseService;
+import cn.htd.membercenter.service.MemberGradeService;
 import cn.htd.membercenter.service.PayInfoService;
 import cn.htd.storecenter.dto.ShopDTO;
 import cn.htd.storecenter.service.ShopExportService;
@@ -84,6 +86,9 @@ public class ErpServiceImpl implements ErpService {
 
 	@Autowired
 	private MemberBaseService memberBaseService;
+
+	@Resource
+	private MemberGradeService memberGradeService;
 
 	@Override
 	public boolean saveErpSellerup(ErpSellerupDTO dto) {
@@ -143,6 +148,17 @@ public class ErpServiceImpl implements ErpService {
 		outCompany.setTaxManId(null != dto.getTaxpayerIDnumber() ? dto.getTaxpayerIDnumber() : "");
 		outCompany.setBusinessLicenseId(dto.getBusinessLicenseCode());
 		applyRelationshipDao.insertMemberLicenceInfo(outCompany);
+
+        // 新增会员等级
+        BuyerGradeInfoDTO gradeDto = new BuyerGradeInfoDTO();
+        gradeDto.setBuyerId(dto.getMemberId());
+        gradeDto.setBuyerGrade("1");
+        gradeDto.setPointGrade(1l);
+        gradeDto.setCreateId(memberBaseDto.getCreateId());
+        gradeDto.setCreateName(memberBaseDto.getCreateName());
+        gradeDto.setModifyId(memberBaseDto.getModifyId());
+        gradeDto.setModifyName(memberBaseDto.getModifyName());
+        memberGradeService.insertGrade(gradeDto);
 
 		addDownErpSuccessStatus(memberBaseDto);
 

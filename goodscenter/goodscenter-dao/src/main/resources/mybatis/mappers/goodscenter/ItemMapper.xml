@@ -2656,4 +2656,17 @@
 		</if>
 		order by i.created desc
 	</select>
+
+	<select id="queryItemListBySellerIdOrderByStock" resultMap="itemDTOMapper">
+		SELECT
+			item.*
+		FROM
+			item item
+		LEFT JOIN item_sku_total_stock stock ON item.item_id = stock.item_id
+		WHERE
+			item.item_status IN (1, 4, 5)
+		AND item.seller_id = #{sellerId}
+		ORDER BY
+			stock.inventory DESC
+	</select>
 </mapper>

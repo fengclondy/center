@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import cn.htd.goodscenter.dto.indto.QueryItemStockDetailInDTO;
-import cn.htd.goodscenter.dto.middleware.outdto.QueryItemStockOutDTO;
 import cn.htd.goodscenter.dto.outdto.QueryItemStockDetailOutDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +12,6 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.Item;
-import cn.htd.goodscenter.domain.ItemPicture;
 import cn.htd.goodscenter.dto.ItemAdDTO;
 import cn.htd.goodscenter.dto.ItemDBDTO;
 import cn.htd.goodscenter.dto.ItemDTO;
@@ -371,5 +369,12 @@ public interface ItemExportService {
 	 * @time 2017-11-20
 	 */
 	public ExecuteResult<Boolean> queryItemInfo(String itemName,Long sellerId);
+
+	/**
+	 * 查询大B的商品，按照实际库存排序
+	 * @param sellerId
+	 * @return
+	 */
+	ExecuteResult<List<ItemDTO>> queryItemListBySellerId(Long sellerId);
 	
 }

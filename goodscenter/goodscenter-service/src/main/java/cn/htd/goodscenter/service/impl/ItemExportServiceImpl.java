@@ -3540,4 +3540,25 @@ public class ItemExportServiceImpl implements ItemExportService {
 		}
 		return result;
 	}
+
+	@Override
+	public ExecuteResult<List<ItemDTO>> queryItemListBySellerId(Long sellerId) {
+		ExecuteResult<List<ItemDTO>> executeResult = new ExecuteResult<>();
+		try {
+			if (sellerId == null || sellerId <= 0) {
+				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
+				executeResult.setResultMessage("sellerId为空");
+				return executeResult;
+			}
+			List<ItemDTO> itemDTOList = this.itemMybatisDAO.queryItemListBySellerIdOrderByStock(sellerId);
+			executeResult.setResult(itemDTOList);
+			executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
+			LOGGER.error("查询大B商品出错，");
+			executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+			executeResult.setResultMessage(ResultCodeEnum.ERROR.getMessage());
+			executeResult.addErrorMessage(e.getMessage());
+		}
+		return executeResult;
+	}
 }

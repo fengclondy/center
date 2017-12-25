@@ -361,4 +361,11 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
     Long queryVmsDraftItemSkuListCount(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO);
 
 	List<QueryVmsMyItemListOutDTO> queryVmsDraftItemSkuList(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO, @Param("pager")Pager pager);
+
+	/**
+	 * 查询大B商品，按照实际库存排序
+	 * @param sellerId
+	 * @return
+	 */
+	List<ItemDTO> queryItemListBySellerIdOrderByStock(@Param("sellerId") Long sellerId);
 }

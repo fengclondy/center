@@ -715,4 +715,9 @@ public class ItemExportServiceImplAllTest extends CommonTest {
 			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testqueryItemListBySellerId() {
+		this.itemExportService.queryItemListBySellerId(517L);
+	}
 }

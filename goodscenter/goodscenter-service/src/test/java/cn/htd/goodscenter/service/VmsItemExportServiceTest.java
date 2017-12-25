@@ -57,6 +57,11 @@ public class VmsItemExportServiceTest extends CommonTest {
         System.out.println(JSON.toJSONString(executeResult));
     }
 
+    @Test
+    public void testqueryItemSpuDetail() {
+        System.out.println(JSON.toJSONString(this.vmsItemExportService.queryItemSpuDetail(6l)));
+    }
+
 
     @Test
     public void testqueryItemSkuPublishInfoList() {

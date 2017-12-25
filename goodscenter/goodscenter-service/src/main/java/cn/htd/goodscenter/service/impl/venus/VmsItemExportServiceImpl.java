@@ -4,9 +4,11 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
+import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.MessageIdUtils;
+import cn.htd.goodscenter.common.constants.Constants;
 import cn.htd.goodscenter.common.constants.ErrorCodes;
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import cn.htd.goodscenter.common.constants.VenusErrorCodes;
@@ -16,6 +18,7 @@ import cn.htd.goodscenter.dao.*;
 import cn.htd.goodscenter.dao.spu.ItemSpuMapper;
 import cn.htd.goodscenter.domain.*;
 import cn.htd.goodscenter.domain.spu.ItemSpu;
+import cn.htd.goodscenter.dto.SpuInfoDTO;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
@@ -29,12 +32,15 @@ import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
 import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.goodscenter.service.ItemExportService;
+import cn.htd.goodscenter.service.ItemSpuExportService;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
 import com.google.common.collect.Lists;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -96,6 +102,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Resource
     private TimelimitedInfoService timelimitedInfoService;
+
+    @Resource
+    private ItemSpuExportService itemSpuExportService;
+
+    @Autowired
+    private RedisDB redisDB;
+
+    @Autowired
+    private CategoryAttrDAO categoryAttrDAO;
     /**
      * 我的商品 - 商品列表
      * @param queryVmsMyItemListInDTO
@@ -198,6 +213,25 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 }
             }
 
+        }
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<SpuInfoDTO> queryItemSpuDetail(Long spuId) {
+        ExecuteResult<SpuInfoDTO> executeResult = this.itemSpuExportService.getItemSpuBySpuId(spuId);
+        if (executeResult != null && ResultCodeEnum.SUCCESS.getCode().equals(executeResult.getCode())) {
+            SpuInfoDTO spuInfoDTO = executeResult.getResult();
+            // 设置单位
+            String unitName = dictionaryUtils.getNameByValue(DictionaryConst.TYPE_ITEM_UNIT, spuInfoDTO.getUnit());
+            spuInfoDTO.setUnit(unitName);
+            // 补充三级类目信息
+            ExecuteResult<Map<String, Object>> categoryResult = itemCategoryService.queryItemOneTwoThreeCategoryName(spuInfoDTO.getCategoryId(), ">");
+            if (categoryResult != null && MapUtils.isNotEmpty(categoryResult.getResult())) {
+                String catName = (String) categoryResult.getResult().get("categoryName");
+                spuInfoDTO.setCategoryName(catName);
+            }
+            spuInfoDTO.setCategoryAttrHandled(this.parseCategoryAttr(spuInfoDTO.getCategoryAttributes()));
         }
         return executeResult;
     }
@@ -936,5 +970,55 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         }
         return promotionQty;
     }
+    private Map<String, String[]> parseCategoryAttr(String categoryAttr) {
+        Map<String, String[]> paresMapResult = new HashMap<>();
+        if (StringUtils.isEmpty(categoryAttr)) {
+            return paresMapResult;
+        }
+        try {
+            Map<String, JSONArray> map = (Map<String, JSONArray>) JSONObject.fromObject(categoryAttr);
+            for (Map.Entry<String, JSONArray> entry : map.entrySet()) {
+                String attrCode = entry.getKey();
+                String attrName = this.getAttributeName(Long.valueOf(attrCode));
+                JSONArray attrValueCodeArray = entry.getValue();
+                String[] array = new String[attrValueCodeArray.size()];
+                if (attrValueCodeArray != null) {
+                    for (int i = 0; i < attrValueCodeArray.size(); i++) {
+                        Integer attrValueCode = (Integer) attrValueCodeArray.get(i);
+                        array[i] = this.getAttributeValueName(attrValueCode);
+                    }
+                }
+                paresMapResult.put(attrName, array);
+            }
+        } catch (Exception e) {
+            logger.error("parseCategoryAttr出错，", e);
+        }
+        return paresMapResult;
+    }
 
+    private String getAttributeName(Long attributeId) {
+        if (attributeId != null) {
+            String attributeName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE + attributeId);
+            if (org.apache.commons.lang3.StringUtils.isEmpty(attributeName)) {
+                return this.categoryAttrDAO.getAttrNameByAttrId(attributeId);
+            } else {
+                return attributeName;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private String getAttributeValueName(Integer attributeValueId) {
+        if (attributeValueId != null) {
+            String attributeValueName = this.redisDB.get(Constants.REDIS_KEY_PREFIX_ATTRIBUTE_VALUE + attributeValueId);
+            if (org.apache.commons.lang3.StringUtils.isEmpty(attributeValueName)) {
+                return this.categoryAttrDAO.getAttrValueNameByAttrValueId(Long.valueOf(attributeValueId));
+            } else {
+                return attributeValueName;
+            }
+        } else {
+            return null;
+        }
+    }
 }

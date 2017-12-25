@@ -2984,7 +2984,10 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	private Map<String, String[]> parseCategoryAttr(String categoryAttr) {
 		Map<String, String[]> paresMapResult = new HashMap<>();
 		try {
-			Map<String, JSONArray> map = (Map<String, JSONArray>) JSONObject.fromObject("{\"1889\":[15259,15263],\"1891\":[15269],\"1893\":[15277],\"1895\":[15283],\"1897\":[15287],\"1899\":[15299]}");
+			if (StringUtils.isEmpty(categoryAttr)) {
+				return paresMapResult;
+			}
+			Map<String, JSONArray> map = (Map<String, JSONArray>) JSONObject.fromObject(categoryAttr);
 			for (Map.Entry<String, JSONArray> entry : map.entrySet()) {
 				String attrCode = entry.getKey();
 				String attrName = this.getAttributeName(Long.valueOf(attrCode));

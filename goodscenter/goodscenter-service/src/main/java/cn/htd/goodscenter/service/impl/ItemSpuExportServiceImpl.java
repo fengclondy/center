@@ -96,40 +96,45 @@ import com.google.common.collect.Lists;
         return result;
     }
 
-    @Override public ExecuteResult<SpuInfoDTO> getItemSpuBySpuId(Long spuId) {
+    @Override
+    public ExecuteResult<SpuInfoDTO> getItemSpuBySpuId(Long spuId) {
         ExecuteResult<SpuInfoDTO> result = new ExecuteResult<SpuInfoDTO>();
-        SpuInfoDTO spuInfoDTO = new SpuInfoDTO();
-        if (null == spuId) {
-            result.setResultMessage("查询参数不能为空");
-            return result;
-        }
-        //查询商品模板信息
-        ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(spuId);
-        
-        LOGGER.error("getItemSpuBySpuId::{}",JSON.toJSON(itemSpu));
-        if (itemSpu == null) {
-        	LOGGER.error("getItemSpuBySpuId is null...");
-        	 
-            result.addErrorMessage("没有该商品模板信息！");
-            return result;
-        }
-        BeanUtils.copyProperties(itemSpu, spuInfoDTO);
-        //查询商品模板图片信息
-        List<ItemSpuPictureDTO> itemSpuPictureDTOList = itemSpuPictureMapper.queryBySpuId(spuId);
-        if (itemSpuPictureDTOList == null) {
-            result.addErrorMessage("没有商品模板图片信息! ");
-            return result;
-        }
-        spuInfoDTO.setItemSpuPictureDTOList(itemSpuPictureDTOList);
-        //查询商品模板详情
-        ItemSpuDescribe itemSpuDescribe = itemSpuDescribeMapper.queryBySpuId(spuId);
-        if (itemSpuDescribe == null) {
-        	 spuInfoDTO.setSpuDesc("");
-        }else{
-        	 spuInfoDTO.setSpuDesc(itemSpuDescribe.getSpuDesc());
-        }
+        try {
+            SpuInfoDTO spuInfoDTO = new SpuInfoDTO();
+            if (null == spuId) {
+                result.setResultMessage("查询参数不能为空");
+                return result;
+            }
+            //查询商品模板信息
+            ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(spuId);
+            LOGGER.error("getItemSpuBySpuId::{}",JSON.toJSON(itemSpu));
+            if (itemSpu == null) {
+                LOGGER.error("getItemSpuBySpuId is null...");
 
-        result.setResult(spuInfoDTO);
+                result.addErrorMessage("没有该商品模板信息！");
+                return result;
+            }
+            BeanUtils.copyProperties(itemSpu, spuInfoDTO);
+            //查询商品模板图片信息
+            List<ItemSpuPictureDTO> itemSpuPictureDTOList = itemSpuPictureMapper.queryBySpuId(spuId);
+            if (itemSpuPictureDTOList == null) {
+                result.addErrorMessage("没有商品模板图片信息! ");
+                return result;
+            }
+            spuInfoDTO.setItemSpuPictureDTOList(itemSpuPictureDTOList);
+            //查询商品模板详情
+            ItemSpuDescribe itemSpuDescribe = itemSpuDescribeMapper.queryBySpuId(spuId);
+            if (itemSpuDescribe == null) {
+                spuInfoDTO.setSpuDesc("");
+            }else{
+                spuInfoDTO.setSpuDesc(itemSpuDescribe.getSpuDesc());
+            }
+            result.setCode(ResultCodeEnum.SUCCESS.getCode());
+            result.setResult(spuInfoDTO);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.addErrorMessage(e.getMessage());
+        }
         return result;
     }
 

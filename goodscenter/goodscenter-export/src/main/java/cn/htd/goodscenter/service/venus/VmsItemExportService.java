@@ -3,6 +3,7 @@ package cn.htd.goodscenter.service.venus;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.goodscenter.dto.SpuInfoDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
@@ -33,10 +34,10 @@ public interface VmsItemExportService {
 
     /**
      * 我的商品 - 商品详情
-     * @param itemSkuId
+     * @param skuId
      * @return
      */
-    ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long itemSkuId);
+    ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long skuId);
 
     /**
      * 我的商品 - 商品模板库列表
@@ -45,6 +46,13 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<DataGrid<VenusItemSpuDataOutDTO>> queryItemSpuDataList(VenusItemMainDataInDTO venusItemSpuInDTO, Pager<String> page);
+
+    /**
+     * 根据商品模板ID查询商品模板详细信息
+     * @param spuId
+     * @return
+     */
+    ExecuteResult<SpuInfoDTO> queryItemSpuDetail(Long spuId);
 
     /**
      * 我的商品 - 申请商品

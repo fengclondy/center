@@ -740,12 +740,17 @@ public class MyMemberServiceImpl implements MyMemberService {
 	public ExecuteResult<Boolean> getNoMemberName(MyNoMemberDTO myNoMemberDto) {
 		ExecuteResult<Boolean> rs = new ExecuteResult<Boolean>();
 		try{
+			rs.setCode("00000");
 			if(myNoMemberDto.getMemberId() == null){
 				myNoMemberDto.setMemberId(0L);
 			}
+			if(myNoMemberDto.getCompanyName() == null){
+				rs.setResultMessage("公司名称为空");
+				rs.setResult(Boolean.FALSE);
+				return rs;
+			}
 			List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(),
 					myNoMemberDto.getMemberId());
-			rs.setCode("00000");
 			if (nmDto != null && nmDto.size() >= 1) {
 				rs.setResult(Boolean.TRUE);
 				rs.addErrorMessage("会员名称已存在");
@@ -756,7 +761,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 			rs.setCode("99999");
 			rs.addErrorMessage(e.getMessage());
 		}
-		return null;
+		return rs;
 	}
 
 }

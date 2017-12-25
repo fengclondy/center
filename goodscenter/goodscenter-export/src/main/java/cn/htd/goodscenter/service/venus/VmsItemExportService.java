@@ -137,4 +137,11 @@ public interface VmsItemExportService {
      * 查询大B下所有未上架、下架的商品
      */
     ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>> queryOffShelfItemBySellerId(QueryOffShelfItemInDTO queryOffShelfItemInDTO, Pager pager);
+
+    /**
+     * 批量上架
+     * @param batchOnShelfInDTO
+     * @return
+     */
+    ExecuteResult<BatchOnShelfOutDTO> batchOnShelves(BatchOnShelfInDTO batchOnShelfInDTO);
 }

@@ -74,7 +74,10 @@ public class MyMemberDTO implements Serializable {
 	 * 法人身份证反面
 	 */
 	private String artificialPersonPicBackSrc;
-	
+	/**
+	 * 是否异业名称
+	 */
+	private String isDiffIndustryName;
 	
 	/**
 	 * @return the memberCode
@@ -453,6 +456,14 @@ public class MyMemberDTO implements Serializable {
 
 	public void setArtificialPersonPicBackSrc(String artificialPersonPicBackSrc) {
 		this.artificialPersonPicBackSrc = artificialPersonPicBackSrc;
+	}
+
+	public String getIsDiffIndustryName() {
+		return isDiffIndustryName;
+	}
+
+	public void setIsDiffIndustryName(String isDiffIndustryName) {
+		this.isDiffIndustryName = isDiffIndustryName;
 	}
 	
 	

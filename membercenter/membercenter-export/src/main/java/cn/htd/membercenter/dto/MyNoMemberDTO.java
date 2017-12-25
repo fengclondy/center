@@ -648,4 +648,17 @@ public class MyNoMemberDTO implements Serializable {
 		this.belongManagerName = belongManagerName;
 	}
 
+	/**
+	 * 手持身份证
+	 */
+	private String artificialPersonIdcardPicSrc;
+
+	public String getArtificialPersonIdcardPicSrc() {
+		return artificialPersonIdcardPicSrc;
+	}
+
+	public void setArtificialPersonIdcardPicSrc(String artificialPersonIdcardPicSrc) {
+		this.artificialPersonIdcardPicSrc = artificialPersonIdcardPicSrc;
+	}
+
 }

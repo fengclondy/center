@@ -248,6 +248,7 @@
   <select id="selectNoMemberList" resultType="cn.htd.membercenter.dto.MyNoMemberDTO">
     SELECT 
     m.id memberId,
+    m.member_code memberCode,
     i.invoice_notify invoiceNotify,
     b.bank_name bankName,
     ms.verify_status verifyStatus,
@@ -720,6 +721,9 @@
 			<if test="artificialPersonPicSrc != null">
 			   	artificial_person_pic_src = #{artificialPersonPicSrc},
 			</if> 
+			<if test="artificialPersonIdcardPicSrc != null">
+				artificial_person_idcard_pic_src = #{artificialPersonIdcardPicSrc},
+			</if>
 			<if test="artificialPersonPicBackSrc != null">
 			   	artificial_person_pic_back_src = #{artificialPersonPicBackSrc},
 			</if> 

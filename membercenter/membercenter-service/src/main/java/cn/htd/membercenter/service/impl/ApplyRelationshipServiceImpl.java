@@ -193,6 +193,9 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 				if (null == myNoMemberDto.getArtificialPersonPicSrc()) {
 					myNoMemberDto.setArtificialPersonPicSrc("");
 				}
+				if (null == myNoMemberDto.getArtificialPersonIdcardPicSrc()) {
+					myNoMemberDto.setArtificialPersonIdcardPicSrc("");
+				}
 				if (null != myNoMemberDto.getHasGuaranteeLicense() && 1 == myNoMemberDto.getHasGuaranteeLicense()) {
 					myNoMemberDto.setHasBusinessLicense(0);
 				}

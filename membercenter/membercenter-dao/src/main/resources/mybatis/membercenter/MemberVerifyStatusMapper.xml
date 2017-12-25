@@ -95,7 +95,7 @@
     when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType,
     c.artificial_person_pic_src artificialPersonPicSrc,
     c.artificial_person_pic_back_src artificialPersonPicBackSrc,
-    c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc，
+    c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
     l.buyer_business_license_id buyerBusinessLicenseId
     from member_base_info m
     left join  member_company_info c on m.id = c.member_id 

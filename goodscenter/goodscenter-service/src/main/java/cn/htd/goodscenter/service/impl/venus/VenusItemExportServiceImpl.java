@@ -1452,31 +1452,35 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			for(InnerItemSkuPrice innerItemSkuPrice:venusItemSkuPublishInDTO.getStandardPrice().getAreaPriceList()){
 				if(!PriceConstants.PRICE_TYPE_OF_AREA.equals(innerItemSkuPrice.getPriceType())){
 					logger.info("innerItemSkuPrice AreaPrice PriceType is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("区域价PriceType")));
+					return result;
 				}
 				if(StringUtils.isEmpty(innerItemSkuPrice.getAreaCode())){
 					logger.info("innerItemSkuPrice AreaPrice AreaCode is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("区域价AreaCode")));
+					return result;
 				}
 				if(innerItemSkuPrice.getPrice()==null){
 					logger.info("innerItemSkuPrice AreaPrice Price is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("区域价price")));
+					return result;
 				}
 				
 				if(innerItemSkuPrice.getSellerId()==null||innerItemSkuPrice.getShopId()==null){
 					logger.info("innerItemSkuPrice AreaPrice sellerid or shopid is null");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("区域价sellerid or shopid")));
+					return result;
 				}
 			}
-			if(isPriceParamWrong){
-				result.setCode(VenusErrorCodes.E1040014.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("AreaPrice")));
-				return result;
-			}
+//			if(isPriceParamWrong){
+//				result.setCode(VenusErrorCodes.E1040014.name());
+//				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("AreaPrice")));
+//				return result;
+//			}
 			
 		}
 		
@@ -1484,30 +1488,34 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			for(InnerItemSkuPrice innerItemSkuPrice:venusItemSkuPublishInDTO.getStandardPrice().getItemSkuMemberGroupPriceList()){
 				if(!PriceConstants.PRICE_TYPE_OF_MEMBER_GROUP.equals(innerItemSkuPrice.getPriceType())){
 					logger.info("innerItemSkuPrice MemberGroup PriceType is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("分组价PriceType")));
+					return result;
 				}
 				if(innerItemSkuPrice.getGroupId()==null){
 					logger.info("innerItemSkuPrice MemberGroup AreaCode is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("分组价GroupId")));
+					return result;
 				}
 				if(innerItemSkuPrice.getPrice()==null){
 					logger.info("innerItemSkuPrice MemberGroup Price is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("分组价price")));
+					return result;
 				}
 				if(innerItemSkuPrice.getSellerId()==null||innerItemSkuPrice.getShopId()==null){
 					logger.info("innerItemSkuPrice AreaPrice sellerid or shopid is null");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("分组价sellerid or shopid")));
+					return result;
 				}
 			}
-			if(isPriceParamWrong){
-				result.setCode(VenusErrorCodes.E1040014.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("MemberGroup")));
-				return result;
-			}
+//			if(isPriceParamWrong){
+//				result.setCode(VenusErrorCodes.E1040014.name());
+//				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("MemberGroup")));
+//				return result;
+//			}
 		
 		}
 		
@@ -1515,30 +1523,34 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			for(InnerItemSkuPrice innerItemSkuPrice:venusItemSkuPublishInDTO.getStandardPrice().getItemSkuMemberLevelPriceList()){
 				if(!PriceConstants.PRICE_TYPE_OF_MEMBER_LEVEL.equals(innerItemSkuPrice.getPriceType())){
 					logger.info("innerItemSkuPrice MemberLevel PriceType is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("等级价PriceType")));
+					return result;
 				}
 				if(innerItemSkuPrice.getBuyerGrade()==null){
 					logger.info("innerItemSkuPrice MemberLevel BuyerGrade is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("等级价BuyerGrade")));
+					return result;
 				}
 				if(innerItemSkuPrice.getPrice()==null){
 					logger.info("innerItemSkuPrice MemberLevel Price is not correct");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("等级价Price")));
+					return result;
 				}
 				if(innerItemSkuPrice.getSellerId()==null||innerItemSkuPrice.getShopId()==null){
 					logger.info("innerItemSkuPrice AreaPrice sellerid or shopid is null");
-					isPriceParamWrong=true;
-					break;
+					result.setCode(VenusErrorCodes.E1040014.name());
+					result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("等级价sellerid or shopid")));
+					return result;
 				}
 			}
-			if(isPriceParamWrong){
-				result.setCode(VenusErrorCodes.E1040014.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("MemberLevel")));
-				return result;
-			}
+//			if(isPriceParamWrong){
+//				result.setCode(VenusErrorCodes.E1040014.name());
+//				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("MemberLevel")));
+//				return result;
+//			}
 			
 		}
 		return result;

@@ -237,6 +237,18 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	 */
 	private void updateTradeOrderAndItem(String orderItemNos,String orderNo,String distributionCode){
 		LOGGER.info("分销单状态上行 跟新订单和订单行表开始 orderItemNos:{} orderNo:{} distributionCode:{}","",orderItemNos, orderNo,distributionCode);
+		//xmz for 2017-12-26 start
+		//查询订单状态是否大于等于已发货的状态值，如果是就直接调用callBackMiddleware(distributionCode, SUCCESS,"");return;
+		TradeOrdersDMO tradeDMO = tradeOrdersDAO.selectOrderByOrderNo(orderNo);
+		if(null != tradeDMO){
+			int status = Integer.parseInt(tradeDMO.getOrderStatus().substring(0, 2));
+			if(status >= Integer.parseInt(OrderStatusEnum.DELIVERYED.getCode())){
+				callBackMiddleware(distributionCode, SUCCESS,"");
+				return;
+			}
+		}
+		//xmz for 2017-12-26 end
+		
 		String[] orderItemNosArry = orderItemNos.split(",");
 		for(String orderItemNosTemp : orderItemNosArry){
 			//更新订单行表

@@ -288,8 +288,17 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 					tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
 							DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 				} else {
-					tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
-							DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
+					String confirmStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
+							DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM);
+					tradeOrdersDTO.setOrderStatus(confirmStatus);
+					List<TradeOrderItemsDTO> itemList = tradeOrdersDTO.getOrderItemList();
+					for (TradeOrderItemsDTO itemDTO : itemList) {
+						List<TradeOrderItemsStatusHistoryDTO> itemHistoryList = itemDTO.getItemStatusHistoryDTOList();
+						for (TradeOrderItemsStatusHistoryDTO itemHistory : itemHistoryList) {
+							itemHistory.setOrderItemStatus(confirmStatus);
+						}
+						itemDTO.setOrderItemStatus(confirmStatus);
+					}
 				}
 			} else {
 				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_SEARCH_FOR_MEMBERID_ERROR,
@@ -2454,6 +2463,8 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			checkOrderInfo4Confirm(tradeOrderConfirmDTO, tradeOrderDTO);
 			// 更新订单状态，ERP状态以及记录日志信息
 			updateOrderStatus4Confirm(tradeOrderConfirmDTO, tradeOrderDTO);
+			result.setCode(ReturnCodeConst.RETURN_SUCCESS);
+			result.setResult(tradeOrderDTO);
 		} catch (TradeCenterBusinessException tcbe) {
 			result.setCode(tcbe.getCode());
 			result.addErrorMessage(tcbe.getMessage());
@@ -2468,7 +2479,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		String orderStatus = tradeOrderDTO.getOrderStatus();
 		String orderNo = tradeOrderDTO.getOrderNo();
 		Map<String, DictionaryInfo> dictMap = baseService.getTradeOrderDictionaryMap();
-		String orderModifyTime = DateUtils.format(tradeOrderDTO.getModifyTime(), DateUtils.YMDHMS);
+		String orderModifyTime = DateUtils.format(tradeOrderDTO.getModifyTime(), DateUtils.YYDDMMHHMMSS);
 		String confirmStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 				DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM);
 		if (!confirmStatus.equals(orderStatus)) {

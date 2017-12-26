@@ -34,11 +34,10 @@
 				AND mci1.buyer_seller_type = 1
 			) a,
 			member_base_info mbi
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id
+		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id AND mci.buyer_seller_type = 2
 		LEFT JOIN supply_contract_info sci ON mbi.member_code = sci.vendor_code and sci.member_code = #{memberCode}
 		WHERE
-		mci.buyer_seller_type = 2
-		AND mbi.member_code IN 
+		mbi.member_code IN 
 			<foreach collection = "vendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
 				#{item}
 			</foreach>
@@ -117,11 +116,10 @@
 				AND mci1.buyer_seller_type = 1
 			) a,
 			member_base_info mbi
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id
+		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id AND mci.buyer_seller_type = 2
 		LEFT JOIN supply_contract_info sci ON mbi.member_code = sci.vendor_code and sci.member_code = #{memberCode}
 		WHERE
-		mci.buyer_seller_type = 2
-		AND mbi.member_code IN 
+		mbi.member_code IN 
 			<foreach collection = "vendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
 				#{item}
 			</foreach> 
@@ -204,20 +202,26 @@
 					mci1.artificial_person_name AS vendorArtificialPersonName,
 					mci1.company_name AS vendorName
 				FROM
-					member_company_info mci1,
-					member_base_info mbi1
+					member_company_info mci1
 				WHERE
-					mbi1.member_code = #{vendorCode}
-				AND mbi1.id = mci1.member_id
+					mci1.company_code = #{vendorCode}
 				AND mci1.buyer_seller_type = 2
 			) a,
 			supply_contract_info sci
 		LEFT JOIN member_base_info mbi ON mbi.member_code = sci.member_code
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id
+		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id AND mci.buyer_seller_type = 1
 		WHERE
-			sci.vendor_code = #{vendorCode} 
+			sci.vendor_code = (
+				SELECT
+					mbi2.member_code 
+				FROM
+					member_base_info mbi2,
+					member_company_info mci2 
+				WHERE
+					mbi2.id = mci2.member_id 
+					AND mci2.company_code = #{vendorCode}
+			)
 		AND sci.contract_status = '1'
-		AND mci.buyer_seller_type = 1
 		AND sci.member_code IN 
 			<foreach collection = "memberCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
 				#{item}

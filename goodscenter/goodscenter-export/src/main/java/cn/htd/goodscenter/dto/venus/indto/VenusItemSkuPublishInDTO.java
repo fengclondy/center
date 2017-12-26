@@ -36,7 +36,7 @@ public class VenusItemSkuPublishInDTO implements Serializable{
 	private Long itemId;
 	// 副标题
 	private String subTitle;
-	// 备注
+	// 0:大厅  1：包厢
 	private Integer isBoxFlag; //是否是包厢库存标记
 
 	private String note;

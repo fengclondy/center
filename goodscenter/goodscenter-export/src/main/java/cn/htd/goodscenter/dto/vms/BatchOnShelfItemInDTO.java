@@ -1,5 +1,9 @@
 package cn.htd.goodscenter.dto.vms;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -7,21 +11,23 @@ import java.math.BigDecimal;
  * 批量上架商品DTO
  */
 public class BatchOnShelfItemInDTO implements Serializable {
-
+    @NotNull(message = "item不能为NULL")
     private Long itemId;
-
+    @NotNull(message = "skuId不能为NULL")
     private Long skuId;
-
+    @NotEmpty(message = "skuCode不能为NULL")
     private String skuCode;
-
+    @NotEmpty(message = "itemCode不能为NULL")
     private String itemCode;
-
+    @NotEmpty(message = "itemName不能为NULL")
     private String itemName;
 
     //分销限价
+    @NotNull(message = "ssaleLimitedPrice不能为空")
     private BigDecimal saleLimitedPrice;
 
     //ERP零售价
+    @NotNull(message = "wsaleUtprice不能为空")
     private BigDecimal wsaleUtprice;
 
     //销售价
@@ -31,13 +37,16 @@ public class BatchOnShelfItemInDTO implements Serializable {
     private BigDecimal retailPrice;
 
     //上架库存
-    private int onShelfQuantiy;
+    @NotNull(message = "onShelfQuantiy不能为空")
+    private Integer onShelfQuantiy;
 
     /** 从QueryOffShelfItemOutDTO透传回来给我 **/
     //如果上架做少库存，可能存在锁定的
-    private int minStock;
+    @NotNull(message = "minStock不能为空")
+    private Integer minStock;
     //可上架库存
-    private int aviableStock;
+    @NotNull(message = "aviableStock不能为空")
+    private Integer aviableStock;
 
     public Long getItemId() {
         return itemId;
@@ -53,6 +62,14 @@ public class BatchOnShelfItemInDTO implements Serializable {
 
     public void setSkuId(Long skuId) {
         this.skuId = skuId;
+    }
+
+    public String getSkuCode() {
+        return skuCode;
+    }
+
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode;
     }
 
     public String getItemCode() {
@@ -103,35 +120,27 @@ public class BatchOnShelfItemInDTO implements Serializable {
         this.retailPrice = retailPrice;
     }
 
-    public int getOnShelfQuantiy() {
+    public Integer getOnShelfQuantiy() {
         return onShelfQuantiy;
     }
 
-    public void setOnShelfQuantiy(int onShelfQuantiy) {
+    public void setOnShelfQuantiy(Integer onShelfQuantiy) {
         this.onShelfQuantiy = onShelfQuantiy;
     }
 
-    public int getMinStock() {
+    public Integer getMinStock() {
         return minStock;
     }
 
-    public void setMinStock(int minStock) {
+    public void setMinStock(Integer minStock) {
         this.minStock = minStock;
     }
 
-    public int getAviableStock() {
+    public Integer getAviableStock() {
         return aviableStock;
     }
 
-    public void setAviableStock(int aviableStock) {
+    public void setAviableStock(Integer aviableStock) {
         this.aviableStock = aviableStock;
-    }
-
-    public String getSkuCode() {
-        return skuCode;
-    }
-
-    public void setSkuCode(String skuCode) {
-        this.skuCode = skuCode;
     }
 }

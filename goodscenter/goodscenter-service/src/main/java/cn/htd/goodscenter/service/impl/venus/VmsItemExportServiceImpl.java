@@ -114,6 +114,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Autowired
     private CategoryAttrDAO categoryAttrDAO;
+
+    @Resource
+    private ItemSalesDefaultAreaMapper itemSalesDefaultAreaMapper;
     /**
      * 我的商品 - 商品列表
      * @param queryVmsMyItemListInDTO
@@ -589,7 +592,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Override
     public ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
-        ExecuteResult<String> result=new ExecuteResult<>();
+         ExecuteResult<String> result=new ExecuteResult<>();
         if(venusItemSkuPublishInDTO == null){
             result.setCode(ErrorCodes.E10000.name());
             result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
@@ -682,9 +685,18 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             Long sellerId = batchOnShelfInDTO.getSellerId();
             BigDecimal ratio = batchOnShelfInDTO.getRatio();
             Integer batchOnShelfType = batchOnShelfInDTO.getBatchOnShelfType(); // 1:默认价格 2:自定义价格 3:自定义涨幅
+            Integer hasBelowLimitPriceAuth = batchOnShelfInDTO.getHasBelowLimitPriceAuth(); // 是否有低于分销限价的权限
+            ValidateResult validateResult = DTOValidateUtil.validate(batchOnShelfInDTO);
+            if (!validateResult.isPass()) {
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
+                executeResult.setResultMessage(validateResult.getMessage());
+                return executeResult;
+            }
             // 校验比率
             if (batchOnShelfType == 3 && (ratio == null || ratio.compareTo(BigDecimal.ZERO) <= 0)) {
-
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
+                executeResult.setResultMessage("自定义涨幅批量上架,比率必须是正整数");
+                return executeResult;
             }
             List<BatchOnShelfItemInDTO> dataList = batchOnShelfInDTO.getDataList();
             // output
@@ -700,6 +712,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 String skuCode = batchOnShelfItemInDTO.getSkuCode();
                 BigDecimal saleLimitPrice = batchOnShelfItemInDTO.getSaleLimitedPrice();
                 BigDecimal wsaleUtprice = batchOnShelfItemInDTO.getWsaleUtprice(); // erp零售价
+                ValidateResult validateResult1 = DTOValidateUtil.validate(batchOnShelfItemInDTO);
+                if (!validateResult1.isPass()) {
+                    this.addFailureList(failureList, itemName, itemCode, validateResult1.getMessage());
+                    continue;
+                }
                 // 校验商品状态
                 if(item == null||Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
                         ||Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(item.getItemStatus())
@@ -775,7 +792,34 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     retailPrice = wsaleUtprice;
                     salePrice = saleLimitPrice;
                 } else if (batchOnShelfType == 2) { // 自定义价格
-
+                    if (batchOnShelfItemInDTO.getRetailPrice() == null || batchOnShelfItemInDTO.getRetailPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                        String errorMsg = "自定义价格,零售价不是正数";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (batchOnShelfItemInDTO.getSalePrice() == null || batchOnShelfItemInDTO.getSalePrice().compareTo(BigDecimal.ZERO) <= 0) {
+                        String errorMsg = "自定义价格,销售价不是正数";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (batchOnShelfItemInDTO.getRetailPrice().compareTo(batchOnShelfItemInDTO.getSalePrice()) < 0) {
+                        String errorMsg = "自定义价格,销售价不能大于零售价";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    // 和分销限价比
+                    if (hasBelowLimitPriceAuth == 0 && batchOnShelfItemInDTO.getRetailPrice().compareTo(saleLimitPrice) < 0) {
+                        String errorMsg = "自定义价格,没有低于分销限价的权限,零售价不能低于分销限价";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (hasBelowLimitPriceAuth == 0 && batchOnShelfItemInDTO.getSalePrice().compareTo(saleLimitPrice) < 0) {
+                        String errorMsg = "自定义价格,没有低于分销限价的权限,销售价不能低于分销限价";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    retailPrice = batchOnShelfItemInDTO.getRetailPrice();
+                    salePrice = batchOnShelfItemInDTO.getSalePrice();
                 } else if (batchOnShelfType == 3) { // 自定义涨幅
                     retailPrice = saleLimitPrice.multiply(ratio).add(saleLimitPrice);
                     salePrice = retailPrice;
@@ -787,9 +831,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     itemSkuBasePrice.setBoxSalePrice(salePrice);
                 }
                 standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
-                itemSkuPriceService.updateItemSkuStandardPrice(standardPriceDTO,isBoxFlag);
+                this.itemSkuPriceService.updateItemSkuStandardPrice(standardPriceDTO,isBoxFlag);
                 // 处理销售区域；默认销售区域
 
+                List<ItemSalesDefaultArea> defaultList = this.itemSalesDefaultAreaMapper.selectDefaultSalesAreaBySellerId(sellerId);
+                if (defaultList != null && defaultList.size() > 0) {
+
+                } else { // 注册所在地的省
+
+                }
                 // 处理商品状态；
 
             }

@@ -12,6 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.membercenter.dto.ContractInfoDTO;
+import cn.htd.membercenter.dto.ContractListInfo;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
 
 /** 
@@ -42,19 +43,12 @@ public class ContractServiceTest {
 	@Test
 	public void queryContractList() {
 		Pager<String> pager = new Pager<String>();
-		pager.setPage(1);
+		pager.setPage(2);
 		pager.setRows(10);
 
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractListByMemberCode("926386",pager);
+		ExecuteResult<ContractListInfo> result = contractService.queryContractListByMemberCode("926386",pager);
 		if (result.isSuccess()) {
-			List<ContractInfoDTO> ContractInfoDTOList = result.getResult().getRows();
-			for (ContractInfoDTO contractInfoDTO : ContractInfoDTOList) {
-				System.out.println(contractInfoDTO.getContractStatus());
-			}
-		} else {
-			for (String e : result.getErrorMessages()) {
-				System.out.println(e);
-			}
+		
 		}
 	} 
 
@@ -63,7 +57,7 @@ public class ContractServiceTest {
 		List<String> memberCodeList = new ArrayList<String>();
 		memberCodeList.add("926386");
 		memberCodeList.add("928123");
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractInfoListByMemberAndVendorCode("htd493085",memberCodeList);
+		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractInfoListByMemberAndVendorCode("0110",memberCodeList);
 		if (result.isSuccess()) {
 			List<ContractInfoDTO> ContractInfoDTOList = result.getResult().getRows();
 			for (ContractInfoDTO contractInfoDTO : ContractInfoDTOList) {
@@ -90,10 +84,10 @@ public class ContractServiceTest {
 		List<String> vendorCodeList = new ArrayList<String>();
 		vendorCodeList.add("htd493085");
 		vendorCodeList.add("htd238861");
-		ExecuteResult<String> result = contractService.queryEntranceExists(vendorCodeList, "926386");
+		/*ExecuteResult<String> result = contractService.queryEntranceExists(vendorCodeList, "926386");
 		if (result.isSuccess()) {
 			System.out.println(result.getResult());
-		}
+		}*/
 	}
 	
 	@Test

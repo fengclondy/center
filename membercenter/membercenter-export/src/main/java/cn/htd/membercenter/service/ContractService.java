@@ -6,6 +6,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.ContractInfoDTO;
+import cn.htd.membercenter.dto.ContractListInfo;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
 
 /** 
@@ -22,7 +23,7 @@ public interface ContractService {
 	 * <Description> 合同列表  <br>
 	 * @param memberCode 会员店编码
 	 */
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryContractListByMemberCode(String memberCode, Pager<String> pager);
+	public ExecuteResult<ContractListInfo> queryContractListByMemberCode(String memberCode, String contractSttatus, Pager<String> pager);
 
 	/**
 	 * <Description> 提醒查询  <br>
@@ -49,7 +50,7 @@ public interface ContractService {
 	 * @param memberCode 会员店编码
 	 * @param vendorCode 供应商编码
 	 */
-	public ExecuteResult<String> queryEntranceExists(List<String> vendorCodeList, String memberCode);
+	public ExecuteResult<DataGrid<ContractInfoDTO>> queryEntranceExists(List<String> vendorCodeList, String memberCode);
 	
 	/**
 	 * <Description> 批量查询某供应商下会员店的合同情况  <br>

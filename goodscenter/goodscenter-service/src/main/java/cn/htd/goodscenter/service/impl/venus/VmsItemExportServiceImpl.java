@@ -21,6 +21,7 @@ import cn.htd.goodscenter.domain.spu.ItemSpu;
 import cn.htd.goodscenter.dto.SpuInfoDTO;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
+import cn.htd.goodscenter.dto.enums.ProductChannelEnum;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
@@ -53,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -677,6 +679,13 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             // input
             String shelfType = batchOnShelfInDTO.getIsBoxFlag() == 1 ? "1" : "2";
             Integer isBoxFlag = batchOnShelfInDTO.getIsBoxFlag();
+            Long sellerId = batchOnShelfInDTO.getSellerId();
+            BigDecimal ratio = batchOnShelfInDTO.getRatio();
+            Integer batchOnShelfType = batchOnShelfInDTO.getBatchOnShelfType(); // 1:默认价格 2:自定义价格 3:自定义涨幅
+            // 校验比率
+            if (batchOnShelfType == 3 && (ratio == null || ratio.compareTo(BigDecimal.ZERO) <= 0)) {
+
+            }
             List<BatchOnShelfItemInDTO> dataList = batchOnShelfInDTO.getDataList();
             // output
             BatchOnShelfOutDTO batchOnShelfOutDTO = new BatchOnShelfOutDTO();
@@ -689,6 +698,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 String itemCode = batchOnShelfItemInDTO.getItemCode();
                 Long skuId = batchOnShelfItemInDTO.getSkuId();
                 String skuCode = batchOnShelfItemInDTO.getSkuCode();
+                BigDecimal saleLimitPrice = batchOnShelfItemInDTO.getSaleLimitedPrice();
+                BigDecimal wsaleUtprice = batchOnShelfItemInDTO.getWsaleUtprice(); // erp零售价
                 // 校验商品状态
                 if(item == null||Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
                         ||Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(item.getItemStatus())
@@ -734,7 +745,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     itemSkuPublishInfoFromDb.setMimQuantity(1); // 默认起订量为1
                     itemSkuPublishInfoFromDb.setIsPurchaseLimit(0); // 默认不限购
                     itemSkuPublishInfoFromDb.setIsVisable(1); // 上架
-                    itemSkuPublishInfoFromDb.setVisableTime();
+                    itemSkuPublishInfoFromDb.setVisableTime(date);
                     itemSkuPublishInfoFromDb.setIsAutomaticVisable(0);
                     itemSkuPublishInfoFromDb.setModifyId(0L);
                     itemSkuPublishInfoFromDb.setModifyTime(date);
@@ -742,7 +753,40 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfoFromDb);
                 }
                 // 处理价格
+                ExecuteResult<StandardPriceDTO> priceResult = this.itemSkuPriceService.queryStandardPrice4InnerSeller(skuId, isBoxFlag);
                 StandardPriceDTO standardPriceDTO = new StandardPriceDTO();
+                if (priceResult != null && priceResult.isSuccess()) {
+                    standardPriceDTO = priceResult.getResult();
+                }
+                ItemSkuBasePrice itemSkuBasePrice = new ItemSkuBasePrice();
+                if (standardPriceDTO.getItemSkuBasePrice() != null) {
+                    itemSkuBasePrice = standardPriceDTO.getItemSkuBasePrice();
+                }
+                itemSkuBasePrice.setSkuId(skuId);
+                itemSkuBasePrice.setItemId(itemId);
+                itemSkuBasePrice.setSellerId(sellerId);
+                itemSkuBasePrice.setItemCode(itemCode);
+                itemSkuBasePrice.setChannelCode(ProductChannelEnum.INTERNAL_SUPPLIER.getCode());
+                itemSkuBasePrice.setSaleLimitedPrice(saleLimitPrice);
+                // 根据上架类型设置价格
+                BigDecimal retailPrice = null;
+                BigDecimal salePrice = null;
+                if (batchOnShelfType == 1) { // 默认价格
+                    retailPrice = wsaleUtprice;
+                    salePrice = saleLimitPrice;
+                } else if (batchOnShelfType == 2) { // 自定义价格
+
+                } else if (batchOnShelfType == 3) { // 自定义涨幅
+                    retailPrice = saleLimitPrice.multiply(ratio).add(saleLimitPrice);
+                    salePrice = retailPrice;
+                }
+                itemSkuBasePrice.setRetailPrice(retailPrice); // 默认erp零售价
+                if (isBoxFlag == 0) { // 大厅
+                    itemSkuBasePrice.setAreaSalePrice(salePrice);
+                } else if (isBoxFlag == 1) {
+                    itemSkuBasePrice.setBoxSalePrice(salePrice);
+                }
+                standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
                 itemSkuPriceService.updateItemSkuStandardPrice(standardPriceDTO,isBoxFlag);
                 // 处理销售区域；默认销售区域
 

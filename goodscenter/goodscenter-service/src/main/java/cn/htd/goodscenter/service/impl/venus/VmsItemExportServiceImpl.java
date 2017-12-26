@@ -37,6 +37,7 @@ import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
+import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
 import com.google.common.collect.Lists;
 import net.sf.json.JSONArray;
@@ -674,6 +675,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         ExecuteResult<BatchOnShelfOutDTO> executeResult = new ExecuteResult<>();
         try {
             // input
+            String shelfType = batchOnShelfInDTO.getIsBoxFlag() == 1 ? "1" : "2";
+            Integer isBoxFlag = batchOnShelfInDTO.getIsBoxFlag();
             List<BatchOnShelfItemInDTO> dataList = batchOnShelfInDTO.getDataList();
             // output
             BatchOnShelfOutDTO batchOnShelfOutDTO = new BatchOnShelfOutDTO();
@@ -684,6 +687,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 Item item = itemMybatisDAO.queryItemByPk(itemId);
                 String itemName = batchOnShelfItemInDTO.getItemName();
                 String itemCode = batchOnShelfItemInDTO.getItemCode();
+                Long skuId = batchOnShelfItemInDTO.getSkuId();
+                String skuCode = batchOnShelfItemInDTO.getSkuCode();
                 // 校验商品状态
                 if(item == null||Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
                         ||Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(item.getItemStatus())
@@ -704,13 +709,45 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     this.addFailureList(failureList, itemName, itemCode, errorMsg);
                     continue;
                 }
+                Date date = new Date();
                 // 处理库存
-//                ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, ,"0");
+                ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType,"0");
+                if (itemSkuPublishInfoFromDb == null) { // 新增
+                    ItemSkuPublishInfo itemSkuPublishInfo = new ItemSkuPublishInfo();
+                    itemSkuPublishInfo.setSkuId(skuId);
+                    itemSkuPublishInfo.setItemId(itemId);
+                    itemSkuPublishInfo.setSkuCode(skuCode);
+                    itemSkuPublishInfo.setIsBoxFlag(isBoxFlag);
+                    itemSkuPublishInfo.setDisplayQuantity(OnShelfQuanty);
+                    itemSkuPublishInfo.setReserveQuantity(0);
+                    itemSkuPublishInfo.setMimQuantity(1); // 默认起订量为1
+                    itemSkuPublishInfo.setIsPurchaseLimit(0); // 默认不限购
+                    itemSkuPublishInfo.setIsVisable(1); // 上架
+                    itemSkuPublishInfo.setVisableTime(date);
+                    itemSkuPublishInfo.setIsAutomaticVisable(0);
+                    itemSkuPublishInfo.setCreateId(0L);
+                    itemSkuPublishInfo.setCreateTime(date);
+                    itemSkuPublishInfo.setCreateName("system");
+                    itemSkuPublishInfoMapper.insertSelective(itemSkuPublishInfo);
+                } else { // 更新
+                    itemSkuPublishInfoFromDb.setDisplayQuantity(OnShelfQuanty);
+                    itemSkuPublishInfoFromDb.setMimQuantity(1); // 默认起订量为1
+                    itemSkuPublishInfoFromDb.setIsPurchaseLimit(0); // 默认不限购
+                    itemSkuPublishInfoFromDb.setIsVisable(1); // 上架
+                    itemSkuPublishInfoFromDb.setVisableTime();
+                    itemSkuPublishInfoFromDb.setIsAutomaticVisable(0);
+                    itemSkuPublishInfoFromDb.setModifyId(0L);
+                    itemSkuPublishInfoFromDb.setModifyTime(date);
+                    itemSkuPublishInfoFromDb.setModifyName("system");
+                    itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfoFromDb);
+                }
                 // 处理价格
+                StandardPriceDTO standardPriceDTO = new StandardPriceDTO();
+                itemSkuPriceService.updateItemSkuStandardPrice(standardPriceDTO,isBoxFlag);
+                // 处理销售区域；默认销售区域
 
-                // 处理销售区域
+                // 处理商品状态；
 
-                // 处理商品状态
             }
             batchOnShelfOutDTO.setFailureList(failureList);
             batchOnShelfOutDTO.setFailCount(failureList.size());

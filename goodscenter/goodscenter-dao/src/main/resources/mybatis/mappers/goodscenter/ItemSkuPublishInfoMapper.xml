@@ -571,10 +571,10 @@
 		info.erp_sync as erpSync,
 		(info.display_quantity-info.reserve_quantity) as avaliableQty,
 		info.mim_quantity as minBuyQty,
-		<if test="shelfType == 2">
+		<if test="shelfType == 2"> <!-- TODO 考虑下架有锁定库存的情况 -->
 		ifnull(info2.display_quantity,0) as boxPublishQty,
 		</if>
-		<if test="shelfType == 1">
+		<if test="shelfType == 1"> <!-- TODO 考虑下架有锁定库存的情况 -->
 		ifnull(info2.display_quantity,0) as areaPublishQty,
 		</if>
 		info.is_purchase_limit as isPurchaseLimit,

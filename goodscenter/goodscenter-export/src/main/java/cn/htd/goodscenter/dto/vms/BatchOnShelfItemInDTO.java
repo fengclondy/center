@@ -12,6 +12,8 @@ public class BatchOnShelfItemInDTO implements Serializable {
 
     private Long skuId;
 
+    private String skuCode;
+
     private String itemCode;
 
     private String itemName;
@@ -123,5 +125,13 @@ public class BatchOnShelfItemInDTO implements Serializable {
 
     public void setAviableStock(int aviableStock) {
         this.aviableStock = aviableStock;
+    }
+
+    public String getSkuCode() {
+        return skuCode;
+    }
+
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode;
     }
 }

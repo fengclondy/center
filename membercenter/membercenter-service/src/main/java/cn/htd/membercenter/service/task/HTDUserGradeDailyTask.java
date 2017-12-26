@@ -83,6 +83,17 @@ public class HTDUserGradeDailyTask implements IScheduleTaskDealMulti<MemberImpor
 					.getHTDMemberGrade(new Long(memberImportSuccInfoDTO.getMemberId()));
 			if (memberGradeModel != null) {
 				memberGradeService.upgradeHTDUserGrade(memberImportSuccInfoDTO, memberGradeModel, jobDate);
+			} else {
+			    // 等级不存在时就新建一条1星数据
+                BuyerGradeInfoDTO gradeDto = new BuyerGradeInfoDTO();
+                gradeDto.setBuyerId(new Long(memberImportSuccInfoDTO.getMemberId()));
+                gradeDto.setBuyerGrade("1");
+                gradeDto.setPointGrade(1l);
+                gradeDto.setCreateId(1L);
+                gradeDto.setCreateName("SYS");
+                gradeDto.setModifyId(1L);
+                gradeDto.setModifyName("SYS");
+                memberGradeService.insertGrade(gradeDto);
 			}
 		}
 		list = new ArrayList<MemberImportSuccInfoDTO>();

@@ -38,6 +38,7 @@ import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
+import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
 import com.google.common.collect.Lists;
@@ -59,8 +60,9 @@ import java.util.*;
 
 /**
  * vms2.0 商品中心接口
- * @date 2017-12-06
+ *
  * @author chenkang
+ * @date 2017-12-06
  */
 @Service("vmsItemExportService")
 public class VmsItemExportServiceImpl implements VmsItemExportService {
@@ -117,8 +119,16 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Resource
     private ItemSalesDefaultAreaMapper itemSalesDefaultAreaMapper;
+
+    @Resource
+    private ItemSalesAreaMapper itemSalesAreaMapper;
+
+    @Resource
+    private ItemSalesAreaDetailMapper itemSalesAreaDetailMapper;
+
     /**
      * 我的商品 - 商品列表
+     *
      * @param queryVmsMyItemListInDTO
      * @param pager
      * @return
@@ -129,20 +139,20 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         DataGrid<QueryVmsMyItemListOutDTO> dtoDataGrid = new DataGrid<>();
         try {
             // 入参校验
-            if(queryVmsMyItemListInDTO == null || pager == null) {
+            if (queryVmsMyItemListInDTO == null || pager == null) {
                 result.setCode(VenusErrorCodes.E1040009.name());
                 result.setResultMessage(VenusErrorCodes.E1040009.getErrorMsg());
                 result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040009.getErrorMsg()));
                 return result;
             }
-            if(queryVmsMyItemListInDTO.getSellerId() == null||queryVmsMyItemListInDTO.getSellerId() <= 0){
+            if (queryVmsMyItemListInDTO.getSellerId() == null || queryVmsMyItemListInDTO.getSellerId() <= 0) {
                 result.setCode(VenusErrorCodes.E1040010.name());
                 result.setResultMessage(VenusErrorCodes.E1040010.getErrorMsg());
                 result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040010.getErrorMsg()));
                 return result;
             }
             // 封装三级类目集合
-            Long[] thirdCategoryIds  = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsMyItemListInDTO.getFirstCategoryId(),
+            Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsMyItemListInDTO.getFirstCategoryId(),
                     queryVmsMyItemListInDTO.getSecCategoryId(), queryVmsMyItemListInDTO.getThirdCategoryId());
             if (thirdCategoryIds != null) {
                 queryVmsMyItemListInDTO.setThirdCategoryIdList(Arrays.asList(thirdCategoryIds));
@@ -191,6 +201,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 我的商品 - 商品详情
+     *
      * @param itemSkuId
      * @return
      */
@@ -244,6 +255,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 我的商品 - 申请商品
+     *
      * @param spuIdList
      * @param sellerId
      * @param shopId
@@ -258,6 +270,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 我的商品 - 批量新增商品 （导入）
+     *
      * @param batchAddItemInDTOList
      * @return
      */
@@ -265,10 +278,10 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     public ExecuteResult<BatchAddItemOutDTO> batchAddItem(List<BatchAddItemInDTO> batchAddItemInDTOList) {
         ExecuteResult<BatchAddItemOutDTO> executeResult = new ExecuteResult<>();
         //前置校验
-        if(batchAddItemInDTOList == null){
+        if (batchAddItemInDTOList == null) {
             executeResult.setCode(ErrorCodes.E10005.name());
             executeResult.setErrorMessages(Lists.newArrayList(ErrorCodes.E10005.getErrorMsg()));
-            return  executeResult;
+            return executeResult;
         }
         try {
             // 失败的集合
@@ -304,7 +317,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 Long brandId = brandResult.getResult();
                 // 校验型号
                 String modelType = batchAddItemInDTO.getModelType();
-                ExecuteResult<String> modelTypeResult =  validateModelType(modelType);
+                ExecuteResult<String> modelTypeResult = validateModelType(modelType);
                 if (!ResultCodeEnum.SUCCESS.equals(modelTypeResult.getCode())) {
                     batchAddItemErrorListOutDTO.setErroMsg(modelTypeResult.getResultMessage());
                     errorList.add(batchAddItemErrorListOutDTO);
@@ -402,6 +415,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 我的商品 - 新增商品
+     *
      * @param venusItemDTO
      * @return
      */
@@ -412,6 +426,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 我的商品 - 修改商品
+     *
      * @param venusItemDTO
      * @return
      */
@@ -422,6 +437,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 我的商品 - 库存商品
+     *
      * @param venusStockItemInDTO
      * @return
      */
@@ -467,32 +483,33 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     /**
      * 查询包厢商品列表
      * 查询大厅商品列表
-     *
+     * <p>
      * sort字段：display_quantity ；
      * order ：asc (从小到大) / desc （从大到小）
+     *
      * @param queryVmsItemPublishInfoInDTO
-     * @param page 排序字段传在page中
+     * @param page                         排序字段传在page中
      * @return
      */
     @Override
     public ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> queryItemSkuPublishInfoList(QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO, Pager<String> page) {
         ExecuteResult<DataGrid<QueryVmsItemPublishInfoOutDTO>> result = new ExecuteResult<>();
         DataGrid<QueryVmsItemPublishInfoOutDTO> dataGrid = new DataGrid<>();
-        if(queryVmsItemPublishInfoInDTO == null){
+        if (queryVmsItemPublishInfoInDTO == null) {
             result.setCode(VenusErrorCodes.E1040009.name());
             result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040009.getErrorMsg()));
             return result;
         }
-        try{
+        try {
             List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList = new ArrayList<>();
             // 封装三级类目集合
-            Long[] thirdCategoryIds  = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsItemPublishInfoInDTO.getFirstCid(),
+            Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsItemPublishInfoInDTO.getFirstCid(),
                     queryVmsItemPublishInfoInDTO.getSecondCid(), queryVmsItemPublishInfoInDTO.getThirdCid());
             if (thirdCategoryIds != null) {
                 queryVmsItemPublishInfoInDTO.setThirdCategoryIdList(Arrays.asList(thirdCategoryIds));
             }
             Long totalCount = itemSkuDAO.queryVmsItemSkuPublishInfoListCount(queryVmsItemPublishInfoInDTO);
-            if(totalCount > 0){
+            if (totalCount > 0) {
                 queryVmsItemPublishInfoOutDTOList = itemSkuDAO.queryVmsItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, page);
                 //获取价格
                 makeUpPriceInfo4ItemSku(queryVmsItemPublishInfoOutDTOList);
@@ -501,7 +518,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             dataGrid.setRows(queryVmsItemPublishInfoOutDTOList);
             result.setCode(ResultCodeEnum.SUCCESS.getCode());
             result.setResult(dataGrid);
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.error("包厢/大厅商品列表查询出错, 错误信息:", e);
             result.setCode(ResultCodeEnum.ERROR.getCode());
             result.setResultMessage(ErrorCodes.E00001.getErrorMsg());
@@ -513,9 +530,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     /**
      * 包厢商品详情
      * 大厅商品详情
+     *
      * @param querySkuPublishInfoDetailParamDTO
-     * @return
-     * // TODO : 其他区域占用的库存，如果其他类型是上架则看可见库存，如果是下架则看锁定库存（新版本下架可见库存和锁定库存一致，但是老版本不是）
+     * @return // TODO : 其他区域占用的库存，如果其他类型是上架则看可见库存，如果是下架则看锁定库存（新版本下架可见库存和锁定库存一致，但是老版本不是）
      */
     @Override
     public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
@@ -526,6 +543,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 下架商品
+     *
      * @param skuCode
      * @param isBoxFlag 是否包厢   0：大厅 ；  1：包厢
      * @return
@@ -542,7 +560,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 return executeResult;
             }
             // 修改库存表记录；可见库存请0；如果存在锁定库存，可见库存和锁定库存一致
-            ItemSkuPublishInfo  itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectBySkuCodeAndShelfType(skuCode, isBoxFlag);
+            ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectBySkuCodeAndShelfType(skuCode, isBoxFlag);
             if (itemSkuPublishInfo == null) { // 库存信息不存在
                 executeResult.setCode(ResultCodeEnum.STOCK_PUBLISH_INFO_IS_NULL.getCode());
                 executeResult.setResultMessage(ResultCodeEnum.STOCK_PUBLISH_INFO_IS_NULL.getMessage());
@@ -579,21 +597,22 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     @Override
     public ExecuteResult<String> onShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
-        ExecuteResult<String> result=new ExecuteResult<>();
-        if(venusItemSkuPublishInDTO == null){
+        ExecuteResult<String> result = new ExecuteResult<>();
+        if (venusItemSkuPublishInDTO == null) {
             result.setCode(ErrorCodes.E10000.name());
             result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
             return result;
         }
         // 上架
         venusItemSkuPublishInDTO.setIsVisible("1");
+        venusItemSkuPublishInDTO.setUpdate(false);
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 
     @Override
     public ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO) {
-         ExecuteResult<String> result=new ExecuteResult<>();
-        if(venusItemSkuPublishInDTO == null){
+        ExecuteResult<String> result = new ExecuteResult<>();
+        if (venusItemSkuPublishInDTO == null) {
             result.setCode(ErrorCodes.E10000.name());
             result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
             return result;
@@ -626,7 +645,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             List<String> spuCodeList = new ArrayList<>();
             if (allOffItemList != null) {
                 for (Map offItemMap : allOffItemList) {
-                    Map<String,Object> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>();
                     String spuCode = (String) offItemMap.get("spucode");
                     if (StringUtils.isEmpty(spuCode)) {
                         continue;
@@ -637,7 +656,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             // 2. 同步实际库存
             this.itemExportService.batchsyncItemStock(spuCodeList, supplierCode, sellerId);
             // 封装三级类目集合
-            Long[] thirdCategoryIds  = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryOffShelfItemInDTO.getFirstCategoryId(),
+            Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryOffShelfItemInDTO.getFirstCategoryId(),
                     queryOffShelfItemInDTO.getSecondCategoryId(), queryOffShelfItemInDTO.getThirdCategoryId());
             if (thirdCategoryIds != null) {
                 queryOffShelfItemInDTO.setThirdCategoryIdList(Arrays.asList(thirdCategoryIds));
@@ -660,6 +679,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     queryOffShelfItemOutDTO.setMinStock(minStock);
                     queryOffShelfItemOutDTO.setPromtionStock(promotionStock);
                     // TODO : erp零售价
+//                    ExecuteResult<ItemSkuBasePriceDTO> this.itemSkuPriceService.queryItemSkuBasePrice(queryOffShelfItemOutDTO.getSkuId());
                 }
             }
             dtoDataGrid.setTotal(count);
@@ -686,6 +706,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             BigDecimal ratio = batchOnShelfInDTO.getRatio();
             Integer batchOnShelfType = batchOnShelfInDTO.getBatchOnShelfType(); // 1:默认价格 2:自定义价格 3:自定义涨幅
             Integer hasBelowLimitPriceAuth = batchOnShelfInDTO.getHasBelowLimitPriceAuth(); // 是否有低于分销限价的权限
+            String areCode = batchOnShelfInDTO.getDefaultAreaCode();
             ValidateResult validateResult = DTOValidateUtil.validate(batchOnShelfInDTO);
             if (!validateResult.isPass()) {
                 executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
@@ -718,12 +739,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     continue;
                 }
                 // 校验商品状态
-                if(item == null||Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
-                        ||Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(item.getItemStatus())
-                        ||Integer.valueOf(HtdItemStatusEnum.ERP_STOCKPRICE_OR_OUTPRODUCTPRICE.getCode()).equals(item.getItemStatus())
-                        ||Integer.valueOf(HtdItemStatusEnum.DELETED.getCode()).equals(item.getItemStatus())
-                        )
-                {
+                if (item == null || Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
+                        || Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(item.getItemStatus())
+                        || Integer.valueOf(HtdItemStatusEnum.ERP_STOCKPRICE_OR_OUTPRODUCTPRICE.getCode()).equals(item.getItemStatus())
+                        || Integer.valueOf(HtdItemStatusEnum.DELETED.getCode()).equals(item.getItemStatus())
+                        ) {
                     String errorMsg = "商品状态不符合上架条件";
                     this.addFailureList(failureList, itemName, itemCode, errorMsg);
                     continue;
@@ -739,7 +759,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 }
                 Date date = new Date();
                 // 处理库存
-                ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType,"0");
+                ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType, "0");
                 if (itemSkuPublishInfoFromDb == null) { // 新增
                     ItemSkuPublishInfo itemSkuPublishInfo = new ItemSkuPublishInfo();
                     itemSkuPublishInfo.setSkuId(skuId);
@@ -831,17 +851,72 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     itemSkuBasePrice.setBoxSalePrice(salePrice);
                 }
                 standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
-                this.itemSkuPriceService.updateItemSkuStandardPrice(standardPriceDTO,isBoxFlag);
+                this.itemSkuPriceService.updateItemSkuStandardPrice(standardPriceDTO, isBoxFlag);
                 // 处理销售区域；默认销售区域
-
+                List<ItemSalesAreaDetail> itemSalesAreaDetailList = new ArrayList<>();
                 List<ItemSalesDefaultArea> defaultList = this.itemSalesDefaultAreaMapper.selectDefaultSalesAreaBySellerId(sellerId);
                 if (defaultList != null && defaultList.size() > 0) {
-
+                    for (ItemSalesDefaultArea itemSalesDefaultArea : defaultList) {
+                        if (StringUtils.isNotEmpty(itemSalesDefaultArea.getAreaCode())) {
+                            ItemSalesAreaDetail itemSalesAreaDetail = new ItemSalesAreaDetail();
+                            itemSalesAreaDetail.setAreaCode(itemSalesDefaultArea.getAreaCode());
+                            itemSalesAreaDetail.setSalesAreaType((itemSalesDefaultArea.getAreaCode().length() / 2) + ""); // 省码2位，市码4位，区位6位；除以2 得到 类型1,2,3
+                            itemSalesAreaDetailList.add(itemSalesAreaDetail);
+                        }
+                    }
                 } else { // 注册所在地的省
-
+                    ItemSalesAreaDetail itemSalesAreaDetail = new ItemSalesAreaDetail();
+                    itemSalesAreaDetail.setAreaCode(areCode);
+                    itemSalesAreaDetail.setSalesAreaType("1");
+                    itemSalesAreaDetailList.add(itemSalesAreaDetail);
+                }
+                Long salesAreaId = null;
+                ItemSalesArea itemSalesAreaFromDb = itemSalesAreaMapper.selectByItemId(itemId, shelfType);
+                if (itemSalesAreaFromDb == null) {
+                    ItemSalesArea itemSalesArea = new ItemSalesArea();
+                    itemSalesArea.setItemId(itemId);
+                    itemSalesArea.setIsBoxFlag(isBoxFlag);
+                    itemSalesArea.setIsSalesWholeCountry(0);
+                    itemSalesArea.setCreateId(0L);
+                    itemSalesArea.setCreateName("system");
+                    itemSalesArea.setCreateTime(new Date());
+                    itemSalesArea.setModifyId(0L);
+                    itemSalesArea.setModifyTime(date);
+                    itemSalesArea.setModifyName("system");
+                    itemSalesArea.setDeleteFlag(0);
+                    itemSalesAreaMapper.insertSelective(itemSalesArea);
+                    salesAreaId = itemSalesArea.getSalesAreaId();
+                } else {
+                    //update
+                    itemSalesAreaFromDb.setSalesAreaId(itemSalesAreaFromDb.getSalesAreaId());
+                    itemSalesAreaFromDb.setModifyId(0L);
+                    itemSalesAreaFromDb.setModifyTime(date);
+                    itemSalesAreaFromDb.setModifyName("system");
+                    itemSalesAreaFromDb.setDeleteFlag(0);
+                    itemSalesAreaMapper.updateByPrimaryKeySelective(itemSalesAreaFromDb);
+                    salesAreaId = itemSalesAreaFromDb.getSalesAreaId();
+                }
+                //处理salesareadetail
+                if (CollectionUtils.isNotEmpty(itemSalesAreaDetailList)) {
+                    for (ItemSalesAreaDetail salesAreaDetail : itemSalesAreaDetailList) {
+                        salesAreaDetail.setItemId(itemId);
+                        salesAreaDetail.setCreateId(0L);
+                        salesAreaDetail.setCreateName("system");
+                        salesAreaDetail.setCreateTime(new Date());
+                        salesAreaDetail.setModifyId(0L);
+                        salesAreaDetail.setModifyTime(date);
+                        salesAreaDetail.setModifyName("system");
+                        salesAreaDetail.setSalesAreaId(salesAreaId);
+                    }
+                    //先删除
+                    itemSalesAreaDetailMapper.deleteBySalesAreaId(salesAreaId);
+                    //再批量插入
+                    itemSalesAreaDetailMapper.batchInsertSalesAreaDetail(itemSalesAreaDetailList);
                 }
                 // 处理商品状态；
-
+                itemMybatisDAO.updateItemStatusByPk(itemId, HtdItemStatusEnum.SHELVED.getCode(), 0l, "system"); //更新主状态为上架
+                //修改商品更新时间
+                itemMybatisDAO.updateItemModifyTimeByItemId(itemId, 1);
             }
             batchOnShelfOutDTO.setFailureList(failureList);
             batchOnShelfOutDTO.setFailCount(failureList.size());
@@ -866,6 +941,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 计算商品名称重复的数量
+     *
      * @param batchAddItemInDTOList
      * @return
      */
@@ -888,10 +964,10 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 根据商品表状态和草稿表状态，计算出给前台的审核状态
+     *
      * @param itemStatus
      * @param status
-     * @param erpCode
-     * // TODO : 魔法数字替换
+     * @param erpCode    // TODO : 魔法数字替换
      * @return
      */
     private Integer getAuditStatus(Integer itemStatus, Integer status, String erpCode) {
@@ -912,7 +988,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             return AuditStatusEnum.MODIFY_AUDIT.getCode();
         }
         // 修改审核驳回
-        if ((itemStatus == 1 || itemStatus == 4 || itemStatus == 5) && status == 2 &&  StringUtils.isNotEmpty(erpCode) && !"0".equals(erpCode)) {
+        if ((itemStatus == 1 || itemStatus == 4 || itemStatus == 5) && status == 2 && StringUtils.isNotEmpty(erpCode) && !"0".equals(erpCode)) {
             return AuditStatusEnum.MODIFY_REJECTED.getCode();
         }
         return null;
@@ -926,8 +1002,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             return executeResult;
         }
         // 校验模板中有没有
-        ItemSpu itemSpu=itemSpuMapper.queryItemSpuByName(itemName);
-        if(itemSpu !=null && itemSpu.getDeleteFlag() != 1) { // 能查到模板且未删除
+        ItemSpu itemSpu = itemSpuMapper.queryItemSpuByName(itemName);
+        if (itemSpu != null && itemSpu.getDeleteFlag() != 1) { // 能查到模板且未删除
             executeResult.setCode(ResultCodeEnum.ERROR.getCode());
             executeResult.setResultMessage("商品主数据已存在，请通过手动方式新增");
             return executeResult;
@@ -1006,6 +1082,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 校验三级类目
+     *
      * @param categoryName
      * @return 00000
      */
@@ -1038,37 +1115,37 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     }
 
     private void makeUpPriceInfo4ItemSku(List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList) {
-        if(CollectionUtils.isEmpty(queryVmsItemPublishInfoOutDTOList)){
+        if (CollectionUtils.isEmpty(queryVmsItemPublishInfoOutDTOList)) {
             return;
         }
-        List<Long> skuIdList=Lists.newArrayList();
-        for(QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList){
-            if(venusItemSkuPublishInfoOutDTO.getSkuId() != null){
+        List<Long> skuIdList = Lists.newArrayList();
+        for (QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
+            if (venusItemSkuPublishInfoOutDTO.getSkuId() != null) {
                 skuIdList.add(venusItemSkuPublishInfoOutDTO.getSkuId());
             }
         }
         ExecuteResult<List<ItemSkuBasePrice>> basePriceList = itemSkuPriceService.batchQueryItemSkuBasePrice(skuIdList);
-        if(basePriceList == null || CollectionUtils.isEmpty(basePriceList.getResult())){
+        if (basePriceList == null || CollectionUtils.isEmpty(basePriceList.getResult())) {
             return;
         }
-        for(QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
-            for(ItemSkuBasePrice price : basePriceList.getResult()) {
-                if(price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())){
+        for (QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
+            for (ItemSkuBasePrice price : basePriceList.getResult()) {
+                if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
                     //分销限价
                     price.getSaleLimitedPrice();
-                    if(price.getSaleLimitedPrice() != null){
+                    if (price.getSaleLimitedPrice() != null) {
                         venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(price.getSaleLimitedPrice()));
                     }
                     //包厢价格
-                    if(null != price.getBoxSalePrice() && "1".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())){
+                    if (null != price.getBoxSalePrice() && "1".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())) {
                         venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getBoxSalePrice()));
                     }
                     //大厅价格
-                    if(null != price.getAreaSalePrice()&& "2".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())){
+                    if (null != price.getAreaSalePrice() && "2".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())) {
                         venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getAreaSalePrice()));
                     }
                     //零售价
-                    if(null != price.getRetailPrice()){
+                    if (null != price.getRetailPrice()) {
                         venusItemSkuPublishInfoOutDTO.setRetailPrice(String.valueOf(price.getRetailPrice()));
                     }
                     break;
@@ -1086,6 +1163,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 
     /**
      * 获取该商品在促销中心占用的库存
+     *
      * @param skuCode
      * @return
      */
@@ -1093,14 +1171,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         Integer promotionQty = 0;
         try {
             ExecuteResult<Integer> timelimitedInfoDTOResult = timelimitedInfoService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), skuCode);
-            if(timelimitedInfoDTOResult!=null && timelimitedInfoDTOResult.isSuccess()){
-                promotionQty = timelimitedInfoDTOResult.getResult()==null ? 0 : timelimitedInfoDTOResult.getResult();
+            if (timelimitedInfoDTOResult != null && timelimitedInfoDTOResult.isSuccess()) {
+                promotionQty = timelimitedInfoDTOResult.getResult() == null ? 0 : timelimitedInfoDTOResult.getResult();
             }
         } catch (Exception e) {
             logger.error(" 获取该商品在促销中心占用的库存出错, 出错信息：", e);
         }
         return promotionQty;
     }
+
     private Map<String, String[]> parseCategoryAttr(String categoryAttr) {
         Map<String, String[]> paresMapResult = new HashMap<>();
         if (StringUtils.isEmpty(categoryAttr)) {

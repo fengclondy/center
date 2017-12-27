@@ -1995,7 +1995,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		ItemStockResponseDTO itemStockResponseDTO=MiddlewareInterfaceUtil.getSingleItemStock(supplierCode, spu.getSpuCode());
 		//if less zero， then zero
 		Integer totalStock = (itemStockResponseDTO==null||itemStockResponseDTO.getStoreNum()<=0) ? 0 : itemStockResponseDTO.getStoreNum();
-		return 1000;
+		return totalStock;
 	}
 	
 	private boolean checkPublishDisplayQtyIsEnough(Integer displayQuantity,Integer reserveQuantity,Long skuId,String shelfType,Long itemId

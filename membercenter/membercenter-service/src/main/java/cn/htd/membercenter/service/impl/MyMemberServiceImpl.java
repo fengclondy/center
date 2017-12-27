@@ -4,12 +4,14 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.dao.MemberBusinessRelationDAO;
+import cn.htd.membercenter.dao.MemberCallCenterDAO;
 import cn.htd.membercenter.dao.MemberModifyVerifyDAO;
 import cn.htd.membercenter.dao.MemberStatusDao;
 import cn.htd.membercenter.dao.MemberVerifyStatusDAO;
@@ -40,6 +43,7 @@ import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
 import cn.htd.membercenter.dto.MemberCountDTO;
+import cn.htd.membercenter.dto.MemberInvoiceDTO;
 import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 import cn.htd.membercenter.dto.MemberRemoveRelationshipDTO;
 import cn.htd.membercenter.dto.MemberUncheckedDTO;
@@ -90,6 +94,9 @@ public class MyMemberServiceImpl implements MyMemberService {
 
 	@Resource
 	private TransactionRelationService transactionRelationService;
+	
+	@Resource
+	private MemberCallCenterDAO memberCallCenterDAO;
 
 	@Override
 	public ExecuteResult<DataGrid<MyMemberDTO>> selectMyMemberList(Pager page, Long sellerId,
@@ -254,16 +261,20 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (memberId != null) {
 				String companyName = myNoMemberDto.getCompanyName();
-				// if (myNoMemberDto.getTaxManId() != null &&
-				// !myNoMemberDto.getTaxManId().equals("")) {
-				// List<MyNoMemberDTO> nmDto =
-				// memberDAO.getNoMemberTaxManId(myNoMemberDto.getTaxManId(),
-				// myNoMemberDto.getMemberId());
-				// if (nmDto != null && nmDto.size() >= 1) {
-				// rs.addErrorMessage("您填写的纳税人识别号已被使用，请重新填写！");
-				// return rs;
-				// }
-				// }
+				MemberInvoiceDTO memberInvoiceDTO = memberCallCenterDAO.queryMemberInvoiceInfo(myNoMemberDto.getMemberCode());
+				if ((!StringUtils.isEmpty(memberInvoiceDTO.getTaxManId()) && !memberInvoiceDTO.getTaxManId().equals(myNoMemberDto.getTaxManId()))
+						||(!StringUtils.isEmpty(memberInvoiceDTO.getBankName()) && !memberInvoiceDTO.getBankName().equals(myNoMemberDto.getBankName()))
+						||(!StringUtils.isEmpty(memberInvoiceDTO.getBankAccount()) && !memberInvoiceDTO.getBankAccount().equals(myNoMemberDto.getBankAccount()))
+						||(!StringUtils.isEmpty(memberInvoiceDTO.getInvoiceAddress()) && !memberInvoiceDTO.getInvoiceAddress().equals(myNoMemberDto.getInvoiceAddress()))
+						||(!StringUtils.isEmpty(memberInvoiceDTO.getContactPhone()) && !memberInvoiceDTO.getContactPhone().equals(myNoMemberDto.getContactPhone()))) {
+					Calendar canModifyTime = Calendar.getInstance();
+					canModifyTime.setTime(memberInvoiceDTO.getModifyTime());
+					canModifyTime.add(Calendar.MONTH, 3);
+					if(new Date().before(canModifyTime.getTime())){
+						rs.addErrorMessage("发票信息三个月内不可再次修改，请重新填写！");
+						return rs;
+					}
+				}
 				if (myNoMemberDto.getTaxManId() != null) {
 					List<MyNoMemberDTO> nmDto = memberDAO.getNoMemberName(myNoMemberDto.getCompanyName(),
 							myNoMemberDto.getMemberId());

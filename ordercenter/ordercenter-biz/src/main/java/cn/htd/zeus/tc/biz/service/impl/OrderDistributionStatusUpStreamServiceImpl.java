@@ -28,6 +28,8 @@ import cn.htd.zeus.tc.biz.service.TradeOrderStatusHistoryService;
 import cn.htd.zeus.tc.common.constant.Constant;
 import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
+import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
+import cn.htd.zeus.tc.common.exception.OrderCenterBusinessException;
 import cn.htd.zeus.tc.common.middleware.MiddlewareHttpUrlConfig;
 import cn.htd.zeus.tc.common.middleware.MiddlewareInterfaceUtil;
 import cn.htd.zeus.tc.common.util.DateUtil;
@@ -93,15 +95,32 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 			
 			callBackMiddleware(distributionId, SUCCESS,"");
 		}catch(Exception e){
-	
-			callBackMiddleware(distributionId, FAIL,"订单系统更新订单状态或者调用http时候发生异常");
-			
-			StringWriter w = new StringWriter();
-		    e.printStackTrace(new PrintWriter(w));
-		    LOGGER.error(w.toString());
+			boolean verifiFlag = verificationOrderExcetion(e);
+			if(verifiFlag){
+				callBackMiddleware(distributionId, SUCCESS,"");
+			}else{
+				callBackMiddleware(distributionId, FAIL,"订单系统更新订单状态或者调用http时候发生异常");
+				StringWriter w = new StringWriter();
+			    e.printStackTrace(new PrintWriter(w));
+			    LOGGER.error(w.toString());
+			}
 		}
 	}
 	
+	private boolean verificationOrderExcetion(Exception e) {
+		if(e instanceof OrderCenterBusinessException){
+			String message1 = ResultCodeEnum.ORDER_STATUS_ERROR.getMsg();
+			String message2 = e.getMessage();
+			if(message1.equals(message2)){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+
 	public void callBackMiddleware(String distributionId,String result,String errormessage){
 		//回调中间件,参数为成功
 		Map<String,String> param = new HashMap<String,String>();
@@ -238,13 +257,13 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	private void updateTradeOrderAndItem(String orderItemNos,String orderNo,String distributionCode){
 		LOGGER.info("分销单状态上行 跟新订单和订单行表开始 orderItemNos:{} orderNo:{} distributionCode:{}","",orderItemNos, orderNo,distributionCode);
 		//xmz for 2017-12-26 start
-		//查询订单状态是否大于等于已发货的状态值，如果是就直接调用callBackMiddleware(distributionCode, SUCCESS,"");return;
+		//查询订单状态是否大于等于已发货的状态值，如果是就直接抛出自定义异常
 		TradeOrdersDMO tradeDMO = tradeOrdersDAO.selectOrderByOrderNo(orderNo);
 		if(null != tradeDMO){
 			int status = Integer.parseInt(tradeDMO.getOrderStatus().substring(0, 2));
 			if(status >= Integer.parseInt(OrderStatusEnum.DELIVERYED.getCode())){
-				callBackMiddleware(distributionCode, SUCCESS,"");
-				return;
+				throw new OrderCenterBusinessException(ResultCodeEnum.ORDER_STATUS_ERROR.getCode(),
+						ResultCodeEnum.ORDER_STATUS_ERROR.getMsg());
 			}
 		}
 		//xmz for 2017-12-26 end

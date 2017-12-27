@@ -2013,12 +2013,15 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		if(displayQuantity<reserveQuantity){
 			return false;
 		}
-		//获得另外一种上架模式数据
-		ItemSkuPublishInfo anotherPublishInfo=itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType.equals("1")?"2":"1","1");
+		//获得另外一种上架模式数据 下架状态取锁定库存
+		ItemSkuPublishInfo anotherPublishInfo = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType.equals("1")?"2":"1","0");
 		
 		Integer anotherPublishInfoDisplayQty=0;
 		if(anotherPublishInfo != null){
-			anotherPublishInfoDisplayQty=anotherPublishInfo.getDisplayQuantity()==null?0:anotherPublishInfo.getDisplayQuantity();
+			anotherPublishInfoDisplayQty = anotherPublishInfo.getIsVisable() == 1 ? anotherPublishInfo.getDisplayQuantity() : anotherPublishInfo.getReserveQuantity();
+			if (anotherPublishInfoDisplayQty == null) {
+				anotherPublishInfoDisplayQty = 0;
+			}
 		}
 		
 		Integer promotionQty=0;//需要获取促销占用的库存数据

@@ -571,11 +571,13 @@
 		info.erp_sync as erpSync,
 		(info.display_quantity-info.reserve_quantity) as avaliableQty,
 		info.mim_quantity as minBuyQty,
-		<if test="shelfType == 2"> <!-- TODO 考虑下架有锁定库存的情况 -->
-		ifnull(info2.display_quantity,0) as boxPublishQty,
+		<if test="shelfType == 2">
+          CASE WHEN info2.is_visable = 1 THEN ifnull(info2.display_quantity,0)
+          ELSE ifnull(info2.reserve_quantity,0) END as boxPublishQty,
 		</if>
-		<if test="shelfType == 1"> <!-- TODO 考虑下架有锁定库存的情况 -->
-		ifnull(info2.display_quantity,0) as areaPublishQty,
+		<if test="shelfType == 1">
+          CASE WHEN info2.is_visable = 1 THEN ifnull(info2.display_quantity,0)
+          ELSE ifnull(info2.reserve_quantity,0) END as areaPublishQty,
 		</if>
 		info.is_purchase_limit as isPurchaseLimit,
 		info.max_purchase_quantity as maxPurchaseQty,
@@ -612,15 +614,9 @@
 		left join item_sku_publish_info info2 on info2.sku_id=sku.sku_id
 		<if test="shelfType == 1">
 		  and info2.is_box_flag='0'
-          <if test="isNewVms == null">
-          and info2.is_visable =1
-          </if>
 		</if>
 		<if test="shelfType == 2">
 		  and info2.is_box_flag='1'
-          <if test="isNewVms == null">
-          and info2.is_visable =1
-          </if>
 		</if>
 		left join item_sku_total_stock stock on t.item_id=stock.item_id
 		where sku.sku_id=#{skuId} limit 1

@@ -63,6 +63,8 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	
 	private static final boolean FLASE = false;
 	
+	private static final String CODE_DUPLICATE_DELIVERED_NOTICE = "CODE_DUPLICATE_DELIVERED_NOTICE";
+	
 	@Autowired
 	private TradeOrderItemStatusHistoryService tradeOrderItemStatusHistoryService;
 	
@@ -95,8 +97,8 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 			
 			callBackMiddleware(distributionId, SUCCESS,"");
 		}catch(Exception e){
-			boolean verifiFlag = verificationOrderExcetion(e);
-			if(verifiFlag){
+			//判断是否重复已发货
+			if(isDuplicateDeliveredNotice(e)){
 				callBackMiddleware(distributionId, SUCCESS,"");
 			}else{
 				callBackMiddleware(distributionId, FAIL,"订单系统更新订单状态或者调用http时候发生异常");
@@ -107,11 +109,10 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		}
 	}
 	
-	private boolean verificationOrderExcetion(Exception e) {
+	private boolean isDuplicateDeliveredNotice(Exception e) {
 		if(e instanceof OrderCenterBusinessException){
-			String message1 = ResultCodeEnum.ORDER_STATUS_ERROR.getMsg();
-			String message2 = e.getMessage();
-			if(message1.equals(message2)){
+			OrderCenterBusinessException exc = (OrderCenterBusinessException) e;
+			if(exc.equals(CODE_DUPLICATE_DELIVERED_NOTICE)){
 				return true;
 			}else{
 				return false;
@@ -262,8 +263,8 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		if(null != tradeDMO){
 			int status = Integer.parseInt(tradeDMO.getOrderStatus().substring(0, 2));
 			if(status >= Integer.parseInt(OrderStatusEnum.DELIVERYED.getCode())){
-				throw new OrderCenterBusinessException(ResultCodeEnum.ORDER_STATUS_ERROR.getCode(),
-						ResultCodeEnum.ORDER_STATUS_ERROR.getMsg());
+				throw new OrderCenterBusinessException(CODE_DUPLICATE_DELIVERED_NOTICE,
+						"重复发货通知标识");
 			}
 		}
 		//xmz for 2017-12-26 end

@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +27,8 @@ import cn.htd.zeus.tc.biz.service.TradeOrderStatusHistoryService;
 import cn.htd.zeus.tc.common.constant.Constant;
 import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
-import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.exception.OrderCenterBusinessException;
 import cn.htd.zeus.tc.common.middleware.MiddlewareHttpUrlConfig;
-import cn.htd.zeus.tc.common.middleware.MiddlewareInterfaceUtil;
 import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.HttpUtil;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
@@ -63,6 +60,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	
 	private static final boolean FLASE = false;
 	
+	// 重复已送货通知消息编码
 	private static final String CODE_DUPLICATE_DELIVERED_NOTICE = "CODE_DUPLICATE_DELIVERED_NOTICE";
 	
 	@Autowired
@@ -99,6 +97,7 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		}catch(Exception e){
 			//判断是否重复已发货
 			if(isDuplicateDeliveredNotice(e)){
+				// 重复通知的时候直接回复中间件成功
 				callBackMiddleware(distributionId, SUCCESS,"");
 			}else{
 				callBackMiddleware(distributionId, FAIL,"订单系统更新订单状态或者调用http时候发生异常");
@@ -109,17 +108,18 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 		}
 	}
 	
+	/*
+	 * 判断是否重复已收货通知
+	 */
 	private boolean isDuplicateDeliveredNotice(Exception e) {
+		boolean result = false;
 		if(e instanceof OrderCenterBusinessException){
 			OrderCenterBusinessException exc = (OrderCenterBusinessException) e;
-			if(exc.equals(CODE_DUPLICATE_DELIVERED_NOTICE)){
-				return true;
-			}else{
-				return false;
+			if(CODE_DUPLICATE_DELIVERED_NOTICE.equals(exc.getCode())){
+				result = true;
 			}
-		}else{
-			return false;
 		}
+		return result;
 	}
 
 	public void callBackMiddleware(String distributionId,String result,String errormessage){

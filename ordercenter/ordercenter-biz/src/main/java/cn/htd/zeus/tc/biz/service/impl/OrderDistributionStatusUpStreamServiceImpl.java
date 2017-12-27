@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +27,8 @@ import cn.htd.zeus.tc.biz.service.TradeOrderStatusHistoryService;
 import cn.htd.zeus.tc.common.constant.Constant;
 import cn.htd.zeus.tc.common.enums.MiddleWareEnum;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
+import cn.htd.zeus.tc.common.exception.OrderCenterBusinessException;
 import cn.htd.zeus.tc.common.middleware.MiddlewareHttpUrlConfig;
-import cn.htd.zeus.tc.common.middleware.MiddlewareInterfaceUtil;
 import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.HttpUtil;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
@@ -60,6 +59,9 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	private static final boolean TRUE = true;
 	
 	private static final boolean FLASE = false;
+	
+	// 重复已送货通知消息编码
+	private static final String CODE_DUPLICATE_DELIVERED_NOTICE = "CODE_DUPLICATE_DELIVERED_NOTICE";
 	
 	@Autowired
 	private TradeOrderItemStatusHistoryService tradeOrderItemStatusHistoryService;
@@ -93,15 +95,33 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 			
 			callBackMiddleware(distributionId, SUCCESS,"");
 		}catch(Exception e){
-	
-			callBackMiddleware(distributionId, FAIL,"订单系统更新订单状态或者调用http时候发生异常");
-			
-			StringWriter w = new StringWriter();
-		    e.printStackTrace(new PrintWriter(w));
-		    LOGGER.error(w.toString());
+			//判断是否重复已发货
+			if(isDuplicateDeliveredNotice(e)){
+				// 重复通知的时候直接回复中间件成功
+				callBackMiddleware(distributionId, SUCCESS,"");
+			}else{
+				callBackMiddleware(distributionId, FAIL,"订单系统更新订单状态或者调用http时候发生异常");
+				StringWriter w = new StringWriter();
+			    e.printStackTrace(new PrintWriter(w));
+			    LOGGER.error(w.toString());
+			}
 		}
 	}
 	
+	/*
+	 * 判断是否重复已收货通知
+	 */
+	private boolean isDuplicateDeliveredNotice(Exception e) {
+		boolean result = false;
+		if(e instanceof OrderCenterBusinessException){
+			OrderCenterBusinessException exc = (OrderCenterBusinessException) e;
+			if(CODE_DUPLICATE_DELIVERED_NOTICE.equals(exc.getCode())){
+				result = true;
+			}
+		}
+		return result;
+	}
+
 	public void callBackMiddleware(String distributionId,String result,String errormessage){
 		//回调中间件,参数为成功
 		Map<String,String> param = new HashMap<String,String>();
@@ -237,6 +257,18 @@ public class OrderDistributionStatusUpStreamServiceImpl implements OrderDistribu
 	 */
 	private void updateTradeOrderAndItem(String orderItemNos,String orderNo,String distributionCode){
 		LOGGER.info("分销单状态上行 跟新订单和订单行表开始 orderItemNos:{} orderNo:{} distributionCode:{}","",orderItemNos, orderNo,distributionCode);
+		//xmz for 2017-12-26 start
+		//查询订单状态是否大于等于已发货的状态值，如果是就直接抛出自定义异常
+		TradeOrdersDMO tradeDMO = tradeOrdersDAO.selectOrderByOrderNo(orderNo);
+		if(null != tradeDMO){
+			int status = Integer.parseInt(tradeDMO.getOrderStatus().substring(0, 2));
+			if(status >= Integer.parseInt(OrderStatusEnum.DELIVERYED.getCode())){
+				throw new OrderCenterBusinessException(CODE_DUPLICATE_DELIVERED_NOTICE,
+						"重复发货通知标识");
+			}
+		}
+		//xmz for 2017-12-26 end
+		
 		String[] orderItemNosArry = orderItemNos.split(",");
 		for(String orderItemNosTemp : orderItemNosArry){
 			//更新订单行表

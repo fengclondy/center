@@ -129,6 +129,7 @@ public class QueryOffShelfItemOutDTO implements Serializable {
     private int otherReserveQuantity; // 其他锁定库存
     //促销占用库存
     private int promtionStock;
+    private String spuCode;
     public int getCurrentDisplayQuantity() {
         return currentDisplayQuantity;
     }
@@ -207,5 +208,13 @@ public class QueryOffShelfItemOutDTO implements Serializable {
 
     public void setPromtionStock(int promtionStock) {
         this.promtionStock = promtionStock;
+    }
+
+    public String getSpuCode() {
+        return spuCode;
+    }
+
+    public void setSpuCode(String spuCode) {
+        this.spuCode = spuCode;
     }
 }

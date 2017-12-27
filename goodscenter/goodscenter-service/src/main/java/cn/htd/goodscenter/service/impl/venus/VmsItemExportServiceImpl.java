@@ -6,6 +6,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.dto.DictionaryInfo;
+import cn.htd.common.middleware.MiddlewareInterfaceUtil;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.common.util.MessageIdUtils;
 import cn.htd.goodscenter.common.constants.Constants;
@@ -678,8 +679,27 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     queryOffShelfItemOutDTO.setAviableStock(aviableStock);
                     queryOffShelfItemOutDTO.setMinStock(minStock);
                     queryOffShelfItemOutDTO.setPromtionStock(promotionStock);
-                    // TODO : erp零售价
-//                    ExecuteResult<ItemSkuBasePriceDTO> this.itemSkuPriceService.queryItemSkuBasePrice(queryOffShelfItemOutDTO.getSkuId());
+                    // 价格
+                    String spuCode = queryOffShelfItemOutDTO.getSpuCode();
+                    BigDecimal saleLimitPrice = null;
+                    BigDecimal wsaleUtprice = null;
+                    if (StringUtils.isNotEmpty(spuCode)) {
+                        Map priceMap = MiddlewareInterfaceUtil.findItemERPPrice(supplierCode, spuCode);
+                        if (MapUtils.isNotEmpty(priceMap)) {
+                            saleLimitPrice = priceMap.get("floorPrice") != null ? new BigDecimal((String) priceMap.get("floorPrice")) : null;
+                            wsaleUtprice = priceMap.get("wsaleUtprice") != null ? new BigDecimal((String) priceMap.get("wsaleUtprice")) : null;
+                        }
+                    }
+                    queryOffShelfItemOutDTO.setSaleLimitedPrice(saleLimitPrice);
+                    queryOffShelfItemOutDTO.setWsaleUtprice(wsaleUtprice);
+                    ExecuteResult<ItemSkuBasePriceDTO> priceResult =  this.itemSkuPriceService.queryItemSkuBasePrice(queryOffShelfItemOutDTO.getSkuId());
+                    if (priceResult != null && priceResult.isSuccess()) {
+                        ItemSkuBasePriceDTO itemSkuBasePriceDTO = priceResult.getResult();
+                        if (itemSkuBasePriceDTO != null) {
+                            queryOffShelfItemOutDTO.setSalePrice(queryOffShelfItemInDTO.getIsBoxFlag() == 0 ? itemSkuBasePriceDTO.getAreaSalePrice() : itemSkuBasePriceDTO.getBoxSalePrice());
+                            queryOffShelfItemOutDTO.setRetailPrice(itemSkuBasePriceDTO.getRetailPrice());
+                        }
+                    }
                 }
             }
             dtoDataGrid.setTotal(count);

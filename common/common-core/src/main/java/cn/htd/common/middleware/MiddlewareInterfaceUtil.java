@@ -416,7 +416,35 @@ public class MiddlewareInterfaceUtil {
 		}
 		return null;
 	}
-	
+
+	public static Map findItemERPPrice(String supplierCode,String itemSpuCode){
+		if(StringUtils.isEmpty(supplierCode)||StringUtils.isEmpty(itemSpuCode)){
+			return null;
+		}
+		try{
+			String accessToken = MiddlewareInterfaceUtil.getAccessToken();
+			String param = "?supplierCode=" + supplierCode + "&productCode=" + itemSpuCode + "&token=" + accessToken;
+			String responseJson = MiddlewareInterfaceUtil
+					.httpGet(MiddlewareInterfaceConstant.MIDDLEWARE_GET_PROD_PRICE_URL + param, Boolean.TRUE);
+
+			if(StringUtils.isEmpty(responseJson)){
+				return null;
+			}
+			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+			if(map.get("code")==null||!String.valueOf(map.get("code")).equals("1")){
+				return null;
+			}
+			if(map.get("data")==null){
+				return null;
+			}
+			Map dataMap = JSONObject.fromObject(map.get("data"));
+			return dataMap;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public static JdItemPriceResponseDTO getJdItemRealPrice(String jdSkuId){
 		if(StringUtils.isEmpty(jdSkuId)){
 			return null;

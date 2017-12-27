@@ -1388,7 +1388,8 @@
 		ifnull(total.inventory - total.reserve_quantity, 0) AS totalStock,
 		t.item_status AS itemStatus,
 		ifnull(publish.is_visable, 0) AS currentIsVisable,
-		ifnull(publish1.is_visable, 0) AS otherIsVisable
+		ifnull(publish1.is_visable, 0) AS otherIsVisable,
+		spu.spu_code AS spuCode
 		FROM
 		item_sku sku
 		JOIN item t ON sku.item_id = t.item_id
@@ -1403,6 +1404,7 @@
 			AND publish1.is_box_flag = 0
 		</if>
 		LEFT JOIN item_sku_total_stock total ON total.item_id = t.item_id
+		LEFT JOIN item_spu spu ON spu.spu_id = t.item_spu_id
 		WHERE
 		1 = 1
 		AND t.item_status IN (1, 4, 5)

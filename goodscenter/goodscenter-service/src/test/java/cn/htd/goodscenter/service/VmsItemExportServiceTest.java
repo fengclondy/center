@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VmsItemExportServiceTest extends CommonTest {
 
@@ -166,7 +168,30 @@ public class VmsItemExportServiceTest extends CommonTest {
         Pager pager = new Pager();
         ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>>  executeResult = this.vmsItemExportService.queryOffShelfItemBySellerId(queryOffShelfItemInDTO, null);
         System.out.println(JSON.toJSONString(executeResult));
+    }
 
+    public void testbatchOnShelves() {
+        BatchOnShelfInDTO batchOnShelfInDTO = new BatchOnShelfInDTO();
+        batchOnShelfInDTO.setSellerId(17606L);
+        batchOnShelfInDTO.setIsBoxFlag(1);
+        batchOnShelfInDTO.setHasBelowLimitPriceAuth(0);
+        batchOnShelfInDTO.setBatchOnShelfType(1);
+        batchOnShelfInDTO.setDefaultAreaCode("32");
+//        batchOnShelfInDTO.setRatio();
 
+        List<BatchOnShelfItemInDTO> dataList = new ArrayList<>();
+        BatchOnShelfItemInDTO batchOnShelfItemInDTO = new BatchOnShelfItemInDTO();
+        batchOnShelfItemInDTO.setItemId(262613L);
+        batchOnShelfItemInDTO.setItemCode("10026434");
+        batchOnShelfItemInDTO.setItemName("海尔冰箱测试");
+        batchOnShelfItemInDTO.setSkuId(257745l);
+        batchOnShelfItemInDTO.setSkuCode("1000026531");
+        batchOnShelfItemInDTO.setAviableStock(59996);
+        batchOnShelfItemInDTO.setMinStock(19);
+        batchOnShelfItemInDTO.setOnShelfQuantiy(20);
+//        batchOnShelfItemInDTO.setSaleLimitedPrice();
+        dataList.add(batchOnShelfItemInDTO);
+        batchOnShelfInDTO.setDataList(dataList);
+        this.vmsItemExportService.batchOnShelves(batchOnShelfInDTO);
     }
 }

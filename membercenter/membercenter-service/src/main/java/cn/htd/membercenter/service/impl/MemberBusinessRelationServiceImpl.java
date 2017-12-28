@@ -22,6 +22,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.ItemBrand;
+import cn.htd.goodscenter.dto.ItemBrandDTO;
 import cn.htd.goodscenter.dto.ItemCategoryDTO;
 import cn.htd.goodscenter.service.ItemBrandExportService;
 import cn.htd.goodscenter.service.ItemCategoryService;
@@ -78,7 +79,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 						.queryMemberBusinessRelationListInfoCount(memberBusinessRelationDTO);
 				try {
 					if (businessList != null) {
-						dg.setRows(setValue4Relation(businessList));
+						// dg.setRows(setValue4Relation(businessList));
+						dg.setRows(setValue4RelationBatch(businessList));
 						dg.setTotal(count);
 						rs.setResult(dg);
 					} else {
@@ -152,7 +154,9 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 
 				try {
 					if (MapUtils.isNotEmpty(map)) {
-						dg.setRows(setValue4Relation((List<MemberBusinessRelationDTO>) map.get("relationList")));
+						// dg.setRows(setValue4Relation((List<MemberBusinessRelationDTO>)
+						// map.get("relationList")));
+						dg.setRows(setValue4RelationBatch((List<MemberBusinessRelationDTO>) map.get("relationList")));
 						dg.setTotal(Long.valueOf(map.get("total").toString()));
 						rs.setResult(dg);
 					} else {
@@ -453,14 +457,14 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 		try {
 			String sellerId = memberBusinessRelationDTO.getSellerId();
 			if (StringUtils.isNotBlank(sellerId)) {
-				//memberBusinessRelationDTO.setAuditStatus(AuditStatusEnum.PASSING_AUDIT.getCode());
+				// memberBusinessRelationDTO.setAuditStatus(AuditStatusEnum.PASSING_AUDIT.getCode());
 				memberBusinessRelationDTO.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
 				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
 						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				try {
 					if (businessList != null) {
 						setValue4Relation(businessList);
-					}else{
+					} else {
 						rs.setResultMessage("要查询的数据不存在");
 					}
 					rs.setResultMessage("success");
@@ -481,7 +485,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 
 	@Override
 	public ExecuteResult<DataGrid<MemberBusinessRelationDTO>> queryMemberBussinessByCategoryId(
-			MemberBusinessRelationDTO dto , Pager<MemberBusinessRelationDTO> pager) {
+			MemberBusinessRelationDTO dto, Pager<MemberBusinessRelationDTO> pager) {
 		ExecuteResult<DataGrid<MemberBusinessRelationDTO>> rs = new ExecuteResult<DataGrid<MemberBusinessRelationDTO>>();
 		try {
 			DataGrid<MemberBusinessRelationDTO> dg = new DataGrid<MemberBusinessRelationDTO>();
@@ -491,8 +495,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 				dto.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
 				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
 						.queryMemberBussinessByCategoryId(dto, pager);
-				long count = memberBusinessRelationDAO
-						.countQueryMemberBussinessByCategoryId(dto);
+				long count = memberBusinessRelationDAO.countQueryMemberBussinessByCategoryId(dto);
 				try {
 					if (businessList != null) {
 						dg.setRows(setValue4Relation(businessList));
@@ -516,5 +519,52 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", e.getMessage()));
 		}
 		return rs;
+	}
+
+	/**
+	 * 优化经营关系查询方法（根据品牌品类id查询name）
+	 * 
+	 * @author li.jun
+	 * @time 2017-12-28
+	 * @param businessList
+	 * @return
+	 */
+	private List<MemberBusinessRelationDTO> setValue4RelationBatch(List<MemberBusinessRelationDTO> businessList) {
+
+		// 品类id列表
+		List<Long> cidList = new ArrayList<Long>();
+		// 品牌id列表
+		List<Long> ids = new ArrayList<Long>();
+		for (MemberBusinessRelationDTO mbr : businessList) {
+			ids.add(mbr.getBrandId());
+			cidList.add(mbr.getCategoryId());
+		}
+		ExecuteResult<List<ItemCategoryDTO>> categoryResult = itemCategoryService.getCategoryListByCids(cidList);
+		ExecuteResult<List<ItemBrandDTO>> itemResult = itemBrandExportService
+				.queryItemBrandByIds(ids.toArray(new Long[0]));
+		List<ItemCategoryDTO> categoryList = categoryResult.getResult();
+		List<ItemBrandDTO> itemList = itemResult.getResult();
+		// 循环取品类名称
+		if (categoryList != null && categoryList.size() > 0) {
+			for (MemberBusinessRelationDTO mbr : businessList) {
+				for (ItemCategoryDTO category : categoryList) {
+					if (mbr.getCategoryId() == category.getCategoryCid()) {
+						mbr.setCategoryName(category.getCategoryCName());
+					}
+				}
+			}
+		}
+		// 循环取品牌名称
+		if (itemList != null && itemList.size() > 0) {
+			for (MemberBusinessRelationDTO mbr : businessList) {
+				for (ItemBrandDTO item : itemList) {
+					if (mbr.getBrandId() == item.getBrandId()) {
+						mbr.setBrandName(item.getBrandName());
+					}
+				}
+			}
+		}
+
+		return businessList;
 	}
 }

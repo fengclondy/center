@@ -33,7 +33,8 @@ public class VmsItemExportServiceTest extends CommonTest {
     @Test
     public void testQueryMyItemList() {
         QueryVmsMyItemListInDTO queryVmsMyItemListInDTO = new QueryVmsMyItemListInDTO();
-        queryVmsMyItemListInDTO.setSellerId(517L);
+        queryVmsMyItemListInDTO.setSellerId(17606L);
+        queryVmsMyItemListInDTO.setAuditStatus(0);
 //        queryVmsMyItemListInDTO.setProductCode("10018231");
 //        queryVmsMyItemListInDTO.setAuditStatus(3);
 //        queryVmsMyItemListInDTO.setBrandName("五粮液");
@@ -100,14 +101,14 @@ public class VmsItemExportServiceTest extends CommonTest {
         venusItemDTO.setThirdLevelCategoryId(366L);
         venusItemDTO.setBrandId(367L);
         venusItemDTO.setSerial("型号");
-        venusItemDTO.setProductName("苹果手机IPHONE-X(580G)");
+        venusItemDTO.setProductName("苹果手机IPHONE-X(5888G)");
         venusItemDTO.setUnit("tai");
         venusItemDTO.setTaxRate("0.17");
         venusItemDTO.setOperatorId(0L);
         venusItemDTO.setOperatorName("CHENKANG");
         venusItemDTO.setHtdVendorId(517L);
-        venusItemDTO.setShopId(425L);
-        venusItemDTO.setShopCid(6065L);
+        venusItemDTO.setShopId(532L);
+        venusItemDTO.setShopCid(0L);
         ItemDescribe itemDescribe = new ItemDescribe();
         venusItemDTO.setDescribe(itemDescribe);
         ExecuteResult<String>  executeResult = this.vmsItemExportService.addItem(venusItemDTO);

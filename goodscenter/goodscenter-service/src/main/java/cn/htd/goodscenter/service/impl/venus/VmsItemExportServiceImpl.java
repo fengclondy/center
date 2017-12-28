@@ -152,6 +152,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040010.getErrorMsg()));
                 return result;
             }
+            if (StringUtils.isEmpty(queryVmsMyItemListInDTO.getProductCode())) {
+                queryVmsMyItemListInDTO.setProductCode(null);
+            }
+            if (StringUtils.isEmpty(queryVmsMyItemListInDTO.getProductName())) {
+                queryVmsMyItemListInDTO.setProductName(null);
+            }
+            if (StringUtils.isEmpty(queryVmsMyItemListInDTO.getBrandName())) {
+                queryVmsMyItemListInDTO.setBrandName(null);
+            }
             // 封装三级类目集合
             Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsMyItemListInDTO.getFirstCategoryId(),
                     queryVmsMyItemListInDTO.getSecCategoryId(), queryVmsMyItemListInDTO.getThirdCategoryId());
@@ -203,12 +212,12 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     /**
      * 我的商品 - 商品详情
      *
-     * @param itemSkuId
+     * @param skuId
      * @return
      */
     @Override
-    public ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long itemSkuId) {
-        return this.venusItemExportService.queryItemSkuDetail(itemSkuId);
+    public ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long skuId) {
+        return this.venusItemExportService.queryItemSkuDetail(skuId);
     }
 
     @Override

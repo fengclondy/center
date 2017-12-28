@@ -10,6 +10,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.goodscenter.dao.spu.ItemSpuDescribeMapper;
+import cn.htd.goodscenter.dao.spu.ItemSpuPictureMapper;
+import cn.htd.goodscenter.domain.spu.ItemSpuDescribe;
+import cn.htd.goodscenter.domain.spu.ItemSpuPicture;
+import cn.htd.goodscenter.service.converter.Converters;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -175,7 +180,10 @@ public class ItemExportServiceImpl implements ItemExportService {
 	private ItemSalesAreaDetailMapper itemSalesAreaDetailMapper;
 	@Autowired
 	private AddressUtils addressUtil;
-
+	@Resource
+	private ItemSpuDescribeMapper itemSpuDescribeMapper;
+	@Resource
+	private ItemSpuPictureMapper itemSpuPictureMapper;
 	/**
 	 * <p>
 	 * Discription:[方法功能中文描述:批量修改商品状态]
@@ -2686,49 +2694,56 @@ public class ItemExportServiceImpl implements ItemExportService {
 				result.addErrorMessage("ModifyName为空！");
 				return result;
 			}
-
 			ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemDTO.getItemId());
 			if (dbItem == null) {
 				result.addErrorMessage("没有查询到该商品信息！");
 				return result;
 			}
-
+			ItemSpu itemSpu = null;
 			Integer itemStatus = itemDTO.getItemStatus();
-			ItemSpu itemSpu = itemSpuMapper.selectByPrimaryKey(Long.valueOf(dbItem.getItemSpuId()));
-
-			if (itemSpu == null) {
-				result.addErrorMessage("itemSpu为空！");
-				return result;
-			}
 			if (itemStatus != null && itemStatus.equals(HtdItemStatusEnum.PASS.getCode())) {
-
 				if (StringUtils.isEmpty(itemDTO.getErpFirstCategoryCode())) {
 					result.addErrorMessage("getErpFirstCategoryCode为空！");
 					return result;
 				}
-
 				if (StringUtils.isEmpty(dbItem.getErpFirstCategoryCode())) {
 					dbItem.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
 				}
-
-				if (StringUtils.isEmpty(dbItem.getErpFiveCategoryCode())
-						&& StringUtils.isEmpty(itemDTO.getErpFiveCategoryCode())) {
+				if (StringUtils.isEmpty(dbItem.getErpFiveCategoryCode()) && StringUtils.isEmpty(itemDTO.getErpFiveCategoryCode())) {
 					result.addErrorMessage("ErpFiveCategoryCode为空！");
 					return result;
 				}
-
 				if (StringUtils.isEmpty(dbItem.getErpFiveCategoryCode())) {
 					dbItem.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 				}
-
-				itemMybatisDAO.updateAuditStatusChangeReason("", itemDTO.getItemId());
 				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
+				// 没有模板说明是新增商品，还未设置模板；此处选择模板
+				itemSpu = itemSpuMapper.selectByPrimaryKey(Long.valueOf(dbItem.getItemSpuId()));
+				if (itemSpu == null) {
+					//自动创建一条商品SPU
+					itemSpu = doAddItemSpu(itemDTO.getItemId());
+					Long spuId = itemSpu.getSpuId();
+					//税率一致校验
+					if (itemSpu.getTaxRate() != null && itemSpu.getTaxRate().compareTo(dbItem.getTaxRate()) != 0) {
+						result.addErrorMessage("税率和模板" + itemSpu.getSpuCode() + "的税率不一致!");
+						return result;
+					}
+					// 给item和itemDraft设置模板ID
+					ItemDTO itemParam = new ItemDTO();
+					itemParam.setItemSpuId(Integer.valueOf(spuId + ""));
+					itemParam.setItemId(itemDTO.getItemId());
+					this.itemMybatisDAO.updateItem(itemParam);
+					ItemDraft itemDraftParam = new ItemDraft();
+					itemDraftParam.setItemSpuId(spuId);
+					itemDraftParam.setItemDraftId(itemDraft.getItemDraftId());
+					this.itemDraftMapper.updateByPrimaryKeySelective(itemDraftParam);
+				}
+				itemMybatisDAO.updateAuditStatusChangeReason("", itemDTO.getItemId());
 				if (null != itemDraft) {
 					itemDraft.setVerifyStatus(1);
 					itemDraft.setVerifyName(itemDTO.getModifyName());
 					itemDraftMapper.updateItemDraftVerifyStatusByPrimaryKey(itemDraft);
-
-					if (itemDraft.getItemSpuId() != null) {
+					if (itemDraft.getItemSpuId() != null && itemDraft.getItemSpuId() > 0) {
 						itemSpu = itemSpuMapper.selectByPrimaryKey(itemDraft.getItemSpuId());
 					}
 				}
@@ -2742,8 +2757,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 				// Integer mainStatus=itemStatus;
 				if (dbItem.getItemStatus() != HtdItemStatusEnum.SHELVED.getCode()) {
 					// mainStatus=HtdItemStatusEnum.SHELVED.getCode();
-					itemMybatisDAO.updateItemStatusByPk(itemDTO.getItemId(), itemStatus, itemDTO.getModifyId(),
-							itemDTO.getModifyName());
+					itemMybatisDAO.updateItemStatusByPk(itemDTO.getItemId(), itemStatus, itemDTO.getModifyId(), itemDTO.getModifyName());
 				}
 
 				if (StringUtils.isNotEmpty(itemDTO.getStatusChangeReason())) {
@@ -2760,16 +2774,16 @@ public class ItemExportServiceImpl implements ItemExportService {
 			}
 			// 修改了erp的一级和五级类目
 			Item tempItem = new Item();
-			if (StringUtils.isNotEmpty(itemDTO.getErpFirstCategoryCode())) {
-				tempItem.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
-				itemSpu.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
-			}
-			if (StringUtils.isNotEmpty(itemDTO.getErpFiveCategoryCode())) {
+			if (StringUtils.isNotEmpty(itemDTO.getErpFirstCategoryCode()) && StringUtils.isNotEmpty(itemDTO.getErpFiveCategoryCode())) {
 				tempItem.setItemId(itemDTO.getItemId());
+				tempItem.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
 				tempItem.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
-				itemSpu.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
 				itemMybatisDAO.updateFirstAndFiveCategoryCodeByItemId(tempItem);
-				itemSpuMapper.updateBySpuIdSelective(itemSpu);
+				if (itemSpu != null) {
+					itemSpu.setErpFirstCategoryCode(itemDTO.getErpFirstCategoryCode());
+					itemSpu.setErpFiveCategoryCode(itemDTO.getErpFiveCategoryCode());
+					itemSpuMapper.updateBySpuIdSelective(itemSpu);
+				}
 			}
 			result.setResult(itemDTO);
 		} catch (Exception e) {
@@ -2849,6 +2863,49 @@ public class ItemExportServiceImpl implements ItemExportService {
 		mqSendUtil.sendToMQWithRoutingKey(productMessage, MQRoutingKeyConstant.ITEM_DOWN_ERP_ROUTING_KEY);
 		itemMybatisDAO.updateErpStatus(dbItem.getItemId(), ItemErpStatusEnum.DOWNING.getCode(), "");
 		LOGGER.info("ERPdoItemDownErp end " + itemSpu.getSpuCode());
+	}
+
+	private ItemSpu doAddItemSpu(Long itemId) {
+		//根据名称去spu表判断一下，该商品是否已经存在，如果不存在，则要新加一条spu数据
+		Item item = this.itemMybatisDAO.queryItemByPk(itemId);
+		ItemSpu itemSpu = itemSpuMapper.queryItemSpuByName(item.getItemName());
+		if(itemSpu == null || itemSpu.getDeleteFlag() == 1){ // 判断模板是否已经删除
+			//新生成一份spu的数据
+			itemSpu = Converters.convert(item, ItemSpu.class);
+			itemSpuMapper.insertSelective(itemSpu);
+			//图片
+			List<ItemPicture> itemPictureList = this.itemPictureDAO.queryItemPicsById(item.getItemId());
+			List<ItemSpuPicture> itemSpuPicturelist=Lists.newArrayList();
+			if(CollectionUtils.isNotEmpty(itemSpuPicturelist)){
+				for(ItemPicture picture : itemPictureList){
+					ItemSpuPicture itemSpuPicture=new ItemSpuPicture();
+					itemSpuPicture.setSpuId(itemSpu.getSpuId());
+					itemSpuPicture.setIsFirst(picture.getIsFirst());
+					itemSpuPicture.setModifyId(0L);
+					itemSpuPicture.setModifyName("system");
+					itemSpuPicture.setModifyTime(new Date());
+					itemSpuPicture.setPictureUrl(picture.getPictureUrl());
+					itemSpuPicture.setSortNum(picture.getSortNumber()==null?0:picture.getSortNumber());
+					itemSpuPicture.setCreateTime(new Date());
+					itemSpuPicture.setCreateId(0L);
+					itemSpuPicture.setCreateName("system");
+					itemSpuPicturelist.add(itemSpuPicture);
+				}
+				itemSpuPictureMapper.batchInsert(itemSpuPicturelist);
+			}
+			ItemDescribe itemDescribe = this.itemDescribeDAO.getDescByItemId(item.getItemId());
+			//描述
+			ItemSpuDescribe itemSpuDescribe= new ItemSpuDescribe();
+			itemSpuDescribe.setSpuId(itemSpu.getSpuId());
+			itemSpuDescribe.setSpuDesc(itemDescribe.getDescribeContent());
+			itemSpuDescribe.setCreateTime(new Date());
+			itemSpuDescribe.setCreateId(0L);
+			itemSpuDescribe.setCreateName("system");
+			itemSpuDescribeMapper.insertSelective(itemSpuDescribe);
+		} else {
+			item.setApplyInSpu(true);
+		}
+		return itemSpu;
 	}
 
 	/**

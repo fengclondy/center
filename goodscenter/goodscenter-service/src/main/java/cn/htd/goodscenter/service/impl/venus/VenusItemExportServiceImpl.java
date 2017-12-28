@@ -180,15 +180,15 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		try{
 			//DTO转化为domain
 			Item item=Converters.convert(venusItemDTO, Item.class);
-			//自动创建一条商品SPU
-			ItemSpu itemSpu = doAddItemSpu(venusItemDTO, item);
-			item.setItemSpuId(itemSpu.getSpuId());
-			//税率一致校验
-			if (itemSpu.getTaxRate().compareTo(item.getTaxRate()) != 0) {
-				result.setCode(VenusErrorCodes.E1040020.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040020.getErrorMsg()));
-				return result;
-			}
+//			//自动创建一条商品SPU
+//			ItemSpu itemSpu = doAddItemSpu(venusItemDTO, item);
+//			item.setItemSpuId(itemSpu.getSpuId());
+//			//税率一致校验
+//			if (itemSpu.getTaxRate().compareTo(item.getTaxRate()) != 0) {
+//				result.setCode(VenusErrorCodes.E1040020.name());
+//				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040020.getErrorMsg()));
+//				return result;
+//			}
 			//存储item到数据库
 		    itemMybatisDAO.addItem(item);
 			//生成SKU
@@ -305,6 +305,9 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	    describe.setModifyTime(new Date());
 	    describe.setModifyId(venusItemDTO.getOperatorId());
 	    describe.setModifyName(venusItemDTO.getOperatorName());
+	    if (StringUtils.isEmpty(describe.getDescribeContent())) {
+			describe.setDescribeContent("");
+		}
 	    itemDescribeDAO.insertSelective(describe);
 	}
 

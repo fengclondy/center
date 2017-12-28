@@ -713,7 +713,6 @@
       modify_time = now(),
     </set>
     where order_no = #{orderNo,jdbcType=VARCHAR}
-      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
   </update>
   <update id="updateTradeOrdersErpDownStatusInfo" parameterType="cn.htd.tradecenter.dto.TradeOrdersDTO" >
     update trade_orders

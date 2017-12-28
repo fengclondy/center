@@ -2512,7 +2512,28 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		tradeOrderDTO.setModifyName(tradeOrderConfirmDTO.getOperatorName());
 		tradeOrderDTO.setModifyTime(DateUtils.getSystemTime());
 		tradeOrderDTO.setConfirmTime(DateUtils.getSystemTime());
+		// 更新订单状态以及日志
 		orderDAO.updateTradeOrdersStatusInfo(tradeOrderDTO);
+		logger.info("********* 确认订单更新订单状态:" + JSON.toJSONString(tradeOrderDTO) + " **********");
+		List<TradeOrderItemsDTO> itemList = tradeOrdersDTO.getOrderItemList();
+		Map<String, DictionaryInfo> dictMap = baseService.getTradeOrderDictionaryMap();
+		// 更新订单行状态以及日志
+		for(TradeOrderItemsDTO itemsDTO : itemList){
+			itemsDTO.setModifyId(tradeOrderConfirmDTO.getOperatorId());
+			itemsDTO.setModifyName(tradeOrderConfirmDTO.getOperatorName());
+			itemsDTO.setOrderItemStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,
+					DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+			orderItemsDAO.updateTradeOrderItemsStatusInfo(itemsDTO);
+			TradeOrderItemsStatusHistoryDTO itemsStatusHistoryDTO = new TradeOrderItemsStatusHistoryDTO();
+			itemsStatusHistoryDTO.setOrderItemNo(itemsDTO.getOrderItemNo());
+			itemsStatusHistoryDTO.setOrderItemStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,
+					DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+			itemsStatusHistoryDTO.setOrderItemStatusText(baseService.getDictNameByCode(dictMap,
+					DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+			itemsStatusHistoryDTO.setCreateId(tradeOrderConfirmDTO.getOperatorId());
+			itemsStatusHistoryDTO.setCreateName(tradeOrderConfirmDTO.getOperatorName());
+			itemStatusHistoryDAO.addOrderItemsStatusHistory(itemsStatusHistoryDTO);
+		}
 		TradeOrderStatusHistoryDTO orderStatusHistoryDTO = new TradeOrderStatusHistoryDTO();
 		orderStatusHistoryDTO.setOrderNo(orderNo);
 		orderStatusHistoryDTO.setOrderStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,

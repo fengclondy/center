@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.aliyun.oss.common.utils.DateUtil;
 import com.google.common.collect.Lists;
 
 import cn.htd.basecenter.common.constant.ReturnCodeConst;
@@ -46,6 +48,7 @@ import cn.htd.basecenter.service.email.SendMailClient;
 import cn.htd.basecenter.service.sms.ManDaoSmsClient;
 import cn.htd.basecenter.service.sms.TianXunTongSmsClient;
 import cn.htd.common.ExecuteResult;
+import cn.htd.common.dao.util.RedisDB;
 
 @Service("sendSmsEmailService")
 public class SendSmsEmailServiceImpl implements SendSmsEmailService {
@@ -63,7 +66,12 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
      * 读取配置文件预警上限数
      */
     private static final String NOTICE_SMS_BALANCE = "notice_sms_balance";
-
+    
+    /**
+     * 累计1小时内短信超过限制标识
+     */
+    private static final String CODE_CUMULATIVE_EXCEED_LIMIT = "CUMULATIVE_EXCEED_LIMIT";
+    
 	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
 
@@ -84,6 +92,9 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 
 	@Resource
 	private SendMailClient sendMailClient;
+	
+	@Resource
+	private RedisDB redisDB;
 
 	@Override
 	public ExecuteResult<String> sendEmail(SendEmailDTO sendEmailDTO) {
@@ -222,6 +233,8 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 				} else if (SmsChannelTypeEnum.MENGWANG.getCode().equals(config.getChannelCode())) {
 					result = mengWangSmsClient.sendSms(config, phoneNum, content);
 				}
+				//在一个小时之内，统计发送短信的条数，超过10万条则关闭短信通道
+				isCumulativeExceedLimit(phoneNum, config);
 			}
 		} catch (BaseCenterBusinessException bcbe) {
 			hasError = true;
@@ -240,6 +253,15 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 			baseSendMessageDAO.add(message);
 		}
 		return result;
+	}
+	
+	private void isCumulativeExceedLimit(String phoneNum, BaseSmsConfigDTO config){
+		String[] phoneNumSplit = phoneNum.split(",");
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.HOUR, +1);
+		//String afterDate = DateUtil.
+		//Long cumulativeLimit = redisDB.incrBy(CODE_CUMULATIVE_EXCEED_LIMIT, phoneNumSplit.length);
+		
 	}
 
 	/**

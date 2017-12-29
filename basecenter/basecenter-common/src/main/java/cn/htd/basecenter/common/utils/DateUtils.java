@@ -19,7 +19,8 @@ public class DateUtils {
 
 	public static final String DATEFORMAT = "yyyy-MM-dd";
 	public static final String TIMEFORMAT = "yyyy-MM-dd HH:mm:ss";
-
+	public static final SimpleDateFormat DATEHH = new SimpleDateFormat("yyyy-MM-dd HH");
+	
 	/**
 	 * 字符串转换为Date
 	 * 

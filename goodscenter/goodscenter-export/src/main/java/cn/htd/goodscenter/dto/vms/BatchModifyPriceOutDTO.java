@@ -1,21 +1,18 @@
 package cn.htd.goodscenter.dto.vms;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * 批量上架DTO
  */
-public class BatchOnShelfOutDTO implements Serializable {
-
-    private int total;
+public class BatchModifyPriceOutDTO implements Serializable {
 
     private int success;
 
     private int failCount;
 
-    private List<BatchOnShelfItemOutDTO> failureList;
+    private List<BatchModifyPriceItemOutDTO> failureList;
 
     public int getSuccess() {
         return success;
@@ -33,19 +30,11 @@ public class BatchOnShelfOutDTO implements Serializable {
         this.failCount = failCount;
     }
 
-    public List<BatchOnShelfItemOutDTO> getFailureList() {
+    public List<BatchModifyPriceItemOutDTO> getFailureList() {
         return failureList;
     }
 
-    public void setFailureList(List<BatchOnShelfItemOutDTO> failureList) {
+    public void setFailureList(List<BatchModifyPriceItemOutDTO> failureList) {
         this.failureList = failureList;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
     }
 }

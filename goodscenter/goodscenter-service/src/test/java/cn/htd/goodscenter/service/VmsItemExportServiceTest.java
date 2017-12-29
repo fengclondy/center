@@ -171,6 +171,7 @@ public class VmsItemExportServiceTest extends CommonTest {
         System.out.println(JSON.toJSONString(executeResult));
     }
 
+    @Test
     public void testbatchOnShelves() {
         BatchOnShelfInDTO batchOnShelfInDTO = new BatchOnShelfInDTO();
         batchOnShelfInDTO.setSellerId(17606L);
@@ -190,7 +191,8 @@ public class VmsItemExportServiceTest extends CommonTest {
         batchOnShelfItemInDTO.setAviableStock(59996);
         batchOnShelfItemInDTO.setMinStock(19);
         batchOnShelfItemInDTO.setOnShelfQuantiy(20);
-//        batchOnShelfItemInDTO.setSaleLimitedPrice();
+        batchOnShelfItemInDTO.setSaleLimitedPrice(new BigDecimal("1000"));
+        batchOnShelfItemInDTO.setWsaleUtprice(new BigDecimal("1010"));
         dataList.add(batchOnShelfItemInDTO);
         batchOnShelfInDTO.setDataList(dataList);
         this.vmsItemExportService.batchOnShelves(batchOnShelfInDTO);

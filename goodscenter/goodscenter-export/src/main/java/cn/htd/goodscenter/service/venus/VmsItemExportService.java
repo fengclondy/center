@@ -152,4 +152,19 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<BatchOnShelfOutDTO> batchOnShelves(BatchOnShelfInDTO batchOnShelfInDTO);
+
+    /**
+     * 批量改价
+     */
+    ExecuteResult<BatchModifyPriceOutDTO> batchModifyItemPrice(BatchModifyPriceInDTO batchModifyPriceInDTO);
+
+    /**
+     * 查询默认销售区域
+     */
+    ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId);
+
+    /**
+     * 设置默认销售区域
+     */
+    ExecuteResult<String> setDefaultSaleArea(Long sellerId, DefaultSaleAreaDTO defaultSaleAreaDTO);
 }

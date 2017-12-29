@@ -296,6 +296,8 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 						List<TradeOrderItemsStatusHistoryDTO> itemHistoryList = itemDTO.getItemStatusHistoryDTOList();
 						for (TradeOrderItemsStatusHistoryDTO itemHistory : itemHistoryList) {
 							itemHistory.setOrderItemStatus(confirmStatus);
+							itemHistory.setOrderItemStatusText(baseService.getDictNameByCode(dictMap,
+									DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
 						}
 						itemDTO.setOrderItemStatus(confirmStatus);
 					}
@@ -2507,7 +2509,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		TradeOrdersDTO tradeOrderDTO = new TradeOrdersDTO();
 		tradeOrderDTO.setOrderNo(orderNo);
 		tradeOrderDTO.setOrderStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,
-				DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+				DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 		tradeOrderDTO.setModifyId(tradeOrderConfirmDTO.getOperatorId());
 		tradeOrderDTO.setModifyName(tradeOrderConfirmDTO.getOperatorName());
 		tradeOrderDTO.setModifyTime(DateUtils.getSystemTime());
@@ -2522,14 +2524,14 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			itemsDTO.setModifyId(tradeOrderConfirmDTO.getOperatorId());
 			itemsDTO.setModifyName(tradeOrderConfirmDTO.getOperatorName());
 			itemsDTO.setOrderItemStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,
-					DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+					DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 			orderItemsDAO.updateTradeOrderItemsStatusInfo(itemsDTO);
 			TradeOrderItemsStatusHistoryDTO itemsStatusHistoryDTO = new TradeOrderItemsStatusHistoryDTO();
 			itemsStatusHistoryDTO.setOrderItemNo(itemsDTO.getOrderItemNo());
 			itemsStatusHistoryDTO.setOrderItemStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,
-					DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+					DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 			itemsStatusHistoryDTO.setOrderItemStatusText(baseService.getDictNameByCode(dictMap,
-					DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+					DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 			itemsStatusHistoryDTO.setCreateId(tradeOrderConfirmDTO.getOperatorId());
 			itemsStatusHistoryDTO.setCreateName(tradeOrderConfirmDTO.getOperatorName());
 			itemStatusHistoryDAO.addOrderItemsStatusHistory(itemsStatusHistoryDTO);
@@ -2537,9 +2539,9 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		TradeOrderStatusHistoryDTO orderStatusHistoryDTO = new TradeOrderStatusHistoryDTO();
 		orderStatusHistoryDTO.setOrderNo(orderNo);
 		orderStatusHistoryDTO.setOrderStatus(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_STATUS,
-				DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+				DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 		orderStatusHistoryDTO.setOrderStatusText(dictionary.getNameByCode(DictionaryConst.TYPE_ORDER_STATUS,
-				DictionaryConst.OPT_ORDER_STATUS_VERIFY_PASS_WAIT_PAY));
+				DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
 		orderStatusHistoryDTO.setCreateId(tradeOrderConfirmDTO.getOperatorId());
 		orderStatusHistoryDTO.setCreateName(tradeOrderConfirmDTO.getOperatorName());
 		orderStatusHistoryDAO.addTradeOrderStatusHistory(orderStatusHistoryDTO);

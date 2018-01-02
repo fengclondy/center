@@ -511,6 +511,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             return result;
         }
         try {
+            Integer isBoxFlag = queryVmsItemPublishInfoInDTO.getIsBoxFlag();
             List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList = new ArrayList<>();
             // 封装三级类目集合
             Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsItemPublishInfoInDTO.getFirstCid(),
@@ -522,7 +523,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             if (totalCount > 0) {
                 queryVmsItemPublishInfoOutDTOList = itemSkuDAO.queryVmsItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, page);
                 //获取价格
-                makeUpPriceInfo4ItemSku(queryVmsItemPublishInfoOutDTOList);
+                makeUpPriceInfo4ItemSku(queryVmsItemPublishInfoOutDTOList, isBoxFlag);
             }
             dataGrid.setTotal(totalCount);
             dataGrid.setRows(queryVmsItemPublishInfoOutDTOList);
@@ -787,6 +788,45 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     continue;
                 }
                 Date date = new Date();
+                // 根据上架类型设置价格
+                BigDecimal retailPrice = null;
+                BigDecimal salePrice = null;
+                if (batchOnShelfType == 1) { // 默认价格
+                    retailPrice = wsaleUtprice;
+                    salePrice = saleLimitPrice;
+                } else if (batchOnShelfType == 2) { // 自定义价格
+                    if (batchOnShelfItemInDTO.getRetailPrice() == null || batchOnShelfItemInDTO.getRetailPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                        String errorMsg = "自定义价格,零售价为空或者不是正数";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (batchOnShelfItemInDTO.getSalePrice() == null || batchOnShelfItemInDTO.getSalePrice().compareTo(BigDecimal.ZERO) <= 0) {
+                        String errorMsg = "自定义价格,销售价为空或者不是正数";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (batchOnShelfItemInDTO.getRetailPrice().compareTo(batchOnShelfItemInDTO.getSalePrice()) < 0) {
+                        String errorMsg = "自定义价格,销售价不能大于零售价";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    // 和分销限价比
+                    if (hasBelowLimitPriceAuth == 0 && batchOnShelfItemInDTO.getRetailPrice().compareTo(saleLimitPrice) < 0) {
+                        String errorMsg = "自定义价格,没有低于分销限价的权限,零售价不能低于分销限价";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (hasBelowLimitPriceAuth == 0 && batchOnShelfItemInDTO.getSalePrice().compareTo(saleLimitPrice) < 0) {
+                        String errorMsg = "自定义价格,没有低于分销限价的权限,销售价不能低于分销限价";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    retailPrice = batchOnShelfItemInDTO.getRetailPrice();
+                    salePrice = batchOnShelfItemInDTO.getSalePrice();
+                } else if (batchOnShelfType == 3) { // 自定义涨幅
+                    retailPrice = saleLimitPrice.multiply(ratio).add(saleLimitPrice);
+                    salePrice = retailPrice;
+                }
                 // 处理库存
                 ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType, "0");
                 if (itemSkuPublishInfoFromDb == null) { // 新增
@@ -835,45 +875,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 itemSkuBasePrice.setChannelCode(ProductChannelEnum.INTERNAL_SUPPLIER.getCode());
                 itemSkuBasePrice.setSaleLimitedPrice(saleLimitPrice);
                 itemSkuBasePrice.setModifyTime(new Date());
-                // 根据上架类型设置价格
-                BigDecimal retailPrice = null;
-                BigDecimal salePrice = null;
-                if (batchOnShelfType == 1) { // 默认价格
-                    retailPrice = wsaleUtprice;
-                    salePrice = saleLimitPrice;
-                } else if (batchOnShelfType == 2) { // 自定义价格
-                    if (batchOnShelfItemInDTO.getRetailPrice() == null || batchOnShelfItemInDTO.getRetailPrice().compareTo(BigDecimal.ZERO) <= 0) {
-                        String errorMsg = "自定义价格,零售价不是正数";
-                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
-                        continue;
-                    }
-                    if (batchOnShelfItemInDTO.getSalePrice() == null || batchOnShelfItemInDTO.getSalePrice().compareTo(BigDecimal.ZERO) <= 0) {
-                        String errorMsg = "自定义价格,销售价不是正数";
-                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
-                        continue;
-                    }
-                    if (batchOnShelfItemInDTO.getRetailPrice().compareTo(batchOnShelfItemInDTO.getSalePrice()) < 0) {
-                        String errorMsg = "自定义价格,销售价不能大于零售价";
-                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
-                        continue;
-                    }
-                    // 和分销限价比
-                    if (hasBelowLimitPriceAuth == 0 && batchOnShelfItemInDTO.getRetailPrice().compareTo(saleLimitPrice) < 0) {
-                        String errorMsg = "自定义价格,没有低于分销限价的权限,零售价不能低于分销限价";
-                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
-                        continue;
-                    }
-                    if (hasBelowLimitPriceAuth == 0 && batchOnShelfItemInDTO.getSalePrice().compareTo(saleLimitPrice) < 0) {
-                        String errorMsg = "自定义价格,没有低于分销限价的权限,销售价不能低于分销限价";
-                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
-                        continue;
-                    }
-                    retailPrice = batchOnShelfItemInDTO.getRetailPrice();
-                    salePrice = batchOnShelfItemInDTO.getSalePrice();
-                } else if (batchOnShelfType == 3) { // 自定义涨幅
-                    retailPrice = saleLimitPrice.multiply(ratio).add(saleLimitPrice);
-                    salePrice = retailPrice;
-                }
+
                 itemSkuBasePrice.setRetailPrice(retailPrice); // 默认erp零售价
                 if (isBoxFlag == 0) { // 大厅
                     itemSkuBasePrice.setAreaSalePrice(salePrice);
@@ -1387,7 +1389,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         batchAddItemErrorListOutDTO.setUnit(batchAddItemInDTO.getUnit());
     }
 
-    private void makeUpPriceInfo4ItemSku(List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList) {
+    private void makeUpPriceInfo4ItemSku(List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList, Integer isBoxFlag) {
         if (CollectionUtils.isEmpty(queryVmsItemPublishInfoOutDTOList)) {
             return;
         }
@@ -1402,6 +1404,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             return;
         }
         for (QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
+            venusItemSkuPublishInfoOutDTO.setIsBoxFlag(isBoxFlag);
             for (ItemSkuBasePrice price : basePriceList.getResult()) {
                 if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
                     //分销限价
@@ -1410,11 +1413,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                         venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(price.getSaleLimitedPrice()));
                     }
                     //包厢价格
-                    if (null != price.getBoxSalePrice() && "1".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())) {
+                    if (null != price.getBoxSalePrice() &&  1 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {
                         venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getBoxSalePrice()));
                     }
                     //大厅价格
-                    if (null != price.getAreaSalePrice() && "2".equals(venusItemSkuPublishInfoOutDTO.getIsBoxFlag())) {
+                    if (null != price.getAreaSalePrice() && 0 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {
                         venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getAreaSalePrice()));
                     }
                     //零售价

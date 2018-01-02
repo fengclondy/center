@@ -71,6 +71,7 @@ public class VmsItemExportServiceTest extends CommonTest {
         QueryVmsItemPublishInfoInDTO queryVmsItemPublishInfoInDTO = new QueryVmsItemPublishInfoInDTO();
         queryVmsItemPublishInfoInDTO.setIsBoxFlag(1);
         queryVmsItemPublishInfoInDTO.setSellerId(17606L);
+        queryVmsItemPublishInfoInDTO.setProductCode("10026428");
 //        queryVmsItemPublishInfoInDTO.seti
 //        queryVmsItemPublishInfoInDTO.setShelfStatus(1);
 //        Pager<String> page = new Pager<>();
@@ -177,22 +178,24 @@ public class VmsItemExportServiceTest extends CommonTest {
         batchOnShelfInDTO.setSellerId(17606L);
         batchOnShelfInDTO.setIsBoxFlag(1);
         batchOnShelfInDTO.setHasBelowLimitPriceAuth(0);
-        batchOnShelfInDTO.setBatchOnShelfType(1);
+        batchOnShelfInDTO.setBatchOnShelfType(2);
         batchOnShelfInDTO.setDefaultAreaCode("32");
-//        batchOnShelfInDTO.setRatio();
+        batchOnShelfInDTO.setRatio(new BigDecimal("0.1"));
 
         List<BatchOnShelfItemInDTO> dataList = new ArrayList<>();
         BatchOnShelfItemInDTO batchOnShelfItemInDTO = new BatchOnShelfItemInDTO();
-        batchOnShelfItemInDTO.setItemId(275473L);
-        batchOnShelfItemInDTO.setItemCode("10032868");
-        batchOnShelfItemInDTO.setItemName("冰三尺冰箱测试商品(请勿购买)");
-        batchOnShelfItemInDTO.setSkuId(270625L);
-        batchOnShelfItemInDTO.setSkuCode("1000032971");
-        batchOnShelfItemInDTO.setAviableStock(59996);
-        batchOnShelfItemInDTO.setMinStock(19);
-        batchOnShelfItemInDTO.setOnShelfQuantiy(20);
-        batchOnShelfItemInDTO.setSaleLimitedPrice(new BigDecimal("1000"));
-        batchOnShelfItemInDTO.setWsaleUtprice(new BigDecimal("1010"));
+        batchOnShelfItemInDTO.setItemId(262601L);
+        batchOnShelfItemInDTO.setItemCode("10026428");
+        batchOnShelfItemInDTO.setItemName("松下热水瓶NC-CS301");
+        batchOnShelfItemInDTO.setSkuId(257733L);
+        batchOnShelfItemInDTO.setSkuCode("1000026525");
+        batchOnShelfItemInDTO.setAviableStock(92);
+        batchOnShelfItemInDTO.setMinStock(5);
+        batchOnShelfItemInDTO.setOnShelfQuantiy(30);
+        batchOnShelfItemInDTO.setSaleLimitedPrice(new BigDecimal("500"));
+        batchOnShelfItemInDTO.setWsaleUtprice(new BigDecimal("550"));
+        batchOnShelfItemInDTO.setSalePrice(new BigDecimal("510"));
+        batchOnShelfItemInDTO.setRetailPrice(new BigDecimal("520"));
         dataList.add(batchOnShelfItemInDTO);
         batchOnShelfInDTO.setDataList(dataList);
         this.vmsItemExportService.batchOnShelves(batchOnShelfInDTO);

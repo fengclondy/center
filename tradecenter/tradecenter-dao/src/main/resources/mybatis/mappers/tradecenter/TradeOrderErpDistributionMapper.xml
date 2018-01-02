@@ -218,7 +218,6 @@
       modify_time = now(),
     </set>
     where id = #{id,jdbcType=BIGINT}
-      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
   </update>
   <update id="updateTradeOrdersErpDistributionTimes" parameterType="cn.htd.tradecenter.dto.TradeOrderErpDistributionDTO">
     update trade_order_erp_distribution

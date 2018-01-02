@@ -22,6 +22,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.goodscenter.domain.ItemBrand;
+import cn.htd.goodscenter.dto.ItemBrandDTO;
 import cn.htd.goodscenter.dto.ItemCategoryDTO;
 import cn.htd.goodscenter.service.ItemBrandExportService;
 import cn.htd.goodscenter.service.ItemCategoryService;
@@ -102,14 +103,28 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 	}
 
 	private List<MemberBusinessRelationDTO> setValue4Relation(List<MemberBusinessRelationDTO> businessList) {
+		List<Long> categoryList = new ArrayList<Long>();
+		List<Long> brandList = new ArrayList<Long>();
+		List<MemberBusinessRelationDTO> resultList = new ArrayList<MemberBusinessRelationDTO>();
 		for (MemberBusinessRelationDTO mbr : businessList) {
-			ExecuteResult<ItemCategoryDTO> category = itemCategoryService.getCategoryByCid(mbr.getCategoryId());
-			if (category.getResult() != null) {
-				mbr.setCategoryName(category.getResult().getCategoryCName());
-			}
-			ExecuteResult<ItemBrand> brand = itemBrandExportService.queryItemBrandById(mbr.getBrandId());
-			if (brand.getResult() != null) {
-				mbr.setBrandName(brand.getResult().getBrandName());
+			categoryList.add(mbr.getCategoryId());
+			brandList.add(mbr.getBrandId());
+		}
+		ExecuteResult<List<ItemCategoryDTO>> categorysList = itemCategoryService.getCategoryListByCids(categoryList);
+		ExecuteResult<List<ItemBrandDTO>> brandsList  =itemBrandExportService.queryItemBrandByIds(brandList.toArray(new Long[0]));
+		if(categorysList.isSuccess() && brandsList.isSuccess()){
+			for(MemberBusinessRelationDTO dto: businessList){
+				for(ItemCategoryDTO itemCategory:categorysList.getResult()){
+					if(dto.getCategoryId() == itemCategory.getCategoryCid()){
+						dto.setCategoryName(itemCategory.getCategoryCName());
+					}
+				}
+				for(ItemBrandDTO itemBrand:brandsList.getResult()){
+					if(dto.getBrandId() == itemBrand.getBrandId()){
+						dto.setBrandName(itemBrand.getBrandName());
+					}
+				}
+				resultList.add(dto);
 			}
 		}
 		return businessList;
@@ -459,7 +474,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				try {
 					if (businessList != null) {
-						setValue4Relation(businessList);
+						rs.setResult(setValue4Relation(businessList)); 
 					}else{
 						rs.setResultMessage("要查询的数据不存在");
 					}

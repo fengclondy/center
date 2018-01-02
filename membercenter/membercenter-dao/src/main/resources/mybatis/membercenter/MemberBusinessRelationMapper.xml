@@ -292,7 +292,7 @@
 		where a.seller_id = #{memberBusinessRelationDTO.sellerId}
 			and a.delete_flag = #{memberBusinessRelationDTO.deleteFlag}
 			and (a.category_id !=0 and a.brand_id !=0)
-			order by a.category_id desc 
+			order by a.brand_id desc
 	</select>
 	
 	<select id="queryMemberBussinessByCategoryId" resultType="cn.htd.membercenter.dto.MemberBusinessRelationDTO"

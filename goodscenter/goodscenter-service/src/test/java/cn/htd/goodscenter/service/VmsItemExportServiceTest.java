@@ -183,11 +183,11 @@ public class VmsItemExportServiceTest extends CommonTest {
 
         List<BatchOnShelfItemInDTO> dataList = new ArrayList<>();
         BatchOnShelfItemInDTO batchOnShelfItemInDTO = new BatchOnShelfItemInDTO();
-        batchOnShelfItemInDTO.setItemId(262613L);
-        batchOnShelfItemInDTO.setItemCode("10026434");
-        batchOnShelfItemInDTO.setItemName("海尔冰箱测试");
-        batchOnShelfItemInDTO.setSkuId(257745l);
-        batchOnShelfItemInDTO.setSkuCode("1000026531");
+        batchOnShelfItemInDTO.setItemId(275473L);
+        batchOnShelfItemInDTO.setItemCode("10032868");
+        batchOnShelfItemInDTO.setItemName("冰三尺冰箱测试商品(请勿购买)");
+        batchOnShelfItemInDTO.setSkuId(270625L);
+        batchOnShelfItemInDTO.setSkuCode("1000032971");
         batchOnShelfItemInDTO.setAviableStock(59996);
         batchOnShelfItemInDTO.setMinStock(19);
         batchOnShelfItemInDTO.setOnShelfQuantiy(20);

@@ -21,6 +21,10 @@ public class BatchModifyPriceInDTO implements Serializable {
     @NotNull(message = "supplierCode不能为NULL")
     private String supplierCode;
 
+    //是否有低于分销限价的权限 0：没有  1：有
+    @NotNull(message = "hasBelowLimitPriceAuth不能为NULL")
+    private Integer hasBelowLimitPriceAuth;
+
     @NotNull(message = "dataList不能为NULL")
     List<BatchModifyPriceItemInDTO> dataList;
 
@@ -54,5 +58,13 @@ public class BatchModifyPriceInDTO implements Serializable {
 
     public void setSupplierCode(String supplierCode) {
         this.supplierCode = supplierCode;
+    }
+
+    public Integer getHasBelowLimitPriceAuth() {
+        return hasBelowLimitPriceAuth;
+    }
+
+    public void setHasBelowLimitPriceAuth(Integer hasBelowLimitPriceAuth) {
+        this.hasBelowLimitPriceAuth = hasBelowLimitPriceAuth;
     }
 }

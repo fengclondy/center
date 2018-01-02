@@ -102,7 +102,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 		return rs;
 	}
 
-	private List<MemberBusinessRelationDTO> setValue4Relation(List<MemberBusinessRelationDTO> businessList) {
+	private List<MemberBusinessRelationDTO> setValueRelation(List<MemberBusinessRelationDTO> businessList) {
 		List<Long> categoryList = new ArrayList<Long>();
 		List<Long> brandList = new ArrayList<Long>();
 		List<MemberBusinessRelationDTO> resultList = new ArrayList<MemberBusinessRelationDTO>();
@@ -125,6 +125,20 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 					}
 				}
 				resultList.add(dto);
+			}
+		}
+		return businessList;
+	}
+	
+	private List<MemberBusinessRelationDTO> setValue4Relation(List<MemberBusinessRelationDTO> businessList) {
+		for (MemberBusinessRelationDTO mbr : businessList) {
+			ExecuteResult<ItemCategoryDTO> category = itemCategoryService.getCategoryByCid(mbr.getCategoryId());
+			if (category.getResult() != null) {
+				mbr.setCategoryName(category.getResult().getCategoryCName());
+			}
+			ExecuteResult<ItemBrand> brand = itemBrandExportService.queryItemBrandById(mbr.getBrandId());
+			if (brand.getResult() != null) {
+				mbr.setBrandName(brand.getResult().getBrandName());
 			}
 		}
 		return businessList;
@@ -474,7 +488,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				try {
 					if (businessList != null) {
-						rs.setResult(setValue4Relation(businessList)); 
+						rs.setResult(setValueRelation(businessList)); 
 					}else{
 						rs.setResultMessage("要查询的数据不存在");
 					}
@@ -510,7 +524,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 						.countQueryMemberBussinessByCategoryId(dto);
 				try {
 					if (businessList != null) {
-						dg.setRows(setValue4Relation(businessList));
+						dg.setRows(setValueRelation(businessList));
 						dg.setTotal(count);
 						rs.setResult(dg);
 					} else {

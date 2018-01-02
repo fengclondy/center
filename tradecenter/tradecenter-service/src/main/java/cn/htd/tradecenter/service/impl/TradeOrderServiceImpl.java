@@ -2553,7 +2553,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			erpDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
 			erpDTO.setModifyId(tradeOrderConfirmDTO.getOperatorId());
 			erpDTO.setModifyName(tradeOrderConfirmDTO.getOperatorName());
-			erpDistributionDAO.updateTradeOrdersErpDistributionStatusInfo(erpDistribution);
+			erpDistributionDAO.updateTradeOrdersErpDistributionStatusInfo(erpDTO);
 		}
 
 	}

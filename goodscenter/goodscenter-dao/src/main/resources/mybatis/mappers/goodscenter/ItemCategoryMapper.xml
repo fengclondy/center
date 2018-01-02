@@ -413,6 +413,7 @@
 		<foreach collection="cidList" open="(" close=")" separator="," item="cid">
 			#{cid}
 		</foreach>
+		and status = 1
 	</select>
 	
 	<!-- 根据名称模糊查询类目 -->

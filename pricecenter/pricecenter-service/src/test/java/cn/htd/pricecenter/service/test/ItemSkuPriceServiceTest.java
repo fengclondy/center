@@ -178,8 +178,8 @@ public class ItemSkuPriceServiceTest extends CommonTest{
 	
 	@Test
 	public void testPrice(){
-		 List<ItemSkuLadderPrice> list = itemSkuPriceService.queryMobileExternalLadderPriceBySkuId("218845");
-		 System.out.println(JSON.toJSONString(list));
+//		 List<ItemSkuLadderPrice> list = itemSkuPriceService.queryMobileExternalLadderPriceBySkuId("218845");
+//		 System.out.println(JSON.toJSONString(list));
 	}
 
 	

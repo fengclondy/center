@@ -25,7 +25,7 @@ public class QueryRegistProcessDTO implements Serializable {
 	private Date registime;//注册时间
 	private String regisTimeStart;//注册时间开始
 	private String regisTimeEnd;//注册时间结束
-	private String ShowStatus;//前台展示审核状态
+	private String showStatus;//前台展示审核状态
 
 	public Integer getMemberId() {
 		return memberId;
@@ -172,10 +172,11 @@ public class QueryRegistProcessDTO implements Serializable {
 	}
 
 	public String getShowStatus() {
-		return ShowStatus;
+		return showStatus;
 	}
 
 	public void setShowStatus(String showStatus) {
-		ShowStatus = showStatus;
+		this.showStatus = showStatus;
 	}
+
 }

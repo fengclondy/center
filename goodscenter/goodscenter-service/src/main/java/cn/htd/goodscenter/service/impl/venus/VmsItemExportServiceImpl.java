@@ -152,6 +152,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040010.getErrorMsg()));
                 return result;
             }
+            if (StringUtils.isEmpty(queryVmsMyItemListInDTO.getProductCode())) {
+                queryVmsMyItemListInDTO.setProductCode(null);
+            }
+            if (StringUtils.isEmpty(queryVmsMyItemListInDTO.getProductName())) {
+                queryVmsMyItemListInDTO.setProductName(null);
+            }
+            if (StringUtils.isEmpty(queryVmsMyItemListInDTO.getBrandName())) {
+                queryVmsMyItemListInDTO.setBrandName(null);
+            }
             // 封装三级类目集合
             Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryVmsMyItemListInDTO.getFirstCategoryId(),
                     queryVmsMyItemListInDTO.getSecCategoryId(), queryVmsMyItemListInDTO.getThirdCategoryId());
@@ -203,12 +212,12 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     /**
      * 我的商品 - 商品详情
      *
-     * @param itemSkuId
+     * @param skuId
      * @return
      */
     @Override
-    public ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long itemSkuId) {
-        return this.venusItemExportService.queryItemSkuDetail(itemSkuId);
+    public ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long skuId) {
+        return this.venusItemExportService.queryItemSkuDetail(skuId);
     }
 
     @Override
@@ -533,7 +542,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
      * 大厅商品详情
      *
      * @param querySkuPublishInfoDetailParamDTO
-     * @return // TODO : 其他区域占用的库存，如果其他类型是上架则看可见库存，如果是下架则看锁定库存（新版本下架可见库存和锁定库存一致，但是老版本不是）
+     * @return
      */
     @Override
     public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
@@ -746,7 +755,6 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             for (BatchOnShelfItemInDTO batchOnShelfItemInDTO : dataList) {
                 // 开始上架
                 Long itemId = batchOnShelfItemInDTO.getItemId();
-                Item item = itemMybatisDAO.queryItemByPk(itemId);
                 String itemName = batchOnShelfItemInDTO.getItemName();
                 String itemCode = batchOnShelfItemInDTO.getItemCode();
                 Long skuId = batchOnShelfItemInDTO.getSkuId();
@@ -758,6 +766,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     this.addFailureList(failureList, itemName, itemCode, validateResult1.getMessage());
                     continue;
                 }
+                Item item = itemMybatisDAO.queryItemByPk(itemId);
                 // 校验商品状态
                 if (item == null || Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
                         || Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(item.getItemStatus())
@@ -825,6 +834,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 itemSkuBasePrice.setItemCode(itemCode);
                 itemSkuBasePrice.setChannelCode(ProductChannelEnum.INTERNAL_SUPPLIER.getCode());
                 itemSkuBasePrice.setSaleLimitedPrice(saleLimitPrice);
+                itemSkuBasePrice.setModifyTime(new Date());
                 // 根据上架类型设置价格
                 BigDecimal retailPrice = null;
                 BigDecimal salePrice = null;
@@ -938,12 +948,232 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 //修改商品更新时间
                 itemMybatisDAO.updateItemModifyTimeByItemId(itemId, 1);
             }
+            batchOnShelfOutDTO.setTotal(dataList.size());
             batchOnShelfOutDTO.setFailureList(failureList);
             batchOnShelfOutDTO.setFailCount(failureList.size());
+            batchOnShelfOutDTO.setSuccess(dataList.size() - failureList.size());
             executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
             executeResult.setResult(batchOnShelfOutDTO);
         } catch (Exception e) {
             logger.error("批量上架出错, 错误信息：", e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.addErrorMessage(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return executeResult;
+    }
+
+    @Transactional
+    @Override
+    public ExecuteResult<BatchModifyPriceOutDTO> batchModifyItemPrice(BatchModifyPriceInDTO batchModifyPriceInDTO) {
+        ExecuteResult<BatchModifyPriceOutDTO> executeResult = new ExecuteResult<>();
+        try {
+            ValidateResult validateResult = DTOValidateUtil.validate(batchModifyPriceInDTO);
+            if (!validateResult.isPass()) {
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
+                executeResult.setResultMessage(validateResult.getMessage());
+                return executeResult;
+            }
+            // input
+            Integer isBoxFlag = batchModifyPriceInDTO.getIsBoxFlag();
+            String shelfType = isBoxFlag == 1 ? "1" : "2";
+            Long sellerId = batchModifyPriceInDTO.getSellerId();
+            String supplierCode = batchModifyPriceInDTO.getSupplierCode();
+            List<BatchModifyPriceItemInDTO> dataList = batchModifyPriceInDTO.getDataList();
+            // output
+            BatchModifyPriceOutDTO batchModifyPriceOutDTO = new BatchModifyPriceOutDTO();
+            List<BatchModifyPriceItemOutDTO> failureList = new ArrayList<>();
+            for (BatchModifyPriceItemInDTO batchModifyPriceItemInDTO : dataList) {
+                String itemCode = batchModifyPriceItemInDTO.getItemCode();
+                BigDecimal salePrice = batchModifyPriceItemInDTO.getSalePrice();
+                BigDecimal retailPrice = batchModifyPriceItemInDTO.getRetailPrice();
+                // 入参校验
+                ValidateResult validateResult1 = DTOValidateUtil.validate(batchModifyPriceItemInDTO);
+                if (!validateResult1.isPass()) {
+                    String errorMsg = validateResult1.getMessage();
+                    this.addFailureList(failureList, "", itemCode, retailPrice, salePrice, null, errorMsg);
+                    continue;
+                }
+                // 商品是否存在
+                Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);
+                if (item == null) {
+                    String errorMsg = "商品不存在";
+                    this.addFailureList(failureList, "", itemCode, retailPrice, salePrice, null, errorMsg);
+                    continue;
+                }
+                ItemSpu itemSpu = this.itemSpuMapper.selectByPrimaryKey(item.getItemSpuId());
+                if (itemSpu == null) {
+                    String errorMsg = "商品模板不存在";
+                    this.addFailureList(failureList, "", itemCode, retailPrice, salePrice, null, errorMsg);
+                    continue;
+                }
+                String saleLimitPriceStr = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, itemSpu.getSpuCode());
+                BigDecimal saleLimitPrice = StringUtils.isNumeric(saleLimitPriceStr) ? new BigDecimal(saleLimitPriceStr) : null;
+                List<ItemSku> itemSkuList = this.itemSkuDAO.queryByItemId(item.getItemId());
+                if (itemSkuList.size() == 0) {
+                    String errorMsg = "商品不存在";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                ItemSku itemSku = itemSkuList.get(0);
+                // 不是该大b的商品
+                if (sellerId != item.getSellerId()) {
+                    String errorMsg = "该商品不是此供应商的商品";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                // 商品是否上架
+                ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(itemSku.getSkuId(), shelfType, "0");
+                if (itemSkuPublishInfo == null) {
+                    String errorMsg = "该商品未上架";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                Integer itemStatus = item.getItemStatus();
+                Integer isVisable = itemSkuPublishInfo.getIsVisable();
+                if (isVisable == 0 || itemStatus != 5) {
+                    String errorMsg = "该商品未上架, itemStatus:"+itemStatus + ",isVisable:"+isVisable;
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                // 价格校验
+                if (salePrice.compareTo(retailPrice) > 0) {
+                    String errorMsg = "销售价大于零售价";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                // 查询基本价格
+                ExecuteResult<ItemSkuBasePriceDTO> priceResult = this.itemSkuPriceService.queryItemSkuBasePrice(itemSku.getSkuId());
+                if (priceResult == null || !priceResult.isSuccess()) {
+                    String errorMsg = "没有查到价格信息";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                ItemSkuBasePriceDTO itemSkuBasePriceDTO = priceResult.getResult();
+                if (itemSkuBasePriceDTO == null) {
+                    String errorMsg = "没有查到价格信息";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                ItemSkuBasePrice itemSkuBasePrice = new ItemSkuBasePrice();
+                itemSkuBasePrice.setSkuId(itemSkuBasePriceDTO.getSkuId());
+                itemSkuBasePrice.setRetailPrice(retailPrice);
+                if (isBoxFlag == 1) {
+                    itemSkuBasePrice.setBoxSalePrice(salePrice);
+                } else {
+                    itemSkuBasePrice.setAreaSalePrice(salePrice);
+                }
+                ExecuteResult<String> updateResult = this.itemSkuPriceService.updateItemSkuBasePrice(itemSkuBasePrice);
+                if (updateResult == null || !updateResult.isSuccess()) {
+                    String errorMsg = "价格更新失败";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+            }
+            batchModifyPriceOutDTO.setFailCount(failureList.size());
+            batchModifyPriceOutDTO.setFailureList(failureList);
+        } catch (Exception e) {
+            logger.error("批量改价出错, 错误信息：", e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("批量改价系统错误");
+            executeResult.addErrorMessage(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId) {
+        ExecuteResult<DefaultSaleAreaDTO> executeResult = new ExecuteResult<>();
+        try {
+            DefaultSaleAreaDTO defaultSaleAreaDTO = new DefaultSaleAreaDTO();
+            List<ItemSalesDefaultArea> defaultList = this.itemSalesDefaultAreaMapper.selectDefaultSalesAreaBySellerId(sellerId);
+            // 没有设置默认销售区域
+            if (defaultList == null || defaultList.size() == 0) {
+                executeResult.setCode(ResultCodeEnum.OUTPUT_IS_NULL.getCode());
+                executeResult.setResultMessage("没有默认销售区域");
+                return executeResult;
+            }
+            // 如果销售区域是全国 则是1条数，并且是 areaCode : 00
+            if (defaultList.size() == 1 && defaultList.get(0).getAreaCode().equals("00")) {
+                ItemSalesArea itemSaleArea = new ItemSalesArea();
+                itemSaleArea.setIsSalesWholeCountry(1); // 全国
+                defaultSaleAreaDTO.setItemSaleArea(itemSaleArea);
+                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setResult(defaultSaleAreaDTO);
+                return executeResult;
+            }
+            // 非全国
+            ItemSalesArea itemSaleArea = new ItemSalesArea();
+            List<ItemSalesAreaDetail> itemSalesAreaDetailList = new ArrayList<>();
+            itemSaleArea.setIsSalesWholeCountry(0); // 非全国
+            for (ItemSalesDefaultArea itemSalesDefaultArea : defaultList) {
+                if (StringUtils.isNotEmpty(itemSalesDefaultArea.getAreaCode())) {
+                    ItemSalesAreaDetail itemSalesAreaDetail = new ItemSalesAreaDetail();
+                    itemSalesAreaDetail.setAreaCode(itemSalesDefaultArea.getAreaCode());
+                    itemSalesAreaDetail.setSalesAreaType((itemSalesDefaultArea.getAreaCode().length() / 2) + ""); // 省码2位，市码4位，区位6位；除以2 得到 类型1,2,3
+                    itemSalesAreaDetailList.add(itemSalesAreaDetail);
+                }
+            }
+            defaultSaleAreaDTO.setItemSaleArea(itemSaleArea);
+            defaultSaleAreaDTO.setItemSaleAreaDetailList(itemSalesAreaDetailList);
+            executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+            executeResult.setResult(defaultSaleAreaDTO);
+        } catch (Exception e) {
+            logger.error("查询默认销售区域出错, 错误信息：", e);
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("查询默认销售区域出错");
+            executeResult.addErrorMessage(e.getMessage());
+        }
+        return executeResult;
+    }
+
+    @Override
+    public ExecuteResult<String> setDefaultSaleArea(Long sellerId, DefaultSaleAreaDTO defaultSaleAreaDTO) {
+        ExecuteResult<String> executeResult = new ExecuteResult<>();
+        try {
+            if (sellerId == null || sellerId <= 0 || defaultSaleAreaDTO == null) {
+                executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+                executeResult.setResultMessage("必传值为空");
+                return executeResult;
+            }
+            //先做删除
+            itemSalesDefaultAreaMapper.deleteBySellerId(sellerId);
+            List<ItemSalesDefaultArea> itemSalesDefaultAreaList = new ArrayList<>();
+            ItemSalesArea itemSaleArea = defaultSaleAreaDTO.getItemSaleArea();
+            List<ItemSalesAreaDetail> itemSalesAreaDetailList = defaultSaleAreaDTO.getItemSaleAreaDetailList();
+            if (itemSaleArea == null) {
+                if (sellerId == null || sellerId <= 0 || defaultSaleAreaDTO == null) {
+                    executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+                    executeResult.setResultMessage("itemSaleArea为空");
+                    return executeResult;
+                }
+            }
+            if (itemSaleArea.getIsSalesWholeCountry() == 1) {
+                ItemSalesDefaultArea itemSalesDefaultArea = new ItemSalesDefaultArea();
+                itemSalesDefaultArea.setAreaCode("00");
+                itemSalesDefaultArea.setSellerId(sellerId);
+                itemSalesDefaultArea.setCreateId(0L);
+                itemSalesDefaultArea.setCreateName("system");
+                itemSalesDefaultArea.setCreateTime(new Date());
+                itemSalesDefaultAreaList.add(itemSalesDefaultArea);
+            } else {
+                for (ItemSalesAreaDetail itemSalesAreaDetail : itemSalesAreaDetailList) {
+                    ItemSalesDefaultArea itemSalesDefaultArea = new ItemSalesDefaultArea();
+                    itemSalesDefaultArea.setAreaCode(itemSalesAreaDetail.getAreaCode());
+                    itemSalesDefaultArea.setSellerId(sellerId);
+                    itemSalesDefaultArea.setCreateId(0L);
+                    itemSalesDefaultArea.setCreateName("system");
+                    itemSalesDefaultArea.setCreateTime(new Date());
+                    itemSalesDefaultAreaList.add(itemSalesDefaultArea);
+                }
+            }
+            for(ItemSalesDefaultArea itemSalesDefaultArea : itemSalesDefaultAreaList){
+                itemSalesDefaultAreaMapper.insertSelective(itemSalesDefaultArea);
+            }
+            executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+        } catch (Exception e) {
+            logger.error("设置默认销售区域出错,", e);
             executeResult.setCode(ResultCodeEnum.ERROR.getCode());
             executeResult.addErrorMessage(e.getMessage());
         }
@@ -958,6 +1188,17 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         failureList.add(batchOnShelfItemOutDTO);
     }
 
+    private void addFailureList(List<BatchModifyPriceItemOutDTO> failureList, String itemName, String itemCode,  BigDecimal retailPrice,
+                                BigDecimal salePrice, BigDecimal saleLimitPrice, String errorMsg) {
+        BatchModifyPriceItemOutDTO batchModifyPriceItemOutDTO = new BatchModifyPriceItemOutDTO();
+        batchModifyPriceItemOutDTO.setItemName(itemName);
+        batchModifyPriceItemOutDTO.setItemCode(itemCode);
+        batchModifyPriceItemOutDTO.setRetailPrice(retailPrice);
+        batchModifyPriceItemOutDTO.setSalePrice(salePrice);
+        batchModifyPriceItemOutDTO.setSaleLimitPrice(saleLimitPrice);
+        batchModifyPriceItemOutDTO.setErrorMsg(errorMsg);
+        failureList.add(batchModifyPriceItemOutDTO);
+    }
 
     /**
      * 计算商品名称重复的数量

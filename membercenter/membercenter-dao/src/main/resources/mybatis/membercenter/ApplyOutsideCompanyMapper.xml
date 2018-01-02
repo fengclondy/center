@@ -3,9 +3,6 @@
 <mapper namespace="cn.htd.membercenter.dao.ApplyRelationshipDAO">
 
 	<sql id="process_mid">
-		<if test="curBelongSellerId != null and  curBelongSellerId !=''">
-			and m.cur_belong_seller_id = #{curBelongSellerId}
-		</if>
 		<if test="dto.companyName != null and dto.companyName != ''">
 			and c.company_name = #{companyName}
 		</if>
@@ -977,7 +974,12 @@
 		from member_base_info m,member_company_info c
 		where m.id = c.member_id
 		and c.buyer_seller_type='1'
-		<include refid="process_mid"/>
+		<if test="curBelongSellerId != null and  curBelongSellerId !=''">
+			and m.cur_belong_seller_id = #{curBelongSellerId}
+		</if>
+		<if test="dto!=null and dto !=''">
+			<include refid="process_mid"/>
+		</if>
 		order by m.regist_time desc
 		<if test="page!=null">
 			<include refid="pagination_tail"/>
@@ -998,7 +1000,12 @@
 			and s.info_type = #{dto.infoTyp}
 			and s.verify_status = #{dto.verifyStatus}
 		</if>
-		<include refid="process_mid"/>
+		<if test="curBelongSellerId != null and  curBelongSellerId !=''">
+			and m.cur_belong_seller_id = #{curBelongSellerId}
+		</if>
+		<if test="dto != null and  dto !=''">
+			<include refid="process_mid"/>
+		</if>
 	</select>
 
 	<select id="queryRegistProcessDetail" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">

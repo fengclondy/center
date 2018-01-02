@@ -94,6 +94,8 @@ public class OrderCancelTask implements IScheduleTaskDealMulti<TradeOrdersDMO> {
 				orderStatusList.add(OrderStatusEnum.PRE_CHECK.getCode());
 				orderStatusList.add(OrderStatusEnum.PRE_PAY.getCode());
 				orderStatusList.add(OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode());
+				// 新增待确认状态订单自动取消
+				orderStatusList.add(OrderStatusEnum.PRE_CONFIRM.getCode());
 				orderQueryParamDMO.setOrderStatus(orderStatusList);
 				orderQueryParamDMO.setPayTimeLimit(DateUtil.getSystemTime());
 				orderQueryParamDMO.setIsCancelOrder(Integer.valueOf(OrderStatusEnum.NOT_CANCLE.getCode()));

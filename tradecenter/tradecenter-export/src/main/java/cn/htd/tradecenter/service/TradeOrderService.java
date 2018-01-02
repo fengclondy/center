@@ -16,6 +16,7 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.tradecenter.dto.RedoErpWorkDTO;
+import cn.htd.tradecenter.dto.TradeOrderConfirmDTO;
 import cn.htd.tradecenter.dto.TradeOrderItemStockDTO;
 import cn.htd.tradecenter.dto.TradeOrderItemsShowDTO;
 import cn.htd.tradecenter.dto.TradeOrdersDTO;
@@ -46,6 +47,14 @@ public interface TradeOrderService {
 	public ExecuteResult<TradeOrdersDTO> confirmVenusTradeOrderInfo(VenusConfirmTradeOrderDTO confirmInDTO);
 
 	/**
+	 * 商城确认订单
+	 * 
+	 * @param tradeOrderConfirmDTO
+	 * @return
+	 */
+	public ExecuteResult<TradeOrdersDTO> confirmVenusOrderByMember(TradeOrderConfirmDTO tradeOrderConfirmDTO);
+
+	/**
 	 * VMS订单处理列表查询
 	 * 
 	 * @param conditionDTO
@@ -54,6 +63,14 @@ public interface TradeOrderService {
 	 */
 	public ExecuteResult<DataGrid<TradeOrdersShowDTO>> queryVenusDealTradeOrderListByCondition(
 			VenusTradeOrdersQueryInDTO conditionDTO, Pager<VenusTradeOrdersQueryInDTO> pager);
+
+	/**
+	 * 查询待确认订单数量
+	 * 
+	 * @param conditionDTO
+	 * @return
+	 */
+	public ExecuteResult<Long> queryWaitconfirmOrderCount(VenusTradeOrdersQueryInDTO conditionDTO);
 
 	/**
 	 * VMS订单审核列表导出
@@ -110,7 +127,7 @@ public interface TradeOrderService {
 	 */
 	public ExecuteResult<DataGrid<TradeOrderItemsShowDTO>> queryTradeOrderListByCondition(TradeOrdersQueryInDTO inDTO,
 			Pager<TradeOrdersQueryInDTO> pager);
-	
+
 	/**
 	 * 运营系统查询商品对应的订单集合
 	 * 
@@ -118,9 +135,9 @@ public interface TradeOrderService {
 	 * @param pager
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<TradeOrderItemsShowDTO>> queryTradeOrderHmsListByItemCodeAndBoxFlag(TradeOrdersQueryInDTO inDTO,
-			Pager<TradeOrdersQueryInDTO> pager);
-	
+	public ExecuteResult<DataGrid<TradeOrderItemsShowDTO>> queryTradeOrderHmsListByItemCodeAndBoxFlag(
+			TradeOrdersQueryInDTO inDTO, Pager<TradeOrdersQueryInDTO> pager);
+
 	/**
 	 * 运营系统或者商品的库存以及锁库存
 	 * 

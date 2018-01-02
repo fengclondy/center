@@ -54,5 +54,7 @@
 	
     <dubbo:service interface="cn.htd.membercenter.service.MemberMeetingService" ref="memberMeetingService" version="${dubbo.version}" timeout="60000" /> 
     
-    <dubbo:service interface="cn.htd.membercenter.service.SellerMeetingVMSService" ref="sellerMeetingVMSService" version="${dubbo.version}" timeout="60000" /> 
+    <dubbo:service interface="cn.htd.membercenter.service.SellerMeetingVMSService" ref="sellerMeetingVMSService" version="${dubbo.version}" timeout="60000" />
+
+	<dubbo:service interface="cn.htd.membercenter.service.ContractService" ref="contractService" version="${dubbo.version}" timeout="60000" />
 </beans>

@@ -63,6 +63,18 @@ public class TradeOrdersShowDTO extends TradeOrdersDTO implements Serializable {
 	 */
 	private String logisticsStatusName;
 	/**
+	 * 返利单号：逗号分隔
+	 */
+	private String rebateNo;
+	/**
+	 * 销售部门编码
+	 */
+	private String salesDepartmentCode;
+	/**
+	 * 销售部门名称
+	 */
+	private String salesDepartmentName;
+	/**
 	 * 订单行展示信息list
 	 */
 	private List<TradeOrderItemsShowDTO> orderItemShowList;
@@ -183,6 +195,51 @@ public class TradeOrdersShowDTO extends TradeOrdersDTO implements Serializable {
 		this.logisticsStatusName = logisticsStatusName;
 	}
 
+	/**
+	 * @return the rebateNo
+	 */
+	public String getRebateNo() {
+		return rebateNo;
+	}
+
+	/**
+	 * @param rebateNo
+	 *            the rebateNo to set
+	 */
+	public void setRebateNo(String rebateNo) {
+		this.rebateNo = rebateNo;
+	}
+
+	/**
+	 * @return the salesDepartmentCode
+	 */
+	public String getSalesDepartmentCode() {
+		return salesDepartmentCode;
+	}
+
+	/**
+	 * @param salesDepartmentCode
+	 *            the salesDepartmentCode to set
+	 */
+	public void setSalesDepartmentCode(String salesDepartmentCode) {
+		this.salesDepartmentCode = salesDepartmentCode;
+	}
+
+	/**
+	 * @return the salesDepartmentName
+	 */
+	public String getSalesDepartmentName() {
+		return salesDepartmentName;
+	}
+
+	/**
+	 * @param salesDepartmentName
+	 *            the salesDepartmentName to set
+	 */
+	public void setSalesDepartmentName(String salesDepartmentName) {
+		this.salesDepartmentName = salesDepartmentName;
+	}
+
 	public List<TradeOrderItemsShowDTO> getOrderItemShowList() {
 		return orderItemShowList;
 	}
@@ -215,6 +272,9 @@ public class TradeOrdersShowDTO extends TradeOrdersDTO implements Serializable {
 		this.invoiceTypeName = orderShowDTO.getInvoiceTypeName();
 		this.deliveryTypeName = orderShowDTO.getDeliveryTypeName();
 		this.logisticsStatusName = orderShowDTO.getLogisticsStatusName();
+		this.rebateNo = orderShowDTO.getRebateNo();
+		this.salesDepartmentCode = orderShowDTO.getSalesDepartmentCode();
+		this.salesDepartmentName = orderShowDTO.getSalesDepartmentName();
 		this.modifyTimeStr = orderShowDTO.getModifyTimeStr();
 	}
 }

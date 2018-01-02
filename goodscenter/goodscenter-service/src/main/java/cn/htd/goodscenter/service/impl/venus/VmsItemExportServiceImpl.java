@@ -979,6 +979,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             String shelfType = isBoxFlag == 1 ? "1" : "2";
             Long sellerId = batchModifyPriceInDTO.getSellerId();
             String supplierCode = batchModifyPriceInDTO.getSupplierCode();
+            Integer hasBelowLimitPriceAuth = batchModifyPriceInDTO.getHasBelowLimitPriceAuth();
             List<BatchModifyPriceItemInDTO> dataList = batchModifyPriceInDTO.getDataList();
             // output
             BatchModifyPriceOutDTO batchModifyPriceOutDTO = new BatchModifyPriceOutDTO();
@@ -1039,6 +1040,17 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 // 价格校验
                 if (salePrice.compareTo(retailPrice) > 0) {
                     String errorMsg = "销售价大于零售价";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                // 和分销限价比
+                if (hasBelowLimitPriceAuth == 0 && retailPrice.compareTo(saleLimitPrice) < 0) {
+                    String errorMsg = "自定义价格,没有低于分销限价的权限,零售价不能低于分销限价";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    continue;
+                }
+                if (hasBelowLimitPriceAuth == 0 && salePrice.compareTo(saleLimitPrice) < 0) {
+                    String errorMsg = "自定义价格,没有低于分销限价的权限,销售价不能低于分销限价";
                     this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
                     continue;
                 }

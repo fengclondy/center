@@ -33,6 +33,8 @@ import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBusinessRelationDAO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
+import cn.htd.membercenter.dto.MemberRelationSearchDTO;
+import cn.htd.membercenter.dto.MyMemberDTO;
 import cn.htd.membercenter.enums.AuditStatusEnum;
 import cn.htd.membercenter.service.MemberBaseService;
 import cn.htd.membercenter.service.MemberBusinessRelationService;
@@ -509,22 +511,24 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 	}
 
 	@Override
-	public ExecuteResult<DataGrid<MemberBusinessRelationDTO>> queryMemberBussinessByCategoryId(
-			MemberBusinessRelationDTO dto , Pager<MemberBusinessRelationDTO> pager) {
-		ExecuteResult<DataGrid<MemberBusinessRelationDTO>> rs = new ExecuteResult<DataGrid<MemberBusinessRelationDTO>>();
+	public ExecuteResult<DataGrid<MyMemberDTO>> queryMemberBussinessByCategoryId(
+			MemberRelationSearchDTO dto , Pager<MemberBusinessRelationDTO> pager) {
+		ExecuteResult<DataGrid<MyMemberDTO>> rs = new ExecuteResult<DataGrid<MyMemberDTO>>();
 		try {
-			DataGrid<MemberBusinessRelationDTO> dg = new DataGrid<MemberBusinessRelationDTO>();
-			String buyerId = dto.getBuyerId();
+			DataGrid<MyMemberDTO> dg = new DataGrid<MyMemberDTO>();
 			String sellerId = dto.getSellerId();
-			if (StringUtils.isNotBlank(buyerId) && StringUtils.isNotBlank(sellerId)) {
-				dto.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
-				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
+			String brandId = dto.getBrandId();
+			String categoryId = dto.getCategoryId();
+			if (StringUtils.isNotBlank(sellerId) && StringUtils.isNotBlank(brandId) 
+					&& StringUtils.isNotBlank(categoryId)) {
+//				dto.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
+				List<MyMemberDTO> businessList = memberBusinessRelationDAO
 						.queryMemberBussinessByCategoryId(dto, pager);
 				long count = memberBusinessRelationDAO
 						.countQueryMemberBussinessByCategoryId(dto);
 				try {
 					if (businessList != null) {
-						dg.setRows(setValueRelation(businessList));
+						dg.setRows(businessList);
 						dg.setTotal(count);
 						rs.setResult(dg);
 					} else {

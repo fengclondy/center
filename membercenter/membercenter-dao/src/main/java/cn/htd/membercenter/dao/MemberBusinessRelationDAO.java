@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
+import cn.htd.membercenter.dto.MemberRelationSearchDTO;
+import cn.htd.membercenter.dto.MyMemberDTO;
 
 public interface MemberBusinessRelationDAO {
 
@@ -47,10 +49,10 @@ public interface MemberBusinessRelationDAO {
 	
 	public List<MemberBusinessRelationDTO> queryCategoryIdAndBrandIdBySellerId(@Param("memberBusinessRelationDTO") MemberBusinessRelationDTO memberBusinessRelationDTO);
 	
-	public List<MemberBusinessRelationDTO> queryMemberBussinessByCategoryId(
-			@Param("dto") MemberBusinessRelationDTO dto,
+	public List<MyMemberDTO> queryMemberBussinessByCategoryId(
+			@Param("dto") MemberRelationSearchDTO dto,
 			@Param("pager") Pager<MemberBusinessRelationDTO> pager);
 
 	public long countQueryMemberBussinessByCategoryId(
-			@Param("dto") MemberBusinessRelationDTO dto);
+			@Param("dto") MemberRelationSearchDTO dto);
 }

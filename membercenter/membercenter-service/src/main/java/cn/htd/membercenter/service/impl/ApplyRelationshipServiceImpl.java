@@ -1385,13 +1385,16 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 		try {
 			List<QueryRegistProcessDTO> registProcessDtoDetail = applyRelationshipDao.queryRegistProcessDetail(memberId,curBelongSellerId);
 			if (CollectionUtils.isNotEmpty(registProcessDtoDetail)) {
-				for(QueryRegistProcessDTO queryRegistProcessDTO :registProcessDtoDetail){
-					if ("11".equals(queryRegistProcessDTO.getInfoType())) {
-						rs.setResult(queryRegistProcessDTO);
-					} else if ("12".equals(queryRegistProcessDTO.getInfoType())) {
-						rs.setResult(queryRegistProcessDTO);
+				if(registProcessDtoDetail.size()>1){
+					for(QueryRegistProcessDTO queryRegistProcessDTO :registProcessDtoDetail){
+						 if ("12".equals(queryRegistProcessDTO.getInfoType())) {
+							rs.setResult(queryRegistProcessDTO);
+						}
 					}
+				}else{
+					rs.setResult(registProcessDtoDetail.get(0));
 				}
+				
 			} else {
 				rs.setResultMessage("要查询的数据不存在!!");
 			}
@@ -1411,12 +1414,25 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 			long count = applyRelationshipDao.queryRegistProcessListCount(dto,cusCompanyId);
 			List<QueryRegistProcessDTO> memberlist = applyRelationshipDao.queryRegistProcessMember(dto, pager,cusCompanyId);
 			List<QueryRegistProcessDTO> resultlist = new ArrayList<QueryRegistProcessDTO>();
-			for(QueryRegistProcessDTO queryRegistProcessDTO :memberlist){
-				QueryRegistProcessDTO result = applyRelationshipDao.queryRegistProcessStatus(queryRegistProcessDTO.getMemberId(),dto);
-				queryRegistProcessDTO.setVerifyStatus(result.getVerifyStatus());
-				queryRegistProcessDTO.setInfoType(result.getInfoType());
-				resultlist.add(queryRegistProcessDTO);
+			if(CollectionUtils.isNotEmpty(memberlist)){
+				for(QueryRegistProcessDTO queryRegistProcessDTO :memberlist){
+					List<QueryRegistProcessDTO> resultList = applyRelationshipDao.queryRegistProcessStatus(queryRegistProcessDTO.getMemberId(),dto);
+					if( resultList.size() > 1){
+						for(QueryRegistProcessDTO processDTO : resultList){
+							if("12".equals(processDTO.getInfoType())){
+								queryRegistProcessDTO.setVerifyStatus(processDTO.getVerifyStatus());
+								queryRegistProcessDTO.setInfoType(processDTO.getInfoType());
+							}
+						}
+					}else{
+						queryRegistProcessDTO.setVerifyStatus(resultList.get(0).getVerifyStatus());
+						queryRegistProcessDTO.setInfoType(resultList.get(0).getInfoType());
+					}
+
+					resultlist.add(queryRegistProcessDTO);
+				}
 			}
+			
 			try {
 				if (CollectionUtils.isNotEmpty(resultlist)) {
 					dg.setRows(resultlist);

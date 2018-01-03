@@ -12,6 +12,7 @@ public class QueryRegistProcessDTO implements Serializable {
 	private String artificialPersonName;// 联系人姓名
 	private String artificialPersonMobile;// 联系人电话
 	private String artificialPersonIdcard;// 联系人身份证号
+	private String artificialPersonIdcardPic;// 联系人手持身份证照
 	private String artificialPersonPicSrc;// 联系人身份证正面照
 	private String artificialPersonPicBackSrc;// 联系人身份证反面照
 	private String industryCategory;// 发展行业
@@ -139,14 +140,6 @@ public class QueryRegistProcessDTO implements Serializable {
 		this.infoType = infoType;
 	}
 
-	public Boolean getDiffIndustry() {
-		return isDiffIndustry;
-	}
-
-	public void setDiffIndustry(Boolean diffIndustry) {
-		isDiffIndustry = diffIndustry;
-	}
-
 	public Date getRegistime() {
 		return registime;
 	}
@@ -178,5 +171,22 @@ public class QueryRegistProcessDTO implements Serializable {
 	public void setShowStatus(String showStatus) {
 		this.showStatus = showStatus;
 	}
+
+	public Boolean getIsDiffIndustry() {
+		return isDiffIndustry;
+	}
+
+	public void setIsDiffIndustry(Boolean isDiffIndustry) {
+		this.isDiffIndustry = isDiffIndustry;
+	}
+
+	public String getArtificialPersonIdcardPic() {
+		return artificialPersonIdcardPic;
+	}
+
+	public void setArtificialPersonIdcardPic(String artificialPersonIdcardPic) {
+		this.artificialPersonIdcardPic = artificialPersonIdcardPic;
+	}
+
 
 }

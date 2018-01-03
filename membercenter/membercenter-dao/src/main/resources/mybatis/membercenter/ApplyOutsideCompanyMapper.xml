@@ -3,16 +3,23 @@
 <mapper namespace="cn.htd.membercenter.dao.ApplyRelationshipDAO">
 
 	<sql id="process_mid">
+		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
+			and s.info_type = #{dto.infoType}
+			and s.verify_status = #{dto.verifyStatus}
+		</if>
+		<if test="dto.ShowStatus == null or dto.ShowStatus == ''">
+			and s.info_type in ('11','12')
+		</if>
 		<if test="dto.companyName != null and dto.companyName != ''">
-			and c.company_name = #{companyName}
+			and c.company_name like concat('%', #{dto.companyName} ,'%')
 		</if>
 		<if test="dto.artificialPersonName != null and dto.artificialPersonName != ''">
-			and c.artificial_person_name = #{dto.artificialPersonName}
+			and c.artificial_person_name like concat('%', #{dto.artificialPersonName} ,'%')
 		</if>
 		<if test="dto.artificialPersonMobile != null and dto.artificialPersonMobile != ''">
-			and c.artificial_person_mobile = #{dto.artificialPersonMobile}
+			and c.artificial_person_mobile like concat('%', #{dto.artificialPersonMobile} ,'%')
 		</if>
-		<if test="dto.isDiffIndustry != null and dto.isDiffIndustry != ''">
+		<if test="dto.isDiffIndustry != null">
 			and m.is_diff_industry = #{dto.isDiffIndustry}
 		</if>
 		<if test="dto.regisTimeStart!=null and dto.regisTimeStart!=''">
@@ -963,7 +970,7 @@
 
 	<select id="queryRegistProcessMember" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">
 		select
-		m.id memberId,
+		DISTINCT m.id memberId,
 		c.company_name companyName,
 		c.artificial_person_name artificialPersonName,
 		c.location_addr as locationAddr,
@@ -971,9 +978,10 @@
 		m.is_diff_industry isDiffIndustry,
 		m.industry_category industryCategory,
 		m.regist_time registime
-		from member_base_info m,member_company_info c
+		from (member_base_info m,member_company_info c)
+		left JOIN member_status_info s on m.id = s.member_id
 		where m.id = c.member_id
-		and c.buyer_seller_type='1'
+		and c.buyer_seller_type='1' and m.status != '0'
 		<if test="curBelongSellerId != null and  curBelongSellerId !=''">
 			and m.cur_belong_seller_id = #{curBelongSellerId}
 		</if>
@@ -989,17 +997,11 @@
 
 	<select id="queryRegistProcessListCount" resultType="java.lang.Long">
 		select
-		count(1)
+		count(DISTINCT(c.member_id))
 		from (member_base_info m,member_company_info c)
-		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
-			left JOIN member_status_info s
-		</if>
-		where m.id = c.member_id and c.buyer_seller_type='1'
-		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
-			and m.id = s.member_id
-			and s.info_type = #{dto.infoTyp}
-			and s.verify_status = #{dto.verifyStatus}
-		</if>
+		left JOIN member_status_info s on m.id = s.member_id
+		where m.id = c.member_id
+		and m.status != '0' and c.buyer_seller_type='1'
 		<if test="curBelongSellerId != null and  curBelongSellerId !=''">
 			and m.cur_belong_seller_id = #{curBelongSellerId}
 		</if>
@@ -1017,6 +1019,7 @@
 		c.artificial_person_idcard artificialPersonIdcard,
 		c.artificial_person_pic_src artificialPersonPicSrc,
 		c.artificial_person_pic_back_src artificialPersonPicBackSrc,
+		c.artificial_person_idcard_pic_src artificialPersonIdcardPic,
 		m.industry_category industryCategory,
 		case when l.buyer_business_license_pic_src !='' then l.buyer_business_license_pic_src
 		else l.buyer_guarantee_license_pic_src end as buyerBusinessLicensePicSrc,
@@ -1042,9 +1045,11 @@
 		s.member_id memberId
 		from member_status_info s
 		where s.member_id = #{memberId}
-		<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
-			and s.info_type = #{dto.infoTyp}
-			and s.verify_status = #{dto.verifyStatus}
+		<if test="dto != null">
+			<if test="dto.ShowStatus != null and dto.ShowStatus != ''">
+				and s.info_type = #{dto.infoType}
+				and s.verify_status = #{dto.verifyStatus}
+			</if>
 		</if>
 	</select>
 </mapper>

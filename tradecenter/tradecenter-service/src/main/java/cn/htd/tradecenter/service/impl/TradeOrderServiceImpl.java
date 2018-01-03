@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,6 +246,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			tradeOrdersDTO.setErpDistributionDTOList(orderErpDistributionDTOList);
 			tradeOrdersDTO.setOrderStatusHistoryDTOList(orderStatusHistoryDTOList);
 			reverseStockResult = orderStockHandle.reserveOrderStock(messageId, vmsOrderFrom, tradeOrderItemsDTOList);
+			logger.info("VMS开单创建订单数据==================="+ JSONObject.toJSONString(tradeOrdersDTO));
 			tradeOrdersDTO = orderDBHandle.createVenusTradeOrders(tradeOrdersDTO);
 			result.setResult(tradeOrdersDTO);
 		} catch (TradeCenterBusinessException tcbe) {
@@ -273,7 +275,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		return result;
 	}
 
-	private void setOrderStatusByCondition(TradeOrdersDTO tradeOrdersDTO, Map<String, DictionaryInfo> dictMap)
+	public void setOrderStatusByCondition(TradeOrdersDTO tradeOrdersDTO, Map<String, DictionaryInfo> dictMap)
 			throws Exception {
 		String memberCode = tradeOrdersDTO.getBuyerCode();
 		ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);

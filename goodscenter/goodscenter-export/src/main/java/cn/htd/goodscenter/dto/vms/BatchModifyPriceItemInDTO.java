@@ -16,12 +16,12 @@ public class BatchModifyPriceItemInDTO implements Serializable {
 
     //销售价
     @NotNull(message = "销售价不能为空")
-    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "销售价必须是小数位不超过两位的正数")
+//    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "销售价必须是小数位不超过两位的正数")
     private BigDecimal salePrice;
 
     //零售价
     @NotNull(message = "零售价不能为空")
-    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "零售价必须是小数位不超过两位的正数")
+//    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "零售价必须是小数位不超过两位的正数")
     private BigDecimal retailPrice;
 
     public String getItemCode() {

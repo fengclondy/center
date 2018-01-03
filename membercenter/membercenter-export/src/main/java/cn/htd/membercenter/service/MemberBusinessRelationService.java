@@ -7,6 +7,8 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
+import cn.htd.membercenter.dto.MemberRelationSearchDTO;
+import cn.htd.membercenter.dto.MyMemberDTO;
 
 public interface MemberBusinessRelationService {
 
@@ -100,6 +102,6 @@ public interface MemberBusinessRelationService {
 	 * @param memberBusinessRelationDTO
 	 * @return
 	 */
-	public ExecuteResult<DataGrid<MemberBusinessRelationDTO>> queryMemberBussinessByCategoryId(MemberBusinessRelationDTO memberBusinessRelationDTO,
+	public ExecuteResult<DataGrid<MyMemberDTO>> queryMemberBussinessByCategoryId(MemberRelationSearchDTO dto,
 			Pager<MemberBusinessRelationDTO> pager);
 }

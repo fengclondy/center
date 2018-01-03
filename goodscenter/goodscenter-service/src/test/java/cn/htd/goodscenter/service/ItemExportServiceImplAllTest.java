@@ -718,6 +718,13 @@ public class ItemExportServiceImplAllTest extends CommonTest {
 
 	@Test
 	public void testqueryItemListBySellerId() {
-		this.itemExportService.queryItemListBySellerId(517L);
+		Pager pager = new Pager();
+		pager.setPage(1);//第几页
+		pager.setRows(20);//每页多少个
+		ExecuteResult<DataGrid<ItemDTO>> executeResult = this.itemExportService.queryItemListBySellerId("汇通达", 517L, pager);
+		if (executeResult != null && "00000".equals(executeResult.getCode())) {
+			DataGrid<ItemDTO> dtoDataGrid = executeResult.getResult(); // 返回分页数据
+			List<ItemDTO> itemDTOList = dtoDataGrid.getRows();
+		}
 	}
 }

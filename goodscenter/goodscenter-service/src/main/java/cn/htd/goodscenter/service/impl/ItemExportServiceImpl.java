@@ -3599,16 +3599,24 @@ public class ItemExportServiceImpl implements ItemExportService {
 	}
 
 	@Override
-	public ExecuteResult<List<ItemDTO>> queryItemListBySellerId(Long sellerId) {
-		ExecuteResult<List<ItemDTO>> executeResult = new ExecuteResult<>();
+	public ExecuteResult<DataGrid<ItemDTO>> queryItemListBySellerId(String itemName, Long sellerId, Pager pager) {
+		ExecuteResult<DataGrid<ItemDTO>> executeResult = new ExecuteResult<>();
+		DataGrid<ItemDTO> dtoDataGrid = new DataGrid<>();
 		try {
 			if (sellerId == null || sellerId <= 0) {
 				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
 				executeResult.setResultMessage("sellerId为空");
 				return executeResult;
 			}
-			List<ItemDTO> itemDTOList = this.itemMybatisDAO.queryItemListBySellerIdOrderByStock(sellerId);
-			executeResult.setResult(itemDTOList);
+			itemName = StringUtils.isEmpty(itemName) ? null : itemName;
+			Long count = this.itemMybatisDAO.queryItemListCountBySellerIdOrderByStock(itemName, sellerId);
+			List<ItemDTO> itemDTOList = new ArrayList<>();
+			if (count > 0) {
+				itemDTOList = this.itemMybatisDAO.queryItemListBySellerIdOrderByStock(itemName, sellerId, pager);
+			}
+			dtoDataGrid.setTotal(count);
+			dtoDataGrid.setRows(itemDTOList);
+			executeResult.setResult(dtoDataGrid);
 			executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
 			LOGGER.error("查询大B商品出错，");

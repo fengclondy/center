@@ -1086,6 +1086,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             }
             batchModifyPriceOutDTO.setFailCount(failureList.size());
             batchModifyPriceOutDTO.setFailureList(failureList);
+            executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+            executeResult.setResult(batchModifyPriceOutDTO);
         } catch (Exception e) {
             logger.error("批量改价出错, 错误信息：", e);
             executeResult.setCode(ResultCodeEnum.ERROR.getCode());

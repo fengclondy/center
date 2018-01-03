@@ -214,6 +214,7 @@
 	<select id="selectListByConditionAll" resultMap="shopBrandMap" >
 		<include refid="selectAllColumnsAll"/>
 		<include refid="where_fragementAll" />
+		order by shop_category_brand_.brand_id
 		<if test="page!=null">
 			<include refid="pagination_tail" />
 		</if>

@@ -375,6 +375,6 @@ public interface ItemExportService {
 	 * @param sellerId
 	 * @return
 	 */
-	ExecuteResult<List<ItemDTO>> queryItemListBySellerId(Long sellerId);
+	ExecuteResult<DataGrid<ItemDTO>> queryItemListBySellerId(String itemName, Long sellerId, Pager pager);
 	
 }

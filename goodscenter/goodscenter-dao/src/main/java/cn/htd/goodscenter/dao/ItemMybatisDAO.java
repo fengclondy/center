@@ -367,5 +367,7 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	 * @param sellerId
 	 * @return
 	 */
-	List<ItemDTO> queryItemListBySellerIdOrderByStock(@Param("sellerId") Long sellerId);
+	List<ItemDTO> queryItemListBySellerIdOrderByStock(@Param("itemName") String itemName, @Param("sellerId") Long sellerId, @Param("page") Pager pager);
+
+    Long queryItemListCountBySellerIdOrderByStock(@Param("itemName") String itemName, @Param("sellerId") Long sellerId);
 }

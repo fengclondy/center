@@ -718,6 +718,7 @@ public class ItemExportServiceImplAllTest extends CommonTest {
 
 	@Test
 	public void testqueryItemListBySellerId() {
-		this.itemExportService.queryItemListBySellerId(517L);
+		Pager pager = new Pager();
+		this.itemExportService.queryItemListBySellerId("汇通达", 517L, pager);
 	}
 }

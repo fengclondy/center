@@ -2666,7 +2666,29 @@
 		WHERE
 			item.item_status IN (1, 4, 5)
 		AND item.seller_id = #{sellerId}
+		<if test="itemName != null">
+			AND item.item_name LIKE CONCAT('%',#{itemName},'%')
+		</if>
 		ORDER BY
 			stock.inventory DESC
+		<if test="page != null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+
+	<select id="queryItemListCountBySellerIdOrderByStock" resultType="Long">
+		SELECT
+			COUNT(1)
+		FROM
+		item item
+		LEFT JOIN item_sku_total_stock stock ON item.item_id = stock.item_id
+		WHERE
+		item.item_status IN (1, 4, 5)
+		AND item.seller_id = #{sellerId}
+		<if test="itemName != null">
+			AND item.item_name LIKE CONCAT('%',#{itemName},'%')
+		</if>
+		ORDER BY
+		stock.inventory DESC
 	</select>
 </mapper>

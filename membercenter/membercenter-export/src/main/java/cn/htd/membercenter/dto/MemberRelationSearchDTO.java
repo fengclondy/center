@@ -1,6 +1,7 @@
 package cn.htd.membercenter.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class MemberRelationSearchDTO implements Serializable {
 
@@ -16,6 +17,10 @@ public class MemberRelationSearchDTO implements Serializable {
 	private String categoryId;
 
 	private String companyName;
+	
+	private int showType;
+	
+	private List<String> buyerIdList;
 	
 	public String getSellerId() {
 		return sellerId;
@@ -58,4 +63,20 @@ public class MemberRelationSearchDTO implements Serializable {
 	}
 
 	private String artificialPersonName;
+
+	public int getShowType() {
+		return showType;
+	}
+
+	public void setShowType(int showType) {
+		this.showType = showType;
+	}
+
+	public List<String> getBuyerIdList() {
+		return buyerIdList;
+	}
+
+	public void setBuyerIdList(List<String> buyerIdList) {
+		this.buyerIdList = buyerIdList;
+	}
 }

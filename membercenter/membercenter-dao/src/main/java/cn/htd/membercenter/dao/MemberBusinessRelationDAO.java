@@ -49,10 +49,10 @@ public interface MemberBusinessRelationDAO {
 	
 	public List<MemberBusinessRelationDTO> queryCategoryIdAndBrandIdBySellerId(@Param("memberBusinessRelationDTO") MemberBusinessRelationDTO memberBusinessRelationDTO);
 	
-	public List<MyMemberDTO> queryMemberBussinessByCategoryId(
-			@Param("dto") MemberRelationSearchDTO dto,
+	public List<String> queryMemberBussinessByCategoryId(@Param("dto") MemberRelationSearchDTO dto);
+	
+	public List<MyMemberDTO> queryMemberInfo(@Param("dto") MemberRelationSearchDTO dto , 
 			@Param("pager") Pager<MemberBusinessRelationDTO> pager);
 
-	public long countQueryMemberBussinessByCategoryId(
-			@Param("dto") MemberRelationSearchDTO dto);
+	public long queryMemberInfoCount(@Param("dto") MemberRelationSearchDTO dto);
 }

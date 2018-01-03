@@ -223,10 +223,10 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			tradeOrdersDTO.setOrderFrom(vmsOrderFrom);
 			tradeOrdersDTO.setSalesType(venusInDTO.getSalesType());
 			tradeOrdersDTO.setSalesDepartmentCode(venusInDTO.getSalesDepartmentCode());
-			// VMS开单订单默认创建状态为待确认
-			setOrderStatusByCondition(tradeOrdersDTO, dictMap);
 			tradeOrdersDTO.setCreateOrderTime(new Date());
 			tradeOrdersDTO.setPayTimeLimit(DateUtils.parse("9999-12-31 23:59:59", DateUtils.YYDDMMHHMMSS));
+			// VMS开单订单默认创建状态为待确认
+			setOrderStatusByCondition(tradeOrdersDTO, dictMap);
 			tradeOrdersDTO.setPayType(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_TYPE,
 					DictionaryConst.OPT_PAY_TYPE_ERP_ACCOUNT));
 			tradeOrdersDTO.setPayStatus(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_STATUS,
@@ -293,6 +293,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 					String confirmStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 							DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM);
 					tradeOrdersDTO.setOrderStatus(confirmStatus);
+					tradeOrdersDTO.setPayTimeLimit(DateUtils.getSystemTime());
 					List<TradeOrderItemsDTO> itemList = tradeOrdersDTO.getOrderItemList();
 					for (TradeOrderItemsDTO itemDTO : itemList) {
 						List<TradeOrderItemsStatusHistoryDTO> itemHistoryList = itemDTO.getItemStatusHistoryDTOList();

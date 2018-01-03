@@ -776,6 +776,11 @@ public class TradeOrderBaseService {
 						DictionaryConst.OPT_ORDER_STATUS_CLOSE);
 				// 订单行状态为待审核时，订单状态为审核拒绝
 			} else if (getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
+					DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM).compareTo(orderStatus) <= 0) {
+				return getDictNameByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
+						DictionaryConst.OPT_ORDER_STATUS_CANCEL);
+				// 订单行状态为待审核时，订单状态为审核拒绝
+			}else if (getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 					DictionaryConst.OPT_ORDER_STATUS_VERIFY_PENDING).equals(orderStatus)) {
 				return getDictNameByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 						DictionaryConst.OPT_ORDER_STATUS_VERIFY_REFUSE);

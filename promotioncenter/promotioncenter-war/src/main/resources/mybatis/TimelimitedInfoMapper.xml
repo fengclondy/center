@@ -525,7 +525,7 @@
 
 	<select id="getTimelimitedInfosCount" resultType="java.lang.Integer">
 		select count(1)  from timelimited_info ti
-        left join promotion_info pi on pi.promotion_id = ti.promotion_id
+        inner join promotion_info pi on pi.promotion_id = ti.promotion_id and pi.status !='9'
 		WHERE 1 = 1  
         <include refid="dynamic_fragment_timelimitedInfo"/>
 	</select>
@@ -543,7 +543,7 @@
 	        ti.modify_id, ti.modify_name,ti.modify_time,
             pi.effective_time,pi.invalid_time,pi.show_status
 		from timelimited_info ti
-        left join promotion_info pi on pi.promotion_id = ti.promotion_id
+        inner join promotion_info pi on pi.promotion_id = ti.promotion_id and pi.status != '9'
 		WHERE 1 = 1  
         <include refid="dynamic_fragment_timelimitedInfo"/>
 		ORDER BY pi.modify_time desc 

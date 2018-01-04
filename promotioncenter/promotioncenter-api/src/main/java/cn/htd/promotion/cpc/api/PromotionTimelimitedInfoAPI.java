@@ -5,6 +5,7 @@ import cn.htd.common.Pager;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
 import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 /**
@@ -129,5 +130,15 @@ public interface PromotionTimelimitedInfoAPI {
 	 * @return
 	 */
 	public ExecuteResult<TimelimitedInfoResDTO> getPromotionTimelimitedInfoBySkuCode(String messageId, String skucode);
+
+
+	/**
+	 * 汇掌柜APP - 删除活动
+	 *
+	 * @param messageId
+	 * @param promotionValidDTO
+	 * @return
+	 */
+	public ExecuteResult<?> deletePromotionTimelimitedInfoBySkuCode(String messageId, PromotionValidDTO promotionValidDTO);
 
 }

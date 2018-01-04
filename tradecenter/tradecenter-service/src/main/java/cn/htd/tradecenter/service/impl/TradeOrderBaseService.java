@@ -909,6 +909,8 @@ public class TradeOrderBaseService {
 			// 订单行为已取消时，为订单行状态包含商城下单已支付、已支付待拆单、已拆单待下行ERP六种状态，且订单取消状态为已取消
 		} else if (DictionaryConst.OPT_ORDER_STATUS_CANCEL.equals(statusConditionCode)) {
 			orderStatusList.add(getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
+					DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
+			orderStatusList.add(getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 					DictionaryConst.OPT_ORDER_STATUS_PAID));
 			orderStatusList.add(getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 					DictionaryConst.OPT_ORDER_STATUS_POST_STRIKEA_PENDING));

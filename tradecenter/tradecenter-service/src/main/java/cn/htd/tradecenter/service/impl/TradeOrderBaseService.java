@@ -484,8 +484,12 @@ public class TradeOrderBaseService {
 				erpDistributionDTO.setCustomerManagerCode(itemDTO.getCustomerManagerCode());
 				erpDistributionDTO.setCustomerManagerName(itemDTO.getCustomerManagerName());
 				erpDistributionDTO.setOrderItemNos(itemDTO.getOrderItemNo());
-				// VMS开单新增分销单待确认状态
-				setERPStatusByCondition(erpDistributionDTO, dictMap);
+				String vmsOrderFrom = getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_FROM,
+						DictionaryConst.OPT_ORDER_FROM_VMS);
+				if(vmsOrderFrom.equals(order.getOrderFrom())){
+					// VMS开单新增分销单待确认状态
+					setERPStatusByCondition(erpDistributionDTO, dictMap);
+				}
 				erpDistributionDTO.setCreateId(order.getCreateId());
 				erpDistributionDTO.setCreateName(order.getCreateName());
 				erpDistributionDTO.setModifyId(order.getModifyId());

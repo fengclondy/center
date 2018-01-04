@@ -280,5 +280,5 @@ public interface ApplyRelationshipDAO {
 	 * @param dto
 	 * @return
 	 */
-	QueryRegistProcessDTO queryRegistProcessStatus(@Param("memberId") Integer memberId, @Param("dto") QueryRegistProcessDTO dto);
+	List<QueryRegistProcessDTO> queryRegistProcessStatus(@Param("memberId") Integer memberId, @Param("dto") QueryRegistProcessDTO dto);
 }

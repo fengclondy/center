@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,32 +106,35 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 		return rs;
 	}
 
-	private List<MemberBusinessRelationDTO> setValueRelation(List<MemberBusinessRelationDTO> businessList) {
+	private List<MemberBusinessRelationDTO> setValueRelation(List<ShopBrandDTO> shopBrandDTOs) {
 		List<Long> categoryList = new ArrayList<Long>();
 		List<Long> brandList = new ArrayList<Long>();
 		List<MemberBusinessRelationDTO> resultList = new ArrayList<MemberBusinessRelationDTO>();
-		for (MemberBusinessRelationDTO mbr : businessList) {
+		for (ShopBrandDTO mbr : shopBrandDTOs) {
 			categoryList.add(mbr.getCategoryId());
 			brandList.add(mbr.getBrandId());
 		}
 		ExecuteResult<List<ItemCategoryDTO>> categorysList = itemCategoryService.getCategoryListByCids(categoryList);
 		ExecuteResult<List<ItemBrandDTO>> brandsList  =itemBrandExportService.queryItemBrandByIds(brandList.toArray(new Long[0]));
 		if(categorysList.isSuccess() && brandsList.isSuccess()){
-			for(MemberBusinessRelationDTO dto: businessList){
+			for(ShopBrandDTO dto: shopBrandDTOs){
+				MemberBusinessRelationDTO mbrDto = new MemberBusinessRelationDTO();
+				mbrDto.setBrandId(dto.getBrandId());
+				mbrDto.setCategoryId(dto.getCategoryId());
 				for(ItemCategoryDTO itemCategory:categorysList.getResult()){
 					if(dto.getCategoryId() == itemCategory.getCategoryCid()){
-						dto.setCategoryName(itemCategory.getCategoryCName());
+						mbrDto.setCategoryName(itemCategory.getCategoryCName());
 					}
 				}
 				for(ItemBrandDTO itemBrand:brandsList.getResult()){
 					if(dto.getBrandId() == itemBrand.getBrandId()){
-						dto.setBrandName(itemBrand.getBrandName());
+						mbrDto.setBrandName(itemBrand.getBrandName());
 					}
 				}
-				resultList.add(dto);
+				resultList.add(mbrDto);
 			}
 		}
-		return businessList;
+		return resultList;
 	}
 	
 	private List<MemberBusinessRelationDTO> setValue4Relation(List<MemberBusinessRelationDTO> businessList) {
@@ -488,12 +492,17 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 			String sellerId = memberBusinessRelationDTO.getSellerId();
 			if (StringUtils.isNotBlank(sellerId)) {
 				//memberBusinessRelationDTO.setAuditStatus(AuditStatusEnum.PASSING_AUDIT.getCode());
-				memberBusinessRelationDTO.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
-				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
-						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
+//				memberBusinessRelationDTO.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
+//				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
+//						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
+				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
+				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));
+				ExecuteResult<DataGrid<ShopBrandDTO>> result = shopBrandExportService.queryShopBrandAll(shopBrandDTO,
+						null);
+				List<ShopBrandDTO> shopBrandDTOs = result.getResult().getRows();
 				try {
-					if (businessList != null) {
-						rs.setResult(setValueRelation(businessList)); 
+					if (CollectionUtils.isNotEmpty(shopBrandDTOs)) {
+						rs.setResult(setValueRelation(shopBrandDTOs)); 
 					}else{
 						rs.setResultMessage("要查询的数据不存在");
 					}
@@ -524,25 +533,30 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 			String categoryId = dto.getCategoryId();
 			if (StringUtils.isNotBlank(sellerId) && StringUtils.isNotBlank(brandId) 
 					&& StringUtils.isNotBlank(categoryId)) {
-//				dto.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
-				List<MyMemberDTO> businessList = memberBusinessRelationDAO
-						.queryMemberBussinessByCategoryId(dto, pager);
-				long count = memberBusinessRelationDAO
-						.countQueryMemberBussinessByCategoryId(dto);
-				try {
-					if (businessList != null) {
-						dg.setRows(businessList);
-						dg.setTotal(count);
-						rs.setResult(dg);
-					} else {
-						rs.setResultMessage("要查询的数据不存在");
-					}
-
-					rs.setResultMessage("success");
-				} catch (Exception e) {
-					rs.setResultMessage("error");
-					throw new RuntimeException(e);
+				List<String> buyerIdList = memberBusinessRelationDAO
+						.queryMemberBussinessByCategoryId(dto);
+				if(CollectionUtils.isNotEmpty(buyerIdList)){
+					dto.setBuyerIdList(buyerIdList);
 				}
+				
+				List<MyMemberDTO> memberInfoList = memberBusinessRelationDAO.queryMemberInfo(dto , pager);
+				long count = memberBusinessRelationDAO.queryMemberInfoCount(dto);
+				if(0 == dto.getShowType()){
+					dto.setShowType(1);
+				}else{
+					dto.setShowType(0);
+				}
+				long reast = memberBusinessRelationDAO.queryMemberInfoCount(dto);
+				if (CollectionUtils.isNotEmpty(memberInfoList)) {
+					dg.setRows(memberInfoList);
+					dg.setTotal(count);
+					dg.setPageNum((int)reast);
+					rs.setResult(dg);
+				} else {
+					rs.setResultMessage("要查询的数据不存在");
+				}
+
+				rs.setResultMessage("success");
 			} else {
 				rs.setResultMessage("参数不全");
 				rs.setResultMessage("error");
@@ -601,5 +615,5 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 
 		return businessList;
 	}
-
+	
 }

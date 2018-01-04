@@ -307,7 +307,22 @@
 			order by a.brand_id desc
 	</select>
 	
-	<select id="queryMemberBussinessByCategoryId" resultType="cn.htd.membercenter.dto.MyMemberDTO"
+	<select id="queryMemberBussinessByCategoryId" resultType="String"
+		parameterType="Object">
+		SELECT 
+			DISTINCT b.buyer_id buyerId
+		FROM 
+			business_relationship b 
+		WHERE 
+			b.seller_id  = #{dto.sellerId} 
+			and b.brand_id = #{dto.brandId}
+			and b.category_id = #{dto.categoryId}
+			and b.delete_flag = 0
+		ORDER BY
+			b.create_time DESC
+	</select>
+	
+	<select id="queryMemberInfo" resultType="cn.htd.membercenter.dto.MyMemberDTO"
 		parameterType="Object">
 		SELECT 
 		    m.id memberId,
@@ -330,8 +345,6 @@
 		    m.regist_time registTime
         FROM 
         	member_company_info c,box_relationship o,member_base_info m
-		left JOIN
-			business_relationship b on b.seller_id = m.id
 		WHERE 
 			m.id = c.member_id  AND o.buyer_id=m.id
     		and c.member_id=o.buyer_id 
@@ -339,20 +352,32 @@
 			and o.delete_flag = 0 
     		and o.seller_id  = #{dto.sellerId}
 			and m.can_mall_login = 1
-			and b.brand_id = #{dto.brandId}
-			and b.category_id = #{dto.categoryId}
+			<if test="dto.showType == 0">
+				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
+					<![CDATA[ and c.id in]]>
+					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
+						#{buyuerId}
+					</foreach>
+				</if>
+			</if>
+			<if test="dto.showType == 1">
+				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
+					<![CDATA[ and c.id not in]]>
+					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
+						#{buyuerId}
+					</foreach>
+				</if>
+			</if>
 		<if test="pager != null">
-			limit #{pager.pageOffset},#{pager.rows}
+		LIMIT #{pager.pageOffset},#{pager.rows}
 		</if>
 	</select>
 	
-	<select id="countQueryMemberBussinessByCategoryId" resultType="Long"
+	<select id="queryMemberInfoCount" resultType="Long"
 		parameterType="Object">
 		SELECT count(1)
         FROM 
         	member_company_info c,box_relationship o,member_base_info m
-		left JOIN
-			business_relationship b on b.seller_id = m.id
 		WHERE 
 			m.id = c.member_id  AND o.buyer_id=m.id
     		and c.member_id=o.buyer_id 
@@ -360,7 +385,21 @@
 			and o.delete_flag = 0 
     		and o.seller_id  = #{dto.sellerId}
 			and m.can_mall_login = 1
-			and b.brand_id = #{dto.brandId}
-			and b.category_id = #{dto.categoryId}
+			<if test="dto.showType == 0">
+				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
+					<![CDATA[ and c.id in]]>
+					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
+						#{buyuerId}
+					</foreach>
+				</if>
+			</if>
+			<if test="dto.showType == 1">
+				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
+					<![CDATA[ and c.id not in]]>
+					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
+						#{buyuerId}
+					</foreach>
+				</if>
+			</if>
 	</select>
 </mapper>

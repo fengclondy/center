@@ -1,5 +1,7 @@
 package cn.htd.promotion.service;
 import javax.annotation.Resource;
+
+import cn.htd.promotion.cpc.dto.response.PromotionValidDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +53,30 @@ public class PromotionTimelimitedJUnit {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+    }
+
+    /**
+     * 添加秒杀活动
+     */
+    @Test
+    @Rollback(false)
+    public void deletePromotionTimelimitedInfoTest(){
+        try {
+            String messageId = "342453251349";
+            String buyerCode = "htd657126";
+            String promotionId = "23171610400238";
+            PromotionValidDTO promotionValidDTO = new  PromotionValidDTO();
+            promotionValidDTO.setOperatorId(Long.parseLong("123123"));
+            promotionValidDTO.setPromotionId(promotionId);
+            promotionValidDTO.setStatus("9");
+            promotionValidDTO.setOperatorName(buyerCode);
+            ExecuteResult<?>timelimited = promotionTimelimitedInfoAPI.deletePromotionTimelimitedInfoBySkuCode(messageId, promotionValidDTO);
+            System.out.println(JSON.toJSONString(timelimited));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

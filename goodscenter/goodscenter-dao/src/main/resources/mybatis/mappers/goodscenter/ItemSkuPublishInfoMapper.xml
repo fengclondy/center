@@ -776,7 +776,8 @@
 	modify_name = #{operatorName},
 	modify_time=NOW(),
 	invisable_time=NOW(),
-	is_visable=0
+	is_visable=0,
+	display_quantity = reserve_quantity
 	where id=#{id}
   </update>
 

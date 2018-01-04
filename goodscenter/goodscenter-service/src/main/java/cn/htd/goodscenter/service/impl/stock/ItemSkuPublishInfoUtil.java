@@ -6,9 +6,11 @@ import cn.htd.goodscenter.dao.ItemSkuPublishInfoMapper;
 import cn.htd.goodscenter.dao.ItemSkuTotalStockMapper;
 import cn.htd.goodscenter.domain.ItemSku;
 import cn.htd.goodscenter.domain.ItemSkuPublishInfo;
+import cn.htd.goodscenter.domain.ItemSkuTotalStock;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
 import com.google.common.collect.Maps;
 
+import java.util.Date;
 import java.util.Map;
 
 public class ItemSkuPublishInfoUtil {
@@ -22,12 +24,16 @@ public class ItemSkuPublishInfoUtil {
         }
         //勾选过同步标记；如果库存超过实际库存，则缩减，否则不处理；
         if (1 == itemSkuPublishInfo.getErpSync() && 1 == itemSkuPublishInfo.getIsVisable() && stockNum != null) {
-            if (itemSkuPublishInfo.getDisplayQuantity() > stockNum) {
+            if (itemSkuPublishInfo.getDisplayQuantity() > stockNum) { // 如果库存小于实际库存，缩减库存
+                int moreStockNum = stockNum - itemSkuPublishInfo.getDisplayQuantity();
+                if (stockNum < itemSkuPublishInfo.getReserveQuantity()) {// 否则缩减为锁定库存
+                    moreStockNum = itemSkuPublishInfo.getReserveQuantity() - itemSkuPublishInfo.getDisplayQuantity();
+                }
                 Map<String, Object> paramMap = Maps.newHashMap();
                 paramMap.put("id", itemSkuPublishInfo.getId());
                 paramMap.put("operatorId", operatorId);
                 paramMap.put("operatorName", operatorName);
-                paramMap.put("moreStockQuantity", stockNum);
+                paramMap.put("moreStockQuantity", moreStockNum);
                 itemSkuPublishInfoMapper.updateDisplayQuantityByPk(paramMap);
             }
         }
@@ -46,6 +52,29 @@ public class ItemSkuPublishInfoUtil {
                     itemMybatisDAO.updateItemStatusByPk(itemSku.getItemId(), HtdItemStatusEnum.NOT_SHELVES.getCode(), 0L, "system");
                 }
             }
+        }
+        ItemSkuTotalStock totalStock = itemSkuTotalStockMapper.queryBySkuId(itemSkuPublishInfo.getSkuId());
+        if (totalStock == null) {
+            totalStock = new ItemSkuTotalStock();
+            totalStock.setItemId(itemSku.getItemId());
+            totalStock.setSkuCode(itemSku.getSkuCode());
+            totalStock.setInventory(stockNum);
+            totalStock.setLastStockSyncTime(new Date());
+            totalStock.setCreateId(0L);
+            totalStock.setCreateName("system");
+            totalStock.setCreateTime(new Date());
+            totalStock.setModifyId(0L);
+            totalStock.setModifyName("system");
+            totalStock.setModifyTime(new Date());
+            totalStock.setSellerId(itemSku.getSellerId());
+            itemSkuTotalStockMapper.insertSelective(totalStock);
+        } else {
+            totalStock.setInventory(stockNum);
+            totalStock.setModifyId(0L);
+            totalStock.setModifyName("system");
+            totalStock.setModifyTime(new Date());
+            totalStock.setLastStockSyncTime(new Date());
+            itemSkuTotalStockMapper.updateByPrimaryKey(totalStock);
         }
     }
 }

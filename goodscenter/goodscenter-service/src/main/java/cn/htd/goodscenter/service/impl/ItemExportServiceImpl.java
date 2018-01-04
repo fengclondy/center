@@ -2454,45 +2454,20 @@ public class ItemExportServiceImpl implements ItemExportService {
 				// 查询库存上架信息
 				List<ItemSkuPublishInfo> itemSkuPublishInfoList = itemSkuPublishInfoMapper
 						.queryItemSkuShelfStatus(itemSku.getSkuId());
-//				if (CollectionUtils.isEmpty(itemSkuPublishInfoList)) {
-//					continue;
-//				}
-
+				if (CollectionUtils.isEmpty(itemSkuPublishInfoList)) {
+					continue;
+				}
 				LOGGER.info("调取中间件查询getSingleItemStock开始, supplierCode : {}, spuCode : {}", supplierCode, spuCode);
 				ItemStockResponseDTO itemStockResponse = MiddlewareInterfaceUtil.getSingleItemStock(supplierCode, spuCode);
 				LOGGER.info("调取中间件查询getSingleItemStock结束, itemStockResponse : {}", JSON.toJSONString(itemStockResponse));
 				Integer stockNum = (itemStockResponse == null || itemStockResponse.getStoreNum() == null
 						|| itemStockResponse.getStoreNum() <= 0) ? 0 : itemStockResponse.getStoreNum();
-				ItemSkuTotalStock totalStock=itemSkuTotalStockMapper.queryBySkuId(itemSku.getSkuId());
-				if(totalStock==null){
-					totalStock=new ItemSkuTotalStock();
-					totalStock.setItemId(itemSku.getItemId());
-					totalStock.setSkuCode(itemSku.getSkuCode());
-					totalStock.setInventory(stockNum);
-					totalStock.setLastStockSyncTime(new Date());
-					totalStock.setCreateId(0L);
-					totalStock.setCreateName("system");
-					totalStock.setCreateTime(new Date());
-					totalStock.setModifyId(0L);
-					totalStock.setModifyName("system");
-					totalStock.setModifyTime(new Date());
-					totalStock.setSellerId(itemSku.getSellerId());
-					itemSkuTotalStockMapper.insertSelective(totalStock);
-				}else{
-					totalStock.setInventory(stockNum);
-					totalStock.setModifyId(0L);
-					totalStock.setModifyName("system");
-					totalStock.setModifyTime(new Date());
-					totalStock.setLastStockSyncTime(new Date());
-					itemSkuTotalStockMapper.updateByPrimaryKey(totalStock);
-				}
 				for (ItemSkuPublishInfo itemSkuPublishInfo : itemSkuPublishInfoList) {
 					ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(syncItemStockInDTO.getOperatorId(),
 							syncItemStockInDTO.getOperatorName(), itemSku, stockNum, itemSkuPublishInfo);
 				}
 			}
 		}
-
 		result.setCode(ErrorCodes.SUCCESS.name());
 		return result;
 	}

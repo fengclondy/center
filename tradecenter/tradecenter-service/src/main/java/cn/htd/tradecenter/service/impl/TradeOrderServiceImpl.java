@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 
+import cn.htd.tradecenter.common.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +57,6 @@ import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.tradecenter.common.constant.ReturnCodeConst;
 import cn.htd.tradecenter.common.enums.YesNoEnum;
 import cn.htd.tradecenter.common.exception.TradeCenterBusinessException;
-import cn.htd.tradecenter.common.utils.CalculateUtils;
-import cn.htd.tradecenter.common.utils.ExceptionUtils;
-import cn.htd.tradecenter.common.utils.MiddleWare;
-import cn.htd.tradecenter.common.utils.ValidateResult;
-import cn.htd.tradecenter.common.utils.ValidationUtils;
 import cn.htd.tradecenter.dao.TradeOrderErpDistributionDAO;
 import cn.htd.tradecenter.dao.TradeOrderItemsDAO;
 import cn.htd.tradecenter.dao.TradeOrderItemsDiscountDAO;
@@ -293,7 +289,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 					String confirmStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 							DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM);
 					tradeOrdersDTO.setOrderStatus(confirmStatus);
-					tradeOrdersDTO.setPayTimeLimit(DateUtils.getSystemTime());
+					tradeOrdersDTO.setPayTimeLimit(DateUtil.getDaysTime(1));
 					List<TradeOrderItemsDTO> itemList = tradeOrdersDTO.getOrderItemList();
 					for (TradeOrderItemsDTO itemDTO : itemList) {
 						List<TradeOrderItemsStatusHistoryDTO> itemHistoryList = itemDTO.getItemStatusHistoryDTOList();

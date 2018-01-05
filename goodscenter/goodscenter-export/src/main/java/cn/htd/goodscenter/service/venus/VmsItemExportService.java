@@ -161,7 +161,7 @@ public interface VmsItemExportService {
     /**
      * 查询默认销售区域
      */
-    ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId);
+    ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId, String defaultAreaCode);
 
     /**
      * 设置默认销售区域

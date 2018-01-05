@@ -1099,15 +1099,32 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     }
 
     @Override
-    public ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId) {
+    public ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId, String defaultAreaCode) {
         ExecuteResult<DefaultSaleAreaDTO> executeResult = new ExecuteResult<>();
+        if (sellerId == null || sellerId <= 0) {
+            executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
+            executeResult.setResultMessage("sellerId不能为空");
+            return executeResult;
+        }
+        if (StringUtils.isEmpty(defaultAreaCode)) {
+            executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_ILLEGAL.getCode());
+            executeResult.setResultMessage("defaultAreaCode不能为空");
+            return executeResult;
+        }
         try {
             DefaultSaleAreaDTO defaultSaleAreaDTO = new DefaultSaleAreaDTO();
             List<ItemSalesDefaultArea> defaultList = this.itemSalesDefaultAreaMapper.selectDefaultSalesAreaBySellerId(sellerId);
             // 没有设置默认销售区域
-            if (defaultList == null || defaultList.size() == 0) {
-                executeResult.setCode(ResultCodeEnum.OUTPUT_IS_NULL.getCode());
-                executeResult.setResultMessage("没有默认销售区域");
+            if (defaultList == null || defaultList.size() == 0) { //没有设置过默认销售区域，取大B的注册所在省
+                ItemSalesArea itemSaleArea = new ItemSalesArea();
+                itemSaleArea.setIsSalesWholeCountry(0); // 全国
+                List<ItemSalesAreaDetail> itemSalesAreaDetailList = new ArrayList<>();
+                ItemSalesAreaDetail itemSalesAreaDetail = new ItemSalesAreaDetail();
+                itemSalesAreaDetail.setAreaCode(defaultAreaCode);
+                itemSalesAreaDetail.setSalesAreaType("1");
+                itemSalesAreaDetailList.add(itemSalesAreaDetail);
+                defaultSaleAreaDTO.setItemSaleArea(itemSaleArea);
+                defaultSaleAreaDTO.setItemSaleAreaDetailList(itemSalesAreaDetailList);
                 return executeResult;
             }
             // 如果销售区域是全国 则是1条数，并且是 areaCode : 00
@@ -1175,6 +1192,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 itemSalesDefaultAreaList.add(itemSalesDefaultArea);
             } else {
                 for (ItemSalesAreaDetail itemSalesAreaDetail : itemSalesAreaDetailList) {
+                    if (StringUtils.isEmpty(itemSalesAreaDetail.getAreaCode())) {
+                        continue;
+                    }
                     ItemSalesDefaultArea itemSalesDefaultArea = new ItemSalesDefaultArea();
                     itemSalesDefaultArea.setAreaCode(itemSalesAreaDetail.getAreaCode());
                     itemSalesDefaultArea.setSellerId(sellerId);

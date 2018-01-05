@@ -12,6 +12,8 @@ public class QuerySkuPublishInfoDetailParamDTO implements Serializable{
 	private String shelfType;
 	//供应商编码
 	private String supplierCode;
+	//供应商注册省
+	private String defaultAreaCode;
 	public Long getSkuId() {
 		return skuId;
 	}
@@ -38,5 +40,13 @@ public class QuerySkuPublishInfoDetailParamDTO implements Serializable{
 
 	public void setNewVms(Boolean newVms) {
 		isNewVms = newVms;
+	}
+
+	public String getDefaultAreaCode() {
+		return defaultAreaCode;
+	}
+
+	public void setDefaultAreaCode(String defaultAreaCode) {
+		this.defaultAreaCode = defaultAreaCode;
 	}
 }

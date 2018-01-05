@@ -1125,6 +1125,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 itemSalesAreaDetailList.add(itemSalesAreaDetail);
                 defaultSaleAreaDTO.setItemSaleArea(itemSaleArea);
                 defaultSaleAreaDTO.setItemSaleAreaDetailList(itemSalesAreaDetailList);
+                executeResult.setResult(defaultSaleAreaDTO);
                 return executeResult;
             }
             // 如果销售区域是全国 则是1条数，并且是 areaCode : 00

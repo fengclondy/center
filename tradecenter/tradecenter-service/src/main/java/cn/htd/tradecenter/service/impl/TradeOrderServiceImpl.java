@@ -222,7 +222,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			tradeOrdersDTO.setCreateOrderTime(new Date());
 			tradeOrdersDTO.setPayTimeLimit(DateUtils.parse("9999-12-31 23:59:59", DateUtils.YYDDMMHHMMSS));
 			// VMS开单订单默认创建状态为待确认,设置ERP分销单状态为待确认
-			setOrderStatusByCondition(tradeOrdersDTO, dictMap, orderErpDistributionDTOList);∂∂
+			setOrderStatusByCondition(tradeOrdersDTO, dictMap, orderErpDistributionDTOList);
 			tradeOrdersDTO.setPayType(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_TYPE,
 					DictionaryConst.OPT_PAY_TYPE_ERP_ACCOUNT));
 			tradeOrdersDTO.setPayStatus(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_STATUS,

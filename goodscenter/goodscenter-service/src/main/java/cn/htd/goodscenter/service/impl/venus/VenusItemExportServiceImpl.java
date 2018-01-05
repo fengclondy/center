@@ -1130,7 +1130,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			//解析类目属性
 			venusItemSkuPublishInfoDetailOutDTO.setCategoryAttrHandled(parseCategoryAttr(venusItemSkuPublishInfoDetailOutDTO.getCategoryAttr()));
 			//未上架，查询默认销售区域给前端
-			if ("2".equals(venusItemSkuPublishInfoDetailOutDTO.getShelfStatus())) { // 未上架，使用默认销售区域
+			if (2 == venusItemSkuPublishInfoDetailOutDTO.getShelfStatus()) { // 未上架，使用默认销售区域
 				ExecuteResult<DefaultSaleAreaDTO> defaultSaleAreaDTOExecuteResult = this.vmsItemExportService.queryDefaultSaleArea(item.getSellerId(), querySkuPublishInfoDetailParamDTO.getDefaultAreaCode());
 				DefaultSaleAreaDTO defaultSaleAreaDTO = defaultSaleAreaDTOExecuteResult.getResult();
 				venusItemSkuPublishInfoDetailOutDTO.setItemSaleArea(defaultSaleAreaDTO.getItemSaleArea());

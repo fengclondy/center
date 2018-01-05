@@ -92,12 +92,15 @@ public class OrderQueryTestUnit {
     @Rollback(false)
     public void testSelectOrderByTradeOrdersParam()
     {
+
     	try {
 			OrderQueryParamReqDTO reqDTO = new  OrderQueryParamReqDTO();
-			reqDTO.setBuyerCode("HTD_13125455");
-			reqDTO.setMessageId(GenerateIdsUtil.generateId(null));
+			reqDTO.setBuyerCode("htd20070007");
+			reqDTO.setMessageId("15150551594280040784193");
+			reqDTO.setOrderNo("1018010414272447369");
 			reqDTO.setOrderDeleteStatus(0);
 			reqDTO.setStart(0);
+			reqDTO.setShopName("");
 			reqDTO.setRows(10);
 			OrderQueryListDMO orderQueryDMO = orderQueryService.selectOrderByTradeOrdersParam(reqDTO);
 			String resultCode = orderQueryDMO.getResultCode();

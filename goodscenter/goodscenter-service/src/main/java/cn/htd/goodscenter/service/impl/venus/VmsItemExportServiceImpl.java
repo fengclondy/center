@@ -1125,6 +1125,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 itemSalesAreaDetailList.add(itemSalesAreaDetail);
                 defaultSaleAreaDTO.setItemSaleArea(itemSaleArea);
                 defaultSaleAreaDTO.setItemSaleAreaDetailList(itemSalesAreaDetailList);
+                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
                 executeResult.setResult(defaultSaleAreaDTO);
                 return executeResult;
             }

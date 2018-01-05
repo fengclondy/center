@@ -581,7 +581,7 @@
   			#{curBelongSellerId},
   			#{curBelongManagerId},
   			#{curBelongManagerId},
-  			'1',
+  			'0',
   			#{memberCode},#{memberCode},
   			now(),
   			#{modifyId},

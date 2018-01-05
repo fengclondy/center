@@ -616,7 +616,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         }
         // 上架
         venusItemSkuPublishInDTO.setIsVisible("1");
-        venusItemSkuPublishInDTO.setUpdate(false);
+        venusItemSkuPublishInDTO.setNewVms(true);
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 
@@ -628,7 +628,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("venusItemSkuPublishInDTO")));
             return result;
         }
-        venusItemSkuPublishInDTO.setUpdate(true);
+        // 只有上架状态的商品才能进入修改接口
+        venusItemSkuPublishInDTO.setIsVisible("1");
+        venusItemSkuPublishInDTO.setNewVms(true);
         return this.venusItemExportService.txPublishItemSkuInfo(venusItemSkuPublishInDTO);
     }
 

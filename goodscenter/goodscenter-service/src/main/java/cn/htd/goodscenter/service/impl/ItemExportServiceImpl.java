@@ -2462,10 +2462,8 @@ public class ItemExportServiceImpl implements ItemExportService {
 				LOGGER.info("调取中间件查询getSingleItemStock结束, itemStockResponse : {}", JSON.toJSONString(itemStockResponse));
 				Integer stockNum = (itemStockResponse == null || itemStockResponse.getStoreNum() == null
 						|| itemStockResponse.getStoreNum() <= 0) ? 0 : itemStockResponse.getStoreNum();
-				for (ItemSkuPublishInfo itemSkuPublishInfo : itemSkuPublishInfoList) {
-					ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(syncItemStockInDTO.getOperatorId(),
-							syncItemStockInDTO.getOperatorName(), itemSku, stockNum, itemSkuPublishInfo);
-				}
+				ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(syncItemStockInDTO.getOperatorId(),
+							syncItemStockInDTO.getOperatorName(), itemSku, stockNum, itemSkuPublishInfoList);
 			}
 		}
 		result.setCode(ErrorCodes.SUCCESS.name());

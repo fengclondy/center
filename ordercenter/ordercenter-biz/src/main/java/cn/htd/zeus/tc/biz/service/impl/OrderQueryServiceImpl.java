@@ -12,6 +12,7 @@ import java.util.Map;
 
 import cn.htd.zeus.tc.dto.response.*;
 import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -159,8 +160,10 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 					.getCreateOrderTimeTo());
 			tradeOrdersParamDMO.setStart(orderQueryParamReqDTO.getStart());
 			tradeOrdersParamDMO.setRows(orderQueryParamReqDTO.getRows());
+			LOGGER.info("商城订单查询============入参：" + JSON.toJSONString(tradeOrdersParamDMO));
 			List<TradeOrdersDMO> tradeOrdersDMOTempList = traderdersDAO
 					.selectOrderByTradeOrdersParam(tradeOrdersParamDMO);
+			LOGGER.info("商城订单查询============结果：" + JSON.toJSONString(tradeOrdersDMOTempList));
 			if (CollectionUtils.isNotEmpty(tradeOrdersDMOTempList)) {
 				for (TradeOrdersDMO order : tradeOrdersDMOTempList) {
 					OrderQueryParamDMO orderQueryDetail = new OrderQueryParamDMO();

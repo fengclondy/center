@@ -7,9 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.htd.zeus.tc.api.OrderQueryAPI;
-import cn.htd.zeus.tc.dto.response.OrderAmountResDTO;
-import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,14 +15,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import cn.htd.zeus.tc.api.OrderQueryAPI;
 import cn.htd.zeus.tc.biz.dmo.OrderQueryListDMO;
 import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
 import cn.htd.zeus.tc.biz.service.OrderQueryService;
 import cn.htd.zeus.tc.biz.service.OrderStatusChangeCommonService;
 import cn.htd.zeus.tc.common.enums.ResultCodeEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
+import cn.htd.zeus.tc.dto.response.OrderAmountResDTO;
 import cn.htd.zeus.tc.dto.response.OrderQueryPageSizeResDTO;
+import cn.htd.zeus.tc.dto.response.OrdersQueryParamListResDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderAmountQueryReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQueryParamReqDTO;
+import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprBossReqDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderQuerySupprMangerReqDTO;
 
 @Transactional
@@ -93,7 +95,7 @@ public class OrderQueryAPITestUnit {
 	public void testSelectOrderByTradeOrdersParam() {
 		try {
 			OrderQueryParamReqDTO reqDTO = new OrderQueryParamReqDTO();
-			reqDTO.setBuyerCode("HTD_13125455");
+			reqDTO.setBuyerCode("htd1087000");
 			reqDTO.setMessageId(GenerateIdsUtil.generateId(null));
 			reqDTO.setOrderDeleteStatus(0);
 			reqDTO.setStart(0);
@@ -173,13 +175,27 @@ public class OrderQueryAPITestUnit {
 	}
 
 	@Test
-	public void testQueryOrderAmountForSuperboss(){
-		OrderAmountQueryReqDTO orderAmountQueryReqDTO=new OrderAmountQueryReqDTO();
+	public void testQueryOrderAmountForSuperboss() {
+		OrderAmountQueryReqDTO orderAmountQueryReqDTO = new OrderAmountQueryReqDTO();
 		orderAmountQueryReqDTO.setMemberCode("htd000662");
 		orderAmountQueryReqDTO.setStartDate("2017-04-24");
 		orderAmountQueryReqDTO.setEndDate("2017-07-18");
 		orderAmountQueryReqDTO.setCurrentMonth("2017-04");
-		OrderAmountResDTO orderAmountResDTO =orderQueryAPI.queryOrderAmountForSuperboss(orderAmountQueryReqDTO);
-		System.out.println("dd"+orderAmountResDTO.getStatus());
+		OrderAmountResDTO orderAmountResDTO = orderQueryAPI.queryOrderAmountForSuperboss(orderAmountQueryReqDTO);
+		System.out.println("dd" + orderAmountResDTO.getStatus());
+	}
+
+	@Test
+	public void testQueryOrderBySupprBoss() {
+		OrderQuerySupprBossReqDTO recoed = new OrderQuerySupprBossReqDTO();
+		List<String> orderStatus = new ArrayList<String>();
+		orderStatus.add("19");
+		recoed.setOrderStatus(orderStatus);
+		recoed.setIsCancelOrder(0);
+		recoed.setOrderDeleteStatus(0);
+		recoed.setMessageId("123456");
+		recoed.setBuyerCode("htd1087000");
+		OrdersQueryParamListResDTO result = orderQueryAPI.queryOrderBySupprBoss(recoed);
+		System.out.println(result);
 	}
 }

@@ -221,8 +221,8 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			tradeOrdersDTO.setSalesDepartmentCode(venusInDTO.getSalesDepartmentCode());
 			tradeOrdersDTO.setCreateOrderTime(new Date());
 			tradeOrdersDTO.setPayTimeLimit(DateUtils.parse("9999-12-31 23:59:59", DateUtils.YYDDMMHHMMSS));
-			// VMS开单订单默认创建状态为待确认
-			setOrderStatusByCondition(tradeOrdersDTO, dictMap);
+			// VMS开单订单默认创建状态为待确认,设置ERP分销单状态为待确认
+			setOrderStatusByCondition(tradeOrdersDTO, dictMap, orderErpDistributionDTOList);∂∂
 			tradeOrdersDTO.setPayType(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_TYPE,
 					DictionaryConst.OPT_PAY_TYPE_ERP_ACCOUNT));
 			tradeOrdersDTO.setPayStatus(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_STATUS,
@@ -271,7 +271,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 		return result;
 	}
 
-	public void setOrderStatusByCondition(TradeOrdersDTO tradeOrdersDTO, Map<String, DictionaryInfo> dictMap)
+	public void setOrderStatusByCondition(TradeOrdersDTO tradeOrdersDTO, Map<String, DictionaryInfo> dictMap, List<TradeOrderErpDistributionDTO> orderErpDistributionDTOList)
 			throws Exception {
 		String memberCode = tradeOrdersDTO.getBuyerCode();
 		ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);
@@ -299,6 +299,10 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 									DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
 						}
 						itemDTO.setOrderItemStatus(confirmStatus);
+					}
+					for(TradeOrderErpDistributionDTO orderErp : orderErpDistributionDTOList){
+						orderErp.setErpStatus(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ERP_STATUS,
+								DictionaryConst.OPT_ERP_STATUS_WAIT_CONFIRM));
 					}
 				}
 			} else {

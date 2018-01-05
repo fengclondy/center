@@ -186,7 +186,12 @@
              </if>
 		</if>
 		and shop_category_brand_.status != '5'
-		<![CDATA[ ORDER BY shop_category_brand_.modify_time desc ]]>
+		<if test="entity.orderByType == null or entity.orderByType == ''">
+			<![CDATA[ ORDER BY shop_category_brand_.modify_time desc ]]>
+		</if>
+		<if test="entity.orderByType == 1 ">
+			<![CDATA[ ORDER BY shop_category_brand_.brand_id desc ]]>
+		</if>
 	</sql>
 
 	<sql id="groupBy">
@@ -214,7 +219,6 @@
 	<select id="selectListByConditionAll" resultMap="shopBrandMap" >
 		<include refid="selectAllColumnsAll"/>
 		<include refid="where_fragementAll" />
-		order by shop_category_brand_.brand_id
 		<if test="page!=null">
 			<include refid="pagination_tail" />
 		</if>

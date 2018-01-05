@@ -496,6 +496,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 //				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
 //						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
+				shopBrandDTO.setBrandId(memberBusinessRelationDTO.getBrandId());
+				shopBrandDTO.setCategoryId(memberBusinessRelationDTO.getCategoryId());
 				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));
 				ExecuteResult<DataGrid<ShopBrandDTO>> result = shopBrandExportService.queryShopBrandAll(shopBrandDTO,
 						null);

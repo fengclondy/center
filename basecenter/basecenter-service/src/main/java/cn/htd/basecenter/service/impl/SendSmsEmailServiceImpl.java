@@ -223,7 +223,7 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		BaseSendMessageDTO message = new BaseSendMessageDTO();
 		try {
 			String smsDisableFlag = redisDB.get(CODE_SMS_DISABLE_FLAG);
-			if(!smsDisableFlag.isEmpty()){
+			if(null == smsDisableFlag || "".equals(smsDisableFlag)){
 				logger.info("sendSmsByChannel 短信通道已停用!");
 				return null;
 			}

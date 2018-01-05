@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.htd.tradecenter.dto.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,20 +25,6 @@ import cn.htd.common.util.DictionaryUtils;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberDetailInfo;
 import cn.htd.membercenter.service.MemberBaseInfoService;
-import cn.htd.tradecenter.dto.TradeOrderItemStockDTO;
-import cn.htd.tradecenter.dto.TradeOrderItemsShowDTO;
-import cn.htd.tradecenter.dto.TradeOrderQueryInForSellerDTO;
-import cn.htd.tradecenter.dto.TradeOrderQueryOutForSellerDTO;
-import cn.htd.tradecenter.dto.TradeOrdersDTO;
-import cn.htd.tradecenter.dto.TradeOrdersQueryInDTO;
-import cn.htd.tradecenter.dto.TradeOrdersShowDTO;
-import cn.htd.tradecenter.dto.VenusConfirmTradeOrderDTO;
-import cn.htd.tradecenter.dto.VenusConfirmTradeOrderItemDTO;
-import cn.htd.tradecenter.dto.VenusConfirmTradeOrderItemWarehouseDTO;
-import cn.htd.tradecenter.dto.VenusCreateTradeOrderDTO;
-import cn.htd.tradecenter.dto.VenusCreateTradeOrderItemDTO;
-import cn.htd.tradecenter.dto.VenusCreateTradeOrderRebateDTO;
-import cn.htd.tradecenter.dto.VenusTradeOrdersQueryInDTO;
 
 public class TradeOrderServiceImplTest {
 
@@ -70,6 +57,11 @@ public class TradeOrderServiceImplTest {
 		// tradeOrders.setOrderType(0);
 		Pager<TradeOrdersQueryInDTO> pager = new Pager<TradeOrdersQueryInDTO>();
 
+		tradeOrders.setOrderNo("1018010414450130818");
+		tradeOrders.setOrderStatus("83");
+		tradeOrders.setBuySellerType(1);
+		tradeOrders.setIsCancelFlag(-1);
+		tradeOrders.setIsErrorFlag(-1);
 		ExecuteResult<DataGrid<TradeOrderItemsShowDTO>> buyerBlackRst = tradeOrderService
 				.queryTradeOrderListByCondition(tradeOrders, pager);
 		System.out.println("运营系统订单查询结果:" + JSON.toJSONString(buyerBlackRst));
@@ -275,5 +267,23 @@ public class TradeOrderServiceImplTest {
 		if (executeResult.isSuccess()) {
 			System.out.println(JSON.toJSONString(executeResult.getResult()));
 		}
+	}
+
+	@Test
+	public void queryTradeOrderInfoTest(){
+		ExecuteResult<TradeOrdersShowDTO> test = tradeOrderService.queryTradeOrderInfo("1018010316220630801");
+		System.out.println("aa");
+
+	}
+
+	@Test
+	public void confirmVenusOrderByMemberTest(){
+		TradeOrderConfirmDTO tradeOrderConfirmDTO = new TradeOrderConfirmDTO();
+		tradeOrderConfirmDTO.setMessageId("15150538540860031287319");
+		tradeOrderConfirmDTO.setOrderNo("1018010414381030815");
+		tradeOrderConfirmDTO.setModifyTimeStr("2018-1-4 14:29:46");
+		tradeOrderConfirmDTO.setOperatorId(46426L);
+		tradeOrderConfirmDTO.setOperatorName("46426");
+		tradeOrderService.confirmVenusOrderByMember(tradeOrderConfirmDTO);
 	}
 }

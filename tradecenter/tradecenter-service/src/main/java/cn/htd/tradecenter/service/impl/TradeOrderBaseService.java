@@ -482,6 +482,8 @@ public class TradeOrderBaseService {
 						.setServiceArea(order.getSellerErpCode() + (StringUtils.isEmpty(order.getConsigneeAddressTown())
 								? order.getConsigneeAddressDistrict() : order.getConsigneeAddressTown()));
 				erpDistributionDTO.setCustomerManagerCode(itemDTO.getCustomerManagerCode());
+				erpDistributionDTO.setErpStatus(getDictValueByCode(dictMap, DictionaryConst.TYPE_ERP_STATUS,
+						DictionaryConst.OPT_ERP_STATUS_PENDING));
 				erpDistributionDTO.setCustomerManagerName(itemDTO.getCustomerManagerName());
 				erpDistributionDTO.setOrderItemNos(itemDTO.getOrderItemNo());
 				erpDistributionDTO.setCreateId(order.getCreateId());

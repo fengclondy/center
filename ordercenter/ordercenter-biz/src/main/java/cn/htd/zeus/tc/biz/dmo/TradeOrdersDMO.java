@@ -176,6 +176,8 @@ public class TradeOrdersDMO extends GenericDMO {
 
 	private Date modifyTime;
 
+	private Date confirmTime;
+
 	private List<TradeOrderItemsDMO> orderItemsList;
 
 	private String buyerCouponCode;
@@ -840,6 +842,14 @@ public class TradeOrdersDMO extends GenericDMO {
 
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public Date getConfirmTime() {
+		return confirmTime;
+	}
+
+	public void setConfirmTime(Date confirmTime) {
+		this.confirmTime = confirmTime;
 	}
 
 	public List<TradeOrderItemsDMO> getOrderItemsList() {

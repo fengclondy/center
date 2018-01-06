@@ -117,4 +117,6 @@ public class Constant {
 
 	// 发票类型增值税发票
 	public final static String ADDVALUE_INVOICE_TYPE = "2";
+	// 不存在异常订单标志
+	public final static String ORDER_ERROR_FALSE = "0";
 }

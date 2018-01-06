@@ -135,6 +135,7 @@
 		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
 		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
 		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+		<result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<resultMap id="itemResultMap" type="cn.htd.zeus.tc.biz.dmo.TradeOrderItemsDMO">
 		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
@@ -216,6 +217,7 @@
 	    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
 	    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
 	    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+		<result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, trade_no, order_no, site, buyer_code, buyer_type, buyer_name,
@@ -244,7 +246,7 @@
 		logistics_status, logistics_company, logistics_no,
 		used_activity_account_amount,
 		order_delete_status, PK, create_id, create_name, create_time, modify_id, modify_name,
-		modify_time,order_type
+		modify_time,order_type,confirm_time
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
 		parameterType="java.lang.Long">
@@ -930,6 +932,9 @@
 		</if>
 		<if test="orderDeleteStatus != null">
 			and t.order_delete_status = #{orderDeleteStatus}
+		</if>
+		<if test="orderErrorStatus != null and orderErrorStatus = '0'">
+			and t.order_error_status = ''
 		</if>
 		and t.order_delete_status != 2
 	</select>

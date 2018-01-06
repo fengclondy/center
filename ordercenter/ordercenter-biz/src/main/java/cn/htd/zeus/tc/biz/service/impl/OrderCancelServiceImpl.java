@@ -235,7 +235,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 					|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode().equals(orderStatus)
 					|| OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
+					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PRE_CONFIRM.getCode().equals(orderStatus)) {
 				if (OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 						|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
 						|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
@@ -367,7 +368,8 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			String memberName = orderCancelInfoDTO.getOrderCancelMemberName();
 			if (OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
 					|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
-					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)) {
+					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PRE_CONFIRM.getCode().equals(orderStatus)) {
 				tradeOrdersDMO.setOrderNo(orderNo);
 				tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
 				tradeOrdersDMO = reservseResource(tradeOrdersDMO, orderItemNo, messageId, memberID, memberName,

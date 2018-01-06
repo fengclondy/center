@@ -254,6 +254,9 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 			tradeOrdersParamDMO.setOrderNo(orderQueryParamReqDTO.getOrderNo());
 			tradeOrdersParamDMO.setOrderStatus(orderQueryParamReqDTO
 					.getOrderStatus());
+			if(CollectionUtils.isNotEmpty(orderQueryParamReqDTO.getOrderStatus())){
+				tradeOrdersParamDMO.setOrderErrorFlag(Constant.ORDER_ERROR_FALSE);
+			}
 			tradeOrdersParamDMO
 					.setShopName(orderQueryParamReqDTO.getShopName());
 			// tradeOrdersParamDMO.setOrderFrom("1");

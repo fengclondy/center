@@ -1473,7 +1473,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 				itemShowIt = itemShowDTOList.iterator();
 				while (itemIt.hasNext()) {
 					itemDTO = itemIt.next();
-					if(StringUtils.isNotBlank(rebateNo)){
+					if(StringUtils.isNotBlank(itemDTO.getErpRebateNo())){
 						rebateNo += itemDTO.getErpRebateNo() + ",";
 					}
 					itemShowDTO = itemShowIt.next();

@@ -1473,7 +1473,9 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 				itemShowIt = itemShowDTOList.iterator();
 				while (itemIt.hasNext()) {
 					itemDTO = itemIt.next();
-					rebateNo += itemDTO.getErpRebateNo() + ",";
+					if(StringUtils.isNotBlank(rebateNo)){
+						rebateNo += itemDTO.getErpRebateNo() + ",";
+					}
 					itemShowDTO = itemShowIt.next();
 					if (isCancelOrder != itemDTO.getIsCancelOrderItem()) {
 						itemIt.remove();

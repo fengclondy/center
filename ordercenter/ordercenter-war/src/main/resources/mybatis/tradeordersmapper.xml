@@ -933,7 +933,7 @@
 		<if test="orderDeleteStatus != null">
 			and t.order_delete_status = #{orderDeleteStatus}
 		</if>
-		<if test="orderErrorStatus != null and orderErrorStatus = '0'">
+		<if test="orderErrorFlag != null and orderErrorFlag = '0'">
 			and t.order_error_status = ''
 		</if>
 		and t.order_delete_status != 2

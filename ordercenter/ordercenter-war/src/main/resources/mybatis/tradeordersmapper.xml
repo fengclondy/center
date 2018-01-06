@@ -935,7 +935,7 @@
 		</if>
 		<if test="orderErrorStatus != null and orderErrorStatus = '0'">
 			and t.order_error_status = ''
-		</if> 
+		</if>
 		and t.order_delete_status != 2
 	</select>
 	

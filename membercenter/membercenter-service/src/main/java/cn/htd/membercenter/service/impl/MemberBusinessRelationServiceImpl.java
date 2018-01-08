@@ -526,7 +526,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 //				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
 //						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
-				shopBrandDTO.setOrderByType(1);
+//				shopBrandDTO.setOrderByType(1);
 				shopBrandDTO.setBrandIdList(memberBusinessRelationDTO.getBrandIdList());
 				shopBrandDTO.setCategoryIdList(memberBusinessRelationDTO.getCategoryIdList());
 				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));

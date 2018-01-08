@@ -324,14 +324,16 @@
 	
 	<select id="queryMemberInfo" resultType="cn.htd.membercenter.dto.MyMemberDTO"
 		parameterType="Object">
-		SELECT 
+		SELECT DISTINCT
 		    m.id memberId,
+		<if test="dto.showType == 0">
+			br.customer_manager_id curBelongManagerId,
+		</if>
 		    m.member_code memberCode,
 		    c.company_name companyName,
 		    m.belong_seller_id sellerId,
 		    m.belong_manager_id belongManagerId,
 		    m.cur_belong_seller_id curBelongSellerId,
-		    m.cur_belong_manager_id curBelongManagerId,
 		    m.status status,
 		    c.artificial_person_name artificialPersonName,
 		    c.artificial_person_mobile artificialPersonMobile,
@@ -345,6 +347,10 @@
 		    m.regist_time registTime
         FROM 
         	member_company_info c,box_relationship o,member_base_info m
+		<if test="dto.showType == 0">
+		LEFT JOIN
+			business_relationship br on br.buyer_id = m.id
+		</if>
 		WHERE 
 			m.id = c.member_id  AND o.buyer_id=m.id
     		and c.member_id=o.buyer_id 
@@ -352,22 +358,12 @@
 			and o.delete_flag = 0 
     		and o.seller_id  = #{dto.sellerId}
 			and m.can_mall_login = 1
-			<if test="dto.showType == 0">
-				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
-					<![CDATA[ and c.id in]]>
-					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
-						#{buyuerId}
-					</foreach>
-				</if>
-			</if>
-			<if test="dto.showType == 1">
-				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
-					<![CDATA[ and c.id not in]]>
-					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
-						#{buyuerId}
-					</foreach>
-				</if>
-			</if>
+		<if test="dto.showType == 0">
+			and br.brand_id =  #{dto.brandId}
+			and br.category_id = #{dto.categoryId}
+			and br.seller_id = #{dto.sellerId}
+		</if>
+		<include refid="where_queryMemberInfo" />
 		<if test="pager != null">
 		LIMIT #{pager.pageOffset},#{pager.rows}
 		</if>
@@ -385,21 +381,42 @@
 			and o.delete_flag = 0 
     		and o.seller_id  = #{dto.sellerId}
 			and m.can_mall_login = 1
-			<if test="dto.showType == 0">
-				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
-					<![CDATA[ and c.id in]]>
-					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
-						#{buyuerId}
-					</foreach>
-				</if>
-			</if>
-			<if test="dto.showType == 1">
-				<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
-					<![CDATA[ and c.id not in]]>
-					<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
-						#{buyuerId}
-					</foreach>
-				</if>
-			</if>
+		<include refid="where_queryMemberInfo" />
 	</select>
+
+	<sql id="where_queryMemberInfo">
+		<if test="dto.showType == 0">
+			<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
+				<![CDATA[ and c.id in]]>
+				<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
+					#{buyuerId}
+				</foreach>
+			</if>
+		</if>
+		<if test="dto.showType == 1">
+			<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
+				<![CDATA[ and c.id not in]]>
+				<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
+					#{buyuerId}
+				</foreach>
+			</if>
+		</if>
+		<if test="dto.companyName != null and dto.companyName!=''">
+			and c.company_name like concat('%',#{dto.companyName},"%")
+		</if>
+		<if test="dto.artificialPersonName != null and dto.artificialPersonName!=''">
+			and c.artificial_person_name like concat('%',#{dto.artificialPersonName},"%")
+		</if>
+		<if test="dto.locationProvince != null and dto.locationProvince!=''">
+			and c.location_province = #{dto.locationProvince}
+			<if test="dto.locationCity != null and dto.locationCity!=''">
+				and c.location_city = #{dto.locationCity}
+				<if test="dto.locationCounty != null and dto.locationCounty!=''">
+					and c.location_county = #{dto.locationCounty}
+				</if>
+			</if>
+		</if>
+
+
+	</sql>
 </mapper>

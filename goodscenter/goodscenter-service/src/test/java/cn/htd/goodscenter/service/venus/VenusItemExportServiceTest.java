@@ -220,16 +220,17 @@ public class VenusItemExportServiceTest extends CommonTest {
 		VenusItemSkuPublishInDTO venusItemSkuPublishInDTO=new VenusItemSkuPublishInDTO();
 		
 		venusItemSkuPublishInDTO.setSubTitle("zhangxiaolong unit test subtitle");
-		venusItemSkuPublishInDTO.setSkuId(99L);
-		venusItemSkuPublishInDTO.setSkuCode("99");
-		venusItemSkuPublishInDTO.setDisplayQty("100");
+		venusItemSkuPublishInDTO.setSkuId(202556L);
+		venusItemSkuPublishInDTO.setSkuCode("HTDH_0000129526");
+		venusItemSkuPublishInDTO.setItemId(202556L);
+		venusItemSkuPublishInDTO.setDisplayQty("20");
 		venusItemSkuPublishInDTO.setShelfType("1");
 		venusItemSkuPublishInDTO.setOperatorId(1234L);
 		venusItemSkuPublishInDTO.setOperatorName("jerry");
 		venusItemSkuPublishInDTO.setSupplierCode("0801");
-		
+		venusItemSkuPublishInDTO.setIsVisible("0");
 		venusItemSkuPublishInDTO.setPreSaleFlag(1);
-		
+
 		StandardPriceDTO standardPrice=new StandardPriceDTO();
 		ItemSkuBasePrice itemSkuBasePrice=new ItemSkuBasePrice();
 		itemSkuBasePrice.setBoxSalePrice(new BigDecimal(122));

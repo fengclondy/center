@@ -37,7 +37,11 @@ public class ShopBrandDTO implements Serializable {
 	 *  品牌编码集合 - 目前供新系统VMS用
 	 */
 	private List<Long> brandIdList;
-	
+
+	/**
+	 * 排序类型 空：老系统；1：新vms
+	 */
+	private int orderByType;
 
 	public Long getIsGroupBy() {
 		return isGroupBy;
@@ -216,5 +220,13 @@ public class ShopBrandDTO implements Serializable {
 				+ brandId + ", status=" + status + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", sellerId="
 				+ sellerId + ", categoryId=" + categoryId + ", passTime=" + passTime + ", createId=" + createId +
 				", createName="+createName+", modifyId="+modifyId+", modifyName="+modifyName+ "，isGroupBy=" + isGroupBy + "]";
+	}
+
+	public int getOrderByType() {
+		return orderByType;
+	}
+
+	public void setOrderByType(int orderByType) {
+		this.orderByType = orderByType;
 	}
 }

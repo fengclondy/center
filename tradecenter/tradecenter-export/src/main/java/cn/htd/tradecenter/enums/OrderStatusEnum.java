@@ -21,6 +21,7 @@ import cn.htd.common.constant.DictionaryConst;
 public enum OrderStatusEnum {
 
 	VERIFY_PENDING("待审核", DictionaryConst.OPT_ORDER_STATUS_VERIFY_PENDING, "10"),
+	WAIT_CONFIRM("待确认", DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM, "19"),
 	WAIT_PAY("待支付", DictionaryConst.OPT_ORDER_STATUS_WAIT_PAY, "20"),
 	PAID("已支付", DictionaryConst.OPT_ORDER_STATUS_PAID, "30"),
 	WAIT_DELIVERY("待发货", DictionaryConst.OPT_ORDER_STATUS_WAIT_DELIVERY, "40"),

@@ -80,6 +80,10 @@ public class ReturnCodeConst {
 	public static final String ORDER_NEGOTIATION_NO_CHANGE = "16122";
 	// 用户专有账户余额不足
 	public static final String ORDER_PRIVATEACCOUNT_NO_ENOUGH = "16123";
+	// VMS开单根据会员code查询id失败
+	public static final String ORDER_SEARCH_FOR_MEMBERID_ERROR = "16124";
+	// VMS开单根据会员id查询会员信息失败
+	public static final String ORDER_SEARCH_FOR_MEMBERINFO_ERROR = "16125";
 
 	// *******************************************************
 	// 订单行返回码
@@ -122,4 +126,5 @@ public class ReturnCodeConst {
 	public static final String ORDER_ITEM_COUNT_OVER_LIMIT = "16117";
 	// 订单行不是可下行ERP状态
 	public static final String ORDER_ITEM_NOT_ERP_PENDING = "16118";
+
 }

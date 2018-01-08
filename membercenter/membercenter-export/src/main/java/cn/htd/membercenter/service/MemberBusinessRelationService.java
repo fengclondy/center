@@ -58,6 +58,14 @@ public interface MemberBusinessRelationService {
 	 */
 	public ExecuteResult<Boolean> insertMemberBusinessRelationInfo(
 			List<MemberBusinessRelationDTO> mbrDTO);
+	
+	/**
+	 * 修改会员的经营关系客户经理
+	 * 
+	 * @param memberInvoiceDTO
+	 * @return
+	 */
+	public ExecuteResult<Boolean> updateCustomManager(List<MemberBusinessRelationDTO> mbrDTO);
 
 	/**
 	 * 查询会员供应商包厢关系、

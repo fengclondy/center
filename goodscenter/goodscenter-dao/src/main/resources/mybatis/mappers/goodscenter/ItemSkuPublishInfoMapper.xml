@@ -583,6 +583,9 @@
 		info.max_purchase_quantity as maxPurchaseQty,
 		info.shipping_cost as shippingCost,
 		ifnull(info.is_visable,0) as isVisible,
+        CASE WHEN info.is_visable IS NULL THEN 2
+        WHEN info.is_visable = 0 THEN 0
+        WHEN info.is_visable = 1 THEN 1 END AS shelfStatus,
 		info.is_automatic_visable as isAutomaticVisible,
 		info.automatic_visable_with_stock as isAutomaticVisibleByStock,
 		info.automatic_starttime as automaticVisibleUpTime,
@@ -776,7 +779,8 @@
 	modify_name = #{operatorName},
 	modify_time=NOW(),
 	invisable_time=NOW(),
-	is_visable=0
+	is_visable=0,
+	display_quantity = reserve_quantity
 	where id=#{id}
   </update>
 
@@ -808,6 +812,6 @@
   </select>
 
   <update id="updateSkuOffShelf">
-    update item_sku_publish_info set display_quantity = reserve_quantity, is_visable = 0 where sku_code = #{skuCode} and is_box_flag = #{isBoxFlag}
+    update item_sku_publish_info set display_quantity = reserve_quantity, is_visable = 0, erp_sync = 0 where sku_code = #{skuCode} and is_box_flag = #{isBoxFlag}
   </update>
 </mapper>

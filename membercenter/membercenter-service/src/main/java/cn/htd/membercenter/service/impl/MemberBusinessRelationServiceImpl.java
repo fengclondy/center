@@ -329,6 +329,36 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 		}
 		return rs;
 	}
+	
+	@Override
+	public ExecuteResult<Boolean> updateCustomManager(List<MemberBusinessRelationDTO> mbrList){
+		ExecuteResult<Boolean> rs = new ExecuteResult<Boolean>();
+		try {
+			for (MemberBusinessRelationDTO mbrDTO : mbrList) {
+				String memberId = mbrDTO.getBuyerId();
+				String sellerId = mbrDTO.getSellerId();
+				long brandId = mbrDTO.getBrandId();
+				long categoryId = mbrDTO.getCategoryId();
+				if (StringUtils.isNotBlank(memberId) && StringUtils.isNotBlank(sellerId) && brandId != 0
+						&& categoryId != 0) {
+					mbrDTO.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
+					// 设置审核状态为审核通过
+					mbrDTO.setAuditStatus(AuditStatusEnum.PASSING_AUDIT.getCode());
+					memberBusinessRelationDAO.updateMemberBusinessRelationInfo(mbrDTO);
+					rs.setResultMessage("success");
+					rs.setResult(GlobalConstant.OPERATE_FLAG_SUCCESS);
+				} else {
+					rs.setResult(GlobalConstant.OPERATE_FLAG_FAIL);
+					rs.addErrorMessage("参数不全！");
+				}
+			}
+		} catch (Exception e) {
+			logger.error("MemberBusinessRelationServiceImpl----->updateCustomManager=" + e);
+			rs.setResult(GlobalConstant.OPERATE_FLAG_FAIL);
+			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", e.getMessage()));
+		}
+		return rs;
+	}
 
 	@Override
 	public ExecuteResult<MemberBaseDTO> queryMemberBusinessRelationPendingAudit(
@@ -496,6 +526,9 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 //				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
 //						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
+				shopBrandDTO.setOrderByType(1);
+				shopBrandDTO.setBrandIdList(memberBusinessRelationDTO.getBrandIdList());
+				shopBrandDTO.setCategoryIdList(memberBusinessRelationDTO.getCategoryIdList());
 				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));
 				ExecuteResult<DataGrid<ShopBrandDTO>> result = shopBrandExportService.queryShopBrandAll(shopBrandDTO,
 						null);

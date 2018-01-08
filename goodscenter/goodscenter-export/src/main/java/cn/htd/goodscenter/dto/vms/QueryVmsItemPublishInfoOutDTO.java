@@ -36,6 +36,13 @@ public class QueryVmsItemPublishInfoOutDTO implements Serializable{
 	//可见库存
 	private Long publishStock;
 	//上架状态
+	/**
+	 * 上架状态
+	 * null 全部
+	 * 0 下架 （上架过，但是下架了）
+	 * 1 上架
+	 * 2 未上架（从来没有上架过）
+	 */
 	private Integer shelfStatus;
 	//是否包厢  0 大厅上架 1 包厢上架
 	private Integer isBoxFlag;

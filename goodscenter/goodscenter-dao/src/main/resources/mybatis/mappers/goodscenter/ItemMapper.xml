@@ -2659,10 +2659,12 @@
 
 	<select id="queryItemListBySellerIdOrderByStock" resultMap="itemDTOMapper">
 		SELECT
-			item.*
+			item.*,
+		    spu.spu_code
 		FROM
 			item item
 		LEFT JOIN item_sku_total_stock stock ON item.item_id = stock.item_id
+		LEFT JOIN item_spu spu ON spu.spu_id = item.item_spu_id
 		WHERE
 			item.item_status IN (1, 4, 5)
 		AND item.seller_id = #{sellerId}
@@ -2682,6 +2684,7 @@
 		FROM
 		item item
 		LEFT JOIN item_sku_total_stock stock ON item.item_id = stock.item_id
+		LEFT JOIN item_spu spu ON spu.spu_id = item.item_spu_id
 		WHERE
 		item.item_status IN (1, 4, 5)
 		AND item.seller_id = #{sellerId}

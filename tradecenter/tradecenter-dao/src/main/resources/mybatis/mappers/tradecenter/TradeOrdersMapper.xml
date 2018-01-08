@@ -83,6 +83,7 @@
     <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
     <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
     id,
@@ -165,7 +166,8 @@
 	create_time,
 	modify_id,
 	modify_name,
-	modify_time
+	modify_time,
+	confirm_time
   </sql>
   <sql id="pagination_tail">
    	limit #{page.pageOffset} , #{page.rows}
@@ -174,6 +176,9 @@
     <if test="entity!=null">
       <if test="entity.sellerCode != null and entity.sellerCode != ''">
       	and seller_code = #{entity.sellerCode}
+      </if>
+      <if test="entity.buyerCode != null and entity.buyerCode != ''">
+      	and buyer_code = #{entity.buyerCode}
       </if>
       <if test="entity.searchStr != null and entity.searchStr != ''">
 	   	and ( 
@@ -209,6 +214,9 @@
 	  <if test="entity.thirdCategoryId != null and entity.thirdCategoryId != ''">
 	  		and order_no in (select distinct(s.order_no) from trade_order_items s 
 			where s.third_category_id = #{entity.thirdCategoryId})
+	  </if>
+	  <if test="entity.orderFrom != null and entity.orderFrom != '' ">
+	    <![CDATA[ and order_from = #{entity.orderFrom} ]]>
 	  </if>
     </if>
   </sql>
@@ -697,12 +705,14 @@
       <if test="orderErrorReason != null and orderErrorReason != ''">
       order_error_reason = #{orderErrorReason,jdbcType=VARCHAR},
       </if>
+      <if test="confirmTime != null and confirmTime != ''">
+      confirm_time = now(),
+      </if>
       modify_id = #{modifyId,jdbcType=BIGINT},
       modify_name = #{modifyName,jdbcType=VARCHAR},
       modify_time = now(),
     </set>
     where order_no = #{orderNo,jdbcType=VARCHAR}
-      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
   </update>
   <update id="updateTradeOrdersErpDownStatusInfo" parameterType="cn.htd.tradecenter.dto.TradeOrdersDTO" >
     update trade_orders

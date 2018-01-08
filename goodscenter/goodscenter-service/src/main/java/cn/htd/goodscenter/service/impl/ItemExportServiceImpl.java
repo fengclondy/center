@@ -2454,45 +2454,18 @@ public class ItemExportServiceImpl implements ItemExportService {
 				// 查询库存上架信息
 				List<ItemSkuPublishInfo> itemSkuPublishInfoList = itemSkuPublishInfoMapper
 						.queryItemSkuShelfStatus(itemSku.getSkuId());
-//				if (CollectionUtils.isEmpty(itemSkuPublishInfoList)) {
-//					continue;
-//				}
-
+				if (CollectionUtils.isEmpty(itemSkuPublishInfoList)) {
+					continue;
+				}
 				LOGGER.info("调取中间件查询getSingleItemStock开始, supplierCode : {}, spuCode : {}", supplierCode, spuCode);
 				ItemStockResponseDTO itemStockResponse = MiddlewareInterfaceUtil.getSingleItemStock(supplierCode, spuCode);
 				LOGGER.info("调取中间件查询getSingleItemStock结束, itemStockResponse : {}", JSON.toJSONString(itemStockResponse));
 				Integer stockNum = (itemStockResponse == null || itemStockResponse.getStoreNum() == null
 						|| itemStockResponse.getStoreNum() <= 0) ? 0 : itemStockResponse.getStoreNum();
-				ItemSkuTotalStock totalStock=itemSkuTotalStockMapper.queryBySkuId(itemSku.getSkuId());
-				if(totalStock==null){
-					totalStock=new ItemSkuTotalStock();
-					totalStock.setItemId(itemSku.getItemId());
-					totalStock.setSkuCode(itemSku.getSkuCode());
-					totalStock.setInventory(stockNum);
-					totalStock.setLastStockSyncTime(new Date());
-					totalStock.setCreateId(0L);
-					totalStock.setCreateName("system");
-					totalStock.setCreateTime(new Date());
-					totalStock.setModifyId(0L);
-					totalStock.setModifyName("system");
-					totalStock.setModifyTime(new Date());
-					totalStock.setSellerId(itemSku.getSellerId());
-					itemSkuTotalStockMapper.insertSelective(totalStock);
-				}else{
-					totalStock.setInventory(stockNum);
-					totalStock.setModifyId(0L);
-					totalStock.setModifyName("system");
-					totalStock.setModifyTime(new Date());
-					totalStock.setLastStockSyncTime(new Date());
-					itemSkuTotalStockMapper.updateByPrimaryKey(totalStock);
-				}
-				for (ItemSkuPublishInfo itemSkuPublishInfo : itemSkuPublishInfoList) {
-					ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(syncItemStockInDTO.getOperatorId(),
-							syncItemStockInDTO.getOperatorName(), itemSku, stockNum, itemSkuPublishInfo);
-				}
+				ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(syncItemStockInDTO.getOperatorId(),
+							syncItemStockInDTO.getOperatorName(), itemSku, stockNum, itemSkuPublishInfoList);
 			}
 		}
-
 		result.setCode(ErrorCodes.SUCCESS.name());
 		return result;
 	}
@@ -2505,6 +2478,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 			List<ItemStockResponseDTO> itemStockResponseDTOList = MiddlewareInterfaceUtil.getBatchItemStock(supplerCode, spuCodeList);
 			LOGGER.info("调取中间件查询getBatchItemStock结束, itemStockResponse : {}", JSON.toJSONString(itemStockResponseDTOList));
 			for (ItemStockResponseDTO itemStockResponseDTO :itemStockResponseDTOList ) {
+				if (itemStockResponseDTO == null) {
+					continue;
+				}
 				String spuCode = itemStockResponseDTO.getProductCode();
 				ItemSpu itemSpu = itemSpuMapper.queryItemSpuBySpuCode(spuCode);
 				Integer stockNum = (itemStockResponseDTO == null || itemStockResponseDTO.getStoreNum() == null || itemStockResponseDTO.getStoreNum() <= 0) ? 0 : itemStockResponseDTO.getStoreNum();
@@ -2516,29 +2492,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 					if (itemSku == null) {
 						continue;
 					}
-					ItemSkuTotalStock totalStock=itemSkuTotalStockMapper.queryBySkuId(itemSku.getSkuId());
-					if(totalStock==null){
-						totalStock=new ItemSkuTotalStock();
-						totalStock.setItemId(itemSku.getItemId());
-						totalStock.setSkuCode(itemSku.getSkuCode());
-						totalStock.setInventory(stockNum);
-						totalStock.setLastStockSyncTime(new Date());
-						totalStock.setCreateId(0L);
-						totalStock.setCreateName("system");
-						totalStock.setCreateTime(new Date());
-						totalStock.setModifyId(0L);
-						totalStock.setModifyName("system");
-						totalStock.setModifyTime(new Date());
-						totalStock.setSellerId(itemSku.getSellerId());
-						itemSkuTotalStockMapper.insertSelective(totalStock);
-					}else{
-						totalStock.setInventory(stockNum);
-						totalStock.setModifyId(0L);
-						totalStock.setModifyName("system");
-						totalStock.setModifyTime(new Date());
-						totalStock.setLastStockSyncTime(new Date());
-						itemSkuTotalStockMapper.updateByPrimaryKey(totalStock);
-					}
+					// 查询库存上架信息
+					List<ItemSkuPublishInfo> itemSkuPublishInfoList = itemSkuPublishInfoMapper.queryItemSkuShelfStatus(itemSku.getSkuId());
+					ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(sellerId, supplerCode, itemSku, stockNum, itemSkuPublishInfoList);
 				}
 			}
 			executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());

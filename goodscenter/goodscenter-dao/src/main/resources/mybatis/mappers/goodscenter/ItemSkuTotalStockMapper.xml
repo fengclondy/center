@@ -196,7 +196,7 @@
   </update>
   <select id="queryBySkuId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
    select stock.* from item_sku_total_stock stock join item_sku sku on 
-	stock.sku_code=sku.sku_code where sku.sku_id=#{skuId}
+	stock.sku_code=sku.sku_code where sku.sku_id=#{skuId} limit 1
   </select>
   <select id="queryWarningStockLevelProductsData" parameterType="Long" resultType="Map">
 	  <![CDATA[

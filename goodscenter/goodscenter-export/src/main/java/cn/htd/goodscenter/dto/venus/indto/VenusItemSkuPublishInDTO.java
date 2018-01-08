@@ -33,6 +33,7 @@ public class VenusItemSkuPublishInDTO implements Serializable{
 	@NotNull(message="skuCode不能为null")
 	private String skuCode;
 	//商品itemId
+	@NotNull(message="itemId不能为null")
 	private Long itemId;
 	// 副标题
 	private String subTitle;
@@ -342,14 +343,13 @@ public class VenusItemSkuPublishInDTO implements Serializable{
 		this.preSaleFlag = preSaleFlag;
 	}
 
-	// 是否修改页面，不涉及上下架
-	private Boolean isUpdate;
+	private boolean newVms;
 
-	public Boolean getUpdate() {
-		return isUpdate;
+	public boolean isNewVms() {
+		return newVms;
 	}
 
-	public void setUpdate(Boolean update) {
-		isUpdate = update;
+	public void setNewVms(boolean newVms) {
+		this.newVms = newVms;
 	}
 }

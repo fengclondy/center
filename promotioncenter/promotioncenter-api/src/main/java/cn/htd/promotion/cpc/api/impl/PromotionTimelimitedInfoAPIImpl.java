@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.biz.service.PromotionBaseService;
+import cn.htd.promotion.cpc.dto.response.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +34,6 @@ import cn.htd.promotion.cpc.common.util.ExceptionUtils;
 import cn.htd.promotion.cpc.common.util.ExecuteResult;
 import cn.htd.promotion.cpc.common.util.PromotionRedisDB;
 import cn.htd.promotion.cpc.dto.request.SeckillInfoReqDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionExtendInfoDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerDetailDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionSellerRuleDTO;
-import cn.htd.promotion.cpc.dto.response.PromotionTimelimitedShowDTO;
-import cn.htd.promotion.cpc.dto.response.TimelimitedInfoResDTO;
 
 @Service("promotionTimelimitedInfoAPI")
 public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfoAPI {
@@ -506,4 +503,23 @@ public class PromotionTimelimitedInfoAPIImpl implements PromotionTimelimitedInfo
 		return result;
 	}
 
+
+	/**
+	 * 汇掌柜APP - 删除活动
+	 *
+	 * @param messageId
+	 * @param promotionValidDTO
+	 * @return
+	 */
+	public ExecuteResult<?> deletePromotionTimelimitedInfoBySkuCode(String messageId, PromotionValidDTO promotionValidDTO){
+		ExecuteResult<?> result = new ExecuteResult<>();
+		try {
+			promotionTimelimitedInfoService.deletePromotionInfo(messageId,promotionValidDTO);
+			result.setCode(PromotionCenterConst.RETURN_SUCCESS);
+		} catch (Exception e) {
+			result.setCode(PromotionCenterConst.SYSTEM_ERROR);
+			result.setErrorMessage(e.getMessage());
+		}
+		return result;
+	}
 }

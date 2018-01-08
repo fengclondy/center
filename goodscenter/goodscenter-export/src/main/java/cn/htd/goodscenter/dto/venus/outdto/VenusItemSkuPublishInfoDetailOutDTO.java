@@ -18,6 +18,15 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 2316545766121200548L;
+	//上架状态
+	/**
+	 * 上架状态
+	 * null 全部
+	 * 0 下架 （上架过，但是下架了）
+	 * 1 上架
+	 * 2 未上架（从来没有上架过）
+	 */
+	private Integer shelfStatus;
 	private Long id;
 	//商品Id
 	private Long itemId;
@@ -423,5 +432,13 @@ public class VenusItemSkuPublishInfoDetailOutDTO implements Serializable{
 
 	public void setCategoryAttrHandled(Map<String, String[]> categoryAttrHandled) {
 		this.categoryAttrHandled = categoryAttrHandled;
+	}
+
+	public Integer getShelfStatus() {
+		return shelfStatus;
+	}
+
+	public void setShelfStatus(Integer shelfStatus) {
+		this.shelfStatus = shelfStatus;
 	}
 }

@@ -1642,9 +1642,7 @@ public class MallItemExportServiceImpl implements MallItemExportService {
 		Integer stockNum = (itemStockResponse.getStoreNum() == null || itemStockResponse.getStoreNum() <= 0) ? 0
 				: itemStockResponse.getStoreNum();
 
-		for (ItemSkuPublishInfo itemSkuPublishInfo : itemSkuPublishInfoList) {
-			ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(0L, "system", itemSku, stockNum, itemSkuPublishInfo);
-		}
+		ItemSkuPublishInfoUtil.doUpdateItemSkuPublishInfo(0L, "system", itemSku, stockNum, itemSkuPublishInfoList);
 
 	}
 

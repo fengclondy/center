@@ -3,9 +3,10 @@ package cn.htd.goodscenter.dto.vms;
 import cn.htd.goodscenter.domain.ItemSalesArea;
 import cn.htd.goodscenter.domain.ItemSalesAreaDetail;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class DefaultSaleAreaDTO {
+public class DefaultSaleAreaDTO implements Serializable {
 
     //销售区域
     private ItemSalesArea itemSaleArea;

@@ -693,7 +693,7 @@
   			#{curBelongSellerId},
   			#{curBelongManagerId},
   			#{curBelongManagerId},
-  			'1',
+  			'',
   			#{memberCode},#{memberCode},
   			now(),
   			#{modifyId},

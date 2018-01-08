@@ -133,16 +133,17 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
                 for (GroupbuyingInfoResDTO dto : tasks) {
                     //根据promotionid 清除redis
                     Boolean deleteResult = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(dto.getPromotionId());
+                    logger.info("CleanGroupBuyingTask-execute-deleteResult: "+deleteResult);
                     //proumotion showstatus下架
-                    int promotionCount =0;
-                    if(deleteResult){
-                        PromotionInfoDTO countDto = new PromotionInfoDTO();
-                        countDto.setShowStatus("4");
-                        countDto.setPromotionId(dto.getPromotionId());
-                        promotionCount = promotionInfoDAO.update(countDto);
-                    }
+                    PromotionInfoDTO countDto = new PromotionInfoDTO();
+                    countDto.setShowStatus("4");
+                    countDto.setModifyId(1L);
+                    countDto.setModifyName("CleanGroupBuyingTask");
+                    countDto.setPromotionId(dto.getPromotionId());
+                    int promotionCount = promotionInfoDAO.savePromotionValidStatus(countDto);
+                    logger.info("CleanGroupBuyingTask-execute-promotionCount: "+promotionCount);
                     //更新汇掌柜sptag、上下架状态
-                    if(deleteResult && promotionCount > 0){
+                    if(promotionCount > 0){
                         int updateResult = groupbuyingInfoDAO.updateHasRedisClean(dto.getPromotionId());
                         logger.info("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId() +" ,updateResult: "+updateResult );
                         changeShelves(dto.getSkuCode(),dto.getSellerCode(),dto.getPromotionId());

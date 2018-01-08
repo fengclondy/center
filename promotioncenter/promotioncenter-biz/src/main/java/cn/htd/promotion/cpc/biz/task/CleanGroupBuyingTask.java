@@ -10,7 +10,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.htd.promotion.cpc.biz.dao.PromotionInfoDAO;
 import cn.htd.promotion.cpc.dto.response.GroupbuyingInfoResDTO;
+import cn.htd.promotion.cpc.dto.response.PromotionInfoDTO;
 import net.sf.json.JSON;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -50,6 +52,9 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
 
     @Resource
     private GroupbuyingInfoDAO groupbuyingInfoDAO;
+
+    @Resource
+    private PromotionInfoDAO promotionInfoDAO;
 
     @Resource
     private PromotionGroupbuyingRedisHandle promotionGroupbuyingRedisHandle;
@@ -128,15 +133,24 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
                 for (GroupbuyingInfoResDTO dto : tasks) {
                     //根据promotionid 清除redis
                     Boolean deleteResult = promotionGroupbuyingRedisHandle.removeGroupbuyingInfoCmpl2Redis(dto.getPromotionId());
+                    //proumotion showstatus下架
+                    int promotionCount =0;
                     if(deleteResult){
+                        PromotionInfoDTO countDto = new PromotionInfoDTO();
+                        countDto.setShowStatus("4");
+                        countDto.setPromotionId(dto.getPromotionId());
+                        promotionCount = promotionInfoDAO.update(countDto);
+                    }
+                    //更新汇掌柜sptag、上下架状态
+                    if(deleteResult && promotionCount > 0){
                         int updateResult = groupbuyingInfoDAO.updateHasRedisClean(dto.getPromotionId());
                         logger.info("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId() +" ,updateResult: "+updateResult );
-                        changeShelves(dto.getSkuCode(),dto.getSellerCode());
+                        changeShelves(dto.getSkuCode(),dto.getSellerCode(),dto.getPromotionId());
                     }else{
-                        logger.error("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId()+"清除redis团购信息失败!");
+                        logger.error("CleanGroupBuyingTask - execute - promotionId: "+dto.getPromotionId()+" ,deleteResult: "+deleteResult+" ,promotionCount: "+promotionCount);
                     }
                 }
-                //更新汇掌柜sptag、上下架状态
+
 
             }
         } catch (Exception e) {
@@ -154,9 +168,10 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
     /**
      * 通过http请求汇掌柜更新商品sptag和上下架状态
      * @param list<GroupbuyingInfoCmplReqDTO>
+     * @param promotionId
      * @return
      */
-    private String changeShelves(String skuCode, String sellerCode) {
+    private String changeShelves(String skuCode, String sellerCode, String promotionId) {
         String responseMsg = "";
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         // 1.构造HttpClient的实例
@@ -186,7 +201,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
             HttpEntity entity = response.getEntity();
             responseMsg = EntityUtils.toString(entity, "UTF-8").trim();
             // 6.处理返回的内容
-            logger.info("update sptag 结果-->" + responseMsg);
+            logger.info("promotionId: "+promotionId+"  update sptag 结果-->" + responseMsg);
             //System.out.println(responseMsg);
             if (!StringUtils.isEmpty(responseMsg) && responseMsg.indexOf("status=ok")>0) {
                 return "ok";

@@ -1010,6 +1010,9 @@
 					#{orderStatus}
 				</foreach>
 			</if>
+			<if test="orderStatus != null">
+				and order_error_status = ''
+			</if>
 			<if test="isCancelOrder != null">
 				and is_cancel_order = #{isCancelOrder}
 			</if>

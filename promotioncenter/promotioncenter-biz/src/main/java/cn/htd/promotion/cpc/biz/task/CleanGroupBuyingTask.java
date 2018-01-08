@@ -83,7 +83,7 @@ public class CleanGroupBuyingTask implements IScheduleTaskDealMulti<GroupbuyingI
      */
     @Override
     public List<GroupbuyingInfoResDTO> selectTasks(String taskParameter, String ownSign, int taskQueueNum,
-                                                       List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
+                                                   List<TaskItemDefine> taskQueueList, int eachFetchDataNum) throws Exception {
         logger.info("\n 方法:[{}],入参:[{}][{}][{}][{}][{}]", "CleanGroupBuyingTask-selectTasks",
                 "taskParameter:" + taskParameter, "ownSign:" + ownSign, "taskQueueNum:" + taskQueueNum,
                 JSONObject.toJSONString(taskQueueList), "eachFetchDataNum:" + eachFetchDataNum);

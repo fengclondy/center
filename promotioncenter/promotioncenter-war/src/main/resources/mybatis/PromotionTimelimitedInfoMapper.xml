@@ -114,7 +114,8 @@
     select 
      p.promotion_id as promotionId,p.invalid_time as invalidTime
      from promotion_info as p , promotion_seller_detail as s
-     where p.promotion_id= s.promotion_id and s.delete_flag !=1 
+     where p.promotion_id= s.promotion_id and s.delete_flag !=1
+       and p.status != '9'
      <if test="buyerCode != null and buyerCode !='' ">
         and s.seller_code=#{buyerCode}
      </if>
@@ -171,7 +172,7 @@
   </sql>
   
    <select id="selectTimelimitedInfoBySkuCode" resultMap="ResultMap">
-      SELECT * FROM timelimited_info b
+      SELECT * FROM timelimited_info b inner join promotion_info a on a.promotion_id= b.promotion_id and a.status !='9'
       where  b.sku_code=#{skuCode, jdbcType=VARCHAR}
       limit 0,1
   </select>

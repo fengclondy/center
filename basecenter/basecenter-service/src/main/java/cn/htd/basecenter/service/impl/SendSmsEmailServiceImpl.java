@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,18 +21,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.StringUtil;
 import com.google.common.collect.Lists;
 
 import cn.htd.basecenter.common.constant.ReturnCodeConst;
 import cn.htd.basecenter.common.enums.YesNoEnum;
 import cn.htd.basecenter.common.exception.BaseCenterBusinessException;
+import cn.htd.basecenter.common.utils.DateUtils;
 import cn.htd.basecenter.common.utils.ExceptionUtils;
 import cn.htd.basecenter.dao.BaseSendMessageDAO;
 import cn.htd.basecenter.dao.BaseSmsClientDAO;
 import cn.htd.basecenter.dao.BaseSmsConfigDAO;
+import cn.htd.basecenter.dao.BaseSmsNoticeDAO;
 import cn.htd.basecenter.domain.BaseSmsClient;
 import cn.htd.basecenter.dto.BaseSendMessageDTO;
 import cn.htd.basecenter.dto.BaseSmsConfigDTO;
+import cn.htd.basecenter.dto.BaseSmsNoticeDTO;
 import cn.htd.basecenter.dto.MailWarnColumn;
 import cn.htd.basecenter.dto.MailWarnInDTO;
 import cn.htd.basecenter.dto.MailWarnRow;
@@ -46,6 +51,8 @@ import cn.htd.basecenter.service.email.SendMailClient;
 import cn.htd.basecenter.service.sms.ManDaoSmsClient;
 import cn.htd.basecenter.service.sms.TianXunTongSmsClient;
 import cn.htd.common.ExecuteResult;
+import cn.htd.common.Pager;
+import cn.htd.common.dao.util.RedisDB;
 
 @Service("sendSmsEmailService")
 public class SendSmsEmailServiceImpl implements SendSmsEmailService {
@@ -63,7 +70,21 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
      * 读取配置文件预警上限数
      */
     private static final String NOTICE_SMS_BALANCE = "notice_sms_balance";
-
+    
+    /**
+     * 累计1小时内短信超过限制标识
+     */
+    private static final String CODE_CUMULATIVE_EXCEED_LIMIT = "CUMULATIVE_EXCEED_LIMIT";
+    
+    /**
+     * 短信1小时内发送次数限制
+     */
+    private static final String SMS_CUMULATIVE_EXCEED_LIMIT= "sms_cumulative_exceed_limit";
+    
+    /**
+     * 短信停用标识
+     */
+    private static final String CODE_SMS_DISABLE_FLAG = "SMS_DISABLE_FLAG";
 	@Resource
 	private BaseSmsConfigDAO baseSmsConfigDAO;
 
@@ -84,6 +105,12 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 
 	@Resource
 	private SendMailClient sendMailClient;
+	
+	@Resource
+	private BaseSmsNoticeDAO baseSmsNoticeDAO;
+	
+	@Resource
+	private RedisDB redisDB;
 
 	@Override
 	public ExecuteResult<String> sendEmail(SendEmailDTO sendEmailDTO) {
@@ -195,6 +222,11 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 		boolean hasError = false;
 		BaseSendMessageDTO message = new BaseSendMessageDTO();
 		try {
+			String smsDisableFlag = redisDB.get(CODE_SMS_DISABLE_FLAG);
+			if(!StringUtils.isEmpty(smsDisableFlag)){
+				logger.info("sendSmsByChannel 短信通道已停用!");
+				return null;
+			}
 			if (String.valueOf(YesNoEnum.YES.getValue()).equals(SysProperties.getProperty(IS_SEND_SMS_FLAG))) {
 				if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
 					//xmz for 2017-12-12 start
@@ -222,6 +254,8 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 				} else if (SmsChannelTypeEnum.MENGWANG.getCode().equals(config.getChannelCode())) {
 					result = mengWangSmsClient.sendSms(config, phoneNum, content);
 				}
+				//在一个小时之内，统计发送短信的条数，超过10万条则关所有短信通道
+				isCumulativeExceedLimit(phoneNum, config);
 			}
 		} catch (BaseCenterBusinessException bcbe) {
 			hasError = true;
@@ -240,6 +274,61 @@ public class SendSmsEmailServiceImpl implements SendSmsEmailService {
 			baseSendMessageDAO.add(message);
 		}
 		return result;
+	}
+	
+	private void isCumulativeExceedLimit(String phoneNum, BaseSmsConfigDTO config){
+		String result = "";
+		String phoneNumSms = ""; 
+		String content = "";
+		try {
+			String[] phoneNumSplit = phoneNum.split(",");
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.HOUR, +1);
+			String dateStr = DateUtils.DATEHH.format(c.getTime());
+			String key = CODE_CUMULATIVE_EXCEED_LIMIT + dateStr;
+			Long cumulativeLimit = redisDB.incrBy(key, phoneNumSplit.length);
+			redisDB.expire(key, 3600);
+			int smsCumulativeLimit = Integer.parseInt(SysProperties.getProperty(SMS_CUMULATIVE_EXCEED_LIMIT));
+			if(cumulativeLimit > smsCumulativeLimit){
+				content = "【汇通达】短信通道在近一小时内发送短信超过" + smsCumulativeLimit + "次,系统已停用所有短信通道一个小时!";
+				Pager<BaseSmsNoticeDTO> pager = new Pager<BaseSmsNoticeDTO>();
+				pager.setRows(100);
+				List<BaseSmsNoticeDTO> baseSmsNoticeList = baseSmsNoticeDAO.queryBaseSmsNotice(null, pager);
+				if (null != baseSmsNoticeList && !baseSmsNoticeList.isEmpty()) {
+					for (BaseSmsNoticeDTO dto : baseSmsNoticeList) {
+						if (StringUtil.isNotEmpty(dto.getNoticePhone())) {
+							phoneNumSms += dto.getNoticePhone() + ",";
+						}
+					}
+				}
+				if(phoneNumSms.isEmpty()){
+					logger.info("短信预警配置无数据 phoneNumSms=" + phoneNumSms);
+					return;
+				}
+				if (SmsChannelTypeEnum.MANDAO.getCode().equals(config.getChannelCode())) {
+					result = manDaoSmsClient.sendSms(config, phoneNumSms, content);
+				} else if (SmsChannelTypeEnum.TIANXUNTONG.getCode().equals(config.getChannelCode())) {
+					result = tianXunTongSmsClient.sendSms(config, phoneNumSms, content);
+				} else if (SmsChannelTypeEnum.MENGWANG.getCode().equals(config.getChannelCode())) {
+					result = mengWangSmsClient.sendSms(config, phoneNumSms, content);
+				}
+				redisDB.set(CODE_SMS_DISABLE_FLAG, "短信通道已停用");
+				redisDB.expire(CODE_SMS_DISABLE_FLAG, 3600);
+			}
+		}catch(Exception e){
+			logger.error("\n 方法[{}]，异常：[{}]", "isCumulativeExceedLimit",
+					ExceptionUtils.getStackTraceAsString(e));
+		}finally {
+			if(!result.isEmpty()){
+				BaseSendMessageDTO message = new BaseSendMessageDTO();
+				message.setAddress(phoneNumSms);
+				message.setContent(content);
+				message.setType(SmsEmailTypeEnum.SMS.getCode());
+				message.setIsSend(YesNoEnum.YES.getValue());
+				message.setSendResult(result);
+				baseSendMessageDAO.add(message);
+			}
+		}
 	}
 
 	/**

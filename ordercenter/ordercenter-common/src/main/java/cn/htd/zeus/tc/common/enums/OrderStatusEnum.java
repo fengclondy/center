@@ -4,6 +4,7 @@ package cn.htd.zeus.tc.common.enums;
 public enum OrderStatusEnum {
 	//订单状态和订单行状态
 	PRE_CHECK("10","待审核"),
+	PRE_CONFIRM("19","待确认"),
 	PRE_PAY("20","待支付"),
 	CHECK_ADOPT_PRE_PAY("21","审核通过待支付"),
 	VMS_ORDER_PRE_DOWN_ERP("22","VMS开单待下行ERP"),

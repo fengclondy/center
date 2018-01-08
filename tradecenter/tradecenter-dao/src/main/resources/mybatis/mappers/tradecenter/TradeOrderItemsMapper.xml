@@ -1264,7 +1264,6 @@
     </set>
     where order_no = #{orderNo,jdbcType=VARCHAR}
       and order_item_no = #{orderItemNo,jdbcType=VARCHAR}
-      and modify_time = #{modifyTime,jdbcType=TIMESTAMP}
   </update>
   <update id="deleteTradeOrderItemsInfo" parameterType="cn.htd.tradecenter.dto.TradeOrderItemsDTO" >
     update trade_order_items

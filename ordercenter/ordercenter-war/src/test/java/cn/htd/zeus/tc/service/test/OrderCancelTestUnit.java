@@ -13,57 +13,62 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.htd.goodscenter.common.constants.ResultCodeEnum;
-import cn.htd.zeus.tc.biz.dmo.TradeOrdersDMO;
+import cn.htd.zeus.tc.api.OrderCancelRefundAPI;
 import cn.htd.zeus.tc.biz.service.OrderCancelService;
 import cn.htd.zeus.tc.common.enums.OrderStatusEnum;
 import cn.htd.zeus.tc.common.util.GenerateIdsUtil;
+import cn.htd.zeus.tc.dto.response.OrderCancelInfoResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCancelInfoReqDTO;
 
-@Transactional  
-@RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration(locations={"classpath:applicationContext_test.xml","classpath:mybatis/sqlconfig/sqlMapConfig.xml"})  
+@Transactional
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext_test.xml",
+		"classpath:mybatis/sqlconfig/sqlMapConfig.xml" })
 public class OrderCancelTestUnit {
-	
+
 	@Resource
 	private OrderCancelService orderCancelService;
-	
-    @Before  
-    public void setUp() throws Exception 
-    {  
-    }
-    
-    @Test
-    @Rollback(false) 
-    public void testOrderCancel()
-    {
-    	try {
+
+	@Resource
+	private OrderCancelRefundAPI orderCancelRefundAPIImpl;
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@Test
+	@Rollback(false)
+	public void testOrderCancel() {
+		try {
 			OrderCancelInfoReqDTO orderCancelInfoReqDTO = new OrderCancelInfoReqDTO();
 			orderCancelInfoReqDTO.setMessageId(GenerateIdsUtil.generateId(null));
 			orderCancelInfoReqDTO.setOrderCancelMemberId("13125455");
-			orderCancelInfoReqDTO.setMemberCode("HTD_13125455");
+			orderCancelInfoReqDTO.setMemberCode("htd1087000");
 			orderCancelInfoReqDTO.setOrderCancelReason("取消原因");
 			orderCancelInfoReqDTO.setOrderCancelMemberName("二娃");
-			orderCancelInfoReqDTO.setOrderNo("10017022217190000378");
-			TradeOrdersDMO tradeOrdersDMO = orderCancelService.orderCancel(orderCancelInfoReqDTO);
-			String resultCode = tradeOrdersDMO.getResultCode();
-			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());  
-    	} catch (Exception e) {
+			orderCancelInfoReqDTO.setOrderNo("1017122617411230664");
+			OrderCancelInfoResDTO tradeOrdersDMO = orderCancelRefundAPIImpl.orderCancel(orderCancelInfoReqDTO);
+			assertEquals(tradeOrdersDMO, ResultCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
 		}
-    }
-    @Test
-    @Rollback(false) 
-    public void testOrderDelete()
-    {
-    	try {
+	}
+
+	@Test
+	@Rollback(false)
+	public void testOrderDelete() {
+		try {
 			OrderCancelInfoReqDTO orderCancelInfoReqDTO = new OrderCancelInfoReqDTO();
 			orderCancelInfoReqDTO.setMessageId(GenerateIdsUtil.generateId(null));
 			orderCancelInfoReqDTO.setMemberCode("HTD_13125455");
 			orderCancelInfoReqDTO.setOrderNo("10017022217190000378");
 			orderCancelInfoReqDTO.setIsDeleteStatus(OrderStatusEnum.ORDER_RESTORE_DELETE_STATUS.getCode());
-		/*	TradeOrdersDMO tradeOrdersDMO = orderCancelService.ordeDelete(orderCancelInfoReqDTO);
-			String resultCode = tradeOrdersDMO.getResultCode();
-			assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());  */
-    	} catch (Exception e) {
+			/*
+			 * TradeOrdersDMO tradeOrdersDMO =
+			 * orderCancelService.ordeDelete(orderCancelInfoReqDTO); String
+			 * resultCode = tradeOrdersDMO.getResultCode();
+			 * assertEquals(resultCode, ResultCodeEnum.SUCCESS.getCode());
+			 */
+		} catch (Exception e) {
 		}
-    }
+	}
 }

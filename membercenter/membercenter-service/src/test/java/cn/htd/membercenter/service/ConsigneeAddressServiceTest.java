@@ -1,5 +1,6 @@
 package cn.htd.membercenter.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Assert;
@@ -10,21 +11,43 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.alibaba.dubbo.common.json.JSON;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.MemberConsigAddressDTO;
+import cn.htd.membercenter.dto.MemberExternalDTO;
 import cn.htd.membercenter.dto.MemberJDAddress;
 
 public class ConsigneeAddressServiceTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConsigneeAddressServiceTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConsigneeAddressServiceTest.class);
 	ApplicationContext ctx = null;
 	ConsigneeAddressService consigneeAddressService = null;
-
+	MemberExternalService memberExternalService;
 	@Before
 	public void setUp() {
 		ctx = new ClassPathXmlApplicationContext("classpath*:/test.xml");
-		consigneeAddressService = (ConsigneeAddressService) ctx.getBean("consigneeAddressService");
+		memberExternalService = (MemberExternalService) ctx.getBean("memberExternalService");
+	}
+	
+	@Test
+	public void queryMemberAddressInfo() {
+	    String memberCode = "htd1078004";
+	    ExecuteResult<MemberExternalDTO> res = memberExternalService.queryMemberAddressInfo(memberCode);
+	    logger.info(res.toString());
+	}
+	
+	@Test
+	public void addUpdateAddressInfo() throws IOException {
+	    String memberCode = "htd1078003";
+	    MemberExternalDTO member = new MemberExternalDTO();
+	    member.setMemberCode(memberCode);
+	    member.setReceiveAddress("汇通达大厦B座");
+	    member.setReceivePerson("lijun");
+	    member.setReceivePhone("18963609595");
+	    ExecuteResult<Boolean>  res = memberExternalService.addUpdateAddressInfo(member);
+	    logger.info(JSON.json(res));
 	}
 
 	/*
@@ -43,7 +66,7 @@ public class ConsigneeAddressServiceTest {
 	 * Assert.assertTrue(res.isSuccess()); }
 	 */
 
-	@Test
+	//@Test
 	public void saveConsigAddressID() {
 		MemberConsigAddressDTO memberConsigAddressDto = new MemberConsigAddressDTO();
 		memberConsigAddressDto.setMemberId((long) 17620);

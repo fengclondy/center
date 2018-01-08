@@ -92,4 +92,10 @@ public interface BoxRelationshipDAO {
 	 * 通过会员memberCode查询供应商信息
 	 */
 	public List<MemberShipDTO> selectBoxRelationshipList(@Param("memberCode") String memberCode);
+	
+	/**
+	 * 通过会员memberCode查询供应商信息
+	 */
+	public List<MemberShipDTO> queryBoxRelationshipList(@Param("memberCode") String memberCode);
+	
 }

@@ -57,6 +57,8 @@ public class OrderQueryParamDMO extends GenericDMO{
 	
 	private String orderFrom;
 
+	private String orderErrorFlag;
+
 	/**
 	 *
 	 */
@@ -227,4 +229,11 @@ public class OrderQueryParamDMO extends GenericDMO{
 		this.orderFrom = orderFrom;
 	}
 
+	public String getOrderErrorFlag() {
+		return orderErrorFlag;
+	}
+
+	public void setOrderErrorFlag(String orderErrorFlag) {
+		this.orderErrorFlag = orderErrorFlag;
+	}
 }

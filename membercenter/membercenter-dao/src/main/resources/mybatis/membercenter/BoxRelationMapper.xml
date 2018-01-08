@@ -140,5 +140,29 @@
 		a.status='1' 
 		and a.member_code = #{memberCode})
 	</select>
-	
+	<!-- 通过会员店memberCode查询供应商关系 -->
+	<select id="queryBoxRelationshipList" resultType="cn.htd.membercenter.dto.MemberShipDTO">
+		SELECT
+			a.id memberId,
+			a.member_code memberCode,
+			m.company_name companyName 
+		FROM
+			member_company_info m
+			LEFT JOIN member_base_info a ON m.member_id = a.id 
+		WHERE
+			m.buyer_seller_type = '2' 
+			AND a.seller_type = '1' 
+			AND a.STATUS = '1' 
+			AND m.member_id IN (
+				SELECT
+					b.seller_id 
+				FROM
+					member_base_info a
+					LEFT JOIN box_relationship b ON a.id = b.buyer_id 
+					AND b.delete_flag = '0' 
+				WHERE
+					a.STATUS = '1' 
+					AND a.member_code = #{memberCode}
+			)
+	</select>
 </mapper>

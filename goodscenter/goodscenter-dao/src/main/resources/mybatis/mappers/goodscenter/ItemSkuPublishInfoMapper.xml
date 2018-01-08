@@ -812,6 +812,6 @@
   </select>
 
   <update id="updateSkuOffShelf">
-    update item_sku_publish_info set display_quantity = reserve_quantity, is_visable = 0 where sku_code = #{skuCode} and is_box_flag = #{isBoxFlag}
+    update item_sku_publish_info set display_quantity = reserve_quantity, is_visable = 0, erp_sync = 0 where sku_code = #{skuCode} and is_box_flag = #{isBoxFlag}
   </update>
 </mapper>

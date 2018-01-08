@@ -1022,7 +1022,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 }
                 ItemSku itemSku = itemSkuList.get(0);
                 // 不是该大b的商品
-                if (sellerId != item.getSellerId()) {
+                if (!sellerId.equals(item.getSellerId())) {
                     String errorMsg = "该商品不是此供应商的商品";
                     this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
                     continue;

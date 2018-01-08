@@ -23,6 +23,9 @@ public interface MemberGroupDAO {
 
 	public List<MemberGroupRelationDTO> queryMemberGroupRelationListInfoByGroupId(
 			@Param("memberGroupDTO") MemberGroupDTO memberGroupDTO);
+	
+	public List<MemberGroupRelationDTO> queryMemberGroupRelationListInfoByGroupIdPage(
+			@Param("memberGroupDTO") MemberGroupDTO memberGroupDTO,@Param("pager") Pager<MemberGroupDTO> pager);
 
 	public void deleteMemberGroupInfo(@Param("memberGroupDTO") MemberGroupDTO memberGroupDTO);
 
@@ -47,4 +50,6 @@ public interface MemberGroupDAO {
 
 	public MemberGroupDTO queryGroupInfoBySellerBuyerId(@Param("buyerId") Long buyerId,
 			@Param("sellerId") Long sellerId);
+
+
 }

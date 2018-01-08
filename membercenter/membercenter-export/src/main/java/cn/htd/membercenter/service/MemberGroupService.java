@@ -43,6 +43,15 @@ public interface MemberGroupService {
 	 * @return
 	 */
 	public ExecuteResult<MemberGroupDTO> queryMemberGroupInfo(MemberGroupDTO memberGroupDTO);
+	
+	/**
+	 * 根据分组编码group_id查询会员分组详情分页
+	 * @param memberGroupDTO
+	 * @param pager
+	 * @return
+	 */
+	public ExecuteResult<MemberGroupDTO> queryMemberGroupInfoForPage(MemberGroupDTO memberGroupDTO,
+			Pager<MemberGroupDTO> pager);
 
 	/**
 	 * 删除会员分组信息
@@ -102,4 +111,6 @@ public interface MemberGroupService {
 	 * @return
 	 */
 	public ExecuteResult<MemberGroupDTO> queryGroupInfoBySellerBuyerId(Long buyerId, Long sellerId);
+
+
 }

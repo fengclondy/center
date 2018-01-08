@@ -113,6 +113,37 @@ public class MemberGroupServiceImpl implements MemberGroupService {
 		}
 		return rs;
 	}
+	
+	@Override
+	public ExecuteResult<MemberGroupDTO> queryMemberGroupInfoForPage(MemberGroupDTO memberGroupDTO,
+			Pager<MemberGroupDTO> pager) {
+		ExecuteResult<MemberGroupDTO> rs = new ExecuteResult<MemberGroupDTO>();
+		try {
+			long groupId = memberGroupDTO.getGroupId();
+			MemberGroupDTO member = null;
+			if (groupId != 0) {
+				member = memberGroupDAO.queryMemberGroupInfo(memberGroupDTO);
+				List<MemberGroupRelationDTO> relationList = memberGroupDAO
+						.queryMemberGroupRelationListInfoByGroupIdPage(memberGroupDTO,pager);
+				member.setRelationList(relationList);
+			}
+			try {
+				if (member != null) {
+					rs.setResult(member);
+				} else {
+					rs.setResultMessage("要查询的数据不存在");
+				}
+
+				rs.setResultMessage("success");
+			} catch (Exception e) {
+				rs.setResultMessage("error");
+				throw new RuntimeException(e);
+			}
+		} catch (Exception e) {
+			logger.error("MemberGroupServiceImpl----->queryMemberGroupInfo=" + e);
+		}
+		return rs;
+	}
 
 	@Override
 	public ExecuteResult<Boolean> deleteMemberGroupInfo(MemberGroupDTO memberGroupDTO) {
@@ -316,4 +347,6 @@ public class MemberGroupServiceImpl implements MemberGroupService {
 		}
 		return rs;
 	}
+
+
 }

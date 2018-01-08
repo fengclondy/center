@@ -4,7 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.htd.membercenter.dao.MemberGroupDAO">
-
+	<sql id="memberGroup">
+		<if test="memberGroupDTO.newFlag == '1' ">
+			and c.status !=0
+		</if>
+		<if test="memberGroupDTO.companyName != null and memberGroupDTO.companyName != ''">
+			<![CDATA[ and b.company_name like concat('%', #{memberGroupDTO.companyName}, '%') ]]>
+		</if>
+		<if test="memberGroupDTO.locationProvince != null and memberGroupDTO.locationProvince != ''">
+			and b.location_province = #{memberGroupDTO.locationProvince}
+		</if>
+		<if test="memberGroupDTO.locationCity != null and memberGroupDTO.locationCity != ''">
+			and b.location_city = #{memberGroupDTO.locationCity}
+		</if>
+		<if test="memberGroupDTO.locationCounty != null and memberGroupDTO.locationCounty != ''">
+			and b.location_county = #{memberGroupDTO.locationCounty}
+		</if>
+	</sql>
 	<!-- 查询商家会员已分组列表信息 -->
 	<select id="queryMemberGroupListInfo" resultType="cn.htd.membercenter.dto.MemberGroupDTO"
 		parameterType="Object">
@@ -83,21 +99,21 @@
 		where a.buyer_id = b.member_id and a.buyer_id = c.id and b.buyer_seller_type = '1'
 		and a.delete_flag = '0'
 		and a.group_id = #{memberGroupDTO.groupId}
-		<if test="memberGroupDTO.newFlag == '1' ">
-			and c.status !=0
-		</if>
-		<if test="memberGroupDTO.companyName != null and memberGroupDTO.companyName != ''">
-			<![CDATA[ and b.company_name like concat('%', #{memberGroupDTO.companyName}, '%') ]]>
-		</if>
-		<if test="memberGroupDTO.locationProvince != null and memberGroupDTO.locationProvince != ''">
-			and b.location_province = #{memberGroupDTO.locationProvince}
-		</if>
-		<if test="memberGroupDTO.locationCity != null and memberGroupDTO.locationCity != ''">
-			and b.location_city = #{memberGroupDTO.locationCity}
-		</if>
-		<if test="memberGroupDTO.locationCounty != null and memberGroupDTO.locationCounty != ''">
-			and b.location_county = #{memberGroupDTO.locationCounty}
-		</if>
+		<include refid="memberGroup" />
+		
+	</select>
+	<!-- 查询商家会员分组信息 -->
+	<select id="queryMemberGroupRelationListInfoByGroupIdPage" resultType="cn.htd.membercenter.dto.MemberGroupRelationDTO"
+		parameterType="Object">
+	    select a.buyer_id buyerId,b.company_name name,c.member_code memberCode
+          from buyer_group_relationship a, member_company_info b, member_base_info c
+		where a.buyer_id = b.member_id and a.buyer_id = c.id and b.buyer_seller_type = '1'
+		and a.delete_flag = '0'
+		and a.group_id = #{memberGroupDTO.groupId}
+		<include refid="memberGroup" />
+		<if test="pager != null and pager!= ''">
+			 limit #{pager.pageOffset},#{pager.rows}
+		</if> 
 	</select>
 	
 	<!-- 删除会员分组信息 -->

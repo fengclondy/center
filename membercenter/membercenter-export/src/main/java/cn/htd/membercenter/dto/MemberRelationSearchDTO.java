@@ -15,12 +15,20 @@ public class MemberRelationSearchDTO implements Serializable {
 	private String brandId;
 	
 	private String categoryId;
-
-	private String companyName;
 	
 	private int showType;
 	
 	private List<String> buyerIdList;
+	
+	private String companyName;
+	
+	private String artificialPersonName;
+	
+	private String locationProvince ;
+	
+	private String locationCity ;
+	
+	private String locationCounty ;
 	
 	public String getSellerId() {
 		return sellerId;
@@ -62,8 +70,6 @@ public class MemberRelationSearchDTO implements Serializable {
 		this.artificialPersonName = artificialPersonName;
 	}
 
-	private String artificialPersonName;
-
 	public int getShowType() {
 		return showType;
 	}
@@ -78,5 +84,29 @@ public class MemberRelationSearchDTO implements Serializable {
 
 	public void setBuyerIdList(List<String> buyerIdList) {
 		this.buyerIdList = buyerIdList;
+	}
+
+	public String getLocationProvince() {
+		return locationProvince;
+	}
+
+	public void setLocationProvince(String locationProvince) {
+		this.locationProvince = locationProvince;
+	}
+
+	public String getLocationCity() {
+		return locationCity;
+	}
+
+	public void setLocationCity(String locationCity) {
+		this.locationCity = locationCity;
+	}
+
+	public String getLocationCounty() {
+		return locationCounty;
+	}
+
+	public void setLocationCounty(String locationCounty) {
+		this.locationCounty = locationCounty;
 	}
 }

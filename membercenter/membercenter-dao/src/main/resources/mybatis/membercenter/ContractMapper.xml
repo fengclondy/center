@@ -91,13 +91,13 @@
 			sci.contract_status AS contractStatus,
 			sci.sign_time AS signTime,
 			sci.member_code AS memberCode,
-			sci.vendor_code AS vendorCode,
+			mbi.member_code AS vendorCode,
 			sci.contract_url AS contractUrl,
 			sci.contract_credit AS contractCredit,
 			sci.contract_title AS contractTitle,
 			mci.location_addr AS vendorLocationAddr,
 			mci.artificial_person_name AS vendorArtificialPersonName,
-			mbi.member_code,
+			mci.company_name AS vendorName,
 			a.memberLocationAddr,
 			a.memberArtificialPersonName,
 			a.memberName
@@ -260,15 +260,7 @@
 				NOW(),
 				(select date_add(NOW(),interval 100 year)),
 				#{item.memberCode},
-				(SELECT
-					mbi2.member_code 
-				FROM
-					member_company_info mci2,
-					member_base_info mbi2 
-				WHERE
-					mci2.company_code = #{item.vendorCode}
-					AND mci2.buyer_seller_type = 2 
-					AND mbi2.id = mci2.member_id),
+				#{item.vendorCode},
 				#{item.createId},
 				#{item.createName},
 				NOW(),

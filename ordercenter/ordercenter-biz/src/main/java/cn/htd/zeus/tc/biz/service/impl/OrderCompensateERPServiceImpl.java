@@ -712,14 +712,18 @@ public class OrderCompensateERPServiceImpl implements OrderCompensateERPService 
 				.selectOrderByOrderNo(tradeOrdersDMO.getOrderNo());
 		if (StringUtilHelper.isNotNull(tradeOrdersRes.getOrderFrom())
 				&& tradeOrdersRes.getOrderFrom().equals(OrderStatusEnum.ORDER_FROM_VMS.getCode())) {
-			tradeOrderItemsDMO.setOrderItemStatus(OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode());
-			tradeOrdersDMO.setOrderStatus(OrderStatusEnum.PRE_PAY.getCode());
+			if(tradeOrdersRes.getConfirmTime() != null){
+				tradeOrderItemsDMO.setOrderItemStatus(OrderStatusEnum.PRE_CONFIRM.getCode());
+				tradeOrdersDMO.setOrderStatus(OrderStatusEnum.PRE_CONFIRM.getCode());
+			}else{
+				tradeOrderItemsDMO.setOrderItemStatus(OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode());
+				tradeOrdersDMO.setOrderStatus(OrderStatusEnum.PRE_PAY.getCode());
+			}
 		}
 		tradeOrderItemsDMO.setOrderItemErrorStatus(OrderStatusEnum.ERP_EXECUTE__ERROR.getCode());
 		tradeOrderItemsDMO.setOrderItemErrorTime(DateUtil.getSystemTime());
 		tradeOrderItemsDMO
 				.setOrderItemErrorReason(orderCompensateERPCallBackReqDTO.getErrormessage());
-
 		tradeOrdersDMO.setOrderErrorStatus(OrderStatusEnum.ERP_EXECUTE__ERROR.getCode());
 		tradeOrdersDMO.setOrderErrorTime(DateUtil.getSystemTime());
 		tradeOrdersDMO.setOrderErrorReason(orderCompensateERPCallBackReqDTO.getErrormessage());

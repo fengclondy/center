@@ -22,6 +22,8 @@ public class QueryOffShelfItemInDTO implements Serializable {
 
     private List<Long> thirdCategoryIdList;
 
+    private List<Long> itemIdList;
+
     public Long getFirstCategoryId() {
         return firstCategoryId;
     }
@@ -84,5 +86,13 @@ public class QueryOffShelfItemInDTO implements Serializable {
 
     public void setSupplyCode(String supplyCode) {
         this.supplyCode = supplyCode;
+    }
+
+    public List<Long> getItemIdList() {
+        return itemIdList;
+    }
+
+    public void setItemIdList(List<Long> itemIdList) {
+        this.itemIdList = itemIdList;
     }
 }

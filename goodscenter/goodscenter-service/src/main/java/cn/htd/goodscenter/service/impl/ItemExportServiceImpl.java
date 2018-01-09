@@ -2710,9 +2710,9 @@ public class ItemExportServiceImpl implements ItemExportService {
 			if (itemStatus != null && itemStatus.equals(HtdItemStatusEnum.REJECTED.getCode())) {
 				ItemDraft itemDraft = itemDraftMapper.selectByItemId(itemDTO.getItemId());
 				// 修改主数据状态
-				// Integer mainStatus=itemStatus;
-				if (dbItem.getItemStatus() != HtdItemStatusEnum.SHELVED.getCode()) {
-					// mainStatus=HtdItemStatusEnum.SHELVED.getCode();
+				if (dbItem.getItemStatus() != HtdItemStatusEnum.SHELVED.getCode()
+						|| dbItem.getItemStatus() != HtdItemStatusEnum.NOT_SHELVES.getCode()
+						|| dbItem.getItemStatus() != HtdItemStatusEnum.PASS.getCode()) {
 					itemMybatisDAO.updateItemStatusByPk(itemDTO.getItemId(), itemStatus, itemDTO.getModifyId(), itemDTO.getModifyName());
 				}
 

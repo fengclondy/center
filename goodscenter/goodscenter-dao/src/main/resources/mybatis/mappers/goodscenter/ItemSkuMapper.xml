@@ -1321,10 +1321,14 @@
 			and t.brand = #{param.brandId}
 		</if>
 		ORDER BY
-			<if test="page != null and page.sort != null">
-				publish.display_quantity #{page.order},
-			</if>
-			sku.created DESC
+			<!--<if test="page.sort == 1">-->
+            sku.created ${param.createTimeOrder},
+            publish.display_quantity ${param.stockOrder}
+			<!--</if>-->
+			<!--<if test="page.sort != 1">-->
+				<!--publish.display_quantity ${param.stockOrder},-->
+				<!--sku.created ${param.createTimeOrder}-->
+			<!--</if>-->
 			<if test="page != null">
 				limit #{page.pageOffset} , #{page.rows}
 			</if>
@@ -1412,13 +1416,19 @@
 		AND (publish.is_visable IS NULL OR publish.is_visable = 0)
 		AND (total.inventory - total.reserve_quantity) > 0
 		<if test="param.thirdCategoryIdList != null">
-			and t.cid IN
+			AND t.cid IN
 			<foreach collection="param.thirdCategoryIdList" separator="," open="(" close=")" item="item">
 				#{item}
 			</foreach>
 		</if>
 		<if test="param.brandId != null">
 			and t.brand = #{param.brandId}
+		</if>
+		<if test="param.itemIdList != null">
+			AND t.item_id IN
+			<foreach collection="param.itemIdList" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
 		</if>
 		ORDER BY
 		sku.created DESC

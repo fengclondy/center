@@ -62,6 +62,11 @@ public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Se
 
 	private List<Long> thirdCategoryIdList;
 
+	// asc desc
+	private String createTimeOrder;
+	// asc desc
+	private String stockOrder;
+
 	public Long getSellerId() {
 		return sellerId;
 	}
@@ -148,5 +153,21 @@ public class QueryVmsItemPublishInfoInDTO extends AbstractPagerDTO implements Se
 
 	public void setThirdCategoryIdList(List<Long> thirdCategoryIdList) {
 		this.thirdCategoryIdList = thirdCategoryIdList;
+	}
+
+	public String getCreateTimeOrder() {
+		return createTimeOrder;
+	}
+
+	public void setCreateTimeOrder(String createTimeOrder) {
+		this.createTimeOrder = createTimeOrder;
+	}
+
+	public String getStockOrder() {
+		return stockOrder;
+	}
+
+	public void setStockOrder(String stockOrder) {
+		this.stockOrder = stockOrder;
 	}
 }

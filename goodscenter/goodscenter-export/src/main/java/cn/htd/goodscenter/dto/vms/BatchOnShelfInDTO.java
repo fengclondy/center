@@ -17,6 +17,8 @@ public class BatchOnShelfInDTO implements Serializable {
     //大B
     @NotNull(message = "sellerId不能为NULL")
     private Long sellerId;
+    @NotNull(message = "supplierCode不能为NULL")
+    private String supplierCode;
     //大B注册所在地省code
     @NotEmpty(message = "defaultAreaCode不能为空")
     private String defaultAreaCode;
@@ -94,5 +96,13 @@ public class BatchOnShelfInDTO implements Serializable {
 
     public void setHasBelowLimitPriceAuth(Integer hasBelowLimitPriceAuth) {
         this.hasBelowLimitPriceAuth = hasBelowLimitPriceAuth;
+    }
+
+    public String getSupplierCode() {
+        return supplierCode;
+    }
+
+    public void setSupplierCode(String supplierCode) {
+        this.supplierCode = supplierCode;
     }
 }

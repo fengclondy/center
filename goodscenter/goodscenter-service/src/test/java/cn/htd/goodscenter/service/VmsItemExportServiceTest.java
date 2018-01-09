@@ -189,8 +189,8 @@ public class VmsItemExportServiceTest extends CommonTest {
         batchOnShelfItemInDTO.setItemName("松下热水瓶NC-CS301");
         batchOnShelfItemInDTO.setSkuId(257733L);
         batchOnShelfItemInDTO.setSkuCode("1000026525");
-        batchOnShelfItemInDTO.setAviableStock(92);
-        batchOnShelfItemInDTO.setMinStock(5);
+//        batchOnShelfItemInDTO.setAviableStock(92);
+//        batchOnShelfItemInDTO.setMinStock(5);
         batchOnShelfItemInDTO.setOnShelfQuantiy(30);
         batchOnShelfItemInDTO.setSaleLimitedPrice(new BigDecimal("500"));
         batchOnShelfItemInDTO.setWsaleUtprice(new BigDecimal("550"));

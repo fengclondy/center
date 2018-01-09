@@ -37,16 +37,7 @@ public class BatchOnShelfItemInDTO implements Serializable {
     private BigDecimal retailPrice;
 
     //上架库存
-    @NotNull(message = "onShelfQuantiy不能为空")
     private Integer onShelfQuantiy;
-
-    /** 从QueryOffShelfItemOutDTO透传回来给我 **/
-    //如果上架做少库存，可能存在锁定的
-    @NotNull(message = "minStock不能为空")
-    private Integer minStock;
-    //可上架库存
-    @NotNull(message = "aviableStock不能为空")
-    private Integer aviableStock;
 
     public Long getItemId() {
         return itemId;
@@ -126,21 +117,5 @@ public class BatchOnShelfItemInDTO implements Serializable {
 
     public void setOnShelfQuantiy(Integer onShelfQuantiy) {
         this.onShelfQuantiy = onShelfQuantiy;
-    }
-
-    public Integer getMinStock() {
-        return minStock;
-    }
-
-    public void setMinStock(Integer minStock) {
-        this.minStock = minStock;
-    }
-
-    public Integer getAviableStock() {
-        return aviableStock;
-    }
-
-    public void setAviableStock(Integer aviableStock) {
-        this.aviableStock = aviableStock;
     }
 }

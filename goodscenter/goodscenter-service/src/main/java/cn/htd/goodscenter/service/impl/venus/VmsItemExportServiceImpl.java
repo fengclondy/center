@@ -650,24 +650,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 executeResult.setResultMessage(validateResult.getMessage());
                 return executeResult;
             }
+            // 批量同步该大B下所有未上架商品的库存
             String supplierCode = queryOffShelfItemInDTO.getSupplyCode();
             Long sellerId = queryOffShelfItemInDTO.getSellerId();
-            // 同步大B下面所有ERP实际库存
-            // 1. 查询所有该大B下包厢或者大厅的下架商品
-            List<Map<String, Object>> allOffItemList = this.itemSkuDAO.queryALLOffShelfItemList(queryOffShelfItemInDTO.getSellerId(), queryOffShelfItemInDTO.getIsBoxFlag());
-            List<String> spuCodeList = new ArrayList<>();
-            if (allOffItemList != null) {
-                for (Map offItemMap : allOffItemList) {
-                    Map<String, Object> map = new HashMap<>();
-                    String spuCode = (String) offItemMap.get("spucode");
-                    if (StringUtils.isEmpty(spuCode)) {
-                        continue;
-                    }
-                    spuCodeList.add(spuCode);
-                }
-            }
-            // 2. 同步实际库存
-            this.itemExportService.batchsyncItemStock(spuCodeList, supplierCode, sellerId);
+            Integer isBoxFlag = queryOffShelfItemInDTO.getIsBoxFlag();
+            this.batchSyncStockBySellerId(supplierCode, sellerId, isBoxFlag);
             // 封装三级类目集合
             Long[] thirdCategoryIds = this.itemCategoryService.getAllThirdCategoryByCategoryId(queryOffShelfItemInDTO.getFirstCategoryId(),
                     queryOffShelfItemInDTO.getSecondCategoryId(), queryOffShelfItemInDTO.getThirdCategoryId());
@@ -678,23 +665,14 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             List<QueryOffShelfItemOutDTO> queryOffShelfItemOutDTOList = new ArrayList<>();
             if (count > 0) {
                 queryOffShelfItemOutDTOList = this.itemSkuDAO.queryVmsOffShelfItemSkuPublishInfoList(queryOffShelfItemInDTO, pager);
+                List<Long> skuIdList = new ArrayList<>();
                 // 获取最大可上架数量和最小上架数量
                 for (QueryOffShelfItemOutDTO queryOffShelfItemOutDTO : queryOffShelfItemOutDTOList) {
-                    // X最大可上架库存 =  实际库存 - y上架的库存或者y下架的锁定库存 - 促销维护的库存
-                    int totalStock = queryOffShelfItemOutDTO.getTotalStock();
-                    // 在其他地方占用的库存（如果其上架则取display库存，如果其下架则取锁定库存）
-                    int otherStock = queryOffShelfItemOutDTO.getOtherIsVisable() == 1 ? queryOffShelfItemOutDTO.getOtherDisplayQuantity() : queryOffShelfItemOutDTO.getOtherReserveQuantity();
-                    int promotionStock = this.getPromotionStock(queryOffShelfItemOutDTO.getSkuCode());
-                    int aviableStock = (totalStock - otherStock - promotionStock) < 0 ? 0 : (totalStock - otherStock - promotionStock);
-                    // X最小可上架库存 = X的锁定库存，没有则为0
-                    int minStock = queryOffShelfItemOutDTO.getCurrentIsVisable() == 0 ? queryOffShelfItemOutDTO.getCurrentReserveQuantity() : 0;
-                    queryOffShelfItemOutDTO.setAviableStock(aviableStock);
-                    queryOffShelfItemOutDTO.setMinStock(minStock);
-                    queryOffShelfItemOutDTO.setPromtionStock(promotionStock);
-                    // 价格
+                    this.setMinAndMaxStock(queryOffShelfItemOutDTO);
+                    // ERP价格
                     String spuCode = queryOffShelfItemOutDTO.getSpuCode();
-                    BigDecimal saleLimitPrice = null;
-                    BigDecimal wsaleUtprice = null;
+                    BigDecimal saleLimitPrice = new BigDecimal("3000");
+                    BigDecimal wsaleUtprice =  new BigDecimal("3100");
                     if (StringUtils.isNotEmpty(spuCode)) {
                         Map priceMap = MiddlewareInterfaceUtil.findItemERPPrice(supplierCode, spuCode);
                         if (MapUtils.isNotEmpty(priceMap)) {
@@ -704,12 +682,17 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     }
                     queryOffShelfItemOutDTO.setSaleLimitedPrice(saleLimitPrice);
                     queryOffShelfItemOutDTO.setWsaleUtprice(wsaleUtprice);
-                    ExecuteResult<ItemSkuBasePriceDTO> priceResult =  this.itemSkuPriceService.queryItemSkuBasePrice(queryOffShelfItemOutDTO.getSkuId());
-                    if (priceResult != null && priceResult.isSuccess()) {
-                        ItemSkuBasePriceDTO itemSkuBasePriceDTO = priceResult.getResult();
-                        if (itemSkuBasePriceDTO != null) {
-                            queryOffShelfItemOutDTO.setSalePrice(queryOffShelfItemInDTO.getIsBoxFlag() == 0 ? itemSkuBasePriceDTO.getAreaSalePrice() : itemSkuBasePriceDTO.getBoxSalePrice());
-                            queryOffShelfItemOutDTO.setRetailPrice(itemSkuBasePriceDTO.getRetailPrice());
+                    skuIdList.add(queryOffShelfItemOutDTO.getSkuId());
+                }
+                ExecuteResult<List<ItemSkuBasePrice>> basePriceList = itemSkuPriceService.batchQueryItemSkuBasePrice(skuIdList);
+                if (basePriceList != null && !CollectionUtils.isEmpty(basePriceList.getResult())) {
+                    List<ItemSkuBasePrice> itemSkuBasePriceList = basePriceList.getResult();
+                    for (QueryOffShelfItemOutDTO queryOffShelfItemOutDTO : queryOffShelfItemOutDTOList) {
+                        for (ItemSkuBasePrice itemSkuBasePrice : itemSkuBasePriceList) {
+                            if (queryOffShelfItemOutDTO.getSkuId().equals(itemSkuBasePrice.getSkuId())) {
+                                queryOffShelfItemOutDTO.setSalePrice(queryOffShelfItemInDTO.getIsBoxFlag() == 0 ? itemSkuBasePrice.getAreaSalePrice() : itemSkuBasePrice.getBoxSalePrice());
+                                queryOffShelfItemOutDTO.setRetailPrice(itemSkuBasePrice.getRetailPrice());
+                            }
                         }
                     }
                 }
@@ -726,6 +709,40 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return executeResult;
     }
 
+    private void setMinAndMaxStock(QueryOffShelfItemOutDTO queryOffShelfItemOutDTO) {
+        // X最大可上架库存 =  实际库存 - y上架的库存或者y下架的锁定库存 - 促销维护的库存
+        int totalStock = queryOffShelfItemOutDTO.getTotalStock();
+        // 在其他地方占用的库存（如果其上架则取display库存，如果其下架则取锁定库存）
+        int otherStock = queryOffShelfItemOutDTO.getOtherIsVisable() == 1 ? queryOffShelfItemOutDTO.getOtherDisplayQuantity() : queryOffShelfItemOutDTO.getOtherReserveQuantity();
+        int promotionStock = this.getPromotionStock(queryOffShelfItemOutDTO.getSkuCode());
+        int aviableStock = (totalStock - otherStock - promotionStock) < 0 ? 0 : (totalStock - otherStock - promotionStock);
+        // X最小可上架库存 = X的锁定库存，没有则为0
+        int minStock = queryOffShelfItemOutDTO.getCurrentIsVisable() == 0 ? queryOffShelfItemOutDTO.getCurrentReserveQuantity() : 0;
+        queryOffShelfItemOutDTO.setAviableStock(aviableStock);
+        queryOffShelfItemOutDTO.setMinStock(minStock);
+        queryOffShelfItemOutDTO.setPromtionStock(promotionStock);
+    }
+
+    private void batchSyncStockBySellerId(String supplierCode, Long sellerId, Integer isBoxFlag) {
+        // 同步大B下面所有ERP实际库存
+        // 1. 查询所有该大B下包厢或者大厅的下架商品
+        List<Map<String, Object>> allOffItemList = this.itemSkuDAO.queryALLOffShelfItemList(sellerId, isBoxFlag);
+        List<String> spuCodeList = new ArrayList<>();
+        if (allOffItemList != null) {
+            for (Map offItemMap : allOffItemList) {
+                String spuCode = (String) offItemMap.get("spucode");
+                if (StringUtils.isEmpty(spuCode)) {
+                    continue;
+                }
+                spuCodeList.add(spuCode);
+            }
+        }
+        // 2. 同步实际库存
+        if (spuCodeList.size() > 0) {
+            this.itemExportService.batchsyncItemStock(spuCodeList, supplierCode, sellerId);
+        }
+    }
+
     @Transactional
     @Override
     public ExecuteResult<BatchOnShelfOutDTO> batchOnShelves(BatchOnShelfInDTO batchOnShelfInDTO) {
@@ -735,6 +752,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             String shelfType = batchOnShelfInDTO.getIsBoxFlag() == 1 ? "1" : "2";
             Integer isBoxFlag = batchOnShelfInDTO.getIsBoxFlag();
             Long sellerId = batchOnShelfInDTO.getSellerId();
+            String supplierCode = batchOnShelfInDTO.getSupplierCode();
             BigDecimal ratio = batchOnShelfInDTO.getRatio();
             Integer batchOnShelfType = batchOnShelfInDTO.getBatchOnShelfType(); // 1:默认价格 2:自定义价格 3:自定义涨幅
             Integer hasBelowLimitPriceAuth = batchOnShelfInDTO.getHasBelowLimitPriceAuth(); // 是否有低于分销限价的权限
@@ -752,6 +770,24 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 return executeResult;
             }
             List<BatchOnShelfItemInDTO> dataList = batchOnShelfInDTO.getDataList();
+            // 同步实际库存
+            // 批量同步该大B下所有未上架商品的库存
+            this.batchSyncStockBySellerId(supplierCode, sellerId, isBoxFlag);
+            // 获取可上架的最小库存和最大库存
+            List<Long> itemIdList = new ArrayList<>();
+            for (BatchOnShelfItemInDTO batchOnShelfItemInDTO : dataList) {
+                itemIdList.add(batchOnShelfItemInDTO.getItemId());
+            }
+            QueryOffShelfItemInDTO queryOffShelfItemInDTO = new QueryOffShelfItemInDTO();
+            queryOffShelfItemInDTO.setSellerId(sellerId);
+            queryOffShelfItemInDTO.setIsBoxFlag(isBoxFlag);
+            queryOffShelfItemInDTO.setItemIdList(itemIdList);
+            Map<Long, QueryOffShelfItemOutDTO> stockDataMap = new HashMap<>();
+            List<QueryOffShelfItemOutDTO> queryOffShelfItemOutDTOList = this.itemSkuDAO.queryVmsOffShelfItemSkuPublishInfoList(queryOffShelfItemInDTO, null);
+            for (QueryOffShelfItemOutDTO queryOffShelfItemOutDTO : queryOffShelfItemOutDTOList) {
+                this.setMinAndMaxStock(queryOffShelfItemOutDTO);
+                stockDataMap.put(queryOffShelfItemOutDTO.getItemId(), queryOffShelfItemOutDTO);
+            }
             // output
             BatchOnShelfOutDTO batchOnShelfOutDTO = new BatchOnShelfOutDTO();
             List<BatchOnShelfItemOutDTO> failureList = new ArrayList<>();
@@ -781,14 +817,20 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     continue;
                 }
                 // 校验库存
-                int OnShelfQuanty = batchOnShelfItemInDTO.getOnShelfQuantiy(); // 上架数量
-                int minQuanty = batchOnShelfItemInDTO.getMinStock(); // 最少上架库存
-                int maxQuanty = batchOnShelfItemInDTO.getAviableStock(); // 最大上架库存
-                if (OnShelfQuanty < minQuanty || OnShelfQuanty > maxQuanty) {
-                    String errorMsg = "可上架商品数量须在" + minQuanty + "到" + maxQuanty + "之间";
+                Integer OnShelfQuanty = batchOnShelfItemInDTO.getOnShelfQuantiy(); // 上架数量
+                if (stockDataMap.isEmpty()) {
+                    String errorMsg = "查询不到可上架的库存";
                     this.addFailureList(failureList, itemName, itemCode, errorMsg);
                     continue;
                 }
+                QueryOffShelfItemOutDTO queryOffShelfItemOutDTO = stockDataMap.get(itemId);
+                if (queryOffShelfItemOutDTO == null) {
+                    String errorMsg = "查询不到可上架的库存";
+                    this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                    continue;
+                }
+                Integer minQuanty = queryOffShelfItemOutDTO.getMinStock();
+                Integer maxQuanty = queryOffShelfItemOutDTO.getAviableStock();
                 Date date = new Date();
                 // 根据上架类型设置价格
                 BigDecimal retailPrice = null;
@@ -796,6 +838,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 if (batchOnShelfType == 1) { // 默认价格
                     retailPrice = wsaleUtprice;
                     salePrice = saleLimitPrice;
+                    OnShelfQuanty = maxQuanty;
                 } else if (batchOnShelfType == 2) { // 自定义价格
                     if (batchOnShelfItemInDTO.getRetailPrice() == null || batchOnShelfItemInDTO.getRetailPrice().compareTo(BigDecimal.ZERO) <= 0) {
                         String errorMsg = "自定义价格,零售价为空或者不是正数";
@@ -823,11 +866,22 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                         this.addFailureList(failureList, itemName, itemCode, errorMsg);
                         continue;
                     }
+                    if (OnShelfQuanty == null || OnShelfQuanty <= 0) {
+                        String errorMsg = "自定义价格, 可上架库存不能为空";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
+                    if (OnShelfQuanty < minQuanty || OnShelfQuanty > maxQuanty) {
+                        String errorMsg = "可上架商品数量须在" + minQuanty + "到" + maxQuanty + "之间";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
                     retailPrice = batchOnShelfItemInDTO.getRetailPrice();
                     salePrice = batchOnShelfItemInDTO.getSalePrice();
                 } else if (batchOnShelfType == 3) { // 自定义涨幅
-                    retailPrice = saleLimitPrice.multiply(ratio).add(saleLimitPrice);
+                    retailPrice = saleLimitPrice.multiply(ratio).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP).add(saleLimitPrice);
                     salePrice = retailPrice;
+                    OnShelfQuanty = maxQuanty;
                 }
                 // 处理库存
                 ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType, "0");
@@ -1434,7 +1488,6 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             for (ItemSkuBasePrice price : basePriceList.getResult()) {
                 if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
                     //分销限价
-                    price.getSaleLimitedPrice();
                     if (price.getSaleLimitedPrice() != null) {
                         venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(price.getSaleLimitedPrice()));
                     }

@@ -191,6 +191,19 @@ public class BuyerBargainAPIImpl implements BuyerBargainAPI {
 		return result;
 	}
 
+    @Override
+    public ExecuteResult<String> updateBargainRecord(String promotionId, String bargainCode) {
+        LOGGER.info("MessageId{}:调用BuyerLaunchBargainInfoServiceImpl.updateBargainRecord（）方法开始,入参{}{}", promotionId, bargainCode);
+        ExecuteResult<String> result = new ExecuteResult<String>();
+        try {
+            result = buyerLaunchBargainInfoService.updateBargainRecord(promotionId, bargainCode);
+        } catch (Exception e) {
+            result.setCode(ResultCodeEnum.ERROR.getCode());
+            result.setErrorMessage(e.toString());
+        }
+        return result;
+    }
+
 	@Override
 	public ExecuteResult<String> optationbargain(String buyerCode, String promotionId, String levelCode,
 			String bargainCode, String helperPicture, String helperName, String openedId, String messageId) {

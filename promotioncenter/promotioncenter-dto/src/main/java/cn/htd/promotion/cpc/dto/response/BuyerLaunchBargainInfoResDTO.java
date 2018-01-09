@@ -91,6 +91,8 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	
 	private String isMyBargainCode;//是否是当前人的看完
 
+	private int hasBuy;//是否已经更改
+
 	public Integer getTemplateFlagD() {
 		return templateFlagD;
 	}
@@ -322,5 +324,12 @@ public class BuyerLaunchBargainInfoResDTO implements Serializable{
 	public void setIsMyBargainCode(String isMyBargainCode) {
 		this.isMyBargainCode = isMyBargainCode;
 	}
-	
+
+	public int getHasBuy() {
+		return hasBuy;
+	}
+
+	public void setHasBuy(int hasBuy) {
+		this.hasBuy = hasBuy;
+	}
 }

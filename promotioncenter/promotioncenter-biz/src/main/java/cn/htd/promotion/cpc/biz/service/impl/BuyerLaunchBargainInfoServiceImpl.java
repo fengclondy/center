@@ -287,6 +287,19 @@ public class BuyerLaunchBargainInfoServiceImpl implements BuyerLaunchBargainInfo
 		}
 		return result;
 	}
+
+	@Override
+	public ExecuteResult<String> updateBargainRecord(String promotionId, String bargainCode) {
+		LOGGER.info("MessageId{}:调用BuyerLaunchBargainInfoServiceImpl.updateBargainRecord（）方法开始,入参{}{}", promotionId, bargainCode);
+		ExecuteResult<String> result = new ExecuteResult<String>();
+		try {
+			buyerLaunchBargainInfoDAO.updateBargainRecord(promotionId, bargainCode);
+		} catch (Exception e) {
+			result.setCode(ResultCodeEnum.ERROR.getCode());
+			result.setErrorMessage(e.toString());
+		}
+		return result;
+	}
 	
 	@Override
 	public ExecuteResult<String> optationbargain(String buyerCode, String promotionId, String levelCode,

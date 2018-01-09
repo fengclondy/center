@@ -36,9 +36,6 @@
             when  m.can_mall_login=1 and m.has_business_license=1 then '2' else '1' end as memberType
 		from member_base_info m
 		left join member_company_info mc on m.id=mc.member_id
-        <if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
-            and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
-        </if>
 	    <if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
 		   left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2' 
 		</if>
@@ -51,6 +48,9 @@
 		and case when ms.status_id is not null then ms.verify_status='2' else 1=1 end
 		and m.status = #{memberBaseInfoDTO.status}
 		
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
 		<if test="memberBaseInfoDTO.accountType != null and memberBaseInfoDTO.accountType != ''">
 		    and m.account_type = #{memberBaseInfoDTO.accountType}
 		</if>
@@ -225,12 +225,12 @@
 	        mc.buyer_seller_type as buyerSellerType
 		from member_base_info m
 		left join member_company_info mc on m.id=mc.member_id
-        <if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
-            and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
-        </if>
 		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
 		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
 		where 1=1
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
 		<if test="memberBaseInfoDTO.accountType != null and memberBaseInfoDTO.accountType != ''">
 		    and m.account_type = #{memberBaseInfoDTO.accountType}
 		</if>
@@ -729,17 +729,18 @@
             ms1.verify_status as verifyStatus
 		from member_base_info m
 		left join member_status_info ms on m.id=ms.member_id AND ms.info_type=12
-		left join member_status_info ms1 on m.id=ms1.member_id AND ms1.info_type=11
+		left join member_status_info ms1 on m.id=ms1.member_id 
 		left join member_company_info mc on m.id=mc.member_id
-        <if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
-            and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
-        </if>
 		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
 		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
 		where 1=1
-        <if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
-            and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
-        </if>
+		AND ms1.info_type=11
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
 		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
 		    <![CDATA[and mc1.company_name like concat('%', #{memberBaseInfoDTO.belongCompanyName},'%')]]>
 		</if>
@@ -774,16 +775,17 @@
 		select count(m.id) from member_base_info m
 		left join member_status_info ms on m.id=ms.member_id AND ms.info_type=12
 		left join member_status_info ms1 on m.id=ms1.member_id AND ms1.info_type=11
-		left join member_company_info mc on m.id=mc.member_id 
-        <if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
-            and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
-        </if>
+		left join member_company_info mc on m.id=mc.member_id
 		left join member_company_info mc1 on mc1.member_id=m.belong_seller_id and mc1.buyer_seller_type='2'
 		left join member_company_info mc2 on mc2.member_id=m.cur_belong_seller_id and mc2.buyer_seller_type='2'
 		where 1=1
-        <if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
-            and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
-        </if>
+		AND ms1.info_type=11
+		<if test="memberBaseInfoDTO.buyerSellerType != null and memberBaseInfoDTO.buyerSellerType != ''">
+		    and mc.buyer_seller_type = #{memberBaseInfoDTO.buyerSellerType}
+		</if>
+		<if test="memberBaseInfoDTO.artificialPersonMobile != null and memberBaseInfoDTO.artificialPersonMobile != ''">
+		    and mc.artificial_person_mobile = #{memberBaseInfoDTO.artificialPersonMobile}
+		</if>
 		<if test="memberBaseInfoDTO.belongCompanyName != null and memberBaseInfoDTO.belongCompanyName != ''">
 		    <![CDATA[and mc1.company_name like concat('%', #{memberBaseInfoDTO.belongCompanyName},'%')]]>
 		</if>

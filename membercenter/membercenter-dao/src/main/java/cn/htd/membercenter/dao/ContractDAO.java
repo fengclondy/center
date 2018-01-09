@@ -38,7 +38,7 @@ public interface ContractDAO {
 	 * @param vendorCodeList
 	 * @return <br>
 	 */ 
-	public List<ContractInfoDTO> queryContractBymemberCodeAndVendorCodeList(@Param("memberCode") String memberCode, @Param("erpVendorCodeList") List<String> erpVendorCodeList);
+	public List<ContractInfoDTO> queryContractBymemberCodeAndVendorCodeList(@Param("memberCode") String memberCode, @Param("vendorCodeList") List<String> vendorCodeList);
 	
 	/**
 	 * Description: 查询该会员店是否需要提醒 <br>

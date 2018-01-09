@@ -217,7 +217,12 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
      */
     @Override
     public ExecuteResult<VenusItemSkuDetailOutDTO> queryItemSkuDetail(Long skuId) {
-        return this.venusItemExportService.queryItemSkuDetail(skuId);
+        ExecuteResult<VenusItemSkuDetailOutDTO> executeResult = this.venusItemExportService.queryItemSkuDetail(skuId);
+        if (executeResult != null && executeResult.isSuccess()) {
+            VenusItemSkuDetailOutDTO venusItemSkuDetailOutDTO = executeResult.getResult();
+            venusItemSkuDetailOutDTO.setCategoryAttrHandled(this.parseCategoryAttr(venusItemSkuDetailOutDTO.getAttributes()));
+        }
+        return executeResult;
     }
 
     @Override

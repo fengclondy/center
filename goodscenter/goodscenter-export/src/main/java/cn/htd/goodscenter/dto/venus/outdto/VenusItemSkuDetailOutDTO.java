@@ -2,6 +2,7 @@ package cn.htd.goodscenter.dto.venus.outdto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import cn.htd.goodscenter.domain.ItemDescribe;
 import cn.htd.goodscenter.domain.ItemPicture;
@@ -35,6 +36,10 @@ public class VenusItemSkuDetailOutDTO implements Serializable{
 	private String modelType;
 	//属性
 	private String attributes;
+
+	//类目属性(解析后的值)
+	private Map<String, String[]> categoryAttrHandled;
+
 	//商品名称
 	private String itemName;
 	//单位
@@ -240,5 +245,13 @@ public class VenusItemSkuDetailOutDTO implements Serializable{
 
 	public void setErpCode(String erpCode) {
 		this.erpCode = erpCode;
+	}
+
+	public Map<String, String[]> getCategoryAttrHandled() {
+		return categoryAttrHandled;
+	}
+
+	public void setCategoryAttrHandled(Map<String, String[]> categoryAttrHandled) {
+		this.categoryAttrHandled = categoryAttrHandled;
 	}
 }

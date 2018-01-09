@@ -23,6 +23,7 @@
 	<result column="MODIFY_ID" property="modifyId" jdbcType="BIGINT" />
 	<result column="MODIFY_NAME" property="modifyName" jdbcType="VARCHAR" />
 	<result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+	  <result column="HAS_BUY" property="hasBuy" jdbcType="TINYINT" />
   </resultMap>
   
     <sql id="pagination_tail">
@@ -134,6 +135,14 @@
 		</set>
 		where promotion_id = #{promotionId,jdbcType=VARCHAR} and level_code = #{levelCode,jdbcType=VARCHAR} and bargain_code = #{bargainCode,jdbcType=VARCHAR}
 	</update>
+
+	<update id="updateBargainRecord" parameterType="java.lang.Integer">
+		update buyer_launch_bargain_info
+		<set>
+			has_buy = 1,
+		</set>
+		where promotion_id = #{promotionId,jdbcType=VARCHAR} and bargain_code = #{bargainCode,jdbcType=VARCHAR}
+	</update>
 	
 	<select id="queryLaunchBargainInfoList" resultMap="BaseResultMap">
 		SELECT blbi.* FROM buyer_launch_bargain_info as blbi
@@ -162,6 +171,34 @@
 	      <include refid="pagination_tail"/>
 	    </if>
 	</select>
+
+	<select id="queryLaunchBargainInfoList" resultMap="BaseResultMap">
+		SELECT blbi.* FROM buyer_launch_bargain_info as blbi
+		INNER JOIN promotion_info as pi on pi.promotion_id = blbi.promotion_id
+		WHERE pi.status != 9
+		<if test="bargainDTO.sellerCode != null and bargainDTO.sellerCode != ''">
+			AND pi.promotion_provider_seller_code = #{bargainDTO.sellerCode}
+		</if>
+		<if test="bargainDTO.buyerTelephone != null and bargainDTO.buyerTelephone != ''">
+			AND blbi.buyer_telephone = #{bargainDTO.buyerTelephone}
+		</if>
+		<if test="bargainDTO.goodsName != null and bargainDTO.goodsName != ''">
+			AND blbi.goods_name like concat('%', #{bargainDTO.goodsName} ,'%')
+		</if>
+		<if test="bargainDTO.isBargainOver != null">
+			AND blbi.is_bargain_over = #{bargainDTO.isBargainOver}
+		</if>
+		<if test="bargainDTO.promotionId != null and bargainDTO.promotionId != ''">
+			AND blbi.promotion_id = #{bargainDTO.promotionId}
+		</if>
+		<if test="bargainDTO.levelCode != null and bargainDTO.levelCode != ''">
+			AND blbi.level_code = #{bargainDTO.levelCode}
+		</if>
+		ORDER by blbi.launch_time desc
+		<if test="page!=null">
+			<include refid="pagination_tail"/>
+		</if>
+	</select>
 	
 	<select id="queryLaunchBargainInfoCount" resultType="java.lang.Long">
 		SELECT COUNT(0) FROM buyer_launch_bargain_info as blbi
@@ -187,6 +224,11 @@
 	<select id="queryBuyerLaunchBargainInfoCount" resultType="java.lang.Integer">
 		select count(distinct level_code) from buyer_launch_bargain_info 
 		where promotion_id = #{promotionId}
+	</select>
+
+	<select id="querygoodsBuysersCount" resultType="java.lang.Integer">
+		select count(t.bargain_code) from buyer_bargain_record t, buyer_launch_bargain_info t1
+		where t.bargain_code=#{bargainCode} and t1.promotion_id=#{promotionId} and t.bargain_code=t1.bargain_code
 	</select>
 	
 </mapper>

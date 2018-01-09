@@ -172,9 +172,27 @@ public class ContractServiceImpl implements ContractService {
 				nosignContractInfoDTOList.add(contractInfoDTO);
 			}
 		}
+		ContractInfoDTO noSignContractInfoDTO = new ContractInfoDTO();
+		String vendorName = "";
+		String vendorCode = "";
+		for (int i = 0;i < nosignContractInfoDTOList.size(); i++) {
+			ContractInfoDTO contractInfoDTO = nosignContractInfoDTOList.get(i);
+			if (i == 0) {
+				vendorName += contractInfoDTO.getVendorName();
+				vendorCode += contractInfoDTO.getVendorCode();
+			} else {
+				vendorName += "," + contractInfoDTO.getVendorName();
+				vendorCode += "," + contractInfoDTO.getVendorCode();
+			}
+			noSignContractInfoDTO.setVendorName(vendorName);
+			noSignContractInfoDTO.setVendorCode(vendorCode);
+			noSignContractInfoDTO.setContractStatus("0");
+		}
 		if (("".equals(contractStatus) || null == contractStatus) && page == 1) {
-			//查询全部且为第一页的时候 未签订的全部放进返回
-			returnContractInfoDTOList.addAll(nosignContractInfoDTOList);
+			//未签订放进返回
+			if (nosignContractInfoDTOList.size() > 0) {
+				returnContractInfoDTOList.add(noSignContractInfoDTO);
+			}
 			if (page == 1 && !returnContractInfoDTOList.isEmpty()) {
 				//第一页 且未签订的不为空 结尾需要-1
 				endIndex -= 1;
@@ -191,9 +209,11 @@ public class ContractServiceImpl implements ContractService {
 					returnContractInfoDTOList.add(signContractInfoDTOList.get(i));
 				}
 			}
-		} else if ("0".equals(contractStatus)) {
-			//需要查询的合同状态为0将所有未签订的全部放入
-			returnContractInfoDTOList.addAll(nosignContractInfoDTOList);
+		} else if ("0".equals(contractStatus)  && page == 1) {
+			//未签订的放进返回
+			if (nosignContractInfoDTOList.size() > 0) {
+				returnContractInfoDTOList.add(noSignContractInfoDTO);
+			}
 		}
 		map.put("returnContractInfoDTOList", returnContractInfoDTOList);
 		map.put("noSignContractInfoCount", nosignContractInfoDTOList.size());

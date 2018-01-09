@@ -887,7 +887,7 @@ public class PromotionBargainInfoServiceImpl implements
 						resDTO.setSurplusTimes(dmo.getGoodsNum()
 								- resDTO.getOverTimes());
 					}
-					int goodsBuysers = this.buyerLaunchBargainInfoDAO.querygoodsBuysersCount(dmo.getPromotionId(), dmo.getBargainCodeD());
+					int goodsBuysers = this.buyerLaunchBargainInfoDAO.querygoodsBuysersCount(dmo.getPromotionId(), dmo.getLevelCode());
 					resDTO.setGoodsBuysers(goodsBuysers);
 					resList.add(resDTO);
 				}

@@ -548,7 +548,12 @@
     left join item_spu spu on spu.spu_id =  i.item_spu_id
     where
        t.status = 0
-    and i.item_status in (0, 1, 4, 5)
+    <if test="param.auditStatus == 0">
+      and i.item_status = 0
+    </if>
+    <if test="param.auditStatus == 3">
+      and i.item_status in (1, 4, 5)
+    </if>
     and sku.seller_id = #{param.sellerId}
     <if test="param.productCode !=null and productCode != '' ">
       and i.item_code=#{param.productCode}

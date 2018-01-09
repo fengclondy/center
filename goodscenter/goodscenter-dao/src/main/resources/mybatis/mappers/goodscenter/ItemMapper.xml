@@ -2552,7 +2552,7 @@
 	</select>
 	<!-- add by li.jun for 限时购 end -->
 
-	<select id="queryVmsDraftItemSkuList" resultType="cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO">
+	<select id="queryVmsItemSkuList" resultType="cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO">
 		select
 		i.item_id as itemId,
 		i.item_code as itemCode,
@@ -2611,7 +2611,7 @@
 		</if>
 	</select>
 
-	<select id="queryVmsDraftItemSkuListCount" resultType="Long">
+	<select id="queryVmsItemSkuListCount" resultType="Long">
 		select
 		count(1)
 		from item_sku sku

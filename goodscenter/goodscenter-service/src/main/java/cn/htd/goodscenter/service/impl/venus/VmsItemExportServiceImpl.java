@@ -177,9 +177,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     queryVmsMyItemListOutDTOS = this.itemDraftMapper.queryVmsDraftItemSkuList(queryVmsMyItemListInDTO, pager);
                 }
             } else { // 否则以商品表数据为准
-                count = this.itemMybatisDAO.queryVmsDraftItemSkuListCount(queryVmsMyItemListInDTO);
+                count = this.itemMybatisDAO.queryVmsItemSkuListCount(queryVmsMyItemListInDTO);
                 if (count > 0) {
-                    queryVmsMyItemListOutDTOS = this.itemMybatisDAO.queryVmsDraftItemSkuList(queryVmsMyItemListInDTO, pager);
+                    queryVmsMyItemListOutDTOS = this.itemMybatisDAO.queryVmsItemSkuList(queryVmsMyItemListInDTO, pager);
                 }
             }
             // 补充信息
@@ -671,8 +671,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     this.setMinAndMaxStock(queryOffShelfItemOutDTO);
                     // ERP价格
                     String spuCode = queryOffShelfItemOutDTO.getSpuCode();
-                    BigDecimal saleLimitPrice = new BigDecimal("3000");
-                    BigDecimal wsaleUtprice =  new BigDecimal("3100");
+                    BigDecimal saleLimitPrice = new BigDecimal("3000"); // TODO :
+                    BigDecimal wsaleUtprice =  new BigDecimal("3100"); // TODO :
                     if (StringUtils.isNotEmpty(spuCode)) {
                         Map priceMap = MiddlewareInterfaceUtil.findItemERPPrice(supplierCode, spuCode);
                         if (MapUtils.isNotEmpty(priceMap)) {
@@ -839,6 +839,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     retailPrice = wsaleUtprice;
                     salePrice = saleLimitPrice;
                     OnShelfQuanty = maxQuanty;
+                    if (OnShelfQuanty == null || OnShelfQuanty <= 0) {
+                        String errorMsg = "默认价格,上架库存必须大于0";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
                 } else if (batchOnShelfType == 2) { // 自定义价格
                     if (batchOnShelfItemInDTO.getRetailPrice() == null || batchOnShelfItemInDTO.getRetailPrice().compareTo(BigDecimal.ZERO) <= 0) {
                         String errorMsg = "自定义价格,零售价为空或者不是正数";
@@ -882,6 +887,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     retailPrice = saleLimitPrice.multiply(ratio).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP).add(saleLimitPrice);
                     salePrice = retailPrice;
                     OnShelfQuanty = maxQuanty;
+                    if (OnShelfQuanty == null || OnShelfQuanty <= 0) {
+                        String errorMsg = "自定义涨幅,上架库存必须大于0";
+                        this.addFailureList(failureList, itemName, itemCode, errorMsg);
+                        continue;
+                    }
                 }
                 // 处理库存
                 ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType, "0");

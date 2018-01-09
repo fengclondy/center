@@ -9,7 +9,6 @@ import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListInDTO;
 import cn.htd.goodscenter.dto.vms.QueryVmsMyItemListOutDTO;
 import org.apache.ibatis.annotations.Param;
 
-import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
 import cn.htd.goodscenter.domain.Item;
@@ -358,9 +357,9 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 
 	public List<Item> queryItemInfo(@Param("itemName")String itemName,@Param("sellerId")Long sellerId);
 
-    Long queryVmsDraftItemSkuListCount(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO);
+    Long queryVmsItemSkuListCount(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO);
 
-	List<QueryVmsMyItemListOutDTO> queryVmsDraftItemSkuList(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO, @Param("pager")Pager pager);
+	List<QueryVmsMyItemListOutDTO> queryVmsItemSkuList(@Param("param") QueryVmsMyItemListInDTO queryVmsMyItemListInDTO, @Param("pager")Pager pager);
 
 	/**
 	 * 查询大B商品，按照实际库存排序

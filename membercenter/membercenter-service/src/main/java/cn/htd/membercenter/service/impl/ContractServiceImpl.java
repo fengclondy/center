@@ -269,15 +269,15 @@ public class ContractServiceImpl implements ContractService {
 	}
 
 	/**
-	 * @Description: 查询签署合同入口是否存在
+	 * @Description: 查询签订合同信息
 	 * @param vendorCode
 	 * @param memberCode
 	 * @return:
 	 */
 	@Override
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryEntranceExists(List<String> vendorCodeList, String memberCode) {
+	public ExecuteResult<List<ContractInfoDTO>> queryContractList(List<String> vendorCodeList, String memberCode) {
 		logger.info("queryEntranceExists方法 已进入会员店编码 memberCode=" + memberCode);
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = new ExecuteResult<DataGrid<ContractInfoDTO>>();
+		ExecuteResult<List<ContractInfoDTO>> result = new ExecuteResult<List<ContractInfoDTO>>();
 		if (vendorCodeList.isEmpty()) {
 			result.addErrorMessage("供应商信息为空");
 			return result;
@@ -286,7 +286,6 @@ public class ContractServiceImpl implements ContractService {
 			result.addErrorMessage("会员店信息为空");
 			return result;
 		}
-		DataGrid<ContractInfoDTO> datagrid = new DataGrid<ContractInfoDTO>();
 		try {
 			//根据会员店编码和提供的供应商编码查询到的合同
 			List<ContractInfoDTO> contractInfoDTOList = contractDAO.queryContractBymemberCodeAndVendorCodeList(memberCode, vendorCodeList);
@@ -296,9 +295,7 @@ public class ContractServiceImpl implements ContractService {
 					contractInfoDTO.setContractStatus("0");
 				}
 			}
-			datagrid.setRows(contractInfoDTOList);
-			datagrid.setSize(contractInfoDTOList.size());
-			result.setResult(datagrid);
+			result.setResult(contractInfoDTOList);
 		} catch (Exception e) {
 			result.addErrorMessage("查询合同签订状态异常 异常信息error=" + e.getMessage());
 			logger.error("查询合同签订状态异常 异常信息 error=" + e.getMessage() + ",	会员店编码memberCode=" + memberCode);

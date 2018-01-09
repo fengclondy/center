@@ -46,11 +46,11 @@ public interface ContractService {
 	public ExecuteResult<String> updateRemindFlagToNotNeed(String memberCode, Long operationId, String operationName);
 
 	/**
-	 * <Description> 查询签订合同入口是否存在  <br>
+	 * <Description> 查询签订合同信息  <br>
 	 * @param memberCode 会员店编码
 	 * @param vendorCode 供应商编码
 	 */
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryEntranceExists(List<String> vendorCodeList, String memberCode);
+	public ExecuteResult<List<ContractInfoDTO>> queryContractList(List<String> vendorCodeList, String memberCode);
 	
 	/**
 	 * <Description> 批量查询某供应商下会员店的合同情况  <br>

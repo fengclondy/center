@@ -45,11 +45,12 @@ public class ContractServiceTest {
 		Pager<String> pager = new Pager<String>();
 		pager.setPage(2);
 		pager.setRows(10);
-
-		//ExecuteResult<ContractListInfo> result = contractService.queryContractListByMemberCode("926386",pager);
-		/*if (result.isSuccess()) {
+		/*List<String> xx = new ArrayList<String>();
+		xx.add("htd31677");*/
+		ExecuteResult<ContractListInfo> result = contractService.queryContractListByMemberCode("htd493085",null,null,pager);
+		if (result.isSuccess()) {
 		
-		}*/
+		}
 	} 
 
 	@Test

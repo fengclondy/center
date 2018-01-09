@@ -19,40 +19,39 @@ public class ContractListInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 未签订合同信息 <br>
+	 * 合同信息 <br>
 	 */
-	public List<ContractInfoDTO> noSignContractInfoList;
+	public List<ContractInfoDTO> contractInfoList;
 	
 	/**
 	 * 未签订合同数量总量 <br>
 	 */
 	public int noSignContractInfoCount;
 	
-	/**
-	 * 已签订合同信息 <br>
-	 */
-	public List<ContractInfoDTO> alreadySignContractInfoList;
 	
 	/**
 	 * 已签订合同数量总量 <br>
 	 */
 	public int alreadySignContractInfoCount;
 
-	/** 
-	 * get noSignContractInfoList
-	 * @return Returns the noSignContractInfoList.<br> 
-	 */
-	public List<ContractInfoDTO> getNoSignContractInfoList() {
-		return noSignContractInfoList;
-	}
 
 	/** 
-	 * set noSignContractInfoList
-	 * @param noSignContractInfoList The noSignContractInfoList to set. <br>
+	 * get contractInfoList
+	 * @return Returns the contractInfoList.<br> 
 	 */
-	public void setNoSignContractInfoList(List<ContractInfoDTO> noSignContractInfoList) {
-		this.noSignContractInfoList = noSignContractInfoList;
+	public List<ContractInfoDTO> getContractInfoList() {
+		return contractInfoList;
 	}
+
+
+	/** 
+	 * set contractInfoList
+	 * @param contractInfoList The contractInfoList to set. <br>
+	 */
+	public void setContractInfoList(List<ContractInfoDTO> contractInfoList) {
+		this.contractInfoList = contractInfoList;
+	}
+
 
 	/** 
 	 * get noSignContractInfoCount
@@ -62,6 +61,7 @@ public class ContractListInfo implements Serializable {
 		return noSignContractInfoCount;
 	}
 
+
 	/** 
 	 * set noSignContractInfoCount
 	 * @param noSignContractInfoCount The noSignContractInfoCount to set. <br>
@@ -70,21 +70,6 @@ public class ContractListInfo implements Serializable {
 		this.noSignContractInfoCount = noSignContractInfoCount;
 	}
 
-	/** 
-	 * get alreadySignContractInfoList
-	 * @return Returns the alreadySignContractInfoList.<br> 
-	 */
-	public List<ContractInfoDTO> getAlreadySignContractInfoList() {
-		return alreadySignContractInfoList;
-	}
-
-	/** 
-	 * set alreadySignContractInfoList
-	 * @param alreadySignContractInfoList The alreadySignContractInfoList to set. <br>
-	 */
-	public void setAlreadySignContractInfoList(List<ContractInfoDTO> alreadySignContractInfoList) {
-		this.alreadySignContractInfoList = alreadySignContractInfoList;
-	}
 
 	/** 
 	 * get alreadySignContractInfoCount
@@ -94,6 +79,7 @@ public class ContractListInfo implements Serializable {
 		return alreadySignContractInfoCount;
 	}
 
+
 	/** 
 	 * set alreadySignContractInfoCount
 	 * @param alreadySignContractInfoCount The alreadySignContractInfoCount to set. <br>
@@ -101,6 +87,5 @@ public class ContractListInfo implements Serializable {
 	public void setAlreadySignContractInfoCount(int alreadySignContractInfoCount) {
 		this.alreadySignContractInfoCount = alreadySignContractInfoCount;
 	}
-	
 	
 }

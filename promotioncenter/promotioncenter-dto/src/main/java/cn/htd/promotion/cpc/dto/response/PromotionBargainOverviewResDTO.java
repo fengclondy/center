@@ -27,6 +27,9 @@ public class PromotionBargainOverviewResDTO implements Serializable{
 	private Integer surplusTimes;//剩余商品数量
 	
 	private Integer goodsNum; //参砍数量
+
+	private int goodsBuysers; //参加帮砍人数
+
 	public Integer getGoodsNum() {
 		return goodsNum;
 	}
@@ -97,5 +100,13 @@ public class PromotionBargainOverviewResDTO implements Serializable{
 
 	public void setSurplusTimes(Integer surplusTimes) {
 		this.surplusTimes = surplusTimes;
+	}
+
+	public int getGoodsBuysers() {
+		return goodsBuysers;
+	}
+
+	public void setGoodsBuysers(int goodsBuysers) {
+		this.goodsBuysers = goodsBuysers;
 	}
 }

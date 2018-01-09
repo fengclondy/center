@@ -55,6 +55,8 @@ public class BuyerLaunchBargainInfoDMO{
 	private String modifyName;//更新人名称
 	
 	private Date modifyTime;//更新时间
+
+	private int hasBuy;//是否已经更改
 	
 	private Integer templateFlagD;//模板类型
 
@@ -250,4 +252,11 @@ public class BuyerLaunchBargainInfoDMO{
 		this.modifyTime = modifyTime;
 	}
 
+	public int getHasBuy() {
+		return hasBuy;
+	}
+
+	public void setHasBuy(int hasBuy) {
+		this.hasBuy = hasBuy;
+	}
 }

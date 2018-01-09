@@ -48,9 +48,9 @@ public interface BuyerLaunchBargainInfoDAO {
 	/**
 	 * 参见帮砍人数
 	 * @param promotionId
-	 * @param bargainCode
+	 * @param levelCode
 	 * @return
 	 */
-	public int querygoodsBuysersCount(@Param("promotionId")String promotionId, @Param("bargainCode")String bargainCode);
+	public int querygoodsBuysersCount(@Param("promotionId")String promotionId, @Param("levelCode")String levelCode);
 
 }

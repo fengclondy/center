@@ -199,8 +199,8 @@
 	</select>
 
 	<select id="querygoodsBuysersCount" resultType="java.lang.Integer">
-		select count(t.bargain_code) from buyer_bargain_record t, buyer_launch_bargain_info t1
-		where t.bargain_code=#{bargainCode} and t1.promotion_id=#{promotionId} and t.bargain_code=t1.bargain_code
+		select count(t.id) from buyer_bargain_record t, buyer_launch_bargain_info t1
+		where t1.level_code=#{levelCode} and t1.promotion_id=#{promotionId} and t.bargain_code=t1.bargain_code
 	</select>
 	
 </mapper>

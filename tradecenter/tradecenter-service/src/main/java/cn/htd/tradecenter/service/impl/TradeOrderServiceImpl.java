@@ -2576,6 +2576,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 			orderStatusList.add(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
 					DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM));
 			conditionDTO.setIsCancelFlag(YesNoEnum.NO.getValue());
+			conditionDTO.setIsErrorFlag(YesNoEnum.NO.getValue());
 			conditionDTO.setOrderStatusList(orderStatusList);
 			long count = orderDAO.queryTradeOrderCountByCondition(conditionDTO);
 			result.setResult(count);

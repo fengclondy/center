@@ -485,4 +485,20 @@
 		where
 		mb.status =1 and m.buyer_seller_type='1' and mb.member_code in('htd000853','htd022246','htd081388','htd1003000','htd1007010','htd1026031','htd1027199','htd1028031','htd1031084','htd1031126','htd103154','htd1033035','htd1036115','htd1046055','htd1048031','htd1051029','htd1053466','htd1056133','htd1057038','htd1058009','htd1059136','htd1063225','htd1068137','htd1071773','htd1071848','htd1073727','htd1085438','htd1092001','htd1093257','htd1097085','htd1098270','htd111132','htd1135310','htd1136241','htd1136393','htd1138789','htd1139400','htd1144107','htd1144401','htd115164','htd1168098','htd1169867','htd1187168','htd1188119','htd119873','htd120297','htd1221201','htd1224074','htd1270244','htd1272010','htd1272136','htd1272197','htd1274215','htd1297094','htd1298661','htd1299762','htd1300415','htd130362','htd1306085','htd1308256','htd1308334','htd1310072','htd1311365','htd1311372','htd1311397','htd1313016','htd1318130','htd1319122','htd1319126','htd1319129','htd1322931','htd1324244','htd1327329','htd1329109','htd1329161','htd1334401','htd1334791','htd135775','htd136060','htd149125','htd155826','htd162888','htd164408','htd177749','htd182378','htd192909','htd196245','htd197562','htd20070030','htd20070161','htd20070196','htd200878','htd207114','htd208565','htd214097','htd214886','htd216249','htd216511','htd221054','htd222142','htd225459','htd228286','htd236433','htd246191','htd257571','htd258063','htd258813','htd260523','htd267626','htd268173','htd277492','htd282752','htd291456','htd293276','htd294531','htd30070001','htd312934','htd314438','htd315149','htd317461','htd325730','htd328582','htd339242','htd345472','htd347532','htd348889','htd352180','htd356943','htd363631','htd373327','htd381966','htd382558','htd386421','htd387076','htd392526','htd393633','htd398542','htd405794','htd409405','htd434674','htd434972','htd438758','htd440625','htd442683','htd444894','htd450198','htd454521','htd454543','htd464188','htd466983','htd472607','htd481476','htd481786','htd496728','htd496857','htd500001','htd500101','htd501814','htd511066','htd516668','htd541342','htd542614','htd544110','htd546264','htd553224','htd553863','htd575274','htd578351','htd591637','htd600155','htd600910','htd604335','htd618901','htd620822','htd621327','htd624629','htd627340','htd634995','htd637217','htd638802','htd640005','htd642822','htd643250','htd644168','htd648159','htd652882','htd664533','htd678793','htd684562','htd693379','htd700627','htd705366','htd706730','htd714354','htd714877','htd718727','htd738355','htd740584','htd760535','htd760557','htd761763','htd765261','htd775544','htd775585','htd779785','htd786626','htd787824','htd791447','htd794375','htd797104','htd806602','htd807475','htd827643','htd837308','htd844172','htd854079','htd854415','htd857862','htd863568','htd866000','htd881469','htd885995','htd891973','htd907365','htd925003','htd928341','htd935034','htd936632','htd939613','htd943558','htd947552','htd953007','htd966342','htd968244','htd985458','htd986318','htd987455','htd989503','htd990370','htd996936')
 		</select>
+		
+		
+	<select id="selectCompanyInfo" resultType="cn.htd.membercenter.dto.MemberBaseInfoDTO">
+		SELECT 
+		     mb.member_code as memberCode, 
+		     mc.company_code as companyCode,
+		     mc.company_name as companyName
+		FROM
+		    member_base_info mb,
+		    member_company_info mc
+		WHERE
+		    mc.buyer_seller_type = 2
+		    AND mb.seller_type = 1
+		    AND mb.status = 1
+		    AND mb.id = mc.member_id
+	</select>
 </mapper>

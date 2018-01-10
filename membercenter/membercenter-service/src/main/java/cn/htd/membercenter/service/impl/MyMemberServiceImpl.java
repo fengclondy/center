@@ -798,17 +798,18 @@ public class MyMemberServiceImpl implements MyMemberService {
 		memberSearch.setStatus("1");
 		try {
 			// 我的会员
-			Long myMemberCount = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, null, 1);
+			Long myMemberCount = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, null, 1);
 			if (myMemberCount != null) {
 				memberCount.setMyMemberCount(myMemberCount.intValue());
 			}
 			// 担保会员
-			Long guaranteeMemberCount = memberDAO.selectByTypeListCount(sellerId, memberSearch, 1, 1, 0);
+			Long guaranteeMemberCount = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, 1, 0);
 			if (guaranteeMemberCount != null) {
 				memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
 			}
 			// 非会员
-			Long noMemberCount = memberDAO.selectNoMemberListCount(sellerId, sellerId, memberSearch, 0);
+			memberSearch.setStatus("");//非会员有效无效都查
+			Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, memberSearch, 0);
 			if (noMemberCount != null) {
 				memberCount.setNoMemberCount(noMemberCount.intValue());
 			}
@@ -820,6 +821,44 @@ public class MyMemberServiceImpl implements MyMemberService {
 		}
 		result.setResult(memberCount);
 		return result;
+	}
+	
+
+	/**
+	 * VMS - 查询我的会员、担保会员列表
+	 * @author li.jun
+	 * @time 2018-01-10
+	 */
+	@Override
+	public ExecuteResult<DataGrid<MyMemberDTO>> selectMemberList(Pager page, Long sellerId,
+			MyMemberSearchDTO memberSearch, String type) {
+		ExecuteResult<DataGrid<MyMemberDTO>> rs = new ExecuteResult<DataGrid<MyMemberDTO>>();
+		DataGrid<MyMemberDTO> dg = new DataGrid<MyMemberDTO>();
+		try {
+			List<MyMemberDTO> myMemberDtoList = null;
+			Long count = null;
+			if (type != null && type.equals("2")) {
+				count = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, null, 1);
+				if (count != null && count > 0) {
+					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, null, 1);
+				}
+			} else if (type != null && type.equals("3")) {
+				count = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, 1, 0);
+				if (count != null && count > 0) {
+					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, 1, 0);
+				}
+			}
+			dg.setRows(myMemberDtoList);
+			dg.setTotal(count);
+			rs.setResult(dg);
+			rs.setResultMessage("success");
+		} catch (Exception e) {
+			logger.error("MyMemberServiceImpl----->selectMemberList=" + e);
+			rs.setResultMessage("error");
+			rs.addErrorMessage("查询我的会员、担保会员出错");
+		}
+
+		return rs;
 	}
 
 }

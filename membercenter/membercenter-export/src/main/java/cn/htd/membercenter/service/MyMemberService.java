@@ -132,4 +132,12 @@ public interface MyMemberService {
 	 * @return
 	 */
 	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId);
+	
+	/**
+	 * VMS - 查询我的会员/担保会员列表
+	 * @author li.jun
+	 * @return
+	 */
+	public ExecuteResult<DataGrid<MyMemberDTO>> selectMemberList(Pager<MyMemberDTO> page, Long sellerId,
+			MyMemberSearchDTO memberSearch, String type);
 }

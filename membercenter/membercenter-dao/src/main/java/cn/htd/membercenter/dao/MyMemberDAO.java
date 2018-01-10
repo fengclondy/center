@@ -197,4 +197,16 @@ public interface MyMemberDAO {
 	 * @param myNoMemberDto
 	 */
 	public void updateBelongRelationshipbuyerFeature(MyNoMemberDTO myNoMemberDto);
+	
+	/**
+	 * VMS - 查询我的会员/担保会员列表总数
+	 * @return
+	 */
+	public Long selectMemberListCount(@Param("sellerId") Long sellerId,
+			@Param("memberSearch") MyMemberSearchDTO memberSearch, @Param("canMallLogin") Integer canMallLogin,
+			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
+			@Param("hasBusinessLicense") Integer hasBusinessLicense);
+	
+	public Long selectNoMemberCount(@Param("sellerId") Long sellerId, @Param("memberSearch") MyMemberSearchDTO memberSearch,
+			@Param("canMallLogin") Integer canMallLogin);
 }

@@ -136,5 +136,7 @@ public interface MemberTaskDAO {
 	@SuppressWarnings("rawtypes")
 	public List<MemberBaseInfoDTO> selectMemberModifyToYijifuTask(@Param("entry") MemberDownCondition entry,
 			@Param("pager") Pager pager);
+	
+	public List<MemberBaseInfoDTO> selectCompanyInfo(@Param("entity") MemberDownCondition entry,	@Param("pager") Pager pager);
 
 }

@@ -1072,7 +1072,75 @@
     
   </select>
   
-  
+    <select id="selectMemberList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
+    SELECT 
+    m.id memberId,
+    m.member_code memberCode,
+    c.company_name companyName,
+    b.bank_account bankAccount,
+    r.buyer_feature buyerFeature,
+    l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+    l.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+    l.buyer_business_license_id buyerBusinessLicenseId,
+    m.is_diff_industry isDiffIndustry,
+    m.industry_category industryCategory,
+    m.is_phone_authenticated isPhoneAuthenticated,
+    m.belong_seller_id sellerId,
+    m.belong_manager_id belongManagerId,
+    m.cur_belong_seller_id curBelongSellerId,
+    m.cur_belong_manager_id curBelongManagerId,
+    d.buyer_grade buyerGrade,
+    p.name groupName,
+    m.status status,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.artificial_person_idcard artificialPersonIdcard,
+    c.location_province locationProvince,
+    c.location_city locationCity,
+    c.location_county locationCounty,
+    c.location_town locationTown,
+    c.location_detail locationDetail,
+    c.location_addr as locationAddr,
+    r.status belongStatus,
+    m.regist_time registTime
+        FROM member_company_info c,
+	 box_relationship o,member_base_info m
+	 left join belong_relationship r on r.buyer_id = m.id and r.status!='9' 
+    left join member_bank_info b on b.member_id = m.id and b.delete_flag=0
+    left join member_status_info ms on ms.member_id=m.id and (ms.info_type=12 or ms.info_type=14)
+	 left join buyer_grade_info d on m.id = d.buyer_id
+	 left join member_licence_info l on l.member_id=m.id  
+	 left join  (
+	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
+	   and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
+	 
+    WHERE m.id = c.member_id  AND o.buyer_id=m.id
+    and c.member_id = l.member_id and o.buyer_id=l.member_id
+    and c.member_id=o.buyer_id 
+      and c.buyer_seller_type='1'
+       and o.delete_flag=0 
+    and o.seller_id  = #{sellerId}
+    <if test="canMallLogin != null and canMallLogin != ''">
+		and m.can_mall_login = #{canMallLogin}
+	</if>
+	<if test="hasBusinessLicense != null ">
+		and m.has_business_license = #{hasBusinessLicense}
+	</if>
+	<if test="hasGuaranteeLicense != null ">
+		and m.has_guarantee_license=#{hasGuaranteeLicense} 
+	</if>
+    <if test="memberSearch != null and memberSearch != ''">
+   	    <choose>
+			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
+	      	    <include refid="VMS_Search_List" />
+	      	 </when>
+	      	 <otherwise>
+	      	 	<include refid="Search_List" />
+	      	 </otherwise>
+	     </choose>
+	</if>
+    order by m.regist_time 
+  </select>
     
     <select id="selectNoMemberCount" resultType="java.lang.Long">
     SELECT

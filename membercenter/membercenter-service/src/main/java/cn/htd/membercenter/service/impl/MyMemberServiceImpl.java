@@ -886,7 +886,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 			}
 		}
 		memberSearch.setMemberIds(memberIds);
-		list = memberDAO.selectByTypeList(page, sellerId, memberSearch, canMallLogin, hasGuaranteeLicense,
+		list = memberDAO.selectMemberList(page, sellerId, memberSearch, canMallLogin, hasGuaranteeLicense,
 				hasBusinessLicense);
 		return list;
 	}

@@ -579,9 +579,9 @@ public class ContractServiceImpl implements ContractService {
 				saveContractInfoDTO.setMemberName(memberBase.getCompanyName());
 				saveContractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
 				saveContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
-				saveContractInfoDTO.setVendorName(memberBase.getCompanyName());
-				saveContractInfoDTO.setVendorLocationAddr(memberBase.getLocationDetail());
-				saveContractInfoDTO.setVendorArtificialPersonName(memberBase.getArtificialPersonName());
+				saveContractInfoDTO.setVendorName(vendorBase.getCompanyName());
+				saveContractInfoDTO.setVendorLocationAddr(vendorBase.getLocationDetail());
+				saveContractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
 			}
 			contractDAO.insertContractInfo(saveContractInfoDTOList);
 			result.setResult("success");

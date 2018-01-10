@@ -54,6 +54,7 @@ import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.util.CollectionUtils;
 
 @Service("promotionBargainInfoService")
 public class PromotionBargainInfoServiceImpl implements
@@ -879,6 +880,7 @@ public class PromotionBargainInfoServiceImpl implements
 					List<BuyerLaunchBargainInfoDMO> overList = buyerLaunchBargainInfoDAO
 							.queryLaunchBargainInfoList(overTimeDTO, null);
 					resDTO.setOverTimes(overList == null ? 0 : overList.size());
+					resDTO.setLevelCode(dmo.getLevelCode());
 					// 剩余商品数量
 					if (dmo.getGoodsNum().intValue() == 0
 							|| dmo.getGoodsNum() < resDTO.getOverTimes()) {

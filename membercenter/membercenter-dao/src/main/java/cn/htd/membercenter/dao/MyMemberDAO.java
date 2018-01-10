@@ -214,4 +214,20 @@ public interface MyMemberDAO {
 			@Param("memberSearch") MyMemberSearchDTO memberSearch, @Param("canMallLogin") Integer canMallLogin,
 			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
 			@Param("hasBusinessLicense") Integer hasBusinessLicense);
+	
+	
+	/**
+	 * 
+	 * @param pager
+	 * @param stringName
+	 * @param canMallLogin
+	 * @param hasGuaranteeLicense
+	 * @param hasBusinessLicense
+	 *            查询我的会员/担保会员列表
+	 * @return
+	 */
+	public List<MyMemberDTO> selectMemberList(@Param("page") Pager page, @Param("sellerId") Long sellerId,
+			@Param("memberSearch") MyMemberSearchDTO memberSearch, @Param("canMallLogin") Integer canMallLogin,
+			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
+			@Param("hasBusinessLicense") Integer hasBusinessLicense);
 }

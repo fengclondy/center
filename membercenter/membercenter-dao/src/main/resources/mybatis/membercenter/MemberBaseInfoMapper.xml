@@ -1115,6 +1115,7 @@ values(
 			<if test="modifyName!=null and modifyName!=''">
 				modify_name = #{modifyName},
 			</if>
+                status = '',
 				modify_time = now()
 		</set>
 		where id = #{memberId}

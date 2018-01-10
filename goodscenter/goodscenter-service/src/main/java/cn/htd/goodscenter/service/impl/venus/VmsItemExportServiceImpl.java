@@ -1564,7 +1564,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 String[] array = new String[attrValueCodeArray.size()];
                 if (attrValueCodeArray != null) {
                     for (int i = 0; i < attrValueCodeArray.size(); i++) {
-                        Integer attrValueCode = (Integer) attrValueCodeArray.get(i);
+                        Integer attrValueCode = Integer.valueOf(attrValueCodeArray.get(i) + "");
                         array[i] = this.getAttributeValueName(attrValueCode);
                     }
                 }

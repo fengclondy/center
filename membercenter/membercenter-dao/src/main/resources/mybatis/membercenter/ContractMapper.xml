@@ -135,7 +135,7 @@
 			member_artificial_person_name,
 			vendor_artificial_person_name,
 			member_location_address,
-			vendor_location_address
+			vendor_location_address,
 			contract_url,
 			contract_title,
 			contract_credit

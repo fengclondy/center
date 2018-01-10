@@ -557,9 +557,31 @@ public class ContractServiceImpl implements ContractService {
 			String dateYMD = sdf.format(new Date());
 			String supplyContractNoKey = "supply_contract_num" + dateYMD;
 			for (SaveContractInfoDTO saveContractInfoDTO : saveContractInfoDTOList) {
+				MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+				memberBaseDTO.setMemberCode(saveContractInfoDTO.getMemberCode());
+				memberBaseDTO.setBuyerSellerType("1");
+				MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+				MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+				vendorBaseDTO.setMemberCode(saveContractInfoDTO.getVendorCode());
+				vendorBaseDTO.setBuyerSellerType("2");
+				MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+				if (null == memberBase) {
+					logger.error("查询不到对应的供应商信息 供应商编码=" + saveContractInfoDTO.getMemberCode());
+					throw new Exception("查询不到对应的供应商信息");
+				}
+				if (null == vendorBase) {
+					logger.error("查询不到对应的供应商信息 供应商编码=" + saveContractInfoDTO.getVendorCode());
+					throw new Exception("查询不到对应的供应商信息");
+				}
 				String contractCode = getContractCode(contractType, dateYMD, supplyContractNoKey);
 				saveContractInfoDTO.setContractCode(contractCode);
 				saveContractInfoDTO.setContractStatus(1);
+				saveContractInfoDTO.setMemberName(memberBase.getCompanyName());
+				saveContractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+				saveContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
+				saveContractInfoDTO.setVendorName(memberBase.getCompanyName());
+				saveContractInfoDTO.setVendorLocationAddr(memberBase.getLocationDetail());
+				saveContractInfoDTO.setVendorArtificialPersonName(memberBase.getArtificialPersonName());
 			}
 			contractDAO.insertContractInfo(saveContractInfoDTOList);
 			result.setResult("success");

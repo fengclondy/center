@@ -94,7 +94,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 
 	@Resource
 	private TransactionRelationService transactionRelationService;
-	
+
 	@Resource
 	private MemberCallCenterDAO memberCallCenterDAO;
 
@@ -261,16 +261,22 @@ public class MyMemberServiceImpl implements MyMemberService {
 		try {
 			if (memberId != null) {
 				String companyName = myNoMemberDto.getCompanyName();
-				MemberInvoiceDTO memberInvoiceDTO = memberCallCenterDAO.queryMemberInvoiceInfo(myNoMemberDto.getMemberCode());
-				if ((!StringUtils.isEmpty(memberInvoiceDTO.getTaxManId()) && !memberInvoiceDTO.getTaxManId().equals(myNoMemberDto.getTaxManId()))
-						||(!StringUtils.isEmpty(memberInvoiceDTO.getBankName()) && !memberInvoiceDTO.getBankName().equals(myNoMemberDto.getBankName()))
-						||(!StringUtils.isEmpty(memberInvoiceDTO.getBankAccount()) && !memberInvoiceDTO.getBankAccount().equals(myNoMemberDto.getBankAccount()))
-						||(!StringUtils.isEmpty(memberInvoiceDTO.getInvoiceAddress()) && !memberInvoiceDTO.getInvoiceAddress().equals(myNoMemberDto.getInvoiceAddress()))
-						||(!StringUtils.isEmpty(memberInvoiceDTO.getContactPhone()) && !memberInvoiceDTO.getContactPhone().equals(myNoMemberDto.getContactPhone()))) {
+				MemberInvoiceDTO memberInvoiceDTO = memberCallCenterDAO
+						.queryMemberInvoiceInfo(myNoMemberDto.getMemberCode());
+				if ((!StringUtils.isEmpty(memberInvoiceDTO.getTaxManId())
+						&& !memberInvoiceDTO.getTaxManId().equals(myNoMemberDto.getTaxManId()))
+						|| (!StringUtils.isEmpty(memberInvoiceDTO.getBankName())
+								&& !memberInvoiceDTO.getBankName().equals(myNoMemberDto.getBankName()))
+						|| (!StringUtils.isEmpty(memberInvoiceDTO.getBankAccount())
+								&& !memberInvoiceDTO.getBankAccount().equals(myNoMemberDto.getBankAccount()))
+						|| (!StringUtils.isEmpty(memberInvoiceDTO.getInvoiceAddress())
+								&& !memberInvoiceDTO.getInvoiceAddress().equals(myNoMemberDto.getInvoiceAddress()))
+						|| (!StringUtils.isEmpty(memberInvoiceDTO.getContactPhone())
+								&& !memberInvoiceDTO.getContactPhone().equals(myNoMemberDto.getContactPhone()))) {
 					Calendar canModifyTime = Calendar.getInstance();
 					canModifyTime.setTime(memberInvoiceDTO.getModifyTime());
 					canModifyTime.add(Calendar.MONTH, 3);
-					if(new Date().before(canModifyTime.getTime())){
+					if (new Date().before(canModifyTime.getTime())) {
 						rs.addErrorMessage("发票信息三个月内不可再次修改，请重新填写！");
 						return rs;
 					}
@@ -756,12 +762,12 @@ public class MyMemberServiceImpl implements MyMemberService {
 	@Override
 	public ExecuteResult<Boolean> getNoMemberName(MyNoMemberDTO myNoMemberDto) {
 		ExecuteResult<Boolean> rs = new ExecuteResult<Boolean>();
-		try{
+		try {
 			rs.setCode("00000");
-			if(myNoMemberDto.getMemberId() == null){
+			if (myNoMemberDto.getMemberId() == null) {
 				myNoMemberDto.setMemberId(0L);
 			}
-			if(myNoMemberDto.getCompanyName() == null){
+			if (myNoMemberDto.getCompanyName() == null) {
 				rs.setResultMessage("公司名称为空");
 				rs.setResult(Boolean.FALSE);
 				return rs;
@@ -790,7 +796,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 	 */
 	@Override
 	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId) {
-		long startTime = System.currentTimeMillis(); 
+		long startTime = System.currentTimeMillis();
 		ExecuteResult<MemberCountDTO> result = new ExecuteResult<MemberCountDTO>();
 		MyMemberSearchDTO memberSearch = new MyMemberSearchDTO();
 		MemberCountDTO memberCount = new MemberCountDTO();
@@ -808,13 +814,13 @@ public class MyMemberServiceImpl implements MyMemberService {
 				memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
 			}
 			// 非会员
-			memberSearch.setStatus("");//非会员有效无效都查
+			memberSearch.setStatus("");// 非会员有效无效都查
 			Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, memberSearch, 0);
 			if (noMemberCount != null) {
 				memberCount.setNoMemberCount(noMemberCount.intValue());
 			}
 			long endTime = System.currentTimeMillis();
-			logger.info("程序运行时间：" + (endTime - startTime)/1000 + "s");
+			logger.info("程序运行时间：" + (endTime - startTime) / 1000 + "s");
 		} catch (Exception e) {
 			logger.error("查询会员数量报错-->" + e);
 			result.addErrorMessage(e.getMessage());
@@ -822,10 +828,10 @@ public class MyMemberServiceImpl implements MyMemberService {
 		result.setResult(memberCount);
 		return result;
 	}
-	
 
 	/**
 	 * VMS - 查询我的会员、担保会员列表
+	 * 
 	 * @author li.jun
 	 * @time 2018-01-10
 	 */
@@ -838,14 +844,14 @@ public class MyMemberServiceImpl implements MyMemberService {
 			List<MyMemberDTO> myMemberDtoList = null;
 			Long count = null;
 			if (type != null && type.equals("2")) {
-				count = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, null, 1);
+				count = gerMemberCount(sellerId, memberSearch, 1, null, 1);
 				if (count != null && count > 0) {
-					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, null, 1);
+					myMemberDtoList = gerMemberList(page, sellerId, memberSearch, 1, null, 1);
 				}
 			} else if (type != null && type.equals("3")) {
-				count = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, 1, 0);
+				count = gerMemberCount(sellerId, memberSearch, 1, 1, 0);
 				if (count != null && count > 0) {
-					myMemberDtoList = memberDAO.selectByTypeList(page, sellerId, memberSearch, 1, 1, 0);
+					myMemberDtoList = gerMemberList(page, sellerId, memberSearch, 1, 1, 0);
 				}
 			}
 			dg.setRows(myMemberDtoList);
@@ -859,6 +865,42 @@ public class MyMemberServiceImpl implements MyMemberService {
 		}
 
 		return rs;
+	}
+
+	/**
+	 * VMS - 获取会员、担保会员列表
+	 * @author li.jun
+	 * @time 2018-01-10
+	 * @return
+	 */
+	private List<MyMemberDTO> gerMemberList(Pager page, Long sellerId, MyMemberSearchDTO memberSearch,
+			Integer canMallLogin, Integer hasGuaranteeLicense, Integer hasBusinessLicense) {
+		List<MyMemberDTO> list = new ArrayList<MyMemberDTO>();
+		List<MyMemberDTO> memberlist = null;
+		List<Long> memberIds = new ArrayList<Long>();
+		memberlist = memberDAO.selectMemberIdList(page, sellerId, memberSearch, canMallLogin, hasGuaranteeLicense,
+				hasBusinessLicense);
+		if (memberlist != null && memberlist.size() > 0) {
+			for (MyMemberDTO dto : memberlist) {
+				memberIds.add(dto.getMemberId());
+			}
+		}
+		memberSearch.setMemberIds(memberIds);
+		list = memberDAO.selectByTypeList(page, sellerId, memberSearch, canMallLogin, hasGuaranteeLicense,
+				hasBusinessLicense);
+		return list;
+	}
+
+	/**
+	 * VMS - 获取会员、担保会员数量
+	 * @author li.jun
+	 * @time 2018-01-10
+	 * @return
+	 */
+	private Long gerMemberCount(Long sellerId, MyMemberSearchDTO memberSearch,
+			Integer canMallLogin, Integer hasGuaranteeLicense, Integer hasBusinessLicense) {
+		Long count = memberDAO.selectMemberListCount(sellerId, memberSearch, canMallLogin, hasGuaranteeLicense, hasBusinessLicense);
+		return count;
 	}
 
 }

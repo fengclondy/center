@@ -99,6 +99,13 @@
 	<if test="memberSearch.status!=null and memberSearch.status !=''">
 		<![CDATA[ and m.status = #{memberSearch.status} ]]>
 	</if>
+	<if test="memberSearch.memberIds!=null and memberSearch.memberIds.size() >0 ">
+		and m.id in
+		<foreach item="item" index="index" collection="memberSearch.memberIds" open="(" separator="," close=")">  
+		     #{item}  
+		 </foreach>  
+	</if>
+		    
   </sql>
 
   
@@ -1022,6 +1029,49 @@
 	     </choose>
 	</if>
   </select>
+  
+   <select id="selectMemberIdList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
+    SELECT 
+      m.id memberId
+   FROM
+    member_company_info c,
+    box_relationship o,
+    member_base_info m
+        LEFT JOIN
+    belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
+    WHERE 
+      m.id = c.member_id 
+      AND o.buyer_id=m.id
+      and c.member_id=o.buyer_id 
+      and c.buyer_seller_type='1'
+      and o.delete_flag=0 
+      and o.seller_id  = #{sellerId}
+    <if test="canMallLogin != null and canMallLogin != ''">
+		and m.can_mall_login = #{canMallLogin}
+	</if>
+	<if test="hasBusinessLicense != null ">
+		and m.has_business_license = #{hasBusinessLicense}
+	</if>
+	<if test="hasGuaranteeLicense != null ">
+		and m.has_guarantee_license=#{hasGuaranteeLicense} 
+	</if>
+    <if test="memberSearch != null and memberSearch != ''">
+   	    <choose>
+			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
+	      	    <include refid="VMS_Search_List" />
+	      	 </when>
+	      	 <otherwise>
+	      	 	<include refid="Search_List" />
+	      	 </otherwise>
+	     </choose>
+	</if>
+    order by m.regist_time 
+    <if test="page != null and page != ''">
+		limit #{page.pageOffset},#{page.rows}
+	</if>
+    
+  </select>
+  
   
     
     <select id="selectNoMemberCount" resultType="java.lang.Long">

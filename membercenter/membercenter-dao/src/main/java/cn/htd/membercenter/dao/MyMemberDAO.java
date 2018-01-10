@@ -209,4 +209,9 @@ public interface MyMemberDAO {
 	
 	public Long selectNoMemberCount(@Param("sellerId") Long sellerId, @Param("memberSearch") MyMemberSearchDTO memberSearch,
 			@Param("canMallLogin") Integer canMallLogin);
+	
+	public List<MyMemberDTO> selectMemberIdList(@Param("page") Pager page, @Param("sellerId") Long sellerId,
+			@Param("memberSearch") MyMemberSearchDTO memberSearch, @Param("canMallLogin") Integer canMallLogin,
+			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
+			@Param("hasBusinessLicense") Integer hasBusinessLicense);
 }

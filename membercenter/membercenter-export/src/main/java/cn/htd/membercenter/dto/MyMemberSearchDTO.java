@@ -2,6 +2,7 @@ package cn.htd.membercenter.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class MyMemberSearchDTO implements Serializable {
 
@@ -79,6 +80,8 @@ public class MyMemberSearchDTO implements Serializable {
 	 * 分页参数 - 每页显示记录数
 	 */
 	private Integer length;
+	
+	private List<Long> memberIds;
 	
 	public String getStringName() {
 		return stringName;
@@ -296,5 +299,14 @@ public class MyMemberSearchDTO implements Serializable {
 	public void setLength(Integer length) {
 		this.length = length;
 	}
+
+	public List<Long> getMemberIds() {
+		return memberIds;
+	}
+
+	public void setMemberIds(List<Long> memberIds) {
+		this.memberIds = memberIds;
+	}
+	
 
 }

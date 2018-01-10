@@ -48,9 +48,39 @@ public class SaveContractInfoDTO implements Serializable {
 	public String vendorCode;
 	
 	/**
+	 * 供应商名称(大B名称) <br>
+	 */
+	public String vendorName;
+	
+	/**
+	 * 供货商地址 <br>
+	 */
+	public String vendorLocationAddr;
+	
+	/**
+	 * 供货商法人名称 <br>
+	 */
+	public String vendorArtificialPersonName;
+	
+	/**
 	 * 会员店编码(小B编码) <br>
 	 */
 	public String memberCode;
+	
+	/**
+	 * 会员店名称(小B名称) <br>
+	 */
+	public String memberName;
+	
+	/**
+	 * 会员店地址 <br>
+	 */
+	public String memberLocationAddr;
+	
+	/**
+	 * 会员店法人名称 <br>
+	 */
+	public String memberArtificialPersonName;
 	
 	/**
 	 * 静态合同页面url(不需传递) <br>

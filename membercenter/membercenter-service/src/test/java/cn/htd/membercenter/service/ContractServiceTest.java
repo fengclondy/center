@@ -43,11 +43,22 @@ public class ContractServiceTest {
 	@Test
 	public void queryContractList() {
 		Pager<String> pager = new Pager<String>();
-		pager.setPage(2);
+		pager.setPage(1);
 		pager.setRows(10);
-		/*List<String> xx = new ArrayList<String>();
-		xx.add("htd31677");*/
-		ExecuteResult<ContractListInfo> result = contractService.queryContractListByMemberCode("htd493085",null,null,pager);
+		List<String> xx = new ArrayList<String>();
+		xx.add("htd552566");
+		xx.add("htd332862");
+		ExecuteResult<ContractListInfo> result = contractService.queryContractListByMemberCode("htd493085",xx,null,pager);
+		if (result.isSuccess()) {
+		
+		}
+	} 
+	@Test
+	public void queryContractList3() {
+		List<String> xx = new ArrayList<String>();
+		xx.add("htd552566");
+		xx.add("htd332862");
+		ExecuteResult<List<ContractInfoDTO>> result = contractService.queryContractList(xx,"htd493085");
 		if (result.isSuccess()) {
 		
 		}
@@ -56,8 +67,8 @@ public class ContractServiceTest {
 	@Test
 	public void queryContractList2() {
 		List<String> memberCodeList = new ArrayList<String>();
-		memberCodeList.add("923505");
-		memberCodeList.add("928123");
+		memberCodeList.add("911713");
+		memberCodeList.add("911529");
 		ExecuteResult<DataGrid<ContractInfoDTO>> result = contractService.queryContractInfoListByMemberAndVendorCode("0889",memberCodeList);
 		if (result.isSuccess()) {
 			List<ContractInfoDTO> ContractInfoDTOList = result.getResult().getRows();

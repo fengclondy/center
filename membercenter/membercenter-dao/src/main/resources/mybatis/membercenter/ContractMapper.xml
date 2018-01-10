@@ -1,51 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.htd.membercenter.dao.ContractDAO">
-  	<!-- 查询该会员店和当前具有包厢关系的供应商下已签订的合同 -->
-	<select id="queryContractBymemberCode" resultType="cn.htd.membercenter.dto.ContractInfoDTO">
+	<!-- 查询已有的合同信息 -->
+	<select id="queryEffectiveContractByMemberCode" resultType="cn.htd.membercenter.dto.ContractInfoDTO">
 		SELECT
-			sci.contract_id AS contractId,
-			sci.contract_code AS contractCode,
-			sci.contract_status AS contractStatus,
-			sci.sign_time AS signTime,
-			#{memberCode} AS memberCode,
-			mbi.member_code AS vendorCode,
-			sci.contract_url AS contractUrl,
-			sci.contract_credit AS contractCredit,
-			sci.contract_title AS contractTitle,
-			mci.location_addr AS vendorLocationAddr,
-			mci.artificial_person_name AS vendorArtificialPersonName,
-			mci.company_name AS vendorName,
-			a.memberLocationAddr,
-			a.memberArtificialPersonName,
-			a.memberName
-		FROM
-			(
-				SELECT
-					mci1.location_addr AS memberLocationAddr,
-					mci1.artificial_person_name AS memberArtificialPersonName,
-					mci1.company_name AS memberName
-				FROM
-					member_company_info mci1,
-					member_base_info mbi1
-				WHERE
-					mbi1.member_code = #{memberCode}
-				AND mbi1.id = mci1.member_id
-				AND mci1.buyer_seller_type = 1
-			) a,
-			member_base_info mbi
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id AND mci.buyer_seller_type = 2
-		LEFT JOIN supply_contract_info sci ON mbi.member_code = sci.vendor_code and sci.member_code = #{memberCode}
-		WHERE
-		mbi.member_code IN 
-			<foreach collection = "vendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
-				#{item}
-			</foreach>
-	</select>
-	<!-- 查询该会员店和当前具有包厢关系的供应商下已签订的合同 -->
-	<select id="queryContractBymemberCodeAndVendorCodeList" resultType="cn.htd.membercenter.dto.ContractInfoDTO">
-		<!-- 若是使用erp供应商编码 启用以下代码 -->
-		<!-- SELECT
 			sci.contract_id AS contractId,
 			sci.contract_code AS contractCode,
 			sci.contract_status AS contractStatus,
@@ -55,74 +13,24 @@
 			sci.contract_url AS contractUrl,
 			sci.contract_credit AS contractCredit,
 			sci.contract_title AS contractTitle,
-			mci.location_addr AS vendorLocationAddr,
-			mci.artificial_person_name AS vendorArtificialPersonName,
-			mci.company_name AS vendorName,
-			a.memberLocationAddr,
-			a.memberArtificialPersonName,
-			a.memberName
+			sci.vendor_location_address AS vendorLocationAddr,
+			sci.vendor_artificial_person_name AS vendorArtificialPersonName,
+			sci.vendor_name AS vendorName,
+			sci.member_location_address AS memberLocationAddr,
+			sci.member_artificial_person_name AS memberArtificialPersonName,
+			sci.member_name AS memberName
 		FROM
-			(
-				SELECT
-					mci1.location_addr AS memberLocationAddr,
-					mci1.artificial_person_name AS memberArtificialPersonName,
-					mci1.company_name AS memberName
-				FROM
-					member_company_info mci1,
-					member_base_info mbi1
-				WHERE
-					mbi1.member_code = #{memberCode}
-				AND mbi1.id = mci1.member_id
-				AND mci1.buyer_seller_type = 1
-			) a,
-			member_base_info mbi
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id
-		LEFT JOIN supply_contract_info sci ON mbi.member_code = sci.vendor_code and sci.member_code = #{memberCode}
+			supply_contract_info sci
 		WHERE
-		mci.buyer_seller_type = 2
-		AND mci.company_code IN
-			<foreach collection = "erpVendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
-				#{item}
-			</foreach> -->
-		<!-- 若是传供应商编码 启用以下代码  -->
-		SELECT
-			sci.contract_id AS contractId,
-			sci.contract_code AS contractCode,
-			sci.contract_status AS contractStatus,
-			sci.sign_time AS signTime,
-			sci.member_code AS memberCode,
-			mbi.member_code AS vendorCode,
-			sci.contract_url AS contractUrl,
-			sci.contract_credit AS contractCredit,
-			sci.contract_title AS contractTitle,
-			mci.location_addr AS vendorLocationAddr,
-			mci.artificial_person_name AS vendorArtificialPersonName,
-			mci.company_name AS vendorName,
-			a.memberLocationAddr,
-			a.memberArtificialPersonName,
-			a.memberName
-		FROM
-			(
-				SELECT
-					mci1.location_addr AS memberLocationAddr,
-					mci1.artificial_person_name AS memberArtificialPersonName,
-					mci1.company_name AS memberName
-				FROM
-					member_company_info mci1,
-					member_base_info mbi1
-				WHERE
-					mbi1.member_code = #{memberCode}
-				AND mbi1.id = mci1.member_id
-				AND mci1.buyer_seller_type = 1
-			) a,
-			member_base_info mbi
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id AND mci.buyer_seller_type = 2
-		LEFT JOIN supply_contract_info sci ON mbi.member_code = sci.vendor_code and sci.member_code = #{memberCode}
-		WHERE
-		mbi.member_code IN 
-			<foreach collection = "vendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
-				#{item}
-			</foreach> 
+			sci.member_code = #{memberCode}
+			AND sci.contract_status = 1
+			<if test="vendorCodeList != null">
+			AND
+				sci.vendor_code IN 
+					<foreach collection = "vendorCodeList" index = "index" item = "item" open = "(" separator = "," close = ")" >
+						#{item}
+					</foreach>
+			</if>
 	</select>
 	<!-- 查询该会员店是否需要提醒 -->
 	<select id="queryRemindFlagByMemberCode" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -167,16 +75,6 @@
 		WHERE
 			member_code = #{memberCode}
 	</update>
-	<!-- 根据会员店编码和供货商编码查询合同签订状态 -->
-	<select id="queryContractStatus" resultType="java.lang.Integer">
-		SELECT
-			contract_status
-		FROM
-			supply_contract_info sci
-		WHERE
-			sci.vendor_code = #{vendorCode}
-			AND sci.member_code = #{memberCode}
-	</select>
 	<!-- 查询该供应商和一部分会员店下已签订的合同 -->
 	<select id="queryContractInfoListByMemberAndVendorCode" resultType="cn.htd.membercenter.dto.ContractInfoDTO">
 		SELECT
@@ -189,27 +87,14 @@
 			sci.contract_url AS contractUrl,
 			sci.contract_credit AS contractCredit,
 			sci.contract_title AS contractTitle,
-			mci.location_addr AS memberLocationAddr,
-			mci.artificial_person_name AS memberArtificialPersonName,
-			mci.company_name AS memberName,
-			a.vendorLocationAddr,
-			a.vendorArtificialPersonName,
-			a.vendorName
+			sci.vendor_location_address AS vendorLocationAddr,
+			sci.vendor_artificial_person_name AS vendorArtificialPersonName,
+			sci.vendor_name AS vendorName,
+			sci.member_location_address AS memberLocationAddr,
+			sci.member_artificial_person_name AS memberArtificialPersonName,
+			sci.member_name AS memberName
 		FROM
-			(
-				SELECT
-					mci1.location_addr AS vendorLocationAddr,
-					mci1.artificial_person_name AS vendorArtificialPersonName,
-					mci1.company_name AS vendorName
-				FROM
-					member_company_info mci1
-				WHERE
-					mci1.company_code = #{vendorCode}
-				AND mci1.buyer_seller_type = 2
-			) a,
 			supply_contract_info sci
-		LEFT JOIN member_base_info mbi ON mbi.member_code = sci.member_code
-		LEFT JOIN member_company_info mci ON mci.member_id = mbi.id AND mci.buyer_seller_type = 1
 		WHERE
 			sci.vendor_code = (
 				SELECT
@@ -245,6 +130,12 @@
 			modify_id,
 			modify_name,
 			modify_time,
+			member_name,
+			vendor_name,
+			member_artificial_person_name,
+			vendor_artificial_person_name,
+			member_location_address,
+			vendor_location_address
 			contract_url,
 			contract_title,
 			contract_credit
@@ -267,6 +158,12 @@
 				#{item.modifyId},
 				#{item.modifyName},
 				NOW(),
+				#{item.memberName},
+				#{item.vendorName},
+				#{item.memberArtificialPersonName},
+				#{item.vendorArtificialPersonName},
+				#{item.memberLocationAddr},
+				#{item.vendorLocationAddr},
 				<if test="item.contractUrl == '' or item.contractUrl == null">
 					'contractURLDefaultValue',
 				</if>

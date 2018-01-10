@@ -56,9 +56,11 @@ public class MemberExternalServiceImpl implements MemberExternalService {
 				resultMap = redisDB.getHashOperations(redisKey);
 				if (resultMap == null || resultMap.isEmpty()) {
 					MemberBaseInfoDTO dto = memberBaseOperationDAO.queryMemberCompanyInfo(memberCode);
-					member.setReceivePerson(dto.getArtificialPersonName());
-					member.setReceivePhone(dto.getArtificialPersonMobile());
-					member.setReceiveAddress(dto.getLocationAddr());
+					if(dto !=null){
+						member.setReceivePerson(dto.getArtificialPersonName());
+						member.setReceivePhone(dto.getArtificialPersonMobile());
+						member.setReceiveAddress(dto.getLocationAddr());	
+					}
 				}else{
 					member.setReceivePerson(resultMap.get(REDIS_EXTERNAL_RECEIVE_PERSON));
 					member.setReceivePhone(resultMap.get(REDIS_EXTERNAL_RECEIVE_PHONE));

@@ -112,4 +112,11 @@ public interface MemberBusinessRelationService {
 	 */
 	public ExecuteResult<DataGrid<MyMemberDTO>> queryMemberBussinessByCategoryId(MemberRelationSearchDTO dto,
 			Pager<MemberBusinessRelationDTO> pager);
+	
+	/**
+	 * 自动选择客户经理
+	 * @param dto
+	 * @return
+	 */
+	public ExecuteResult<String> queryDefaultCustomManagerId(MemberBusinessRelationDTO dto);
 }

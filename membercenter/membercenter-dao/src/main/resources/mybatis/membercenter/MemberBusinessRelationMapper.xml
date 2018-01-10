@@ -423,4 +423,11 @@
 
 
 	</sql>
+	
+	<select id="queryCustomManagerId" resultType="String" parameterType="Object">
+		select t.customer_manager_id,t.create_time 
+		FROM business_relationship t 
+		WHERE t.buyer_id = #{dto.buyerId} and t.seller_id = #{dto.sellerId}
+		ORDER BY t.create_time limit 0,1
+	</select>
 </mapper>

@@ -32,11 +32,13 @@ import cn.htd.membercenter.common.constant.GlobalConstant;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBusinessRelationDAO;
+import cn.htd.membercenter.dto.BelongRelationshipDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
 import cn.htd.membercenter.dto.MemberRelationSearchDTO;
 import cn.htd.membercenter.dto.MyMemberDTO;
 import cn.htd.membercenter.enums.AuditStatusEnum;
+import cn.htd.membercenter.service.BelongRelationshipService;
 import cn.htd.membercenter.service.MemberBaseService;
 import cn.htd.membercenter.service.MemberBusinessRelationService;
 import cn.htd.storecenter.dto.ShopBrandDTO;
@@ -64,6 +66,9 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 
 	@Resource
 	private MemberBaseService memberBaseService;
+	
+	@Resource
+	private BelongRelationshipService belongRelationshipService;
 
 	@Override
 	public ExecuteResult<DataGrid<MemberBusinessRelationDTO>> queryMemberBusinessRelationListInfo(
@@ -581,15 +586,10 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 					dto.setShowType(0);
 				}
 				long reast = memberBusinessRelationDAO.queryMemberInfoCount(dto);
-				if (CollectionUtils.isNotEmpty(memberInfoList)) {
-					dg.setRows(memberInfoList);
-					dg.setTotal(count);
-					dg.setPageNum((int)reast);
-					rs.setResult(dg);
-				} else {
-					rs.setResultMessage("要查询的数据不存在");
-				}
-
+				dg.setRows(memberInfoList);
+				dg.setTotal(count);
+				dg.setPageNum((int)reast);
+				rs.setResult(dg);
 				rs.setResultMessage("success");
 			} else {
 				rs.setResultMessage("参数不全");
@@ -648,6 +648,26 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 		}
 
 		return businessList;
+	}
+
+	@Override
+	public ExecuteResult<String> queryDefaultCustomManagerId(MemberBusinessRelationDTO dto) {
+		ExecuteResult<String> rs = new ExecuteResult<String>();
+		try{
+			String curCustomManagerId = null;
+			ExecuteResult<BelongRelationshipDTO> brResult = belongRelationshipService.selectBelongRelationInfo(Long.valueOf(dto.getBuyerId()), Long.valueOf(dto.getSellerId()));
+			if(brResult != null && brResult.isSuccess() && brResult.getResult()!=null){
+				curCustomManagerId = brResult.getResult().getCurBelongManagerId();
+			}
+			if(StringUtils.isEmpty(curCustomManagerId)){
+				curCustomManagerId = memberBusinessRelationDAO.queryCustomManagerId(dto);
+			}
+			rs.setResult(curCustomManagerId);
+		}catch(Exception e){
+			logger.error("MemberBusinessRelationServiceImpl----->queryDefaultCustomManagerId=" + e);
+			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", e.getMessage()));
+		}
+		return rs;
 	}
 	
 }

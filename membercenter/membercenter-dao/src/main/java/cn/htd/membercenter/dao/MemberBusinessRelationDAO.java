@@ -55,4 +55,6 @@ public interface MemberBusinessRelationDAO {
 			@Param("pager") Pager<MemberBusinessRelationDTO> pager);
 
 	public long queryMemberInfoCount(@Param("dto") MemberRelationSearchDTO dto);
+	
+	public String queryCustomManagerId(@Param("dto") MemberBusinessRelationDTO dto);
 }

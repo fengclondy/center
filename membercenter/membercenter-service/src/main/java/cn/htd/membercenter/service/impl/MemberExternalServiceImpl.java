@@ -60,6 +60,8 @@ public class MemberExternalServiceImpl implements MemberExternalService {
 						member.setReceivePerson(dto.getArtificialPersonName());
 						member.setReceivePhone(dto.getArtificialPersonMobile());
 						member.setReceiveAddress(dto.getLocationAddr());	
+					}else{
+						result.addErrorMessage("该会员在中台不存在" + memberCode);
 					}
 				}else{
 					member.setReceivePerson(resultMap.get(REDIS_EXTERNAL_RECEIVE_PERSON));

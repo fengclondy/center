@@ -200,6 +200,7 @@ public interface MyMemberDAO {
 	
 	/**
 	 * VMS - 查询我的会员/担保会员列表总数
+	 * @author li.jun
 	 * @return
 	 */
 	public Long selectMemberListCount(@Param("sellerId") Long sellerId,
@@ -207,23 +208,27 @@ public interface MyMemberDAO {
 			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
 			@Param("hasBusinessLicense") Integer hasBusinessLicense);
 	
+	/**
+	 * VMS - 查询非会员总数
+	 * @author li.jun
+	 * @return
+	 */
 	public Long selectNoMemberCount(@Param("sellerId") Long sellerId, @Param("memberSearch") MyMemberSearchDTO memberSearch,
 			@Param("canMallLogin") Integer canMallLogin);
 	
+	/**
+	 * VMS - 查询我的会员列表的memberId
+	 * @author li.jun
+	 * @return
+	 */
 	public List<MyMemberDTO> selectMemberIdList(@Param("page") Pager page, @Param("sellerId") Long sellerId,
 			@Param("memberSearch") MyMemberSearchDTO memberSearch, @Param("canMallLogin") Integer canMallLogin,
 			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
 			@Param("hasBusinessLicense") Integer hasBusinessLicense);
 	
-	
 	/**
-	 * 
-	 * @param pager
-	 * @param stringName
-	 * @param canMallLogin
-	 * @param hasGuaranteeLicense
-	 * @param hasBusinessLicense
-	 *            查询我的会员/担保会员列表
+	 * VMS - 查询我的会员列表
+	 *  @author li.jun          
 	 * @return
 	 */
 	public List<MyMemberDTO> selectMemberList(@Param("page") Pager page, @Param("sellerId") Long sellerId,

@@ -987,7 +987,7 @@
     and  c.member_id not in ( #{memberId} )
   </select>
   
-  
+  <!-- 查询会员、担保会员数量 -->
  <select id="selectMemberListCount" resultType="java.lang.Long">
   SELECT 
    	count(1) count
@@ -1030,6 +1030,7 @@
 	</if>
   </select>
   
+   <!-- 查询会员id -->
    <select id="selectMemberIdList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
     SELECT 
       m.id memberId
@@ -1072,6 +1073,7 @@
     
   </select>
   
+    <!-- 查询会员列表 -->
     <select id="selectMemberList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
     SELECT 
     m.id memberId,
@@ -1141,8 +1143,8 @@
 	</if>
     order by m.regist_time 
   </select>
-    
-    <select id="selectNoMemberCount" resultType="java.lang.Long">
+    <!-- 查询非会员数量 -->
+   <select id="selectNoMemberCount" resultType="java.lang.Long">
     SELECT
       count(1)
     FROM  

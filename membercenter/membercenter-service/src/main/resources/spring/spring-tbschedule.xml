@@ -59,4 +59,7 @@
 	
 	<bean id="loadBelongRelationInRedisTask" class="cn.htd.membercenter.service.task.LoadBelongRelationInRedisTask"/>
 	
+		<!-- 获取供应商客户经理job -->
+    <bean id="memberCustomerManagerTask" class="cn.htd.membercenter.service.task.MemberCustomerManagerTask"/>
+	
 </beans>

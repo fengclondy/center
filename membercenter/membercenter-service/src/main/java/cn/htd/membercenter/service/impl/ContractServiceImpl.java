@@ -310,7 +310,7 @@ public class ContractServiceImpl implements ContractService {
 				return result;
 			}
 			Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
-			if (remindFlag == null) {
+			if (null != remindFlag && remindFlag == 1) {
 				//查询到的提醒标志不为空 且标志不为0 表示不需要提醒 数据库记录无需更改
 				result.setResultMessage("该会员店查询到提醒标识不为0或null 不需要提醒");
 				contractRemindInfoDTO.setRemindFlag("noRemind");
@@ -335,9 +335,9 @@ public class ContractServiceImpl implements ContractService {
 						memberBaseDTO.setBuyerSellerType("1");
 						MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 						MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
-						vendorBaseDTO.setMemberCode(memberCode);
-						vendorBaseDTO.setBuyerSellerType("1");
-						MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+						vendorBaseDTO.setMemberCode(memberShipDTO.getMemberCode());
+						vendorBaseDTO.setBuyerSellerType("2");
+						MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
 						ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
 						contractInfoDTO.setMemberName(memberBase.getCompanyName());
 						contractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
@@ -355,6 +355,7 @@ public class ContractServiceImpl implements ContractService {
 					contractRemindInfoDTO.setRemindFlag("noRemind");
 				}
 			}
+			result.setResult(contractRemindInfoDTO);
 		} catch (Exception e) {
 			result.addErrorMessage("查询异常 异常信息 :" + e);
 			logger.error("queryRemindFlag 方法查询合同列表异常 异常信息:" + e);

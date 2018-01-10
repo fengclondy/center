@@ -340,7 +340,7 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 				long brandId = mbrDTO.getBrandId();
 				long categoryId = mbrDTO.getCategoryId();
 				if (StringUtils.isNotBlank(memberId) && StringUtils.isNotBlank(sellerId) && brandId != 0
-						&& categoryId != 0) {
+						&& categoryId != 0 && StringUtils.isNotBlank(mbrDTO.getCustomerManagerId())) {
 					mbrDTO.setDeleteFlag(GlobalConstant.DELETED_FLAG_NO);
 					// 设置审核状态为审核通过
 					mbrDTO.setAuditStatus(AuditStatusEnum.PASSING_AUDIT.getCode());
@@ -526,7 +526,8 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 //				List<MemberBusinessRelationDTO> businessList = memberBusinessRelationDAO
 //						.queryCategoryIdAndBrandIdBySellerId(memberBusinessRelationDTO);
 				ShopBrandDTO shopBrandDTO = new ShopBrandDTO();
-//				shopBrandDTO.setOrderByType(1);
+				shopBrandDTO.setOrderByType(1);
+				shopBrandDTO.setStatus("2");
 				shopBrandDTO.setBrandIdList(memberBusinessRelationDTO.getBrandIdList());
 				shopBrandDTO.setCategoryIdList(memberBusinessRelationDTO.getCategoryIdList());
 				shopBrandDTO.setSellerId(Long.valueOf(memberBusinessRelationDTO.getSellerId()));

@@ -364,6 +364,10 @@
 			and br.seller_id = #{dto.sellerId}
 		</if>
 		<include refid="where_queryMemberInfo" />
+		<if test="dto.showType == 0">
+		ORDER BY
+			br.create_time desc
+		</if>
 		<if test="pager != null">
 		LIMIT #{pager.pageOffset},#{pager.rows}
 		</if>

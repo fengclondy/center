@@ -7,6 +7,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.ContractInfoDTO;
 import cn.htd.membercenter.dto.ContractListInfo;
+import cn.htd.membercenter.dto.ContractRemindInfoDTO;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
 
 /** 
@@ -31,7 +32,7 @@ public interface ContractService {
 	 * @param operationId 操作人id
 	 * @param operationName 操作人名称
 	 */
-	public ExecuteResult<String> queryRemindFlag(String memberCode);
+	public ExecuteResult<ContractRemindInfoDTO> queryRemindFlag(String memberCode);
 	
 	/**
 	 * Description: 修改会员店提醒状态为不提醒 <br> 

@@ -83,6 +83,8 @@ public class MyMemberSearchDTO implements Serializable {
 	
 	private List<Long> memberIds;
 	
+	private String auditStatus;
+	
 	public String getStringName() {
 		return stringName;
 	}
@@ -307,6 +309,13 @@ public class MyMemberSearchDTO implements Serializable {
 	public void setMemberIds(List<Long> memberIds) {
 		this.memberIds = memberIds;
 	}
-	
 
+	public String getAuditStatus() {
+		return auditStatus;
+	}
+
+	public void setAuditStatus(String auditStatus) {
+		this.auditStatus = auditStatus;
+	}
+	
 }

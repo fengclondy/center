@@ -105,7 +105,9 @@
 		     #{item}  
 		 </foreach>  
 	</if>
-		    
+	<if test="memberSearch.auditStatus!=null and memberSearch.auditStatus !=''">
+
+	</if>   
   </sql>
 
   

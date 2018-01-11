@@ -114,7 +114,8 @@ public class MemberCustomerManagerTask implements IScheduleTaskDealMulti<MemberB
 									&& resultMap.get(value).contains(saleman.getCustomerManagerName())) {
 								continue;
 							} else {
-								if (StringUtils.isNotEmpty(saleman.getCustomerManagerName())) {
+								if (StringUtils.isNotEmpty(saleman.getCustomerManagerName())
+										&& StringUtils.isNotEmpty(saleman.getCustomerManagerName().trim())) {
 									resultMap.put(key, saleman.getCustomerManagerCode());
 									resultMap.put(value, saleman.getCustomerManagerName());
 								}

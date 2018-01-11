@@ -644,7 +644,7 @@ public class PromotionBargainInfoServiceImpl implements
 					promotionBargainInfoList.add(bagainInfoDTO);
 				}
 				// 写入reids操作
-				if (dictionary.getValueByCode(
+				/*if (dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_NO_START).equals(
 						promotionInfoDTO.getStatus())) {
@@ -653,6 +653,16 @@ public class PromotionBargainInfoServiceImpl implements
 				} else {
 					promotionBargainRedisHandle.addBargainInfo2Redis(
 							promotionBargainInfoList, true);
+				}*/
+				if (dictionary.getValueByCode(
+						DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_END).equals(
+						promotionInfoDTO.getStatus())) {
+					promotionBargainRedisHandle.addBargainInfo2Redis(
+							promotionBargainInfoList, true);
+				} else {
+					promotionBargainRedisHandle.addBargainInfo2Redis(
+							promotionBargainInfoList, false);
 				}
 				result.setResult(updateResult);
 			}

@@ -324,6 +324,7 @@
     l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
     l.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
     l.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+    l.buyer_business_license_id buyerBusinessLicenseId,
     b.bank_name bankName,
     r.buyer_feature buyerFeature,
     m.is_diff_industry isDiffIndustry,
@@ -357,7 +358,7 @@
     c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
     r.status belongStatus
     FROM  member_base_info m
-    left join member_bank_info b on b.member_id = m.id and b.delete_flag=0
+    left join member_invoice_info b on b.member_id = m.id and b.delete_flag=0 and b.channel_code=''
     left join member_company_info c on m.id = c.member_id and c.buyer_seller_type='1' 
     left join belong_relationship r on m.id = r.buyer_id and r.status !=9
     left join buyer_grade_info d on  m.id = d.buyer_id 

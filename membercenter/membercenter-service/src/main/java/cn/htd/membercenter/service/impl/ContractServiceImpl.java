@@ -547,7 +547,7 @@ public class ContractServiceImpl implements ContractService {
 		if (StringUtils.isEmpty(memberCode)) {
 			result.addErrorMessage("会员店编码为空 保存失败");
 			return result;
-		} else if (operationId == null || StringUtils.isEmpty(operationName)) {
+		} else if (null == operationId || StringUtils.isEmpty(operationName)) {
 			result.addErrorMessage("操作人信息不完整 保存失败");
 			return result;
 		}

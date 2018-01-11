@@ -427,56 +427,36 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	@Transactional
 	@Override
 	public ExecuteResult<String> updateItem(VenusItemInDTO venusItemDTO) {
-		ExecuteResult<String> result=new ExecuteResult<String>();
+		ExecuteResult<String> result=new ExecuteResult<>();
 		if(venusItemDTO == null){
 			result.setCode(ErrorCodes.E10005.name());
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10005.getErrorMsg()));
 			return result;
 		}
 		//做更新，主键不能为空
-		if(venusItemDTO.getItemId() ==null || venusItemDTO.getItemId() <=0 ){
+		if(venusItemDTO.getItemId() == null || venusItemDTO.getItemId() <= 0 ){
 			result.setCode(ErrorCodes.E10001.name());
 			result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10001.getErrorMsg("itemId")));
 			return result;
 		}
 		//先校验
-	    ValidateResult va1lidateResult=DTOValidateUtil.validate(venusItemDTO);
-		
+	    ValidateResult va1lidateResult = DTOValidateUtil.validate(venusItemDTO);
 		if(!va1lidateResult.isPass()){
 			result.setCode(ErrorCodes.E10006.name());
 			result.setErrorMessages(Lists.newArrayList(StringUtils.split(va1lidateResult.getMessage(),DTOValidateUtil.ERROR_MSG_SEPERATOR)));
 			return  result;
 		}
-		
-//		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
-//			result.setCode(VenusErrorCodes.E1040001.name());
-//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040001.getErrorMsg()));
-//			return  result;
-//		}
-		
-//		if(venusItemDTO.getDescribe()==null||StringUtils.isEmpty(venusItemDTO.getDescribe().getDescribeContent())){
-//			result.setCode(VenusErrorCodes.E1040002.name());
-//			result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040002.getErrorMsg()));
-//			return  result;
-//		}
-		//查询数据库中item
 		try{
-			Item itemFromDb=itemMybatisDAO.queryItemByPk(venusItemDTO.getItemId());
+			//查询数据库中item
+			Item itemFromDb = itemMybatisDAO.queryItemByPk(venusItemDTO.getItemId());
 			if(itemFromDb == null){
 				result.setCode(VenusErrorCodes.E1040003.name());
 				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040003.getErrorMsg()));
 				return  result;
 			}
 			ItemDraft itemDraftFromDB = doUpdateItemDraft(venusItemDTO, itemFromDb);
-			
 			doUpdateItemDraftPicture(venusItemDTO, itemFromDb, itemDraftFromDB);
-			
 			doUpdateItemDraftDescribe(venusItemDTO, itemDraftFromDB);
-			
-			//ItemDTO dbItem = this.itemMybatisDAO.getItemDTOById(itemFromDb.getItemId());
-			
-			//ModifyDetailInfoUtil.saveChangedRecordForVenusItem((ItemDTO)Converters.convert(venusItemDTO,ItemDTO.class), dbItem);
-
 			result.setCode(ResultCodeEnum.SUCCESS.getCode());
 		}catch(Exception e){
 			logger.error("VenusItemExportServiceImpl::updateItem:",e);
@@ -487,63 +467,42 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		return result;
 	}
 
-	private ItemDraft doUpdateItemDraft(VenusItemInDTO venusItemDTO,
-			Item itemFromDb) {
-		//比对变化字段
-		boolean isItemInfoChanged=false;
-		
-		//数据保存到item_draft
-		ItemDraft changedVenusItemDTO=itemDraftMapper.selectByItemId(itemFromDb.getItemId());
-		
-		if(changedVenusItemDTO==null){
-			changedVenusItemDTO=new ItemDraft();
+	private ItemDraft doUpdateItemDraft(VenusItemInDTO venusItemDTO, Item itemFromDb) {
+		//比对变化字段 数据保存到item_draft
+		ItemDraft changedVenusItemDTO = itemDraftMapper.selectByItemId(itemFromDb.getItemId());
+		if (changedVenusItemDTO == null) {
+			changedVenusItemDTO = new ItemDraft();
 			//如果曾经没有草稿信息，则认为是审核通过商品
 			changedVenusItemDTO.setStatus(1);
 			changedVenusItemDTO.setVerifyName("管理员");
 			changedVenusItemDTO.setVerifyStatus(1);
 		}
-		logger.error("doUpdateItemDraft::{}",JSON.toJSONString(changedVenusItemDTO));
-		differItemInfo(venusItemDTO, itemFromDb,isItemInfoChanged, changedVenusItemDTO);
-		logger.error("after differItemInfo ::{}",JSON.toJSONString(changedVenusItemDTO));
-		
-		//模版
-		ItemSpu itemSpu=itemSpuMapper.queryItemSpuByName(changedVenusItemDTO.getItemName());
-		
-		//if(isItemInfoChanged){
-			changedVenusItemDTO.setItemId(itemFromDb.getItemId());
-			changedVenusItemDTO.setModifyId(venusItemDTO.getOperatorId());
-			changedVenusItemDTO.setModifyName(venusItemDTO.getOperatorName());
-			changedVenusItemDTO.setModified(new Date());
-			changedVenusItemDTO.setStatus(HtdItemStatusEnum.AUDITING.getCode());
-			if(itemSpu!=null){
-				changedVenusItemDTO.setItemSpuId(itemSpu.getSpuId());
-			}
-			logger.error("doUpdateItemDraft::{}",JSON.toJSONString(changedVenusItemDTO));
-			if(changedVenusItemDTO.getItemDraftId()!=null){
-				//update
-				itemDraftMapper.updateByPrimaryKeySelective(changedVenusItemDTO);
-				}else{
-				//insert
-				itemDraftMapper.insertSelective(changedVenusItemDTO);
-			}
-			//更新下item的状态
-			if(HtdItemStatusEnum.REJECTED.getCode()==itemFromDb.getItemStatus()){
-				itemMybatisDAO.updateItemStatusByPk(itemFromDb.getItemId(), HtdItemStatusEnum.AUDITING.getCode(), venusItemDTO.getOperatorId(), venusItemDTO.getOperatorName());
-			}
-			//itemMybatisDAO.updateItemStatusByPk(itemFromDb.getItemId(), HtdItemStatusEnum.AUDITING.getCode(), venusItemDTO.getOperatorId(), venusItemDTO.getOperatorName());
-		//}
+		differItemInfo(venusItemDTO, changedVenusItemDTO);
+		changedVenusItemDTO.setItemId(itemFromDb.getItemId());
+		changedVenusItemDTO.setModifyId(venusItemDTO.getOperatorId());
+		changedVenusItemDTO.setModifyName(venusItemDTO.getOperatorName());
+		changedVenusItemDTO.setModified(new Date());
+		changedVenusItemDTO.setStatus(HtdItemStatusEnum.AUDITING.getCode());
+		if (changedVenusItemDTO.getItemDraftId() != null) {
+			//update
+			itemDraftMapper.updateByPrimaryKeySelective(changedVenusItemDTO);
+		} else {
+			//insert
+			itemDraftMapper.insertSelective(changedVenusItemDTO);
+		}
+		//更新下item的状态
+		if(HtdItemStatusEnum.REJECTED.getCode()==itemFromDb.getItemStatus()) {
+			itemMybatisDAO.updateItemStatusByPk(itemFromDb.getItemId(), HtdItemStatusEnum.AUDITING.getCode(), venusItemDTO.getOperatorId(), venusItemDTO.getOperatorName());
+		}
 		return changedVenusItemDTO;
 	}
 
-	private void doUpdateItemDraftPicture(VenusItemInDTO venusItemDTO,
-			Item itemFromDb, ItemDraft itemDraftFromDB) {
-		
+	private void doUpdateItemDraftPicture(VenusItemInDTO venusItemDTO, Item itemFromDb, ItemDraft itemDraftFromDB) {
 		//清除图片
 		if(CollectionUtils.isEmpty(venusItemDTO.getPictures())){
 			itemDraftPictureMapper.deleteDraftPicByItemDraftId(itemDraftFromDB.getItemDraftId());
 			return;
 		}
-		
 		//图片
 		 List<ItemDraftPicture> draftPicturesList= Lists.newArrayList();
 		    for(ItemPicture picture:venusItemDTO.getPictures()){
@@ -603,35 +562,25 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		}
 	}
 
-	private boolean differItemInfo(VenusItemInDTO venusItemDTO,
-			Item itemFromDb, boolean isItemInfoChanged,
-			ItemDraft changedVenusItemDTO) {
-		logger.error("differItemInfo::{}",JSON.toJSONString(changedVenusItemDTO));
+	private void differItemInfo(VenusItemInDTO venusItemDTO, ItemDraft changedVenusItemDTO) {
 		//三级目录
-		if(changedVenusItemDTO.getCid()==null||
-				!changedVenusItemDTO.getCid().equals(venusItemDTO.getThirdLevelCategoryId())){
-			isItemInfoChanged=true;
+		if(changedVenusItemDTO.getCid()==null || !changedVenusItemDTO.getCid().equals(venusItemDTO.getThirdLevelCategoryId())){
 			changedVenusItemDTO.setCid(venusItemDTO.getThirdLevelCategoryId());
 		}
 		//品牌
-		if(changedVenusItemDTO.getBrand()==null||
-				!changedVenusItemDTO.getBrand().equals(venusItemDTO.getBrandId())){
-			isItemInfoChanged=true;
+		if(changedVenusItemDTO.getBrand()==null || !changedVenusItemDTO.getBrand().equals(venusItemDTO.getBrandId())){
 			changedVenusItemDTO.setBrand(venusItemDTO.getBrandId());
 		}
 		//型号
 		if(!StringUtils.trim(venusItemDTO.getSerial()).equals(changedVenusItemDTO.getModelType())){
-			isItemInfoChanged=true;
 			changedVenusItemDTO.setModelType(venusItemDTO.getSerial());
 		}
 		//商品名称
 		if(!StringUtils.trim(venusItemDTO.getProductName()).equals(changedVenusItemDTO.getItemName())){
-			isItemInfoChanged=true;
 			changedVenusItemDTO.setItemName(venusItemDTO.getProductName());
 		}
 		//单位
 		if(!StringUtils.trim(venusItemDTO.getUnit()).equals(changedVenusItemDTO.getWeightUnit())){
-			isItemInfoChanged=true;
 			changedVenusItemDTO.setWeightUnit(venusItemDTO.getUnit());
 		}
 		//税率
@@ -639,43 +588,26 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			BigDecimal newTaxRate=new BigDecimal(venusItemDTO.getTaxRate());
 			changedVenusItemDTO.setTaxRate(newTaxRate.setScale(4));
 		}
-		
-//		if(!changedVenusItemDTO.getNetWeight().equals(new BigDecimal(venusItemDTO.getGrossWeight()).setScale(4))
-//				||!changedVenusItemDTO.getNetWeight().equals(new BigDecimal(venusItemDTO.getNetWeight()).setScale(4))
-//				||!changedVenusItemDTO.getLength().equals(new BigDecimal(venusItemDTO.getLength()).setScale(4))
-//				||!changedVenusItemDTO.getWidth().equals(new BigDecimal(venusItemDTO.getWidth()).setScale(4))
-//				||!changedVenusItemDTO.getHeight().equals(new BigDecimal(venusItemDTO.getHeight()).setScale(4))
-//				||!StringUtils.trim(changedVenusItemDTO.getAttrSale()).equals(venusItemDTO.getColor())
-//				||!StringUtils.trim(changedVenusItemDTO.getAd()).equals(venusItemDTO.getAd())
-//				||!StringUtils.trim(venusItemDTO.getOriginPlace()).equals(changedVenusItemDTO.getOrigin())
-//				||!StringUtils.trim(venusItemDTO.getCategoryAttribute()).equals(changedVenusItemDTO.getAttributes())){
-//			
-//			isItemInfoChanged=true;
-			//毛重量
-			BigDecimal newWeight=new BigDecimal(venusItemDTO.getGrossWeight());
-			changedVenusItemDTO.setWeight(newWeight.setScale(4));
-			//净重
-			BigDecimal defaultNetWeight=new BigDecimal(venusItemDTO.getNetWeight());
-			changedVenusItemDTO.setNetWeight(defaultNetWeight.setScale(4));
-			//长
-			changedVenusItemDTO.setLength(new BigDecimal(venusItemDTO.getLength()).setScale(4));
-			//宽 
-			changedVenusItemDTO.setWidth(new BigDecimal(venusItemDTO.getWidth()).setScale(4));
-			//高
-			changedVenusItemDTO.setHeight(new BigDecimal(venusItemDTO.getHeight()).setScale(4));
-			//颜色
-			changedVenusItemDTO.setAttrSale(venusItemDTO.getColor());
-			//广告语
-			changedVenusItemDTO.setAd(venusItemDTO.getAd());
-	        //生产地
-			changedVenusItemDTO.setOrigin(venusItemDTO.getOriginPlace());
-			//目录属性
-			changedVenusItemDTO.setAttributes(venusItemDTO.getCategoryAttribute());
-//		}
-		
-		logger.error("differItemInfo::{}",JSON.toJSONString(changedVenusItemDTO));
-		
-		return isItemInfoChanged;
+		//毛重量
+		BigDecimal newWeight = new BigDecimal(venusItemDTO.getGrossWeight());
+		changedVenusItemDTO.setWeight(newWeight.setScale(4));
+		//净重
+		BigDecimal defaultNetWeight = new BigDecimal(venusItemDTO.getNetWeight());
+		changedVenusItemDTO.setNetWeight(defaultNetWeight.setScale(4));
+		//长
+		changedVenusItemDTO.setLength(new BigDecimal(venusItemDTO.getLength()).setScale(4));
+		//宽
+		changedVenusItemDTO.setWidth(new BigDecimal(venusItemDTO.getWidth()).setScale(4));
+		//高
+		changedVenusItemDTO.setHeight(new BigDecimal(venusItemDTO.getHeight()).setScale(4));
+		//颜色
+		changedVenusItemDTO.setAttrSale(venusItemDTO.getColor());
+		//广告语
+		changedVenusItemDTO.setAd(venusItemDTO.getAd());
+		//生产地
+		changedVenusItemDTO.setOrigin(venusItemDTO.getOriginPlace());
+		//目录属性
+		changedVenusItemDTO.setAttributes(venusItemDTO.getCategoryAttribute());
 	}
 	
 	@Deprecated

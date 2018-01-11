@@ -50,19 +50,19 @@ public class VenusItemInDTO implements Serializable{
 	@NotEmpty(message="商品税率不能为空")
 	private String taxRate;
 	//毛重量
-	@Digits(integer=11,fraction=2,message="毛重量小数位数不正确")
+//	@Digits(integer=11,fraction=2,message="毛重量小数位数不正确")
 	private String grossWeight;
 	//净重量
-	@Digits(integer=11,fraction=3,message="净重量小数位数不正确")
+//	@Digits(integer=11,fraction=3,message="净重量小数位数不正确")
 	private String  netWeight;
 	//长
-	@Digits(integer=14,fraction=2,message="长小数位数不正确")
+//	@Digits(integer=14,fraction=2,message="长小数位数不正确")
 	private String length;
 	//宽
-	@Digits(integer=14,fraction=2,message="宽小数位数不正确")
+//	@Digits(integer=14,fraction=2,message="宽小数位数不正确")
 	private String width;
 	//高
-	@Digits(integer=14,fraction=2,message="高小数位数不正确")
+//	@Digits(integer=14,fraction=2,message="高小数位数不正确")
 	private String height;
 	//颜色
 	private String color;

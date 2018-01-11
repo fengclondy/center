@@ -795,13 +795,10 @@ public class MyMemberServiceImpl implements MyMemberService {
 	 * @return
 	 */
 	@Override
-	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId) {
+	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(MyMemberSearchDTO memberSearch,Long sellerId) {
 		long startTime = System.currentTimeMillis();
 		ExecuteResult<MemberCountDTO> result = new ExecuteResult<MemberCountDTO>();
-		MyMemberSearchDTO memberSearch = new MyMemberSearchDTO();
 		MemberCountDTO memberCount = new MemberCountDTO();
-		memberSearch.setSysFlag("1");
-		memberSearch.setStatus("1");
 		try {
 			// 我的会员
 			Long myMemberCount = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, null, 1);

@@ -131,7 +131,7 @@ public interface MyMemberService {
 	 * @param sellerId
 	 * @return
 	 */
-	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(Long sellerId);
+	public ExecuteResult<MemberCountDTO> queryMemberCountInfo(MyMemberSearchDTO memberSearch,Long sellerId);
 	
 	/**
 	 * VMS - 查询我的会员/担保会员列表

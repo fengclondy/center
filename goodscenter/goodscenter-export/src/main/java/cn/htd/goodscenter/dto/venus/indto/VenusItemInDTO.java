@@ -18,6 +18,7 @@ public class VenusItemInDTO implements Serializable{
 	private static final long serialVersionUID = -7523026418967104254L;
 	//商品ID
 	private Long itemId;
+	private Long skuId;
 	private String productCode;
 	//商品状态
 	private Integer productStatus;
@@ -258,6 +259,13 @@ public class VenusItemInDTO implements Serializable{
 	public void setShopCid(Long shopCid) {
 		this.shopCid = shopCid;
 	}
-	
-	
+
+
+	public Long getSkuId() {
+		return skuId;
+	}
+
+	public void setSkuId(Long skuId) {
+		this.skuId = skuId;
+	}
 }

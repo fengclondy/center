@@ -799,22 +799,79 @@ public class MyMemberServiceImpl implements MyMemberService {
 		long startTime = System.currentTimeMillis();
 		ExecuteResult<MemberCountDTO> result = new ExecuteResult<MemberCountDTO>();
 		MemberCountDTO memberCount = new MemberCountDTO();
+		String memberType = memberSearch.getMemberType();
+		MyMemberSearchDTO search = new MyMemberSearchDTO();
+		search.setSysFlag("1");
+		search.setStatus("1");
 		try {
-			// 我的会员
-			Long myMemberCount = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, null, 1);
-			if (myMemberCount != null) {
-				memberCount.setMyMemberCount(myMemberCount.intValue());
-			}
-			// 担保会员
-			Long guaranteeMemberCount = memberDAO.selectMemberListCount(sellerId, memberSearch, 1, 1, 0);
-			if (guaranteeMemberCount != null) {
-				memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
-			}
-			// 非会员
-			memberSearch.setStatus("");// 非会员有效无效都查
-			Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, memberSearch, 0);
-			if (noMemberCount != null) {
-				memberCount.setNoMemberCount(noMemberCount.intValue());
+			if(StringUtils.isEmpty(memberType)){//默认条件
+				// 我的会员
+				Long myMemberCount = gerMemberCount(sellerId, memberSearch, 1, null, 1);
+				if (myMemberCount != null) {
+					memberCount.setMyMemberCount(myMemberCount.intValue());
+				}
+				// 担保会员
+				Long guaranteeMemberCount = gerMemberCount(sellerId, memberSearch, 1, 1, 0);
+				if (guaranteeMemberCount != null) {
+					memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
+				}
+				// 非会员
+				memberSearch.setStatus("");// 非会员有效无效都查
+				Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, memberSearch, 0);
+				if(noMemberCount != null) {
+					memberCount.setNoMemberCount(noMemberCount.intValue());
+				}
+			}else if("2".equals(memberType)){//带有会员条件的查询
+				// 我的会员
+				Long myMemberCount = gerMemberCount(sellerId, memberSearch, 1, null, 1);
+				if (myMemberCount != null) {
+					memberCount.setMyMemberCount(myMemberCount.intValue());
+				}
+				// 担保会员
+				Long guaranteeMemberCount = gerMemberCount(sellerId, search, 1, 1, 0);
+				if (guaranteeMemberCount != null) {
+					memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
+				}
+				// 非会员
+				search.setStatus("");// 非会员有效无效都查
+				Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, search, 0);
+				if(noMemberCount != null) {
+					memberCount.setNoMemberCount(noMemberCount.intValue());
+				}
+			}else if("3".equals(memberType)){//带有担保会员条件的查询
+				// 我的会员
+				Long myMemberCount = gerMemberCount(sellerId, search, 1, null, 1);
+				if (myMemberCount != null) {
+					memberCount.setMyMemberCount(myMemberCount.intValue());
+				}
+				// 担保会员
+				Long guaranteeMemberCount = gerMemberCount(sellerId, memberSearch, 1, 1, 0);
+				if (guaranteeMemberCount != null) {
+					memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
+				}
+				// 非会员
+				search.setStatus("");// 非会员有效无效都查
+				Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, search, 0);
+				if(noMemberCount != null) {
+					memberCount.setNoMemberCount(noMemberCount.intValue());
+				}
+			}else if("1".equals(memberType)){//带有非会员条件的查询
+				// 我的会员
+				Long myMemberCount = gerMemberCount(sellerId, search, 1, null, 1);
+				if (myMemberCount != null) {
+					memberCount.setMyMemberCount(myMemberCount.intValue());
+				}
+				// 担保会员
+				Long guaranteeMemberCount = gerMemberCount(sellerId, search, 1, 1, 0);
+				if (guaranteeMemberCount != null) {
+					memberCount.setGuaranteeMemberCount(guaranteeMemberCount.intValue());
+				}
+				// 非会员
+				memberSearch.setStatus("");// 非会员有效无效都查
+				Long noMemberCount = memberDAO.selectNoMemberCount(sellerId, memberSearch, 0);
+				if(noMemberCount != null) {
+					memberCount.setNoMemberCount(noMemberCount.intValue());
+				}
 			}
 			long endTime = System.currentTimeMillis();
 			logger.info("程序运行时间：" + (endTime - startTime) / 1000 + "s");
@@ -825,6 +882,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 		result.setResult(memberCount);
 		return result;
 	}
+	
 
 	/**
 	 * VMS - 查询我的会员、担保会员列表

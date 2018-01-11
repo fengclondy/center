@@ -339,9 +339,11 @@ public class ContractServiceImpl implements ContractService {
 						vendorBaseDTO.setBuyerSellerType("2");
 						MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
 						ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
+						contractInfoDTO.setMemberCode(memberCode);
 						contractInfoDTO.setMemberName(memberBase.getCompanyName());
 						contractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
 						contractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
+						contractInfoDTO.setVendorCode(vendorBase.getMemberCode());
 						contractInfoDTO.setVendorName(vendorBase.getCompanyName());
 						contractInfoDTO.setVendorLocationAddr(vendorBase.getLocationDetail());
 						contractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());

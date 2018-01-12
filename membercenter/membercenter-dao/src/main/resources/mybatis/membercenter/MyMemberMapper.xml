@@ -999,15 +999,11 @@
     box_relationship o,
     member_base_info m
      LEFT JOIN
-    belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
-        LEFT JOIN
-    buyer_grade_info d ON m.id = d.buyer_id
-        LEFT JOIN
-    member_licence_info l ON l.member_id = m.id
-        LEFT JOIN
-        buyer_group p on   p.delete_flag = 0 and   p.seller_id = #{sellerId} and p.seller_id=m.id
+     belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
+     LEFT JOIN  
+        (buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
+	   and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
     WHERE m.id = c.member_id  AND o.buyer_id=m.id
-    and c.member_id = l.member_id and o.buyer_id=l.member_id
     and c.member_id=o.buyer_id 
      and c.buyer_seller_type='1' 
        and o.delete_flag=0 
@@ -1043,6 +1039,9 @@
     member_base_info m
         LEFT JOIN
     belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
+      LEFT JOIN
+      (buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
+	   and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
     WHERE 
       m.id = c.member_id 
       AND o.buyer_id=m.id
@@ -1117,8 +1116,7 @@
 	 left join member_licence_info l on l.member_id=m.id  
 	 left join  (
 	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
-	   and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
-	 
+	  and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
     WHERE m.id = c.member_id  AND o.buyer_id=m.id
     and c.member_id = l.member_id and o.buyer_id=l.member_id
     and c.member_id=o.buyer_id 
@@ -1158,9 +1156,8 @@
     belong_relationship r ON m.id = r.buyer_id AND r.status != '9'
         AND r.seller_id = #{sellerId}
         LEFT JOIN
-    buyer_group p ON p.delete_flag = 0
-        AND p.seller_id = #{sellerId}
-        AND p.seller_id = m.id
+        (buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
+	    and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
     where o.buyer_id=m.id and o.delete_flag=0 
     and o.seller_id  =  #{sellerId} and m.id = c.member_id and c.buyer_seller_type='1'
     and m.can_mall_login=#{canMallLogin}

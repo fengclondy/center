@@ -31,6 +31,7 @@
         <if test="memberGroupDTO.groupId != null and memberGroupDTO.groupId != ''">
           	and a.group_id = #{memberGroupDTO.groupId}
         </if>
+        order by a.create_time desc 
         <if test="pager.pageOffset != null and pager != null ">
 			limit #{pager.pageOffset},#{pager.rows}
 		</if>

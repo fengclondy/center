@@ -1107,7 +1107,6 @@
     m.belong_manager_id belongManagerId,
     m.cur_belong_seller_id curBelongSellerId,
     m.cur_belong_manager_id curBelongManagerId,
-    
     d.buyer_grade buyerGrade,
     p.name groupName,
     m.status status,
@@ -1130,13 +1129,11 @@ FROM
     belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
     LEFT JOIN
     buyer_grade_info d ON m.id = d.buyer_id
-	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
 	  LEFT JOIN
     (buyer_group_relationship g, buyer_group p) ON m.id = g.buyer_id AND g.delete_flag = 0
         AND p.seller_id = #{sellerId}
         AND g.group_id = p.group_id
         AND p.delete_flag = 0
-	</if>
     WHERE
       m.id = c.member_id 
       AND o.buyer_id=m.id

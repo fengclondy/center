@@ -180,8 +180,8 @@ public class MemberGroupServiceImpl implements MemberGroupService {
 		ExecuteResult<Boolean> rs = new ExecuteResult<Boolean>();
 		try {
 			String buyerIds = memberGroupDTO.getBuyerIds();
+			memberGroupDAO.insertMemberGroupInfo(memberGroupDTO);
 			if (StringUtils.isNotBlank(buyerIds)) {
-				memberGroupDAO.insertMemberGroupInfo(memberGroupDTO);
 				String[] buyerIdArr = buyerIds.split(",");
 				for (int i = 0; i < buyerIdArr.length; i++) {
 					MemberGroupRelationDTO memberGroupRelationDTO = new MemberGroupRelationDTO();

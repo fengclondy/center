@@ -1,5 +1,6 @@
 package cn.htd.storecenter.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -287,6 +288,111 @@ public class ShopCategorySellerExportServiceImpl implements ShopCategorySellerEx
 				queryOutDto.setParentCid(sonDto.getParentCid());
 			}
 			result.setResult(queryOutDto);
+			result.setResultMessage("success");
+		}catch (Exception e){
+			result.getErrorMessages().add(e.getMessage());
+			result.setResultMessage("error");
+			logger.error(e.getMessage());
+			throw new RuntimeException(e);
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<List<ShopCategorySellerQueryDTO>> batchAddOrQueryByCondition(List<ShopCategorySellerQueryDTO> dtoList) {
+		ExecuteResult<List<ShopCategorySellerQueryDTO>> result = new ExecuteResult<List<ShopCategorySellerQueryDTO>>();
+		try{
+			List<ShopCategorySellerQueryDTO> shopCategorySellerQueryDTOList = new ArrayList<ShopCategorySellerQueryDTO>();
+			for (ShopCategorySellerQueryDTO dto : dtoList) {
+				ShopDTO shopDTO = shopInfoDAO.selectBySellerId(dto.getSellerId());
+				if(shopDTO == null){
+					result.setResult(null);
+					result.setResultMessage("没有此店铺！");
+					return result;
+				}
+				ShopCategorySellerQueryDTO queryOutDto = new ShopCategorySellerQueryDTO();
+				queryOutDto.setSellerId(dto.getSellerId());
+				queryOutDto.setParentCName(dto.getParentCName());
+				queryOutDto.setCname(dto.getCname());
+				//查询是否存在此一级类目
+				ShopCategorySellerDTO queryDTO = new ShopCategorySellerDTO();
+				queryDTO.setSellerId(dto.getSellerId());
+				queryDTO.setCname(dto.getParentCName());
+				queryDTO.setLev(1);
+				List<ShopCategorySellerDTO> list =  shopCategorySellerDAO.selectListByCondition(queryDTO,null);
+				if(list != null && list.size() > 0){
+					//如果有此一级类目，查询是否存在此二级类目
+					queryOutDto.setParentCid(list.get(0).getCid());
+
+					ShopCategorySellerDTO query2Dto = new ShopCategorySellerDTO();
+					query2Dto.setSellerId(dto.getSellerId());
+					query2Dto.setParentCid(list.get(0).getCid());
+					query2Dto.setCname(dto.getCname());
+					query2Dto.setLev(2);
+					List<ShopCategorySellerDTO> query2List =  shopCategorySellerDAO.selectListByCondition(query2Dto,null);
+					if(query2List != null && query2List.size() > 0){
+						queryOutDto.setCid(query2List.get(0).getCid());
+					}else{
+						ShopCategorySellerDTO sonDto = new ShopCategorySellerDTO();
+						sonDto.setParentCid(list.get(0).getCid());
+						sonDto.setCname(dto.getCname());
+						sonDto.setLev(2);
+						sonDto.setShopId(shopDTO.getShopId());
+						sonDto.setSellerId(dto.getSellerId());
+						sonDto.setHasLeaf(1);
+						sonDto.setSortNumber(1);
+						sonDto.setHomeShow(1);
+						sonDto.setExpand(2);
+						sonDto.setDeleted(0);
+						sonDto.setCreateId(dto.getCreateId());
+						sonDto.setCreateName(dto.getCreateName());
+						sonDto.setModifyId(dto.getCreateId());
+						sonDto.setModifyName(dto.getCreateName());
+						shopCategorySellerDAO.insertShopCategory(sonDto);
+						queryOutDto.setCid(sonDto.getCid());
+					}
+				}else{
+					//添加一级类目
+					ShopCategorySellerDTO parentDto = new ShopCategorySellerDTO();
+					parentDto.setParentCid(0l);
+					parentDto.setCname(dto.getParentCName());
+					parentDto.setLev(1);
+					parentDto.setShopId(shopDTO.getShopId());
+					parentDto.setSellerId(dto.getSellerId());
+					parentDto.setHasLeaf(1);
+					parentDto.setSortNumber(1);
+					parentDto.setHomeShow(1);
+					parentDto.setExpand(2);
+					parentDto.setDeleted(0);
+					parentDto.setCreateId(dto.getCreateId());
+					parentDto.setCreateName(dto.getCreateName());
+					parentDto.setModifyId(dto.getCreateId());
+					parentDto.setModifyName(dto.getCreateName());
+					shopCategorySellerDAO.insertShopCategory(parentDto);
+					//添加二级类目
+					ShopCategorySellerDTO sonDto = new ShopCategorySellerDTO();
+					sonDto.setParentCid(parentDto.getCid());
+					sonDto.setCname(dto.getCname());
+					sonDto.setLev(2);
+					sonDto.setShopId(shopDTO.getShopId());
+					sonDto.setSellerId(dto.getSellerId());
+					sonDto.setHasLeaf(1);
+					sonDto.setSortNumber(1);
+					sonDto.setHomeShow(1);
+					sonDto.setExpand(2);
+					sonDto.setDeleted(0);
+					sonDto.setCreateId(dto.getCreateId());
+					sonDto.setCreateName(dto.getCreateName());
+					sonDto.setModifyId(dto.getCreateId());
+					sonDto.setModifyName(dto.getCreateName());
+					shopCategorySellerDAO.insertShopCategory(sonDto);
+
+					queryOutDto.setCid(sonDto.getCid());
+					queryOutDto.setParentCid(sonDto.getParentCid());
+				}
+				shopCategorySellerQueryDTOList.add(queryOutDto);
+			}
+			result.setResult(shopCategorySellerQueryDTOList);
 			result.setResultMessage("success");
 		}catch (Exception e){
 			result.getErrorMessages().add(e.getMessage());

@@ -593,32 +593,32 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			BigDecimal newWeight = new BigDecimal(venusItemDTO.getGrossWeight());
 			changedVenusItemDTO.setWeight(newWeight.setScale(4));
 		} else {
-			changedVenusItemDTO.setWeight(new BigDecimal("0"));
+			changedVenusItemDTO.setWeight(BigDecimal.ZERO);
 		}
 		//净重
 		if (StringUtils.isNotEmpty(venusItemDTO.getNetWeight())) {
 			BigDecimal defaultNetWeight = new BigDecimal(venusItemDTO.getNetWeight());
 			changedVenusItemDTO.setNetWeight(defaultNetWeight.setScale(4));
 		} else {
-			changedVenusItemDTO.setNetWeight(new BigDecimal("0"));
+			changedVenusItemDTO.setNetWeight(BigDecimal.ZERO);
 		}
 		//长
 		if (StringUtils.isNotEmpty(venusItemDTO.getLength())) {
 			changedVenusItemDTO.setLength(new BigDecimal(venusItemDTO.getLength()).setScale(4));
 		} else {
-			changedVenusItemDTO.setLength(new BigDecimal("0"));
+			changedVenusItemDTO.setLength(BigDecimal.ZERO);
 		}
 		//宽
 		if (StringUtils.isNotEmpty(venusItemDTO.getWidth())) {
 			changedVenusItemDTO.setWidth(new BigDecimal(venusItemDTO.getWidth()).setScale(4));
 		} else {
-			changedVenusItemDTO.setWeight(new BigDecimal("0"));
+			changedVenusItemDTO.setWeight(BigDecimal.ZERO);
 		}
 		//高
 		if (StringUtils.isNotEmpty(venusItemDTO.getHeight())) {
 			changedVenusItemDTO.setHeight(new BigDecimal(venusItemDTO.getHeight()).setScale(4));
 		} else {
-			changedVenusItemDTO.setHeight(new BigDecimal("0"));
+			changedVenusItemDTO.setHeight(BigDecimal.ZERO);
 		}
 		//颜色
 		changedVenusItemDTO.setAttrSale(venusItemDTO.getColor());

@@ -50,6 +50,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -315,7 +316,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 // 校验类目
                 String categoryName = batchAddItemInDTO.getCategoryName();
                 ExecuteResult<Long> categoryResult = validateCategoryName(categoryName);
-                if (!ResultCodeEnum.SUCCESS.equals(categoryResult.getCode())) {
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(categoryResult.getCode())) {
                     batchAddItemErrorListOutDTO.setErroMsg(categoryResult.getResultMessage());
                     errorList.add(batchAddItemErrorListOutDTO);
                     continue;
@@ -324,7 +325,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 // 校验品牌
                 String brandName = batchAddItemInDTO.getBrandName();
                 ExecuteResult<Long> brandResult = validateBrandName(brandName);
-                if (!ResultCodeEnum.SUCCESS.equals(brandResult.getCode())) {
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(brandResult.getCode())) {
                     batchAddItemErrorListOutDTO.setErroMsg(brandResult.getResultMessage());
                     errorList.add(batchAddItemErrorListOutDTO);
                     continue;
@@ -333,24 +334,24 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 // 校验型号
                 String modelType = batchAddItemInDTO.getModelType();
                 ExecuteResult<String> modelTypeResult = validateModelType(modelType);
-                if (!ResultCodeEnum.SUCCESS.equals(modelTypeResult.getCode())) {
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(modelTypeResult.getCode())) {
                     batchAddItemErrorListOutDTO.setErroMsg(modelTypeResult.getResultMessage());
                     errorList.add(batchAddItemErrorListOutDTO);
                     continue;
                 }
                 // 校验单位
-                String unit = batchAddItemInDTO.getUnit();
-                ExecuteResult<String> unitResult = validateUnit(unit);
-                if (!ResultCodeEnum.SUCCESS.equals(unitResult.getCode())) {
-                    batchAddItemErrorListOutDTO.setErroMsg(unitResult.getResultMessage());
-                    errorList.add(batchAddItemErrorListOutDTO);
-                    continue;
-                }
-                String unitCode = unitResult.getResult();
+                String unit = batchAddItemInDTO.getUnit(); // TODO : 暂时写死
+//                ExecuteResult<String> unitResult = validateUnit(unit);
+//                if (!ResultCodeEnum.SUCCESS.getCode().equals(unitResult.getCode())) {
+//                    batchAddItemErrorListOutDTO.setErroMsg(unitResult.getResultMessage());
+//                    errorList.add(batchAddItemErrorListOutDTO);
+//                    continue;
+//                }
+                String unitCode = "dui";//unitResult.getResult();
                 // 校验税率
                 String taxRate = batchAddItemInDTO.getTaxRate();
                 ExecuteResult<String> rateResult = validateTaxRate(taxRate);
-                if (!ResultCodeEnum.SUCCESS.equals(rateResult.getCode())) {
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(rateResult.getCode())) {
                     batchAddItemErrorListOutDTO.setErroMsg(rateResult.getResultMessage());
                     errorList.add(batchAddItemErrorListOutDTO);
                     continue;
@@ -358,7 +359,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 // 校验名称
                 String itemName = batchAddItemInDTO.getProductName();
                 ExecuteResult<String> itemResult = validateProductName(itemName);
-                if (!ResultCodeEnum.SUCCESS.equals(itemResult.getCode())) {
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(itemResult.getCode())) {
                     batchAddItemErrorListOutDTO.setErroMsg(itemResult.getResultMessage());
                     errorList.add(batchAddItemErrorListOutDTO);
                     continue;
@@ -370,6 +371,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                     errorList.add(batchAddItemErrorListOutDTO);
                     continue;
                 }
+                BeanUtils.copyProperties(batchAddItemInDTO, preImportItem);
                 // 封装ITEM
                 // 补充三级类目信息
                 ExecuteResult<Map<String, Object>> categoryResult1 = itemCategoryService.queryItemOneTwoThreeCategoryName(cid, ">");
@@ -380,6 +382,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 preImportItem.setBrandId(brandId);
                 preImportItem.setThirdCid(cid);
                 preImportItem.setUnitCode(unitCode);
+                preImportItem.setTaxRate(new BigDecimal(preImportItem.getTaxRate()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP) + "");
                 preImportItemList.add(preImportItem);
             }
             // 开始导入
@@ -397,7 +400,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 venusItemDTO.setShopId(preImportItem.getShopId());
                 venusItemDTO.setShopCid(preImportItem.getShopCid());
                 venusItemDTO.setOperatorId(preImportItem.getOperatorId());
-                venusItemDTO.setOperatorName(preImportItem.getOperatorName());
+                venusItemDTO.setOperatorName(StringUtils.isEmpty(preImportItem.getOperatorName()) ? "SYSTEM" : preImportItem.getOperatorName());
+                ItemDescribe itemDescribe = new ItemDescribe();
+                venusItemDTO.setDescribe(itemDescribe);
                 ExecuteResult<String> addResult = this.addItem(venusItemDTO);
                 if (!ResultCodeEnum.SUCCESS.getCode().equals(addResult.getCode())) {
                     BatchAddItemErrorListOutDTO batchAddItemErrorListOutDTO = new BatchAddItemErrorListOutDTO();
@@ -1390,7 +1395,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             executeResult.setResultMessage("税率为空");
             return executeResult;
         }
-        // TODO : 校验数值
+        if (!StringUtils.isNumeric(taxRate)) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("税率必须是整数");
+            return executeResult;
+        }
         executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
         executeResult.setResultMessage("校验成功");
         return executeResult;

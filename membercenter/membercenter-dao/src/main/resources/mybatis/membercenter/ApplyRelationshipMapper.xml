@@ -199,6 +199,33 @@
 	</if>
 	order by b.create_time
   </select>
+  <!-- 查询待审核的经营关系信息会员id-->
+   <select id="selectBusinessRelationMemberId" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">
+    select DISTINCT
+    m.id memberId,
+    b.audit_status auditStatus,
+    c.company_name companyName,
+    b.customer_manager_id customerManagerId,
+    c.artificial_person_name artificialPersonName,
+    c.artificial_person_mobile artificialPersonMobile,
+    c.location_addr as locationAddr
+    from member_company_info c,member_base_info m,business_relationship b 
+    where m.id = c.member_id and c.member_id = b.buyer_id and b.audit_status='0' and m.status='1'
+    and (b.category_id !=0 and b.brand_id !=0)
+    and c.buyer_seller_type = '1' and b.seller_id=#{curBelongSellerId}
+	order by b.create_time
+	<if test="pager != null and pager != ''">
+		limit #{pager.pageOffset},#{pager.rows}
+	</if>
+  </select>
+  <!-- 统计待审核的经营关系信息会员id-->
+   <select id="selectBusinessRelationMemberIdCount" resultType="long">
+    select count(DISTINCT m.id )
+    from member_company_info c,member_base_info m,business_relationship b 
+    where m.id = c.member_id and c.member_id = b.buyer_id and b.audit_status='0' and m.status='1'
+    and (b.category_id !=0 and b.brand_id !=0)
+    and c.buyer_seller_type = '1' and b.seller_id=#{curBelongSellerId}
+  </select>
   <!-- 注册进度查询-->
    <select id="queryRegistProcess" resultType="cn.htd.membercenter.dto.QueryRegistProcessDTO">
     select 

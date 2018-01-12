@@ -261,12 +261,12 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 			List<ApplyBusiRelationDTO> businessApplyDtoList = null;
 			// 查询个数
 			List<ApplyBusiRelationDTO> businessApplyDtoListCount = applyRelationshipDao
-					.selectBusinessRelationshipCount(curBelongSellerId, companyName);
-			if (businessApplyDtoListCount != null) {
-				for (int i = 0; i < businessApplyDtoListCount.size(); i++) {
+					.selectBusinessRelationMemberId(curBelongSellerId, companyName , null);
+			if (CollectionUtils.isNotEmpty(businessApplyDtoListCount)) {
+				for (ApplyBusiRelationDTO dto : businessApplyDtoListCount) {
 					List<CategoryBrandDTO> CategoryBrandList = new ArrayList<CategoryBrandDTO>();
 					businessApplyDtoList = applyRelationshipDao.selectBusinessRelationship(curBelongSellerId,
-							companyName, businessApplyDtoListCount.get(i).getMemberId());
+							companyName, dto.getMemberId());
 					for (int j = 0; j < businessApplyDtoList.size(); j++) {
 						CategoryBrandDTO categoryBrandDTO = new CategoryBrandDTO();
 						ExecuteResult<ItemCategoryDTO> category = itemCategoryService
@@ -285,11 +285,65 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 						categoryBrandDTO.setCreateTime(businessApplyDtoList.get(j).getCreateTime());
 						CategoryBrandList.add(categoryBrandDTO);
 					}
-					businessApplyDtoListCount.get(i).setCategoryBrand(CategoryBrandList);
+					dto.setCategoryBrand(CategoryBrandList);
 				}
 
 				dg.setRows(businessApplyDtoListCount);
 				dg.setTotal(new Long(businessApplyDtoListCount.size()));
+				rs.setResult(dg);
+			} else {
+				rs.setResultMessage("fail");
+				rs.setResultMessage("要查询的数据不存在!!");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("ApplyRelationshipServiceImpl----->selectBusinessRelationshipApply=" + e);
+			rs.setResultMessage("error");
+		}
+		return rs;
+	}
+	
+	@Override
+	public ExecuteResult<DataGrid<ApplyBusiRelationDTO>> selectBusinessRelationship(Long curBelongSellerId,
+			String companyName , Pager pager) {
+		ExecuteResult<DataGrid<ApplyBusiRelationDTO>> rs = new ExecuteResult<DataGrid<ApplyBusiRelationDTO>>();
+		DataGrid<ApplyBusiRelationDTO> dg = new DataGrid<ApplyBusiRelationDTO>();
+		try {
+			List<ApplyBusiRelationDTO> businessApplyDtoList = null;
+			// 查询个数
+			Long count = applyRelationshipDao
+					.selectBusinessRelationMemberIdCount(curBelongSellerId);
+			List<ApplyBusiRelationDTO> businessApplyDtoListCount = applyRelationshipDao
+					.selectBusinessRelationMemberId(curBelongSellerId, companyName , pager);
+			if (CollectionUtils.isNotEmpty(businessApplyDtoListCount)) {
+				for (ApplyBusiRelationDTO dto : businessApplyDtoListCount) {
+					List<CategoryBrandDTO> CategoryBrandList = new ArrayList<CategoryBrandDTO>();
+					businessApplyDtoList = applyRelationshipDao.selectBusinessRelationship(curBelongSellerId,
+							companyName, dto.getMemberId());
+					for (int j = 0; j < businessApplyDtoList.size(); j++) {
+						CategoryBrandDTO categoryBrandDTO = new CategoryBrandDTO();
+						ExecuteResult<ItemCategoryDTO> category = itemCategoryService
+								.getCategoryByCid(businessApplyDtoList.get(j).getCategoryId());
+						if (category.getResult() != null) {
+							categoryBrandDTO.setCategoryId(businessApplyDtoList.get(j).getCategoryId());
+							categoryBrandDTO.setCategoryName(category.getResult().getCategoryCName());
+						}
+						ExecuteResult<ItemBrand> brand = itemBrandExportService
+								.queryItemBrandById(businessApplyDtoList.get(j).getBrandId());
+						if (brand.getResult() != null) {
+							categoryBrandDTO.setBrandId(businessApplyDtoList.get(j).getBrandId());
+							categoryBrandDTO.setBrandName(brand.getResult().getBrandName());
+						}
+						categoryBrandDTO.setBusinessId(businessApplyDtoList.get(j).getBusinessId());
+						categoryBrandDTO.setCreateTime(businessApplyDtoList.get(j).getCreateTime());
+						CategoryBrandList.add(categoryBrandDTO);
+					}
+					dto.setCategoryBrand(CategoryBrandList);
+				}
+
+				dg.setRows(businessApplyDtoListCount);
+				dg.setTotal(count);
 				rs.setResult(dg);
 			} else {
 				rs.setResultMessage("fail");

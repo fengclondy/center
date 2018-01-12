@@ -574,18 +574,17 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 					&& StringUtils.isNotBlank(categoryId)) {
 				List<String> buyerIdList = memberBusinessRelationDAO
 						.queryMemberBussinessByCategoryId(dto);
+				long count = 0l;
 				if(CollectionUtils.isNotEmpty(buyerIdList)){
 					dto.setBuyerIdList(buyerIdList);
+					count = memberBusinessRelationDAO.queryMemberInfoCount(dto);
 				}
-				
+				if(CollectionUtils.isEmpty(buyerIdList) && 1 == dto.getShowType()){
+					count = memberBusinessRelationDAO.queryMemberInfoCount(dto);
+				}
 				List<MyMemberDTO> memberInfoList = memberBusinessRelationDAO.queryMemberInfo(dto , pager);
-				long count = memberBusinessRelationDAO.queryMemberInfoCount(dto);
-				if(0 == dto.getShowType()){
-					dto.setShowType(1);
-				}else{
-					dto.setShowType(0);
-				}
-				long reast = memberBusinessRelationDAO.queryMemberInfoCount(dto);
+				dto.setShowType(2);
+				long reast = memberBusinessRelationDAO.queryMemberInfoCount(dto) - count;
 				dg.setRows(memberInfoList);
 				dg.setTotal(count);
 				dg.setPageNum((int)reast);

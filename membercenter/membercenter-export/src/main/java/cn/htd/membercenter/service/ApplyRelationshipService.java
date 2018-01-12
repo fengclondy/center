@@ -44,6 +44,14 @@ public interface ApplyRelationshipService {
 	 */
 	public ExecuteResult<DataGrid<ApplyBusiRelationDTO>> selectBusinessRelationship(Long curBelongSellerId,
 			String companyName);
+	
+	/**
+	 * 分页查询会员申请经营关系待审核列表
+	 * 
+	 * @return
+	 */
+	public ExecuteResult<DataGrid<ApplyBusiRelationDTO>> selectBusinessRelationship(Long curBelongSellerId,
+			String companyName  , Pager pager);
 
 	/**
 	 * 查询注册进度

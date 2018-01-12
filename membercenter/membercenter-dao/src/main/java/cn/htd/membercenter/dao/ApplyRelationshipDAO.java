@@ -281,4 +281,8 @@ public interface ApplyRelationshipDAO {
 	 * @return
 	 */
 	List<QueryRegistProcessDTO> queryRegistProcessStatus(@Param("memberId") Integer memberId, @Param("dto") QueryRegistProcessDTO dto);
+	
+	List<ApplyBusiRelationDTO> selectBusinessRelationMemberId(@Param("curBelongSellerId") Long curBelongSellerId, @Param("companyName") String companyName , @Param("pager") Pager pager);
+	
+	Long selectBusinessRelationMemberIdCount(@Param("curBelongSellerId") Long curBelongSellerId);
 }

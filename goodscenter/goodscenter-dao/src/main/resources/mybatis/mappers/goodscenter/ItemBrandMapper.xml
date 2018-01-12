@@ -372,4 +372,14 @@
 			</if>
 		</if>
 	</select>
+
+	<select id="batchQueryBrandByName" resultMap="itemBrandMapper">
+		SELECT * FROM item_brand
+		WHERE
+			brand_status = 1
+		AND brand_name in
+		<foreach collection="bNameList" index="index" item="bName" open="(" separator="," close=")">
+			#{bName}
+		</foreach>
+	</select>
 </mapper>

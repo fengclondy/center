@@ -105,7 +105,9 @@
 		     #{item}  
 		 </foreach>  
 	</if>
-		    
+	<if test="memberSearch.auditStatus!=null and memberSearch.auditStatus !=''">
+
+	</if>   
   </sql>
 
   
@@ -322,6 +324,7 @@
     l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
     l.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
     l.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+    l.buyer_business_license_id buyerBusinessLicenseId,
     b.bank_name bankName,
     r.buyer_feature buyerFeature,
     m.is_diff_industry isDiffIndustry,
@@ -355,7 +358,7 @@
     c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
     r.status belongStatus
     FROM  member_base_info m
-    left join member_bank_info b on b.member_id = m.id and b.delete_flag=0
+    left join member_invoice_info b on b.member_id = m.id and b.delete_flag=0 and b.channel_code=''
     left join member_company_info c on m.id = c.member_id and c.buyer_seller_type='1' 
     left join belong_relationship r on m.id = r.buyer_id and r.status !=9
     left join buyer_grade_info d on  m.id = d.buyer_id 
@@ -990,25 +993,31 @@
   <!-- 查询会员、担保会员数量 -->
  <select id="selectMemberListCount" resultType="java.lang.Long">
   SELECT 
-   	count(1) count
-         FROM 
-    member_company_info c,
-    box_relationship o,
-    member_base_info m
-     LEFT JOIN
-    belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
-        LEFT JOIN
-    buyer_grade_info d ON m.id = d.buyer_id
-        LEFT JOIN
-    member_licence_info l ON l.member_id = m.id
-        LEFT JOIN
-        buyer_group p on   p.delete_flag = 0 and   p.seller_id = #{sellerId} and p.seller_id=m.id
-    WHERE m.id = c.member_id  AND o.buyer_id=m.id
-    and c.member_id = l.member_id and o.buyer_id=l.member_id
-    and c.member_id=o.buyer_id 
+    COUNT(*) count
+  FROM
+	    member_company_info c,
+	    box_relationship o,
+	    member_base_info m
+	        LEFT JOIN
+	    belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
+	   <if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
+			  LEFT JOIN
+	        buyer_grade_info d ON m.id = d.buyer_id
+		</if>
+		<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+			LEFT JOIN
+	    (buyer_group_relationship g, buyer_group p) ON m.id = g.buyer_id AND g.delete_flag = 0
+	        AND p.seller_id = #{sellerId}
+	        AND g.group_id = p.group_id
+	        AND p.delete_flag = 0
+		</if>
+    WHERE
+     m.id = c.member_id 
+     AND o.buyer_id=m.id
+     and c.member_id=o.buyer_id 
      and c.buyer_seller_type='1' 
-       and o.delete_flag=0 
-    and o.seller_id  = #{sellerId}
+     and o.delete_flag=0 
+     and o.seller_id  = #{sellerId}
     <if test="canMallLogin != null and canMallLogin != ''">
 		and m.can_mall_login = #{canMallLogin}
 	</if>
@@ -1040,6 +1049,17 @@
     member_base_info m
         LEFT JOIN
     belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
+   <if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
+		    LEFT JOIN
+        buyer_grade_info d ON m.id = d.buyer_id
+	</if>
+	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+		   LEFT JOIN
+    (buyer_group_relationship g, buyer_group p) ON m.id = g.buyer_id AND g.delete_flag = 0
+        AND p.seller_id =  #{sellerId}
+        AND g.group_id = p.group_id
+        AND p.delete_flag = 0
+	</if>
     WHERE 
       m.id = c.member_id 
       AND o.buyer_id=m.id
@@ -1075,15 +1095,11 @@
   
     <!-- 查询会员列表 -->
     <select id="selectMemberList" resultType="cn.htd.membercenter.dto.MyMemberDTO">
-    SELECT 
+ SELECT 
     m.id memberId,
     m.member_code memberCode,
     c.company_name companyName,
-    b.bank_account bankAccount,
     r.buyer_feature buyerFeature,
-    l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
-    l.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
-    l.buyer_business_license_id buyerBusinessLicenseId,
     m.is_diff_industry isDiffIndustry,
     m.industry_category industryCategory,
     m.is_phone_authenticated isPhoneAuthenticated,
@@ -1102,26 +1118,29 @@
     c.location_county locationCounty,
     c.location_town locationTown,
     c.location_detail locationDetail,
-    c.location_addr as locationAddr,
+    c.location_addr AS locationAddr,
     r.status belongStatus,
     m.regist_time registTime
-        FROM member_company_info c,
-	 box_relationship o,member_base_info m
-	 left join belong_relationship r on r.buyer_id = m.id and r.status!='9' 
-    left join member_bank_info b on b.member_id = m.id and b.delete_flag=0
-    left join member_status_info ms on ms.member_id=m.id and (ms.info_type=12 or ms.info_type=14)
-	 left join buyer_grade_info d on m.id = d.buyer_id
-	 left join member_licence_info l on l.member_id=m.id  
-	 left join  (
-	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
-	   and  p.seller_id= #{sellerId}  and g.group_id =p.group_id and p.delete_flag=0
-	 
-    WHERE m.id = c.member_id  AND o.buyer_id=m.id
-    and c.member_id = l.member_id and o.buyer_id=l.member_id
-    and c.member_id=o.buyer_id 
+FROM
+    member_company_info c,
+    box_relationship o,
+    member_base_info m
+        LEFT JOIN
+    belong_relationship r ON r.buyer_id = m.id AND r.status != '9'
+    LEFT JOIN
+    buyer_grade_info d ON m.id = d.buyer_id
+	  LEFT JOIN
+    (buyer_group_relationship g, buyer_group p) ON m.id = g.buyer_id AND g.delete_flag = 0
+        AND p.seller_id = #{sellerId}
+        AND g.group_id = p.group_id
+        AND p.delete_flag = 0
+    WHERE
+      m.id = c.member_id 
+      AND o.buyer_id=m.id
+      and c.member_id=o.buyer_id 
       and c.buyer_seller_type='1'
-       and o.delete_flag=0 
-    and o.seller_id  = #{sellerId}
+      and o.delete_flag=0 
+      and o.seller_id  = #{sellerId}
     <if test="canMallLogin != null and canMallLogin != ''">
 		and m.can_mall_login = #{canMallLogin}
 	</if>
@@ -1154,14 +1173,37 @@
         LEFT JOIN
     belong_relationship r ON m.id = r.buyer_id AND r.status != '9'
         AND r.seller_id = #{sellerId}
-        LEFT JOIN
-    buyer_group p ON p.delete_flag = 0
-        AND p.seller_id = #{sellerId}
-        AND p.seller_id = m.id
-    where o.buyer_id=m.id and o.delete_flag=0 
-    and o.seller_id  =  #{sellerId} and m.id = c.member_id and c.buyer_seller_type='1'
-    and m.can_mall_login=#{canMallLogin}
-    <if test="memberSearch != null and memberSearch != ''">
+	<if test="memberSearch.auditStatus!=null and memberSearch.auditStatus !=''">
+		LEFT JOIN
+		member_status_info ms ON ms.member_id = m.id
+			AND ms.info_type = 13
+		LEFT JOIN
+		member_status_info ms1 ON ms1.member_id = m.id
+			AND ms1.info_type = 14
+		LEFT JOIN
+		member_status_info s2 ON s2.member_id = m.id
+			AND s2.info_type = 33
+     </if> 
+     <if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
+		    LEFT JOIN
+        buyer_grade_info d ON m.id = d.buyer_id
+	 </if>        
+	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+	  LEFT JOIN
+      (buyer_group_relationship g, buyer_group p) ON m.id = g.buyer_id 
+        AND g.delete_flag = 0
+        AND p.seller_id =  #{sellerId}
+        AND g.group_id = p.group_id
+        AND p.delete_flag = 0
+	</if>
+    where 
+      o.buyer_id=m.id
+      and o.delete_flag=0 
+      and o.seller_id  =  #{sellerId} 
+      and m.id = c.member_id
+      and c.buyer_seller_type='1'
+      and m.can_mall_login=#{canMallLogin}
+     <if test="memberSearch != null and memberSearch != ''">
    	    <choose>
 			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
 	      	    <include refid="VMS_Search_List" />
@@ -1170,7 +1212,7 @@
 	      	 	<include refid="Search_List" />
 	      	 </otherwise>
 	     </choose>
-	</if>
+	 </if>
   </select>
   
   

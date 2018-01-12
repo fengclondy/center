@@ -139,7 +139,7 @@ public class MyMemberServiceImpl implements MyMemberService {
 			List<MyNoMemberDTO> myMemberDtoList = null;
 			Long count = null;
 			if (type != null && type.equals("1")) {
-				count = memberDAO.selectNoMemberListCount(vendorId, vendorId, memberSearch, 0);
+				count = memberDAO.selectNoMemberCount(vendorId, memberSearch, 0);
 				if (count != null && count > 0) {
 					myMemberDtoList = memberDAO.selectNoMemberList(page, vendorId, vendorId, memberSearch, 0);
 					dg.setRows(myMemberDtoList);

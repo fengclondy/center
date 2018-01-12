@@ -589,17 +589,37 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			changedVenusItemDTO.setTaxRate(newTaxRate.setScale(4));
 		}
 		//毛重量
-		BigDecimal newWeight = new BigDecimal(venusItemDTO.getGrossWeight());
-		changedVenusItemDTO.setWeight(newWeight.setScale(4));
+		if (StringUtils.isNotEmpty(venusItemDTO.getGrossWeight())) {
+			BigDecimal newWeight = new BigDecimal(venusItemDTO.getGrossWeight());
+			changedVenusItemDTO.setWeight(newWeight.setScale(4));
+		} else {
+			changedVenusItemDTO.setWeight(BigDecimal.ZERO);
+		}
 		//净重
-		BigDecimal defaultNetWeight = new BigDecimal(venusItemDTO.getNetWeight());
-		changedVenusItemDTO.setNetWeight(defaultNetWeight.setScale(4));
+		if (StringUtils.isNotEmpty(venusItemDTO.getNetWeight())) {
+			BigDecimal defaultNetWeight = new BigDecimal(venusItemDTO.getNetWeight());
+			changedVenusItemDTO.setNetWeight(defaultNetWeight.setScale(4));
+		} else {
+			changedVenusItemDTO.setNetWeight(BigDecimal.ZERO);
+		}
 		//长
-		changedVenusItemDTO.setLength(new BigDecimal(venusItemDTO.getLength()).setScale(4));
+		if (StringUtils.isNotEmpty(venusItemDTO.getLength())) {
+			changedVenusItemDTO.setLength(new BigDecimal(venusItemDTO.getLength()).setScale(4));
+		} else {
+			changedVenusItemDTO.setLength(BigDecimal.ZERO);
+		}
 		//宽
-		changedVenusItemDTO.setWidth(new BigDecimal(venusItemDTO.getWidth()).setScale(4));
+		if (StringUtils.isNotEmpty(venusItemDTO.getWidth())) {
+			changedVenusItemDTO.setWidth(new BigDecimal(venusItemDTO.getWidth()).setScale(4));
+		} else {
+			changedVenusItemDTO.setWeight(BigDecimal.ZERO);
+		}
 		//高
-		changedVenusItemDTO.setHeight(new BigDecimal(venusItemDTO.getHeight()).setScale(4));
+		if (StringUtils.isNotEmpty(venusItemDTO.getHeight())) {
+			changedVenusItemDTO.setHeight(new BigDecimal(venusItemDTO.getHeight()).setScale(4));
+		} else {
+			changedVenusItemDTO.setHeight(BigDecimal.ZERO);
+		}
 		//颜色
 		changedVenusItemDTO.setAttrSale(venusItemDTO.getColor());
 		//广告语

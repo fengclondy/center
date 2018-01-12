@@ -129,4 +129,6 @@ public interface ItemBrandDAO extends BaseDAO<ItemBrand> {
 	public List<ItemBrandDTO> queryBrandList4SuperBoss(@Param("entity") QueryItemBrandInDTO itemBrandDTO, @Param("page") Pager page);
 
 	public Long queryCountBrandList4SuperBoss(@Param("entity") QueryItemBrandInDTO itemBrandDTO);
+
+    List<ItemBrand> batchQueryBrandByName(@Param("bNameList")List<String> cNameList);
 }

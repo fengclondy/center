@@ -6,6 +6,8 @@ import cn.htd.common.Pager;
 import cn.htd.storecenter.dto.ShopCategorySellerDTO;
 import cn.htd.storecenter.dto.ShopCategorySellerQueryDTO;
 
+import java.util.List;
+
 public interface ShopCategorySellerExportService {
 
 	/**
@@ -78,6 +80,9 @@ public interface ShopCategorySellerExportService {
 	 * </p>
 	 */
 	public ExecuteResult<ShopCategorySellerQueryDTO> addOrQueryByCondition(ShopCategorySellerQueryDTO dto);
+
+
+	ExecuteResult<List<ShopCategorySellerQueryDTO>> batchAddOrQueryByCondition(List<ShopCategorySellerQueryDTO> dtoList);
 
 
 	public ExecuteResult<ShopCategorySellerDTO> queryParentCname(Long cid);

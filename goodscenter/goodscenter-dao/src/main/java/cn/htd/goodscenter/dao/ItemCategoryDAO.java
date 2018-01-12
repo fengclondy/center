@@ -99,4 +99,10 @@ public interface ItemCategoryDAO extends BaseDAO<ItemCategoryDTO> {
 	 */
 	public List<ItemCategoryDTO> queryItemCategoryList(@Param("entity") ItemCategoryDTO itemCategoryDTO, @Param("page") Pager pager);
 
+	/**
+	 * 根据类目名称查询类目ID
+	 * @return
+	 */
+	List<ItemCategoryDTO> batchQueryThirdCategoryIdByName(@Param("cNameList") List<String> cNameList);
+
 }

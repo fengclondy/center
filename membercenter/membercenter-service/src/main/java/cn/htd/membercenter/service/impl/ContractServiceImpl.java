@@ -385,6 +385,8 @@ public class ContractServiceImpl implements ContractService {
 			return result;
 		}
 		try {
+			//首先根据会员编码查询一圈包厢关系
+			List<MemberShipDTO> memberShipList = boxRelationshipDAO.queryBoxRelationshipList(memberCode);
 			//根据传入的会员店编码和有可能的供应商编码查询现有合同信息
 			List<ContractInfoDTO> returnContractList = contractDAO.queryEffectiveContractByMemberCode(memberCode, vendorCodeList);
 			List<ContractInfoDTO> returnContracInfotList = new ArrayList<ContractInfoDTO>();
@@ -394,22 +396,31 @@ public class ContractServiceImpl implements ContractService {
 			memberBaseDTO.setBuyerSellerType("1");
 			MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 			returnContracInfotList.addAll(returnContractList);
+			if (null == memberShipList || memberShipList.isEmpty()) {
+				result.setResult(returnContracInfotList);
+				return result;
+			}
 			for (String vendor : vendorCodeList) {
 				boolean checkExistsFlag = true;
-				for (ContractInfoDTO contractInfoDTO : returnContractList) {
-					if (vendor.equals(contractInfoDTO.getVendorCode())) {
-						//如果相同的话置为false证明已经查询到合同信息
-						checkExistsFlag = false;
-						break;
+				for (MemberShipDTO memberShipDTO : memberShipList) {
+					if (vendor.equals(memberShipDTO.getMemberCode())) {
+						//证明是在包厢关系中的需要签订合同的
+						for (ContractInfoDTO contractInfoDTO : returnContractList) {
+							if (vendor.equals(contractInfoDTO.getVendorCode())) {
+								//如果相同的话置为false证明已经查询到合同信息
+								checkExistsFlag = false;
+								break;
+							}
+						}
+						if (checkExistsFlag) {
+							//表示对应的供应商没有签订合同
+							ContractInfoDTO noSigncontract = getContractInfoDTOByCode(memberBase, vendor);
+							returnContracInfotList.add(noSigncontract);
+						}
 					}
 				}
-				if (checkExistsFlag) {
-					//表示对应的供应商没有签订合同
-					ContractInfoDTO noSigncontract = getContractInfoDTOByCode(memberBase, vendor);
-					returnContracInfotList.add(noSigncontract);
-				}
 			}
-			
+			//此时包含的是已经签订的合同加需要签订合同的供应商的合同
 			result.setResult(returnContracInfotList);
 		} catch (Exception e) {
 			result.addErrorMessage("查询合同签订信息异常 异常信息error=" + e.getMessage());

@@ -84,10 +84,10 @@ public class ContractServiceTest {
 	
 	@Test
 	public void queryRemind() {
-		ExecuteResult<String> result = contractService.queryRemindFlag("926386");
+		/*ExecuteResult<String> result = contractService.queryRemindFlag("926386");
 		if (result.isSuccess()) {
 			System.out.println(result.getResult());
-		}
+		}*/
 		
 	}
 	

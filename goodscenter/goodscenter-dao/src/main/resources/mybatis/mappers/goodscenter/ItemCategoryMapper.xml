@@ -427,4 +427,16 @@
 			<include refid="pagination_tail" />
 		</if>
 	</select>
+
+	<!-- 根据cid查询类目-->
+	<select id="batchQueryThirdCategoryIdByName" resultMap="itemCategoryDTOMapper">
+		<include refid="selectAllColumns"/>
+		where
+		c_name in
+		<foreach collection="cNameList" open="(" close=")" separator="," item="cname">
+			#{cname}
+		</foreach>
+		and status = 1
+		and lev = 3
+	</select>
 </mapper>

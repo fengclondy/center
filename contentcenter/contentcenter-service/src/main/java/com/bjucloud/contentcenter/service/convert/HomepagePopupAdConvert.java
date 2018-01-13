@@ -3,16 +3,13 @@ package com.bjucloud.contentcenter.service.convert;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import cn.htd.common.util.DictionaryUtils;
 import com.bjucloud.contentcenter.domain.HomepagePopupAd;
 import com.bjucloud.contentcenter.domain.HomepagePopupTerminalAd;
-import com.bjucloud.contentcenter.dto.HomepagePopupAdDTO;
+import com.bjucloud.contentcenter.dto.PopupAdDTO;
 import com.bjucloud.contentcenter.enums.PopupAdTerminalTypeEnums;
 
 
-public class HomepagePopupAdConvert extends AbstractConvert<HomepagePopupAd, HomepagePopupAdDTO> {
+public class HomepagePopupAdConvert extends AbstractConvert<HomepagePopupAd, PopupAdDTO> {
 
     /**
      * 填充目标对象
@@ -21,8 +18,8 @@ public class HomepagePopupAdConvert extends AbstractConvert<HomepagePopupAd, Hom
      * @return TARGET
      */
     @Override
-    protected HomepagePopupAdDTO populateTarget(HomepagePopupAd homepagePopupAd) {
-        HomepagePopupAdDTO dto = new HomepagePopupAdDTO();
+    protected PopupAdDTO populateTarget(HomepagePopupAd homepagePopupAd) {
+        PopupAdDTO dto = new PopupAdDTO();
         List<String> terminalTypeList = new ArrayList<String>();
         String terminalTypeStr = "";
         dto.setId(homepagePopupAd.getId());
@@ -52,7 +49,33 @@ public class HomepagePopupAdConvert extends AbstractConvert<HomepagePopupAd, Hom
      * @return
      */
     @Override
-    protected HomepagePopupAd populateSource(HomepagePopupAdDTO homepagePopupAdDTO) {
-        return null;
+    protected HomepagePopupAd populateSource(PopupAdDTO homepagePopupAdDTO) {
+        HomepagePopupAd popupAd = new HomepagePopupAd();
+        List<HomepagePopupTerminalAd> terminalAdList = new ArrayList<HomepagePopupTerminalAd>();
+        HomepagePopupTerminalAd terminalAd = null;
+
+        popupAd.setId(homepagePopupAdDTO.getId());
+        popupAd.setAdName(homepagePopupAdDTO.getAdName());
+        popupAd.setPicUrl(homepagePopupAdDTO.getPicUrl());
+        popupAd.setLinkUrl(homepagePopupAdDTO.getLinkUrl());
+        popupAd.setStartTime(homepagePopupAdDTO.getStartTime());
+        popupAd.setEndTime(homepagePopupAdDTO.getEndTime());
+        popupAd.setCreateId(homepagePopupAdDTO.getOperatorId());
+        popupAd.setCreateName(homepagePopupAdDTO.getOperatorName());
+        popupAd.setModifyId(homepagePopupAdDTO.getOperatorId());
+        popupAd.setModifyName(homepagePopupAdDTO.getOperatorName());
+        if (homepagePopupAdDTO.getTerminalTypeList() != null && !homepagePopupAdDTO.getTerminalTypeList().isEmpty()) {
+           for (String terminalTypeCode : homepagePopupAdDTO.getTerminalTypeList()) {
+               terminalAd.setAdId(homepagePopupAdDTO.getId());
+               terminalAd.setTerminalType(terminalTypeCode);
+               terminalAd.setCreateId(homepagePopupAdDTO.getOperatorId());
+               terminalAd.setCreateName(homepagePopupAdDTO.getOperatorName());
+               terminalAd.setModifyId(homepagePopupAdDTO.getOperatorId());
+               terminalAd.setModifyName(homepagePopupAdDTO.getOperatorName());
+               terminalAdList.add(terminalAd);
+           }
+           popupAd.setTerminalAdList(terminalAdList);
+        }
+        return popupAd;
     }
 }

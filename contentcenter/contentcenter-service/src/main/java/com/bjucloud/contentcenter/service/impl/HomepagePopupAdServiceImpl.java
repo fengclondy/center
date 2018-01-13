@@ -1,6 +1,5 @@
 package com.bjucloud.contentcenter.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,16 +10,25 @@ import cn.htd.common.Pager;
 import com.bjucloud.contentcenter.common.enmu.ReturnCodeEnum;
 import com.bjucloud.contentcenter.common.exception.ContentCenterBusinessException;
 import com.bjucloud.contentcenter.common.utils.ExceptionUtils;
+import com.bjucloud.contentcenter.common.utils.ValidateResult;
+import com.bjucloud.contentcenter.common.utils.ValidationUtils;
 import com.bjucloud.contentcenter.dao.HomepagePopupAdDAO;
 import com.bjucloud.contentcenter.dao.HomepagePopupAdTerminalDAO;
 import com.bjucloud.contentcenter.domain.HomepagePopupAd;
 import com.bjucloud.contentcenter.domain.HomepagePopupTerminalAd;
-import com.bjucloud.contentcenter.dto.HomepagePopupAdConditionDTO;
-import com.bjucloud.contentcenter.dto.HomepagePopupAdDTO;
+import com.bjucloud.contentcenter.dto.PopupAdConditionDTO;
+import com.bjucloud.contentcenter.dto.PopupAdDTO;
+import com.bjucloud.contentcenter.dto.PopupAdModifyConditionDTO;
+import com.bjucloud.contentcenter.enums.PopupAdTerminalTypeEnums;
+import com.bjucloud.contentcenter.enums.YesNoEnums;
 import com.bjucloud.contentcenter.service.HomepagePopupAdService;
 import com.bjucloud.contentcenter.service.convert.HomepagePopupAdConvert;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+@Transactional
 @Service("homepagePopupAdService")
 public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
 
@@ -38,10 +46,10 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
      * @return
      */
     @Override
-    public ExecuteResult<DataGrid<HomepagePopupAdDTO>> queryPopupAdList(HomepagePopupAdConditionDTO conditionDTO,
-            Pager<HomepagePopupAdDTO> page) {
-        ExecuteResult<DataGrid<HomepagePopupAdDTO>> result = new ExecuteResult<DataGrid<PromotionDiscountInfoDTO>>();
-        DataGrid<HomepagePopupAdDTO> dataGrid = new DataGrid<HomepagePopupAdDTO>();
+    public ExecuteResult<DataGrid<PopupAdDTO>> queryPopupAdList(PopupAdConditionDTO conditionDTO,
+            Pager<PopupAdDTO> page) {
+        ExecuteResult<DataGrid<PopupAdDTO>> result = new ExecuteResult<DataGrid<PopupAdDTO>>();
+        DataGrid<PopupAdDTO> dataGrid = new DataGrid<PopupAdDTO>();
         List<HomepagePopupAd> adList = null;
         List<HomepagePopupTerminalAd> terminalAdList = null;
         HomepagePopupAdConvert convert = null;
@@ -76,19 +84,21 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
      * @return
      */
     @Override
-    public ExecuteResult<HomepagePopupAdDTO> queryPopupAdInfo(Long adId) {
-        ExecuteResult<HomepagePopupAdDTO> result = new ExecuteResult<HomepagePopupAdDTO>();
-        HomepagePopupAdDTO popupAdDTO = null;
+    public ExecuteResult<PopupAdDTO> queryPopupAdInfo(Long adId) {
+        ExecuteResult<PopupAdDTO> result = new ExecuteResult<PopupAdDTO>();
+        PopupAdDTO popupAdDTO = null;
         HomepagePopupAd popupAd = null;
         List<HomepagePopupTerminalAd> terminalAdList = null;
         HomepagePopupAdConvert convert = null;
         try {
             popupAd = homepagePopupAdDAO.queryById(adId);
             if (popupAd == null) {
-                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(), ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
+                        ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
             }
-            if (popupAd.getDeleteFlag() == 1) {
-                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_HAS_DELETED.getCode(), ReturnCodeEnum.AD_HAS_DELETED.getDesc());
+            if (popupAd.getDeleteFlag() == YesNoEnums.YES.getValue()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_HAS_DELETED.getCode(),
+                        ReturnCodeEnum.AD_HAS_DELETED.getDesc());
             }
             terminalAdList = homepagePopupAdTerminalDAO.queryByAdId(popupAd.getId());
             popupAd.setTerminalAdList(terminalAdList);
@@ -112,8 +122,31 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
      * @return
      */
     @Override
-    public ExecuteResult<String> addPopupAdInfo(HomepagePopupAdDTO popupAdDTO) {
-        return null;
+    public ExecuteResult<String> addPopupAdInfo(PopupAdDTO popupAdDTO) {
+        ExecuteResult<String> result = new ExecuteResult<String>();
+        HomepagePopupAd popupAd = null;
+        HomepagePopupAdConvert convert = null;
+        try {
+            ValidateResult validateResult = ValidationUtils.validateEntity(popupAdDTO);
+            if (validateResult.isHasErrors()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_ERROR.getCode(),
+                        validateResult.getErrorMsg());
+            }
+            checkPopupAdPeriodRepeat(popupAdDTO);
+            convert = new HomepagePopupAdConvert();
+            popupAd = convert.toSource(popupAdDTO);
+            insertPopupAdInfo(popupAd);
+            result.setResult("处理成功");
+        } catch (ContentCenterBusinessException ccbe) {
+            result.setCode(ccbe.getCode());
+            result.addErrorMessage(ccbe.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        } catch (Exception e) {
+            result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
     }
 
     /**
@@ -123,18 +156,181 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
      * @return
      */
     @Override
-    public ExecuteResult<String> updatePopupAdInfo(HomepagePopupAdDTO popupAdDTO) {
-        return null;
+    public ExecuteResult<String> updatePopupAdInfo(PopupAdDTO popupAdDTO) {
+        ExecuteResult<String> result = new ExecuteResult<String>();
+        Long adId = popupAdDTO.getId();
+        HomepagePopupAd popupAd = null;
+        HomepagePopupAdConvert convert = null;
+        try {
+            ValidateResult validateResult = ValidationUtils.validateEntity(popupAdDTO);
+            if (validateResult.isHasErrors()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_ERROR.getCode(),
+                        validateResult.getErrorMsg());
+            }
+            if (adId == null) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_NOT_NULL.getCode(), "弹屏广告ID不能为空");
+            }
+            popupAd = homepagePopupAdDAO.queryById(adId);
+            if (popupAd == null) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
+                        ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
+            }
+            if (popupAd.getDeleteFlag() == YesNoEnums.YES.getValue()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_HAS_DELETED.getCode(),
+                        ReturnCodeEnum.AD_HAS_DELETED.getDesc());
+            }
+            checkPopupAdPeriodRepeat(popupAdDTO);
+            convert = new HomepagePopupAdConvert();
+            popupAd = convert.toSource(popupAdDTO);
+            updatePopupAdInfo(popupAd);
+            result.setResult("处理成功");
+        } catch (ContentCenterBusinessException ccbe) {
+            result.setCode(ccbe.getCode());
+            result.addErrorMessage(ccbe.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        } catch (Exception e) {
+            result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
     }
 
     /**
      * 删除弹屏广告信息
      *
-     * @param adId
+     * @param deleteAdDTO
      * @return
      */
     @Override
-    public ExecuteResult<String> deletePopupAdInfo(Long adId) {
-        return null;
+    public ExecuteResult<String> deletePopupAdInfo(PopupAdModifyConditionDTO deleteAdDTO) {
+        ExecuteResult<String> result = new ExecuteResult<String>();
+        Long adId = deleteAdDTO.getAdId();
+        HomepagePopupAd popupAd = null;
+        try {
+            ValidateResult validateResult = ValidationUtils.validateEntity(deleteAdDTO);
+            if (validateResult.isHasErrors()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_ERROR.getCode(),
+                        validateResult.getErrorMsg());
+            }
+            popupAd = homepagePopupAdDAO.queryById(adId);
+            if (popupAd == null) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
+                        ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
+            }
+            if (popupAd.getDeleteFlag() == YesNoEnums.YES.getValue()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_HAS_DELETED.getCode(),
+                        ReturnCodeEnum.AD_HAS_DELETED.getDesc());
+            }
+            popupAd = new HomepagePopupAd();
+            popupAd.setId(deleteAdDTO.getAdId());
+            popupAd.setModifyId(deleteAdDTO.getOperatorId());
+            popupAd.setModifyName(deleteAdDTO.getOperatorName());
+            homepagePopupAdDAO.delete(popupAd);
+            result.setResult("处理成功");
+        } catch (ContentCenterBusinessException ccbe) {
+            result.setCode(ccbe.getCode());
+            result.addErrorMessage(ccbe.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        } catch (Exception e) {
+            result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return result;
+    }
+
+    /**
+     * 根据展示终端获取展示弹框广告信息
+     *
+     * @param terminalTypeCode
+     * @return
+     */
+    @Override
+    public ExecuteResult<PopupAdDTO> searchShowPopupAdInfo(String terminalTypeCode) {
+        ExecuteResult<PopupAdDTO> result = new ExecuteResult<PopupAdDTO>();
+        HomepagePopupAdConvert convert = null;
+        HomepagePopupAd popupAd = null;
+        PopupAdDTO popupAdDTO = null;
+        String terminalDesc = "";
+        try {
+            if(StringUtils.isEmpty(terminalTypeCode)) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_NOT_NULL.getCode(),
+                        "展示终端类型不能为空");
+            }
+            terminalDesc = PopupAdTerminalTypeEnums.getTypeDesc(terminalTypeCode);
+            if (StringUtils.isEmpty(terminalDesc)) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_VALUE_ERROR.getCode(),
+                        "展示终端类型不正确");
+            }
+            popupAd = homepagePopupAdDAO.queryShowPopupAd(terminalTypeCode);
+            if (popupAd != null) {
+                convert = new HomepagePopupAdConvert();
+                popupAdDTO = convert.toTarget(popupAd);
+                result.setResult(popupAdDTO);
+            }
+        } catch (ContentCenterBusinessException ccbe) {
+            result.setCode(ccbe.getCode());
+            result.addErrorMessage(ccbe.getMessage());
+        } catch (Exception e) {
+            result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+        }
+        return result;
+    }
+
+    /**
+     * 校验弹屏活动是否和已有活动的期间重叠
+     *
+     * @param popupAdDTO
+     */
+    private void checkPopupAdPeriodRepeat(PopupAdDTO popupAdDTO) {
+        Long count = 0L;
+        count = homepagePopupAdDAO.checkPopupAdPeriodRepeat(popupAdDTO);
+        if (count > 0) {
+            throw new ContentCenterBusinessException(ReturnCodeEnum.AD_PERIOD_REPEAT.getCode(),
+                    ReturnCodeEnum.AD_PERIOD_REPEAT.getDesc());
+        }
+    }
+
+    /**
+     * 插入弹屏广告信息
+     *
+     * @param popupAd
+     */
+    private void insertPopupAdInfo(HomepagePopupAd popupAd) {
+        Long adId = 0L;
+        homepagePopupAdDAO.add(popupAd);
+        adId = popupAd.getId();
+        if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
+            for (HomepagePopupTerminalAd popupTerminalAd : popupAd.getTerminalAdList()) {
+                popupTerminalAd.setAdId(adId);
+            }
+            homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
+        }
+    }
+
+    /**
+     * 更新弹屏广告信息
+     *
+     * @param popupAd
+     */
+    private void updatePopupAdInfo(HomepagePopupAd popupAd) {
+        Long adId = popupAd.getId();
+        int count = 0;
+
+        HomepagePopupTerminalAd terminalCondition = new HomepagePopupTerminalAd();
+        terminalCondition.setAdId(adId);
+        terminalCondition.setModifyId(popupAd.getModifyId());
+        terminalCondition.setModifyName(popupAd.getModifyName());
+        count = homepagePopupAdDAO.update(popupAd);
+        if (count != 1) {
+            throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
+                    ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
+        }
+        homepagePopupAdTerminalDAO.deleteByAdId(terminalCondition);
+        if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
+            homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
+        }
     }
 }

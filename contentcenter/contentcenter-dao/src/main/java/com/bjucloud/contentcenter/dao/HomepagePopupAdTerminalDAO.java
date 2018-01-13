@@ -16,8 +16,17 @@ public interface HomepagePopupAdTerminalDAO extends BaseDAO<HomepagePopupTermina
 
     /**
      * 根据广告ID查询展示终端信息
+     *
      * @param id
      * @return
      */
     public List<HomepagePopupTerminalAd> queryByAdId(Long id);
+
+    /**
+     * 根据广告ID删除展示终端信息
+     *
+     * @param terminalAd
+     * @return
+     */
+    public Integer deleteByAdId(HomepagePopupTerminalAd terminalAd);
 }

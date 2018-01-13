@@ -61,7 +61,7 @@
             )
         </foreach>
     </insert>
-    <update id="delete">
+    <update id="deleteByAdId">
         update homepage_popup_ad_terminal
         <set>
             delete_flag = 1,

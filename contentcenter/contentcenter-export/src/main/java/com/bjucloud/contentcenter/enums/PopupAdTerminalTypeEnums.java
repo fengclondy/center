@@ -4,11 +4,11 @@ package com.bjucloud.contentcenter.enums;
  * 弹屏广告终端定义
  */
 public enum PopupAdTerminalTypeEnums {
-	HZG("1", "汇掌柜"),
-	SUPER_BOSS_APP("2", "超级老板APP"),
-	SUPER_BOSS_PC("3", "超级老板PC"),
-	SUPER_MANAGER("4", "超级经理人"),
-	B2B_MALL("5", "汇通达商城PC");
+	HZG("hzg", "汇掌柜"),
+	SUPER_BOSS_APP("bossapp", "超级老板APP"),
+	SUPER_BOSS_PC("bosspc", "超级老板PC"),
+	SUPER_MANAGER("manager", "超级经理人"),
+	B2B_MALL("mallpc", "汇通达商城PC");
 
 	private String code;
 	private String typeDesc;

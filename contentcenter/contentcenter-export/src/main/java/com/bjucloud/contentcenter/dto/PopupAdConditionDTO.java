@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class HomepagePopupAdConditionDTO implements Serializable {
+public class PopupAdConditionDTO implements Serializable {
 
 	private static final long serialVersionUID = 3527613047270244097L;
 

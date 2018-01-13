@@ -3,8 +3,9 @@ package com.bjucloud.contentcenter.service;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
-import com.bjucloud.contentcenter.dto.HomepagePopupAdConditionDTO;
-import com.bjucloud.contentcenter.dto.HomepagePopupAdDTO;
+import com.bjucloud.contentcenter.dto.PopupAdConditionDTO;
+import com.bjucloud.contentcenter.dto.PopupAdDTO;
+import com.bjucloud.contentcenter.dto.PopupAdModifyConditionDTO;
 
 public interface HomepagePopupAdService {
 
@@ -15,7 +16,8 @@ public interface HomepagePopupAdService {
      * @param page
      * @return
      */
-    public ExecuteResult<DataGrid<HomepagePopupAdDTO>> queryPopupAdList(HomepagePopupAdConditionDTO conditionDTO, Pager<HomepagePopupAdDTO> page);
+    public ExecuteResult<DataGrid<PopupAdDTO>> queryPopupAdList(PopupAdConditionDTO conditionDTO,
+            Pager<PopupAdDTO> page);
 
     /**
      * 根据广告ID查询弹屏广告信息
@@ -23,7 +25,7 @@ public interface HomepagePopupAdService {
      * @param adId
      * @return
      */
-    public ExecuteResult<HomepagePopupAdDTO> queryPopupAdInfo(Long adId);
+    public ExecuteResult<PopupAdDTO> queryPopupAdInfo(Long adId);
 
     /**
      * 保存弹屏广告信息
@@ -31,7 +33,7 @@ public interface HomepagePopupAdService {
      * @param popupAdDTO
      * @return
      */
-    public ExecuteResult<String> addPopupAdInfo(HomepagePopupAdDTO popupAdDTO);
+    public ExecuteResult<String> addPopupAdInfo(PopupAdDTO popupAdDTO);
 
     /**
      * 更新弹屏广告信息
@@ -39,13 +41,21 @@ public interface HomepagePopupAdService {
      * @param popupAdDTO
      * @return
      */
-    public ExecuteResult<String> updatePopupAdInfo(HomepagePopupAdDTO popupAdDTO);
+    public ExecuteResult<String> updatePopupAdInfo(PopupAdDTO popupAdDTO);
 
     /**
      * 删除弹屏广告信息
      *
-     * @param adId
+     * @param deleteAdDTO
      * @return
      */
-    public ExecuteResult<String> deletePopupAdInfo(Long adId);
+    public ExecuteResult<String> deletePopupAdInfo(PopupAdModifyConditionDTO deleteAdDTO);
+
+    /**
+     * 根据展示终端获取展示弹框广告信息
+     *
+     * @param terminalTypeCode
+     * @return
+     */
+    public ExecuteResult<PopupAdDTO> searchShowPopupAdInfo(String terminalTypeCode);
 }

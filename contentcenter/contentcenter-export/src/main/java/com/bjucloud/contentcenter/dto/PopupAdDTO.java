@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 
-public class HomepagePopupAdDTO implements Serializable {
+public class PopupAdDTO implements Serializable {
 
     private static final long serialVersionUID = 3527613047270244097L;
 

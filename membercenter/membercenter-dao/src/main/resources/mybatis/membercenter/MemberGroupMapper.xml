@@ -58,6 +58,9 @@
         <if test="memberGroupDTO.name != null and memberGroupDTO.name != ''">
 		     <![CDATA[ and a.name like concat('%', #{memberGroupDTO.name}, '%') ]]>
 		</if> 
+		 <if test="memberGroupDTO.groupId != null and memberGroupDTO.groupId != ''">
+		     <![CDATA[ and a.group_id !=#{memberGroupDTO.groupId}  ]]>
+		</if>
 	</select>
 	
 	<!-- 查询商家会员未分组列表信息 -->

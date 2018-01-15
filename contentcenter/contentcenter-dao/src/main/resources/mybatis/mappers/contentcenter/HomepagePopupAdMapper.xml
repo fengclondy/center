@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.HomepagePopupAdDAO">
+  <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.domain.HomepagePopupAd">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="ad_name" jdbcType="VARCHAR" property="adName"/>
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+    <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
+    <result column="create_id" jdbcType="BIGINT" property="createId"/>
+    <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,
+    ad_name,
+    pic_url,
+    link_url,
+    start_time,
+    end_time,
+    delete_flag,
+    create_id,
+    create_name,
+    create_time,
+    modify_id,
+    modify_name,
+    modify_time
+  </sql>
+  <sql id="where_fragement">
+    where 1 = 1
+    and delete_flag = 0
+    <if test="entity != null">
+      <if test="entity.adName != null and entity.adName != ''">
+        and ad_name like CONCAT('%',#{entity.adName},'%')
+      </if>
+      <if test="entity.terminalCode != null and entity.terminalCode != ''">
+        and exists (
+        select 1
+        from homepage_popup_ad_terminal
+        where homepage_popup_ad.id = homepage_popup_ad_terminal.ad_id
+        and homepage_popup_ad_terminal.delete_flag = 0
+        and homepage_popup_ad_terminal.terminal_type = #{entity.terminalType}
+        )
+      </if>
+      <if test="entity.startTime != null">
+        and <![CDATA[end_time >= #{entity.startTime}]]>
+      </if>
+      <if test="entity.endTime != null">
+        and <![CDATA[start_time <= #{entity.endTime}]]>
+      </if>
+    </if>
+  </sql>
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+        limit #{page.pageOffset} , #{page.rows}
+    </sql>
+  <select id="queryById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from homepage_popup_ad
+    where id = #{id, jdbcType=BIGINT}
+  </select>
+  <!-- 查询总数 -->
+  <select id="queryCount" resultType="java.lang.Long">
+    select count(1)
+    from homepage_popup_ad
+    <include refid="where_fragement"/>
+  </select>
+  <!-- 分页查询 -->
+  <select id="queryList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from homepage_popup_ad
+    <include refid="where_fragement"/>
+    order by modify_time desc
+    <if test="page != null">
+      <include refid="pagination_tail"/>
+    </if>
+  </select>
+  <!-- 校验弹屏活动是否和已有活动的期间重叠 -->
+  <select id="checkPopupAdPeriodRepeat" parameterType="com.bjucloud.contentcenter.dto.PopupAdDTO"
+          resultType="java.lang.Long">
+    select count(1)
+    from homepage_popup_ad a
+    where 1 = 1
+    and <![CDATA[a.start_time <= #{endTime,jdbcType=TIMESTAMP}]]>
+    and <![CDATA[a.end_time >= #{startTime,jdbcType=TIMESTAMP}]]>
+    and a.delete_flag = 0
+    and exists (
+    select 1
+    from homepage_popup_ad_terminal b
+    where a.id = b.ad_id
+    and b.delete_flag = 0
+    and b.terminal_type in
+    <foreach collection="terminalTypeList" index="index" item="terminalType" open="(" separator="," close=")">
+      #{terminalType}
+    </foreach>
+    )
+    <if test="id != null">
+      and <![CDATA[a.id <> #{id,jdbcType=BIGINT}]]>
+    </if>
+  </select>
+  <!-- 根据终端类型查询展示弹屏活动信息 -->
+  <select id="queryShowPopupAd" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from homepage_popup_ad
+    where 1 = 1
+    and <![CDATA[homepage_popup_ad.start_time >= now()]]>
+    and <![CDATA[homepage_popup_ad.end_time <= now()]]>
+    and homepage_popup_ad.delete_flag = 0
+    and exists (
+    select 1
+    from homepage_popup_ad_terminal
+    where homepage_popup_ad.id = homepage_popup_ad_terminal.ad_id
+    and homepage_popup_ad_terminal.delete_flag = 0
+    and homepage_popup_ad_terminal.terminal_type = #{_parameter,jdbcType=VARCHAR}
+    )
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id">
+    insert into homepage_popup_ad
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      ad_name,
+      pic_url,
+      <if test="linkUrl != null and linkUrl != ''">
+        link_url,
+      </if>
+      start_time,
+      end_time,
+      delete_flag,
+      create_id,
+      create_name,
+      create_time,
+      modify_id,
+      modify_name,
+      modify_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{adName,jdbcType=VARCHAR},
+      #{picUrl,jdbcType=VARCHAR},
+      <if test="linkUrl != null and linkUrl != ''">
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      #{startTime,jdbcType=TIMESTAMP},
+      #{endTime,jdbcType=TIMESTAMP},
+      0,
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+      #{createId,jdbcType=BIGINT},
+      #{createName,jdbcType=VARCHAR},
+      now(),
+    </trim>
+  </insert>
+  <update id="update">
+    update homepage_popup_ad
+    <set>
+      ad_name = #{adName,jdbcType=VARCHAR},
+      pic_url = #{picUrl,jdbcType=VARCHAR},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="delete">
+    update homepage_popup_ad
+    <set>
+      delete_flag = 1,
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

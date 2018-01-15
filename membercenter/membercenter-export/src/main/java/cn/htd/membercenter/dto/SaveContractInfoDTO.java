@@ -48,9 +48,39 @@ public class SaveContractInfoDTO implements Serializable {
 	public String vendorCode;
 	
 	/**
+	 * 供应商名称(大B名称) <br>
+	 */
+	public String vendorName;
+	
+	/**
+	 * 供货商地址 <br>
+	 */
+	public String vendorLocationAddr;
+	
+	/**
+	 * 供货商法人名称 <br>
+	 */
+	public String vendorArtificialPersonName;
+	
+	/**
 	 * 会员店编码(小B编码) <br>
 	 */
 	public String memberCode;
+	
+	/**
+	 * 会员店名称(小B名称) <br>
+	 */
+	public String memberName;
+	
+	/**
+	 * 会员店地址 <br>
+	 */
+	public String memberLocationAddr;
+	
+	/**
+	 * 会员店法人名称 <br>
+	 */
+	public String memberArtificialPersonName;
 	
 	/**
 	 * 静态合同页面url(不需传递) <br>
@@ -419,6 +449,102 @@ public class SaveContractInfoDTO implements Serializable {
 	 */
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	/** 
+	 * get vendorName
+	 * @return Returns the vendorName.<br> 
+	 */
+	public String getVendorName() {
+		return vendorName;
+	}
+
+	/** 
+	 * set vendorName
+	 * @param vendorName The vendorName to set. <br>
+	 */
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+
+	/** 
+	 * get vendorLocationAddr
+	 * @return Returns the vendorLocationAddr.<br> 
+	 */
+	public String getVendorLocationAddr() {
+		return vendorLocationAddr;
+	}
+
+	/** 
+	 * set vendorLocationAddr
+	 * @param vendorLocationAddr The vendorLocationAddr to set. <br>
+	 */
+	public void setVendorLocationAddr(String vendorLocationAddr) {
+		this.vendorLocationAddr = vendorLocationAddr;
+	}
+
+	/** 
+	 * get vendorArtificialPersonName
+	 * @return Returns the vendorArtificialPersonName.<br> 
+	 */
+	public String getVendorArtificialPersonName() {
+		return vendorArtificialPersonName;
+	}
+
+	/** 
+	 * set vendorArtificialPersonName
+	 * @param vendorArtificialPersonName The vendorArtificialPersonName to set. <br>
+	 */
+	public void setVendorArtificialPersonName(String vendorArtificialPersonName) {
+		this.vendorArtificialPersonName = vendorArtificialPersonName;
+	}
+
+	/** 
+	 * get memberName
+	 * @return Returns the memberName.<br> 
+	 */
+	public String getMemberName() {
+		return memberName;
+	}
+
+	/** 
+	 * set memberName
+	 * @param memberName The memberName to set. <br>
+	 */
+	public void setMemberName(String memberName) {
+		this.memberName = memberName;
+	}
+
+	/** 
+	 * get memberLocationAddr
+	 * @return Returns the memberLocationAddr.<br> 
+	 */
+	public String getMemberLocationAddr() {
+		return memberLocationAddr;
+	}
+
+	/** 
+	 * set memberLocationAddr
+	 * @param memberLocationAddr The memberLocationAddr to set. <br>
+	 */
+	public void setMemberLocationAddr(String memberLocationAddr) {
+		this.memberLocationAddr = memberLocationAddr;
+	}
+
+	/** 
+	 * get memberArtificialPersonName
+	 * @return Returns the memberArtificialPersonName.<br> 
+	 */
+	public String getMemberArtificialPersonName() {
+		return memberArtificialPersonName;
+	}
+
+	/** 
+	 * set memberArtificialPersonName
+	 * @param memberArtificialPersonName The memberArtificialPersonName to set. <br>
+	 */
+	public void setMemberArtificialPersonName(String memberArtificialPersonName) {
+		this.memberArtificialPersonName = memberArtificialPersonName;
 	}
 	
 }

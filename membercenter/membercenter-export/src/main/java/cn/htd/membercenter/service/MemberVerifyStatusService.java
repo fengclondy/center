@@ -30,5 +30,12 @@ public interface MemberVerifyStatusService {
      * @return
      */
 	public ExecuteResult<DataGrid<MemberVerifyStatusDTO>> queryAuditPendingMember(Pager<MemberVerifyStatusDTO> page,MemberAuditPendingDTO memberAuditPending);
+	
+	/**
+	 * 查询待审核会员数量
+	 * @param dto
+	 * @return
+	 */
+	public ExecuteResult<Long> queryAuditPendingMemberCount(MemberAuditPendingDTO dto);
 
 }

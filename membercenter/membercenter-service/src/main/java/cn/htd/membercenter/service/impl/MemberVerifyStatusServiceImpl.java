@@ -58,6 +58,7 @@ public class MemberVerifyStatusServiceImpl implements MemberVerifyStatusService 
 		return rs;
 	}
 
+	
 	/**
 	 * VMS - 查询待审核会员列表
 	 * @author li.jun
@@ -82,5 +83,24 @@ public class MemberVerifyStatusServiceImpl implements MemberVerifyStatusService 
 		}
 		return result;
 	}
+
+	/**
+	 * 查询待审核会员数量报错
+	 */
+	@Override
+	public ExecuteResult<Long> queryAuditPendingMemberCount(MemberAuditPendingDTO memberAuditPending) {
+		ExecuteResult<Long> result = new ExecuteResult<Long>();
+		try{
+			Long count = memberVerifyStatusDao.queryAuditPendingMemberCount(memberAuditPending);
+			result.setResult(count);
+		}catch (Exception e) {
+			logger.error("查询待审核会员数量报错  -> queryAuditPendingMemberCount=" + e);
+			result.addErrorMessage("查询待审核会员数量报错!");
+		}
+		
+		return result;
+	}
+
+	
 
 }

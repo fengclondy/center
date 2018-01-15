@@ -14,6 +14,7 @@ import com.yiji.openapi.tool.util.StringUtils;
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
+import cn.htd.common.dao.util.RedisDB;
 import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.dao.CycleTradeForbiddenMemberDAO;
 import cn.htd.membercenter.domain.CycleTradeForbiddenMember;
@@ -30,6 +31,10 @@ public class CycleTradeForbiddenMemberServiceImpl implements CycleTradeForbidden
 	private CycleTradeForbiddenMemberDAO cycleTradeForbiddenMemberDAO;
 	@Resource
 	private BoxRelationshipService boxRelationshipService;
+	@Resource
+	private RedisDB redisDB;
+	//平台公司是否禁止销售标识(reids)
+	private static final String CODE_CYCLE_TRADE_FORBIDDEN_COMPANY_FLAG = "CYCLE_TRADE_FORBIDDEN_COMPANY_FLAG";
 
 	@Override
 	public ExecuteResult<String> insertCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto) {
@@ -186,6 +191,53 @@ public class CycleTradeForbiddenMemberServiceImpl implements CycleTradeForbidden
 			result.addErrorMessage("error");
 			result.setResultMessage("异常");
 			logger.error("CycleTradeForbiddenMemberServiceImpl======>queryCycleTradeForbiddenMember=" + e);
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<Boolean> isCycleTradeForbiddenCompany() {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		try {
+			String value = redisDB.get(CODE_CYCLE_TRADE_FORBIDDEN_COMPANY_FLAG);
+			if("禁止".equals(value)){
+				result.setResult(true);
+			}else{
+				result.setResult(false);
+			}
+			result.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode(MemberCenterCodeEnum.ERROR.getCode());
+			result.addErrorMessage("error");
+			result.setResultMessage("异常");
+			logger.error("CycleTradeForbiddenMemberServiceImpl======>isCycleTradeForbiddenCompany=" + e);
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<Boolean> updateCycleTradeForbiddenCompany(String flag) {
+		ExecuteResult<Boolean> result = new ExecuteResult<Boolean>();
+		try {
+			if(StringUtils.isEmpty(flag)){
+				result.setCode(MemberCenterCodeEnum.ERROR.getCode());
+				result.setResultMessage("参数错误");
+				return result;
+			}
+			if("1".equals(flag)){
+				redisDB.set(CODE_CYCLE_TRADE_FORBIDDEN_COMPANY_FLAG, "禁止");
+			}else{
+				redisDB.set(CODE_CYCLE_TRADE_FORBIDDEN_COMPANY_FLAG, "不禁止");
+			} 
+			result.setResult(true);
+			result.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode(MemberCenterCodeEnum.ERROR.getCode());
+			result.addErrorMessage("error");
+			result.setResultMessage("异常");
+			logger.error("CycleTradeForbiddenMemberServiceImpl======>updateCycleTradeForbiddenCompany=" + e);
 		}
 		return result;
 	}

@@ -54,4 +54,16 @@ public interface CycleTradeForbiddenMemberService {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> isCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
+	
+	/**
+	 * 查询平台公司是否禁止销售
+	 * @return
+	 */
+	public ExecuteResult<Boolean> isCycleTradeForbiddenCompany();
+	
+	/**
+	 * 修改平台公司是否禁止销售
+	 * @return
+	 */
+	public ExecuteResult<Boolean> updateCycleTradeForbiddenCompany(String flag);
 }

@@ -290,7 +290,7 @@ public class MemberBaseServiceTest {
 	 
 	 @Test
 	 public void testCompanyName(){
-		 ExecuteResult<String> result = boxRelationshipService.selectCompanyName("htd0002");
+		 ExecuteResult<String> result = boxRelationshipService.selectCompanyName("htd0002", null);
 		 System.out.println(JSON.toJSONString(result));
 	 }
 

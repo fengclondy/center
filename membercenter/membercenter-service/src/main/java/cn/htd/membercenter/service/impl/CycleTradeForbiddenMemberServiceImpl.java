@@ -6,11 +6,11 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.github.pagehelper.StringUtil;
 import com.yiji.openapi.tool.fastjson.JSONObject;
+import com.yiji.openapi.tool.util.StringUtils;
+
 import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
@@ -18,6 +18,7 @@ import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.dao.CycleTradeForbiddenMemberDAO;
 import cn.htd.membercenter.domain.CycleTradeForbiddenMember;
 import cn.htd.membercenter.dto.CycleTradeForbiddenMemberDTO;
+import cn.htd.membercenter.service.BoxRelationshipService;
 import cn.htd.membercenter.service.CycleTradeForbiddenMemberService;
 
 @Service("cycleTradeForbiddenMemberService")
@@ -27,6 +28,8 @@ public class CycleTradeForbiddenMemberServiceImpl implements CycleTradeForbidden
 
 	@Resource
 	private CycleTradeForbiddenMemberDAO cycleTradeForbiddenMemberDAO;
+	@Resource
+	private BoxRelationshipService boxRelationshipService;
 
 	@Override
 	public ExecuteResult<String> insertCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto) {
@@ -37,6 +40,13 @@ public class CycleTradeForbiddenMemberServiceImpl implements CycleTradeForbidden
 				result.setCode(MemberCenterCodeEnum.ERROR.getCode());
 				result.setResultMessage("参数错误");
 				return result;
+			}
+			if(dto.isExport()){
+				ExecuteResult<String> memberResult = boxRelationshipService.selectCompanyName(dto.getMemberCode(), dto.getMemberName());
+				if(!"00000".equals(memberResult) || StringUtils.isEmpty(memberResult.getResult())){
+					result.setCode(MemberCenterCodeEnum.NO_DATA_CODE.getCode());
+					return result;
+				}
 			}
 			CycleTradeForbiddenMemberDTO countDTO = new CycleTradeForbiddenMemberDTO();
 			countDTO.setMemberCode(dto.getMemberCode());

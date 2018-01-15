@@ -103,6 +103,6 @@ public interface BoxRelationshipDAO {
 	 * @param memberId
 	 * @return
 	 */
-	public String selectCompanyName(@Param("memberCode") String memberId);
+	public String selectCompanyName(@Param("memberCode") String memberId,@Param("memberName") String memberName);
 	
 }

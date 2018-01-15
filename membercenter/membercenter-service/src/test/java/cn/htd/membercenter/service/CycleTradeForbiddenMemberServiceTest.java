@@ -34,11 +34,11 @@ public class CycleTradeForbiddenMemberServiceTest {
 	@Test
 	public void insertTest() {
 		CycleTradeForbiddenMemberDTO dto = new CycleTradeForbiddenMemberDTO();
-		dto.setMemberCode("htd0008");
-		dto.setMemberName("xj");
-		dto.setForbiddenType("1");
-		dto.setCreateId("222");
-		dto.setCreateName("sa2");
+		dto.setMemberCode("htd953007");
+		dto.setMemberName("南通金冠网络科技有限公司");
+		dto.setCreateId("1");
+		dto.setCreateName("test");
+		dto.setExport(true);
 		ExecuteResult<String> result = cycleTradeForbiddenMemberService.insertCycleTradeForbiddenMember(dto);
 		System.out.println(JSONObject.toJSONString(result));
 	}
@@ -67,10 +67,9 @@ public class CycleTradeForbiddenMemberServiceTest {
 	@Test
 	public void selectPageTest() {
 		CycleTradeForbiddenMemberDTO dto = new CycleTradeForbiddenMemberDTO();
-		dto.setMemberName("z");
 		Pager<CycleTradeForbiddenMemberDTO> pager = new Pager<CycleTradeForbiddenMemberDTO>();
 		ExecuteResult<DataGrid<CycleTradeForbiddenMemberDTO>> result = cycleTradeForbiddenMemberService
-				.selectCycleTradeForbiddenMemberList(dto, pager);
+				.selectCycleTradeForbiddenMemberList(dto, null);
 		System.out.println(JSONObject.toJSONString(result));
 	}
 }

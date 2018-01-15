@@ -38,7 +38,7 @@
       <if test="entity.adName != null and entity.adName != ''">
         and ad_name like CONCAT('%',#{entity.adName},'%')
       </if>
-      <if test="entity.terminalType != null and entity.terminalType != ''">
+      <if test="entity.terminalCode != null and entity.terminalCode != ''">
         and exists (
         select 1
         from homepage_popup_ad_terminal

@@ -2567,7 +2567,7 @@
 		t.status as status
 		from item_sku sku
 		join item i on sku.item_id = i.item_id
-		join item_draft t on t.item_id = sku.item_id
+		left join item_draft t on t.item_id = sku.item_id
 		left join item_brand brand on brand.brand_id = t.brand
 		left join item_spu spu on spu.spu_id =  i.item_spu_id
 		where
@@ -2616,7 +2616,7 @@
 		count(1)
 		from item_sku sku
 		join item i on sku.item_id = i.item_id
-		join item_draft t on t.item_id = sku.item_id
+		left join item_draft t on t.item_id = sku.item_id
 		left join item_brand brand on brand.brand_id = t.brand
 		left join item_spu spu on spu.spu_id =  i.item_spu_id
 		where

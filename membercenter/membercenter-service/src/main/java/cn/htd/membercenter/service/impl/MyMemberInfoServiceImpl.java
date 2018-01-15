@@ -182,7 +182,11 @@ public class MyMemberInfoServiceImpl implements MyMemberInfoService {
 				// 根据会员ID查询查询我的会员/担保会员归属状态
 				myMemberDTO = myMemberDao.queryMemberBelongStatus(memberId);
 			}
-			rs.setResult(myMemberDTO);
+			if(null !=myMemberDTO){
+				rs.setResult(myMemberDTO);
+			}else{
+				rs.addErrorMessage("未查到改会员的归属信息！");
+			}
 		} catch (Exception e) {
 			logger.error("MyMemberInfoServiceImpl----->queryMemberBelongStatus=" + e);
 			rs.addErrorMessage("查询会员归属状态出错");

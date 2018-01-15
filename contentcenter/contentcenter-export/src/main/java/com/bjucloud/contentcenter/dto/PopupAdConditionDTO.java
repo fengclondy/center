@@ -7,8 +7,6 @@ import java.util.List;
 
 public class PopupAdConditionDTO implements Serializable {
 
-	private static final long serialVersionUID = 3527613047270244097L;
-
 	private String adName;
 
 	private String terminalCode;

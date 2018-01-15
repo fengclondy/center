@@ -10,8 +10,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class PopupAdModifyConditionDTO implements Serializable {
 
-	private static final long serialVersionUID = 3527613047270244097L;
-
 	@NotNull(message = "弹屏广告ID不能为空")
 	private Long adId;
 

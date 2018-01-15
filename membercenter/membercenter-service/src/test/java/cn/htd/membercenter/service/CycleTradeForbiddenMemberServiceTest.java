@@ -34,11 +34,11 @@ public class CycleTradeForbiddenMemberServiceTest {
 	@Test
 	public void insertTest() {
 		CycleTradeForbiddenMemberDTO dto = new CycleTradeForbiddenMemberDTO();
-		dto.setMemberCode("htd0003");
-		dto.setMemberName("zxl");
+		dto.setMemberCode("htd0008");
+		dto.setMemberName("xj");
 		dto.setForbiddenType("1");
-		dto.setCreateId("111");
-		dto.setCreateName("sa");
+		dto.setCreateId("222");
+		dto.setCreateName("sa2");
 		ExecuteResult<String> result = cycleTradeForbiddenMemberService.insertCycleTradeForbiddenMember(dto);
 		System.out.println(JSONObject.toJSONString(result));
 	}

@@ -58,6 +58,37 @@
 		</foreach>
 	</update>
 
+	<update id="updateCycleTradeForbiddenMember"
+		parameterType="cn.htd.membercenter.dto.CycleTradeForbiddenMemberDTO">
+		update cycle_trade_forbidden_member
+		set modify_id = #{createId},
+		modify_name = #{createName},
+		modify_time = now()
+		where id = #{id}
+	</update>
+	
+	<select id="queryCycleTradeForbiddenMember" resultMap="resultMap">
+		SELECT id,
+		member_code,
+		member_name,
+		forbidden_type,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+		FROM
+		cycle_trade_forbidden_member
+		WHERE delete_flag = 0
+		<if test="dto.memberCode != null and dto.memberCode != ''">
+			AND member_code = #{dto.memberCode}
+		</if>
+		<if test="dto.forbiddenType != null and dto.forbiddenType != ''">
+			AND forbidden_type = #{dto.forbiddenType}
+		</if>
+	</select>
+
 	<select id="selecCycleTradeForbiddenMemberCount" resultType="java.lang.Long">
 		SELECT COUNT(1)
 		FROM cycle_trade_forbidden_member
@@ -84,7 +115,8 @@
 		modify_id,
 		modify_name,
 		modify_time
-		FROM cycle_trade_forbidden_member
+		FROM
+		cycle_trade_forbidden_member
 		WHERE delete_flag = 0
 		<if test="dto.memberCode != null and dto.memberCode != ''">
 			AND member_code = #{dto.memberCode}

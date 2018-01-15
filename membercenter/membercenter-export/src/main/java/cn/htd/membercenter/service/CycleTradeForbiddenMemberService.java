@@ -33,6 +33,13 @@ public interface CycleTradeForbiddenMemberService {
 	public ExecuteResult<String> deleteCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
 	
 	/**
+	 * 查询互为上下游禁止交易会员信息
+	 * @param dto
+	 * @return
+	 */
+	public ExecuteResult<CycleTradeForbiddenMemberDTO> queryCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
+	
+	/**
 	 * 查询互为上下游禁止交易会员信息(分页)
 	 * @param dto
 	 * @param pager

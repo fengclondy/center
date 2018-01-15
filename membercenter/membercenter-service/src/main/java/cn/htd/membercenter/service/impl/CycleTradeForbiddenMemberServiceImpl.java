@@ -43,12 +43,10 @@ public class CycleTradeForbiddenMemberServiceImpl implements CycleTradeForbidden
 			countDTO.setForbiddenType(dto.getForbiddenType());
 			long count = cycleTradeForbiddenMemberDAO.selecCycleTradeForbiddenMemberCount(countDTO);
 			if(count > 0){
-				result.setCode(MemberCenterCodeEnum.ERROR.getCode());
-				if(dto.getForbiddenType().equals("1")){
-					result.setResultMessage("该数据已在互为上下游禁止销售中存在");
-				}else{
-					result.setResultMessage("该数据已在互为上下游禁止购买中存在");
-				}
+				CycleTradeForbiddenMember member = cycleTradeForbiddenMemberDAO.queryCycleTradeForbiddenMember(dto);
+				dto.setId(member.getId());
+				cycleTradeForbiddenMemberDAO.updateCycleTradeForbiddenMember(dto);
+				result.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
 				return result;
 			}
 			cycleTradeForbiddenMemberDAO.insertCycleTradeForbiddenMember(dto);
@@ -147,6 +145,37 @@ public class CycleTradeForbiddenMemberServiceImpl implements CycleTradeForbidden
 			result.addErrorMessage("error");
 			result.setResultMessage("异常");
 			logger.error("CycleTradeForbiddenMemberServiceImpl======>isCycleTradeForbiddenMember=" + e);
+		}
+		return result;
+	}
+
+	@Override
+	public ExecuteResult<CycleTradeForbiddenMemberDTO> queryCycleTradeForbiddenMember(
+			CycleTradeForbiddenMemberDTO dto) {
+		logger.info("查询该会员数据参数:" + JSONObject.toJSONString(dto));
+		ExecuteResult<CycleTradeForbiddenMemberDTO> result = new ExecuteResult<CycleTradeForbiddenMemberDTO>();
+		try {
+			if (null == dto) {
+				result.setCode(MemberCenterCodeEnum.ERROR.getCode());
+				result.setResultMessage("参数错误");
+				return result;
+			}
+			CycleTradeForbiddenMember resultDTO = cycleTradeForbiddenMemberDAO.queryCycleTradeForbiddenMember(dto);
+			if(resultDTO != null){
+				String str = JSONObject.toJSONString(resultDTO);
+				CycleTradeForbiddenMemberDTO convertDTO = JSONObject.parseObject(str,
+						CycleTradeForbiddenMemberDTO.class);
+				result.setResult(convertDTO);
+				result.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
+			}else{
+				result.setCode(MemberCenterCodeEnum.NO_DATA_CODE.getCode());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setCode(MemberCenterCodeEnum.ERROR.getCode());
+			result.addErrorMessage("error");
+			result.setResultMessage("异常");
+			logger.error("CycleTradeForbiddenMemberServiceImpl======>queryCycleTradeForbiddenMember=" + e);
 		}
 		return result;
 	}

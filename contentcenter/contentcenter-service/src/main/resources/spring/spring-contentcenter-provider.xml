@@ -95,4 +95,7 @@
 	<dubbo:service interface="com.bjucloud.contentcenter.service.HomepagePopupAdService" ref="homepagePopupAdService"
 								 version="${esf.version}" timeout="60000" retries="1"/>
 
+    <dubbo:service interface="com.bjucloud.contentcenter.service.PurchaseHeadAdvertiseExportService" ref="purchaseHeadAdvertiseExportService" version="${esf.version}" timeout="60000" />
+    <dubbo:service interface="com.bjucloud.contentcenter.service.PurchaseChannelsService" ref="purchaseChannelsService" version="${esf.version}" timeout="60000" />
+
 </beans>

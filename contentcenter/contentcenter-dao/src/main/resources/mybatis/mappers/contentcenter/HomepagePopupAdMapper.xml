@@ -44,7 +44,7 @@
         from homepage_popup_ad_terminal
         where homepage_popup_ad.id = homepage_popup_ad_terminal.ad_id
         and homepage_popup_ad_terminal.delete_flag = 0
-        and homepage_popup_ad_terminal.terminal_type = #{entity.terminalType}
+        and homepage_popup_ad_terminal.terminal_type = #{entity.terminalCode}
         )
       </if>
       <if test="entity.startTime != null">

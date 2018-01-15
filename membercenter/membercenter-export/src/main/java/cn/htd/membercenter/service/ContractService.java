@@ -7,6 +7,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.dto.ContractInfoDTO;
 import cn.htd.membercenter.dto.ContractListInfo;
+import cn.htd.membercenter.dto.ContractRemindInfoDTO;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
 
 /** 
@@ -31,7 +32,7 @@ public interface ContractService {
 	 * @param operationId 操作人id
 	 * @param operationName 操作人名称
 	 */
-	public ExecuteResult<String> queryRemindFlag(String memberCode);
+	public ExecuteResult<ContractRemindInfoDTO> queryRemindFlag(String memberCode);
 	
 	/**
 	 * Description: 修改会员店提醒状态为不提醒 <br> 
@@ -46,11 +47,11 @@ public interface ContractService {
 	public ExecuteResult<String> updateRemindFlagToNotNeed(String memberCode, Long operationId, String operationName);
 
 	/**
-	 * <Description> 查询签订合同入口是否存在  <br>
+	 * <Description> 查询签订合同信息  <br>
 	 * @param memberCode 会员店编码
 	 * @param vendorCode 供应商编码
 	 */
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryEntranceExists(List<String> vendorCodeList, String memberCode);
+	public ExecuteResult<List<ContractInfoDTO>> queryContractList(List<String> vendorCodeList, String memberCode);
 	
 	/**
 	 * <Description> 批量查询某供应商下会员店的合同情况  <br>

@@ -13,6 +13,9 @@ public class ActivityPictureInfoReqDTO  extends GenricReqDTO  {
 	 */
 	private static final long serialVersionUID = 1L;
 
+    /**
+     *
+     */
 	private Long id;
 
     private String pictureId;

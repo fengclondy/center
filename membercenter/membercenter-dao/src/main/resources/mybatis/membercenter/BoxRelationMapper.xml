@@ -103,6 +103,13 @@
 		and c.company_name =#{companyName} and c.buyer_seller_type=#{buyerSellerType} 
 		</select>
 	
+	<select id="selectCompanyName" resultType="java.lang.String">
+		SELECT c.company_name
+		FROM member_company_info c,member_base_info m
+		WHERE m.seller_type='1' 
+		AND m.member_code = #{memberCode}
+		limit 0,1
+	</select>
 	
 	<select id="selectBoxRelationListByMemberId" resultType="cn.htd.membercenter.domain.BoxRelationship"
 	parameterType="java.lang.Long" >
@@ -140,7 +147,7 @@
 		a.status='1' 
 		and a.member_code = #{memberCode})
 	</select>
-	<!-- 通过会员店memberCode查询供应商关系 -->
+	<!-- 通过会员店memberCode查询供应商关系 排除本部  -->
 	<select id="queryBoxRelationshipList" resultType="cn.htd.membercenter.dto.MemberShipDTO">
 		SELECT
 			a.id memberId,
@@ -151,6 +158,7 @@
 			LEFT JOIN member_base_info a ON m.member_id = a.id 
 		WHERE
 			m.buyer_seller_type = '2' 
+			AND m.company_code != '0801'
 			AND a.seller_type = '1' 
 			AND a.STATUS = '1' 
 			AND m.member_id IN (

@@ -10,6 +10,8 @@ import cn.htd.membercenter.dto.MemberBaseDTO;
 public interface MemberBaseDAO {
 
 	public MemberBaseDTO queryMemberBaseInfoById(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO);
+	
+	public MemberBaseDTO queryMemberBaseInfoByMemberCodeAndType(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO);
 
 	public List<MemberBaseDTO> queryMemberInfoBySellerId(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO,
 			@Param("pager") Pager<MemberBaseDTO> pager);

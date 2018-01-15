@@ -45,8 +45,8 @@
 			<artifactId>marketcenter-export</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>cn.htd.membercenter</groupId>
-			<artifactId>membercenter-export</artifactId>
+			<groupId>cn.htd.storecenter</groupId>
+			<artifactId>storecenter-export</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>cn.htd.zeus.tc</groupId>

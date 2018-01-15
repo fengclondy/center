@@ -66,13 +66,6 @@ public interface VmsItemExportService {
     ExecuteResult<String> applyItemSpu2HtdProduct(List<Long> spuIdList, String sellerId, String shopId, String operatorId, String operatorName);
 
     /**
-     * 我的商品 - 批量新增商品 （导入）
-     * @param batchAddItemInDTOList
-     * @return
-     */
-    ExecuteResult<BatchAddItemOutDTO> batchAddItem(List<BatchAddItemInDTO> batchAddItemInDTOList);
-
-    /**
      * 我的商品 - 新增商品
      * @param venusItemDTO
      * @return

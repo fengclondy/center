@@ -29,5 +29,12 @@ public interface MyMemberInfoService {
 	 * @return
 	 */
 	public ExecuteResult<MyNoMemberDTO> selectNoMemberInfo(Long memberId);
+	
+	/**
+	 * 查询我的会员归属状态
+	 * @param memberId
+	 * @return
+	 */
+	public ExecuteResult<MyMemberDTO> queryMemberBelongStatus(Long memberId);
 
 }

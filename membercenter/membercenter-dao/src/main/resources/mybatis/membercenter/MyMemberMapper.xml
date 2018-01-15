@@ -1215,5 +1215,22 @@ FROM
 	 </if>
   </select>
   
+      
+  <select id="queryMemberBelongStatus" resultType="cn.htd.membercenter.dto.MyMemberDTO">
+  select 
+    m.id memberId,
+    m.member_code memberCode,
+    c.company_name companyName,
+    m.status status,
+    m.cur_belong_seller_id curBelongSellerId,
+    ms.verify_status verifyStatus
+    FROM  member_base_info m
+    left join member_company_info c on m.id = c.member_id and c.buyer_seller_type='1' 
+    left join member_status_info ms on ms.member_id = m.id and ms.info_type='25'
+    WHERE  m.id=#{memberId} and c.buyer_seller_type='1'
+  </select>
+  
+  
+  
   
 </mapper>

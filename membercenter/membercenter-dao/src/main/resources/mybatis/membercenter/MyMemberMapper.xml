@@ -62,8 +62,9 @@
 		   </otherwise>
 	   </choose>
 	</if>
-
-
+	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+		<![CDATA[ and p.group_id=#{memberSearch.groupId} ]]>
+	</if>
 	<if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
 		<![CDATA[ and d.buyer_grade = #{memberSearch.buyerGrade} ]]>
 	</if>

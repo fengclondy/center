@@ -114,11 +114,13 @@
 		update business_relationship set			
 	   	delete_flag = #{memberBusinessRelationDTO.deleteFlag},
 	   	customer_manager_id = #{memberBusinessRelationDTO.customerManagerId},
+	    modify_time= now(),
 	   	audit_status = #{memberBusinessRelationDTO.auditStatus}
 		where buyer_id = #{memberBusinessRelationDTO.buyerId}
 		and seller_id = #{memberBusinessRelationDTO.sellerId}
 		and brand_id = #{memberBusinessRelationDTO.brandId}
 		and category_id = #{memberBusinessRelationDTO.categoryId}
+		
 	</update>
 	
 	<!-- 删除商家会员经营关系 -->

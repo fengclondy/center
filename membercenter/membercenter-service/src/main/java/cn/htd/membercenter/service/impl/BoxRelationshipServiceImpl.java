@@ -15,6 +15,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.membercenter.common.constant.ErpStatusEnum;
 import cn.htd.membercenter.common.constant.GlobalConstant;
+import cn.htd.membercenter.common.constant.MemberCenterCodeEnum;
 import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
@@ -155,6 +156,26 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("BoxRelationshipServiceImpl----->selectCompanyID=" + e);
+			rs.setResultMessage("error");
+		}
+		return rs;
+	}
+	
+	@Override
+	public ExecuteResult<String> selectCompanyName(String memberCode) {
+		ExecuteResult<String> rs = new ExecuteResult<String>();
+		try {
+			String companyName = boxRelationshipDao.selectCompanyName(memberCode);
+			if (StringUtils.isEmpty(companyName)) {
+				rs.setResultMessage("暂未找到对应的会员信息！！");
+				return rs;
+			}else{
+				rs.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
+				rs.setResult(companyName);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("BoxRelationshipServiceImpl----->selectCompanyName=" + e);
 			rs.setResultMessage("error");
 		}
 		return rs;
@@ -422,5 +443,4 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 		}
 		logger.info("updateSignRemindFlag方法已结束");
 	}
-
 }

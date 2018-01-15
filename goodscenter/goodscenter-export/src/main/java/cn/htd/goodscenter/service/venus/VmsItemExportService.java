@@ -134,24 +134,6 @@ public interface VmsItemExportService {
     ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO);
 
     /**
-     * 批量上架查询大B下未上架，下架的商品
-     * 查询大B下所有未上架、下架的商品
-     */
-    ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>> queryOffShelfItemBySellerId(QueryOffShelfItemInDTO queryOffShelfItemInDTO, Pager pager);
-
-    /**
-     * 批量上架
-     * @param batchOnShelfInDTO
-     * @return
-     */
-    ExecuteResult<BatchOnShelfOutDTO> batchOnShelves(BatchOnShelfInDTO batchOnShelfInDTO);
-
-    /**
-     * 批量改价
-     */
-    ExecuteResult<BatchModifyPriceOutDTO> batchModifyItemPrice(BatchModifyPriceInDTO batchModifyPriceInDTO);
-
-    /**
      * 查询默认销售区域
      */
     ExecuteResult<DefaultSaleAreaDTO> queryDefaultSaleArea(Long sellerId, String defaultAreaCode);

@@ -62,9 +62,8 @@
 		   </otherwise>
 	   </choose>
 	</if>
-	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
-		<![CDATA[ and p.group_id=#{memberSearch.groupId} ]]>
-	</if>
+
+
 	<if test="memberSearch.buyerGrade != null and memberSearch.buyerGrade != ''">
 		<![CDATA[ and d.buyer_grade = #{memberSearch.buyerGrade} ]]>
 	</if>
@@ -106,7 +105,12 @@
 		 </foreach>  
 	</if>
 	<if test="memberSearch.auditStatus!=null and memberSearch.auditStatus !=''">
-
+	  <if test="memberSearch.auditStatus!=2">
+		and (ms.verify_status = #{memberSearch.auditStatus} or s2.verify_status = #{memberSearch.auditStatus} or ms1.verify_status = #{memberSearch.auditStatus})
+	  </if>
+	  <if test="memberSearch.auditStatus==2">
+		  and (ms.verify_status = 2 and (s2.verify_status = 2 or s2.verify_status is null) or ms1.verify_status = #{memberSearch.auditStatus})
+	  </if>
 	</if>   
   </sql>
 
@@ -236,9 +240,11 @@
     left join member_status_info ms on ms.member_id=m.id and ms.info_type=13 
     left join member_status_info ms1 on ms1.member_id=m.id and ms1.info_type=14
     left join member_status_info s2 on s2.member_id=m.id and s2.info_type=33
-    left join  (
-	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
-	   and  p.seller_id= #{vendorId}  and g.group_id =p.group_id and p.delete_flag=0
+	<if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+		<![CDATA[  left join  (
+	  	buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0
+	   	and  p.seller_id= #{vendorId}  and g.group_id =p.group_id and p.delete_flag=0 ]]>
+	</if>
     where o.buyer_id=m.id and o.delete_flag=0 
     and o.seller_id  =  #{vendorId} and m.id = c.member_id and c.buyer_seller_type='1'
     and m.can_mall_login=#{canMallLogin}
@@ -293,9 +299,11 @@
     left join member_status_info ms on ms.member_id=m.id and ms.info_type=13 
     left join member_status_info ms1 on ms1.member_id=m.id and ms1.info_type=14
     left join member_status_info s2 on s2.member_id=m.id and s2.info_type=33
-    left join  (
-	  buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0 
-	   and  p.seller_id= #{vendorId}  and g.group_id =p.group_id and p.delete_flag=0
+    <if test="memberSearch.groupId != null and memberSearch.groupId != ''">
+	  <![CDATA[  left join  (
+	  	buyer_group_relationship g,buyer_group p ) on m.id=g.buyer_id  and g.delete_flag=0
+	   	and  p.seller_id= #{vendorId}  and g.group_id =p.group_id and p.delete_flag=0 ]]>
+  	</if>
     where o.buyer_id=m.id and o.delete_flag=0 
     and o.seller_id  =  #{vendorId} and m.id = c.member_id and c.buyer_seller_type='1'
     and m.can_mall_login=#{canMallLogin}

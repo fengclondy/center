@@ -2564,11 +2564,11 @@
 		brand.brand_name as brandName,
 		spu.erp_code as erpCode,
 		i.item_status as itemStatus,
-		t.status as status
+		IFNULL(t.status, 1) as status
 		from item_sku sku
 		join item i on sku.item_id = i.item_id
-		join item_draft t on t.item_id = sku.item_id
-		left join item_brand brand on brand.brand_id = t.brand
+		left join item_draft t on t.item_id = sku.item_id
+		left join item_brand brand on brand.brand_id = i.brand
 		left join item_spu spu on spu.spu_id =  i.item_spu_id
 		where
 		     i.item_status != 6
@@ -2578,7 +2578,7 @@
 				and i.item_status = 0 and t.status = 0
 			</if>
 			<if test="param.auditStatus == 1"> <!-- 审核通过 -->
-				and i.item_status in (1,4,5) and t.status = 1
+				and i.item_status in (1,4,5) and (t.status = 1 or t.status is null)
 			</if>
 			<if test="param.auditStatus == 2"> <!-- 新增审核不通过 -->
 				and i.item_status = 2 and t.status = 2
@@ -2616,8 +2616,8 @@
 		count(1)
 		from item_sku sku
 		join item i on sku.item_id = i.item_id
-		join item_draft t on t.item_id = sku.item_id
-		left join item_brand brand on brand.brand_id = t.brand
+		left join item_draft t on t.item_id = sku.item_id
+		left join item_brand brand on brand.brand_id = i.brand
 		left join item_spu spu on spu.spu_id =  i.item_spu_id
 		where
 		i.item_status != 6
@@ -2627,7 +2627,7 @@
 				and i.item_status = 0 and t.status = 0
 			</if>
 			<if test="param.auditStatus == 1"> <!-- 审核通过 -->
-				and i.item_status in (1,4,5) and t.status = 1
+				and i.item_status in (1,4,5) and (t.status = 1 or t.status is null)
 			</if>
 			<if test="param.auditStatus == 2"> <!-- 新增审核不通过 -->
 				and i.item_status = 2 and t.status = 2

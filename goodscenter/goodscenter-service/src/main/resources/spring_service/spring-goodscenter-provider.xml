@@ -70,6 +70,8 @@
 	<dubbo:service interface="cn.htd.goodscenter.service.promotionstock.PromotionSkuStockChangeExportService" ref="promotionSkuStockChangeExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
 
 	<dubbo:service interface="cn.htd.goodscenter.service.venus.VmsItemExportService" ref="vmsItemExportService" version="${dubbo.version}" timeout="${dubbo.timeout}" />
-	
-	
+
+	<dubbo:service interface="cn.htd.goodscenter.service.venus.VmsBatchExportService" ref="vmsBatchExportServiceImpl" version="${dubbo.version}" timeout="${dubbo.timeout}" />
+
+
 </beans>

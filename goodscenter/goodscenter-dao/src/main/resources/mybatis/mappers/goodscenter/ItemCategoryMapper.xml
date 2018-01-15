@@ -439,4 +439,26 @@
 		and status = 1
 		and lev = 3
 	</select>
+
+	<select id="batchQueryCategoryComplete" resultType="cn.htd.goodscenter.dto.ItemCategoryCompleteDTO">
+		SELECT
+			f.cid AS firstCategoryId,
+			f.c_name AS firstCategoryName,
+			s.cid AS secondCategoryId,
+			s.c_name AS secondCategoryName,
+			t.cid AS thirdCategoryId,
+			t.c_name AS thirdCategoryName
+		FROM
+			item_category t
+		JOIN item_category s ON t.parent_cid = s.cid
+		JOIN item_category f ON s.parent_cid = f.cid
+		WHERE
+			t.cid in
+			<foreach collection="cidList" open="(" close=")" separator="," item="cid">
+				${cid}
+			</foreach>
+		AND f.`status` = 1
+		AND s.`status` = 1
+		AND t.`status` = 1
+	</select>
 </mapper>

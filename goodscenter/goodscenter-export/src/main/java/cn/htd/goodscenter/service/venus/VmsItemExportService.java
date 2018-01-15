@@ -66,13 +66,6 @@ public interface VmsItemExportService {
     ExecuteResult<String> applyItemSpu2HtdProduct(List<Long> spuIdList, String sellerId, String shopId, String operatorId, String operatorName);
 
     /**
-     * 我的商品 - 批量新增商品 （导入）
-     * @param batchAddItemInDTOList
-     * @return
-     */
-    ExecuteResult<BatchAddItemOutDTO> batchAddItem(List<BatchAddItemInDTO> batchAddItemInDTOList);
-
-    /**
      * 我的商品 - 新增商品
      * @param venusItemDTO
      * @return
@@ -139,24 +132,6 @@ public interface VmsItemExportService {
      * @return
      */
     ExecuteResult<String> modifyShelves(VenusItemSkuPublishInDTO venusItemSkuPublishInDTO);
-
-    /**
-     * 批量上架查询大B下未上架，下架的商品
-     * 查询大B下所有未上架、下架的商品
-     */
-    ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>> queryOffShelfItemBySellerId(QueryOffShelfItemInDTO queryOffShelfItemInDTO, Pager pager);
-
-    /**
-     * 批量上架
-     * @param batchOnShelfInDTO
-     * @return
-     */
-    ExecuteResult<BatchOnShelfOutDTO> batchOnShelves(BatchOnShelfInDTO batchOnShelfInDTO);
-
-    /**
-     * 批量改价
-     */
-    ExecuteResult<BatchModifyPriceOutDTO> batchModifyItemPrice(BatchModifyPriceInDTO batchModifyPriceInDTO);
 
     /**
      * 查询默认销售区域

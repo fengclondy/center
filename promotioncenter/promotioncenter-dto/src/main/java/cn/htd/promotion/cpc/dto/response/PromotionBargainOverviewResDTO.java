@@ -4,10 +4,6 @@ import java.io.Serializable;
 
 import java.math.BigDecimal;
 public class PromotionBargainOverviewResDTO implements Serializable{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8789694479515897752L;
 
 	private String promotionId;//活动编码
@@ -29,6 +25,8 @@ public class PromotionBargainOverviewResDTO implements Serializable{
 	private Integer goodsNum; //参砍数量
 
 	private int goodsBuysers; //参加帮砍人数
+
+	private String levelCode;	//层级编码
 
 	public Integer getGoodsNum() {
 		return goodsNum;
@@ -108,5 +106,13 @@ public class PromotionBargainOverviewResDTO implements Serializable{
 
 	public void setGoodsBuysers(int goodsBuysers) {
 		this.goodsBuysers = goodsBuysers;
+	}
+
+	public String getLevelCode() {
+		return levelCode;
+	}
+
+	public void setLevelCode(String levelCode) {
+		this.levelCode = levelCode;
 	}
 }

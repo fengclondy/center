@@ -235,4 +235,11 @@ public interface MyMemberDAO {
 			@Param("memberSearch") MyMemberSearchDTO memberSearch, @Param("canMallLogin") Integer canMallLogin,
 			@Param("hasGuaranteeLicense") Integer hasGuaranteeLicense,
 			@Param("hasBusinessLicense") Integer hasBusinessLicense);
+	
+	/**
+	 * VMS - 查询我的会员归属状态
+	 *  @author li.jun          
+	 * @return
+	 */
+  public MyMemberDTO queryMemberBelongStatus(@Param("memberId") Long memberId);
 }

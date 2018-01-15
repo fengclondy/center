@@ -263,8 +263,8 @@ public class MyMemberServiceImpl implements MyMemberService {
 				String companyName = myNoMemberDto.getCompanyName();
 				MemberInvoiceDTO memberInvoiceDTO = memberCallCenterDAO
 						.queryMemberInvoiceInfo(myNoMemberDto.getMemberCode());
-				if ((!StringUtils.isEmpty(memberInvoiceDTO.getTaxManId())
-						&& !memberInvoiceDTO.getTaxManId().equals(myNoMemberDto.getTaxManId()))
+				if (memberInvoiceDTO != null){
+					if(!StringUtils.isEmpty(memberInvoiceDTO.getTaxManId()) && !memberInvoiceDTO.getTaxManId().equals(myNoMemberDto.getTaxManId())
 						|| (!StringUtils.isEmpty(memberInvoiceDTO.getBankName())
 								&& !memberInvoiceDTO.getBankName().equals(myNoMemberDto.getBankName()))
 						|| (!StringUtils.isEmpty(memberInvoiceDTO.getBankAccount())
@@ -273,12 +273,13 @@ public class MyMemberServiceImpl implements MyMemberService {
 								&& !memberInvoiceDTO.getInvoiceAddress().equals(myNoMemberDto.getInvoiceAddress()))
 						|| (!StringUtils.isEmpty(memberInvoiceDTO.getContactPhone())
 								&& !memberInvoiceDTO.getContactPhone().equals(myNoMemberDto.getContactPhone()))) {
-					Calendar canModifyTime = Calendar.getInstance();
-					canModifyTime.setTime(memberInvoiceDTO.getModifyTime());
-					canModifyTime.add(Calendar.MONTH, 3);
-					if (new Date().before(canModifyTime.getTime())) {
-						rs.addErrorMessage("发票信息三个月内不可再次修改，请重新填写！");
-						return rs;
+						Calendar canModifyTime = Calendar.getInstance();
+						canModifyTime.setTime(memberInvoiceDTO.getModifyTime());
+						canModifyTime.add(Calendar.MONTH, 3);
+						if (new Date().before(canModifyTime.getTime())) {
+							rs.addErrorMessage("发票信息三个月内不可再次修改，请重新填写！");
+							return rs;
+						}
 					}
 				}
 				if (myNoMemberDto.getTaxManId() != null) {
@@ -355,7 +356,8 @@ public class MyMemberServiceImpl implements MyMemberService {
 			logger.error("MyMemberServiceImpl----->modifyNoMemberInfo=" + "非会员信息修改失败");
 			rs.addErrorMessage(MessageFormat.format("系统异常，请联系系统管理员！", "非会员信息修改失败！"));
 			rs.setResultMessage("error");
-			throw new RuntimeException("非会员信息修改失败！！");
+			return rs;
+			//throw new RuntimeException("非会员信息修改失败！！");
 
 		}
 

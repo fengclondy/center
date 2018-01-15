@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.HomepagePopupAdTerminalDAO">
+    <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.domain.HomepagePopupTerminalAd">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="ad_id" jdbcType="BIGINT" property="adId"/>
+        <result column="terminal_type" jdbcType="VARCHAR" property="terminalType"/>
+        <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
+        <result column="create_id" jdbcType="BIGINT" property="createId"/>
+        <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_id" jdbcType="BIGINT" property="modifyId"/>
+        <result column="modify_name" jdbcType="VARCHAR" property="modifyName"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        ad_id,
+        terminal_type,
+        delete_flag,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time
+    </sql>
+    <select id="queryByAdId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from homepage_popup_ad_terminal
+        where ad_id = #{adId, jdbcType=BIGINT}
+          and delete_flag = 0
+    </select>
+    <!-- 批量插入记录 -->
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        insert into homepage_popup_ad_terminal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            ad_id,
+            terminal_type,
+            delete_flag,
+            create_id,
+            create_name,
+            create_time,
+            modify_id,
+            modify_name,
+            modify_time,
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.adId},
+            #{item.terminalType},
+            #{item.deleteFlag},
+            #{item.createId},
+            #{item.createName},
+            now(),
+            #{item.modifyId},
+            #{item.modifyName},
+            now()
+            )
+        </foreach>
+    </insert>
+    <update id="deleteByAdId">
+        update homepage_popup_ad_terminal
+        <set>
+            delete_flag = 1,
+            modify_id = #{modifyId,jdbcType=BIGINT},
+            modify_name = #{modifyName,jdbcType=VARCHAR},
+            modify_time = now(),
+        </set>
+        where ad_id = #{adId,jdbcType=BIGINT}
+    </update>
+</mapper>

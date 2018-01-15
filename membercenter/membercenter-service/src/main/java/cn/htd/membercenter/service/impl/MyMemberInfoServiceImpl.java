@@ -165,5 +165,34 @@ public class MyMemberInfoServiceImpl implements MyMemberInfoService {
 		}
 		return rs;
 	}
+	
+
+	/**
+	 * 查询我的会员/担保会员详细信息
+	 * 
+	 * @param memberId
+	 * @return
+	 */
+	@Override
+	public ExecuteResult<MyMemberDTO> queryMemberBelongStatus(Long memberId) {
+		ExecuteResult<MyMemberDTO> rs = new ExecuteResult<MyMemberDTO>();
+		try {
+			MyMemberDTO myMemberDTO = new MyMemberDTO();
+			if (memberId != null) {
+				// 根据会员ID查询查询我的会员/担保会员归属状态
+				myMemberDTO = myMemberDao.queryMemberBelongStatus(memberId);
+			}
+			if(null !=myMemberDTO){
+				rs.setResult(myMemberDTO);
+			}else{
+				rs.addErrorMessage("未查到改会员的归属信息！");
+			}
+		} catch (Exception e) {
+			logger.error("MyMemberInfoServiceImpl----->queryMemberBelongStatus=" + e);
+			rs.addErrorMessage("查询会员归属状态出错");
+		}
+		return rs;
+	}
+
 
 }

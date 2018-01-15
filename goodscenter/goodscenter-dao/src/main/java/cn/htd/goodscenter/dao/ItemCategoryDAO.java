@@ -3,6 +3,7 @@ package cn.htd.goodscenter.dao;
 import java.util.Date;
 import java.util.List;
 
+import cn.htd.goodscenter.dto.ItemCategoryCompleteDTO;
 import cn.htd.goodscenter.dto.indto.QueryItemCategoryInDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -105,4 +106,6 @@ public interface ItemCategoryDAO extends BaseDAO<ItemCategoryDTO> {
 	 */
 	List<ItemCategoryDTO> batchQueryThirdCategoryIdByName(@Param("cNameList") List<String> cNameList);
 
+
+	List<ItemCategoryCompleteDTO> batchQueryCategoryComplete(@Param("cidList") List<Long> cidList);
 }

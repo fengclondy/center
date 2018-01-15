@@ -28,11 +28,13 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
+@Service("VmsBatchAddItemExportServiceImpl")
 public class VmsBatchAddItemExportServiceImpl implements VmsBatchAddItemExportService {
 
     private final Logger logger = LoggerFactory.getLogger(VmsBatchAddItemExportServiceImpl.class);

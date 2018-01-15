@@ -13,6 +13,7 @@ import cn.htd.goodscenter.dto.venus.outdto.VenusItemSkuPublishInfoDetailOutDTO;
 import cn.htd.goodscenter.dto.venus.outdto.VenusItemSpuDataOutDTO;
 import cn.htd.goodscenter.dto.venus.po.QuerySkuPublishInfoDetailParamDTO;
 import cn.htd.goodscenter.dto.vms.*;
+import cn.htd.goodscenter.service.venus.VmsBatchExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.goodscenter.test.common.CommonTest;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
@@ -29,6 +30,9 @@ public class VmsItemExportServiceTest extends CommonTest {
 
     @Autowired
     private VmsItemExportService vmsItemExportService;
+
+    @Autowired
+    private VmsBatchExportService vmsBatchExportService;
 
     @Test
     public void testQueryMyItemList() {
@@ -168,7 +172,7 @@ public class VmsItemExportServiceTest extends CommonTest {
         queryOffShelfItemInDTO.setIsBoxFlag(1);
         queryOffShelfItemInDTO.setSupplyCode("htd1000000");
         Pager pager = new Pager();
-        ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>>  executeResult = this.vmsItemExportService.queryOffShelfItemBySellerId(queryOffShelfItemInDTO, null);
+        ExecuteResult<DataGrid<QueryOffShelfItemOutDTO>>  executeResult = this.vmsBatchExportService.queryOffShelfItemBySellerId(queryOffShelfItemInDTO, null);
         System.out.println(JSON.toJSONString(executeResult));
     }
 
@@ -198,6 +202,6 @@ public class VmsItemExportServiceTest extends CommonTest {
         batchOnShelfItemInDTO.setRetailPrice(new BigDecimal("520"));
         dataList.add(batchOnShelfItemInDTO);
         batchOnShelfInDTO.setDataList(dataList);
-        this.vmsItemExportService.batchOnShelves(batchOnShelfInDTO);
+        this.vmsBatchExportService.batchOnShelves(batchOnShelfInDTO);
     }
 }

@@ -19,6 +19,7 @@ import com.bjucloud.contentcenter.domain.HomepagePopupTerminalAd;
 import com.bjucloud.contentcenter.dto.PopupAdConditionDTO;
 import com.bjucloud.contentcenter.dto.PopupAdDTO;
 import com.bjucloud.contentcenter.dto.PopupAdModifyConditionDTO;
+import com.bjucloud.contentcenter.dto.SearchShowPopupAdDTO;
 import com.bjucloud.contentcenter.enums.PopupAdTerminalTypeEnums;
 import com.bjucloud.contentcenter.enums.YesNoEnums;
 import com.bjucloud.contentcenter.service.HomepagePopupAdService;
@@ -243,27 +244,28 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
     /**
      * 根据展示终端获取展示弹框广告信息
      *
-     * @param terminalTypeCode
+     * @param showPopupAdDTO
      * @return
      */
     @Override
-    public ExecuteResult<PopupAdDTO> searchShowPopupAdInfo(String terminalTypeCode) {
+    public ExecuteResult<PopupAdDTO> searchShowPopupAdInfo(SearchShowPopupAdDTO showPopupAdDTO) {
         ExecuteResult<PopupAdDTO> result = new ExecuteResult<PopupAdDTO>();
         HomepagePopupAdConvert convert = null;
         HomepagePopupAd popupAd = null;
         PopupAdDTO popupAdDTO = null;
         String terminalDesc = "";
         try {
-            if(StringUtils.isEmpty(terminalTypeCode)) {
-                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_NOT_NULL.getCode(),
-                        "展示终端类型不能为空");
+            ValidateResult validateResult = ValidationUtils.validateEntity(showPopupAdDTO);
+            if (validateResult.isHasErrors()) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_ERROR.getCode(),
+                        validateResult.getErrorMsg());
             }
-            terminalDesc = PopupAdTerminalTypeEnums.getTypeDesc(terminalTypeCode);
+            terminalDesc = PopupAdTerminalTypeEnums.getTypeDesc(showPopupAdDTO.getTerminalTypeCode());
             if (StringUtils.isEmpty(terminalDesc)) {
                 throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_VALUE_ERROR.getCode(),
                         "展示终端类型不正确");
             }
-            popupAd = homepagePopupAdDAO.queryShowPopupAd(terminalTypeCode);
+            popupAd = homepagePopupAdDAO.queryShowPopupAd(showPopupAdDTO.getTerminalTypeCode());
             if (popupAd != null) {
                 convert = new HomepagePopupAdConvert();
                 popupAdDTO = convert.toTarget(popupAd);

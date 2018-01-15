@@ -6,6 +6,7 @@ import cn.htd.common.Pager;
 import com.bjucloud.contentcenter.dto.PopupAdConditionDTO;
 import com.bjucloud.contentcenter.dto.PopupAdDTO;
 import com.bjucloud.contentcenter.dto.PopupAdModifyConditionDTO;
+import com.bjucloud.contentcenter.dto.SearchShowPopupAdDTO;
 
 public interface HomepagePopupAdService {
 
@@ -54,8 +55,8 @@ public interface HomepagePopupAdService {
     /**
      * 根据展示终端获取展示弹框广告信息
      *
-     * @param terminalTypeCode
+     * @param showPopupAdDTO
      * @return
      */
-    public ExecuteResult<PopupAdDTO> searchShowPopupAdInfo(String terminalTypeCode);
+    public ExecuteResult<PopupAdDTO> searchShowPopupAdInfo(SearchShowPopupAdDTO showPopupAdDTO);
 }

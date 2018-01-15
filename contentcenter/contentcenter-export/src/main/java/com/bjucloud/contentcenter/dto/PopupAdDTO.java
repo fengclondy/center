@@ -12,8 +12,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class PopupAdDTO implements Serializable {
 
-    private static final long serialVersionUID = 3527613047270244097L;
-
     private Long id;
 
     @NotEmpty(message = "广告名称不能为空")

@@ -20,7 +20,7 @@ public enum ReturnCodeEnum {
     PARAMETER_VALUE_ERROR("99003", "入参值错误"),
     AD_NOT_EXISTS("25001", "弹屏广告不存在"),
     AD_HAS_DELETED("25002", "弹屏广告已删除"),
-    AD_PERIOD_REPEAT("25003", "与其他弹屏活动存在有效期重叠")
+    AD_PERIOD_REPEAT("25003", "相同终端在同一有效期内存在重叠弹屏活动")
 
 
     ;

@@ -34,8 +34,9 @@ public class CycleTradeForbiddenMemberServiceTest {
 	@Test
 	public void insertTest() {
 		CycleTradeForbiddenMemberDTO dto = new CycleTradeForbiddenMemberDTO();
-		dto.setMemberCode("htd953007");
+		dto.setMemberCode("htd98950388877666");
 		dto.setMemberName("南通金冠网络科技有限公司");
+		dto.setForbiddenType("2");
 		dto.setCreateId("1");
 		dto.setCreateName("test");
 		dto.setExport(true);

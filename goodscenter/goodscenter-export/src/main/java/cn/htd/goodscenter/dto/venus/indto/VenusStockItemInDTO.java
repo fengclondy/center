@@ -8,19 +8,28 @@ public class VenusStockItemInDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -9181361811582006840L;
+	//供应商sellerId
 	private Long supplierId;
+	//供应商编码
 	private String supplierCode;
+	// 是否协议 传0
 	private String isAgreement;
+	// 每页多少个
 	private String pageCount;
+	// 第几页
 	private String pageIndex;
+	// 传1
 	private String canSellNum;
 	private String distributionNum;
 	private String surplusNum;
+	// 商品名称
 	private String productName;
 	private String hasPage;
+	//商品编码
 	private String productCode;
 	private String brandName;
 	private String categroyName;
+	//库存状态 0:全部  1：有货  2：无货
 	private String stockAttr;
 	public String getSupplierCode() {
 		return supplierCode;

@@ -7,15 +7,13 @@ import java.util.List;
 
 public class PopupAdConditionDTO implements Serializable {
 
-	private static final long serialVersionUID = 3527613047270244097L;
-
 	private String adName;
 
 	private String terminalCode;
 
-	private Date startTime;
+	private String startTimeStr;
 
-	private Date endTime;
+	private String endTimeStr;
 
 	public String getAdName() {
 		return adName;
@@ -33,19 +31,19 @@ public class PopupAdConditionDTO implements Serializable {
 		this.terminalCode = terminalCode;
 	}
 
-	public Date getStartTime() {
-		return startTime;
+	public String getStartTimeStr() {
+		return startTimeStr;
 	}
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+	public void setStartTimeStr(String startTimeStr) {
+		this.startTimeStr = startTimeStr;
 	}
 
-	public Date getEndTime() {
-		return endTime;
+	public String getEndTimeStr() {
+		return endTimeStr;
 	}
 
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
+	public void setEndTimeStr(String endTimeStr) {
+		this.endTimeStr = endTimeStr;
 	}
 }

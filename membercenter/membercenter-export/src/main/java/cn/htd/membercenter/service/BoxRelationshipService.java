@@ -66,7 +66,14 @@ public interface BoxRelationshipService {
 	 * @param memberId
 	 * @return
 	 */
-	public ExecuteResult<String> selectCompanyName(String memberCode);
+	public ExecuteResult<String> selectCompanyName(String memberCode, String memberName);
+	
+	/**
+	 * 根基会员名称模糊查询会员名称列表
+	 * @param memberName
+	 * @return
+	 */
+	public ExecuteResult<List<String>> selectCompanyNameList(String memberName);
 
 	/**
 	 * 导入会员包厢关系

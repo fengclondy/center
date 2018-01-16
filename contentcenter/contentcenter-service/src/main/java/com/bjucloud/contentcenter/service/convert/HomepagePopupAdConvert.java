@@ -66,6 +66,7 @@ public class HomepagePopupAdConvert extends AbstractConvert<HomepagePopupAd, Pop
         popupAd.setModifyName(homepagePopupAdDTO.getOperatorName());
         if (homepagePopupAdDTO.getTerminalTypeList() != null && !homepagePopupAdDTO.getTerminalTypeList().isEmpty()) {
            for (String terminalTypeCode : homepagePopupAdDTO.getTerminalTypeList()) {
+               terminalAd = new HomepagePopupTerminalAd();
                terminalAd.setAdId(homepagePopupAdDTO.getId());
                terminalAd.setTerminalType(terminalTypeCode);
                terminalAd.setCreateId(homepagePopupAdDTO.getOperatorId());

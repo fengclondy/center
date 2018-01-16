@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjucloud.contentcenter.dao.PurchaseChannelsDAO">
+  <resultMap id="BaseResultMap" type="com.bjucloud.contentcenter.dto.PurchaseChannelsDTO">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sort_num" jdbcType="BIGINT" property="sortNum" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_id" jdbcType="BIGINT" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_id" jdbcType="BIGINT" property="modifyId" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name,sort_num, status, create_id, create_name, create_time, modify_id, modify_name, modify_time
+  </sql>
+  <!-- mysql 分页 -->
+  <sql id="pagination_tail">
+    limit #{page.pageOffset}, #{page.rows}
+  </sql>
+  <!-- mysql 查询总数 -->
+  <sql id="count_Tail">
+    SELECT COUNT(1) FROM purchase_channels
+  </sql>
+
+  <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from purchase_channels
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from purchase_channels
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.bjucloud.contentcenter.dto.PurchaseChannelsDTO" keyProperty="id" useGeneratedKeys="true">
+    insert into purchase_channels
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="sortNum != null">
+        sort_num,
+      </if>
+        <if test="status != null ">
+        status ,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+        create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        #{sortNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null ">
+       #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.bjucloud.contentcenter.dto.PurchaseChannelsDTO">
+    update purchase_channels
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNum != null">
+        sort_num = #{sortNum,jdbcType=BIGINT},
+      </if>
+      <if test="status != null and status != ''">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyId != null">
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null">
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+        modify_time = now()
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <delete id="delete" parameterType="java.lang.Long">
+    delete from purchase_channels
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <update id="updateByPrimaryKey" parameterType="com.bjucloud.contentcenter.dto.PurchaseChannelsDTO">
+    update purchase_channels
+    set name = #{name,jdbcType=VARCHAR},
+      sort_num = #{sortNum,jdbcType=BIGINT},
+      status = #{status,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from purchase_channels
+    ORDER BY create_time ASC
+    <if test="page!=null">
+      <include refid="pagination_tail" />
+    </if>
+  </select>
+
+  <select id="selectAllCount" resultType="long">
+    <include refid="count_Tail" />
+  </select>
+
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from purchase_channels
+    where name  = #{name}
+  </select>
+  
+  <update id="updateOrderStatus" parameterType="com.bjucloud.contentcenter.dto.PurchaseChannelsDTO">
+    update purchase_channels
+    <set>
+        status = 0,
+      <if test="modifyId != null">
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null">
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+        modify_time = now()
+    </set>
+    where status='1' and sort_num = #{sortNum,jdbcType=BIGINT}
+    and id not in (#{id,jdbcType=BIGINT})
+  </update>
+  
+  <select id="queryPurchaseChannelsList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from purchase_channels
+    where status='1' 
+    ORDER BY sort_num
+  </select>
+</mapper>

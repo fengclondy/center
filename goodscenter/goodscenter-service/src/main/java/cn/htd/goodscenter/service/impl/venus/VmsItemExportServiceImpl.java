@@ -17,6 +17,7 @@ import cn.htd.goodscenter.domain.spu.ItemSpu;
 import cn.htd.goodscenter.dto.SpuInfoDTO;
 import cn.htd.goodscenter.dto.enums.AuditStatusEnum;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
+import cn.htd.goodscenter.dto.middleware.outdto.QuerySpecialItemOutDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemMainDataInDTO;
 import cn.htd.goodscenter.dto.venus.indto.VenusItemSkuPublishInDTO;
@@ -309,9 +310,20 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         String itemCode = venusStockItemInDTO.getProductCode();
         if (StringUtils.isNotEmpty(itemCode)) {
             Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);
-            ItemSpu itemSpu = this.itemSpuMapper.selectByPrimaryKey(item.getItemSpuId());
-            venusStockItemInDTO.setProductCode(itemSpu.getSpuCode()); // 模板编码
-            venusStockItemInDTO.setItemCode(itemCode); // 商品编码
+            if (item != null) {
+                ItemSpu itemSpu = this.itemSpuMapper.selectByPrimaryKey(item.getItemSpuId());
+                venusStockItemInDTO.setProductCode(itemSpu.getSpuCode()); // 模板编码
+                venusStockItemInDTO.setItemCode(itemCode); // 商品编码
+            } else {
+                Map map = new HashMap();
+                Map<String,Object> mapData = new HashMap<>();
+                List<QuerySpecialItemOutDTO> newQuerySpecialItemList = new ArrayList<>();
+                mapData.put("storeList", newQuerySpecialItemList);
+                map.put("data",mapData);
+                executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                executeResult.setResult(JSONObject.fromObject(map).toString());
+                return executeResult;
+            }
         }
         venusStockItemInDTO.setNewVms(true);
         venusStockItemInDTO.setHasPage("1");

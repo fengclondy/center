@@ -78,7 +78,7 @@
 	</select>
 	
 	<!-- 根据会员编码查询会员信息 -->
-	<select id="queryMemberBaseInfoByMemberCodeAndType" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
+	<select id="queryMemberBaseInfoByMemberCodeAndType" resultType="cn.htd.membercenter.dto.MemberAddrInfoDTO"
 		parameterType="Object">
 		select
 			d.company_name companyName,
@@ -90,6 +90,7 @@
 			d.location_county locationCounty,
 			d.location_town locationTown,
 			d.location_detail locationDetail,
+			d.location_addr locationAddr,
 			c.sales_volumn salesVolumn,
 			c.business_scope businessScope,
 			d.company_code companyCode,

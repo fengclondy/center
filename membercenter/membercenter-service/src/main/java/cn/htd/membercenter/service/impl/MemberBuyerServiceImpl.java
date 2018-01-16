@@ -1846,20 +1846,27 @@ public class MemberBuyerServiceImpl implements MemberBuyerService {
 	 *  
 	 * @author zhoutong <br>
 	 * @taskId <br>
-	 * @param memberCode
-	 * @param operationId
-	 * @param operationName
+	 * @param 
 	 * @return <br>
 	 */ 
 	public void updateSignRemindFlagToIsNeed(ApplyBusiRelationDTO applyBusiRelationDTO) throws Exception {
 		logger.info("updateSignRemindFlag方法已进入");
-		String memberCode = applyBusiRelationDTO.getMemberCode();
-		logger.info("重置会员店提醒信息 会员店编码memberCode=" + memberCode);
-		if (StringUtils.isEmpty(memberCode)) {
-			logger.error("会员店编码为空  重置会员店提醒信息失败");
+		//查询供应商信息
+		MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+		vendorBaseDTO.setMemberId(applyBusiRelationDTO.getSellerId() + "");
+		vendorBaseDTO.setBuyerSellerType("2");
+		MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoById(vendorBaseDTO);
+		if ("0801".equals(vendorBase.getCompanyCode())) {
+			//如果是汇通达本部直接return
 			return;
 		}
-		Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(applyBusiRelationDTO.getMemberCode());
+		//查询会员店信息
+		MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+		memberBaseDTO.setMemberId(applyBusiRelationDTO.getMemberId() + "");
+		memberBaseDTO.setBuyerSellerType("1");
+		MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoById(memberBaseDTO);
+		String memberCode = memberBase.getMemberCode();
+		Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
 		ContractSignRemindInfoDTO contractSignRemindInfoDTO = new ContractSignRemindInfoDTO();
 		contractSignRemindInfoDTO.setMemberCode(memberCode);
 		contractSignRemindInfoDTO.setModifyId(applyBusiRelationDTO.getCreateId());

@@ -162,10 +162,10 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	}
 	
 	@Override
-	public ExecuteResult<String> selectCompanyName(String memberCode) {
+	public ExecuteResult<String> selectCompanyName(String memberCode, String memberName) {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		try {
-			String companyName = boxRelationshipDao.selectCompanyName(memberCode);
+			String companyName = boxRelationshipDao.selectCompanyName(memberCode, memberName);
 			if (StringUtils.isEmpty(companyName)) {
 				rs.setResultMessage("暂未找到对应的会员信息！！");
 				return rs;

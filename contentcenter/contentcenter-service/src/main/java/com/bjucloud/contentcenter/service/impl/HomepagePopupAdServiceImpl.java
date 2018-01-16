@@ -133,6 +133,7 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
                 throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_ERROR.getCode(),
                         validateResult.getErrorMsg());
             }
+            checkTerminalTypeValid(popupAdDTO.getTerminalTypeList());
             checkPopupAdPeriodRepeat(popupAdDTO);
             convert = new HomepagePopupAdConvert();
             popupAd = convert.toSource(popupAdDTO);
@@ -171,6 +172,7 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
             if (adId == null) {
                 throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_NOT_NULL.getCode(), "弹屏广告ID不能为空");
             }
+            checkTerminalTypeValid(popupAdDTO.getTerminalTypeList());
             popupAd = homepagePopupAdDAO.queryById(adId);
             if (popupAd == null) {
                 throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
@@ -333,6 +335,23 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
         homepagePopupAdTerminalDAO.deleteByAdId(terminalCondition);
         if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
             homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
+        }
+    }
+
+    /**
+     * 校验参数的终端类型是否合法
+     * @param terminalTypeList
+     */
+    private void checkTerminalTypeValid(List<String> terminalTypeList) {
+        String desc = "";
+        if (terminalTypeList != null && !terminalTypeList.isEmpty()) {
+            for (String terminalType : terminalTypeList) {
+                desc = PopupAdTerminalTypeEnums.getTypeDesc(terminalType);
+                if (StringUtils.isEmpty(desc)) {
+                    throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_VALUE_ERROR.getCode(),
+                            "终端类型的值不正确 类型:" + terminalType);
+                }
+            }
         }
     }
 }

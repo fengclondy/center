@@ -312,8 +312,19 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);
             if (item != null) {
                 ItemSpu itemSpu = this.itemSpuMapper.selectByPrimaryKey(item.getItemSpuId());
-                venusStockItemInDTO.setProductCode(itemSpu.getSpuCode()); // 模板编码
-                venusStockItemInDTO.setItemCode(itemCode); // 商品编码
+                if (itemSpu != null) {
+                    venusStockItemInDTO.setProductCode(itemSpu.getSpuCode()); // 模板编码
+                    venusStockItemInDTO.setItemCode(itemCode); // 商品编码
+                } else {
+                    Map map = new HashMap();
+                    Map<String,Object> mapData = new HashMap<>();
+                    List<QuerySpecialItemOutDTO> newQuerySpecialItemList = new ArrayList<>();
+                    mapData.put("storeList", newQuerySpecialItemList);
+                    map.put("data",mapData);
+                    executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+                    executeResult.setResult(JSONObject.fromObject(map).toString());
+                    return executeResult;
+                }
             } else {
                 Map map = new HashMap();
                 Map<String,Object> mapData = new HashMap<>();

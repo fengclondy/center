@@ -12,11 +12,11 @@ public class BatchModifyPriceItemOutDTO implements Serializable {
 
     private String itemName;
     //销售价
-    private BigDecimal salePrice;
+    private String salePrice;
     //零售价
-    private BigDecimal retailPrice;
+    private String retailPrice;
     //分销限价
-    private BigDecimal saleLimitPrice;
+    private String saleLimitPrice;
     //错误原因
     private String errorMsg;
 
@@ -44,27 +44,27 @@ public class BatchModifyPriceItemOutDTO implements Serializable {
         this.errorMsg = errorMsg;
     }
 
-    public BigDecimal getSalePrice() {
+    public String getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
+    public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
 
-    public BigDecimal getRetailPrice() {
+    public String getRetailPrice() {
         return retailPrice;
     }
 
-    public void setRetailPrice(BigDecimal retailPrice) {
+    public void setRetailPrice(String retailPrice) {
         this.retailPrice = retailPrice;
     }
 
-    public BigDecimal getSaleLimitPrice() {
+    public String getSaleLimitPrice() {
         return saleLimitPrice;
     }
 
-    public void setSaleLimitPrice(BigDecimal saleLimitPrice) {
+    public void setSaleLimitPrice(String saleLimitPrice) {
         this.saleLimitPrice = saleLimitPrice;
     }
 }

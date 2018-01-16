@@ -669,7 +669,6 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
             Integer isBoxFlag = batchModifyPriceInDTO.getIsBoxFlag();
             String shelfType = isBoxFlag == 1 ? "1" : "2";
             Long sellerId = batchModifyPriceInDTO.getSellerId();
-            String supplierCode = batchModifyPriceInDTO.getSupplierCode();
             Integer hasBelowLimitPriceAuth = batchModifyPriceInDTO.getHasBelowLimitPriceAuth();
             List<BatchModifyPriceItemInDTO> dataList = batchModifyPriceInDTO.getDataList();
             // output
@@ -677,99 +676,93 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
             List<BatchModifyPriceItemOutDTO> failureList = new ArrayList<>();
             for (BatchModifyPriceItemInDTO batchModifyPriceItemInDTO : dataList) {
                 String itemCode = batchModifyPriceItemInDTO.getItemCode();
-                BigDecimal salePrice = batchModifyPriceItemInDTO.getSalePrice();
-                BigDecimal retailPrice = batchModifyPriceItemInDTO.getRetailPrice();
-                // 入参校验
-                ValidateResult validateResult1 = DTOValidateUtil.validate(batchModifyPriceItemInDTO);
-                if (!validateResult1.isPass()) {
-                    String errorMsg = validateResult1.getMessage();
-                    this.addFailureList(failureList, "", itemCode, retailPrice, salePrice, null, errorMsg);
-                    continue;
-                }
                 // 商品是否存在
                 Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);
                 if (item == null) {
                     String errorMsg = "商品不存在";
-                    this.addFailureList(failureList, "", itemCode, retailPrice, salePrice, null, errorMsg);
+                    this.addFailureList(failureList, "", itemCode, null, null, null, errorMsg);
+                    continue;
+                }
+                String salePrice = batchModifyPriceItemInDTO.getSalePrice();
+                String retailPrice = batchModifyPriceItemInDTO.getRetailPrice();
+                // 入参校验
+                ValidateResult validateResult1 = DTOValidateUtil.validate(batchModifyPriceItemInDTO);
+                if (!validateResult1.isPass()) {
+                    String errorMsg = validateResult1.getMessage();
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
                 ItemSpu itemSpu = this.itemSpuMapper.selectByPrimaryKey(item.getItemSpuId());
                 if (itemSpu == null) {
                     String errorMsg = "商品模板不存在";
-                    this.addFailureList(failureList, "", itemCode, retailPrice, salePrice, null, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
-                String saleLimitPriceStr = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, itemSpu.getSpuCode());
-                BigDecimal saleLimitPrice = StringUtils.isNumeric(saleLimitPriceStr) ? new BigDecimal(saleLimitPriceStr) : null;
                 List<ItemSku> itemSkuList = this.itemSkuDAO.queryByItemId(item.getItemId());
                 if (itemSkuList.size() == 0) {
                     String errorMsg = "商品不存在";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
                 ItemSku itemSku = itemSkuList.get(0);
                 // 不是该大b的商品
                 if (!sellerId.equals(item.getSellerId())) {
                     String errorMsg = "该商品不是此供应商的商品";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
                 // 商品是否上架
                 ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(itemSku.getSkuId(), shelfType, "0");
                 if (itemSkuPublishInfo == null) {
                     String errorMsg = "该商品未上架";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
                 Integer itemStatus = item.getItemStatus();
                 Integer isVisable = itemSkuPublishInfo.getIsVisable();
                 if (isVisable == 0 || itemStatus != 5) {
                     String errorMsg = "该商品未上架, itemStatus:"+itemStatus + ",isVisable:"+isVisable;
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
                 // 价格校验
-                if (salePrice.compareTo(retailPrice) > 0) {
-                    String errorMsg = "销售价大于零售价";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
-                    continue;
-                }
-                // 和分销限价比
-                if (hasBelowLimitPriceAuth == 0 && retailPrice.compareTo(saleLimitPrice) < 0) {
-                    String errorMsg = "自定义价格,没有低于分销限价的权限,零售价不能低于分销限价";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
-                    continue;
-                }
-                if (hasBelowLimitPriceAuth == 0 && salePrice.compareTo(saleLimitPrice) < 0) {
-                    String errorMsg = "自定义价格,没有低于分销限价的权限,销售价不能低于分销限价";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
-                    continue;
-                }
                 // 查询基本价格
                 ExecuteResult<ItemSkuBasePriceDTO> priceResult = this.itemSkuPriceService.queryItemSkuBasePrice(itemSku.getSkuId());
-                if (priceResult == null || !priceResult.isSuccess()) {
+                if (priceResult == null || !priceResult.isSuccess() || priceResult.getResult() == null) {
                     String errorMsg = "没有查到价格信息";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, null, errorMsg);
                     continue;
                 }
                 ItemSkuBasePriceDTO itemSkuBasePriceDTO = priceResult.getResult();
-                if (itemSkuBasePriceDTO == null) {
-                    String errorMsg = "没有查到价格信息";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                BigDecimal saleLimitedPrice = itemSkuBasePriceDTO.getSaleLimitedPrice();
+                if (new BigDecimal(salePrice).compareTo(new BigDecimal(retailPrice)) > 0) {
+                    String errorMsg = "销售价大于零售价";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitedPrice, errorMsg);
+                    continue;
+                }
+                // 和分销限价比
+                if (hasBelowLimitPriceAuth == 0 && new BigDecimal(retailPrice).compareTo(saleLimitedPrice) < 0) {
+                    String errorMsg = "自定义价格,没有低于分销限价的权限,零售价不能低于分销限价";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitedPrice, errorMsg);
+                    continue;
+                }
+                if (hasBelowLimitPriceAuth == 0 && new BigDecimal(salePrice).compareTo(saleLimitedPrice) < 0) {
+                    String errorMsg = "自定义价格,没有低于分销限价的权限,销售价不能低于分销限价";
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitedPrice, errorMsg);
                     continue;
                 }
                 ItemSkuBasePrice itemSkuBasePrice = new ItemSkuBasePrice();
                 itemSkuBasePrice.setSkuId(itemSkuBasePriceDTO.getSkuId());
-                itemSkuBasePrice.setRetailPrice(retailPrice);
+                itemSkuBasePrice.setRetailPrice(new BigDecimal(retailPrice));
                 if (isBoxFlag == 1) {
-                    itemSkuBasePrice.setBoxSalePrice(salePrice);
+                    itemSkuBasePrice.setBoxSalePrice(new BigDecimal(salePrice));
                 } else {
-                    itemSkuBasePrice.setAreaSalePrice(salePrice);
+                    itemSkuBasePrice.setAreaSalePrice(new BigDecimal(salePrice));
                 }
                 ExecuteResult<String> updateResult = this.itemSkuPriceService.updateItemSkuBasePrice(itemSkuBasePrice);
                 if (updateResult == null || !updateResult.isSuccess()) {
                     String errorMsg = "价格更新失败";
-                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitPrice, errorMsg);
+                    this.addFailureList(failureList, item.getItemName(), itemCode, retailPrice, salePrice, saleLimitedPrice, errorMsg);
                     continue;
                 }
             }
@@ -1039,14 +1032,14 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
         failureList.add(batchOnShelfItemOutDTO);
     }
 
-    private void addFailureList(List<BatchModifyPriceItemOutDTO> failureList, String itemName, String itemCode,  BigDecimal retailPrice,
-                                BigDecimal salePrice, BigDecimal saleLimitPrice, String errorMsg) {
+    private void addFailureList(List<BatchModifyPriceItemOutDTO> failureList, String itemName, String itemCode,  String retailPrice,
+                                String salePrice, BigDecimal saleLimitPrice, String errorMsg) {
         BatchModifyPriceItemOutDTO batchModifyPriceItemOutDTO = new BatchModifyPriceItemOutDTO();
         batchModifyPriceItemOutDTO.setItemName(itemName);
         batchModifyPriceItemOutDTO.setItemCode(itemCode);
         batchModifyPriceItemOutDTO.setRetailPrice(retailPrice);
         batchModifyPriceItemOutDTO.setSalePrice(salePrice);
-        batchModifyPriceItemOutDTO.setSaleLimitPrice(saleLimitPrice);
+        batchModifyPriceItemOutDTO.setSaleLimitPrice(saleLimitPrice == null ? "" : String.valueOf(saleLimitPrice));
         batchModifyPriceItemOutDTO.setErrorMsg(errorMsg);
         failureList.add(batchModifyPriceItemOutDTO);
     }

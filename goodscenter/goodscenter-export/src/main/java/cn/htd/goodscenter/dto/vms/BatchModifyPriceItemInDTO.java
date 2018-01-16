@@ -15,14 +15,14 @@ public class BatchModifyPriceItemInDTO implements Serializable {
     private String itemCode;
 
     //销售价
-    @NotNull(message = "销售价不能为空")
-//    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "销售价必须是小数位不超过两位的正数")
-    private BigDecimal salePrice;
+    @NotEmpty(message = "销售价不能为空")
+    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "销售价必须是小数位不超过两位的正数")
+    private String salePrice;
 
     //零售价
-    @NotNull(message = "零售价不能为空")
-//    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "零售价必须是小数位不超过两位的正数")
-    private BigDecimal retailPrice;
+    @NotEmpty(message = "零售价不能为空")
+    @Pattern(regexp = "[0-9]+(.[0-9]{2})?", message = "零售价必须是小数位不超过两位的正数")
+    private String retailPrice;
 
     public String getItemCode() {
         return itemCode;
@@ -32,19 +32,19 @@ public class BatchModifyPriceItemInDTO implements Serializable {
         this.itemCode = itemCode;
     }
 
-    public BigDecimal getSalePrice() {
+    public String getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
+    public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
 
-    public BigDecimal getRetailPrice() {
+    public String getRetailPrice() {
         return retailPrice;
     }
 
-    public void setRetailPrice(BigDecimal retailPrice) {
+    public void setRetailPrice(String retailPrice) {
         this.retailPrice = retailPrice;
     }
 }

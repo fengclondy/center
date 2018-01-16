@@ -2688,6 +2688,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 					ItemDTO itemParam = new ItemDTO();
 					itemParam.setItemSpuId(Integer.valueOf(spuId + ""));
 					itemParam.setItemId(itemDTO.getItemId());
+					itemParam.setSpu(true);
 					this.itemMybatisDAO.updateItem(itemParam);
 					ItemDraft itemDraftParam = new ItemDraft();
 					itemDraftParam.setItemSpuId(spuId);

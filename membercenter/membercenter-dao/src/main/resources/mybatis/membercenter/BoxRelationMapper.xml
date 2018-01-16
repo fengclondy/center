@@ -114,6 +114,14 @@
 		limit 0,1
 	</select>
 	
+	<select id="selectCompanyNameList" resultType="java.lang.String">
+		SELECT c.company_name
+		FROM member_company_info c,member_base_info m
+		WHERE m.seller_type='1' 
+		<![CDATA[AND c.company_name like CONCAT('%',#{memberName},'%') ]]>
+		limit 0,10
+	</select>
+	
 	<select id="selectBoxRelationListByMemberId" resultType="cn.htd.membercenter.domain.BoxRelationship"
 	parameterType="java.lang.Long" >
 		SELECT box_id boxId, buyer_id buyerId, seller_id sellerId, erp_status erpStatus, 

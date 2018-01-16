@@ -19,6 +19,8 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.dao.util.RedisDB;
+import cn.htd.common.dto.AddressInfo;
+import cn.htd.common.util.AddressUtils;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
 import cn.htd.membercenter.dao.ContractDAO;
 import cn.htd.membercenter.dao.MemberBaseDAO;
@@ -61,6 +63,9 @@ public class ContractServiceImpl implements ContractService {
 	
 	@Resource
 	private RedisDB redisDB;
+	
+	@Resource
+	private AddressUtils addressUtil;
 
 	/**
 	 * Description: 查询合同列表 <br> 
@@ -170,12 +175,72 @@ public class ContractServiceImpl implements ContractService {
 		noSigncontract.setContractStatus("0");
 		noSigncontract.setMemberCode(memberBase.getMemberCode());
 		noSigncontract.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
-		noSigncontract.setMemberLocationAddr(memberBase.getLocationDetail());
+		AddressInfo provinceInfo = new AddressInfo();
+		AddressInfo cityInfo = new AddressInfo();
+		AddressInfo countyInfo = new AddressInfo();
+		AddressInfo townInfo = new AddressInfo();
+		String memberLocationAddr = "";
+		if (null != memberBase.getLocationProvince()) {
+			provinceInfo = addressUtil.getAddressName(memberBase.getLocationProvince());
+			if (null != provinceInfo) {
+				memberLocationAddr += provinceInfo.getName();
+			}
+		}
+		if (null != memberBase.getLocationCity()) {
+			cityInfo = addressUtil.getAddressName(memberBase.getLocationCity());
+			if (null != cityInfo) {
+				memberLocationAddr += cityInfo.getName();
+			}
+		}
+		if (null != memberBase.getLocationCounty()) {
+			countyInfo = addressUtil.getAddressName(memberBase.getLocationCounty());
+			if (null != countyInfo) {
+				memberLocationAddr += countyInfo.getName();
+			}
+		}
+		if (null != memberBase.getLocationTown()) {
+			townInfo = addressUtil.getAddressName(memberBase.getLocationTown());
+			if (null != townInfo) {
+				memberLocationAddr += townInfo.getName();
+			}
+		}
+		memberLocationAddr += memberBase.getLocationDetail();
+		noSigncontract.setMemberLocationAddr(memberLocationAddr);
 		noSigncontract.setMemberName(memberBase.getCompanyName());
 		noSigncontract.setVendorCode(vendorBase.getMemberCode());
 		noSigncontract.setVendorName(vendorBase.getCompanyName());
 		noSigncontract.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
-		noSigncontract.setVendorLocationAddr(vendorBase.getLocationDetail());
+		AddressInfo vendorProvinceInfo = new AddressInfo();
+		AddressInfo vendorCityInfo = new AddressInfo();
+		AddressInfo vendorCountyInfo = new AddressInfo();
+		AddressInfo vendorTownInfo = new AddressInfo();
+		String vendorLocationAddr = "";
+		if (null != vendorBase.getLocationProvince()) {
+			vendorProvinceInfo = addressUtil.getAddressName(vendorBase.getLocationProvince());
+			if (null != vendorProvinceInfo) {
+				vendorLocationAddr += vendorProvinceInfo.getName();
+			}
+		}
+		if (null != vendorBase.getLocationCity()) {
+			vendorCityInfo = addressUtil.getAddressName(vendorBase.getLocationCity());
+			if (null != vendorCityInfo) {
+				vendorLocationAddr += vendorCityInfo.getName();
+			}
+		}
+		if (null != vendorBase.getLocationCounty()) {
+			vendorCountyInfo = addressUtil.getAddressName(vendorBase.getLocationCounty());
+			if (null != vendorCountyInfo) {
+				vendorLocationAddr += vendorCountyInfo.getName();
+			}
+		}
+		if (null != vendorBase.getLocationTown()) {
+			vendorTownInfo = addressUtil.getAddressName(vendorBase.getLocationTown());
+			if (null != vendorTownInfo) {
+				vendorLocationAddr += vendorTownInfo.getName();
+			}
+		}
+		vendorLocationAddr += vendorBase.getLocationDetail();
+		noSigncontract.setVendorLocationAddr(vendorLocationAddr);
 		return noSigncontract;
 	}
 	
@@ -247,7 +312,37 @@ public class ContractServiceImpl implements ContractService {
 		noSignContractInfoDTO.setVendorLocationAddr(vendorLocationAddr);
 		noSignContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
 		noSignContractInfoDTO.setMemberCode(memberBase.getMemberCode());
-		noSignContractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+		AddressInfo provinceInfo = new AddressInfo();
+		AddressInfo cityInfo = new AddressInfo();
+		AddressInfo countyInfo = new AddressInfo();
+		AddressInfo townInfo = new AddressInfo();
+		String memberLocationAddr = "";
+		if (null != memberBase.getLocationProvince()) {
+		    provinceInfo = addressUtil.getAddressName(memberBase.getLocationProvince());
+		    if (null != provinceInfo) {
+		        memberLocationAddr += provinceInfo.getName();
+		    }
+		}
+		if (null != memberBase.getLocationCity()) {
+		    cityInfo = addressUtil.getAddressName(memberBase.getLocationCity());
+		    if (null != cityInfo) {
+		        memberLocationAddr += cityInfo.getName();
+		    }
+		}
+		if (null != memberBase.getLocationCounty()) {
+		    countyInfo = addressUtil.getAddressName(memberBase.getLocationCounty());
+		    if (null != countyInfo) {
+		        memberLocationAddr += countyInfo.getName();
+		    }
+		}
+		if (null != memberBase.getLocationTown()) {
+		    townInfo = addressUtil.getAddressName(memberBase.getLocationTown());
+		    if (null != townInfo) {
+		        memberLocationAddr += townInfo.getName();
+		    }
+		}
+		memberLocationAddr += memberBase.getLocationDetail();
+		noSignContractInfoDTO.setMemberLocationAddr(memberLocationAddr);
 		noSignContractInfoDTO.setMemberName(memberBase.getCompanyName());
 		if (("".equals(contractStatus) || null == contractStatus) && page == 1) {
 			//未签订放进返回
@@ -341,11 +436,71 @@ public class ContractServiceImpl implements ContractService {
 						ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
 						contractInfoDTO.setMemberCode(memberCode);
 						contractInfoDTO.setMemberName(memberBase.getCompanyName());
-						contractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+						AddressInfo provinceInfo = new AddressInfo();
+						AddressInfo cityInfo = new AddressInfo();
+						AddressInfo countyInfo = new AddressInfo();
+						AddressInfo townInfo = new AddressInfo();
+						String memberLocationAddr = "";
+						if (null != memberBase.getLocationProvince()) {
+						    provinceInfo = addressUtil.getAddressName(memberBase.getLocationProvince());
+						    if (null != provinceInfo) {
+						        memberLocationAddr += provinceInfo.getName();
+						    }
+						}
+						if (null != memberBase.getLocationCity()) {
+						    cityInfo = addressUtil.getAddressName(memberBase.getLocationCity());
+						    if (null != cityInfo) {
+						        memberLocationAddr += cityInfo.getName();
+						    }
+						}
+						if (null != memberBase.getLocationCounty()) {
+						    countyInfo = addressUtil.getAddressName(memberBase.getLocationCounty());
+						    if (null != countyInfo) {
+						        memberLocationAddr += countyInfo.getName();
+						    }
+						}
+						if (null != memberBase.getLocationTown()) {
+						    townInfo = addressUtil.getAddressName(memberBase.getLocationTown());
+						    if (null != townInfo) {
+						        memberLocationAddr += townInfo.getName();
+						    }
+						}
+						memberLocationAddr += memberBase.getLocationDetail();
+						contractInfoDTO.setMemberLocationAddr(memberLocationAddr);
 						contractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
 						contractInfoDTO.setVendorCode(vendorBase.getMemberCode());
 						contractInfoDTO.setVendorName(vendorBase.getCompanyName());
-						contractInfoDTO.setVendorLocationAddr(vendorBase.getLocationDetail());
+						AddressInfo vendorProvinceInfo = new AddressInfo();
+						AddressInfo vendorCityInfo = new AddressInfo();
+						AddressInfo vendorCountyInfo = new AddressInfo();
+						AddressInfo vendorTownInfo = new AddressInfo();
+						String vendorLocationAddr = "";
+						if (null != vendorBase.getLocationProvince()) {
+						    vendorProvinceInfo = addressUtil.getAddressName(vendorBase.getLocationProvince());
+						    if (null != vendorProvinceInfo) {
+						        vendorLocationAddr += vendorProvinceInfo.getName();
+						    }
+						}
+						if (null != vendorBase.getLocationCity()) {
+						    vendorCityInfo = addressUtil.getAddressName(vendorBase.getLocationCity());
+						    if (null != vendorCityInfo) {
+						        vendorLocationAddr += vendorCityInfo.getName();
+						    }
+						}
+						if (null != vendorBase.getLocationCounty()) {
+						    vendorCountyInfo = addressUtil.getAddressName(vendorBase.getLocationCounty());
+						    if (null != vendorCountyInfo) {
+						        vendorLocationAddr += vendorCountyInfo.getName();
+						    }
+						}
+						if (null != vendorBase.getLocationTown()) {
+						    vendorTownInfo = addressUtil.getAddressName(vendorBase.getLocationTown());
+						    if (null != vendorTownInfo) {
+						        vendorLocationAddr += vendorTownInfo.getName();
+						    }
+						}
+						vendorLocationAddr += vendorBase.getLocationDetail();
+						contractInfoDTO.setVendorLocationAddr(vendorLocationAddr);
 						contractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
 						needContractInfoList.add(contractInfoDTO);
 						result.setResultMessage("该会员店提醒标志为0 需要提醒");
@@ -638,10 +793,71 @@ public class ContractServiceImpl implements ContractService {
 				saveContractInfoDTO.setContractCode(contractCode);
 				saveContractInfoDTO.setContractStatus(1);
 				saveContractInfoDTO.setMemberName(memberBase.getCompanyName());
-				saveContractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+				AddressInfo provinceInfo = new AddressInfo();
+				AddressInfo cityInfo = new AddressInfo();
+				AddressInfo countyInfo = new AddressInfo();
+				AddressInfo townInfo = new AddressInfo();
+				String memberLocationAddr = "";
+				if (null != memberBase.getLocationProvince()) {
+				    provinceInfo = addressUtil.getAddressName(memberBase.getLocationProvince());
+				    if (null != provinceInfo) {
+				        memberLocationAddr += provinceInfo.getName();
+				    }
+				}
+				if (null != memberBase.getLocationCity()) {
+				    cityInfo = addressUtil.getAddressName(memberBase.getLocationCity());
+				    if (null != cityInfo) {
+				        memberLocationAddr += cityInfo.getName();
+				    }
+				}
+				if (null != memberBase.getLocationCounty()) {
+				    countyInfo = addressUtil.getAddressName(memberBase.getLocationCounty());
+				    if (null != countyInfo) {
+				        memberLocationAddr += countyInfo.getName();
+				    }
+				}
+				if (null != memberBase.getLocationTown()) {
+				    townInfo = addressUtil.getAddressName(memberBase.getLocationTown());
+				    if (null != townInfo) {
+				        memberLocationAddr += townInfo.getName();
+				    }
+				}
+				memberLocationAddr += memberBase.getLocationDetail();
+				saveContractInfoDTO.setMemberLocationAddr(memberLocationAddr);
 				saveContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
 				saveContractInfoDTO.setVendorName(vendorBase.getCompanyName());
-				saveContractInfoDTO.setVendorLocationAddr(vendorBase.getLocationDetail());
+				AddressInfo vendorProvinceInfo = new AddressInfo();
+				AddressInfo vendorCityInfo = new AddressInfo();
+				AddressInfo vendorCountyInfo = new AddressInfo();
+				AddressInfo vendorTownInfo = new AddressInfo();
+				String vendorLocationAddr = "";
+				if (null != vendorBase.getLocationProvince()) {
+				    vendorProvinceInfo = addressUtil.getAddressName(vendorBase.getLocationProvince());
+				    if (null != vendorProvinceInfo) {
+				        vendorLocationAddr += vendorProvinceInfo.getName();
+				    }
+				}
+				if (null != vendorBase.getLocationCity()) {
+				    vendorCityInfo = addressUtil.getAddressName(vendorBase.getLocationCity());
+				    if (null != vendorCityInfo) {
+				        vendorLocationAddr += vendorCityInfo.getName();
+				    }
+				}
+				if (null != vendorBase.getLocationCounty()) {
+				    vendorCountyInfo = addressUtil.getAddressName(vendorBase.getLocationCounty());
+				    if (null != vendorCountyInfo) {
+				        vendorLocationAddr += vendorCountyInfo.getName();
+				    }
+				}
+				if (null != vendorBase.getLocationTown()) {
+				    vendorTownInfo = addressUtil.getAddressName(vendorBase.getLocationTown());
+				    if (null != vendorTownInfo) {
+				        vendorLocationAddr += vendorTownInfo.getName();
+				    }
+				}
+
+				vendorLocationAddr += vendorBase.getLocationDetail();
+				saveContractInfoDTO.setVendorLocationAddr(vendorLocationAddr);
 				saveContractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
 			}
 			contractDAO.insertContractInfo(saveContractInfoDTOList);

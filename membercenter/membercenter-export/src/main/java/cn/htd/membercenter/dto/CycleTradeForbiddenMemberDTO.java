@@ -26,6 +26,15 @@ public class CycleTradeForbiddenMemberDTO implements Serializable {
 	private String modifyId;      //修改人id
 	private String modifyName;    //修改人名称
 	private List<String> ids;
+	private boolean isExport;      //是否导入
+
+	public boolean isExport() {
+		return isExport;
+	}
+
+	public void setExport(boolean isExport) {
+		this.isExport = isExport;
+	}
 
 	public List<String> getIds() {
 		return ids;

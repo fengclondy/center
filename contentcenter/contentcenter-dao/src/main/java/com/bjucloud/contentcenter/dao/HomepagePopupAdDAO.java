@@ -6,6 +6,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.dao.orm.BaseDAO;
 import com.bjucloud.contentcenter.domain.HomepagePopupAd;
 import com.bjucloud.contentcenter.dto.PopupAdConditionDTO;
+import com.bjucloud.contentcenter.dto.PopupAdConditionExtendDTO;
 import com.bjucloud.contentcenter.dto.PopupAdDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +18,7 @@ public interface HomepagePopupAdDAO extends BaseDAO<HomepagePopupAd> {
      * @param entity
      * @return
      */
-    public Long queryCount(@Param("entity") PopupAdConditionDTO entity);
+    public Long queryCount(@Param("entity") PopupAdConditionExtendDTO entity);
 
     /**
      * 分页查询弹屏活动列表
@@ -26,7 +27,7 @@ public interface HomepagePopupAdDAO extends BaseDAO<HomepagePopupAd> {
      * @param page
      * @return
      */
-    public List<HomepagePopupAd> queryList(@Param("entity") PopupAdConditionDTO entity, @Param("page") Pager page);
+    public List<HomepagePopupAd> queryList(@Param("entity") PopupAdConditionExtendDTO entity, @Param("page") Pager page);
 
     /**
      * 校验弹屏活动是否和已有活动的期间重叠

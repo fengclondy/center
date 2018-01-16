@@ -17,6 +17,7 @@ import com.bjucloud.contentcenter.dao.HomepagePopupAdTerminalDAO;
 import com.bjucloud.contentcenter.domain.HomepagePopupAd;
 import com.bjucloud.contentcenter.domain.HomepagePopupTerminalAd;
 import com.bjucloud.contentcenter.dto.PopupAdConditionDTO;
+import com.bjucloud.contentcenter.dto.PopupAdConditionExtendDTO;
 import com.bjucloud.contentcenter.dto.PopupAdDTO;
 import com.bjucloud.contentcenter.dto.PopupAdModifyConditionDTO;
 import com.bjucloud.contentcenter.dto.SearchShowPopupAdDTO;
@@ -49,6 +50,7 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
     @Override
     public ExecuteResult<DataGrid<PopupAdDTO>> queryPopupAdList(PopupAdConditionDTO conditionDTO,
             Pager<PopupAdDTO> page) {
+        PopupAdConditionExtendDTO searchConditionDTO = new PopupAdConditionExtendDTO(conditionDTO);
         ExecuteResult<DataGrid<PopupAdDTO>> result = new ExecuteResult<DataGrid<PopupAdDTO>>();
         DataGrid<PopupAdDTO> dataGrid = new DataGrid<PopupAdDTO>();
         List<HomepagePopupAd> adList = null;
@@ -56,9 +58,9 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
         HomepagePopupAdConvert convert = null;
         long count = 0;
         try {
-            count = homepagePopupAdDAO.queryCount(conditionDTO);
+            count = homepagePopupAdDAO.queryCount(searchConditionDTO);
             if (count > 0) {
-                adList = homepagePopupAdDAO.queryList(conditionDTO, page);
+                adList = homepagePopupAdDAO.queryList(searchConditionDTO, page);
                 for (HomepagePopupAd popupAd : adList) {
                     terminalAdList = homepagePopupAdTerminalDAO.queryByAdId(popupAd.getId());
                     popupAd.setTerminalAdList(terminalAdList);

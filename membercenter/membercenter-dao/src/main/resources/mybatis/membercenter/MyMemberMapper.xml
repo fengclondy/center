@@ -1095,7 +1095,7 @@
 	      	 </otherwise>
 	     </choose>
 	</if>
-    order by m.regist_time 
+    order by m.regist_time  desc
     <if test="page != null and page != ''">
 		limit #{page.pageOffset},#{page.rows}
 	</if>
@@ -1169,7 +1169,7 @@ FROM
 	      	 </otherwise>
 	     </choose>
 	</if>
-    order by m.regist_time 
+    order by m.regist_time desc
   </select>
     <!-- 查询非会员数量 -->
    <select id="selectNoMemberCount" resultType="java.lang.Long">

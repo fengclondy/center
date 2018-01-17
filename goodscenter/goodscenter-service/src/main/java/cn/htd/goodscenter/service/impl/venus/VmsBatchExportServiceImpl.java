@@ -164,14 +164,14 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
                     continue;
                 }
                 // 校验单位
-                String unit = batchAddItemInDTO.getUnit(); // TODO : 暂时写死
-//                ExecuteResult<String> unitResult = validateUnit(unit);
-//                if (!ResultCodeEnum.SUCCESS.getCode().equals(unitResult.getCode())) {
-//                    batchAddItemErrorListOutDTO.setErroMsg(unitResult.getResultMessage());
-//                    errorList.add(batchAddItemErrorListOutDTO);
-//                    continue;
-//                }
-                String unitCode = "dui";//unitResult.getResult();
+                String unit = batchAddItemInDTO.getUnit();
+                ExecuteResult<String> unitResult = validateUnit(unit);
+                if (!ResultCodeEnum.SUCCESS.getCode().equals(unitResult.getCode())) {
+                    batchAddItemErrorListOutDTO.setErroMsg(unitResult.getResultMessage());
+                    errorList.add(batchAddItemErrorListOutDTO);
+                    continue;
+                }
+                String unitCode = unitResult.getResult();
                 // 校验税率
                 String taxRate = batchAddItemInDTO.getTaxRate();
                 ExecuteResult<String> rateResult = validateTaxRate(taxRate);
@@ -328,8 +328,8 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
                     this.setMinAndMaxStock(queryOffShelfItemOutDTO);
                     // ERP价格
                     String spuCode = queryOffShelfItemOutDTO.getSpuCode();
-                    BigDecimal saleLimitPrice = new BigDecimal("3000"); // TODO :
-                    BigDecimal wsaleUtprice =  new BigDecimal("3100"); // TODO :
+                    BigDecimal saleLimitPrice = null;
+                    BigDecimal wsaleUtprice = null;
                     if (StringUtils.isNotEmpty(spuCode)) {
                         Map priceMap = MiddlewareInterfaceUtil.findItemERPPrice(supplierCode, spuCode);
                         if (MapUtils.isNotEmpty(priceMap)) {

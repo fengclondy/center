@@ -960,4 +960,41 @@ public class MyMemberServiceImpl implements MyMemberService {
 		return count;
 	}
 
+	/**
+	 * VMS - 导出会员、担保会员
+	 * @author li.jun
+	 * @time 2018-01-17
+	 * @return
+	 */
+	@Override
+	public ExecuteResult<DataGrid<MyMemberDTO>> exportMemberList(Long vendorId, MyMemberSearchDTO memberSearch,
+			String type) {
+		ExecuteResult<DataGrid<MyMemberDTO>> rs = new ExecuteResult<DataGrid<MyMemberDTO>>();
+		DataGrid<MyMemberDTO> dg = new DataGrid<MyMemberDTO>();
+		try {
+			List<MyMemberDTO> myMemberDtoList = null;
+			if (type != null && type.equals("2")) {
+				myMemberDtoList = gerMemberList(null, vendorId, memberSearch, 1, null, 1);
+			} else if (type != null && type.equals("3")) {
+				myMemberDtoList = gerMemberList(null, vendorId, memberSearch, 1, 1, 0);
+			}
+			if (myMemberDtoList != null) {
+				if (myMemberDtoList.size() > GlobalConstant.MAXIMPORT_EXPORT_COUNT) {
+					rs.setResultMessage("导出最大条数不能超过" + GlobalConstant.MAXIMPORT_EXPORT_COUNT + "条");
+				} else {
+					dg.setRows(myMemberDtoList);
+					rs.setResult(dg);
+				}
+			} else {
+				rs.addErrorMessage("要查询的数据不存在");
+				rs.setResultMessage("fail");
+			}
+		} catch (Exception e) {
+			logger.error("MyMemberServiceImpl----->exportMemberList=" + e);
+			rs.setResultMessage("error");
+			rs.addErrorMessage("导出会员查询报错");
+		}
+		return rs;
+	}
+
 }

@@ -140,4 +140,13 @@ public interface MyMemberService {
 	 */
 	public ExecuteResult<DataGrid<MyMemberDTO>> selectMemberList(Pager<MyMemberDTO> page, Long sellerId,
 			MyMemberSearchDTO memberSearch, String type);
+	/**
+	 * VMS 导出我的会员/担保会员列表
+	 * @author li.jun
+	 * @param vendorId
+	 * @param memberSearch
+	 * @return
+	 */
+	public ExecuteResult<DataGrid<MyMemberDTO>> exportMemberList(Long vendorId, MyMemberSearchDTO memberSearch,
+			String type);
 }

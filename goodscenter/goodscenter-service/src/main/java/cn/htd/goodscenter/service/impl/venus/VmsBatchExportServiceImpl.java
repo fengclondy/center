@@ -4,7 +4,6 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
-import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.common.middleware.MiddlewareInterfaceUtil;
 import cn.htd.common.util.DictionaryUtils;
@@ -25,8 +24,6 @@ import cn.htd.goodscenter.dto.venus.indto.VenusItemInDTO;
 import cn.htd.goodscenter.dto.vms.*;
 import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.goodscenter.service.ItemExportService;
-import cn.htd.goodscenter.service.ItemSpuExportService;
-import cn.htd.goodscenter.service.venus.VenusItemExportService;
 import cn.htd.goodscenter.service.venus.VmsBatchExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
@@ -106,8 +103,6 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
 
     @Override
     public ExecuteResult<BatchAddItemOutDTO> batchAddItem(List<BatchAddItemInDTO> batchAddItemInDTOList) {
-        System.out.println("计算时间开始~~~~");
-        Long start0 = (new Date()).getTime();
         ExecuteResult<BatchAddItemOutDTO> executeResult = new ExecuteResult<>();
         //前置校验
         if (batchAddItemInDTOList == null) {
@@ -286,8 +281,6 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
             executeResult.setResultMessage(ResultCodeEnum.ERROR.getMessage());
             executeResult.addErrorMessage(e.getMessage());
         }
-        Long end = (new Date()).getTime();
-        System.out.println("耗时：" + (end - start0));
         return executeResult;
     }
 

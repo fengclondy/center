@@ -1549,10 +1549,6 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 				return null;
 			}
 			if("1".equals(result.getResult())){
-				//有外部供应商身份的平台公司，清分结算自动完成，不进行提款操作
-				params.put("status", SettlementStatusEnum.SETTLEMENT_STATUS_13.key());
-				params.put("statusText", SettlementStatusEnum.SETTLEMENT_STATUS_13.value());
-				updateTradeStatus(params);
 				ExecuteResult<MemberBaseInfoDTO> result1 = memberBaseInfoService.getInnerInfoByOuterHTDCode(tdtos.get(0).getSellerCode());
 				if(null == result1 ||null == result1.getResult()){
 					return null;

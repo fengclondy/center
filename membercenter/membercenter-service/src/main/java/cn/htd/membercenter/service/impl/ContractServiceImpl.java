@@ -255,9 +255,9 @@ public class ContractServiceImpl implements ContractService {
 		noSignContractInfoDTO.setMemberCode(memberBase.getMemberCode());
 		noSignContractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
 		noSignContractInfoDTO.setMemberName(memberBase.getCompanyName());
-		if (("".equals(contractStatus) || null == contractStatus) && page == 1) {
+		if (("".equals(contractStatus) || null == contractStatus)) {
 			//未签订放进返回
-			if (nosignContractInfoDTOList.size() > 0) {
+			if (page == 1 && nosignContractInfoDTOList.size() > 0) {
 				returnContractInfoDTOList.add(noSignContractInfoDTO);
 			}
 			if (page == 1 && !returnContractInfoDTOList.isEmpty()) {

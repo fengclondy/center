@@ -1,5 +1,7 @@
 package cn.htd.membercenter.service;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -290,7 +292,13 @@ public class MemberBaseServiceTest {
 	 
 	 @Test
 	 public void testCompanyName(){
-		 ExecuteResult<String> result = boxRelationshipService.selectCompanyName("htd95300117");
+		 ExecuteResult<String> result = boxRelationshipService.selectCompanyName("htd0002", null);
+		 System.out.println(JSON.toJSONString(result));
+	 }
+	 
+	 @Test
+	 public void testCompanyNameList(){
+		 ExecuteResult<List<String>> result = boxRelationshipService.selectCompanyNameList("汇通达");
 		 System.out.println(JSON.toJSONString(result));
 	 }
 

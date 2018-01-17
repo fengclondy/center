@@ -17,9 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-
 import cn.htd.goodscenter.dto.stock.Order4StockChangeDTO;
 import cn.htd.goodscenter.dto.stock.Order4StockEntryDTO;
 import cn.htd.goodscenter.dto.stock.StockTypeEnum;
@@ -50,6 +47,9 @@ import cn.htd.zeus.tc.common.util.DateUtil;
 import cn.htd.zeus.tc.common.util.StringUtilHelper;
 import cn.htd.zeus.tc.dto.othercenter.response.OtherCenterResDTO;
 import cn.htd.zeus.tc.dto.resquest.OrderCancelInfoReqDTO;
+
+import com.alibaba.dubbo.common.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
 
 /**
  * @author ly
@@ -928,6 +928,202 @@ public class OrderCancelServiceImpl implements OrderCancelService {
 			StringWriter w = new StringWriter();
 			e.printStackTrace(new PrintWriter(w));
 			LOGGER.error("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.orderDelete出现异常{}",
+					orderCancelInfoDTO.getMessageId(), orderNo, w.toString());
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return tradeOrdersDMO;
+		}
+		return tradeOrdersDMO;
+	}
+	
+	@Transactional
+	@Override
+	public TradeOrderItemsDMO cancelOrderItemForNewVMS(OrderCancelInfoReqDTO orderCancelInfoDTO) throws Exception {
+
+		TradeOrdersDMO tradeOrdersDMO = new TradeOrdersDMO();
+		TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
+		String orderNo = orderCancelInfoDTO.getOrderNo();
+		try {
+			String messageId = orderCancelInfoDTO.getMessageId();
+			String orderItemNo = orderCancelInfoDTO.getOrderItemNo();
+			List<TradeOrderItemsDMO> tradeOrderItemsDMOs = tradeOrderItemsDAO.selectOrderItemsByOrderItemNo(orderItemNo);
+			//订单行不存在
+			if (CollectionUtils.isEmpty(tradeOrderItemsDMOs)) {
+				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getCode());
+				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getMsg());
+				return tradeOrderItemsDMO;
+			}
+			tradeOrderItemsDMO = tradeOrderItemsDMOs.get(0);
+			String orderStatus = tradeOrderItemsDMO.getOrderItemStatus();
+			if (StringUtils.isEmpty((orderStatus))) {
+				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getCode());
+				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getMsg());
+				return tradeOrderItemsDMO;
+			}
+			//这几种状态不能取消订单
+			if ((OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_PRE_SPLIT_ORDER_PRE.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_POST_STRIKEA_DOWNING.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getCode().equals(orderStatus))) {
+				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getCode());
+				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getMsg());
+				return tradeOrderItemsDMO;
+			}
+			
+			//是否已经取消
+			if (OrderStatusEnum.CANCLED.getCode().equals(String.valueOf(tradeOrderItemsDMO.getIsCancelOrderItem()))) {
+				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getCode());
+				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getMsg());
+				return tradeOrderItemsDMO;
+			}
+			String memberID = StringUtils.isEmpty(orderCancelInfoDTO.getOrderCancelMemberId()) ? "0" : orderCancelInfoDTO.getOrderCancelMemberId();
+			
+			String memberName = orderCancelInfoDTO.getOrderCancelMemberName();
+			if (OrderStatusEnum.CHECK_ADOPT_PRE_PAY.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PRE_CHECK.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PRE_PAY.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PRE_CONFIRM.getCode().equals(orderStatus)) {
+				tradeOrdersDMO.setOrderNo(orderNo);
+				tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
+				tradeOrdersDMO.setOrderStatus(orderStatus);
+				tradeOrderItemsDMO.setOrderItemNo(orderItemNo);
+			} else if (OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)) {// 如果是vms开单取消订单行，就取消相同的品牌品类的订单行
+				tradeOrderItemsDMO.setBrandId(tradeOrderItemsDMO.getBrandId());
+				tradeOrderItemsDMO.setErpFirstCategoryCode(tradeOrderItemsDMO.getErpFirstCategoryCode());
+				tradeOrderItemsDMO.setOrderItemNo(null);
+
+				tradeOrdersDMO.setOrderNo(orderNo);
+				tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
+			}
+			tradeOrderItemsDMO.setOrderItemCancelOperatorName(memberName);
+			tradeOrderItemsDMO.setOrderItemCancelOperatorId(Long.parseLong(memberID));
+			String cancelReason = orderCancelInfoDTO.getOrderCancelReason();
+			tradeOrderItemsDMO.setOrderItemCancelReason(cancelReason);
+			tradeOrderItemsDMO.setOrderItemCancelTime(DateUtil.getSystemTime());
+			tradeOrderItemsDMO.setOrderNo(orderNo);
+			tradeOrderItemsDMO.setIsCancelOrderItem(Constant.IS_CANCEL_ORDER);
+			tradeOrderItemsDMO.setModifyTime(DateUtil.getSystemTime());
+			int updateResultInt = orderItemCancelDAO.updateOrderItemCancelInfoByOrderItemNo(tradeOrderItemsDMO);
+			if(updateResultInt < 1){
+				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_REFUNDSTATUS_IS_DATABASEFAIL.getCode());
+				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_REFUNDSTATUS_IS_DATABASEFAIL.getMsg());
+				return tradeOrderItemsDMO;
+			}
+
+			//查询主订单状态是否有订单行取消标志
+			Long orderItemCancelCount = tradeOrderItemsDAO.selectTradeOrderItemsByOrderNoIsNotCancel(orderNo);
+			//如果没有，则要在主订单上标记一下
+			if (orderItemCancelCount == 0L) {
+				tradeOrdersDMO.setOrderNo(orderNo);
+				tradeOrdersDMO.setOrderCancelMemberId(Long.parseLong(memberID));
+				tradeOrdersDMO.setOrderCancelMemberName(memberName);
+				tradeOrdersDMO.setOrderCancelReason(cancelReason);
+				tradeOrdersDMO.setIsCancelOrder(Constant.IS_CANCEL_ORDER);
+				tradeOrdersDMO.setOrderCancelTime(DateUtil.getSystemTime());
+				tradeOrdersDMO.setModifyTime(DateUtil.getSystemTime());
+				orderCancelDAO.updateOrderCancelInfo(tradeOrdersDMO);
+			}
+			tradeOrderItemsDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+			tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
+		
+			//处在下行中订单，要更新TradeOrderErpDistribution相关表
+			if (OrderStatusEnum.VMS_ORDER_PRE_DOWN_ERP.getCode().equals(orderStatus)) {// 如果是vms开单取消订单行，就取消相同的品牌品类的订单行
+				// 取消订单行更新订单表相关金额、数量等数据
+				vmsOperateOrderItemCancelUpdateOrderTable(tradeOrderItemsDMO, orderNo, tradeOrdersDMO, messageId);
+				TradeOrderErpDistributionDMO record = new TradeOrderErpDistributionDMO();
+				record.setBrandId(tradeOrderItemsDMO.getBrandId());
+				record.setErpFirstCategoryCode(tradeOrderItemsDMO.getErpFirstCategoryCode());
+				record.setOrderNo(orderNo);
+				record.setDeleteFlag(new Byte(OrderStatusEnum.ORDER_DELETE_STATUS.getCode()));
+				tradeOrderErpDistributionDAO.updateOrderItemNosBySelective(record);
+				tradeOrderItemsDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+				tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
+				return tradeOrderItemsDMO;
+			}
+		} catch (Exception e) {
+			tradeOrderItemsDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
+			tradeOrderItemsDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} OrderItemNo:{} 调用方法OrderCancelServiceImpl.cancelOrderItemForNewVMS 出现异常{}",
+					orderCancelInfoDTO.getMessageId(), orderCancelInfoDTO.getOrderItemNo(), w.toString());
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return tradeOrderItemsDMO;
+		}
+		return tradeOrderItemsDMO;
+	}
+
+	@Override
+	public TradeOrdersDMO cancelOrderForNewVMS(OrderCancelInfoReqDTO orderCancelInfoDTO) throws Exception {
+		TradeOrdersDMO tradeOrdersDMO = new TradeOrdersDMO();
+		String orderNo = orderCancelInfoDTO.getOrderNo();
+		try {
+			tradeOrdersDMO.setOrderNo(orderNo);
+			tradeOrdersDMO = orderCancelDAO.selectTradeCancelOrderByOrderNo(tradeOrdersDMO);
+			//订单不存在
+			if (tradeOrdersDMO == null) {
+				tradeOrdersDMO = new TradeOrdersDMO();
+				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getCode());
+				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDER_IS_NOT_EXIST.getMsg());
+				return tradeOrdersDMO;
+			}
+			String orderStatus = tradeOrdersDMO.getOrderStatus();
+			//订单状态异常
+			if (StringUtils.isEmpty((orderStatus))) {
+				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getCode());
+				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_NULL.getMsg());
+				return tradeOrdersDMO;
+			}
+			
+			//这几种状态不能取消订单
+			if ((OrderStatusEnum.PAYED_PRE_SPLIT_ORDER.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_PRE_SPLIT_ORDER_PRE.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_POST_STRIKEA_DOWNING.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode().equals(orderStatus)
+					|| OrderStatusEnum.PAYED_SPLITED_ORDER_PRE_ERP.getCode().equals(orderStatus))) {
+				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getCode());
+				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_FAIL.getMsg());
+				return tradeOrdersDMO;
+			}
+			
+			//已取消
+			if (OrderStatusEnum.CANCLED.getCode().equals(String.valueOf(tradeOrdersDMO.getIsCancelOrder()))) {
+				tradeOrdersDMO.setResultCode(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getCode());
+				tradeOrdersDMO.setResultMsg(ResultCodeEnum.ORDERCANCEL_ORDERSTATUS_IS_CANCEL.getMsg());
+				return tradeOrdersDMO;
+			}
+			String memberID = StringUtils.isEmpty(orderCancelInfoDTO.getOrderCancelMemberId())?"0":orderCancelInfoDTO.getOrderCancelMemberId();
+			
+			String memberName = orderCancelInfoDTO.getOrderCancelMemberName();
+
+			tradeOrdersDMO.setOrderCancelMemberId(Long.parseLong(memberID));
+			tradeOrdersDMO.setOrderCancelMemberName(memberName);
+			String cancelReason = orderCancelInfoDTO.getOrderCancelReason();
+			tradeOrdersDMO.setOrderCancelReason(cancelReason);
+			tradeOrdersDMO.setIsCancelOrder(Constant.IS_CANCEL_ORDER);
+			tradeOrdersDMO.setOrderCancelTime(DateUtil.getSystemTime());
+			tradeOrdersDMO.setModifyTime(DateUtil.getSystemTime());
+			int updateResultInt = orderCancelDAO.updateOrderCancelInfo(tradeOrdersDMO);
+			if (updateResultInt != 0) {
+				TradeOrderItemsDMO tradeOrderItemsDMO = new TradeOrderItemsDMO();
+				tradeOrderItemsDMO.setOrderItemCancelOperatorName(memberName);
+				tradeOrderItemsDMO.setOrderItemCancelOperatorId(Long.parseLong(memberID));
+				tradeOrderItemsDMO.setOrderItemCancelReason(cancelReason);
+				tradeOrderItemsDMO.setOrderItemCancelTime(DateUtil.getSystemTime());
+				tradeOrderItemsDMO.setIsCancelOrderItem(Constant.IS_CANCEL_ORDER);
+				tradeOrderItemsDMO.setOrderNo(orderNo);
+				tradeOrderItemsDMO.setModifyTime(DateUtil.getSystemTime());
+				orderItemCancelDAO.updateOrderItemCancelInfoByOrderNo(tradeOrderItemsDMO);
+				tradeOrdersDMO.setResultCode(ResultCodeEnum.SUCCESS.getCode());
+				tradeOrdersDMO.setResultMsg(ResultCodeEnum.SUCCESS.getMsg());
+				return tradeOrdersDMO;
+			}
+		} catch (Exception e) {
+			tradeOrdersDMO.setResultCode(ResultCodeEnum.ERROR.getCode());
+			tradeOrdersDMO.setResultMsg(ResultCodeEnum.ERROR.getMsg());
+			StringWriter w = new StringWriter();
+			e.printStackTrace(new PrintWriter(w));
+			LOGGER.error("MessageId:{} OrderNo:{} 调用方法OrderCancelServiceImpl.cancelOrderForNewVMS 出现异常{}",
 					orderCancelInfoDTO.getMessageId(), orderNo, w.toString());
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return tradeOrdersDMO;

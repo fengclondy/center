@@ -53,4 +53,22 @@ public interface OrderCancelService {
 	 * @throws Exception
 	 */
 	TradeOrdersDMO orderDelete(OrderCancelInfoReqDTO orderCancelInfoDTO) throws Exception;
+	
+	/**
+	 * VMS2.0 取消订单行
+	 * 
+	 * @param orderCancelInfoDTO
+	 * @return
+	 * @throws Exception
+	 */
+	TradeOrderItemsDMO cancelOrderItemForNewVMS(OrderCancelInfoReqDTO orderCancelInfoDTO) throws Exception;
+	
+	/**
+	 * VMS2.0 取消订单
+	 * 
+	 * @param orderCancelInfoDTO
+	 * @return
+	 * @throws Exception
+	 */
+	TradeOrdersDMO cancelOrderForNewVMS(OrderCancelInfoReqDTO orderCancelInfoDTO) throws Exception;
 }

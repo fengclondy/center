@@ -162,10 +162,10 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	}
 	
 	@Override
-	public ExecuteResult<String> selectCompanyName(String memberCode) {
+	public ExecuteResult<String> selectCompanyName(String memberCode, String memberName) {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		try {
-			String companyName = boxRelationshipDao.selectCompanyName(memberCode);
+			String companyName = boxRelationshipDao.selectCompanyName(memberCode, memberName);
 			if (StringUtils.isEmpty(companyName)) {
 				rs.setResultMessage("暂未找到对应的会员信息！！");
 				return rs;
@@ -176,6 +176,26 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("BoxRelationshipServiceImpl----->selectCompanyName=" + e);
+			rs.setResultMessage("error");
+		}
+		return rs;
+	}
+	
+	@Override
+	public ExecuteResult<List<String>> selectCompanyNameList(String memberName) {
+		ExecuteResult<List<String>> rs = new ExecuteResult<List<String>>();
+		try {
+			List<String> companyNameList = boxRelationshipDao.selectCompanyNameList(memberName);
+			if (StringUtils.isEmpty(memberName)) {
+				rs.setResultMessage("暂未找到对应的会员信息！！");
+				return rs;
+			}else{
+				rs.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
+				rs.setResult(companyNameList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("BoxRelationshipServiceImpl----->selectCompanyNameList=" + e);
 			rs.setResultMessage("error");
 		}
 		return rs;

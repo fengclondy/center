@@ -30,6 +30,12 @@ public interface CycleTradeForbiddenMemberDAO {
 	 * @param dto
 	 */
 	public void deleteCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
+	
+	/**
+	 * 修改互为上下游禁止交易会员
+	 * @param dto
+	 */
+	public void updateCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
 
 	/**
 	 * 查询互为上下游禁止交易会员条数
@@ -39,7 +45,14 @@ public interface CycleTradeForbiddenMemberDAO {
 	 * @return
 	 */
 	public Long selecCycleTradeForbiddenMemberCount(@Param("dto") CycleTradeForbiddenMemberDTO dto);
-
+	
+	/**
+	 * 根据id查询互为上下游禁止交易会员信息
+	 * @param dto
+	 * @return
+	 */
+	public CycleTradeForbiddenMember queryCycleTradeForbiddenMember(@Param("dto") CycleTradeForbiddenMemberDTO dto);
+	
 	/**
 	 * 查询互为上下游禁止交易会员集合
 	 * 

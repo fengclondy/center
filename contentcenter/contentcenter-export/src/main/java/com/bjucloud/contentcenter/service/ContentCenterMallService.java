@@ -1,10 +1,24 @@
 package com.bjucloud.contentcenter.service;
 
-import cn.htd.common.ExecuteResult;
-
 import java.util.List;
 
-import com.bjucloud.contentcenter.domain.*;
+import com.bjucloud.contentcenter.domain.FloorInfo;
+import com.bjucloud.contentcenter.domain.FloorInfoDO;
+import com.bjucloud.contentcenter.domain.HeadAd;
+import com.bjucloud.contentcenter.domain.HotWord;
+import com.bjucloud.contentcenter.domain.LoginPage;
+import com.bjucloud.contentcenter.domain.MallChannels;
+import com.bjucloud.contentcenter.domain.MallType;
+import com.bjucloud.contentcenter.domain.MallTypeSub;
+import com.bjucloud.contentcenter.domain.MobileMallCategory;
+import com.bjucloud.contentcenter.domain.SiteLogo;
+import com.bjucloud.contentcenter.domain.SiteSlogan;
+import com.bjucloud.contentcenter.domain.StaticAd;
+import com.bjucloud.contentcenter.domain.SubAd;
+import com.bjucloud.contentcenter.domain.SubCarouselAd;
+import com.bjucloud.contentcenter.domain.TopAd;
+
+import cn.htd.common.ExecuteResult;
 
 public interface ContentCenterMallService {
     /**

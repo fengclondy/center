@@ -33,6 +33,13 @@ public interface CycleTradeForbiddenMemberService {
 	public ExecuteResult<String> deleteCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
 	
 	/**
+	 * 查询互为上下游禁止交易会员信息
+	 * @param dto
+	 * @return
+	 */
+	public ExecuteResult<CycleTradeForbiddenMemberDTO> queryCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
+	
+	/**
 	 * 查询互为上下游禁止交易会员信息(分页)
 	 * @param dto
 	 * @param pager
@@ -47,4 +54,16 @@ public interface CycleTradeForbiddenMemberService {
 	 * @return
 	 */
 	public ExecuteResult<Boolean> isCycleTradeForbiddenMember(CycleTradeForbiddenMemberDTO dto);
+	
+	/**
+	 * 查询平台公司是否禁止销售
+	 * @return
+	 */
+	public ExecuteResult<Boolean> isCycleTradeForbiddenCompany();
+	
+	/**
+	 * 修改平台公司是否禁止销售
+	 * @return
+	 */
+	public ExecuteResult<Boolean> updateCycleTradeForbiddenCompany(String flag);
 }

@@ -33,6 +33,8 @@ import cn.htd.membercenter.common.constant.StaticProperty;
 import cn.htd.membercenter.common.util.HttpUtils;
 import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
+import cn.htd.membercenter.dao.ContractDAO;
+import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBaseInfoDao;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.dao.MemberBusinessRelationDAO;
@@ -44,6 +46,8 @@ import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
 import cn.htd.membercenter.dto.BoxRelationImportDTO;
 import cn.htd.membercenter.dto.BuyerHisPointDTO;
 import cn.htd.membercenter.dto.CategoryBrandDTO;
+import cn.htd.membercenter.dto.ContractSignRemindInfoDTO;
+import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
@@ -109,6 +113,10 @@ public class MemberBuyerServiceImpl implements MemberBuyerService {
 	private MemberBusinessRelationDAO memberBusinessRelationDAO;
 	@Resource
 	private MemberVerifySaveDAO verifyInfoDAO;
+	@Resource
+	private ContractDAO contractDAO;
+	@Resource
+	private MemberBaseDAO memberBaseDAO;
 
 	/**
 	 * 查询个人信息
@@ -957,6 +965,8 @@ public class MemberBuyerServiceImpl implements MemberBuyerService {
 						if (queryBox == null) {
 							applyBusiRelationDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
 							applyRelationshipDao.insertBoxRelationInfo(applyBusiRelationDTO);
+							//新建包厢关系 重置该会员店提醒信息
+							updateSignRemindFlagToIsNeed(applyBusiRelationDTO);
 						}
 						// List<ApplyBusiRelationDTO> busiRelationList =
 						// boxRelationshipDAO
@@ -1831,4 +1841,35 @@ public class MemberBuyerServiceImpl implements MemberBuyerService {
 		return true;
 	}
 
+	/**
+	 * Description: 重置会员店提醒信息 <br> 
+	 *  
+	 * @author zhoutong <br>
+	 * @taskId <br>
+	 * @param memberCode
+	 * @param operationId
+	 * @param operationName
+	 * @return <br>
+	 */ 
+	public void updateSignRemindFlagToIsNeed(ApplyBusiRelationDTO applyBusiRelationDTO) throws Exception {
+		logger.info("updateSignRemindFlag方法已进入");
+		String memberCode = applyBusiRelationDTO.getMemberCode();
+		logger.info("重置会员店提醒信息 会员店编码memberCode=" + memberCode);
+		if (StringUtils.isEmpty(memberCode)) {
+			logger.error("会员店编码为空  重置会员店提醒信息失败");
+			return;
+		}
+		Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(applyBusiRelationDTO.getMemberCode());
+		ContractSignRemindInfoDTO contractSignRemindInfoDTO = new ContractSignRemindInfoDTO();
+		contractSignRemindInfoDTO.setMemberCode(memberCode);
+		contractSignRemindInfoDTO.setModifyId(applyBusiRelationDTO.getCreateId());
+		contractSignRemindInfoDTO.setModifyName(applyBusiRelationDTO.getCreateName());
+		//重置为需要提醒
+		contractSignRemindInfoDTO.setIsNeedRemind(0);
+		if (remindFlag != null && remindFlag != 0) {
+			//查询到的提醒标志不为空 且标志不为0 表示需要提醒更新为0 
+			contractDAO.updateContractSignRemindInfo(contractSignRemindInfoDTO);
+		}
+		logger.info("updateSignRemindFlag方法已结束");
+	}
 }

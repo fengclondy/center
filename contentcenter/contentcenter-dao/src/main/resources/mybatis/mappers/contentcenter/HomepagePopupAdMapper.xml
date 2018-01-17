@@ -111,8 +111,8 @@
     <include refid="Base_Column_List"/>
     from homepage_popup_ad
     where 1 = 1
-    and <![CDATA[homepage_popup_ad.start_time >= now()]]>
-    and <![CDATA[homepage_popup_ad.end_time <= now()]]>
+    and <![CDATA[homepage_popup_ad.start_time <= now()]]>
+    and <![CDATA[homepage_popup_ad.end_time >= now()]]>
     and homepage_popup_ad.delete_flag = 0
     and exists (
     select 1

@@ -23,6 +23,7 @@ import com.alibaba.dubbo.common.utils.CollectionUtils;
 import cn.htd.common.ExecuteResult;
 import cn.htd.tradecenter.common.constant.SettlementConstants;
 import cn.htd.tradecenter.common.enums.SettlementEnum;
+import cn.htd.tradecenter.common.enums.SettlementStatusEnum;
 import cn.htd.tradecenter.common.utils.PaySDK;
 import cn.htd.tradecenter.common.utils.SettlementUtils;
 import cn.htd.tradecenter.dao.TradeOrderSettlementDAO;
@@ -494,7 +495,7 @@ public class TradeSettlementServiceImplTest {
 	@Test
 	public void doSyncExternalTradeData(){
 		try {
-			tradeSettlementService.doSyncExternalTradeData("201706010038");
+			tradeSettlementService.doSyncExternalTradeData("QF170801000028");
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -502,4 +503,15 @@ public class TradeSettlementServiceImplTest {
 		}
 	}
 	
+	@Test
+	public void updateTradeStatus(){
+		TradeSettlementWithdrawDTO dto = new TradeSettlementWithdrawDTO();
+		dto.setTradeNo("TK171114000115");
+		dto.setOperateType("2");//提款
+		dto.setTradeType("1");//外部供应商
+		dto.setModifyTime(new Date());
+		dto.setStatus(SettlementStatusEnum.SETTLEMENT_STATUS_11.key());
+		dto.setStatusText(SettlementStatusEnum.SETTLEMENT_STATUS_11.value());
+        tradeSettlementService.updateTradeStatus(dto);
+	}
 }

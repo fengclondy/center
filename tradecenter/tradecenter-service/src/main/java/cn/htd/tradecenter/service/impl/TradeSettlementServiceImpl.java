@@ -37,7 +37,6 @@ import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberDetailInfo;
 import cn.htd.membercenter.dto.MemberImportSuccInfoDTO;
 import cn.htd.membercenter.service.MemberBaseInfoService;
-import cn.htd.membercenter.service.MemberStatusService;
 import cn.htd.tradecenter.common.constant.SettlementConstants;
 import cn.htd.tradecenter.common.enums.SettlementEnum;
 import cn.htd.tradecenter.common.enums.SettlementStatusEnum;
@@ -107,9 +106,6 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 	
 	@Resource
 	private TradeSettlementWithdrawDAO tradeSettlementWithdrawDAO;
-	
-	@Resource
-	private MemberStatusService memberStatusService;
 	
 	@Resource
 	private TraSetComOpeDAO traSetComOpeDAO;
@@ -1304,6 +1300,20 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 		params.put("statusText", SettlementStatusEnum.SETTLEMENT_STATUS_13.value());
 		return updateTradeStatus(params);
 	}
+	
+	@Override
+	public int updateTradeStatus(TradeSettlementWithdrawDTO dto){
+		List<TradeSettlementWithdrawDTO> traSetWitDtos = tradeSettlementWithdrawDAO.queryTraSetWithdraw(dto);
+		if(CollectionUtils.isEmpty(traSetWitDtos)){
+			return 0;
+		}
+		Map<String,Object> params = new HashMap<String,Object>();
+		String settlementNo = traSetWitDtos.get(0).getSettlementNo();
+		params.put("settlementNo", settlementNo);
+		params.put("status", dto.getStatus());
+		params.put("statusText", dto.getStatusText());
+		return updateTradeStatus(params);
+	}
 
 	@Override
 	public void payOperation(TradeSettlementWithdrawDTO dto) {
@@ -1539,6 +1549,10 @@ public class TradeSettlementServiceImpl implements TradeSettlementService{
 				return null;
 			}
 			if("1".equals(result.getResult())){
+				//有外部供应商身份的平台公司，清分结算自动完成，不进行提款操作
+				params.put("status", SettlementStatusEnum.SETTLEMENT_STATUS_13.key());
+				params.put("statusText", SettlementStatusEnum.SETTLEMENT_STATUS_13.value());
+				updateTradeStatus(params);
 				ExecuteResult<MemberBaseInfoDTO> result1 = memberBaseInfoService.getInnerInfoByOuterHTDCode(tdtos.get(0).getSellerCode());
 				if(null == result1 ||null == result1.getResult()){
 					return null;

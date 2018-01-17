@@ -155,4 +155,11 @@ public interface TradeSettlementService {
     public int batchDistribution(TradeSettlementWithdrawDTO dto , List<String> merchantOrderNoList , String totalCommissionAmount , String batchReturnUrl);
     
     public void doSyncExternalTradeData(String settlementNo) throws Exception;
+    
+    /**
+     * 更新结算单状态
+     * @param params
+     * @return
+     */
+    public int updateTradeStatus(TradeSettlementWithdrawDTO dto);
 }

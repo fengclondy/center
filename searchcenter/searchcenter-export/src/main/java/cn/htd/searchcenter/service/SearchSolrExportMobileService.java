@@ -57,7 +57,7 @@ public interface SearchSolrExportMobileService {
 	 */
 	SearchDataGrid<String> searchItemMobile(String addressCode, String keyword,
 			Pager pager, Integer sort, Long buyerId, Long categoryId,
-			Long brandId, Long shopId, Long belongRelationSellerId,
+			Long brandId, Long shopId, Long belongRelationSellerId, String rowsFlag,
 			List<String> businessRelationSellerIdList, boolean isAccessJD,
 			List<String> shieldCidAndBrandId,
 			Map<String, List<String>> filterParam,
@@ -65,7 +65,7 @@ public interface SearchSolrExportMobileService {
 			List<String> itemCodeList);
 
 	List<Object> searchNewItemMobile(String query, String filterQuery,
-			List<String> businessRelationSellerIdList, Long buyerId);
+			List<String> businessRelationSellerIdList, Long buyerId, String rowsFlag);
 
 	List<Object> searchPopularityItemMobile(String query, String filterQuery,
 			List<String> businessRelationSellerIdList, Long buyerId,

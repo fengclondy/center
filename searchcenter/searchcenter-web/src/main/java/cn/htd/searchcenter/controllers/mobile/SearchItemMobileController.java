@@ -116,6 +116,7 @@ public class SearchItemMobileController {
 								itemForm.getCategoryId(),
 								itemForm.getBrandId(), itemForm.getShopId(),
 								itemForm.getBelongRelationSellerId(),
+								itemForm.getRowsFlag(),
 								businessRelationSellerIdList, isAccessJD,
 								shieldCidAndBrandId, filterParam,
 								promotionItemIdList, sellerIdList, itemCodeList);
@@ -123,13 +124,14 @@ public class SearchItemMobileController {
 					resultMap.put("dataList", dg.getDataList());
 					resultMap.put("screenMap", dg.getScreenMap());
 					resultMap.put("total", dg.getTotal());
-					if (null != itemForm.getShopId()) {
+					//rowsFlag为10的情况下是移动端专用的数据，一般情况下人气和新品只有在供应商搜索才给予展示
+					if (null != itemForm.getShopId() || "10".equals(itemForm.getRowsFlag())) {
 						List<Object> newItemList = searchSolrExportMobileService
 								.searchNewItemMobile(
 										dg.getShopActivityItemQuery(),
 										dg.getShopActivityItemFilterQuery(),
 										businessRelationSellerIdList,
-										itemForm.getBuyerId());
+										itemForm.getBuyerId(), itemForm.getRowsFlag());
 						List<Object> popularityItemList = new ArrayList<Object>();
 						if("1".equals(itemForm.getPromotionItemFlag())){
 							popularityItemList = searchSolrExportMobileService

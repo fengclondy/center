@@ -26,7 +26,9 @@ import cn.htd.goodscenter.service.ItemCategoryService;
 import cn.htd.goodscenter.service.ItemExportService;
 import cn.htd.goodscenter.service.venus.VmsBatchExportService;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
+import cn.htd.marketcenter.dto.TimelimitedSkuCountDTO;
 import cn.htd.marketcenter.service.TimelimitedInfoService;
+import cn.htd.marketcenter.service.TimelimitedSkuInfo4VMSService;
 import cn.htd.pricecenter.domain.ItemSkuBasePrice;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
@@ -90,7 +92,7 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
     private ItemExportService itemExportService;
 
     @Resource
-    private TimelimitedInfoService timelimitedInfoService;
+    private TimelimitedSkuInfo4VMSService timelimitedSkuInfo4VMSService;
 
     @Resource
     private ItemSalesDefaultAreaMapper itemSalesDefaultAreaMapper;
@@ -1007,9 +1009,10 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
     private Integer getPromotionStock(String skuCode) {
         Integer promotionQty = 0;
         try {
-            ExecuteResult<Integer> timelimitedInfoDTOResult = timelimitedInfoService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), skuCode);
-            if (timelimitedInfoDTOResult != null && timelimitedInfoDTOResult.isSuccess()) {
-                promotionQty = timelimitedInfoDTOResult.getResult() == null ? 0 : timelimitedInfoDTOResult.getResult();
+            ExecuteResult<TimelimitedSkuCountDTO> timelimitedInfoDTOResult = timelimitedSkuInfo4VMSService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), skuCode);
+            if(timelimitedInfoDTOResult != null && timelimitedInfoDTOResult.isSuccess() && timelimitedInfoDTOResult.getResult() != null) {
+                TimelimitedSkuCountDTO timelimitedSkuCountDTO = timelimitedInfoDTOResult.getResult();
+                promotionQty = timelimitedSkuCountDTO.getInvalidSkuCount() + timelimitedSkuCountDTO.getValidSkuCount();
             }
         } catch (Exception e) {
             logger.error(" 获取该商品在促销中心占用的库存出错, 出错信息：", e);

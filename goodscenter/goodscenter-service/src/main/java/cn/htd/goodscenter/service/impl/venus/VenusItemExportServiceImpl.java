@@ -11,6 +11,8 @@ import cn.htd.goodscenter.common.constants.ResultCodeEnum;
 import cn.htd.goodscenter.dao.*;
 import cn.htd.goodscenter.dto.vms.DefaultSaleAreaDTO;
 import cn.htd.goodscenter.service.venus.VmsItemExportService;
+import cn.htd.marketcenter.dto.TimelimitedSkuCountDTO;
+import cn.htd.marketcenter.service.TimelimitedSkuInfo4VMSService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -97,7 +99,6 @@ import cn.htd.goodscenter.service.impl.stock.ItemSkuPublishInfoUtil;
 import cn.htd.goodscenter.service.utils.ItemCodeGenerator;
 import cn.htd.goodscenter.service.utils.ItemDTOToDomainUtil;
 import cn.htd.goodscenter.service.venus.VenusItemExportService;
-import cn.htd.marketcenter.service.TimelimitedInfoService;
 import cn.htd.membercenter.dto.SellerInfoDTO;
 import cn.htd.membercenter.service.MemberBaseInfoService;
 import cn.htd.middleware.common.message.erp.ProductMessage;
@@ -109,8 +110,6 @@ import cn.htd.pricecenter.dto.HzgPriceInDTO;
 import cn.htd.pricecenter.dto.ItemSkuBasePriceDTO;
 import cn.htd.pricecenter.dto.StandardPriceDTO;
 import cn.htd.pricecenter.service.ItemSkuPriceService;
-
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 
 @Service("venusItemExportService")
@@ -151,7 +150,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	@Resource
 	private ItemDraftDescribeMapper itemDraftDescribeMapper;
 	@Resource
-	private TimelimitedInfoService timelimitedInfoService;
+	private TimelimitedSkuInfo4VMSService timelimitedSkuInfo4VMSService;
 	@Resource
 	private DictionaryUtils dictionaryUtils;
 	@Resource
@@ -1064,13 +1063,8 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				venusItemSkuPublishInfoDetailOutDTO.setStandardPriceDTO(queryStandardPriceExeResult.getResult());
 			}
 			//查询促销锁定库存
-			ExecuteResult<Integer> timelimitedInfoDTOResult = timelimitedInfoService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), venusItemSkuPublishInfoDetailOutDTO.getSkuCode());
-			
-			if(timelimitedInfoDTOResult!=null && timelimitedInfoDTOResult.isSuccess()){
-				String promotionQty=timelimitedInfoDTOResult.getResult()==null ? "0":
-					timelimitedInfoDTOResult.getResult() + "";
-				venusItemSkuPublishInfoDetailOutDTO.setPromotionReserveQty(promotionQty);
-			}
+			Integer promotionQty = getPromotionQty(venusItemSkuPublishInfoDetailOutDTO.getSkuCode());
+			venusItemSkuPublishInfoDetailOutDTO.setPromotionReserveQty(promotionQty + "");
 			//设置单位
 			String unitValue = dictionaryUtils.getNameByValue(DictionaryConst.TYPE_ITEM_UNIT, venusItemSkuPublishInfoDetailOutDTO.getUnit());
 			venusItemSkuPublishInfoDetailOutDTO.setUnit(unitValue);
@@ -1764,18 +1758,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 					if(itemSkuPublishInfo==null){
 						//先判断剩余可用库存
 						Integer leftAvaliableStockQty=getLeftAvaliableStockQty(item.getItemId(),venusItemSetShelfStatusInDTO.getSupplierCode());
-						
-						Integer promotionQty=0;//需要获取促销占用的库存数据
-						
-						//查询促销锁定库存
-						ExecuteResult<Integer> timelimitedInfoDTOResult=
-								timelimitedInfoService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), itemSku.getSkuCode());
-						
-						if(timelimitedInfoDTOResult!=null && timelimitedInfoDTOResult.isSuccess()&&
-								timelimitedInfoDTOResult.getResult()!=null){
-							promotionQty=timelimitedInfoDTOResult.getResult();
-						}
-						
+						Integer promotionQty = this.getPromotionQty(itemSku.getSkuCode());//需要获取促销占用的库存数据
 						leftAvaliableStockQty=leftAvaliableStockQty-promotionQty;
 						
 						//获得另外一种上架模式数据
@@ -2006,18 +1989,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				anotherPublishInfoDisplayQty = 0;
 			}
 		}
-		
-		Integer promotionQty=0;//需要获取促销占用的库存数据
-		
-		//查询促销锁定库存
-		ExecuteResult<Integer> timelimitedInfoDTOResult=
-				timelimitedInfoService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), skuCode);
-		
-		if(timelimitedInfoDTOResult!=null && timelimitedInfoDTOResult.isSuccess()&&
-				timelimitedInfoDTOResult.getResult()!=null){
-			promotionQty=timelimitedInfoDTOResult.getResult();
-		}
-		
+		Integer promotionQty = getPromotionQty(skuCode);
 		//计算最终能够上架的库存数
 		Integer qty=realStockQty-anotherPublishInfoDisplayQty-promotionQty;
 		//大于实际可用库存
@@ -2026,8 +1998,21 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		}
 		return true;
 	}
-	
-	
+
+	private Integer getPromotionQty(String skuCode) {
+		Integer promotionQty = 0;
+		try {
+			ExecuteResult<TimelimitedSkuCountDTO> timelimitedInfoDTOResult = timelimitedSkuInfo4VMSService.getSkuTimelimitedAllCount(MessageIdUtils.generateMessageId(), skuCode);
+			if(timelimitedInfoDTOResult != null && timelimitedInfoDTOResult.isSuccess() && timelimitedInfoDTOResult.getResult() != null) {
+				TimelimitedSkuCountDTO timelimitedSkuCountDTO = timelimitedInfoDTOResult.getResult();
+				promotionQty = timelimitedSkuCountDTO.getInvalidSkuCount() + timelimitedSkuCountDTO.getValidSkuCount();
+			}
+		} catch (Exception e) {
+			logger.error(" 获取该商品在促销中心占用的库存出错, 出错信息：", e);
+		}
+		return promotionQty;
+	}
+
 	@Transactional
 	@Override
 	public ExecuteResult<String> txBatchDeleteItemSku(

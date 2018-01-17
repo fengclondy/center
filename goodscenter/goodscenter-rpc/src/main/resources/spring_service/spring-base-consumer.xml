@@ -18,6 +18,9 @@
 					 
 	<dubbo:reference id="timelimitedInfoService" interface="cn.htd.marketcenter.service.TimelimitedInfoService"
 					 version="${dubbo.version}" timeout="5000" check="false"/>
+
+	<dubbo:reference id="timelimitedSkuInfo4VMSService" interface="cn.htd.marketcenter.service.TimelimitedSkuInfo4VMSService"
+					 version="${dubbo.version}" timeout="5000" check="false"/>
 					 
 	<dubbo:reference id="shopCategorySellerExportService" interface="cn.htd.storecenter.service.ShopCategorySellerExportService"
 					 version="${dubbo.version}" timeout="5000" check="false"/>

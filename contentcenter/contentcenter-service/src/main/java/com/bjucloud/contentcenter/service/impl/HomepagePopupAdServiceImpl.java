@@ -142,11 +142,9 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
         } catch (ContentCenterBusinessException ccbe) {
             result.setCode(ccbe.getCode());
             result.addErrorMessage(ccbe.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
             result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
             result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
     }
@@ -190,11 +188,9 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
         } catch (ContentCenterBusinessException ccbe) {
             result.setCode(ccbe.getCode());
             result.addErrorMessage(ccbe.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
             result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
             result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
     }
@@ -234,11 +230,9 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
         } catch (ContentCenterBusinessException ccbe) {
             result.setCode(ccbe.getCode());
             result.addErrorMessage(ccbe.getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } catch (Exception e) {
             result.setCode(ReturnCodeEnum.SYSTEM_ERROR.getCode());
             result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return result;
     }
@@ -264,8 +258,7 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
             }
             terminalDesc = PopupAdTerminalTypeEnums.getTypeDesc(showPopupAdDTO.getTerminalTypeCode());
             if (StringUtils.isEmpty(terminalDesc)) {
-                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_VALUE_ERROR.getCode(),
-                        "展示终端类型不正确");
+                throw new ContentCenterBusinessException(ReturnCodeEnum.PARAMETER_VALUE_ERROR.getCode(), "展示终端类型不正确");
             }
             popupAd = homepagePopupAdDAO.queryShowPopupAd(showPopupAdDTO.getTerminalTypeCode());
             if (popupAd != null) {
@@ -301,16 +294,23 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
      * 插入弹屏广告信息
      *
      * @param popupAd
+     * @throws Exception
      */
-    private void insertPopupAdInfo(HomepagePopupAd popupAd) {
+    private void insertPopupAdInfo(HomepagePopupAd popupAd) throws Exception {
         Long adId = 0L;
-        homepagePopupAdDAO.add(popupAd);
-        adId = popupAd.getId();
-        if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
-            for (HomepagePopupTerminalAd popupTerminalAd : popupAd.getTerminalAdList()) {
-                popupTerminalAd.setAdId(adId);
+
+        try {
+            homepagePopupAdDAO.add(popupAd);
+            adId = popupAd.getId();
+            if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
+                for (HomepagePopupTerminalAd popupTerminalAd : popupAd.getTerminalAdList()) {
+                    popupTerminalAd.setAdId(adId);
+                }
+                homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
             }
-            homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw e;
         }
     }
 
@@ -318,23 +318,28 @@ public class HomepagePopupAdServiceImpl implements HomepagePopupAdService {
      * 更新弹屏广告信息
      *
      * @param popupAd
+     * @throws Exception
      */
-    private void updatePopupAdInfo(HomepagePopupAd popupAd) {
+    private void updatePopupAdInfo(HomepagePopupAd popupAd) throws Exception {
         Long adId = popupAd.getId();
         int count = 0;
-
         HomepagePopupTerminalAd terminalCondition = new HomepagePopupTerminalAd();
-        terminalCondition.setAdId(adId);
-        terminalCondition.setModifyId(popupAd.getModifyId());
-        terminalCondition.setModifyName(popupAd.getModifyName());
-        count = homepagePopupAdDAO.update(popupAd);
-        if (count != 1) {
-            throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
-                    ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
-        }
-        homepagePopupAdTerminalDAO.deleteByAdId(terminalCondition);
-        if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
-            homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
+        try {
+            terminalCondition.setAdId(adId);
+            terminalCondition.setModifyId(popupAd.getModifyId());
+            terminalCondition.setModifyName(popupAd.getModifyName());
+            count = homepagePopupAdDAO.update(popupAd);
+            if (count != 1) {
+                throw new ContentCenterBusinessException(ReturnCodeEnum.AD_NOT_EXISTS.getCode(),
+                        ReturnCodeEnum.AD_NOT_EXISTS.getDesc());
+            }
+            homepagePopupAdTerminalDAO.deleteByAdId(terminalCondition);
+            if (popupAd.getTerminalAdList() != null && !popupAd.getTerminalAdList().isEmpty()) {
+                homepagePopupAdTerminalDAO.insertList(popupAd.getTerminalAdList());
+            }
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw e;
         }
     }
 

@@ -69,7 +69,7 @@ public interface SearchSolrExportMobileService {
 
 	List<Object> searchPopularityItemMobile(String query, String filterQuery,
 			List<String> businessRelationSellerIdList, Long buyerId,
-			List<Object> newItemList);
+			String rowsFlag, List<Object> newItemList);
 
 	/**
 	 * 超级老板手机端筛选项搜索

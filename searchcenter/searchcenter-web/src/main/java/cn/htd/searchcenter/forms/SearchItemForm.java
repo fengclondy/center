@@ -29,7 +29,16 @@ public class SearchItemForm {
 	private String sellerIdList;
 	private String itemCodeList;
 	private String promotionItemFlag;
+	private String rowsFlag;
 	
+	public String getRowsFlag() {
+		return rowsFlag;
+	}
+
+	public void setRowsFlag(String rowsFlag) {
+		this.rowsFlag = rowsFlag;
+	}
+
 	public String getPromotionItemFlag() {
 		return promotionItemFlag;
 	}

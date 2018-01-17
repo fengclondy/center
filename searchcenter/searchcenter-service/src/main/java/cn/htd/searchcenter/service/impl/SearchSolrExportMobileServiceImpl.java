@@ -62,30 +62,30 @@ public class SearchSolrExportMobileServiceImpl implements
 	private HttpSolrClient itemAttrSolrClient;
 
 	public static void main(String[] args) {
-		SearchSolrExportMobileServiceImpl service = new SearchSolrExportMobileServiceImpl();
-		service.setShopSolrClient("http://171.16.47.87:8983/solr/shop");
-		service.setItemSolrClient("http://171.16.47.87:8983/solr/item");
-		service.setItemAttrSolrClient("http://172.16.47.87:8983/solr/attr");
-		List<Object> newItemList = new ArrayList<Object>();
-		ItemData data = new ItemData();
-		data.setId("2904394");
-		newItemList.add(data);
-		List<String> busList = new ArrayList<String>();
-		busList.add("176062273");
-		String query = "(shopId:532)";
-		String filter = "(((((shelvesFlag:3 OR shelvesFlag:4) AND (  vbc:17606532134 OR vbc:17606600110 OR vbc:17606208134 OR vbc:17606420353 OR vbc:17606468355 OR vbc:1760678134 OR vbc:17606748353 OR vbc:17606212134 OR vbc:1760677353 OR vbc:176063109 OR vbc:17606623353 OR vbc:17606419134 OR vbc:1760633388 OR vbc:17606532353 OR vbc:17606822352 OR vbc:17606479273 OR vbc:17606784273 OR vbc:17606468353 OR vbc:17606600353 OR vbc:17606534352 OR vbc:17606612353 OR vbc:176063411158 OR vbc:17606120352 OR vbc:17606118 OR vbc:17606485353 OR vbc:1760611110 OR vbc:17606136353 OR vbc:1760611352 OR vbc:17606416353 OR vbc:1760611363 OR vbc:176063353 OR vbc:17606496134 OR vbc:17606487134 OR vbc:1760610353 OR vbc:17606419353 OR vbc:176062352 OR vbc:17606169366 OR vbc:17606296353 OR vbc:17606468134 OR vbc:17606353353 OR vbc:17606465353 OR vbc:17606397353 OR vbc:1760671151 OR vbc:1760674110 OR vbc:1760691110 OR vbc:17606739109 OR vbc:1760611214 OR vbc:176063352 OR vbc:17606468273 OR vbc:1760611353 OR vbc:17606532248 OR vbc:176062353 OR vbc:1760668352 OR vbc:17606600134 OR vbc:1760653188 OR vbc:1760691268 OR vbc:1760691248 OR vbc:517488206 OR vbc:517532353 OR vbc:517468353 OR vbc:1760653289 OR vbc:176063340326 OR vbc:5171395291 OR vbc:17606662134 OR vbc:1760653257 OR vbc:17606426316 OR vbc:17606305352 OR vbc:17606536352 OR vbc:517246273 OR vbc:517494291 OR vbc:5172139352 OR vbc:17606530353 OR vbc:17606188 OR vbc:1760663111158 OR vbc:1760674313 OR vbc:176069134 OR vbc:17606579 OR vbc:176061122 OR vbc:1760677207 OR vbc:1760682295 OR vbc:1760653433 OR vbc:176067361 OR vbc:176066461 OR vbc:1760610615 OR vbc:17606103240349 OR vbc:17606532352 OR vbc:1760671273 OR vbc:176069071 OR vbc:1760634011158 OR vbc:17606531319 OR vbc:17606352134 OR vbc:17606533315 OR vbc:17606571352 OR vbc:1760653256 OR vbc:1760682215 OR vbc:176064871 OR vbc:17606166273 OR vbc:176062134 OR vbc:17606340109 OR vbc:17606197927 OR vbc:176062273 OR vbc:1760659302 OR vbc:176063273 OR vbc:1760621352 OR vbc:517532109 OR vbc:17606531151 OR vbc:17606479413 OR vbc:17606564134 OR vbc:5171493291 OR vbc:517232557 OR vbc:38142464353 OR vbc:517110098 OR vbc:517352352 OR vbc:17606909134 OR vbc:176061182485 OR vbc:17606479134 OR vbc:176061008438 OR vbc:1760666933 OR vbc:17606361 OR vbc:17026600353 )) OR shelvesFlag:1 OR shelvesFlag:2 ) AND ((areaCode:3201 OR areaCode:32) OR isSalesWholeCountry:true NOT shelvesFlag:4))) AND hasQuantity:true ";
-		List<Object> popularityItemList = service
-				.searchPopularityItemMobile(
-						query,
-						filter,
-						busList,
-						null, newItemList);
-		for (Object object : popularityItemList) {
-			if (object instanceof ItemData) {
-				ItemData d = (ItemData) object;
-				System.out.println(d.getItemName());
-			}
-		}
+//		SearchSolrExportMobileServiceImpl service = new SearchSolrExportMobileServiceImpl();
+//		service.setShopSolrClient("http://171.16.47.87:8983/solr/shop");
+//		service.setItemSolrClient("http://171.16.47.87:8983/solr/item");
+//		service.setItemAttrSolrClient("http://172.16.47.87:8983/solr/attr");
+//		List<Object> newItemList = new ArrayList<Object>();
+//		ItemData data = new ItemData();
+//		data.setId("2904394");
+//		newItemList.add(data);
+//		List<String> busList = new ArrayList<String>();
+//		busList.add("176062273");
+//		String query = "(shopId:532)";
+//		String filter = "(((((shelvesFlag:3 OR shelvesFlag:4) AND (  vbc:17606532134 OR vbc:17606600110 OR vbc:17606208134 OR vbc:17606420353 OR vbc:17606468355 OR vbc:1760678134 OR vbc:17606748353 OR vbc:17606212134 OR vbc:1760677353 OR vbc:176063109 OR vbc:17606623353 OR vbc:17606419134 OR vbc:1760633388 OR vbc:17606532353 OR vbc:17606822352 OR vbc:17606479273 OR vbc:17606784273 OR vbc:17606468353 OR vbc:17606600353 OR vbc:17606534352 OR vbc:17606612353 OR vbc:176063411158 OR vbc:17606120352 OR vbc:17606118 OR vbc:17606485353 OR vbc:1760611110 OR vbc:17606136353 OR vbc:1760611352 OR vbc:17606416353 OR vbc:1760611363 OR vbc:176063353 OR vbc:17606496134 OR vbc:17606487134 OR vbc:1760610353 OR vbc:17606419353 OR vbc:176062352 OR vbc:17606169366 OR vbc:17606296353 OR vbc:17606468134 OR vbc:17606353353 OR vbc:17606465353 OR vbc:17606397353 OR vbc:1760671151 OR vbc:1760674110 OR vbc:1760691110 OR vbc:17606739109 OR vbc:1760611214 OR vbc:176063352 OR vbc:17606468273 OR vbc:1760611353 OR vbc:17606532248 OR vbc:176062353 OR vbc:1760668352 OR vbc:17606600134 OR vbc:1760653188 OR vbc:1760691268 OR vbc:1760691248 OR vbc:517488206 OR vbc:517532353 OR vbc:517468353 OR vbc:1760653289 OR vbc:176063340326 OR vbc:5171395291 OR vbc:17606662134 OR vbc:1760653257 OR vbc:17606426316 OR vbc:17606305352 OR vbc:17606536352 OR vbc:517246273 OR vbc:517494291 OR vbc:5172139352 OR vbc:17606530353 OR vbc:17606188 OR vbc:1760663111158 OR vbc:1760674313 OR vbc:176069134 OR vbc:17606579 OR vbc:176061122 OR vbc:1760677207 OR vbc:1760682295 OR vbc:1760653433 OR vbc:176067361 OR vbc:176066461 OR vbc:1760610615 OR vbc:17606103240349 OR vbc:17606532352 OR vbc:1760671273 OR vbc:176069071 OR vbc:1760634011158 OR vbc:17606531319 OR vbc:17606352134 OR vbc:17606533315 OR vbc:17606571352 OR vbc:1760653256 OR vbc:1760682215 OR vbc:176064871 OR vbc:17606166273 OR vbc:176062134 OR vbc:17606340109 OR vbc:17606197927 OR vbc:176062273 OR vbc:1760659302 OR vbc:176063273 OR vbc:1760621352 OR vbc:517532109 OR vbc:17606531151 OR vbc:17606479413 OR vbc:17606564134 OR vbc:5171493291 OR vbc:517232557 OR vbc:38142464353 OR vbc:517110098 OR vbc:517352352 OR vbc:17606909134 OR vbc:176061182485 OR vbc:17606479134 OR vbc:176061008438 OR vbc:1760666933 OR vbc:17606361 OR vbc:17026600353 )) OR shelvesFlag:1 OR shelvesFlag:2 ) AND ((areaCode:3201 OR areaCode:32) OR isSalesWholeCountry:true NOT shelvesFlag:4))) AND hasQuantity:true ";
+//		List<Object> popularityItemList = service
+//				.searchPopularityItemMobile(
+//						query,
+//						filter,
+//						busList,
+//						null, newItemList);
+//		for (Object object : popularityItemList) {
+//			if (object instanceof ItemData) {
+//				ItemData d = (ItemData) object;
+//				System.out.println(d.getItemName());
+//			}
+//		}
 	}
 
 //	public SearchDataGrid<String> searchItemMobile(String addressCode,
@@ -743,7 +743,7 @@ public class SearchSolrExportMobileServiceImpl implements
 	@Override
 	public List<Object> searchPopularityItemMobile(String query,
 			String filterQuery, List<String> businessRelationSellerIdList,
-			Long buyerId, List<Object> newItemList) {
+			Long buyerId, String rowsFlag, List<Object> newItemList) {
 		logger.info("come in searchPopularityItemMobile start");
 		logger.info("searchPopularityItemMobile businessRelationSellerIdList:" + businessRelationSellerIdList);
 		logger.info("searchPopularityItemMobile newItemList:" + JSON.toJSONString(newItemList));
@@ -771,7 +771,7 @@ public class SearchSolrExportMobileServiceImpl implements
 				q.setQuery(query);
 				q.setFilterQueries(filterQuery);
 				q.addSort("salesVolume", ORDER.desc);
-				q.setRows(4);
+				q.setRows(Integer.parseInt(rowsFlag));
 				QueryResponse queryResponse = itemSolrClient.query(q,
 						METHOD.POST);
 				SolrDocumentList results = queryResponse.getResults();

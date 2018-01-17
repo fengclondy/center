@@ -184,8 +184,16 @@ public class MemberVerifySaveServiceImpl implements MemberVerifySaveService {
 						transactionRelationService.updateTransactionRelation(transactionRelationDTO);
 					}
 					rs.setResultMessage("success");
+				}else{
+					rs.addErrorMessage("会员不是待审核状态" );
+					logger.error("执行方法【saveMemberVerifyInfo】报错：{} 会员不是待审核状态！");
+					rs.setResultMessage("error");
 				}
 
+			}else{
+				rs.addErrorMessage("参数异常" );
+				logger.error("执行方法【saveMemberVerifyInfo】报错：{} 参数异常！");
+				rs.setResultMessage("error");
 			}
 
 		} catch (Exception e) {

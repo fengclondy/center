@@ -99,10 +99,17 @@ public interface BoxRelationshipDAO {
 	public List<MemberShipDTO> queryBoxRelationshipList(@Param("memberCode") String memberCode);
 	
 	/**
-	 * 根基会员code精确查询公司名称
+	 * 根据会员code精确查询公司名称
 	 * @param memberId
 	 * @return
 	 */
-	public String selectCompanyName(@Param("memberCode") String memberId);
+	public String selectCompanyName(@Param("memberCode") String memberId,@Param("memberName") String memberName);
+	
+	/**
+	 * 根据会员名称模糊查询公司名称列表
+	 * @param memberName
+	 * @return
+	 */
+	public List<String> selectCompanyNameList(@Param("memberName") String memberName);
 	
 }

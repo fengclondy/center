@@ -33,7 +33,7 @@
           and delete_flag = 0
     </select>
     <!-- 批量插入记录 -->
-    <insert id="insertList" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+    <insert id="insertList" parameterType="java.util.List">
         insert into homepage_popup_ad_terminal
         <trim prefix="(" suffix=")" suffixOverrides=",">
             ad_id,

@@ -37,6 +37,8 @@ import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
 import cn.htd.membercenter.dao.ConsigneeAddressDAO;
+import cn.htd.membercenter.dao.ContractDAO;
+import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.dao.MemberBusinessRelationDAO;
 import cn.htd.membercenter.dao.MemberGradeDAO;
@@ -52,7 +54,9 @@ import cn.htd.membercenter.dto.BindingBankCardCallbackDTO;
 import cn.htd.membercenter.dto.BindingBankCardDTO;
 import cn.htd.membercenter.dto.BuyerGradeInfoDTO;
 import cn.htd.membercenter.dto.CategoryBrandDTO;
+import cn.htd.membercenter.dto.ContractSignRemindInfoDTO;
 import cn.htd.membercenter.dto.LegalPerson;
+import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberBaseInfoDTO;
 import cn.htd.membercenter.dto.MemberBusinessRelationDTO;
 import cn.htd.membercenter.dto.MemberConsigAddressDTO;
@@ -123,6 +127,12 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 
 	@Resource
 	BelongRelationshipDAO belongRelationshipDao;
+	
+	@Resource
+	private ContractDAO contractDAO;
+	
+	@Resource
+	private MemberBaseDAO memberBaseDAO;
 
 	@Override
 	public ExecuteResult<String> applyNoBelongRelationship(BelongRelationshipDTO belongRelationshipDto) {
@@ -359,6 +369,7 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 					if (applyBusiRelation == null) {
 						businessRelatVerifyDto.setErpStatus(ErpStatusEnum.PENDING.getValue());
 						applyRelationshipDao.insertBoxRelationInfo(businessRelatVerifyDto);
+						updateSignRemindFlagToIsNeed(businessRelatVerifyDto);
 					}
 				}
 				for (int i = 0; i < categoryBrandList.size(); i++) {
@@ -395,6 +406,45 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 			rs.setResultMessage("error");
 		}
 		return rs;
+	}
+	
+	/**
+	 * Description: 重置会员店提醒信息 <br> 
+	 *  
+	 * @author zhoutong <br>
+	 * @taskId <br>
+	 * @param 
+	 * @return <br>
+	 */ 
+	public void updateSignRemindFlagToIsNeed(ApplyBusiRelationDTO applyBusiRelationDTO) throws Exception {
+		logger.info("updateSignRemindFlag方法已进入");
+		//查询供应商信息
+		MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+		vendorBaseDTO.setMemberId(applyBusiRelationDTO.getSellerId() + "");
+		vendorBaseDTO.setBuyerSellerType("2");
+		MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoById(vendorBaseDTO);
+		if ("0801".equals(vendorBase.getCompanyCode())) {
+			//如果是汇通达本部直接return
+			return;
+		}
+		//查询会员店信息
+		MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+		memberBaseDTO.setMemberId(applyBusiRelationDTO.getMemberId() + "");
+		memberBaseDTO.setBuyerSellerType("1");
+		MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoById(memberBaseDTO);
+		String memberCode = memberBase.getMemberCode();
+		Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
+		ContractSignRemindInfoDTO contractSignRemindInfoDTO = new ContractSignRemindInfoDTO();
+		contractSignRemindInfoDTO.setMemberCode(memberCode);
+		contractSignRemindInfoDTO.setModifyId(applyBusiRelationDTO.getCreateId());
+		contractSignRemindInfoDTO.setModifyName(applyBusiRelationDTO.getCreateName());
+		//重置为需要提醒
+		contractSignRemindInfoDTO.setIsNeedRemind(0);
+		if (remindFlag != null && remindFlag != 0) {
+			//查询到的提醒标志不为空 且标志不为0 表示需要提醒更新为0 
+			contractDAO.updateContractSignRemindInfo(contractSignRemindInfoDTO);
+		}
+		logger.info("updateSignRemindFlag方法已结束");
 	}
 
 	@Override

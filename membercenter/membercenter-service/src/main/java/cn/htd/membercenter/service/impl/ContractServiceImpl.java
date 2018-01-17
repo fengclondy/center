@@ -19,6 +19,8 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.dao.util.RedisDB;
+import cn.htd.common.dto.AddressInfo;
+import cn.htd.common.util.AddressUtils;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
 import cn.htd.membercenter.dao.ContractDAO;
 import cn.htd.membercenter.dao.MemberBaseDAO;
@@ -26,6 +28,7 @@ import cn.htd.membercenter.dto.ContractInfoDTO;
 import cn.htd.membercenter.dto.ContractListInfo;
 import cn.htd.membercenter.dto.ContractRemindInfoDTO;
 import cn.htd.membercenter.dto.ContractSignRemindInfoDTO;
+import cn.htd.membercenter.dto.MemberAddrInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberShipDTO;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
@@ -61,6 +64,9 @@ public class ContractServiceImpl implements ContractService {
 	
 	@Resource
 	private RedisDB redisDB;
+	
+	@Resource
+	private AddressUtils addressUtil;
 
 	/**
 	 * Description: 查询合同列表 <br> 
@@ -97,7 +103,7 @@ public class ContractServiceImpl implements ContractService {
 			MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
 			memberBaseDTO.setMemberCode(memberCode);
 			memberBaseDTO.setBuyerSellerType("1");
-			MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+			MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 			if (null == vendorCodeStrList || vendorCodeStrList.isEmpty()) {
 				
 				//如果传入的供应商编码集合为空
@@ -157,11 +163,11 @@ public class ContractServiceImpl implements ContractService {
 	 * @param vendorCode
 	 * @return <br>
 	 */ 
-	public ContractInfoDTO getContractInfoDTOByCode(MemberBaseDTO memberBase, String vendorCode) throws Exception {
+	public ContractInfoDTO getContractInfoDTOByCode(MemberAddrInfoDTO memberBase, String vendorCode) throws Exception {
 		MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
 		vendorBaseDTO.setMemberCode(vendorCode);
 		vendorBaseDTO.setBuyerSellerType("2");
-		MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+		MemberAddrInfoDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
 		if (null == vendorBase) {
 			logger.error("查询不到对应的供应商信息 供应商编码=" + vendorCode);
 			throw new Exception("查询不到对应的供应商信息");
@@ -170,12 +176,12 @@ public class ContractServiceImpl implements ContractService {
 		noSigncontract.setContractStatus("0");
 		noSigncontract.setMemberCode(memberBase.getMemberCode());
 		noSigncontract.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
-		noSigncontract.setMemberLocationAddr(memberBase.getLocationDetail());
+		noSigncontract.setMemberLocationAddr(memberBase.getLocationAddr());
 		noSigncontract.setMemberName(memberBase.getCompanyName());
 		noSigncontract.setVendorCode(vendorBase.getMemberCode());
 		noSigncontract.setVendorName(vendorBase.getCompanyName());
 		noSigncontract.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
-		noSigncontract.setVendorLocationAddr(vendorBase.getLocationDetail());
+		noSigncontract.setVendorLocationAddr(vendorBase.getLocationAddr());
 		return noSigncontract;
 	}
 	
@@ -189,7 +195,7 @@ public class ContractServiceImpl implements ContractService {
 	 * @param contractInfoDTOList
 	 * @return <br>
 	 */ 
-	public Map<String, Object> resultHandle(MemberBaseDTO memberBase, String contractStatus, Pager pager,
+	public Map<String, Object> resultHandle(MemberAddrInfoDTO memberBase, String contractStatus, Pager pager,
 			List<ContractInfoDTO> contractInfoDTOList) throws Exception {
 		logger.info("resultHandle方法已进入 对查询合同列表结果进行处理");
 		int page = pager.getPage();
@@ -247,7 +253,7 @@ public class ContractServiceImpl implements ContractService {
 		noSignContractInfoDTO.setVendorLocationAddr(vendorLocationAddr);
 		noSignContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
 		noSignContractInfoDTO.setMemberCode(memberBase.getMemberCode());
-		noSignContractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+		noSignContractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
 		noSignContractInfoDTO.setMemberName(memberBase.getCompanyName());
 		if (("".equals(contractStatus) || null == contractStatus) && page == 1) {
 			//未签订放进返回
@@ -333,19 +339,19 @@ public class ContractServiceImpl implements ContractService {
 						MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
 						memberBaseDTO.setMemberCode(memberCode);
 						memberBaseDTO.setBuyerSellerType("1");
-						MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+						MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 						MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
 						vendorBaseDTO.setMemberCode(memberShipDTO.getMemberCode());
 						vendorBaseDTO.setBuyerSellerType("2");
-						MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+						MemberAddrInfoDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
 						ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
 						contractInfoDTO.setMemberCode(memberCode);
 						contractInfoDTO.setMemberName(memberBase.getCompanyName());
-						contractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+						contractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
 						contractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
 						contractInfoDTO.setVendorCode(vendorBase.getMemberCode());
 						contractInfoDTO.setVendorName(vendorBase.getCompanyName());
-						contractInfoDTO.setVendorLocationAddr(vendorBase.getLocationDetail());
+						contractInfoDTO.setVendorLocationAddr(vendorBase.getLocationAddr());
 						contractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
 						needContractInfoList.add(contractInfoDTO);
 						result.setResultMessage("该会员店提醒标志为0 需要提醒");
@@ -394,7 +400,7 @@ public class ContractServiceImpl implements ContractService {
 			MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
 			memberBaseDTO.setMemberCode(memberCode);
 			memberBaseDTO.setBuyerSellerType("1");
-			MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+			MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 			returnContracInfotList.addAll(returnContractList);
 			if (null == memberShipList || memberShipList.isEmpty()) {
 				result.setResult(returnContracInfotList);
@@ -621,11 +627,11 @@ public class ContractServiceImpl implements ContractService {
 				MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
 				memberBaseDTO.setMemberCode(saveContractInfoDTO.getMemberCode());
 				memberBaseDTO.setBuyerSellerType("1");
-				MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+				MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 				MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
 				vendorBaseDTO.setMemberCode(saveContractInfoDTO.getVendorCode());
 				vendorBaseDTO.setBuyerSellerType("2");
-				MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+				MemberAddrInfoDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
 				if (null == memberBase) {
 					logger.error("查询不到对应的供应商信息 供应商编码=" + saveContractInfoDTO.getMemberCode());
 					throw new Exception("查询不到对应的供应商信息");
@@ -638,10 +644,10 @@ public class ContractServiceImpl implements ContractService {
 				saveContractInfoDTO.setContractCode(contractCode);
 				saveContractInfoDTO.setContractStatus(1);
 				saveContractInfoDTO.setMemberName(memberBase.getCompanyName());
-				saveContractInfoDTO.setMemberLocationAddr(memberBase.getLocationDetail());
+				saveContractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
 				saveContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
 				saveContractInfoDTO.setVendorName(vendorBase.getCompanyName());
-				saveContractInfoDTO.setVendorLocationAddr(vendorBase.getLocationDetail());
+				saveContractInfoDTO.setVendorLocationAddr(vendorBase.getLocationAddr());
 				saveContractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
 			}
 			contractDAO.insertContractInfo(saveContractInfoDTOList);

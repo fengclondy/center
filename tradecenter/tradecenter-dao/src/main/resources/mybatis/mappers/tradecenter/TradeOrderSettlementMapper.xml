@@ -116,12 +116,13 @@
  					o.order_status = #{orderStatus,jdbcType=VARCHAR}  
 			</foreach>
 		<!-- </if> -->
-		or (
+<!-- 		or (
 			<foreach collection="orderStatusCancelArray" item="orderStatusCancel" index="index" open=" (" separator="or" close=") ">
  					o.order_status = #{orderStatusCancel,jdbcType=VARCHAR}  
 			</foreach>
 			and o.is_cancel_order = #{isCancelOrder,jdbcType=VARCHAR}  
-		) )
+		)  -->
+		)
 		<if test="null != sortName and '' != sortName">
 		      order by ${sortName}  
 		    <if test="null != sortDir and '' != sortDir">
@@ -150,12 +151,13 @@
 			<foreach collection="orderStatusArray" item="orderStatus" index="index" open=" (" separator="or" close=") ">
  			 o.order_status = #{orderStatus,jdbcType=VARCHAR}  
 			</foreach>
-		or (
+<!-- 		or (
 			<foreach collection="orderStatusCancelArray" item="orderStatusCancel" index="index" open=" (" separator="or" close=") ">
  					o.order_status = #{orderStatusCancel,jdbcType=VARCHAR}  
 			</foreach>
 			and o.is_cancel_order = #{isCancelOrder,jdbcType=VARCHAR}  
-		) ) 
+		)  -->
+		) 
 	</select>
 	
 	<!-- 查询符合结算规则的订单里的所有供应商（外部供应商和商品+的订单，筛选出供应商） productChannelCode[渠道编码: 10 内部供应商 20 外部供应商 3010 京东商品＋] -->
@@ -173,12 +175,13 @@
 			<foreach collection="orderStatusArray" item="orderStatus" index="index" open=" (" separator="or" close=") ">
  			 o.order_status = #{orderStatus,jdbcType=VARCHAR}  
 			</foreach>
-		or (
+<!-- 		or (
 			<foreach collection="orderStatusCancelArray" item="orderStatusCancel" index="index" open=" (" separator="or" close=") ">
  					o.order_status = #{orderStatusCancel,jdbcType=VARCHAR}  
 			</foreach>
 			and o.is_cancel_order = #{isCancelOrder,jdbcType=VARCHAR}  
-		) )  
+		)  -->
+		)  
 		limit #{startNum},#{pageSize}
 	</select>
 	

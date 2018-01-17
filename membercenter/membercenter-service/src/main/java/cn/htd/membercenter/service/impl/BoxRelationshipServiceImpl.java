@@ -20,6 +20,7 @@ import cn.htd.membercenter.dao.ApplyRelationshipDAO;
 import cn.htd.membercenter.dao.BelongRelationshipDAO;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
 import cn.htd.membercenter.dao.ContractDAO;
+import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dao.MemberBaseOperationDAO;
 import cn.htd.membercenter.domain.BoxRelationship;
 import cn.htd.membercenter.dto.ApplyBusiRelationDTO;
@@ -47,6 +48,9 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	
 	@Resource
 	private ContractDAO contractDAO;
+	
+	@Resource
+	private MemberBaseDAO memberBaseDAO;
 
 	@Override
 	public ExecuteResult<DataGrid<BelongRelationshipDTO>> selectBoxRelationList(Pager page, String companyName,
@@ -162,10 +166,10 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	}
 	
 	@Override
-	public ExecuteResult<String> selectCompanyName(String memberCode) {
+	public ExecuteResult<String> selectCompanyName(String memberCode, String memberName) {
 		ExecuteResult<String> rs = new ExecuteResult<String>();
 		try {
-			String companyName = boxRelationshipDao.selectCompanyName(memberCode);
+			String companyName = boxRelationshipDao.selectCompanyName(memberCode, memberName);
 			if (StringUtils.isEmpty(companyName)) {
 				rs.setResultMessage("暂未找到对应的会员信息！！");
 				return rs;
@@ -176,6 +180,26 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("BoxRelationshipServiceImpl----->selectCompanyName=" + e);
+			rs.setResultMessage("error");
+		}
+		return rs;
+	}
+	
+	@Override
+	public ExecuteResult<List<String>> selectCompanyNameList(String memberName) {
+		ExecuteResult<List<String>> rs = new ExecuteResult<List<String>>();
+		try {
+			List<String> companyNameList = boxRelationshipDao.selectCompanyNameList(memberName);
+			if (StringUtils.isEmpty(memberName)) {
+				rs.setResultMessage("暂未找到对应的会员信息！！");
+				return rs;
+			}else{
+				rs.setCode(MemberCenterCodeEnum.SUCCESS.getCode());
+				rs.setResult(companyNameList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("BoxRelationshipServiceImpl----->selectCompanyNameList=" + e);
 			rs.setResultMessage("error");
 		}
 		return rs;
@@ -234,7 +258,7 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 									applyBusiRelationDTO.setErpStatus(ErpStatusEnum.PENDING.getValue());
 									try {
 										Long num = applyRelationshipDao.insertBoxRelationInfo(applyBusiRelationDTO);
-										updateSignRemindFlagToIsNeed(memberCode,applyBusiRelationDTO.getCreateId(),applyBusiRelationDTO.getCreateName());
+										updateSignRemindFlagToIsNeed(applyBusiRelationDTO);
 										if (num != null) {
 											boxIds.add(applyBusiRelationDTO.getBoxId());
 											sList.add(applyBusiRelationDTO);
@@ -414,32 +438,36 @@ public class BoxRelationshipServiceImpl implements BoxRelationshipService {
 	 *  
 	 * @author zhoutong <br>
 	 * @taskId <br>
-	 * @param memberCode
-	 * @param operationId
-	 * @param operationName
+	 * @param 
 	 * @return <br>
 	 */ 
-	public void updateSignRemindFlagToIsNeed(String memberCode, Long operationId, String operationName) {
-		logger.info("updateSignRemindFlag方法已进入会员店编码memberCode=" + memberCode);
-		if (StringUtils.isEmpty(memberCode)) {
-			logger.error("会员店编码为空  重置会员店提醒信息失败");
+	public void updateSignRemindFlagToIsNeed(ApplyBusiRelationDTO applyBusiRelationDTO) throws Exception {
+		logger.info("updateSignRemindFlag方法已进入");
+		//查询供应商信息
+		MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+		vendorBaseDTO.setMemberId(applyBusiRelationDTO.getSellerId() + "");
+		vendorBaseDTO.setBuyerSellerType("2");
+		MemberBaseDTO vendorBase = memberBaseDAO.queryMemberBaseInfoById(vendorBaseDTO);
+		if ("0801".equals(vendorBase.getCompanyCode())) {
+			//如果是汇通达本部直接return
 			return;
 		}
-		try {
-			Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
-			ContractSignRemindInfoDTO contractSignRemindInfoDTO = new ContractSignRemindInfoDTO();
-			contractSignRemindInfoDTO.setMemberCode(memberCode);
-			contractSignRemindInfoDTO.setModifyId(operationId);
-			contractSignRemindInfoDTO.setModifyName(operationName);
-			//重置为需要提醒
-			contractSignRemindInfoDTO.setIsNeedRemind(0);
-			if (remindFlag != null && remindFlag != 0) {
-				//查询到的提醒标志不为空 且标志不为0 表示需要提醒更新为0 
-				contractDAO.updateContractSignRemindInfo(contractSignRemindInfoDTO);
-			}
-			//其他情况标识需要提醒 无需重置
-		} catch (Exception e) {
-			logger.error("updateSignRemindFlag 方法保存或者重置提醒信息异常 异常信息:" + e);
+		//查询会员店信息
+		MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+		memberBaseDTO.setMemberId(applyBusiRelationDTO.getMemberId() + "");
+		memberBaseDTO.setBuyerSellerType("1");
+		MemberBaseDTO memberBase = memberBaseDAO.queryMemberBaseInfoById(memberBaseDTO);
+		String memberCode = memberBase.getMemberCode();
+		Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
+		ContractSignRemindInfoDTO contractSignRemindInfoDTO = new ContractSignRemindInfoDTO();
+		contractSignRemindInfoDTO.setMemberCode(memberCode);
+		contractSignRemindInfoDTO.setModifyId(applyBusiRelationDTO.getCreateId());
+		contractSignRemindInfoDTO.setModifyName(applyBusiRelationDTO.getCreateName());
+		//重置为需要提醒
+		contractSignRemindInfoDTO.setIsNeedRemind(0);
+		if (remindFlag != null && remindFlag != 0) {
+			//查询到的提醒标志不为空 且标志不为0 表示需要提醒更新为0 
+			contractDAO.updateContractSignRemindInfo(contractSignRemindInfoDTO);
 		}
 		logger.info("updateSignRemindFlag方法已结束");
 	}

@@ -5,13 +5,14 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import cn.htd.common.Pager;
+import cn.htd.membercenter.dto.MemberAddrInfoDTO;
 import cn.htd.membercenter.dto.MemberBaseDTO;
 
 public interface MemberBaseDAO {
 
 	public MemberBaseDTO queryMemberBaseInfoById(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO);
 	
-	public MemberBaseDTO queryMemberBaseInfoByMemberCodeAndType(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO);
+	public MemberAddrInfoDTO queryMemberBaseInfoByMemberCodeAndType(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO);
 
 	public List<MemberBaseDTO> queryMemberInfoBySellerId(@Param("memberBaseDTO") MemberBaseDTO memberBaseDTO,
 			@Param("pager") Pager<MemberBaseDTO> pager);

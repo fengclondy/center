@@ -307,6 +307,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             return executeResult;
         }
         // 商品编码转模板编码
+        venusStockItemInDTO.setProductCode(StringUtils.isEmpty(venusStockItemInDTO.getProductCode()) ? null : venusStockItemInDTO.getProductCode().trim());
+        venusStockItemInDTO.setProductName(StringUtils.isEmpty(venusStockItemInDTO.getProductName()) ? null : venusStockItemInDTO.getProductName());
         String itemCode = venusStockItemInDTO.getProductCode();
         if (StringUtils.isNotEmpty(itemCode)) {
             Item item = this.itemMybatisDAO.queryItemByItemCode(itemCode);

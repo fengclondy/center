@@ -106,6 +106,9 @@ public class SearchItemMobileController {
 						}
 					}
 				}
+				if(StringUtils.isEmpty(itemForm.getRowsFlag())){
+					itemForm.setRowsFlag("4");
+				}
 				SearchDataGrid<String> dg = searchSolrExportMobileService
 						.searchItemMobile(itemForm.getAddressCode(),
 								itemForm.getKeyword(), pager,
@@ -134,14 +137,14 @@ public class SearchItemMobileController {
 											dg.getShopActivityItemQuery(),
 											dg.getShopActivityItemFilterQuery(),
 											businessRelationSellerIdList,
-											itemForm.getBuyerId(), null);
+											itemForm.getBuyerId(), itemForm.getRowsFlag(), null);
 						}else{
 							popularityItemList = searchSolrExportMobileService
 									.searchPopularityItemMobile(
 											dg.getShopActivityItemQuery(),
 											dg.getShopActivityItemFilterQuery(),
 											businessRelationSellerIdList,
-											itemForm.getBuyerId(), newItemList);
+											itemForm.getBuyerId(),itemForm.getRowsFlag(), newItemList);
 						}
 						resultMap.put("popularityItem", popularityItemList);
 						resultMap.put("newItem", newItemList);

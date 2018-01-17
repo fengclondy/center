@@ -980,18 +980,16 @@ public class MyMemberServiceImpl implements MyMemberService {
 			}
 			if (myMemberDtoList != null) {
 				if (myMemberDtoList.size() > GlobalConstant.MAXIMPORT_EXPORT_COUNT) {
-					rs.setResultMessage("导出最大条数不能超过" + GlobalConstant.MAXIMPORT_EXPORT_COUNT + "条");
+					rs.addErrorMessage("导出最大条数不能超过" + GlobalConstant.MAXIMPORT_EXPORT_COUNT + "条");
 				} else {
 					dg.setRows(myMemberDtoList);
 					rs.setResult(dg);
 				}
 			} else {
 				rs.addErrorMessage("要查询的数据不存在");
-				rs.setResultMessage("fail");
 			}
 		} catch (Exception e) {
 			logger.error("MyMemberServiceImpl----->exportMemberList=" + e);
-			rs.setResultMessage("error");
 			rs.addErrorMessage("导出会员查询报错");
 		}
 		return rs;

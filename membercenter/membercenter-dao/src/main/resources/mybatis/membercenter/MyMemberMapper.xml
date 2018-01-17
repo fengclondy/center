@@ -411,6 +411,7 @@
     c.artificial_person_idcard artificialPersonIdcard,
     c.artificial_person_pic_src artificialPersonPicSrc,
     c.artificial_person_pic_back_src artificialPersonPicBackSrc,
+    c.artificial_person_idcard_pic_src artificialPersonIdcardPicSrc,
     l.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
     l.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
     l.buyer_business_license_id buyerBusinessLicenseId,

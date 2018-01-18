@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.tradecenter.dao.VMSOrderDAO" >
+    <resultMap id="BaseResultMap" type="cn.htd.tradecenter.dto.TradeOrdersDTO" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="site" property="site" jdbcType="VARCHAR" />
+        <result column="buyer_code" property="buyerCode" jdbcType="VARCHAR" />
+        <result column="buyer_type" property="buyerType" jdbcType="VARCHAR" />
+        <result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+        <result column="seller_code" property="sellerCode" jdbcType="VARCHAR" />
+        <result column="seller_type" property="sellerType" jdbcType="VARCHAR" />
+        <result column="seller_name" property="sellerName" jdbcType="VARCHAR" />
+        <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+        <result column="order_from" property="orderFrom" jdbcType="VARCHAR" />
+        <result column="sales_type" property="salesType" jdbcType="VARCHAR" />
+        <result column="sales_department_code" property="salesDepartmentCode" jdbcType="VARCHAR" />
+        <result column="has_productplus_flag" property="hasProductplusFlag" jdbcType="TINYINT" />
+        <result column="total_goods_count" property="totalGoodsCount" jdbcType="INTEGER" />
+        <result column="total_goods_amount" property="totalGoodsAmount" jdbcType="DECIMAL" />
+        <result column="total_freight" property="totalFreight" jdbcType="DECIMAL" />
+        <result column="total_discount_amount" property="totalDiscountAmount" jdbcType="DECIMAL" />
+        <result column="shop_discount_amount" property="shopDiscountAmount" jdbcType="DECIMAL" />
+        <result column="platform_discount_amount" property="platformDiscountAmount" jdbcType="DECIMAL" />
+        <result column="used_rebate_amount" property="usedRebateAmount" jdbcType="DECIMAL" />
+        <result column="bargaining_order_amount" property="bargainingOrderAmount" jdbcType="DECIMAL" />
+        <result column="bargaining_order_freight" property="bargainingOrderFreight" jdbcType="DECIMAL" />
+        <result column="order_total_amount" property="orderTotalAmount" jdbcType="DECIMAL" />
+        <result column="order_pay_amount" property="orderPayAmount" jdbcType="DECIMAL" />
+        <result column="create_order_time" property="createOrderTime" jdbcType="TIMESTAMP" />
+        <result column="has_used_coupon" property="hasUsedCoupon" jdbcType="TINYINT" />
+        <result column="is_change_price" property="isChangePrice" jdbcType="TINYINT" />
+        <result column="order_status" property="orderStatus" jdbcType="VARCHAR" />
+        <result column="order_receipt_time" property="orderReceiptTime" jdbcType="TIMESTAMP" />
+        <result column="order_error_status" property="orderErrorStatus" jdbcType="VARCHAR" />
+        <result column="order_error_time" property="orderErrorTime" jdbcType="TIMESTAMP" />
+        <result column="order_error_reason" property="orderErrorReason" jdbcType="VARCHAR" />
+        <result column="is_cancel_order" property="isCancelOrder" jdbcType="TINYINT" />
+        <result column="order_cancel_time" property="orderCancelTime" jdbcType="TIMESTAMP" />
+        <result column="order_cancel_member_id" property="orderCancelMemberId" jdbcType="BIGINT" />
+        <result column="order_cancel_member_name" property="orderCancelMemberName" jdbcType="VARCHAR" />
+        <result column="order_cancel_reason" property="orderCancelReason" jdbcType="VARCHAR" />
+        <result column="pay_type" property="payType" jdbcType="VARCHAR" />
+        <result column="pay_time_limit" property="payTimeLimit" jdbcType="TIMESTAMP" />
+        <result column="pay_order_time" property="payOrderTime" jdbcType="TIMESTAMP" />
+        <result column="pay_status" property="payStatus" jdbcType="VARCHAR" />
+        <result column="pay_serial_no" property="paySerialNo" jdbcType="VARCHAR" />
+        <result column="is_out_distribtion" property="isOutDistribtion" jdbcType="TINYINT" />
+        <result column="is_timelimited_order" property="isTimelimitedOrder" jdbcType="TINYINT" />
+        <result column="promotion_id" property="promotionId" jdbcType="VARCHAR" />
+        <result column="buyer_remarks" property="buyerRemarks" jdbcType="VARCHAR" />
+        <result column="order_remarks" property="orderRemarks" jdbcType="VARCHAR" />
+        <result column="is_need_invoice" property="isNeedInvoice" jdbcType="TINYINT" />
+        <result column="invoice_type" property="invoiceType" jdbcType="VARCHAR" />
+        <result column="invoice_notify" property="invoiceNotify" jdbcType="VARCHAR" />
+        <result column="invoice_company_name" property="invoiceCompanyName" jdbcType="VARCHAR" />
+        <result column="tax_man_id" property="taxManId" jdbcType="VARCHAR" />
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+        <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+        <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="invoice_address" property="invoiceAddress" jdbcType="VARCHAR" />
+        <result column="delivery_type" property="deliveryType" jdbcType="VARCHAR" />
+        <result column="consignee_name" property="consigneeName" jdbcType="VARCHAR" />
+        <result column="consignee_phone_num" property="consigneePhoneNum" jdbcType="VARCHAR" />
+        <result column="consignee_address" property="consigneeAddress" jdbcType="VARCHAR" />
+        <result column="consignee_address_province" property="consigneeAddressProvince" jdbcType="VARCHAR" />
+        <result column="consignee_address_city" property="consigneeAddressCity" jdbcType="VARCHAR" />
+        <result column="consignee_address_district" property="consigneeAddressDistrict" jdbcType="VARCHAR" />
+        <result column="consignee_address_town" property="consigneeAddressTown" jdbcType="VARCHAR" />
+        <result column="consignee_address_detail" property="consigneeAddressDetail" jdbcType="VARCHAR" />
+        <result column="post_code" property="postCode" jdbcType="VARCHAR" />
+        <result column="is_express_delivery" property="isExpressDelivery" jdbcType="TINYINT" />
+        <result column="logistics_status" property="logisticsStatus" jdbcType="VARCHAR" />
+        <result column="logistics_company" property="logisticsCompany" jdbcType="VARCHAR" />
+        <result column="logistics_no" property="logisticsNo" jdbcType="VARCHAR" />
+        <result column="used_activity_account_amount" property="usedActivityAccountAmount" jdbcType="DECIMAL" />
+        <result column="order_delete_status" property="orderDeleteStatus" jdbcType="TINYINT" />
+        <result column="create_id" property="createId" jdbcType="BIGINT" />
+        <result column="create_name" property="createName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+        <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+        <result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,
+        trade_no,
+        order_no,
+        site,
+        buyer_code,
+        buyer_type,
+        buyer_name,
+        seller_code,
+        seller_type,
+        seller_name,
+        shop_id,
+        shop_name,
+        order_from,
+        sales_type,
+        sales_department_code,
+        has_productplus_flag,
+        total_goods_count,
+        total_goods_amount,
+        total_freight,
+        total_discount_amount,
+        shop_discount_amount,
+        platform_discount_amount,
+        used_rebate_amount,
+        bargaining_order_amount,
+        bargaining_order_freight,
+        order_total_amount,
+        order_pay_amount,
+        create_order_time,
+        has_used_coupon,
+        is_change_price,
+        order_status,
+        order_receipt_time,
+        order_error_status,
+        order_error_time,
+        order_error_reason,
+        is_cancel_order,
+        order_cancel_time,
+        order_cancel_member_id,
+        order_cancel_member_name,
+        order_cancel_reason,
+        pay_type,
+        pay_time_limit,
+        pay_order_time,
+        pay_status,
+        pay_serial_no,
+        is_out_distribtion,
+        is_timelimited_order,
+        promotion_id,
+        buyer_remarks,
+        order_remarks,
+        is_need_invoice,
+        invoice_type,
+        invoice_notify,
+        invoice_company_name,
+        tax_man_id,
+        bank_name,
+        bank_account,
+        contact_phone,
+        invoice_address,
+        delivery_type,
+        consignee_name,
+        consignee_phone_num,
+        consignee_address,
+        consignee_address_province,
+        consignee_address_city,
+        consignee_address_district,
+        consignee_address_town,
+        consignee_address_detail,
+        post_code,
+        is_express_delivery,
+        logistics_status,
+        logistics_company,
+        logistics_no,
+        used_activity_account_amount,
+        order_delete_status,
+        create_id,
+        create_name,
+        create_time,
+        modify_id,
+        modify_name,
+        modify_time,
+        confirm_time
+    </sql>
+    <sql id="pagination_tail">
+        limit #{page.pageOffset} , #{page.rows}
+    </sql>
+    <sql id="where_fragement">
+        <if test="entity!=null">
+            <if test="entity.sellerCode != null and entity.sellerCode != ''">
+                and seller_code = #{entity.sellerCode}
+            </if>
+            <if test="entity.buyerCode != null and entity.buyerCode != ''">
+                and buyer_code = #{entity.buyerCode}
+            </if>
+            <if test="entity.searchStr != null and entity.searchStr != ''">
+                and (
+                order_no = #{entity.searchStr}
+                or consignee_phone_num = #{entity.searchStr}
+                or buyer_name like concat('%', #{entity.searchStr}, '%')
+                )
+            </if>
+            <if test="entity.buyerType != null and entity.buyerType != ''">
+                and buyer_type = #{entity.buyerType}
+            </if>
+            <if test="entity.createStart != null">
+                <![CDATA[ and create_order_time >= #{entity.createStart} ]]>
+            </if>
+            <if test="entity.createEnd != null">
+                <![CDATA[ and create_order_time <= #{entity.createEnd} ]]>
+            </if>
+            <if test="entity.orderStatusList != null and entity.orderStatusList.size > 0 ">
+                <![CDATA[ and order_status in ]]>
+                <foreach collection="entity.orderStatusList" item="status" index="index" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="entity.isCancelFlag != null and entity.isCancelFlag != -1 ">
+                <![CDATA[ and is_cancel_order = #{entity.isCancelFlag} ]]>
+            </if>
+            <if test="entity.isErrorFlag != null and entity.isErrorFlag == 0 ">
+                <![CDATA[ and order_error_status = '' ]]>
+            </if>
+            <if test="entity.isErrorFlag != null and entity.isErrorFlag == 1 ">
+                <![CDATA[ and order_error_status <> '' ]]>
+            </if>
+            <if test="entity.thirdCategoryId != null and entity.thirdCategoryId != ''">
+                and order_no in (select distinct(s.order_no) from trade_order_items s
+                where s.third_category_id = #{entity.thirdCategoryId})
+            </if>
+            <if test="entity.orderFrom != null and entity.orderFrom != '' ">
+                <![CDATA[ and order_from = #{entity.orderFrom} ]]>
+            </if>
+            <if test="entity.hasUsedCoupon != null and entity.hasUsedCoupon != ''">
+                and has_used_coupon = #{entity.hasUsedCoupon}
+            </if>
+            <if test="entity.isTimeLimitedOrder != null and entity.isTimeLimitedOrder != ''">
+                and is_timelimited_order = #{entity.isTimeLimitedOrder}
+            </if>
+        </if>
+    </sql>
+
+
+</mapper>

@@ -59,6 +59,21 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 
 	private String buyerCode;
 
+	// 1:超区域待审核 2：待支付可议价 3：待客户确认 4：已支付带拆单 5：下发ERP异常
+	private String searchFlag;
+	/**
+	 * 是否超出配送范围 0：未超出 1：超出
+	 */
+	private int isOutDistribtion;
+	/**
+	 * 是否使用优惠 0：未使用 1：使用
+	 */
+	private int hasUsedCoupon;
+	/**
+	 * 是否秒杀订单 0:不是 1：是
+	 */
+	private int isTimelimitedOrder;
+
 	public String getSellerCode() {
 		return sellerCode;
 	}
@@ -184,4 +199,35 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 		this.buyerCode = buyerCode;
 	}
 
+	public String getSearchFlag() {
+		return searchFlag;
+	}
+
+	public void setSearchFlag(String searchFlag) {
+		this.searchFlag = searchFlag;
+	}
+
+	public int getIsOutDistribtion() {
+		return isOutDistribtion;
+	}
+
+	public void setIsOutDistribtion(int isOutDistribtion) {
+		this.isOutDistribtion = isOutDistribtion;
+	}
+
+	public int getHasUsedCoupon() {
+		return hasUsedCoupon;
+	}
+
+	public void setHasUsedCoupon(int hasUsedCoupon) {
+		this.hasUsedCoupon = hasUsedCoupon;
+	}
+
+	public int getIsTimelimitedOrder() {
+		return isTimelimitedOrder;
+	}
+
+	public void setIsTimelimitedOrder(int isTimelimitedOrder) {
+		this.isTimelimitedOrder = isTimelimitedOrder;
+	}
 }

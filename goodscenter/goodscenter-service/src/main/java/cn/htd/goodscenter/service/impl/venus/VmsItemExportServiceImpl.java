@@ -47,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -671,19 +672,19 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
                     //分销限价
                     if (price.getSaleLimitedPrice() != null) {
-                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(price.getSaleLimitedPrice()));
+                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(price.getSaleLimitedPrice(), 2)));
                     }
                     //包厢价格
                     if (null != price.getBoxSalePrice() &&  1 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {
-                        venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getBoxSalePrice()));
+                        venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(this.wrapDecimal(price.getBoxSalePrice(), 2)));
                     }
                     //大厅价格
                     if (null != price.getAreaSalePrice() && 0 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {
-                        venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(price.getAreaSalePrice()));
+                        venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(this.wrapDecimal(price.getAreaSalePrice(), 2)));
                     }
                     //零售价
                     if (null != price.getRetailPrice()) {
-                        venusItemSkuPublishInfoOutDTO.setRetailPrice(String.valueOf(price.getRetailPrice()));
+                        venusItemSkuPublishInfoOutDTO.setRetailPrice(String.valueOf(this.wrapDecimal(price.getRetailPrice(), 2)));
                     }
                     break;
                 }
@@ -748,6 +749,20 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             }
         } else {
             return null;
+        }
+    }
+
+
+    /**
+     * 设置小数位数 （默认四舍五入）
+     * @param origin
+     * @return
+     */
+    private static BigDecimal wrapDecimal(BigDecimal origin, int newScale) {
+        if (origin == null) {
+            return origin;
+        } else {
+            return origin.setScale(newScale, BigDecimal.ROUND_HALF_UP);
         }
     }
 }

@@ -97,6 +97,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     private CategoryAttrDAO categoryAttrDAO;
 
     @Resource
+    private ItemBrandDAO itemBrandDAO;
+
+    @Resource
     private ItemSalesDefaultAreaMapper itemSalesDefaultAreaMapper;
 
     /**
@@ -236,6 +239,11 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
                 spuInfoDTO.setCategoryName(catName);
             }
             spuInfoDTO.setCategoryAttrHandled(this.parseCategoryAttr(spuInfoDTO.getCategoryAttributes()));
+            // 设置品牌
+            ItemBrand itemBrand = this.itemBrandDAO.queryById(spuInfoDTO.getBrandId());
+            if (itemBrand != null) {
+                spuInfoDTO.setBrandName(itemBrand.getBrandName());
+            }
         }
         return executeResult;
     }

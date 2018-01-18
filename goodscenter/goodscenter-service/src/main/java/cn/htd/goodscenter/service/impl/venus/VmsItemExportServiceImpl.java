@@ -162,9 +162,8 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             for (QueryVmsMyItemListOutDTO queryVmsMyItemListOutDTO : queryVmsMyItemListOutDTOS) {
                 Integer itemStatus = queryVmsMyItemListOutDTO.getItemStatus(); // 商品表状态
                 Integer status = queryVmsMyItemListOutDTO.getStatus(); // 草稿表状态
-                String erpCode = queryVmsMyItemListOutDTO.getErpCode(); // erpCpde
                 // 添加审核状态
-                queryVmsMyItemListOutDTO.setAuditStatus(this.getAuditStatus(itemStatus, status, erpCode));
+                queryVmsMyItemListOutDTO.setAuditStatus(this.getAuditStatus(itemStatus, status));
                 // 补充三级类目信息
                 ExecuteResult<Map<String, Object>> categoryResult = itemCategoryService.queryItemOneTwoThreeCategoryName(queryVmsMyItemListOutDTO.getCategoryId(), ">");
                 if (categoryResult != null && MapUtils.isNotEmpty(categoryResult.getResult())) {
@@ -628,9 +627,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
      * @param erpCode    // TODO : 魔法数字替换
      * @return
      */
-    private Integer getAuditStatus(Integer itemStatus, Integer status, String erpCode) {
+    private Integer getAuditStatus(Integer itemStatus, Integer status) {
         // 待审核
-        if (itemStatus == 0 && status == 0 && (StringUtils.isEmpty(erpCode) || "0".equals(erpCode))) {
+        if (itemStatus == 0 && status == 0) {
             return AuditStatusEnum.AUDIT.getCode();
         }
         // 审核通过
@@ -638,15 +637,15 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             return AuditStatusEnum.PASS.getCode();
         }
         // 新增审核驳回
-        if (itemStatus == 2 && status == 2 && (StringUtils.isEmpty(erpCode) || "0".equals(erpCode))) {
+        if (itemStatus == 2 && status == 2) {
             return AuditStatusEnum.REJECTED.getCode();
         }
         // 修改待审核
-        if ((itemStatus == 1 || itemStatus == 4 || itemStatus == 5) && status == 0 && StringUtils.isNotEmpty(erpCode) && !"0".equals(erpCode)) {
+        if ((itemStatus == 1 || itemStatus == 4 || itemStatus == 5) && status == 0 ) {
             return AuditStatusEnum.MODIFY_AUDIT.getCode();
         }
         // 修改审核驳回
-        if ((itemStatus == 1 || itemStatus == 4 || itemStatus == 5) && status == 2 && StringUtils.isNotEmpty(erpCode) && !"0".equals(erpCode)) {
+        if ((itemStatus == 1 || itemStatus == 4 || itemStatus == 5) && status == 2) {
             return AuditStatusEnum.MODIFY_REJECTED.getCode();
         }
         return null;

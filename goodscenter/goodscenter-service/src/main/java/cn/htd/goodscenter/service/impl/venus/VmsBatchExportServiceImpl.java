@@ -882,10 +882,11 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
             executeResult.setResultMessage("型号为空");
             return executeResult;
         }
-        // TODO : 校验型号的长度
-//        if () {
-//
-//        }
+        if (modelType.length() > 80) {
+            executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+            executeResult.setResultMessage("型号长度不能超过80");
+            return executeResult;
+        }
         executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
         executeResult.setResultMessage("校验成功");
         return executeResult;

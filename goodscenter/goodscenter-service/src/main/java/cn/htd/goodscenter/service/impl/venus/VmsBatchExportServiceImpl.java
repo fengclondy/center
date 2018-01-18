@@ -870,7 +870,7 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
             return executeResult;
         }
         executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
-        executeResult.setResult(dictionaryInfo.getCode());
+        executeResult.setResult(dictionaryInfo.getValue());
         executeResult.setResultMessage("校验成功");
         return executeResult;
     }

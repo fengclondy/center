@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Service("vmsOrderServiceImpl")
+@Service("vmsOrderService")
 public class VMSOrderServiceImpl implements VMSOrderService{
 
     private static final Logger logger = LoggerFactory.getLogger(TradeOrderServiceImpl.class);
@@ -40,7 +40,6 @@ public class VMSOrderServiceImpl implements VMSOrderService{
     public ExecuteResult<DataGrid<TradeOrdersShowDTO>> queryVMSpendingOrderByCondition(VenusTradeOrdersQueryInDTO conditionDTO, Pager<VenusTradeOrdersQueryInDTO> pager) {
         ExecuteResult<DataGrid<TradeOrdersShowDTO>> result = new ExecuteResult<DataGrid<TradeOrdersShowDTO>>();
         DataGrid<TradeOrdersShowDTO> dataGrid = new DataGrid<TradeOrdersShowDTO>();
-        Map<String, DictionaryInfo> dictMap = baseService.getTradeOrderDictionaryMap();
         if (conditionDTO == null) {
             throw new TradeCenterBusinessException(ReturnCodeConst.PARAMETER_ERROR, "卖家编码不能为空");
         }
@@ -65,26 +64,26 @@ public class VMSOrderServiceImpl implements VMSOrderService{
     private void setVMSpendingQueryCondition(VenusTradeOrdersQueryInDTO conditionDTO){
         List<String> orderStatusList = new ArrayList<String>();
         if(VMSOrderConstants.SEARCH_CONDITION_OUT_DISTRIBTION.equals(conditionDTO.getSearchFlag())){
-            orderStatusList.add(OrderStatusEnum.VERIFY_PENDING.getCode());
+            orderStatusList.add(OrderStatusEnum.VERIFY_PENDING.getValue());
             conditionDTO.setOrderStatusList(orderStatusList);
             conditionDTO.setIsOutDistribtion(VMSOrderConstants.IS_OUT_DISTRIBTION);
             conditionDTO.setIsCancelFlag(VMSOrderConstants.IS_NOT_CANCEL_ORDER);
         }else if(VMSOrderConstants.SEARCH_CONDITION_PENDING_PRICE.equals(conditionDTO.getSearchFlag())){
-            orderStatusList.add(OrderStatusEnum.WAIT_PAY.getCode());
-            orderStatusList.add(OrderStatusEnum.VERIFY_WAIT_PAY.getCode());
+            orderStatusList.add(OrderStatusEnum.WAIT_PAY.getValue());
+            orderStatusList.add(OrderStatusEnum.VERIFY_WAIT_PAY.getValue());
             conditionDTO.setOrderStatusList(orderStatusList);
             conditionDTO.setIsTimelimitedOrder(VMSOrderConstants.IS_NOT_TIMELIMITED_ORDER);
             conditionDTO.setHasUsedCoupon(VMSOrderConstants.HAS_NOT_USED_COUPON);
             conditionDTO.setIsErrorFlag(VMSOrderConstants.IS_NOT_ERROR_ORDER);
             conditionDTO.setIsCancelFlag(VMSOrderConstants.IS_NOT_CANCEL_ORDER);
         }else if(VMSOrderConstants.SEARCH_CONDITION_WAITING_CONFIRM.equals(conditionDTO.getSearchFlag())){
-            orderStatusList.add(OrderStatusEnum.WAIT_CONFIRM.getCode());
+            orderStatusList.add(OrderStatusEnum.WAIT_CONFIRM.getValue());
             conditionDTO.setOrderStatusList(orderStatusList);
             conditionDTO.setIsErrorFlag(VMSOrderConstants.IS_NOT_ERROR_ORDER);
             conditionDTO.setIsCancelFlag(VMSOrderConstants.IS_NOT_CANCEL_ORDER);
         }else if(VMSOrderConstants.SEARCH_CONDITION_PENDING_SPLIT.equals(conditionDTO.getSearchFlag())){
-            orderStatusList.add(OrderStatusEnum.PAID.getCode());
-            orderStatusList.add(OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getCode());
+            orderStatusList.add(OrderStatusEnum.PAID.getValue());
+            orderStatusList.add(OrderStatusEnum.PAYED_POST_STRIKEA_SUCCESS_PRE_OPEN_LIST.getValue());
             conditionDTO.setOrderStatusList(orderStatusList);
             conditionDTO.setIsCancelFlag(VMSOrderConstants.IS_NOT_CANCEL_ORDER);
         }else if(VMSOrderConstants.SEARCH_CONDITION_ORDER_ERROR.equals(conditionDTO.getSearchFlag())){

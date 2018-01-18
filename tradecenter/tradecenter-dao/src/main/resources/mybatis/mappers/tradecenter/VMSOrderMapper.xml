@@ -221,11 +221,31 @@
             <if test="entity.hasUsedCoupon != null and entity.hasUsedCoupon != ''">
                 and has_used_coupon = #{entity.hasUsedCoupon}
             </if>
-            <if test="entity.isTimeLimitedOrder != null and entity.isTimeLimitedOrder != ''">
-                and is_timelimited_order = #{entity.isTimeLimitedOrder}
+            <if test="entity.isOutDistribtion != null and entity.isOutDistribtion != -1 ">
+                <![CDATA[ and is_out_distribtion = #{entity.isOutDistribtion} ]]>
+            </if>
+            <if test="entity.isTimelimitedOrder != null and entity.isTimelimitedOrder != -1 ">
+                <![CDATA[ and is_timelimited_order = #{entity.isTimelimitedOrder} ]]>
             </if>
         </if>
     </sql>
 
+    <select id="queryVMSpendingOrderCountByCondition" resultType="java.lang.Long" parameterType="cn.htd.tradecenter.dto.VenusTradeOrdersQueryInDTO" >
+        select count(1)
+        from trade_orders
+        where 1 = 1
+        <include refid="where_fragement"/>
+    </select>
+    <select id="queryVMSpendingOrderByCondition" resultMap="BaseResultMap" parameterType="cn.htd.tradecenter.dto.VenusTradeOrdersQueryInDTO" >
+        select
+        <include refid="Base_Column_List" />
+        from trade_orders
+        where 1 = 1
+        <include refid="where_fragement"/>
+        order by modify_time desc
+        <if test="page!=null">
+            <include refid="pagination_tail" />
+        </if>
+    </select>
 
 </mapper>

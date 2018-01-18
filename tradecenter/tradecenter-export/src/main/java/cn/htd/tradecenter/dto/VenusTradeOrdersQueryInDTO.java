@@ -70,9 +70,9 @@ public class VenusTradeOrdersQueryInDTO implements Serializable {
 	 */
 	private int hasUsedCoupon;
 	/**
-	 * 是否秒杀订单 0:不是 1：是
+	 * 是否秒杀订单 0：不是 1：是
 	 */
-	private int isTimelimitedOrder;
+	public int isTimelimitedOrder;
 
 	public String getSellerCode() {
 		return sellerCode;

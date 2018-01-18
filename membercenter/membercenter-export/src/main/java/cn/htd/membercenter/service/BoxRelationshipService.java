@@ -60,6 +60,20 @@ public interface BoxRelationshipService {
 	 * @return
 	 */
 	public ExecuteResult<Long> selectCompanyID(String companyName, String buyerSellerType);
+	
+	/**
+	 * 根据会员code精确查询该会员店的公司名称
+	 * @param memberId
+	 * @return
+	 */
+	public ExecuteResult<String> selectCompanyName(String memberCode, String memberName);
+	
+	/**
+	 * 根基会员名称模糊查询会员名称列表
+	 * @param memberName
+	 * @return
+	 */
+	public ExecuteResult<List<String>> selectCompanyNameList(String memberName);
 
 	/**
 	 * 导入会员包厢关系

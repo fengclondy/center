@@ -59,5 +59,7 @@
 	<dubbo:service interface="cn.htd.membercenter.service.ContractService" ref="contractService" version="${dubbo.version}" timeout="60000" />
 	<!-- 超级经理人带客下单服务接口 -->
 	<dubbo:service interface="cn.htd.membercenter.service.MemberExternalService" ref="memberExternalService" version="${dubbo.version}" timeout="60000" />
+	<!-- 互为上下游禁止交易服务接口 -->
+	<dubbo:service interface="cn.htd.membercenter.service.CycleTradeForbiddenMemberService" ref="cycleTradeForbiddenMemberService" version="${dubbo.version}" timeout="60000" />
 	
 </beans>

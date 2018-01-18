@@ -54,6 +54,7 @@ import cn.htd.promotion.cpc.dto.response.PromotonInfoResDTO;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.util.CollectionUtils;
 
 @Service("promotionBargainInfoService")
 public class PromotionBargainInfoServiceImpl implements
@@ -645,6 +646,14 @@ public class PromotionBargainInfoServiceImpl implements
 				// 写入reids操作
 				if (dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_STATUS,
+						DictionaryConst.OPT_PROMOTION_STATUS_END).equals(
+						promotionInfoDTO.getStatus())) {
+					result.setResult(updateResult);
+					return result;
+				}
+
+				if (dictionary.getValueByCode(
+						DictionaryConst.TYPE_PROMOTION_STATUS,
 						DictionaryConst.OPT_PROMOTION_STATUS_NO_START).equals(
 						promotionInfoDTO.getStatus())) {
 					promotionBargainRedisHandle.addBargainInfo2Redis(
@@ -653,6 +662,7 @@ public class PromotionBargainInfoServiceImpl implements
 					promotionBargainRedisHandle.addBargainInfo2Redis(
 							promotionBargainInfoList, true);
 				}
+
 				result.setResult(updateResult);
 			}
 		} catch (PromotionCenterBusinessException pbe) {
@@ -879,6 +889,7 @@ public class PromotionBargainInfoServiceImpl implements
 					List<BuyerLaunchBargainInfoDMO> overList = buyerLaunchBargainInfoDAO
 							.queryLaunchBargainInfoList(overTimeDTO, null);
 					resDTO.setOverTimes(overList == null ? 0 : overList.size());
+					resDTO.setLevelCode(dmo.getLevelCode());
 					// 剩余商品数量
 					if (dmo.getGoodsNum().intValue() == 0
 							|| dmo.getGoodsNum() < resDTO.getOverTimes()) {

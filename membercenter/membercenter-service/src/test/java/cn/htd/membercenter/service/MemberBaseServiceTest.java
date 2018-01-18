@@ -1,15 +1,20 @@
 package cn.htd.membercenter.service;
 
-import cn.htd.common.ExecuteResult;
-import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
-import cn.htd.membercenter.dto.MemberInvoiceDTO;
-import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.alibaba.fastjson.JSON;
+
+import cn.htd.common.ExecuteResult;
+import cn.htd.membercenter.dto.MemberBaseInfoRegisterDTO;
+import cn.htd.membercenter.dto.MemberInvoiceDTO;
+import cn.htd.membercenter.dto.MemberOutsideSupplierCompanyDTO;
 
 public class MemberBaseServiceTest {
 
@@ -21,6 +26,7 @@ public class MemberBaseServiceTest {
 	MemberInvoiceService memberInvoiceService = null;
 	ConsigneeAddressService consigneeAddressService = null;
 	ApplyRelationshipService applyRelationshipService = null;
+	BoxRelationshipService boxRelationshipService = null;
 
 	@Before
 	public void setUp() {
@@ -32,6 +38,7 @@ public class MemberBaseServiceTest {
 
 		memberBaseInfoService = (MemberBaseInfoService) ctx.getBean("memberBaseInfoService");
 		applyRelationshipService = (ApplyRelationshipService) ctx.getBean("applyRelationshipService");
+		boxRelationshipService = (BoxRelationshipService) ctx.getBean("boxRelationshipService");
 
 	}
 
@@ -282,5 +289,17 @@ public class MemberBaseServiceTest {
 	 * 
 	 * }
 	 */
+	 
+	 @Test
+	 public void testCompanyName(){
+		 ExecuteResult<String> result = boxRelationshipService.selectCompanyName("htd0002", null);
+		 System.out.println(JSON.toJSONString(result));
+	 }
+	 
+	 @Test
+	 public void testCompanyNameList(){
+		 ExecuteResult<List<String>> result = boxRelationshipService.selectCompanyNameList("汇通达");
+		 System.out.println(JSON.toJSONString(result));
+	 }
 
 }

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.htd.membercenter.dao.CycleTradeForbiddenMemberDAO">
+
+	<resultMap id="resultMap"
+		type="cn.htd.membercenter.domain.CycleTradeForbiddenMember">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="member_code" property="memberCode" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="forbidden_type" property="forbiddenType"
+			jdbcType="TINYINT" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_name" property="createName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+		<result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<insert id="insertCycleTradeForbiddenMember"
+		parameterType="cn.htd.membercenter.dto.CycleTradeForbiddenMemberDTO">
+		insert into cycle_trade_forbidden_member
+		(member_code,
+		member_name,
+		forbidden_type,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+		)
+		value(
+		#{memberCode},
+		#{memberName},
+		#{forbiddenType},
+		#{createId},
+		#{createName},
+		now(),
+		#{createId},
+		#{createName},
+		now()
+		)
+	</insert>
+
+	<update id="deleteCycleTradeForbiddenMember"
+		parameterType="cn.htd.membercenter.dto.CycleTradeForbiddenMemberDTO">
+		update cycle_trade_forbidden_member
+		set delete_flag = 1,
+		modify_id =
+		#{modifyId},
+		modify_name = #{modifyName},
+		modify_time = now()
+		where id in
+		<foreach collection="ids" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<update id="updateCycleTradeForbiddenMember"
+		parameterType="cn.htd.membercenter.dto.CycleTradeForbiddenMemberDTO">
+		update cycle_trade_forbidden_member
+		set modify_id = #{createId},
+		modify_name = #{createName},
+		modify_time = now()
+		where id = #{id}
+	</update>
+	
+	<select id="queryCycleTradeForbiddenMember" resultMap="resultMap">
+		SELECT id,
+		member_code,
+		member_name,
+		forbidden_type,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+		FROM
+		cycle_trade_forbidden_member
+		WHERE delete_flag = 0
+		<if test="dto.memberCode != null and dto.memberCode != ''">
+			AND member_code = #{dto.memberCode}
+		</if>
+		<if test="dto.forbiddenType != null and dto.forbiddenType != ''">
+			AND forbidden_type = #{dto.forbiddenType}
+		</if>
+	</select>
+
+	<select id="selecCycleTradeForbiddenMemberCount" resultType="java.lang.Long">
+		SELECT COUNT(1)
+		FROM cycle_trade_forbidden_member
+		WHERE delete_flag = 0
+		<if test="dto.memberCode != null and dto.memberCode != ''">
+			AND member_code = #{dto.memberCode}
+		</if>
+		<if test="dto.memberName != null and dto.memberName != ''">
+			<![CDATA[ AND member_name like CONCAT('%',#{dto.memberName},'%') ]]>
+		</if>
+		<if test="dto.forbiddenType != null and dto.forbiddenType != ''">
+			AND forbidden_type = #{dto.forbiddenType}
+		</if>
+	</select>
+
+	<select id="selectCycleTradeForbiddenMemberList" resultMap="resultMap">
+		SELECT id,
+		member_code,
+		member_name,
+		forbidden_type,
+		create_id,
+		create_name,
+		create_time,
+		modify_id,
+		modify_name,
+		modify_time
+		FROM
+		cycle_trade_forbidden_member
+		WHERE delete_flag = 0
+		<if test="dto.memberCode != null and dto.memberCode != ''">
+			AND member_code = #{dto.memberCode}
+		</if>
+		<if test="dto.memberName != null and dto.memberName != ''">
+			<![CDATA[ AND member_name like CONCAT('%',#{dto.memberName},'%') ]]>
+		</if>
+		<if test="dto.forbiddenType != null and dto.forbiddenType != ''">
+			AND forbidden_type = #{dto.forbiddenType}
+		</if>
+		ORDER BY create_time desc
+		<if test="pager.pageOffset != null and pager != null">
+			limit #{pager.pageOffset},#{pager.rows}
+		</if>
+	</select>
+</mapper>

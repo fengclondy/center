@@ -77,6 +77,56 @@
 		</if> 
 	</select>
 	
+	<!-- 根据会员编码查询会员信息 -->
+	<select id="queryMemberBaseInfoByMemberCodeAndType" resultType="cn.htd.membercenter.dto.MemberAddrInfoDTO"
+		parameterType="Object">
+		select
+			d.company_name companyName,
+			c.company_type companyType,
+			b.taxman_flag taxmanFlag,
+			c.company_work_address companyWorkAddress,
+			d.location_province locationProvince,
+			d.location_city locationCity,
+			d.location_county locationCounty,
+			d.location_town locationTown,
+			d.location_detail locationDetail,
+			d.location_addr locationAddr,
+			c.sales_volumn salesVolumn,
+			c.business_scope businessScope,
+			d.company_code companyCode,
+			d.artificial_person_name artificialPersonName,
+			d.artificial_person_mobile artificialPersonMobile,
+			a.contact_name contactName,
+			a.contact_mobile contactMobile,
+			a.contact_email contactEmail,
+			a.member_code memberCode,
+			a.seller_type sellerType,
+			a.can_mall_login canMallLogin,
+			a.has_guarantee_license hasGuaranteeLicense,
+			a.has_business_license hasBusinessLicense,
+			c.business_category businessCategory,
+			c.major_business_category majorBusinessCategory,
+			c.business_brand businessBrand,
+			c.operating_life operatingLife,
+			c.vendor_nature vendorNature,
+			c.chain_of_authorize chainOfAuthorize,
+			c.is_use_other_platform isUseOtherPlatform,
+            b.buyer_guarantee_license_pic_src buyerGuaranteeLicensePicSrc,
+			b.buyer_business_license_pic_src buyerBusinessLicensePicSrc,
+			b.business_license_pic_src businessLicensePicSrc,
+			b.business_license_certificate_pic_src businessLicenseCertificatePicSrc,
+			b.organization_pic_src organizationPicSrc,
+			b.tax_registration_certificate_pic_src taxRegistrationCertificatePicSrc,
+			b.taxpayer_certificate_pic_src taxpayerCertificatePicSrc,
+            c.member_id memberId
+           from member_base_info a
+           left join member_licence_info b on b.member_id=a.id
+           left join member_extend_info c on c.member_id=a.id
+           left join member_company_info d on d.member_id=a.id
+		where
+			d.buyer_seller_type = #{memberBaseDTO.buyerSellerType}
+		    and a.member_code = #{memberBaseDTO.memberCode}
+	</select>
 	
    	<select id="queryMemberInfoBySellerId" resultType="cn.htd.membercenter.dto.MemberBaseDTO"
 		parameterType="Object">

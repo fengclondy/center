@@ -51,8 +51,9 @@ public class PromotionBargainRedisHandle {
 
 	/**
 	 * 取得Redis砍价活动信息
-	 *
-	 * @param promotionId
+	 * @param dto
+	 * @return
+	 * @throws PromotionCenterBusinessException
 	 */
 	public List<PromotionBargainInfoResDTO> getRedisBargainInfoList(
 			PromotionBargainInfoResDTO dto) throws PromotionCenterBusinessException {
@@ -105,8 +106,8 @@ public class PromotionBargainRedisHandle {
 
 	/**
 	 * 保存砍价活动信息进Redis
-	 *
-	 * @param BargainInfo
+	 * @param promotionBargainInfoList
+	 * @param isBargainLaunch
 	 */
 	public void addBargainInfo2Redis(
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList, boolean isBargainLaunch) {
@@ -127,12 +128,28 @@ public class PromotionBargainRedisHandle {
 				dto.setShowStatus(dictionary.getValueByCode(
 						DictionaryConst.TYPE_PROMOTION_VERIFY_STATUS,
 						DictionaryConst.OPT_PROMOTION_VERIFY_STATUS_VALID));
+				int goodsNum = dto.getGoodsNum();
 				if(!isBargainLaunch){
-					int goodsNum = dto.getGoodsNum();
 					String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + dto.getPromotionId() + "_" + dto.getLevelCode();
 					promotionRedisDB.del(stockKey);
 					if(goodsNum > 0) {
 						for (int i = 0; i < goodsNum; i++) {
+							promotionRedisDB.headPush(stockKey, i + 1 + "");
+						}
+					}
+				}else{
+					String stockKey = RedisConst.REDIS_BARGAIN_ITEM_STOCK + "_" + dto.getPromotionId() + "_" + dto.getLevelCode();
+					String oldJson =  promotionRedisDB.getHash(RedisConst.REDIS_BARGAIN, promotionId);
+					List<PromotionBargainInfoResDTO> listOld = JSON.parseArray(oldJson, PromotionBargainInfoResDTO.class);
+					for (PromotionBargainInfoResDTO oldDto : listOld) {
+						if(!oldDto.getLevelCode().equals(dto.getLevelCode())){
+							continue;
+						}
+						if(oldDto.getGoodsNum() == goodsNum){
+							continue;
+						}
+						int beforeNum = oldDto.getGoodsNum();
+						for (int i = 0; i < goodsNum - beforeNum; i++) {
 							promotionRedisDB.headPush(stockKey, i + 1 + "");
 						}
 					}
@@ -142,11 +159,10 @@ public class PromotionBargainRedisHandle {
 					JSON.toJSONString(promotionBargainInfoList));
 		}
 	}
-	
+
 	/**
 	 * 砍完商品时砍价活动信息进Redis
-	 *
-	 * @param BargainInfo
+	 * @param promotionBargainInfoList
 	 */
 	public void addBargainInfo3Redis(
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList) {
@@ -175,8 +191,7 @@ public class PromotionBargainRedisHandle {
 
 	/**
 	 * 更新砍价变化活动状态
-	 *
-	 * @param promotionInfo
+	 * @param promotionBargainInfoList
 	 */
 	public void updateRedisTimeilimitedStatus(
 			List<PromotionBargainInfoResDTO> promotionBargainInfoList) {
@@ -215,8 +230,7 @@ public class PromotionBargainRedisHandle {
 
 	/**
 	 * 更新Redis中的砍价活动参加记录并更新DB
-	 *
-	 * @param useLogList
+	 * @param useLog
 	 */
 	public void updateRedisUseBargainLog(BuyerUseBargainLogDTO useLog) {
 		String useLogRedisKey = "";

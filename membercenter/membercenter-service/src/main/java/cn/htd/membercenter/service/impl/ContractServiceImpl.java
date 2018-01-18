@@ -19,11 +19,17 @@ import cn.htd.common.DataGrid;
 import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.dao.util.RedisDB;
+import cn.htd.common.dto.AddressInfo;
+import cn.htd.common.util.AddressUtils;
 import cn.htd.membercenter.dao.BoxRelationshipDAO;
 import cn.htd.membercenter.dao.ContractDAO;
+import cn.htd.membercenter.dao.MemberBaseDAO;
 import cn.htd.membercenter.dto.ContractInfoDTO;
 import cn.htd.membercenter.dto.ContractListInfo;
+import cn.htd.membercenter.dto.ContractRemindInfoDTO;
 import cn.htd.membercenter.dto.ContractSignRemindInfoDTO;
+import cn.htd.membercenter.dto.MemberAddrInfoDTO;
+import cn.htd.membercenter.dto.MemberBaseDTO;
 import cn.htd.membercenter.dto.MemberShipDTO;
 import cn.htd.membercenter.dto.SaveContractInfoDTO;
 import cn.htd.membercenter.service.ContractService;
@@ -47,6 +53,8 @@ public class ContractServiceImpl implements ContractService {
 	@Autowired
 	private ContractDAO contractDAO;
 	
+	@Autowired
+	private MemberBaseDAO memberBaseDAO;
 	
 	/**
 	 * 包厢关系数据库服务 <br>
@@ -56,6 +64,9 @@ public class ContractServiceImpl implements ContractService {
 	
 	@Resource
 	private RedisDB redisDB;
+	
+	@Resource
+	private AddressUtils addressUtil;
 
 	/**
 	 * Description: 查询合同列表 <br> 
@@ -79,44 +90,57 @@ public class ContractServiceImpl implements ContractService {
 			result.addErrorMessage("分页信息为空");
 			return result;
 		}
-		List<ContractInfoDTO> contractInfoDTOList = null;
+		
 		try {
-			List<String> vendorCodeList = new ArrayList<String>();
+			//根据传入的会员店编码和有可能的供应商编码查询现有合同信息
+			List<ContractInfoDTO> returnContractList = contractDAO.queryEffectiveContractByMemberCode(memberCode, vendorCodeStrList);
+			List<ContractInfoDTO> returnContracInfotList = new ArrayList<ContractInfoDTO>();
+			returnContracInfotList.addAll(returnContractList);
 			//首先根据会员编码查询一圈包厢关系
 			List<MemberShipDTO> memberShipList = boxRelationshipDAO.queryBoxRelationshipList(memberCode);
-			if (memberShipList.isEmpty()) {
-				result.setResultMessage("该会员店没有包厢关系 不含合同");
-				return result;
-			}
+			
+			//查询会员店信息
+			MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+			memberBaseDTO.setMemberCode(memberCode);
+			memberBaseDTO.setBuyerSellerType("1");
+			MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
 			if (null == vendorCodeStrList || vendorCodeStrList.isEmpty()) {
+				
 				//如果传入的供应商编码集合为空
 				for (MemberShipDTO memberShip : memberShipList) {
-					//则将供应商编码获取出来
-					vendorCodeList.add(memberShip.getMemberCode());
+					boolean checkExistsFlag = true;
+					for (ContractInfoDTO contractInfoDTO : returnContractList) {
+						if (memberShip.getMemberCode().equals(contractInfoDTO.getVendorCode())) {
+							//如果相同的话置为false证明已经查询
+							checkExistsFlag = false;
+							break;
+						}
+					}
+					if (checkExistsFlag) {
+						//表示对应的供应商没有签订合同
+						ContractInfoDTO noSigncontract = getContractInfoDTOByCode(memberBase, memberShip.getMemberCode());
+						returnContracInfotList.add(noSigncontract);
+					}
 				}
 			} else {
 				//否则 查询传入的供应对应的合同信息
-				for (MemberShipDTO memberShip : memberShipList) {
-					String vendorCode = memberShip.getMemberCode();
-					for (String vendor : vendorCodeStrList) {
-						if (vendorCode.equals(vendor)) {
-							vendorCodeList.add(vendorCode);
+				for (String vendor : vendorCodeStrList) {
+					boolean checkExistsFlag = true;
+					for (ContractInfoDTO contractInfoDTO : returnContractList) {
+						if (vendor.equals(contractInfoDTO.getVendorCode())) {
+							//如果相同的话置为false证明已经查询到合同信息
+							checkExistsFlag = false;
+							break;
 						}
+					}
+					if (checkExistsFlag) {
+						//表示对应的供应商没有签订合同
+						ContractInfoDTO noSigncontract = getContractInfoDTOByCode(memberBase, vendor);
+						returnContracInfotList.add(noSigncontract);
 					}
 				}
 			}
-			if (vendorCodeList.isEmpty()) {
-				result.setResultMessage("该会员店没有对应的包厢关系 不具有合同");
-				return result;
-			}
-			//查询出对应的合同信息
-			contractInfoDTOList = contractDAO.queryContractBymemberCode(memberCode, vendorCodeList);
-			for (ContractInfoDTO contractInfoDTO : contractInfoDTOList) {
-				if (StringUtils.isEmpty(contractInfoDTO.getContractStatus())) {
-					contractInfoDTO.setContractStatus("0");
-				}
-			}
-			Map<String, Object> map = resultHandle(contractStatus, pager, contractInfoDTOList);
+			Map<String, Object> map = resultHandle(memberBase,contractStatus, pager, returnContracInfotList);
 			List<ContractInfoDTO> returnContractInfoList = (List<ContractInfoDTO>) map.get("returnContractInfoDTOList");
 			contractListInfo.setContractInfoList(returnContractInfoList);
 			contractListInfo.setAlreadySignContractInfoCount((Integer)map.get("signContractInfoCount"));
@@ -130,6 +154,37 @@ public class ContractServiceImpl implements ContractService {
 		return result;
 	}
 	
+	/**
+	 * Description: 用来获取一些合同的基本信息 <br> 
+	 *  
+	 * @author zhoutong <br>
+	 * @taskId <br>
+	 * @param memberBase
+	 * @param vendorCode
+	 * @return <br>
+	 */ 
+	public ContractInfoDTO getContractInfoDTOByCode(MemberAddrInfoDTO memberBase, String vendorCode) throws Exception {
+		MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+		vendorBaseDTO.setMemberCode(vendorCode);
+		vendorBaseDTO.setBuyerSellerType("2");
+		MemberAddrInfoDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+		if (null == vendorBase) {
+			logger.error("查询不到对应的供应商信息 供应商编码=" + vendorCode);
+			throw new Exception("查询不到对应的供应商信息");
+		}
+		ContractInfoDTO noSigncontract = new ContractInfoDTO();
+		noSigncontract.setContractStatus("0");
+		noSigncontract.setMemberCode(memberBase.getMemberCode());
+		noSigncontract.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
+		noSigncontract.setMemberLocationAddr(memberBase.getLocationAddr());
+		noSigncontract.setMemberName(memberBase.getCompanyName());
+		noSigncontract.setVendorCode(vendorBase.getMemberCode());
+		noSigncontract.setVendorName(vendorBase.getCompanyName());
+		noSigncontract.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
+		noSigncontract.setVendorLocationAddr(vendorBase.getLocationAddr());
+		return noSigncontract;
+	}
+	
 	
 	/**
 	 * Description: 合同列表查询结果处理 <br> 
@@ -140,7 +195,7 @@ public class ContractServiceImpl implements ContractService {
 	 * @param contractInfoDTOList
 	 * @return <br>
 	 */ 
-	public Map<String, Object> resultHandle(String contractStatus, Pager pager,
+	public Map<String, Object> resultHandle(MemberAddrInfoDTO memberBase, String contractStatus, Pager pager,
 			List<ContractInfoDTO> contractInfoDTOList) throws Exception {
 		logger.info("resultHandle方法已进入 对查询合同列表结果进行处理");
 		int page = pager.getPage();
@@ -175,19 +230,31 @@ public class ContractServiceImpl implements ContractService {
 		ContractInfoDTO noSignContractInfoDTO = new ContractInfoDTO();
 		String vendorName = "";
 		String vendorCode = "";
+		String vendorLocationAddr = "";
+		String vendorArtificialPersonName = "";
 		for (int i = 0;i < nosignContractInfoDTOList.size(); i++) {
 			ContractInfoDTO contractInfoDTO = nosignContractInfoDTOList.get(i);
 			if (i == 0) {
 				vendorName += contractInfoDTO.getVendorName();
 				vendorCode += contractInfoDTO.getVendorCode();
+				vendorLocationAddr += contractInfoDTO.getVendorLocationAddr();
+				vendorArtificialPersonName += contractInfoDTO.getVendorArtificialPersonName();
 			} else {
 				vendorName += "," + contractInfoDTO.getVendorName();
 				vendorCode += "," + contractInfoDTO.getVendorCode();
+				vendorLocationAddr += "," + contractInfoDTO.getVendorLocationAddr();
+				vendorArtificialPersonName += "," + contractInfoDTO.getVendorArtificialPersonName();
 			}
-			noSignContractInfoDTO.setVendorName(vendorName);
-			noSignContractInfoDTO.setVendorCode(vendorCode);
-			noSignContractInfoDTO.setContractStatus("0");
 		}
+		noSignContractInfoDTO.setContractStatus("0");
+		noSignContractInfoDTO.setVendorName(vendorName);
+		noSignContractInfoDTO.setVendorCode(vendorCode);
+		noSignContractInfoDTO.setVendorArtificialPersonName(vendorArtificialPersonName);
+		noSignContractInfoDTO.setVendorLocationAddr(vendorLocationAddr);
+		noSignContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
+		noSignContractInfoDTO.setMemberCode(memberBase.getMemberCode());
+		noSignContractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
+		noSignContractInfoDTO.setMemberName(memberBase.getCompanyName());
 		if (("".equals(contractStatus) || null == contractStatus) && page == 1) {
 			//未签订放进返回
 			if (nosignContractInfoDTOList.size() > 0) {
@@ -231,9 +298,10 @@ public class ContractServiceImpl implements ContractService {
 	 * @return <br>
 	 */
 	@Override
-	public ExecuteResult<String> queryRemindFlag(String memberCode) {
+	public ExecuteResult<ContractRemindInfoDTO> queryRemindFlag(String memberCode) {
 		logger.info("queryRemindFlag方法 已进入 会员店编码memberCode=" + memberCode);
-		ExecuteResult<String> result = new ExecuteResult<String>();
+		ExecuteResult<ContractRemindInfoDTO> result = new ExecuteResult<ContractRemindInfoDTO>();
+		ContractRemindInfoDTO contractRemindInfoDTO = new ContractRemindInfoDTO();
 		if (StringUtils.isEmpty(memberCode)) {
 			result.addErrorMessage("会员店编码为空 查询失败");
 			return result;
@@ -243,23 +311,59 @@ public class ContractServiceImpl implements ContractService {
 			List<MemberShipDTO> memberShipList = boxRelationshipDAO.queryBoxRelationshipList(memberCode);
 			if (memberShipList.isEmpty()) {
 				result.setResultMessage("该会员店没有包厢关系 不需要提醒");
-				result.setResult("noRemind");
+				contractRemindInfoDTO.setRemindFlag("noRemind");
+				result.setResult(contractRemindInfoDTO);
 				return result;
 			}
 			Integer remindFlag = contractDAO.queryRemindFlagByMemberCode(memberCode);
-			if (remindFlag == null) {
-				//查询到的提醒标志为空 需要提醒
-				result.setResultMessage("该会员店没有查询到提醒标识 需要提醒");
-				result.setResult("Remind");
-			} else if (remindFlag == 0) {
-				//查询到的提醒标志为0 需要提醒
-				result.setResultMessage("该会员店提醒标志为0 需要提醒");
-				result.setResult("Remind");
-			} else {
+			if (null != remindFlag && remindFlag == 1) {
 				//查询到的提醒标志不为空 且标志不为0 表示不需要提醒 数据库记录无需更改
 				result.setResultMessage("该会员店查询到提醒标识不为0或null 不需要提醒");
-				result.setResult("noRemind");
+				contractRemindInfoDTO.setRemindFlag("noRemind");
+				result.setResult(contractRemindInfoDTO);
+				return result;
+			} else {
+				//数据库中不含该会员店的提醒标志  则查询有效合同如果有未签订合同的包厢关系则需要提醒
+				List<ContractInfoDTO> returnContractList = contractDAO.queryEffectiveContractByMemberCode(memberCode, null);
+				List<ContractInfoDTO> needContractInfoList = new ArrayList<ContractInfoDTO>();
+				for (MemberShipDTO memberShipDTO : memberShipList) {
+					boolean checkFlag = true;
+					for (ContractInfoDTO contractInfoDTO : returnContractList) {
+						if (memberShipDTO.getMemberCode().equals(contractInfoDTO.getVendorCode())) {
+							checkFlag = false;
+							break;
+						}
+					}
+					if (checkFlag) {
+						//查询会员店信息
+						MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+						memberBaseDTO.setMemberCode(memberCode);
+						memberBaseDTO.setBuyerSellerType("1");
+						MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+						MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+						vendorBaseDTO.setMemberCode(memberShipDTO.getMemberCode());
+						vendorBaseDTO.setBuyerSellerType("2");
+						MemberAddrInfoDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+						ContractInfoDTO contractInfoDTO = new ContractInfoDTO();
+						contractInfoDTO.setMemberCode(memberCode);
+						contractInfoDTO.setMemberName(memberBase.getCompanyName());
+						contractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
+						contractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
+						contractInfoDTO.setVendorCode(vendorBase.getMemberCode());
+						contractInfoDTO.setVendorName(vendorBase.getCompanyName());
+						contractInfoDTO.setVendorLocationAddr(vendorBase.getLocationAddr());
+						contractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
+						needContractInfoList.add(contractInfoDTO);
+						result.setResultMessage("该会员店提醒标志为0 需要提醒");
+						contractRemindInfoDTO.setRemindFlag("Remind");
+					}
+				}
+				contractRemindInfoDTO.setNeedSignContractList(needContractInfoList);
+				if (StringUtils.isEmpty(contractRemindInfoDTO.getRemindFlag())) {
+					contractRemindInfoDTO.setRemindFlag("noRemind");
+				}
 			}
+			result.setResult(contractRemindInfoDTO);
 		} catch (Exception e) {
 			result.addErrorMessage("查询异常 异常信息 :" + e);
 			logger.error("queryRemindFlag 方法查询合同列表异常 异常信息:" + e);
@@ -269,15 +373,15 @@ public class ContractServiceImpl implements ContractService {
 	}
 
 	/**
-	 * @Description: 查询签署合同入口是否存在
+	 * @Description: 查询签订合同信息
 	 * @param vendorCode
 	 * @param memberCode
 	 * @return:
 	 */
 	@Override
-	public ExecuteResult<DataGrid<ContractInfoDTO>> queryEntranceExists(List<String> vendorCodeList, String memberCode) {
+	public ExecuteResult<List<ContractInfoDTO>> queryContractList(List<String> vendorCodeList, String memberCode) {
 		logger.info("queryEntranceExists方法 已进入会员店编码 memberCode=" + memberCode);
-		ExecuteResult<DataGrid<ContractInfoDTO>> result = new ExecuteResult<DataGrid<ContractInfoDTO>>();
+		ExecuteResult<List<ContractInfoDTO>> result = new ExecuteResult<List<ContractInfoDTO>>();
 		if (vendorCodeList.isEmpty()) {
 			result.addErrorMessage("供应商信息为空");
 			return result;
@@ -286,22 +390,47 @@ public class ContractServiceImpl implements ContractService {
 			result.addErrorMessage("会员店信息为空");
 			return result;
 		}
-		DataGrid<ContractInfoDTO> datagrid = new DataGrid<ContractInfoDTO>();
 		try {
-			//根据会员店编码和提供的供应商编码查询到的合同
-			List<ContractInfoDTO> contractInfoDTOList = contractDAO.queryContractBymemberCodeAndVendorCodeList(memberCode, vendorCodeList);
-			for (ContractInfoDTO contractInfoDTO : contractInfoDTOList) {
-				if (StringUtils.isEmpty(contractInfoDTO.getContractStatus())) {
-					//签订状态为空为未签订合同  0为未签订
-					contractInfoDTO.setContractStatus("0");
+			//首先根据会员编码查询一圈包厢关系
+			List<MemberShipDTO> memberShipList = boxRelationshipDAO.queryBoxRelationshipList(memberCode);
+			//根据传入的会员店编码和有可能的供应商编码查询现有合同信息
+			List<ContractInfoDTO> returnContractList = contractDAO.queryEffectiveContractByMemberCode(memberCode, vendorCodeList);
+			List<ContractInfoDTO> returnContracInfotList = new ArrayList<ContractInfoDTO>();
+			//查询会员店信息
+			MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+			memberBaseDTO.setMemberCode(memberCode);
+			memberBaseDTO.setBuyerSellerType("1");
+			MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+			returnContracInfotList.addAll(returnContractList);
+			if (null == memberShipList || memberShipList.isEmpty()) {
+				result.setResult(returnContracInfotList);
+				return result;
+			}
+			for (String vendor : vendorCodeList) {
+				boolean checkExistsFlag = true;
+				for (MemberShipDTO memberShipDTO : memberShipList) {
+					if (vendor.equals(memberShipDTO.getMemberCode())) {
+						//证明是在包厢关系中的需要签订合同的
+						for (ContractInfoDTO contractInfoDTO : returnContractList) {
+							if (vendor.equals(contractInfoDTO.getVendorCode())) {
+								//如果相同的话置为false证明已经查询到合同信息
+								checkExistsFlag = false;
+								break;
+							}
+						}
+						if (checkExistsFlag) {
+							//表示对应的供应商没有签订合同
+							ContractInfoDTO noSigncontract = getContractInfoDTOByCode(memberBase, vendor);
+							returnContracInfotList.add(noSigncontract);
+						}
+					}
 				}
 			}
-			datagrid.setRows(contractInfoDTOList);
-			datagrid.setSize(contractInfoDTOList.size());
-			result.setResult(datagrid);
+			//此时包含的是已经签订的合同加需要签订合同的供应商的合同
+			result.setResult(returnContracInfotList);
 		} catch (Exception e) {
-			result.addErrorMessage("查询合同签订状态异常 异常信息error=" + e.getMessage());
-			logger.error("查询合同签订状态异常 异常信息 error=" + e.getMessage() + ",	会员店编码memberCode=" + memberCode);
+			result.addErrorMessage("查询合同签订信息异常 异常信息error=" + e.getMessage());
+			logger.error("查询合同签订信息异常 异常信息 error=" + e.getMessage() + ",	会员店编码memberCode=" + memberCode);
 		}
 		logger.info("queryEntranceExists方法 已结束");
 		return result;
@@ -437,7 +566,7 @@ public class ContractServiceImpl implements ContractService {
 		if (StringUtils.isEmpty(memberCode)) {
 			result.addErrorMessage("会员店编码为空 保存失败");
 			return result;
-		} else if (operationId == null || StringUtils.isEmpty(operationName)) {
+		} else if (null == operationId || StringUtils.isEmpty(operationName)) {
 			result.addErrorMessage("操作人信息不完整 保存失败");
 			return result;
 		}
@@ -495,11 +624,34 @@ public class ContractServiceImpl implements ContractService {
 			String dateYMD = sdf.format(new Date());
 			String supplyContractNoKey = "supply_contract_num" + dateYMD;
 			for (SaveContractInfoDTO saveContractInfoDTO : saveContractInfoDTOList) {
+				MemberBaseDTO memberBaseDTO = new MemberBaseDTO();
+				memberBaseDTO.setMemberCode(saveContractInfoDTO.getMemberCode());
+				memberBaseDTO.setBuyerSellerType("1");
+				MemberAddrInfoDTO memberBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(memberBaseDTO);
+				MemberBaseDTO vendorBaseDTO = new MemberBaseDTO();
+				vendorBaseDTO.setMemberCode(saveContractInfoDTO.getVendorCode());
+				vendorBaseDTO.setBuyerSellerType("2");
+				MemberAddrInfoDTO vendorBase = memberBaseDAO.queryMemberBaseInfoByMemberCodeAndType(vendorBaseDTO);
+				if (null == memberBase) {
+					logger.error("查询不到对应的供应商信息 供应商编码=" + saveContractInfoDTO.getMemberCode());
+					throw new Exception("查询不到对应的供应商信息");
+				}
+				if (null == vendorBase) {
+					logger.error("查询不到对应的供应商信息 供应商编码=" + saveContractInfoDTO.getVendorCode());
+					throw new Exception("查询不到对应的供应商信息");
+				}
 				String contractCode = getContractCode(contractType, dateYMD, supplyContractNoKey);
 				saveContractInfoDTO.setContractCode(contractCode);
 				saveContractInfoDTO.setContractStatus(1);
+				saveContractInfoDTO.setMemberName(memberBase.getCompanyName());
+				saveContractInfoDTO.setMemberLocationAddr(memberBase.getLocationAddr());
+				saveContractInfoDTO.setMemberArtificialPersonName(memberBase.getArtificialPersonName());
+				saveContractInfoDTO.setVendorName(vendorBase.getCompanyName());
+				saveContractInfoDTO.setVendorLocationAddr(vendorBase.getLocationAddr());
+				saveContractInfoDTO.setVendorArtificialPersonName(vendorBase.getArtificialPersonName());
 			}
 			contractDAO.insertContractInfo(saveContractInfoDTOList);
+			result.setResult("success");
 		} catch (Exception e) {
 			logger.error("saveContractInfo方法保存合同信息失败 失败信息 error:" + e);
 			result.addErrorMessage("保存合同信息失败 失败信息 error:" + e);

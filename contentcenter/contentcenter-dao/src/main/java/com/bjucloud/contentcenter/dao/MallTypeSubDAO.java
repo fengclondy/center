@@ -1,11 +1,12 @@
 package com.bjucloud.contentcenter.dao;
 
-import cn.htd.common.dao.orm.BaseDAO;
-import com.bjucloud.contentcenter.dto.HTDMallTypeSubDTO;
-
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+
+import com.bjucloud.contentcenter.dto.HTDMallTypeSubDTO;
+
+import cn.htd.common.dao.orm.BaseDAO;
 
 public interface MallTypeSubDAO extends BaseDAO<HTDMallTypeSubDTO> {
     /**

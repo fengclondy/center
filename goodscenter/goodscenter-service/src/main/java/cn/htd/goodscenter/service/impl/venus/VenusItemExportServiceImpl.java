@@ -748,6 +748,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 						||Integer.valueOf(HtdItemStatusEnum.REJECTED.getCode()).equals(draftItemSkuDetailOutDTO.getItemStatus())){
 					    draftItemSkuDetailOutDTO.setStatusChangeReason(venusItemSkuDetailOutDTO.getStatusChangeReason());
 					    draftItemSkuDetailOutDTO.setErpCode(venusItemSkuDetailOutDTO.getErpCode());
+						draftItemSkuDetailOutDTO.setItemCode(venusItemSkuDetailOutDTO.getItemCode());
 						venusItemSkuDetailOutDTO=draftItemSkuDetailOutDTO;
 				}
 			}

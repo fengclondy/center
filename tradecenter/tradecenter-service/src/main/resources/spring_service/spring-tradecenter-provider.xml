@@ -29,4 +29,6 @@
 
 	<dubbo:service interface="cn.htd.tradecenter.service.GroupBuyService" ref="groupBuyService" version="${dubbo.version}" timeout="${dubbo.timeout}"/>
 
+	<dubbo:service interface="cn.htd.tradecenter.service.VMSOrderService" ref="vmsOrderService" version="${dubbo.version}" timeout="${dubbo.timeout}"/>
+	
 </beans>

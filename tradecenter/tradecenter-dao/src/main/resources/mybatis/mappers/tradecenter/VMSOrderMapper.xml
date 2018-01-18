@@ -180,13 +180,6 @@
             <if test="entity.buyerCode != null and entity.buyerCode != ''">
                 and buyer_code = #{entity.buyerCode}
             </if>
-            <if test="entity.searchStr != null and entity.searchStr != ''">
-                and (
-                order_no = #{entity.searchStr}
-                or consignee_phone_num = #{entity.searchStr}
-                or buyer_name like concat('%', #{entity.searchStr}, '%')
-                )
-            </if>
             <if test="entity.buyerType != null and entity.buyerType != ''">
                 and buyer_type = #{entity.buyerType}
             </if>
@@ -226,6 +219,17 @@
             </if>
             <if test="entity.isTimelimitedOrder != null and entity.isTimelimitedOrder != -1 ">
                 <![CDATA[ and is_timelimited_order = #{entity.isTimelimitedOrder} ]]>
+            </if>
+            <if test="entity.searchStr != null and entity.searchStr != ''">
+                and (
+                order_no = #{entity.searchStr}
+                or consignee_phone_num = #{entity.searchStr}
+                or buyer_name like concat('%', #{entity.searchStr}, '%')
+                )
+            </if>
+            <if test="entity.thirdCategoryId != null and entity.thirdCategoryId != ''">
+                and order_no in (select distinct(s.order_no) from trade_order_items s
+                where s.third_category_id = #{entity.thirdCategoryId})
             </if>
         </if>
     </sql>

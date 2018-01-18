@@ -7,6 +7,7 @@ import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.tradecenter.common.constant.ReturnCodeConst;
 import cn.htd.tradecenter.common.constant.VMSOrderConstants;
 import cn.htd.tradecenter.common.exception.TradeCenterBusinessException;
+import cn.htd.tradecenter.common.utils.ExceptionUtils;
 import cn.htd.tradecenter.common.utils.ValidateResult;
 import cn.htd.tradecenter.common.utils.ValidationUtils;
 import cn.htd.tradecenter.dao.VMSOrderDAO;
@@ -49,19 +50,27 @@ public class VMSOrderServiceImpl implements VMSOrderService{
         if (validateResult.isHasErrors()) {
             throw new TradeCenterBusinessException(ReturnCodeConst.PARAMETER_ERROR, validateResult.getErrorMsg());
         }
-        // 根据查询tab设置查询入参
-        setVMSpendingQueryCondition(conditionDTO);
-        long count = vmsOrderDAO.queryVMSpendingOrderCountByCondition(conditionDTO);
-        if(count > 0){
-            List<TradeOrdersShowDTO> orderlist = vmsOrderDAO.queryVMSpendingOrderByCondition(conditionDTO, pager);
-            dataGrid.setRows(orderlist);
+        try {
+            // 根据查询tab设置查询入参
+            setVMSpendingQueryCondition(conditionDTO);
+            long count = vmsOrderDAO.queryVMSpendingOrderCountByCondition(conditionDTO);
+            if(count > 0){
+                List<TradeOrdersShowDTO> orderlist = vmsOrderDAO.queryVMSpendingOrderByCondition(conditionDTO, pager);
+                dataGrid.setRows(orderlist);
+            }
+            dataGrid.setTotal(count);
+            result.setResult(dataGrid);
+        } catch (TradeCenterBusinessException tcbe) {
+            result.setCode(tcbe.getCode());
+            result.addErrorMessage(tcbe.getMessage());
+        } catch (Exception e) {
+            result.setCode(ReturnCodeConst.SYSTEM_ERROR);
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
         }
-        dataGrid.setTotal(count);
-        result.setResult(dataGrid);
         return result;
     }
 
-    private void setVMSpendingQueryCondition(VenusTradeOrdersQueryInDTO conditionDTO){
+    private void setVMSpendingQueryCondition(VenusTradeOrdersQueryInDTO conditionDTO) throws Exception{
         List<String> orderStatusList = new ArrayList<String>();
         if(VMSOrderConstants.SEARCH_CONDITION_OUT_DISTRIBTION.equals(conditionDTO.getSearchFlag())){
             orderStatusList.add(OrderStatusEnum.VERIFY_PENDING.getValue());

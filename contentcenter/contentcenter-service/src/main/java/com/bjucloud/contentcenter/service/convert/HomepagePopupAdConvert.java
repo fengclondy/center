@@ -33,7 +33,7 @@ public class HomepagePopupAdConvert extends AbstractConvert<HomepagePopupAd, Pop
         dto.setOperateTime(homepagePopupAd.getModifyTime());
         if (homepagePopupAd.getTerminalAdList() != null && !homepagePopupAd.getTerminalAdList().isEmpty()) {
             for (HomepagePopupTerminalAd terminalAd : homepagePopupAd.getTerminalAdList()) {
-                terminalTypeStr += "," + PopupAdTerminalTypeEnums.getTypeDesc(terminalAd.getTerminalType());
+                terminalTypeStr += "、" + PopupAdTerminalTypeEnums.getTypeDesc(terminalAd.getTerminalType());
                 terminalTypeList.add(terminalAd.getTerminalType());
             }
             dto.setTerminallTypeStr(terminalTypeStr.substring(1));

@@ -726,6 +726,7 @@
 		cat.c_name as categoryName,
 		brand.brand_name as brandName,
 		t.brand as brandId,
+		t.item_code as itemCode,
 		t.model_type as modelType,
 		sku.attributes as color,
 		t.item_name as itemName,

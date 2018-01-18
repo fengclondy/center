@@ -495,6 +495,7 @@
 		t.brand as brandId,
 		t.model_type as modelType,
 		t.attr_sale as color,
+		t.item_code as itemCode,
 		t.item_name as itemName,
 		t.cid as thirdCatId,
 		t.weight_unit as unit,

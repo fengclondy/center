@@ -17,6 +17,8 @@ public class VenusItemSkuDetailOutDTO implements Serializable{
 	private Long skuId;
 	//item id
 	private Long itemId;
+	//商品编码
+	private String itemCode;
 	//一级目录ID
 	private Long firstCatId;
 	//一级目录名称
@@ -253,5 +255,13 @@ public class VenusItemSkuDetailOutDTO implements Serializable{
 
 	public void setCategoryAttrHandled(Map<String, String[]> categoryAttrHandled) {
 		this.categoryAttrHandled = categoryAttrHandled;
+	}
+
+	public String getItemCode() {
+		return itemCode;
+	}
+
+	public void setItemCode(String itemCode) {
+		this.itemCode = itemCode;
 	}
 }

@@ -944,6 +944,9 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
                 cNameList.add(batchAddItemInDTO.getCategoryName());
             }
         }
+        if (CollectionUtils.isEmpty(cNameList)) {
+            return resultMap;
+        }
         List<ItemCategoryDTO> itemCategoryDTOList = this.itemCategoryDAO.batchQueryThirdCategoryIdByName(cNameList);
         for (ItemCategoryDTO itemCategoryDTO : itemCategoryDTOList) {
             resultMap.put(itemCategoryDTO.getCategoryCName(), itemCategoryDTO.getCategoryCid());
@@ -958,6 +961,9 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
             if (batchAddItemInDTO != null && StringUtils.isNotEmpty(batchAddItemInDTO.getBrandName())) {
                 cNameList.add(batchAddItemInDTO.getBrandName());
             }
+        }
+        if (CollectionUtils.isEmpty(cNameList)) {
+            return resultMap;
         }
         List<ItemBrand> itemBrandList = this.itemBrandDAO.batchQueryBrandByName(cNameList);
         for (ItemBrand itemBrand : itemBrandList) {

@@ -1065,6 +1065,13 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 						if (StringUtils.isNotEmpty(saleLimitPrice)) {
 							itemSkuBasePrice.setSaleLimitedPrice(new BigDecimal(saleLimitPrice));
 						}
+					} else {
+						itemSkuBasePrice = new ItemSkuBasePrice();
+						String saleLimitPrice = MiddlewareInterfaceUtil.findItemFloorPrice(querySkuPublishInfoDetailParamDTO.getSupplierCode(), spu.getSpuCode());
+						if (StringUtils.isNotEmpty(saleLimitPrice)) {
+							itemSkuBasePrice.setSaleLimitedPrice(new BigDecimal(saleLimitPrice));
+							standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
+						}
 					}
 				}
 			}

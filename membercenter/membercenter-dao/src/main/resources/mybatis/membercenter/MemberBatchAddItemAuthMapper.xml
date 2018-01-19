@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.htd.membercenter.dao.MemberBatchAddItemAuthMapper" >
+  <resultMap id="BaseResultMap" type="cn.htd.membercenter.domain.MemberBatchAddItemAuth" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="is_open" property="isOpen" jdbcType="TINYINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_id" property="modifyId" jdbcType="BIGINT" />
+    <result column="modify_name" property="modifyName" jdbcType="VARCHAR" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="BaseResultMap2" type="cn.htd.membercenter.dto.QueryBatchAddItemAuthOutDTO" >
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+    <result column="is_open" property="isOpen" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, seller_id, is_open, create_id, create_name, create_time, modify_id, modify_name, 
+    modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_batch_add_item_auth
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectBysellerId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from member_batch_add_item_auth
+    where seller_id = #{sellerId,jdbcType=BIGINT} limit 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from member_batch_add_item_auth
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteBySellerId" parameterType="java.lang.Long" >
+    delete from member_batch_add_item_auth
+    where seller_id = #{sellerId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.htd.membercenter.domain.MemberBatchAddItemAuth" >
+    insert into member_batch_add_item_auth (id, seller_id, is_open, 
+      create_id, create_name, create_time, 
+      modify_id, modify_name, modify_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, #{isOpen,jdbcType=TINYINT}, 
+      #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
+      #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.htd.membercenter.domain.MemberBatchAddItemAuth" >
+    insert into member_batch_add_item_auth
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="isOpen != null" >
+        is_open,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyId != null" >
+        modify_id,
+      </if>
+      <if test="modifyName != null" >
+        modify_name,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="isOpen != null" >
+        #{isOpen,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.htd.membercenter.domain.MemberBatchAddItemAuth" >
+    update member_batch_add_item_auth
+    <set >
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="isOpen != null" >
+        is_open = #{isOpen,jdbcType=TINYINT},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyId != null" >
+        modify_id = #{modifyId,jdbcType=BIGINT},
+      </if>
+      <if test="modifyName != null" >
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.htd.membercenter.domain.MemberBatchAddItemAuth" >
+    update member_batch_add_item_auth
+    set seller_id = #{sellerId,jdbcType=BIGINT},
+      is_open = #{isOpen,jdbcType=TINYINT},
+      create_id = #{createId,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_id = #{modifyId,jdbcType=BIGINT},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="queryBatchAddItemAuthList" resultMap="BaseResultMap2">
+    SELECT
+        a.company_name,
+        b.member_code,
+        a.member_id,
+        IFNULL(c.is_open, 0),
+        c.create_time
+    FROM
+        member_company_info a
+    JOIN member_base_info b
+    ON a.member_id = b.id
+    LEFT JOIN member_batch_add_item_auth c
+    ON c.seller_id = b.id
+    WHERE b.`status` = 1 and a.buyer_seller_type = 2
+      <if test="param.companyName != null and param.companyName != ''">
+        AND a.company_name LIKE concat('%', #{param.companyName}, '%')
+      </if>
+      <if test="param.companyCode != null and param.companyCode != ''">
+        AND b.member_code = #{param.companyCode}
+      </if>
+      <if test="param.isOpen != null">
+        <if test="param.isOpen == 0">
+          c.is_open is null
+        </if>
+        <if test="param.isOpen == 1">
+          c.is_open = 1
+        </if>
+      </if>
+      <if test="pager != null">
+        limit #{pager.pageOffset} , #{pager.rows}
+      </if>
+  </select>
+
+  <select id="queryBatchAddItemAuthListCount" resultType="Long">
+    SELECT
+      count(1)
+    FROM
+    member_company_info a
+    JOIN member_base_info b
+    ON a.member_id = b.id
+    LEFT JOIN member_batch_add_item_auth c
+    ON c.seller_id = b.id
+    WHERE b.`status` = 1 and a.buyer_seller_type = 2
+    <if test="param.companyName != null and param.companyName != ''">
+      AND a.company_name LIKE concat('%', #{param.companyName}, '%')
+    </if>
+    <if test="param.companyCode != null and param.companyCode != ''">
+      AND b.member_code = #{param.companyCode}
+    </if>
+    <if test="param.isOpen != null">
+      <if test="param.isOpen == 0">
+        c.is_open is null
+      </if>
+      <if test="param.isOpen == 1">
+        c.is_open = 1
+      </if>
+    </if>
+  </select>
+</mapper>

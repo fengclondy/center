@@ -1057,6 +1057,16 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			ExecuteResult<StandardPriceDTO> queryStandardPriceExeResult=itemSkuPriceService.queryStandardPrice4InnerSeller(querySkuPublishInfoDetailParamDTO.getSkuId(), isBoxFlag);
 			if(queryStandardPriceExeResult.isSuccess()){
 				venusItemSkuPublishInfoDetailOutDTO.setStandardPriceDTO(queryStandardPriceExeResult.getResult());
+				StandardPriceDTO standardPriceDTO = queryStandardPriceExeResult.getResult();
+				if (standardPriceDTO != null) {
+					ItemSkuBasePrice itemSkuBasePrice = standardPriceDTO.getItemSkuBasePrice();
+					if (itemSkuBasePrice != null) {
+						String saleLimitPrice = MiddlewareInterfaceUtil.findItemFloorPrice(querySkuPublishInfoDetailParamDTO.getSupplierCode(), spu.getSpuCode());
+						if (StringUtils.isNotEmpty(saleLimitPrice)) {
+							itemSkuBasePrice.setSaleLimitedPrice(new BigDecimal(saleLimitPrice));
+						}
+					}
+				}
 			}
 			//查询促销锁定库存
 			Integer promotionQty = getPromotionQty(venusItemSkuPublishInfoDetailOutDTO.getSkuCode());

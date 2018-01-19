@@ -5,6 +5,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.Pager;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.dao.util.RedisDB;
+import cn.htd.common.middleware.MiddlewareInterfaceUtil;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.goodscenter.common.constants.Constants;
 import cn.htd.goodscenter.common.constants.ErrorCodes;
@@ -387,7 +388,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             if (totalCount > 0) {
                 queryVmsItemPublishInfoOutDTOList = itemSkuDAO.queryVmsItemSkuPublishInfoList(queryVmsItemPublishInfoInDTO, page);
                 //获取价格
-                makeUpPriceInfo4ItemSku(queryVmsItemPublishInfoOutDTOList, isBoxFlag);
+                makeUpPriceInfo4ItemSku(queryVmsItemPublishInfoOutDTOList, isBoxFlag, queryVmsItemPublishInfoInDTO.getSupplierCode());
             }
             dataGrid.setTotal(totalCount);
             dataGrid.setRows(queryVmsItemPublishInfoOutDTOList);
@@ -651,7 +652,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
         return null;
     }
 
-    private void makeUpPriceInfo4ItemSku(List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList, Integer isBoxFlag) {
+    private void makeUpPriceInfo4ItemSku(List<QueryVmsItemPublishInfoOutDTO> queryVmsItemPublishInfoOutDTOList, Integer isBoxFlag, String supplierCode) {
         if (CollectionUtils.isEmpty(queryVmsItemPublishInfoOutDTOList)) {
             return;
         }
@@ -670,8 +671,9 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             for (ItemSkuBasePrice price : basePriceList.getResult()) {
                 if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
                     //分销限价
-                    if (price.getSaleLimitedPrice() != null) {
-                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(price.getSaleLimitedPrice(), 2)));
+                    String saleLimitedPrice = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, venusItemSkuPublishInfoOutDTO.getSpuCode());
+                    if (saleLimitedPrice != null) {
+                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(new BigDecimal(saleLimitedPrice), 2)));
                     }
                     //包厢价格
                     if (null != price.getBoxSalePrice() &&  1 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {

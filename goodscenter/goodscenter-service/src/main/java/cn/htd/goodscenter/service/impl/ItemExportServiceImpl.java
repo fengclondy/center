@@ -3606,7 +3606,7 @@ public class ItemExportServiceImpl implements ItemExportService {
 			}
 			ItemSku itemSku = itemSkuList.get(0);
 			String shelfType = isBoxFlag == 1 ? "1" : "2";
-			ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(itemSku.getSkuId(), shelfType, 0);
+			ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(itemSku.getSkuId(), shelfType, "0");
 			if (itemSkuPublishInfo == null) {
 				executeResult.setCode(ResultCodeEnum.OUTPUT_IS_NULL.getCode());
 				executeResult.setResultMessage("查询不到库存信息");

@@ -312,13 +312,15 @@
    	    <choose>
 			<when test='memberSearch.sysFlag =="1"'>  <!-- VMS新系统执行代码 -->
 	      	    <include refid="VMS_Search_List" />
+	      	     order by m.regist_time desc
 	      	 </when>
 	      	 <otherwise>
 	      	 	<include refid="Search_List" />
+	      	 	order by m.regist_time 
 	      	 </otherwise>
 	     </choose>
 	</if>
-    order by m.regist_time
+   
    <if test="page != null and page != ''">
 		limit #{page.pageOffset},#{page.rows}
 	</if>

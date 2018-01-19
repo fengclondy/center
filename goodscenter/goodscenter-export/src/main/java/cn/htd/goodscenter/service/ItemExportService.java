@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import cn.htd.goodscenter.domain.ItemSkuPublishInfo;
 import cn.htd.goodscenter.dto.indto.QueryItemStockDetailInDTO;
 import cn.htd.goodscenter.dto.outdto.QueryItemStockDetailOutDTO;
 import org.apache.ibatis.annotations.Param;
@@ -376,5 +377,13 @@ public interface ItemExportService {
 	 * @return
 	 */
 	ExecuteResult<DataGrid<ItemDTO>> queryItemListBySellerId(String itemName, Long sellerId, Pager pager);
+
+	/**
+	 * 查询库存信息(限内部供应商)
+	 * @param itemId
+	 * @param isBoxFlag 0：大厅； 1：包厢
+	 * @return
+	 */
+	ExecuteResult<ItemSkuPublishInfo> queryItemStockInfo(Long itemId, Integer isBoxFlag);
 	
 }

@@ -3576,7 +3576,47 @@ public class ItemExportServiceImpl implements ItemExportService {
 			executeResult.setResult(dtoDataGrid);
 			executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
 		} catch (Exception e) {
-			LOGGER.error("查询大B商品出错，");
+			LOGGER.error("查询大B商品出错，", e);
+			executeResult.setCode(ResultCodeEnum.ERROR.getCode());
+			executeResult.setResultMessage(ResultCodeEnum.ERROR.getMessage());
+			executeResult.addErrorMessage(e.getMessage());
+		}
+		return executeResult;
+	}
+
+	@Override
+	public ExecuteResult<ItemSkuPublishInfo> queryItemStockInfo(Long itemId, Integer isBoxFlag) {
+		ExecuteResult<ItemSkuPublishInfo> executeResult = new ExecuteResult<>();
+		try {
+			if (itemId == null || itemId <= 0) {
+				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+				executeResult.setResultMessage("itemId不能为空");
+				return executeResult;
+			}
+			if (isBoxFlag == null) {
+				executeResult.setCode(ResultCodeEnum.INPUT_PARAM_IS_NULL.getCode());
+				executeResult.setResultMessage("isBoxFlag不能为空");
+				return executeResult;
+			}
+			List<ItemSku> itemSkuList = this.itemSkuDAO.queryByItemId(itemId);
+			if (CollectionUtils.isEmpty(itemSkuList)) {
+				executeResult.setCode(ResultCodeEnum.OUTPUT_IS_NULL.getCode());
+				executeResult.setResultMessage("查询不到库存信息");
+				return executeResult;
+			}
+			ItemSku itemSku = itemSkuList.get(0);
+			String shelfType = isBoxFlag == 1 ? "1" : "2";
+			ItemSkuPublishInfo itemSkuPublishInfo = this.itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(itemSku.getSkuId(), shelfType, 0);
+			if (itemSkuPublishInfo == null) {
+				executeResult.setCode(ResultCodeEnum.OUTPUT_IS_NULL.getCode());
+				executeResult.setResultMessage("查询不到库存信息");
+				return executeResult;
+			}
+			executeResult.setCode(ResultCodeEnum.SUCCESS.getCode());
+			executeResult.setResult(itemSkuPublishInfo);
+			executeResult.setResultMessage(ResultCodeEnum.SUCCESS.getMessage());
+		} catch (Exception e) {
+			LOGGER.error("查询库存信息出错，", e);
 			executeResult.setCode(ResultCodeEnum.ERROR.getCode());
 			executeResult.setResultMessage(ResultCodeEnum.ERROR.getMessage());
 			executeResult.addErrorMessage(e.getMessage());

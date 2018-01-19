@@ -8,5 +8,7 @@ import cn.htd.tradecenter.dto.VenusTradeOrdersQueryInDTO;
 
 public interface VMSOrderService {
 
+    public ExecuteResult<Long> queryVMSpendingOrderCountByCondition(VenusTradeOrdersQueryInDTO conditionDTO);
+
     public ExecuteResult<DataGrid<TradeOrdersShowDTO>> queryVMSpendingOrderByCondition(VenusTradeOrdersQueryInDTO conditionDTO, Pager<VenusTradeOrdersQueryInDTO> pager);
 }

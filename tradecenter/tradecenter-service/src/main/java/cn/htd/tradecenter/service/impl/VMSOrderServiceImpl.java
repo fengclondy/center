@@ -38,6 +38,33 @@ public class VMSOrderServiceImpl implements VMSOrderService{
 
 
     @Override
+    public ExecuteResult<Long> queryVMSpendingOrderCountByCondition(VenusTradeOrdersQueryInDTO conditionDTO) {
+        ExecuteResult<Long> result = new ExecuteResult<Long>();
+        if (conditionDTO == null) {
+            throw new TradeCenterBusinessException(ReturnCodeConst.PARAMETER_ERROR, "卖家编码不能为空");
+        }
+        // 输入DTO的验证
+        ValidateResult validateResult = ValidationUtils.validateEntity(conditionDTO);
+        // 有错误信息时返回错误信息
+        if (validateResult.isHasErrors()) {
+            throw new TradeCenterBusinessException(ReturnCodeConst.PARAMETER_ERROR, validateResult.getErrorMsg());
+        }
+        try {
+            // 根据查询tab设置查询入参
+            setVMSpendingQueryCondition(conditionDTO);
+            long count = vmsOrderDAO.queryVMSpendingOrderCountByCondition(conditionDTO);
+            result.setResult(count);
+        } catch (TradeCenterBusinessException tcbe) {
+            result.setCode(tcbe.getCode());
+            result.addErrorMessage(tcbe.getMessage());
+        } catch (Exception e) {
+            result.setCode(ReturnCodeConst.SYSTEM_ERROR);
+            result.addErrorMessage(ExceptionUtils.getStackTraceAsString(e));
+        }
+        return result;
+    }
+
+    @Override
     public ExecuteResult<DataGrid<TradeOrdersShowDTO>> queryVMSpendingOrderByCondition(VenusTradeOrdersQueryInDTO conditionDTO, Pager<VenusTradeOrdersQueryInDTO> pager) {
         ExecuteResult<DataGrid<TradeOrdersShowDTO>> result = new ExecuteResult<DataGrid<TradeOrdersShowDTO>>();
         DataGrid<TradeOrdersShowDTO> dataGrid = new DataGrid<TradeOrdersShowDTO>();

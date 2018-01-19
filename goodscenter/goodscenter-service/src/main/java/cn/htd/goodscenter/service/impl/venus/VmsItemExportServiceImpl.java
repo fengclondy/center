@@ -663,18 +663,18 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             }
         }
         ExecuteResult<List<ItemSkuBasePrice>> basePriceList = itemSkuPriceService.batchQueryItemSkuBasePrice(skuIdList);
-        if (basePriceList == null || CollectionUtils.isEmpty(basePriceList.getResult())) {
-            return;
-        }
+//        if (basePriceList == null || CollectionUtils.isEmpty(basePriceList.getResult())) {
+//            return;
+//        }
         for (QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
             venusItemSkuPublishInfoOutDTO.setIsBoxFlag(isBoxFlag);
+            //分销限价
+            String saleLimitedPrice = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, venusItemSkuPublishInfoOutDTO.getSpuCode());
+            if (saleLimitedPrice != null) {
+                venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(new BigDecimal(saleLimitedPrice), 2)));
+            }
             for (ItemSkuBasePrice price : basePriceList.getResult()) {
                 if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
-                    //分销限价
-                    String saleLimitedPrice = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, venusItemSkuPublishInfoOutDTO.getSpuCode());
-                    if (saleLimitedPrice != null) {
-                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(new BigDecimal(saleLimitedPrice), 2)));
-                    }
                     //包厢价格
                     if (null != price.getBoxSalePrice() &&  1 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {
                         venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(this.wrapDecimal(price.getBoxSalePrice(), 2)));

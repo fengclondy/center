@@ -8,10 +8,12 @@ import cn.htd.membercenter.domain.MemberBatchAddItemAuth;
 import cn.htd.membercenter.dto.QueryBatchAddItemAuthInDTO;
 import cn.htd.membercenter.dto.QueryBatchAddItemAuthOutDTO;
 import cn.htd.membercenter.service.MemberBatchAddItemAuthService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
+@Service("memberBatchAddItemAuthService")
 public class MemberBatchAddItemAuthServiceImpl implements MemberBatchAddItemAuthService {
 
     @Resource

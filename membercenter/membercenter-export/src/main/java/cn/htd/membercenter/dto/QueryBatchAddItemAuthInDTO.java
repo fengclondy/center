@@ -1,6 +1,8 @@
 package cn.htd.membercenter.dto;
 
-public class QueryBatchAddItemAuthInDTO {
+import java.io.Serializable;
+
+public class QueryBatchAddItemAuthInDTO implements Serializable {
     // 平台公司名称
     private String companyName;
     // 平台公司编码

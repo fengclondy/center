@@ -8,6 +8,8 @@ public class MemberBatchAddItemAuth {
     private Long sellerId;
 
     private Integer isOpen;
+    private Date startTime;
+    private Date endTime;
 
     private Long createId;
 
@@ -35,6 +37,22 @@ public class MemberBatchAddItemAuth {
 
     public void setSellerId(Long sellerId) {
         this.sellerId = sellerId;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public Integer getIsOpen() {

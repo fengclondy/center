@@ -23,7 +23,7 @@ public interface MemberBatchAddItemAuthService {
      * @param sellerId
      * @return
      */
-    ExecuteResult<String> openAuthBatchAddItem(Long sellerId, Long operateId, String operateName);
+    ExecuteResult<String> openAuthBatchAddItem(QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO, Long operateId, String operateName);
 
     /**
      * 关闭批量权限

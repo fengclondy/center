@@ -40,12 +40,14 @@ public class MemberBatchAddItemAuthServiceImpl implements MemberBatchAddItemAuth
     }
 
     @Override
-    public ExecuteResult<String> openAuthBatchAddItem(Long sellerId, Long operateId, String operateName) {
+    public ExecuteResult<String> openAuthBatchAddItem(QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO, Long operateId, String operateName) {
         ExecuteResult<String> executeResult = new ExecuteResult<String>();
         try {
             MemberBatchAddItemAuth memberBatchAddItemAuth = new MemberBatchAddItemAuth();
             memberBatchAddItemAuth.setIsOpen(1);
-            memberBatchAddItemAuth.setSellerId(sellerId);
+            memberBatchAddItemAuth.setStartTime(queryBatchAddItemAuthInDTO.getStartTime());
+            memberBatchAddItemAuth.setEndTime(queryBatchAddItemAuthInDTO.getEndTime());
+            memberBatchAddItemAuth.setSellerId(Long.valueOf(queryBatchAddItemAuthInDTO.getSellerId()));
             memberBatchAddItemAuth.setCreateId(operateId);
             memberBatchAddItemAuth.setCreateName(operateName);
             memberBatchAddItemAuth.setModifyId(operateId);

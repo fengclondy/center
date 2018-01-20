@@ -15,7 +15,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <resultMap id="BaseResultMap2" type="cn.htd.membercenter.dto.QueryBatchAddItemAuthOutDTO" >
-    <!--<result column="seller_id" property="sellerId" jdbcType="BIGINT" />-->
+    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
     <result column="company_name" property="companyName" jdbcType="VARCHAR" />
     <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
@@ -187,8 +187,9 @@
     SELECT
         a.company_name,
         a.company_code,
-        a.start_time,
-        a.end_time,
+        c.start_time,
+        c.end_time,
+        c.seller_id,
         b.member_code ,
         a.member_id ,
         IFNULL(c.is_open, 0) is_open,
@@ -208,10 +209,10 @@
       </if>
       <if test="param.isOpen != null">
         <if test="param.isOpen == 0">
-          c.is_open is null
+          AND c.is_open is null
         </if>
         <if test="param.isOpen == 1">
-          c.is_open = 1
+          AND c.is_open = 1
         </if>
       </if>
       <if test="pager != null">
@@ -237,10 +238,10 @@
     </if>
     <if test="param.isOpen != null">
       <if test="param.isOpen == 0">
-        c.is_open is null
+        AND c.is_open is null
       </if>
       <if test="param.isOpen == 1">
-        c.is_open = 1
+        AND c.is_open = 1
       </if>
     </if>
   </select>

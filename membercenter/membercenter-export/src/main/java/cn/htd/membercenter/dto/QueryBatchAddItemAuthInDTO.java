@@ -6,6 +6,7 @@ import java.util.Date;
 public class QueryBatchAddItemAuthInDTO implements Serializable {
     // 平台公司名称
     private String companyName;
+    private String sellerId;
     // 平台公司编码
     private String companyCode;
 
@@ -15,6 +16,14 @@ public class QueryBatchAddItemAuthInDTO implements Serializable {
     private Date endTime;
     // 是否开通 0：未开通 1：已开通
     private Integer isOpen;
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
 
     public String getCompanyName() {
         return companyName;

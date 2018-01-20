@@ -5,6 +5,8 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
     <result column="is_open" property="isOpen" jdbcType="TINYINT" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -13,14 +15,16 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <resultMap id="BaseResultMap2" type="cn.htd.membercenter.dto.QueryBatchAddItemAuthOutDTO" >
-    <result column="seller_id" property="sellerId" jdbcType="BIGINT" />
+    <!--<result column="seller_id" property="sellerId" jdbcType="BIGINT" />-->
     <result column="company_name" property="companyName" jdbcType="VARCHAR" />
     <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
     <result column="is_open" property="isOpen" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, seller_id, is_open, create_id, create_name, create_time, modify_id, modify_name, 
+    id, seller_id, is_open,start_time,end_time create_id, create_name, create_time, modify_id, modify_name,
     modify_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -44,11 +48,13 @@
     where seller_id = #{sellerId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="cn.htd.membercenter.domain.MemberBatchAddItemAuth" >
-    insert into member_batch_add_item_auth (id, seller_id, is_open, 
+    insert into member_batch_add_item_auth (id, seller_id, is_open,
+      start_time,end_time,
       create_id, create_name, create_time, 
       modify_id, modify_name, modify_time
       )
-    values (#{id,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, #{isOpen,jdbcType=TINYINT}, 
+    values (#{id,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, #{isOpen,jdbcType=TINYINT},
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
       #{createId,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, now(),
       #{modifyId,jdbcType=BIGINT}, #{modifyName,jdbcType=VARCHAR}, now()
       )
@@ -64,6 +70,12 @@
       </if>
       <if test="isOpen != null" >
         is_open,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
       </if>
       <if test="createId != null" >
         create_id,
@@ -94,6 +106,12 @@
       <if test="isOpen != null" >
         #{isOpen,jdbcType=TINYINT},
       </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
       </if>
@@ -123,6 +141,12 @@
       <if test="isOpen != null" >
         is_open = #{isOpen,jdbcType=TINYINT},
       </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TINYINT},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TINYINT},
+      </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
       </if>
@@ -148,6 +172,8 @@
     update member_batch_add_item_auth
     set seller_id = #{sellerId,jdbcType=BIGINT},
       is_open = #{isOpen,jdbcType=TINYINT},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
       create_id = #{createId,jdbcType=BIGINT},
       create_name = #{createName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -160,9 +186,12 @@
   <select id="queryBatchAddItemAuthList" resultMap="BaseResultMap2">
     SELECT
         a.company_name,
-        b.member_code,
-        a.member_id,
-        IFNULL(c.is_open, 0),
+        a.company_code,
+        a.start_time,
+        a.end_time,
+        b.member_code ,
+        a.member_id ,
+        IFNULL(c.is_open, 0) is_open,
         c.create_time
     FROM
         member_company_info a

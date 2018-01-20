@@ -8,6 +8,11 @@ public class QueryBatchAddItemAuthOutDTO implements Serializable {
     private String companyName;
     // 平台公司编码
     private String companyCode;
+    //权限生效时间
+    private Date startTime;
+    //权限失效时间
+    private Date endTime;
+
     // 是否开通 0：未开通 1：已开通
     private Integer isOpen;
     //开通时间
@@ -27,6 +32,22 @@ public class QueryBatchAddItemAuthOutDTO implements Serializable {
 
     public void setCompanyCode(String companyCode) {
         this.companyCode = companyCode;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public Integer getIsOpen() {

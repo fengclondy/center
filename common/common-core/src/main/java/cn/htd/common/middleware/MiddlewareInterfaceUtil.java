@@ -30,12 +30,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 
 import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.util.SpringApplicationContextHolder;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 
 /**
@@ -75,12 +75,12 @@ public class MiddlewareInterfaceUtil {
 		
 		logger.info("MiddlewareInterfaceUtil::getAccessToken:接口查询 token "+ responseJson);
 
-		Map resultMap = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+		JSONObject resultMap = JSONObject.parseObject(responseJson);
 		if (MapUtils.isNotEmpty(resultMap)
-				&& MiddlewareInterfaceConstant.MIDDLEWARE_RESPONSE_CODE_OF_SUCCESS.equals(resultMap.get("code") + "")) {
-			if (resultMap.get("data") != null) {
-				redisClient.setAndExpire(MIDDLEWARE_ACCESS_TOKEN_KEY, resultMap.get("data") + "",1 * 60 * 60);
-				return resultMap.get("data") + "";
+				&& MiddlewareInterfaceConstant.MIDDLEWARE_RESPONSE_CODE_OF_SUCCESS.equals(resultMap.getString("code") + "")) {
+			if (resultMap.getString("data") != null) {
+				redisClient.setAndExpire(MIDDLEWARE_ACCESS_TOKEN_KEY, resultMap.getString("data"), 1 * 60 * 60);
+				return resultMap.getString("data");
 			}
 
 		}
@@ -99,11 +99,11 @@ public class MiddlewareInterfaceUtil {
 		
 		logger.info("MiddlewareInterfaceUtil::getAccessToken:接口查询 token "+ responseJson);
 
-		Map resultMap = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+		JSONObject resultMap = JSONObject.parseObject(responseJson);
 		if (MapUtils.isNotEmpty(resultMap)
-				&& MiddlewareInterfaceConstant.MIDDLEWARE_RESPONSE_CODE_OF_SUCCESS.equals(resultMap.get("code") + "")) {
-			if (resultMap.get("data") != null) {
-				redisClient.setAndExpire(MIDDLEWARE_ACCESS_TOKEN_KEY, resultMap.get("data") + "",1 * 60 * 60);
+				&& MiddlewareInterfaceConstant.MIDDLEWARE_RESPONSE_CODE_OF_SUCCESS.equals(resultMap.getString("code") + "")) {
+			if (resultMap.getString("data") != null) {
+				redisClient.setAndExpire(MIDDLEWARE_ACCESS_TOKEN_KEY, resultMap.getString("data"), 1 * 60 * 60);
 			}
 
 		}
@@ -152,7 +152,7 @@ public class MiddlewareInterfaceUtil {
 
     public static String httpPost(String url, Map<String, String> paramMap, boolean isHttps) {
         logger.info("MiddlewareInterfaceUtil::httpPost url={},paramMap={}", url,
-                JSONObject.fromObject(paramMap).toString());
+                JSONObject.toJSONString(paramMap));
         StringEntity entity = null;
         if (paramMap != null && !paramMap.isEmpty()) {
             StringBuilder param = new StringBuilder();
@@ -211,9 +211,9 @@ public class MiddlewareInterfaceUtil {
             }
         }
         try{
-            Map map = (Map) JSONObject.toBean(JSONObject.fromObject(resultSb.toString()), Map.class);
+            JSONObject map = JSONObject.parseObject(resultSb.toString());
             
-            if(map.get("code")!=null&&String.valueOf(map.get("code")).equals("2001")){
+            if(map.getString("code")!=null&&String.valueOf(map.getString("code")).equals("2001")){
                 //try again
                 refreshAcceccToken();
             }
@@ -275,9 +275,9 @@ public class MiddlewareInterfaceUtil {
 		}
 		logger.info("httpGet end, result : {}", resultSb.toString());
 		try{
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(resultSb.toString()), Map.class);
+		    JSONObject map = JSONObject.parseObject(resultSb.toString());
 			
-			if(map.get("code")!=null&&String.valueOf(map.get("code")).equals("2001")){
+			if(map.getString("code")!=null&&String.valueOf(map.getString("code")).equals("2001")){
 				//try again
 				refreshAcceccToken();
 			}
@@ -288,21 +288,19 @@ public class MiddlewareInterfaceUtil {
 		return resultSb.toString();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T httpPostAndGetResponseObject(String url, String jsonParam, Class clazz) {
+	public static <T> T httpPostAndGetResponseObject(String url, String jsonParam, Class<T> clazz) {
 		String responseJson = httpPost(url, jsonParam, Boolean.TRUE);
 		if (StringUtils.isEmpty(responseJson)) {
 			return null;
 		}
 
 		try{
-			MiddlewareResponseObject middlewareResponseObj = (MiddlewareResponseObject) JSONObject
-					.toBean(JSONObject.fromObject(responseJson), MiddlewareResponseObject.class);
-			String code = middlewareResponseObj.getCode();
+			JSONObject middlewareResponseObj = JSONObject.parseObject(responseJson);
+			String code = middlewareResponseObj.getString("code");
 			if (MiddlewareInterfaceConstant.MIDDLEWARE_RESPONSE_CODE_OF_SUCCESS.equals(code)) {
-				Map<String, Object> dataMap = middlewareResponseObj.getData();
-				if (MapUtils.isNotEmpty(dataMap)) {
-					return (T) JSONObject.toBean(JSONObject.fromObject(dataMap), clazz);
+				String dataMap = middlewareResponseObj.getString("data");
+				if (StringUtils.isNotEmpty(dataMap)) {
+					return JSONObject.parseObject(dataMap, clazz);
 				}
 			}
 		}catch(Exception e){
@@ -318,12 +316,11 @@ public class MiddlewareInterfaceUtil {
 		try{
 			String responseJson = MiddlewareInterfaceUtil
 					.httpGet(MiddlewareInterfaceConstant.MIDDLEWARE_GET_ITEM_STOCK_URL + param, Boolean.TRUE);
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
-			JSONArray jsonArray=JSONArray.fromObject(map.get("data"));
-			List list =JSONArray.toList(jsonArray,ItemStockResponseDTO.class);
+			JSONObject map = JSONObject.parseObject(responseJson);
+			List<ItemStockResponseDTO> list = JSONArray.parseArray(map.getString("data"), ItemStockResponseDTO.class);
 			ItemStockResponseDTO itemStockResponse = null;
 			if (CollectionUtils.isNotEmpty(list)) {
-				itemStockResponse = (ItemStockResponseDTO) list.get(0);
+				itemStockResponse = list.get(0);
 			}
 			return itemStockResponse;
 		}catch(Exception e){
@@ -346,9 +343,8 @@ public class MiddlewareInterfaceUtil {
 				+ MiddlewareInterfaceUtil.getAccessToken();
 		try{
 			String responseJson = MiddlewareInterfaceUtil.httpGet(MiddlewareInterfaceConstant.MIDDLEWARE_GET_ITEM_STOCK_URL + param, Boolean.TRUE);
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
-			JSONArray jsonArray=JSONArray.fromObject(map.get("data"));
-			List<ItemStockResponseDTO> list =JSONArray.toList(jsonArray,ItemStockResponseDTO.class);
+			JSONObject map = JSONObject.parseObject(responseJson);
+			List<ItemStockResponseDTO> list =JSONArray.parseArray(map.getString("data"),ItemStockResponseDTO.class);
 			return list;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -356,7 +352,6 @@ public class MiddlewareInterfaceUtil {
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static List<ItemStockResponseDTO> getItemStockList(String supplyierCode, List<String> spuCodeList) {
 		if(StringUtils.isEmpty(supplyierCode)||CollectionUtils.isEmpty(spuCodeList)){
 			return null;
@@ -385,7 +380,7 @@ public class MiddlewareInterfaceUtil {
 				return null;
 			}
 			
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+			JSONObject map = JSONObject.parseObject(responseJson);
 			
 			if(map.get("code")==null||!String.valueOf(map.get("code")).equals("1")){
 				return null;
@@ -394,8 +389,7 @@ public class MiddlewareInterfaceUtil {
 			if(map.get("data")==null){
 				return null;
 			}
-			JSONArray jsonArray=JSONArray.fromObject(map.get("data"));
-			return JSONArray.toList(jsonArray,ItemStockResponseDTO.class);
+			return JSONArray.parseArray(map.getString("data"),ItemStockResponseDTO.class);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -418,20 +412,20 @@ public class MiddlewareInterfaceUtil {
 				return null;
 			}
 			
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+			JSONObject map = JSONObject.parseObject(responseJson);
 			
-			if(map.get("code")==null||!String.valueOf(map.get("code")).equals("1")){
+			if(map.getString("code")==null||!String.valueOf(map.getString("code")).equals("1")){
 				return null;
 			}
 			
-			if(map.get("data")==null){
+			if(map.getJSONObject("data")==null){
 				return null;
 			}
 			
-			Map dataMap = JSONObject.fromObject(map.get("data"));
+			JSONObject dataMap = map.getJSONObject("data");
 			
-			if(MapUtils.isNotEmpty(dataMap)&& dataMap.get("floorPrice")!=null){
-				return (String) dataMap.get("floorPrice");	
+			if(dataMap != null && dataMap.getString("floorPrice")!=null){
+				return dataMap.getString("floorPrice");	
 			}
 			
 		}catch(Exception e){
@@ -440,7 +434,8 @@ public class MiddlewareInterfaceUtil {
 		return null;
 	}
 
-	public static Map findItemERPPrice(String supplierCode,String itemSpuCode){
+	@SuppressWarnings("rawtypes")
+    public static Map findItemERPPrice(String supplierCode,String itemSpuCode){
 		if(StringUtils.isEmpty(supplierCode)||StringUtils.isEmpty(itemSpuCode)){
 			return null;
 		}
@@ -453,14 +448,14 @@ public class MiddlewareInterfaceUtil {
 			if(StringUtils.isEmpty(responseJson)){
 				return null;
 			}
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
-			if(map.get("code")==null||!String.valueOf(map.get("code")).equals("1")){
+			JSONObject map = JSONObject.parseObject(responseJson);
+			if(map.getString("code")==null||!String.valueOf(map.getString("code")).equals("1")){
 				return null;
 			}
-			if(map.get("data")==null){
+			if(map.getJSONObject("data")==null){
 				return null;
 			}
-			Map dataMap = JSONObject.fromObject(map.get("data"));
+			Map dataMap = JSONObject.toJavaObject(map.getJSONObject("data"), Map.class);
 			return dataMap;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -484,21 +479,19 @@ public class MiddlewareInterfaceUtil {
 					return null;
 				}
 				
-				Map map = (Map) JSONObject.toBean(JSONObject.fromObject(responseJson), Map.class);
+				JSONObject map = JSONObject.parseObject(responseJson);
 				
-				if(map.get("code")==null||!String.valueOf(map.get("code")).equals("1")){
+				if(map.getString("code")==null||!String.valueOf(map.getString("code")).equals("1")){
 					return null;
 				}
 				
-				if(map.get("data")==null){
+				if(map.getString("data")==null){
 					return null;
 				}
 				
-				if(map.get("data")!=null){
-					JSONArray jsonArray=JSONArray.fromObject(map.get("data"));
+				if(map.getString("data")!=null){
 					
-					List<JdItemPriceResponseDTO> jdItemPriceList= JSONArray.toList(jsonArray,JdItemPriceResponseDTO.class);
-					
+					List<JdItemPriceResponseDTO> jdItemPriceList= JSONArray.parseArray(map.getString("data"), JdItemPriceResponseDTO.class);
 					if(CollectionUtils.isNotEmpty(jdItemPriceList)){
 						jdItemPriceResponseDTO=jdItemPriceList.get(0);
 					}

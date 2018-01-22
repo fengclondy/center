@@ -348,5 +348,26 @@ public class MemberGroupServiceImpl implements MemberGroupService {
 		return rs;
 	}
 
+	@Override
+	public ExecuteResult<List<MemberGroupDTO>> queryChooseMemberGroupInfo(MemberGroupDTO memberGroupDTO) {
+		logger.info("MemberGroupServiceImpl -- queryChooseMemberGroupInfo -- 参数sellerId:"+memberGroupDTO.getSellerId());
+		ExecuteResult<List<MemberGroupDTO>> rs = new ExecuteResult<List<MemberGroupDTO>>();
+		try{
+			List<MemberGroupDTO> result = memberGroupDAO.queryChooseMemberGroupInfo(memberGroupDTO);
+			if(CollectionUtils.isNotEmpty(result)){
+				rs.setResult(result);
+				rs.setResultMessage("successs");
+			}else{
+				rs.addErrorMessage("查询不到分组信息");
+				rs.setResultMessage("fail");
+			}
+		}catch (Exception e) {
+			rs.addErrorMessage(e.getMessage());
+			rs.setResultMessage("fail");
+			logger.error("MemberGroupServiceImpl----->queryGroupInfoBySellerBuyerId执行异常，参数位：sellerId:" + memberGroupDTO.getSellerId()
+					 + e);
 
+		}
+		return rs;
+	}
 }

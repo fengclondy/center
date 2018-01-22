@@ -263,5 +263,15 @@
 	    and a.delete_flag=0
 	    and b.delete_flag=0
 	</select>
+
+	<!-- 查询商家分组信息 -->
+	<select id="queryChooseMemberGroupInfo" resultType="cn.htd.membercenter.dto.MemberGroupDTO">
+		select a.buyer_id as buyerId
+	    from buyer_group_relationship a
+	    left join buyer_group b on a.group_id=b.group_id
+	    where b.seller_id=#{memberGroupDTO.sellerId}
+	    and a.delete_flag=0
+	    and b.delete_flag=0
+	</select>
 	
 </mapper>

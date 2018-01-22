@@ -51,5 +51,5 @@ public interface MemberGroupDAO {
 	public MemberGroupDTO queryGroupInfoBySellerBuyerId(@Param("buyerId") Long buyerId,
 			@Param("sellerId") Long sellerId);
 
-
+    List<MemberGroupDTO> queryChooseMemberGroupInfo(@Param("memberGroupDTO") MemberGroupDTO memberGroupDTO);
 }

@@ -111,6 +111,13 @@ public interface MemberGroupService {
 	 * @return
 	 */
 	public ExecuteResult<MemberGroupDTO> queryGroupInfoBySellerBuyerId(Long buyerId, Long sellerId);
+	
+	/**
+	 * 根据sellid 查找所有已分组会员
+	 * @param memberGroupDTO
+	 * @return
+	 */
+	public ExecuteResult<List<MemberGroupDTO>> queryChooseMemberGroupInfo(MemberGroupDTO memberGroupDTO);
 
 
 }

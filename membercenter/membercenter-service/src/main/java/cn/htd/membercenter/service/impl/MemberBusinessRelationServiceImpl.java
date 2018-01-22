@@ -112,36 +112,49 @@ public class MemberBusinessRelationServiceImpl implements MemberBusinessRelation
 	}
 
 	private List<MemberBusinessRelationDTO> setValueRelation(List<ShopBrandDTO> shopBrandDTOs) {
-		List<Long> categoryList = new ArrayList<Long>();
-		List<Long> brandList = new ArrayList<Long>();
+		// 品类id列表
+		List<Long> cidList = new ArrayList<Long>();
+		// 品牌id列表
+		List<Long> ids = new ArrayList<Long>();
 		List<MemberBusinessRelationDTO> resultList = new ArrayList<MemberBusinessRelationDTO>();
+
 		for (ShopBrandDTO mbr : shopBrandDTOs) {
-			categoryList.add(mbr.getCategoryId());
-			brandList.add(mbr.getBrandId());
+			MemberBusinessRelationDTO dto = new MemberBusinessRelationDTO();
+			cidList.add(mbr.getCategoryId());
+			ids.add(mbr.getBrandId());
+			dto.setCategoryId(mbr.getCategoryId());
+			dto.setBrandId(mbr.getBrandId());
+			resultList.add(dto);
 		}
-		ExecuteResult<List<ItemCategoryDTO>> categorysList = itemCategoryService.getCategoryListByCids(categoryList);
-		ExecuteResult<List<ItemBrandDTO>> brandsList  =itemBrandExportService.queryItemBrandByIds(brandList.toArray(new Long[0]));
-		if(categorysList.isSuccess() && brandsList.isSuccess()){
-			for(ShopBrandDTO dto: shopBrandDTOs){
-				MemberBusinessRelationDTO mbrDto = new MemberBusinessRelationDTO();
-				mbrDto.setBrandId(dto.getBrandId());
-				mbrDto.setCategoryId(dto.getCategoryId());
-				for(ItemCategoryDTO itemCategory:categorysList.getResult()){
-					if(dto.getCategoryId() == itemCategory.getCategoryCid()){
-						mbrDto.setCategoryName(itemCategory.getCategoryCName());
+		ExecuteResult<List<ItemCategoryDTO>> categoryResult = itemCategoryService.getCategoryListByCids(cidList);
+		ExecuteResult<List<ItemBrandDTO>> itemResult = itemBrandExportService
+				.queryItemBrandByIds(ids.toArray(new Long[0]));
+		List<ItemCategoryDTO> categoryList = categoryResult.getResult();
+		List<ItemBrandDTO> itemList = itemResult.getResult();
+		// 循环取品类名称
+		if (categoryList != null && categoryList.size() > 0) {
+			for (MemberBusinessRelationDTO mbr : resultList) {
+				for (ItemCategoryDTO category : categoryList) {
+					if (mbr.getCategoryId() == category.getCategoryCid()) {
+						mbr.setCategoryName(category.getCategoryCName());
 					}
 				}
-				for(ItemBrandDTO itemBrand:brandsList.getResult()){
-					if(dto.getBrandId() == itemBrand.getBrandId()){
-						mbrDto.setBrandName(itemBrand.getBrandName());
+			}
+		}
+		// 循环取品牌名称
+		if (itemList != null && itemList.size() > 0) {
+			for (MemberBusinessRelationDTO mbr : resultList) {
+				for (ItemBrandDTO item : itemList) {
+					if (mbr.getBrandId() == item.getBrandId()) {
+						mbr.setBrandName(item.getBrandName());
 					}
 				}
-				resultList.add(mbrDto);
 			}
 		}
 		return resultList;
+
 	}
-	
+
 	private List<MemberBusinessRelationDTO> setValue4Relation(List<MemberBusinessRelationDTO> businessList) {
 		for (MemberBusinessRelationDTO mbr : businessList) {
 			ExecuteResult<ItemCategoryDTO> category = itemCategoryService.getCategoryByCid(mbr.getCategoryId());

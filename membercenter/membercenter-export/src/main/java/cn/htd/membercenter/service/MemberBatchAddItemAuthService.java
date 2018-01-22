@@ -37,5 +37,5 @@ public interface MemberBatchAddItemAuthService {
      * @param queryBatchAddItemAuthInDTO
      * @return
      */
-    ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>> queryBatchAddItemAuthList(QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO, Pager pager);
+    ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>> handleAndQueryBatchAddItemAuthList(QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO, Pager pager);
 }

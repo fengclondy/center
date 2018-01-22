@@ -92,7 +92,7 @@ public class MemberBatchAddItemAuthServiceImpl implements MemberBatchAddItemAuth
     }
 
     @Override
-    public ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>> queryBatchAddItemAuthList(QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO, Pager pager) {
+    public ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>> handleAndQueryBatchAddItemAuthList(QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO, Pager pager) {
         ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>> executeResult = new ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>>();
         DataGrid<QueryBatchAddItemAuthOutDTO> dtoDataGrid = new DataGrid<QueryBatchAddItemAuthOutDTO>();
         try {

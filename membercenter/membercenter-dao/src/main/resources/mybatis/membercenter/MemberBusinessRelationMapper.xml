@@ -368,7 +368,7 @@
 		<include refid="where_queryMemberInfo" />
 		<if test="dto.showType == 0">
 		ORDER BY
-			br.create_time desc
+			br.modify_time desc
 		</if>
 		<if test="pager != null">
 		LIMIT #{pager.pageOffset},#{pager.rows}

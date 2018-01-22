@@ -93,6 +93,8 @@ public class MemberBatchAddItemAuthServiceImpl implements MemberBatchAddItemAuth
         ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>> executeResult = new ExecuteResult<DataGrid<QueryBatchAddItemAuthOutDTO>>();
         DataGrid<QueryBatchAddItemAuthOutDTO> dtoDataGrid = new DataGrid<QueryBatchAddItemAuthOutDTO>();
         try {
+            // 删除已过期的数据
+            this.MemberBatchAddItemAuthMapper.deleteExpireDate();
             Long count = this.MemberBatchAddItemAuthMapper.queryBatchAddItemAuthListCount(queryBatchAddItemAuthInDTO);
             if (count > 0) {
                 List<QueryBatchAddItemAuthOutDTO> queryBatchAddItemAuthOutDTOList = this.MemberBatchAddItemAuthMapper.queryBatchAddItemAuthList(queryBatchAddItemAuthInDTO, pager);

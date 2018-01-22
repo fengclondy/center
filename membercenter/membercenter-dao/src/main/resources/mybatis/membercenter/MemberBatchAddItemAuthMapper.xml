@@ -245,4 +245,9 @@
       </if>
     </if>
   </select>
+
+  <delete id="deleteExpireDate" parameterType="java.lang.Long" >
+    delete from member_batch_add_item_auth
+    where now() > end_time
+  </delete>
 </mapper>

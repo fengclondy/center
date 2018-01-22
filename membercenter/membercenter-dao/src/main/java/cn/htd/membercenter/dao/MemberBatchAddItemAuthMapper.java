@@ -29,4 +29,6 @@ public interface MemberBatchAddItemAuthMapper {
 
     Long queryBatchAddItemAuthListCount(@Param("param") QueryBatchAddItemAuthInDTO queryBatchAddItemAuthInDTO);
 
+    void deleteExpireDate();
+
 }

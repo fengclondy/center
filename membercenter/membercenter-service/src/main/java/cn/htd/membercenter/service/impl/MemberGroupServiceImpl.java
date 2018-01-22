@@ -208,8 +208,8 @@ public class MemberGroupServiceImpl implements MemberGroupService {
 		try {
 			String buyerIds = memberGroupDTO.getBuyerIds();
 			memberGroupDAO.updateMemberGroupInfo(memberGroupDTO);
+			memberGroupDAO.deleteMemberGroupRelationInfo(memberGroupDTO);
 			if (StringUtils.isNotBlank(buyerIds)) {
-				memberGroupDAO.deleteMemberGroupRelationInfo(memberGroupDTO);
 				String[] buyerIdArr = buyerIds.split(",");
 				for (int i = 0; i < buyerIdArr.length; i++) {
 					MemberGroupRelationDTO memberGroupRelationDTO = new MemberGroupRelationDTO();

@@ -137,6 +137,7 @@
     <if test="entity != null and entity != ''">
 	     <include refid="query_member_condition" />
 	</if>
+	 order by m.regist_time desc
 	<if test="page != null and page != '' " >
 		 limit #{page.pageOffset},#{page.rows}  
 	</if>

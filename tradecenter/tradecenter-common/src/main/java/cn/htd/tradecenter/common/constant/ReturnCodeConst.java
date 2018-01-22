@@ -84,6 +84,10 @@ public class ReturnCodeConst {
 	public static final String ORDER_SEARCH_FOR_MEMBERID_ERROR = "16124";
 	// VMS开单根据会员id查询会员信息失败
 	public static final String ORDER_SEARCH_FOR_MEMBERINFO_ERROR = "16125";
+    // 代客开单锁定客户帐存失败
+    public static final String ORDER_REVERSE_CUSTOMER_BALANCE_ERROR = "16126";
+    // 代客开单释放客户帐存锁定失败
+    public static final String ORDER_RELEASE_CUSTOMER_BALANCE_ERROR = "16127";
 
 	// *******************************************************
 	// 订单行返回码

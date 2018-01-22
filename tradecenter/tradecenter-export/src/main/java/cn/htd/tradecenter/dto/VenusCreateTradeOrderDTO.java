@@ -41,6 +41,12 @@ public class VenusCreateTradeOrderDTO extends CreateTradeOrderDTO implements Ser
 	@Length(min = 1, max = 32, message = "销售部门超长")
 	private String salesDepartmentCode;
 
+    /**
+     * 订单来源
+     */
+    @NotBlank(message = "订单来源不能为空")
+    private String orderFrom;
+
 	/**
 	 * 订单行及仓库信息列表
 	 */
@@ -52,7 +58,7 @@ public class VenusCreateTradeOrderDTO extends CreateTradeOrderDTO implements Ser
 	 * 返利单信息
 	 */
 	private VenusCreateTradeOrderRebateDTO rebateDTO;
-
+	
 	public String getSalesType() {
 		return salesType;
 	}
@@ -84,4 +90,12 @@ public class VenusCreateTradeOrderDTO extends CreateTradeOrderDTO implements Ser
 	public void setRebateDTO(VenusCreateTradeOrderRebateDTO rebateDTO) {
 		this.rebateDTO = rebateDTO;
 	}
+
+    public String getOrderFrom() {
+        return orderFrom;
+    }
+
+    public void setOrderFrom(String orderFrom) {
+        this.orderFrom = orderFrom;
+    }
 }

@@ -37,7 +37,7 @@
     select
     <include refid="Base_Column_List" />
     from member_batch_add_item_auth
-    where seller_id = #{sellerId,jdbcType=BIGINT} limit 1
+    where seller_id = #{sellerId,jdbcType=BIGINT} AND now() BETWEEN c.start_time AND c.end_time limit 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from member_batch_add_item_auth
@@ -189,7 +189,7 @@
         a.company_code,
         c.start_time,
         c.end_time,
-        c.seller_id,
+        a.member_id seller_id,
         b.member_code ,
         a.member_id ,
         IFNULL(c.is_open, 0) is_open,

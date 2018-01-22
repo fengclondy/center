@@ -178,7 +178,7 @@
 	<if test="memberId != null and memberId != ''">
 		and m.id = #{memberId}
 	</if>
-	order by b.create_time asc
+	order by b.create_time desc
   </select>
    <!-- 查询待审核的经营关系信息会员分组个数-->
    <select id="selectBusinessRelationshipCount" resultType="cn.htd.membercenter.dto.ApplyBusiRelationDTO">

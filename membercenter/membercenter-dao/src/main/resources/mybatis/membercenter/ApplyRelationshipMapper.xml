@@ -213,7 +213,7 @@
     where m.id = c.member_id and c.member_id = b.buyer_id and b.audit_status='0' and m.status='1'
     and (b.category_id !=0 and b.brand_id !=0)
     and c.buyer_seller_type = '1' and b.seller_id=#{curBelongSellerId}
-	order by b.create_time
+	order by b.create_time desc
 	<if test="pager != null and pager != ''">
 		limit #{pager.pageOffset},#{pager.rows}
 	</if>

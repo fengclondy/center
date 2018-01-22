@@ -367,6 +367,21 @@ public class ApplyRelationshipServiceImpl implements ApplyRelationshipService {
 		}
 		return rs;
 	}
+	
+	@Override
+	public ExecuteResult<Long> countBusinessRelationship(Long curBelongSellerId){
+		ExecuteResult<Long> rs = new ExecuteResult<Long>();
+		try{
+			Long count = applyRelationshipDao
+					.selectBusinessRelationMemberIdCount(curBelongSellerId);
+			rs.setResult(count);
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("ApplyRelationshipServiceImpl----->countBusinessRelationship=" + e);
+			rs.setResultMessage("error");
+		}
+		return rs;
+	}
 
 	@Override
 	public ExecuteResult<QueryRegistProcessDTO> queryRegistProcess(Long memberId, String companyName,

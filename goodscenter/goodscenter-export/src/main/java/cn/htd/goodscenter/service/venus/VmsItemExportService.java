@@ -142,4 +142,13 @@ public interface VmsItemExportService {
      * 设置默认销售区域
      */
     ExecuteResult<String> setDefaultSaleArea(Long sellerId, DefaultSaleAreaDTO defaultSaleAreaDTO);
+
+
+    /**
+     * 校验同步标记在另一种上架模式上是否勾选
+     * @param isBoxFlag
+     * @param skuId
+     * @return
+     */
+    ExecuteResult<String> checkErpSyncFlag(Integer isBoxFlag, Long skuId);
 }

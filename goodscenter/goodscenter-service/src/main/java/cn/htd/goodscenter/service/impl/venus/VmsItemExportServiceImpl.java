@@ -621,6 +621,30 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
     }
 
     /**
+     * 校验同步标记在另一种上架模式上是否勾选
+     * @param isBoxFlag
+     * @param skuId
+     * @return
+     */
+    @Override
+    public ExecuteResult<String> checkErpSyncFlag(Integer isBoxFlag, Long skuId) {
+        ExecuteResult<String> result = new ExecuteResult<>();
+        String anotherShelfType = isBoxFlag == 0 ? "1" : "2";
+        ItemSkuPublishInfo itemSkuPublishInfoFromAnother = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, anotherShelfType,"0");
+        if (itemSkuPublishInfoFromAnother != null && itemSkuPublishInfoFromAnother.getErpSync() == 1) {
+            result.setCode(ErrorCodes.E10006.name());
+            if ("1".equals(anotherShelfType)) {
+                result.setResultMessage("包厢已经勾选同步标记, 是否仍要勾选?");
+            } else {
+                result.setResultMessage("区域已经勾选同步标记, 是否仍要勾选?");
+            }
+            return result;
+        }
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        return result;
+    }
+
+    /**
      * 根据商品表状态和草稿表状态，计算出给前台的审核状态
      *
      * @param itemStatus

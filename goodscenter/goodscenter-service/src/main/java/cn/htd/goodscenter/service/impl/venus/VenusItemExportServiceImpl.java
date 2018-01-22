@@ -1140,17 +1140,6 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				result.setErrorMessages(Lists.newArrayList(ErrorCodes.E10000.getErrorMsg("itemSku")));
 				return result;
 			}
-			// 校验同步标记;包厢和大厅只能勾选一个
-			if ("1".equals(venusItemSkuPublishInDTO.getErpSync())) { // 如狗勾上了同步标记，校验其他情况是否勾上
-				String anotherShelfType = venusItemSkuPublishInDTO.getIsBoxFlag() == 0 ? "1" : "2";
-				ItemSkuPublishInfo itemSkuPublishInfoFromAnother = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(venusItemSkuPublishInDTO.getSkuId(), anotherShelfType,"0");
-				if (itemSkuPublishInfoFromAnother != null && itemSkuPublishInfoFromAnother.getErpSync() == 1) {
-					result.setCode(ErrorCodes.E10006.name());
-					result.setResultMessage("区域和包厢的同步标记只能勾选一个");
-					result.addErrorMessage("区域和包厢的同步标记只能勾选一个");
-					return result;
-				}
-			}
 			//校验状态
 			Item item=itemMybatisDAO.queryItemByPk(itemSkuFromDb.getItemId());
 			if(item==null||Integer.valueOf(HtdItemStatusEnum.AUDITING.getCode()).equals(item.getItemStatus())
@@ -1295,6 +1284,19 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 	private void dealWithItemSkuPublishInfo(
 			VenusItemSkuPublishInDTO venusItemSkuPublishInDTO,
 			ItemSku itemSkuFromDb, ItemSkuPublishInfo itemSkuPublishInfoFromDb) {
+
+		// 校验同步标记;包厢和大厅只能勾选一个
+		if ("1".equals(venusItemSkuPublishInDTO.getErpSync())) { // 如狗勾上了同步标记，校验其他情况是否勾上
+			String anotherShelfType = venusItemSkuPublishInDTO.getIsBoxFlag() == 0 ? "1" : "2";
+			ItemSkuPublishInfo itemSkuPublishInfoFromAnother = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(venusItemSkuPublishInDTO.getSkuId(), anotherShelfType,"0");
+			if (itemSkuPublishInfoFromAnother != null && itemSkuPublishInfoFromAnother.getErpSync() == 1) {
+				// 更新另外一种情况为不勾上
+				ItemSkuPublishInfo itemSkuPublishInfoFromAnother1 = new ItemSkuPublishInfo();
+				itemSkuPublishInfoFromAnother1.setId(itemSkuPublishInfoFromAnother.getId());
+				itemSkuPublishInfoFromAnother1.setErpSync(0);
+				this.itemSkuPublishInfoMapper.updateByPrimaryKeySelective(itemSkuPublishInfoFromAnother1);
+			}
+		}
 		//插入
 		if (venusItemSkuPublishInDTO.isNewVms()) { // 处理限购字段
 			if(StringUtils.isNotEmpty(venusItemSkuPublishInDTO.getMaxPurchaseQty()) && StringUtils.isNumeric(venusItemSkuPublishInDTO.getMaxPurchaseQty())){

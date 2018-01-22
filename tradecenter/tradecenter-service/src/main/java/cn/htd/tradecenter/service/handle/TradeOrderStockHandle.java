@@ -88,17 +88,20 @@ public class TradeOrderStockHandle {
 				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_SPU_NOT_EXIST,
 						skuMsg + " 商品没有商品模版信息");
 			}
-			if (skuStockInfo == null) {
-				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_AVAILABLE_INVENTORY_LACK,
-						skuMsg + " 商品没有库存信息");
-			}
-			if (skuBasePriceInfo == null) {
-				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_NONE_PRICE, skuMsg + " 商品没有价格信息");
-			}
-			if (goodsNum > (skuStockInfo.getDisplayQuantity().intValue()
-					- skuStockInfo.getReserveQuantity().intValue())) {
-				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_AVAILABLE_INVENTORY_LACK,
-						skuMsg + " 商品库存不足");
+			// vms代客开单时，商品不需要在大厅或者包厢上架，所以不做相关校验
+			if (isBoxFlg != -1) {
+    			if (skuStockInfo == null) {
+    				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_AVAILABLE_INVENTORY_LACK,
+    						skuMsg + " 商品没有库存信息");
+    			}
+    			if (skuBasePriceInfo == null) {
+    				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_NONE_PRICE, skuMsg + " 商品没有价格信息");
+    			}
+    			if (goodsNum > (skuStockInfo.getDisplayQuantity().intValue()
+    					- skuStockInfo.getReserveQuantity().intValue())) {
+    				throw new TradeCenterBusinessException(ReturnCodeConst.ORDER_ITEM_AVAILABLE_INVENTORY_LACK,
+    						skuMsg + " 商品库存不足");
+    			}
 			}
 			orderItemsDTO.setChannelCode(itemDetailInfo.getItemChannel());
 			orderItemsDTO.setItemCode(itemDetailInfo.getItemCode());
@@ -122,11 +125,14 @@ public class TradeOrderStockHandle {
 					+ orderItemsDTO.getSecondCategoryId() + "," + orderItemsDTO.getThirdCategoryId());
 			orderItemsDTO.setCategoryNameList(orderItemsDTO.getFirstCategoryName() + ","
 					+ orderItemsDTO.getSecondCategoryName() + "," + orderItemsDTO.getThirdCategoryName());
-			orderItemsDTO.setIsBoxFlag(skuStockInfo.getIsBoxFlag());
-			if (YesNoEnum.YES.getValue() == skuStockInfo.getIsBoxFlag().intValue()) {
-				orderItemsDTO.setSalePrice(skuBasePriceInfo.getBoxSalePrice());
-			} else {
-				orderItemsDTO.setSalePrice(skuBasePriceInfo.getAreaSalePrice());
+			// vms代客开单时，商品不需要在大厅或者包厢上架，所以不做相关设定
+			if (isBoxFlg != -1) {
+    			orderItemsDTO.setIsBoxFlag(skuStockInfo.getIsBoxFlag());
+    			if (YesNoEnum.YES.getValue() == skuStockInfo.getIsBoxFlag().intValue()) {
+    				orderItemsDTO.setSalePrice(skuBasePriceInfo.getBoxSalePrice());
+    			} else {
+    				orderItemsDTO.setSalePrice(skuBasePriceInfo.getAreaSalePrice());
+    			}
 			}
 			orderItemsDTO.setIsVipItem(YesNoEnum.NO.getValue());
 			orderItemsDTO.setShopFreightTemplateId(0L);

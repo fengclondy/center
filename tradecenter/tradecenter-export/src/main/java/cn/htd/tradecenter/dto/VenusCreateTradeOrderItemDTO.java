@@ -36,6 +36,12 @@ public class VenusCreateTradeOrderItemDTO extends VenusConfirmTradeOrderItemWare
 	private String skuCode;
 
 	/**
+     * 商品SPU编码
+     */
+    @NotBlank(message = "商品SPU编码不能为空")
+    private String spuCode;
+
+    /**
 	 * 包厢商品 0:大厅, 1:包厢
 	 */
 	@NotNull(message = "包厢商品标志为空")
@@ -63,6 +69,14 @@ public class VenusCreateTradeOrderItemDTO extends VenusConfirmTradeOrderItemWare
 	public void setSkuCode(String skuCode) {
 		this.skuCode = skuCode;
 	}
+
+    public String getSpuCode() {
+        return spuCode;
+    }
+
+    public void setSpuCode(String spuCode) {
+        this.spuCode = spuCode;
+    }
 
 	public int getIsBoxFlag() {
 		return isBoxFlag;

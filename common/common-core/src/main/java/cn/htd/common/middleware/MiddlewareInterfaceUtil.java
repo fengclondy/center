@@ -5,16 +5,13 @@ import java.io.InputStreamReader;
 import java.security.KeyManagementException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -33,10 +30,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
+
 import cn.htd.common.dao.util.RedisDB;
 import cn.htd.common.util.SpringApplicationContextHolder;
-
-import com.google.common.base.Joiner;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 
 /**
@@ -141,67 +140,92 @@ public class MiddlewareInterfaceUtil {
 	}
 
 	public static String httpPost(String url, String jsonParam, boolean isHttps) {
-		final HttpPost post = new HttpPost(url);
-		logger.info("MiddlewareInterfaceUtil::httpPost",url+" ,param="+jsonParam);
-		RequestConfig requestConfig = RequestConfig.custom()  
-		        .setConnectTimeout(2000)//设置连接超时时间，单位毫秒
-		        .setConnectionRequestTimeout(1000)//设置从connect Manager获取Connection 超时时间
-		        .setSocketTimeout(5000).build();//请求获取数据的超时时间
-		post.setConfig(requestConfig);
-		CloseableHttpClient httpClient = getHttpClient(isHttps);
+		logger.info("MiddlewareInterfaceUtil::httpPost url={},param={}", url, jsonParam);
+		StringEntity entity = null;
 		if (StringUtils.isNotEmpty(jsonParam)) {
-			StringEntity entity = new StringEntity(jsonParam, ContentType.APPLICATION_JSON);
-			post.setEntity(entity);
+			entity = new StringEntity(jsonParam, ContentType.APPLICATION_JSON);
 		}
-
-		CloseableHttpResponse httpResponse = null;
-		StringBuilder resultSb = new StringBuilder();
-		try {
-			httpResponse = httpClient.execute(post);
-			final HttpEntity resultEntity = httpResponse.getEntity();
-			if (null != resultEntity) {
-				String line;
-				BufferedReader bufferedReader;
-				InputStreamReader streamReader = null;
-
-				streamReader = new InputStreamReader(resultEntity.getContent(), "UTF-8");
-
-				if (streamReader != null) {
-					bufferedReader = new BufferedReader(streamReader);
-					while ((line = bufferedReader.readLine()) != null) {
-						resultSb.append(line);
-					}
-					streamReader.close();
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (httpResponse != null) {
-				try {
-					httpResponse.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		try{
-			Map map = (Map) JSONObject.toBean(JSONObject.fromObject(resultSb.toString()), Map.class);
-			
-			if(map.get("code")!=null&&String.valueOf(map.get("code")).equals("2001")){
-				//try again
-				refreshAcceccToken();
-			}
-			
-		}catch(Exception e){
-			
-		}
-		
-		logger.info("httpPost end, result : {}", resultSb.toString());
-		return resultSb.toString();
+        String result = httpPost(url, entity, isHttps);
+		logger.info("httpPost end, result : {}", result);
+		return result;
 	}
 
+    public static String httpPost(String url, Map<String, String> paramMap, boolean isHttps) {
+        logger.info("MiddlewareInterfaceUtil::httpPost url={},paramMap={}", url,
+                JSONObject.fromObject(paramMap).toString());
+        StringEntity entity = null;
+        if (paramMap != null && !paramMap.isEmpty()) {
+            StringBuilder param = new StringBuilder();
+            for (String key : paramMap.keySet()) {
+                param.append(MessageFormat.format("&{0}={1}", key, paramMap.get(key)));
+            }
+            entity = new StringEntity(param.substring(1), ContentType.APPLICATION_FORM_URLENCODED);
+        }
+        String result = httpPost(url, entity, isHttps);
+        logger.info("httpPost end, result : {}", result);
+        return result;
+    }
+
+	private static String httpPost(String url, StringEntity se, boolean isHttps) {
+        final HttpPost post = new HttpPost(url);
+        RequestConfig requestConfig = RequestConfig.custom()  
+                .setConnectTimeout(2000)//设置连接超时时间，单位毫秒
+                .setConnectionRequestTimeout(1000)//设置从connect Manager获取Connection 超时时间
+                .setSocketTimeout(5000).build();//请求获取数据的超时时间
+        post.setConfig(requestConfig);
+        CloseableHttpClient httpClient = getHttpClient(isHttps);
+        if (se != null) {
+            post.setEntity(se);
+        }
+
+        CloseableHttpResponse httpResponse = null;
+        StringBuilder resultSb = new StringBuilder();
+        try {
+            httpResponse = httpClient.execute(post);
+            final HttpEntity resultEntity = httpResponse.getEntity();
+            if (null != resultEntity) {
+                String line;
+                BufferedReader bufferedReader;
+                InputStreamReader streamReader = null;
+
+                streamReader = new InputStreamReader(resultEntity.getContent(), "UTF-8");
+
+                if (streamReader != null) {
+                    bufferedReader = new BufferedReader(streamReader);
+                    while ((line = bufferedReader.readLine()) != null) {
+                        resultSb.append(line);
+                    }
+                    streamReader.close();
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (httpResponse != null) {
+                try {
+                    httpResponse.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        try{
+            Map map = (Map) JSONObject.toBean(JSONObject.fromObject(resultSb.toString()), Map.class);
+            
+            if(map.get("code")!=null&&String.valueOf(map.get("code")).equals("2001")){
+                //try again
+                refreshAcceccToken();
+            }
+            
+        }catch(Exception e){
+            
+        }
+        
+        logger.info("httpPost end, result : {}", resultSb.toString());
+        return resultSb.toString();
+    }
+	
 	/**
 	 * 
 	 * @param url

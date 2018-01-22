@@ -24,6 +24,7 @@ import cn.htd.tradecenter.dto.VenusCreateTradeOrderDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderItemDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderRebateDTO;
 import cn.htd.tradecenter.service.handle.TradeOrderMiddlewareHandle;
+import cn.htd.tradecenter.service.impl.TradeOrderBaseService;
 
 public class ValetOrderServiceImplTest {
 
@@ -31,6 +32,7 @@ public class ValetOrderServiceImplTest {
 
     private ApplicationContext ctx;
     private DictionaryUtils dictionary;
+    private TradeOrderBaseService baseService;
     private ValetOrderService valetOrderService;
     private TradeOrderMiddlewareHandle tradeOrderMiddlwareHandle;
 
@@ -38,6 +40,7 @@ public class ValetOrderServiceImplTest {
     public void setUp() throws Exception {
         ctx = new ClassPathXmlApplicationContext("test.xml");
         dictionary = (DictionaryUtils) ctx.getBean("dictionaryUtils");
+        baseService = (TradeOrderBaseService) ctx.getBean("tradeOrderBaseService");
         valetOrderService = (ValetOrderService) ctx.getBean("valetOrderService");
         tradeOrderMiddlwareHandle = (TradeOrderMiddlewareHandle) ctx.getBean("tradeOrderMiddlwareHandle");
     }
@@ -122,8 +125,11 @@ public class ValetOrderServiceImplTest {
         }
     }
 
-    // @Test
+    @Test
     public void testReverseReleaseBalance() {
+        String orderNo = baseService.getOrderNo(
+                dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_FROM, DictionaryConst.OPT_ORDER_FROM_VMS));
+        String orderItemNo = baseService.getOrderItemNo(orderNo);
         List<ReverseCustomerBalanceDTO> reverseBalanceList = new ArrayList<ReverseCustomerBalanceDTO>();
         ReverseCustomerBalanceDTO reverseBalance = new ReverseCustomerBalanceDTO();
         reverseBalance.setBrandCode("600");
@@ -131,12 +137,14 @@ public class ValetOrderServiceImplTest {
         reverseBalance.setCustomerCode("htd1299140");
         reverseBalance.setCompanyCode("htd238861");
         reverseBalance.setChargeAmount("100");
-        reverseBalance.setItemOrderNo("201801191547390001413");
+        reverseBalance.setItemOrderNo(orderItemNo);
         reverseBalanceList.add(reverseBalance);
+        // 锁定
         boolean result = tradeOrderMiddlwareHandle.reverseBalance(reverseBalanceList);
         Assert.assertEquals(true, result);
 
-        result = tradeOrderMiddlwareHandle.releaseBalance("201801191547390001413");
+        // 释放锁定
+        result = tradeOrderMiddlwareHandle.releaseBalance(orderItemNo);
         Assert.assertEquals(true, result);
     }
 

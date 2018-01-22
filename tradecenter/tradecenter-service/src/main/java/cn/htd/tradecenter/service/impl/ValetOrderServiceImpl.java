@@ -149,7 +149,6 @@ public class ValetOrderServiceImpl implements ValetOrderService {
                     customerDTO.getIsLowFlag() == null ? false : customerDTO.getIsLowFlag().booleanValue(), sellerCode,
                     buyerCode);
             // 取得交易号和订单号
-            // TODO 之前固定用的商城订单来生成订单号，原因不明
             tradeNo = baseService.getTradeNo(venusInDTO.getOrderFrom());
             orderNo = baseService.getOrderNo(venusInDTO.getOrderFrom());
             // 取得订单行信息计算订单行金额信息

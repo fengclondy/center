@@ -222,7 +222,6 @@ public class MiddlewareInterfaceUtil {
             
         }
         
-        logger.info("httpPost end, result : {}", resultSb.toString());
         return resultSb.toString();
     }
 	

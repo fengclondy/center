@@ -183,7 +183,7 @@ public class SearchSolrExportMobileServiceImpl implements
 	public SearchDataGrid<String> searchItemMobile(String addressCode,
 			String keyword, Pager pager, Integer sort, Long buyerId,
 			Long categoryId, Long brandId, Long shopId,
-			Long belongRelationSellerId,
+			Long belongRelationSellerId, String rowsFlag,
 			List<String> businessRelationSellerIdList, boolean isAccessJD,
 			List<String> shieldCidAndBrandId,
 			Map<String, List<String>> filterParam,
@@ -371,7 +371,8 @@ public class SearchSolrExportMobileServiceImpl implements
 		}
 		query.setQuery(queryStr);
 		query.setFilterQueries(filterStr);
-		if (null != shopId) {
+		//rowsFlag为10的情况下是移动端专用的数据，一般情况下人气和新品只有在供应商搜索才给予展示
+		if (null != shopId || "10".equals(rowsFlag)) {
 			dg.setShopActivityItemQuery(queryStr);
 			dg.setShopActivityItemFilterQuery(filterStr);
 		}
@@ -709,7 +710,7 @@ public class SearchSolrExportMobileServiceImpl implements
 
 	@Override
 	public List<Object> searchNewItemMobile(String query, String filterQuery,
-			List<String> businessRelationSellerIdList, Long buyerId) {
+			List<String> businessRelationSellerIdList, Long buyerId, String rowsFlag) {
 		logger.info("come in searchNewItemMobile start");
 		logger.info("searchNewItemMobile query:" + query);
 		logger.info("searchNewItemMobile filterQuery:" + filterQuery);
@@ -723,7 +724,7 @@ public class SearchSolrExportMobileServiceImpl implements
 				q.setQuery(query);
 				q.setFilterQueries(filterQuery);
 				q.addSort("listtingTime", ORDER.desc);
-				q.setRows(4);
+				q.setRows(Integer.parseInt(rowsFlag));
 				QueryResponse queryResponse = itemSolrClient.query(q,
 						METHOD.POST);
 				SolrDocumentList results = queryResponse.getResults();

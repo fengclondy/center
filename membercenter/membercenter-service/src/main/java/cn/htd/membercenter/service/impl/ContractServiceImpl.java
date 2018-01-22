@@ -260,8 +260,11 @@ public class ContractServiceImpl implements ContractService {
 			if (page == 1 && nosignContractInfoDTOList.size() > 0) {
 				returnContractInfoDTOList.add(noSignContractInfoDTO);
 			}
-			if (page == 1 && !returnContractInfoDTOList.isEmpty()) {
+			if (!nosignContractInfoDTOList.isEmpty()) {
 				//第一页 且未签订的不为空 结尾需要-1
+				if (page != 1) {
+					startIndex -= 1;
+				}
 				endIndex -= 1;
 			}
 			for (int i = 0; i < signContractInfoDTOList.size(); i++) {

@@ -15,12 +15,12 @@
 		</encoder>
 	</appender>
 	
-	<logger name="cn.htd" level="${loggingLevel}">
+	<logger name="cn.htd" level="${loggingLevel}" additivity="false">
 		<appender-ref ref="rollinginfoFile" />
 	</logger>
 	
 	<!-- mybatis -->
-	<logger name="org.apache.ibatis" level="${loggingLevel}">
+	<logger name="org.apache.ibatis" level="${loggingLevel}" additivity="false">
 		<appender-ref ref="rollinginfoFile" />
 	</logger>
 	

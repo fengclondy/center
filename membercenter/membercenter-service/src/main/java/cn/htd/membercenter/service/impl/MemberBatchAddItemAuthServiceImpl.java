@@ -20,21 +20,24 @@ public class MemberBatchAddItemAuthServiceImpl implements MemberBatchAddItemAuth
     private MemberBatchAddItemAuthMapper MemberBatchAddItemAuthMapper;
 
     @Override
-    public ExecuteResult<String> isAuthBatchAddItem(Long sellerId) {
-        ExecuteResult<String> executeResult = new ExecuteResult<String>();
+    public ExecuteResult<Boolean> isAuthBatchAddItem(Long sellerId) {
+        ExecuteResult<Boolean> executeResult = new ExecuteResult<Boolean>();
         try {
             MemberBatchAddItemAuth result = this.MemberBatchAddItemAuthMapper.selectBysellerId(sellerId);
             if (result == null) {
                 executeResult.setCode("000001");
                 executeResult.setResultMessage("没有权限");
+                executeResult.setResult(false);
                 return executeResult;
             }
             executeResult.setCode("00000");
             executeResult.setResultMessage("有权限");
+            executeResult.setResult(true);
             return executeResult;
         } catch (Exception e) {
             executeResult.setCode("99999");
             executeResult.addErrorMessage(e.getMessage());
+            executeResult.setResult(false);
         }
         return executeResult;
     }

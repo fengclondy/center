@@ -16,7 +16,7 @@ public interface MemberBatchAddItemAuthService {
      * @param sellerId
      * @return
      */
-    ExecuteResult<String> isAuthBatchAddItem(Long sellerId);
+    ExecuteResult<Boolean> isAuthBatchAddItem(Long sellerId);
 
     /**
      * 开通批量权限

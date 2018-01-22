@@ -668,13 +668,12 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
 //        }
         for (QueryVmsItemPublishInfoOutDTO venusItemSkuPublishInfoOutDTO : queryVmsItemPublishInfoOutDTOList) {
             venusItemSkuPublishInfoOutDTO.setIsBoxFlag(isBoxFlag);
-            //分销限价
-            String saleLimitedPrice = MiddlewareInterfaceUtil.findItemFloorPrice(supplierCode, venusItemSkuPublishInfoOutDTO.getSpuCode());
-            if (saleLimitedPrice != null) {
-                venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(new BigDecimal(saleLimitedPrice), 2)));
-            }
             for (ItemSkuBasePrice price : basePriceList.getResult()) {
                 if (price.getSkuId().equals(venusItemSkuPublishInfoOutDTO.getSkuId())) {
+                    //分销限价
+                    if (price.getSaleLimitedPrice() != null) {
+                        venusItemSkuPublishInfoOutDTO.setSaleLimitedPrice(String.valueOf(this.wrapDecimal(price.getSaleLimitedPrice(), 2)));
+                    }
                     //包厢价格
                     if (null != price.getBoxSalePrice() &&  1 == venusItemSkuPublishInfoOutDTO.getIsBoxFlag()) {
                         venusItemSkuPublishInfoOutDTO.setSalePrice(String.valueOf(this.wrapDecimal(price.getBoxSalePrice(), 2)));

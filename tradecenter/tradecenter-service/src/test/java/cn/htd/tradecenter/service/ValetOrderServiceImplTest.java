@@ -18,6 +18,7 @@ import cn.htd.common.ExecuteResult;
 import cn.htd.common.constant.DictionaryConst;
 import cn.htd.common.util.DictionaryUtils;
 import cn.htd.tradecenter.dto.ReverseCustomerBalanceDTO;
+import cn.htd.tradecenter.dto.TradeOrderItemsDTO;
 import cn.htd.tradecenter.dto.TradeOrdersDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderItemDTO;
@@ -112,9 +113,16 @@ public class ValetOrderServiceImplTest {
                     JSONObject.toJSONString(result));
         }
         Assert.assertEquals(true, result.isSuccess());
+
+        // 释放锁定帐存
+        if (result.getResult() != null && result.getResult().getOrderItemList() != null) {
+            for (TradeOrderItemsDTO item : result.getResult().getOrderItemList()) {
+                tradeOrderMiddlwareHandle.releaseBalance(item.getOrderItemNo());
+            }
+        }
     }
 
-//    @Test
+    // @Test
     public void testReverseReleaseBalance() {
         List<ReverseCustomerBalanceDTO> reverseBalanceList = new ArrayList<ReverseCustomerBalanceDTO>();
         ReverseCustomerBalanceDTO reverseBalance = new ReverseCustomerBalanceDTO();
@@ -127,7 +135,7 @@ public class ValetOrderServiceImplTest {
         reverseBalanceList.add(reverseBalance);
         boolean result = tradeOrderMiddlwareHandle.reverseBalance(reverseBalanceList);
         Assert.assertEquals(true, result);
-        
+
         result = tradeOrderMiddlwareHandle.releaseBalance("201801191547390001413");
         Assert.assertEquals(true, result);
     }

@@ -2,10 +2,11 @@ package cn.htd.common.middleware;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -27,6 +30,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,22 +155,25 @@ public class MiddlewareInterfaceUtil {
 	}
 
     public static String httpPost(String url, Map<String, String> paramMap, boolean isHttps) {
-        logger.info("MiddlewareInterfaceUtil::httpPost url={},paramMap={}", url,
-                JSONObject.toJSONString(paramMap));
-        StringEntity entity = null;
+        logger.info("MiddlewareInterfaceUtil::httpPost url={},paramMap={}", url, JSONObject.toJSONString(paramMap));
+        UrlEncodedFormEntity entity = null;
         if (paramMap != null && !paramMap.isEmpty()) {
-            StringBuilder param = new StringBuilder();
+            List<NameValuePair> pairs = new ArrayList<NameValuePair>();
             for (String key : paramMap.keySet()) {
-                param.append(MessageFormat.format("&{0}={1}", key, paramMap.get(key)));
+                pairs.add(new BasicNameValuePair(key, paramMap.get(key)));
             }
-            entity = new StringEntity(param.substring(1), ContentType.APPLICATION_FORM_URLENCODED);
+            try {
+                entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+            } catch (UnsupportedEncodingException uee) {
+                logger.error("", uee);
+            }
         }
         String result = httpPost(url, entity, isHttps);
         logger.info("httpPost end, result : {}", result);
         return result;
     }
 
-	private static String httpPost(String url, StringEntity se, boolean isHttps) {
+	private static String httpPost(String url, HttpEntity entity, boolean isHttps) {
         final HttpPost post = new HttpPost(url);
         RequestConfig requestConfig = RequestConfig.custom()  
                 .setConnectTimeout(2000)//设置连接超时时间，单位毫秒
@@ -174,8 +181,8 @@ public class MiddlewareInterfaceUtil {
                 .setSocketTimeout(5000).build();//请求获取数据的超时时间
         post.setConfig(requestConfig);
         CloseableHttpClient httpClient = getHttpClient(isHttps);
-        if (se != null) {
-            post.setEntity(se);
+        if (entity != null) {
+            post.setEntity(entity);
         }
 
         CloseableHttpResponse httpResponse = null;

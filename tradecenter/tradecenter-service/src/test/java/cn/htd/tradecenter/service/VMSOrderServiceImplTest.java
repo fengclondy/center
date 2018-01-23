@@ -36,6 +36,7 @@ public class VMSOrderServiceImplTest {
         VenusTradeOrdersQueryInDTO conditionDTO = new VenusTradeOrdersQueryInDTO();
         conditionDTO.setSearchFlag("2");
         conditionDTO.setSellerCode("htd1000000");
+        conditionDTO.setSearchStr("1");
         Pager<VenusTradeOrdersQueryInDTO> pager = new Pager<VenusTradeOrdersQueryInDTO>();
         pager.setPage(1);
         pager.setRows(10);

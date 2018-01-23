@@ -393,7 +393,7 @@
 	<sql id="where_queryMemberInfo">
 		<if test="dto.showType == 0">
 			<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
-				<![CDATA[ and c.id in]]>
+				<![CDATA[ and m.id in]]>
 				<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
 					#{buyuerId}
 				</foreach>
@@ -401,7 +401,7 @@
 		</if>
 		<if test="dto.showType == 1">
 			<if test="dto.buyerIdList != null and dto.buyerIdList.size != 0 ">
-				<![CDATA[ and c.id not in]]>
+				<![CDATA[ and m.id not in]]>
 				<foreach collection="dto.buyerIdList" index="index" item="buyuerId" open="(" separator="," close=")">
 					#{buyuerId}
 				</foreach>

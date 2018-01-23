@@ -46,7 +46,7 @@ public class ValetOrderServiceImplTest {
     }
 
     @Test
-    public void testCreateValetOrder() {
+    public void testCreateVMSValetOrder() {
         VenusCreateTradeOrderDTO venusInDTO = new VenusCreateTradeOrderDTO();
         venusInDTO.setOrderFrom(
                 dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_FROM, DictionaryConst.OPT_ORDER_FROM_VMS));
@@ -112,7 +112,79 @@ public class ValetOrderServiceImplTest {
         venusInDTO.setRebateDTO(rebateDTO);
         ExecuteResult<TradeOrdersDTO> result = valetOrderService.createValetOrder(venusInDTO);
         if (!result.isSuccess()) {
-            logger.info("\n 方法[{}]，出参：[{}]", "ValetOrderServiceImplTest-testCreateValetOrder",
+            logger.info("\n 方法[{}]，出参：[{}]", "ValetOrderServiceImplTest-testCreateSuperManagerValetOrder",
+                    JSONObject.toJSONString(result));
+        }
+        Assert.assertEquals(true, result.isSuccess());
+
+        // 释放锁定帐存
+        if (result.getResult() != null && result.getResult().getOrderItemList() != null) {
+            for (TradeOrderItemsDTO item : result.getResult().getOrderItemList()) {
+                tradeOrderMiddlwareHandle.releaseBalance(item.getOrderItemNo());
+            }
+        }
+    }
+
+    @Test
+    public void testCreateSuperManagerValetOrder() {
+        VenusCreateTradeOrderDTO venusInDTO = new VenusCreateTradeOrderDTO();
+        venusInDTO.setOrderFrom(
+                dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_FROM, DictionaryConst.OPT_ORDER_FROM_SUPER_MANAGER));
+        venusInDTO.setBankAccount("jiangkun test");
+        venusInDTO.setBankName("jiangkun bank");
+        venusInDTO.setBuyerId(new Long(79269));
+        venusInDTO.setConsigneeAddress("南京市下关区测试测试");
+        venusInDTO.setConsigneeAddressProvince("02");
+        venusInDTO.setConsigneeAddressCity("025");
+        venusInDTO.setConsigneeAddressDistrict("025003");
+        venusInDTO.setConsigneeAddressTown("025003004");
+        venusInDTO.setConsigneeAddressDetail("测试测试");
+        venusInDTO.setConsigneeName("蒋坤");
+        venusInDTO.setConsigneePhoneNum("1234567890");
+        venusInDTO.setContactPhone("98765432d1");
+        venusInDTO.setDeliveryType(dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_GIVE_TYPE,
+                DictionaryConst.OPT_ORDER_GIVE_TYPE_SELLER));
+        venusInDTO.setInvoiceAddress("南京市下关区测试测试");
+        venusInDTO.setInvoiceCompanyName("测试测试");
+        venusInDTO.setInvoiceNotify("bugaosuni");
+        venusInDTO.setIsNeedInvoice(1);
+        venusInDTO.setInvoiceType(
+                dictionary.getValueByCode(DictionaryConst.TYPE_INVOICE_TYPE, DictionaryConst.OPT_INVOICE_TYPE_PLAIN));
+        venusInDTO.setOperatorId(new Long(10517));
+        venusInDTO.setOperatorName("测试测试");
+        venusInDTO.setOrderRemarks("南京市下关区测试测试");
+        venusInDTO.setPostCode("210015");
+        venusInDTO.setSalesDepartmentCode("0801022001");
+        venusInDTO.setSalesType(
+                dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_SALE_TYPE, DictionaryConst.OPT_ORDER_SALE_TYPE1));
+        venusInDTO.setSellerId(new Long(517));
+        venusInDTO.setTaxManId("12345678");
+
+        List<VenusCreateTradeOrderItemDTO> tradeItemDTOList = new ArrayList<VenusCreateTradeOrderItemDTO>();
+        VenusCreateTradeOrderItemDTO orderItemDTO = new VenusCreateTradeOrderItemDTO();
+        orderItemDTO.setAgreementCode("jiang kun");
+        orderItemDTO.setAvailableInventory(new Integer(100));
+        orderItemDTO.setGoodsCount(new Integer(10));
+        orderItemDTO.setGoodsPrice(new BigDecimal("1000"));
+        orderItemDTO.setCostPrice(new BigDecimal("900"));
+        orderItemDTO.setIsAgreementSku(1);
+        orderItemDTO.setIsBoxFlag(1);
+        orderItemDTO.setRebateUsedAmount(new BigDecimal("50"));
+        orderItemDTO.setSkuCode("100001886131");
+        orderItemDTO.setSpuCode("HPH_0000005501");
+        tradeItemDTOList.add(orderItemDTO);
+        venusInDTO.setTradeItemDTOList(tradeItemDTOList);
+
+        VenusCreateTradeOrderRebateDTO rebateDTO = new VenusCreateTradeOrderRebateDTO();
+        venusInDTO.setRebateDTO(rebateDTO);
+        rebateDTO.setRebateBalance(new BigDecimal("100"));
+        rebateDTO.setRebateCode("0009");
+        rebateDTO.setRebateNo("466");
+        rebateDTO.setUseRebateAmount(new BigDecimal("50"));
+        venusInDTO.setRebateDTO(rebateDTO);
+        ExecuteResult<TradeOrdersDTO> result = valetOrderService.createValetOrder(venusInDTO);
+        if (!result.isSuccess()) {
+            logger.info("\n 方法[{}]，出参：[{}]", "ValetOrderServiceImplTest-testCreateSuperManagerValetOrder",
                     JSONObject.toJSONString(result));
         }
         Assert.assertEquals(true, result.isSuccess());

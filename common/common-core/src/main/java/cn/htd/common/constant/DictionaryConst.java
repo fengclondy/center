@@ -868,4 +868,7 @@ public class DictionaryConst {
 	public static final String OPT_SMS_CHANNEL_MENGWANG = "SMS_CHANNEL_MENGWANG";
 	// ******************* add by jiangkun on 20170917 for PromotionCenter End
 	// *********************
+	
+    // 字典信息-订单来源-超级经理人下单
+    public static final String OPT_ORDER_FROM_SUPER_MANAGER = "ORDER_FROM_SUPER_MANAGER";
 }

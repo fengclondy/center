@@ -125,7 +125,7 @@ public class ValetOrderServiceImplTest {
         }
     }
 
-    @Test
+//    @Test
     public void testReverseReleaseBalance() {
         String orderNo = baseService.getOrderNo(
                 dictionary.getValueByCode(DictionaryConst.TYPE_ORDER_FROM, DictionaryConst.OPT_ORDER_FROM_VMS));

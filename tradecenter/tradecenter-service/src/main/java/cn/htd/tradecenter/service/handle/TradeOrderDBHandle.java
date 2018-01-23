@@ -119,7 +119,9 @@ public class TradeOrderDBHandle {
                     }
                 }
                 orderItemsDAO.addTradeOrderItemInfo(orderItemDTO);
-                orderItemsWarehouseDAO.addOrderItemsWarehouseDetailList(orderItemDTO.getWarehouseDTOList());
+                if (orderItemDTO.getWarehouseDTOList() != null && orderItemDTO.getWarehouseDTOList().size() > 0) {
+                    orderItemsWarehouseDAO.addOrderItemsWarehouseDetailList(orderItemDTO.getWarehouseDTOList());
+                }
             }
             if (orderItemsStatusHistoryDTOList != null && orderItemsStatusHistoryDTOList.size() > 0) {
                 orderItemsStatusHistoryDAO.addOrderItemsStatusHistoryList(orderItemsStatusHistoryDTOList);

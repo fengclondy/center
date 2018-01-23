@@ -21,6 +21,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
+import cn.htd.tradecenter.dto.ValetOrderGroup.Vms;
+
 /**
  * 订单行拆单信息DTO
  * 
@@ -46,49 +48,49 @@ public class VenusConfirmTradeOrderItemWarehouseDTO implements Serializable {
 	/**
 	 * 仓库代码
 	 */
-	@NotBlank(message = "仓库代码不能为空")
+    @NotBlank(message = "仓库代码不能为空", groups = { Vms.class })
 	@Length(max = 32, message = "仓库代码超长")
 	private String warehouseCode;
 
 	/**
 	 * 仓库名称
 	 */
-	@NotBlank(message = "仓库名称不能为空")
+	@NotBlank(message = "仓库名称不能为空", groups = { Vms.class })
 	@Length(max = 255, message = "仓库名称超长")
 	private String warehouseName;
 
 	/**
 	 * 供货商编码
 	 */
-	@NotBlank(message = "供货商编码不能为空")
+	@NotBlank(message = "供货商编码不能为空", groups = { Vms.class })
 	@Length(max = 32, message = "供货商编码超长")
 	private String supplierCode;
 
 	/**
 	 * 供货商名称
 	 */
-	@NotBlank(message = "供货商名称不能为空")
+	@NotBlank(message = "供货商名称不能为空", groups = { Vms.class })
 	@Length(max = 255, message = "供货商名称超长")
 	private String supplierName;
 
 	/**
 	 * 采购部门编码
 	 */
-	@NotBlank(message = "采购部门编码不能为空")
+	@NotBlank(message = "采购部门编码不能为空", groups = { Vms.class })
 	@Length(max = 32, message = "采购部门编码超长")
 	private String purchaseDepartmentCode;
 
 	/**
 	 * 采购部门名称
 	 */
-	@NotBlank(message = "采购部门名称不能为空")
+	@NotBlank(message = "采购部门名称不能为空", groups = { Vms.class })
 	@Length(max = 255, message = "采购部门名称超长")
 	private String purchaseDepartmentName;
 
 	/**
 	 * 商品属性
 	 */
-	@NotEmpty(message = "商品属性不能为空")
+	@NotEmpty(message = "商品属性不能为空", groups = { Vms.class })
 	private String productAttribute;
 
 	/**

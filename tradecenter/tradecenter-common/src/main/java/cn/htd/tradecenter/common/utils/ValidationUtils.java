@@ -34,10 +34,10 @@ public class ValidationUtils {
 	 * @param obj 待校验对象
 	 * @return
 	 */
-	public static <T> ValidateResult validateEntity(T obj) {
+	public static <T> ValidateResult validateEntity(T obj, Class<?>... groups) {
 
 		ValidateResult result = new ValidateResult();
-		Set<ConstraintViolation<T>> constraintViolations = validator.validate(obj);
+		Set<ConstraintViolation<T>> constraintViolations = validator.validate(obj, groups);
 
 		if (CollectionUtils.isNotEmpty(constraintViolations)) {
 			result.setHasErrors(true);

@@ -54,6 +54,7 @@ import cn.htd.tradecenter.dto.TradeOrdersDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderItemDTO;
 import cn.htd.tradecenter.dto.VenusCreateTradeOrderRebateDTO;
+import cn.htd.tradecenter.dto.ValetOrderGroup.Vms;
 import cn.htd.tradecenter.service.ValetOrderService;
 import cn.htd.tradecenter.service.handle.TradeOrderDBHandle;
 import cn.htd.tradecenter.service.handle.TradeOrderMiddlewareHandle;
@@ -104,8 +105,18 @@ public class ValetOrderServiceImpl implements ValetOrderService {
         boolean reverseBalanceResult = false;
 
         try {
+            Map<String, DictionaryInfo> dictMap = baseService.getTradeOrderDictionaryMap();
+            String vmsOrderFrom = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_FROM,
+                    DictionaryConst.OPT_ORDER_FROM_VMS);
+            boolean isVms = vmsOrderFrom.equals(venusInDTO.getOrderFrom());
+
             // 输入DTO的验证
-            ValidateResult validateResult = ValidationUtils.validateEntity(venusInDTO);
+            ValidateResult validateResult = null;
+            if (isVms) {
+                validateResult = ValidationUtils.validateEntity(venusInDTO, Vms.class);
+            } else {
+                validateResult = ValidationUtils.validateEntity(venusInDTO);
+            }
             // 有错误信息时返回错误信息
             if (validateResult.isHasErrors()) {
                 throw new TradeCenterBusinessException(ReturnCodeConst.PARAMETER_ERROR, validateResult.getErrorMsg());
@@ -144,16 +155,15 @@ public class ValetOrderServiceImpl implements ValetOrderService {
                 throw new TradeCenterBusinessException(ReturnCodeConst.BUYER_NOT_EXIST, "买家信息不存在");
             }
 
-            Map<String, DictionaryInfo> dictMap = baseService.getTradeOrderDictionaryMap();
             checkCreateVenusOrderParameter(dictMap, venusInDTO,
                     customerDTO.getIsLowFlag() == null ? false : customerDTO.getIsLowFlag().booleanValue(), sellerCode,
-                    buyerCode);
+                    buyerCode, isVms);
             // 取得交易号和订单号
             tradeNo = baseService.getTradeNo(venusInDTO.getOrderFrom());
             orderNo = baseService.getOrderNo(venusInDTO.getOrderFrom());
             // 取得订单行信息计算订单行金额信息
             List<TradeOrderItemsDTO> tradeOrderItemsDTOList = getValetOrderItemList(dictMap, orderNo, venusInDTO,
-                    sellerCode);
+                    sellerCode, isVms);
             TradeOrdersDTO tradeOrdersDTO = baseService.createTradeOrderInfo(dictMap, orderNo, venusInDTO,
                     tradeOrderItemsDTOList);
             // 判断账户余额是否足够
@@ -173,7 +183,7 @@ public class ValetOrderServiceImpl implements ValetOrderService {
             tradeOrdersDTO.setCreateOrderTime(new Date());
             tradeOrdersDTO.setPayTimeLimit(DateUtils.parse("9999-12-31 23:59:59", DateUtils.YYDDMMHHMMSS));
             // VMS开单订单默认创建状态为待确认,设置ERP分销单状态为待确认
-            setOrderStatusByCondition(tradeOrdersDTO, dictMap, orderErpDistributionDTOList);
+            setOrderStatusByCondition(tradeOrdersDTO, dictMap, orderErpDistributionDTOList, isVms);
             tradeOrdersDTO.setPayType(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_TYPE,
                     DictionaryConst.OPT_PAY_TYPE_ERP_ACCOUNT));
             tradeOrdersDTO.setPayStatus(baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_PAY_STATUS,
@@ -255,10 +265,11 @@ public class ValetOrderServiceImpl implements ValetOrderService {
      * @param canUnderFloorPrice
      * @param sellerCode
      * @param buyerCode
+     * @param isVms
      * @throws TradeCenterBusinessException
      */
     private void checkCreateVenusOrderParameter(Map<String, DictionaryInfo> dictMap,
-            VenusCreateTradeOrderDTO venusInDTO, boolean canUnderFloorPrice, String sellerCode, String buyerCode)
+            VenusCreateTradeOrderDTO venusInDTO, boolean canUnderFloorPrice, String sellerCode, String buyerCode, boolean isVms)
             throws TradeCenterBusinessException {
         List<VenusCreateTradeOrderItemDTO> itemDTOList = venusInDTO.getTradeItemDTOList();
         VenusCreateTradeOrderRebateDTO rebateDTO = venusInDTO.getRebateDTO();
@@ -318,14 +329,22 @@ public class ValetOrderServiceImpl implements ValetOrderService {
             }
             int storeNum = 0;
             if (stockMap.get(spuCode) != null) {
-                for (QueryItemWarehouseOutDTO stockDTO : stockMap.get(spuCode)) {
-                    // 取得选择仓库的实际库存
-                    if (itemBaseDTO.getSupplierCode().equals(stockDTO.getSupplierCode())
-                            && itemBaseDTO.getPurchaseDepartmentCode().equals(stockDTO.getDepartmentCode())
-                            && itemBaseDTO.getWarehouseCode().equals(stockDTO.getWareHouseCode())
-                            && itemBaseDTO.getProductAttribute().equals(stockDTO.getProductAttribute())) {
-                        storeNum = Integer.parseInt(stockDTO.getStoreNum());
-                        break;
+                if (isVms) {
+                    // vms订单时
+                    for (QueryItemWarehouseOutDTO stockDTO : stockMap.get(spuCode)) {
+                        // 取得选择仓库的实际库存
+                        if (itemBaseDTO.getSupplierCode().equals(stockDTO.getSupplierCode())
+                                && itemBaseDTO.getPurchaseDepartmentCode().equals(stockDTO.getDepartmentCode())
+                                && itemBaseDTO.getWarehouseCode().equals(stockDTO.getWareHouseCode())
+                                && itemBaseDTO.getProductAttribute().equals(stockDTO.getProductAttribute())) {
+                            storeNum = Integer.parseInt(stockDTO.getStoreNum());
+                            break;
+                        }
+                    }
+                } else {
+                    // 非VMS订单(超级经理人)时，取指定商品的库存总和
+                    for (QueryItemWarehouseOutDTO stockDTO : stockMap.get(spuCode)) {
+                        storeNum += Integer.parseInt(stockDTO.getStoreNum());
                     }
                 }
             }
@@ -383,12 +402,13 @@ public class ValetOrderServiceImpl implements ValetOrderService {
      * @param orderNo
      * @param venusInDTO
      * @param sellerCode
+     * @param isVms
      * @return
      * @throws TradeCenterBusinessException
      * @throws Exception
      */
     private List<TradeOrderItemsDTO> getValetOrderItemList(Map<String, DictionaryInfo> dictMap, String orderNo,
-            VenusCreateTradeOrderDTO venusInDTO, String sellerCode) throws TradeCenterBusinessException, Exception {
+            VenusCreateTradeOrderDTO venusInDTO, String sellerCode, boolean isVms) throws TradeCenterBusinessException, Exception {
         List<String> skuList = new ArrayList<String>();
         List<String> spuList = new ArrayList<String>();
         Map<String, List<VenusCreateTradeOrderItemDTO>> distinctItemListMap = new HashMap<String, List<VenusCreateTradeOrderItemDTO>>();
@@ -429,7 +449,7 @@ public class ValetOrderServiceImpl implements ValetOrderService {
                 orderItemsDTO.setSalePrice(salePrice);
 
                 TradeOrderItemsDTO retOrderItemsDTO = setTradeOrderItemsDTO(dictMap, orderNo, orderItemsDTO,
-                        tempVenusItemDTO, venusInDTO);
+                        tempVenusItemDTO, venusInDTO, isVms);
                 retOrderItemsDTOList.add(retOrderItemsDTO);
             }
         }
@@ -444,11 +464,12 @@ public class ValetOrderServiceImpl implements ValetOrderService {
      * @param targetDTO
      * @param baseDTO
      * @param venusInDTO
+     * @param isVms
      * @return
      * @throws TradeCenterBusinessException
      */
     private TradeOrderItemsDTO setTradeOrderItemsDTO(Map<String, DictionaryInfo> dictMap, String orderNo,
-            TradeOrderItemsDTO targetDTO, VenusCreateTradeOrderItemDTO baseDTO, VenusCreateTradeOrderDTO venusInDTO)
+            TradeOrderItemsDTO targetDTO, VenusCreateTradeOrderItemDTO baseDTO, VenusCreateTradeOrderDTO venusInDTO, boolean isVms)
             throws TradeCenterBusinessException {
         TradeOrderItemsDTO retDTO = new TradeOrderItemsDTO();
         VenusCreateTradeOrderRebateDTO rebateDTO = venusInDTO.getRebateDTO();
@@ -515,26 +536,29 @@ public class ValetOrderServiceImpl implements ValetOrderService {
         retDTO.setModifyId(venusInDTO.getOperatorId());
         retDTO.setModifyName(venusInDTO.getOperatorName());
 
-        itemWarehouseDetailDTO.setOrderNo(orderNo);
-        itemWarehouseDetailDTO.setOrderItemNo(retDTO.getOrderItemNo());
-        itemWarehouseDetailDTO.setSkuCode(retDTO.getSkuCode());
-        itemWarehouseDetailDTO.setGoodsCount(goodsNum);
-        itemWarehouseDetailDTO.setWarehouseCode(baseDTO.getWarehouseCode());
-        itemWarehouseDetailDTO.setWarehouseName(baseDTO.getWarehouseName());
-        itemWarehouseDetailDTO.setSupplierCode(baseDTO.getSupplierCode());
-        itemWarehouseDetailDTO.setSupplierName(baseDTO.getSupplierName());
-        itemWarehouseDetailDTO.setPurchaseDepartmentCode(baseDTO.getPurchaseDepartmentCode());
-        itemWarehouseDetailDTO.setPurchaseDepartmentName(baseDTO.getPurchaseDepartmentName());
-        itemWarehouseDetailDTO.setProductAttribute(baseDTO.getProductAttribute());
-        itemWarehouseDetailDTO.setAvailableInventory(baseDTO.getAvailableInventory());
-        itemWarehouseDetailDTO.setIsAgreementSku(baseDTO.getIsAgreementSku());
-        itemWarehouseDetailDTO.setAgreementCode(baseDTO.getAgreementCode());
-        itemWarehouseDetailDTO.setCreateId(venusInDTO.getOperatorId());
-        itemWarehouseDetailDTO.setCreateName(venusInDTO.getOperatorName());
-        itemWarehouseDetailDTO.setModifyId(venusInDTO.getOperatorId());
-        itemWarehouseDetailDTO.setModifyName(venusInDTO.getOperatorName());
-        itemWarehouseDetailList.add(itemWarehouseDetailDTO);
-        retDTO.setWarehouseDTOList(itemWarehouseDetailList);
+        // 只有vms代客开单才会插入仓库信息
+        if (isVms) {
+            itemWarehouseDetailDTO.setOrderNo(orderNo);
+            itemWarehouseDetailDTO.setOrderItemNo(retDTO.getOrderItemNo());
+            itemWarehouseDetailDTO.setSkuCode(retDTO.getSkuCode());
+            itemWarehouseDetailDTO.setGoodsCount(goodsNum);
+            itemWarehouseDetailDTO.setWarehouseCode(baseDTO.getWarehouseCode());
+            itemWarehouseDetailDTO.setWarehouseName(baseDTO.getWarehouseName());
+            itemWarehouseDetailDTO.setSupplierCode(baseDTO.getSupplierCode());
+            itemWarehouseDetailDTO.setSupplierName(baseDTO.getSupplierName());
+            itemWarehouseDetailDTO.setPurchaseDepartmentCode(baseDTO.getPurchaseDepartmentCode());
+            itemWarehouseDetailDTO.setPurchaseDepartmentName(baseDTO.getPurchaseDepartmentName());
+            itemWarehouseDetailDTO.setProductAttribute(baseDTO.getProductAttribute());
+            itemWarehouseDetailDTO.setAvailableInventory(baseDTO.getAvailableInventory());
+            itemWarehouseDetailDTO.setIsAgreementSku(baseDTO.getIsAgreementSku());
+            itemWarehouseDetailDTO.setAgreementCode(baseDTO.getAgreementCode());
+            itemWarehouseDetailDTO.setCreateId(venusInDTO.getOperatorId());
+            itemWarehouseDetailDTO.setCreateName(venusInDTO.getOperatorName());
+            itemWarehouseDetailDTO.setModifyId(venusInDTO.getOperatorId());
+            itemWarehouseDetailDTO.setModifyName(venusInDTO.getOperatorName());
+            itemWarehouseDetailList.add(itemWarehouseDetailDTO);
+            retDTO.setWarehouseDTOList(itemWarehouseDetailList);
+        }
 
         itemStatusHistoryDTO.setOrderItemNo(retDTO.getOrderItemNo());
         itemStatusHistoryDTO.setOrderItemStatus(retDTO.getOrderItemStatus());
@@ -549,7 +573,7 @@ public class ValetOrderServiceImpl implements ValetOrderService {
     }
 
     public void setOrderStatusByCondition(TradeOrdersDTO tradeOrdersDTO, Map<String, DictionaryInfo> dictMap,
-            List<TradeOrderErpDistributionDTO> orderErpDistributionDTOList) throws Exception {
+            List<TradeOrderErpDistributionDTO> orderErpDistributionDTOList, boolean isVms) throws Exception {
         String memberCode = tradeOrdersDTO.getBuyerCode();
         ExecuteResult<Long> id = memberBaseInfoService.getMemberIdByCode(memberCode);
         if (id.isSuccess()) {
@@ -560,8 +584,15 @@ public class ValetOrderServiceImpl implements ValetOrderService {
                 if ((("2".equals(memberDTO.getMemberType()) || "3".equals(memberDTO.getMemberType()))
                         && "1".equals(memberDTO.getSellerType()) && memberDTO.getIsSeller() == 1)
                         || "1".equals(memberDTO.getMemberType())) {
-                    tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
-                            DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
+                    if (isVms) {
+                        // VMS代客开单时，订单状态为待支付待下行
+                        tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
+                                DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_VMS_WAIT_DOWNERP));
+                    } else {
+                        // 非VMS代客开单时，订单状态为已支付（等待大B拆单）
+                        tradeOrdersDTO.setOrderStatus(baseService.getDictValueByCode(dictMap,
+                                DictionaryConst.TYPE_ORDER_STATUS, DictionaryConst.OPT_ORDER_STATUS_PAID));
+                    }
                 } else {
                     String confirmStatus = baseService.getDictValueByCode(dictMap, DictionaryConst.TYPE_ORDER_STATUS,
                             DictionaryConst.OPT_ORDER_STATUS_WAIT_CONFIRM);

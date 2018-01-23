@@ -32,15 +32,6 @@ public class QuerySkuPublishInfoDetailParamDTO implements Serializable{
 	public void setSupplierCode(String supplierCode) {
 		this.supplierCode = supplierCode;
 	}
-	private Boolean isNewVms;
-
-	public Boolean getNewVms() {
-		return isNewVms;
-	}
-
-	public void setNewVms(Boolean newVms) {
-		isNewVms = newVms;
-	}
 
 	public String getDefaultAreaCode() {
 		return defaultAreaCode;
@@ -49,4 +40,5 @@ public class QuerySkuPublishInfoDetailParamDTO implements Serializable{
 	public void setDefaultAreaCode(String defaultAreaCode) {
 		this.defaultAreaCode = defaultAreaCode;
 	}
+
 }

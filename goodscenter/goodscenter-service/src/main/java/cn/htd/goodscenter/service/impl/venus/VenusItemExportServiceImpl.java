@@ -1060,16 +1060,52 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				StandardPriceDTO standardPriceDTO = queryStandardPriceExeResult.getResult();
 				if (standardPriceDTO != null) {
 					ItemSkuBasePrice itemSkuBasePrice = standardPriceDTO.getItemSkuBasePrice();
-					if (itemSkuBasePrice != null) {
-						String saleLimitPrice = MiddlewareInterfaceUtil.findItemFloorPrice(querySkuPublishInfoDetailParamDTO.getSupplierCode(), spu.getSpuCode());
-						if (StringUtils.isNotEmpty(saleLimitPrice)) {
-							itemSkuBasePrice.setSaleLimitedPrice(new BigDecimal(saleLimitPrice));
-						}
-					} else {
+					BigDecimal saleLimitPrice = null;
+					BigDecimal wsaleUtprice = null;
+					BigDecimal webPrice = null;
+					Map priceMap = MiddlewareInterfaceUtil.findItemERPPrice(querySkuPublishInfoDetailParamDTO.getSupplierCode(), spu.getSpuCode());
+					if (MapUtils.isNotEmpty(priceMap)) {
+						saleLimitPrice = priceMap.get("floorPrice") != null ? new BigDecimal((String) priceMap.get("floorPrice")) : null;
+						wsaleUtprice = priceMap.get("wsaleUtprice") != null ? new BigDecimal((String) priceMap.get("wsaleUtprice")) : null;
+						webPrice = priceMap.get("webPrice") != null ? new BigDecimal((String) priceMap.get("webPrice")) : null;
+					}
+					// 未上架，取erp零售价和erp分销单价
+					if (2 == venusItemSkuPublishInfoDetailOutDTO.getShelfStatus()) { // 未上架
 						itemSkuBasePrice = new ItemSkuBasePrice();
-						String saleLimitPrice = MiddlewareInterfaceUtil.findItemFloorPrice(querySkuPublishInfoDetailParamDTO.getSupplierCode(), spu.getSpuCode());
-						if (StringUtils.isNotEmpty(saleLimitPrice)) {
-							itemSkuBasePrice.setSaleLimitedPrice(new BigDecimal(saleLimitPrice));
+						if (saleLimitPrice != null) {
+							itemSkuBasePrice.setSaleLimitedPrice(saleLimitPrice);
+						}
+						if (wsaleUtprice != null) {
+							itemSkuBasePrice.setRetailPrice(wsaleUtprice);
+						}
+						if (webPrice != null) {
+							if ("1".equals(querySkuPublishInfoDetailParamDTO.getShelfType())) {
+								itemSkuBasePrice.setBoxSalePrice(webPrice);
+							} else {
+								itemSkuBasePrice.setAreaSalePrice(webPrice);
+							}
+						}
+						standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
+					} else { // 上过架
+						if (itemSkuBasePrice != null) {
+							if (saleLimitPrice != null) {
+								itemSkuBasePrice.setSaleLimitedPrice(saleLimitPrice);
+							}
+						} else {
+							itemSkuBasePrice = new ItemSkuBasePrice();
+							if (saleLimitPrice != null) {
+								itemSkuBasePrice.setSaleLimitedPrice(saleLimitPrice);
+							}
+							if (wsaleUtprice != null) {
+								itemSkuBasePrice.setRetailPrice(wsaleUtprice);
+							}
+							if (webPrice != null) {
+								if ("1".equals(querySkuPublishInfoDetailParamDTO.getShelfType())) {
+									itemSkuBasePrice.setBoxSalePrice(webPrice);
+								} else {
+									itemSkuBasePrice.setAreaSalePrice(webPrice);
+								}
+							}
 							standardPriceDTO.setItemSkuBasePrice(itemSkuBasePrice);
 						}
 					}

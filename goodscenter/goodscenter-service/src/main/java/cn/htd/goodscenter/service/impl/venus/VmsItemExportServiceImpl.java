@@ -412,7 +412,6 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
      */
     @Override
     public ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> queryItemSkuPublishInfoDetail(QuerySkuPublishInfoDetailParamDTO querySkuPublishInfoDetailParamDTO) {
-        querySkuPublishInfoDetailParamDTO.setNewVms(true);
         ExecuteResult<VenusItemSkuPublishInfoDetailOutDTO> executeResult = this.venusItemExportService.queryItemSkuPublishInfoDetail(querySkuPublishInfoDetailParamDTO);
         return executeResult;
     }

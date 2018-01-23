@@ -325,15 +325,18 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
                     String spuCode = queryOffShelfItemOutDTO.getSpuCode();
                     BigDecimal saleLimitPrice = null;
                     BigDecimal wsaleUtprice = null;
+                    BigDecimal webPrice = null;
                     if (StringUtils.isNotEmpty(spuCode)) {
                         Map priceMap = MiddlewareInterfaceUtil.findItemERPPrice(supplierCode, spuCode);
                         if (MapUtils.isNotEmpty(priceMap)) {
                             saleLimitPrice = priceMap.get("floorPrice") != null ? new BigDecimal((String) priceMap.get("floorPrice")) : null;
                             wsaleUtprice = priceMap.get("wsaleUtprice") != null ? new BigDecimal((String) priceMap.get("wsaleUtprice")) : null;
+                            webPrice = priceMap.get("webPrice") != null ? new BigDecimal((String) priceMap.get("webPrice")) : null;
                         }
                     }
                     queryOffShelfItemOutDTO.setSaleLimitedPrice(saleLimitPrice);
                     queryOffShelfItemOutDTO.setWsaleUtprice(wsaleUtprice);
+                    queryOffShelfItemOutDTO.setWebPrice(webPrice);
                     skuIdList.add(queryOffShelfItemOutDTO.getSkuId());
                 }
                 ExecuteResult<List<ItemSkuBasePrice>> basePriceList = itemSkuPriceService.batchQueryItemSkuBasePrice(skuIdList);
@@ -416,8 +419,9 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
                 String itemCode = batchOnShelfItemInDTO.getItemCode();
                 Long skuId = batchOnShelfItemInDTO.getSkuId();
                 String skuCode = batchOnShelfItemInDTO.getSkuCode();
-                BigDecimal saleLimitPrice = batchOnShelfItemInDTO.getSaleLimitedPrice();
+                BigDecimal saleLimitPrice = batchOnShelfItemInDTO.getSaleLimitedPrice(); //分销限价
                 BigDecimal wsaleUtprice = batchOnShelfItemInDTO.getWsaleUtprice(); // erp零售价
+                BigDecimal webPrice = batchOnShelfItemInDTO.getWebPrice(); // erp分销单价
                 ValidateResult validateResult1 = DTOValidateUtil.validate(batchOnShelfItemInDTO);
                 if (!validateResult1.isPass()) {
                     this.addFailureList(failureList, itemName, itemCode, validateResult1.getMessage());
@@ -455,7 +459,7 @@ public class VmsBatchExportServiceImpl implements VmsBatchExportService {
                 BigDecimal salePrice = null;
                 if (batchOnShelfType == 1) { // 默认价格
                     retailPrice = wsaleUtprice;
-                    salePrice = saleLimitPrice;
+                    salePrice = webPrice;
                     OnShelfQuanty = maxQuanty;
                     if (OnShelfQuanty == null || OnShelfQuanty <= 0) {
                         String errorMsg = "默认价格,上架库存必须大于0";

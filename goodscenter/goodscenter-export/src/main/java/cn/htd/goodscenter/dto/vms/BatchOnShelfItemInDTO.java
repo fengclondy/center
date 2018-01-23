@@ -27,8 +27,13 @@ public class BatchOnShelfItemInDTO implements Serializable {
     private BigDecimal saleLimitedPrice;
 
     //ERP零售价
-    @NotNull(message = "wsaleUtprice不能为空")
+    @NotNull(message = "wsaleUtpriceERP零售价不能为空")
     private BigDecimal wsaleUtprice;
+
+    //ERO分销单价
+    //ERP零售价
+    @NotNull(message = "webPrice分销单价不能为空")
+    private BigDecimal webPrice;
 
     //销售价
     private BigDecimal salePrice;
@@ -117,5 +122,13 @@ public class BatchOnShelfItemInDTO implements Serializable {
 
     public void setOnShelfQuantiy(Integer onShelfQuantiy) {
         this.onShelfQuantiy = onShelfQuantiy;
+    }
+
+    public BigDecimal getWebPrice() {
+        return webPrice;
+    }
+
+    public void setWebPrice(BigDecimal webPrice) {
+        this.webPrice = webPrice;
     }
 }

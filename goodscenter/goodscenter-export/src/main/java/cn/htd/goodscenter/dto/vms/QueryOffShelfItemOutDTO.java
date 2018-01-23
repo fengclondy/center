@@ -18,6 +18,8 @@ public class QueryOffShelfItemOutDTO implements Serializable {
     private BigDecimal saleLimitedPrice;
     //ERP零售价
     private BigDecimal wsaleUtprice;
+    //ERP分销单价
+    private BigDecimal webPrice;
     //零售价
     private BigDecimal retailPrice;
     //销售价
@@ -216,5 +218,13 @@ public class QueryOffShelfItemOutDTO implements Serializable {
 
     public void setSpuCode(String spuCode) {
         this.spuCode = spuCode;
+    }
+
+    public BigDecimal getWebPrice() {
+        return webPrice;
+    }
+
+    public void setWebPrice(BigDecimal webPrice) {
+        this.webPrice = webPrice;
     }
 }

@@ -1199,17 +1199,51 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			ItemSkuPublishInfo itemSkuPublishInfoFromDb = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(venusItemSkuPublishInDTO.getSkuId(), venusItemSkuPublishInDTO.getShelfType(),"0");
 			//已锁定数量
 			Integer alreadyReserve = itemSkuPublishInfoFromDb == null ? 0 : itemSkuPublishInfoFromDb.getReserveQuantity();
-			//校验库存
-			boolean isPublishDisplayQtyIsEnough = checkPublishDisplayQtyIsEnough(Integer.parseInt(venusItemSkuPublishInDTO.getDisplayQty()), alreadyReserve,
-					venusItemSkuPublishInDTO.getSkuId(), venusItemSkuPublishInDTO.getShelfType(), item.getItemId(),
-					venusItemSkuPublishInDTO.getSupplierCode(), itemSkuFromDb.getSkuCode());
-			if (!"0".equals(venusItemSkuPublishInDTO.getIsVisible()) && isPublishDisplayQtyIsEnough && Integer.parseInt(venusItemSkuPublishInDTO.getDisplayQty()) == 0) {//非下架
-				isPublishDisplayQtyIsEnough = false;
-			}
-			if (!isPublishDisplayQtyIsEnough) {
-				result.setCode(VenusErrorCodes.E1040015.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040015.getErrorMsg()));
-				return result;
+			if ("1".equals(venusItemSkuPublishInDTO.getIsVisible())) { // 如果上架，校验可上架数量
+				//校验库存
+				Integer displayQuantity = Integer.valueOf(venusItemSkuPublishInDTO.getDisplayQty());
+				if(displayQuantity == null || displayQuantity < 0){
+					result.setCode(VenusErrorCodes.E1040015.name());
+					result.addErrorMessage("上架库存必须是大于0的正数");
+					return result;
+				}
+				//获取实际库存
+				Long itemId = item.getItemId();
+				Long skuId = venusItemSkuPublishInDTO.getSkuId();
+				String shelfType = venusItemSkuPublishInDTO.getShelfType();
+				String supplierCode = venusItemSkuPublishInDTO.getSupplierCode();
+				Integer realStockQty = getLeftAvaliableStockQty(itemId,supplierCode);
+				String skuCode = venusItemSkuPublishInDTO.getSkuCode();
+				//上架可见数大于实际库存
+				if(displayQuantity > realStockQty){
+					result.setCode(VenusErrorCodes.E1040015.name());
+					result.addErrorMessage("上架库存不能大于实际库存");
+					return result;
+				}
+				//上架可见数小于锁定数
+				if(displayQuantity < alreadyReserve){
+					result.setCode(VenusErrorCodes.E1040015.name());
+					result.addErrorMessage("上架库存不能小于锁定库存");
+					return result;
+				}
+				//获得另外一种上架模式数据 下架状态取锁定库存
+				ItemSkuPublishInfo anotherPublishInfo = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(skuId, shelfType.equals("1")?"2":"1","0");
+				Integer anotherPublishInfoDisplayQty=0;
+				if(anotherPublishInfo != null){
+					anotherPublishInfoDisplayQty = anotherPublishInfo.getIsVisable() == 1 ? anotherPublishInfo.getDisplayQuantity() : anotherPublishInfo.getReserveQuantity();
+					if (anotherPublishInfoDisplayQty == null) {
+						anotherPublishInfoDisplayQty = 0;
+					}
+				}
+				Integer promotionQty = getPromotionQty(skuCode);
+				//计算最终能够上架的库存数
+				Integer qty=realStockQty-anotherPublishInfoDisplayQty-promotionQty;
+				//大于实际可用库存
+				if(displayQuantity > qty){
+					result.setCode(VenusErrorCodes.E1040015.name());
+					result.addErrorMessage("上架库存不能大于最大可上架库存");
+					return result;
+				}
 			}
 			dealWithItemSkuPublishInfo(venusItemSkuPublishInDTO, itemSkuFromDb, itemSkuPublishInfoFromDb);
 			// 处理预售标记

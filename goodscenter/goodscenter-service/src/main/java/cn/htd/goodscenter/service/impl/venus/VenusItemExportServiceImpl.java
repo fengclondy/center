@@ -3111,8 +3111,8 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 				String[] array = new String[attrValueCodeArray.size()];
 				if (attrValueCodeArray != null) {
 					for (int i = 0; i < attrValueCodeArray.size(); i++) {
-						Integer attrValueCode = (Integer) attrValueCodeArray.get(i);
-						array[i] = this.getAttributeValueName(attrValueCode);
+						Integer attrValueCode = Integer.valueOf(attrValueCodeArray.get(i) + "");
+ 						array[i] = this.getAttributeValueName(attrValueCode);
 					}
 				}
 				paresMapResult.put(attrName, array);

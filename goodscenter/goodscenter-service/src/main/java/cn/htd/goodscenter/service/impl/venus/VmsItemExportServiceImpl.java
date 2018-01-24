@@ -716,7 +716,7 @@ public class VmsItemExportServiceImpl implements VmsItemExportService {
             // 补充三级类目信息
             ExecuteResult<Map<String, Object>> categoryResult = itemCategoryService.queryItemOneTwoThreeCategoryName(venusItemSkuPublishInfoOutDTO.getCategoryId(), ">");
             if (categoryResult != null && MapUtils.isNotEmpty(categoryResult.getResult())) {
-                String catName = (String) categoryResult.getResult().get("categoryName");
+                String catName = (String) categoryResult.getResult().get("thirdCategoryName");
                 venusItemSkuPublishInfoOutDTO.setCategoryName(catName);
             }
         }

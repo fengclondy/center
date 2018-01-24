@@ -6,6 +6,7 @@ import cn.htd.common.Pager;
 import cn.htd.common.dto.DictionaryInfo;
 import cn.htd.tradecenter.common.constant.ReturnCodeConst;
 import cn.htd.tradecenter.common.constant.VMSOrderConstants;
+import cn.htd.tradecenter.common.enums.YesNoEnum;
 import cn.htd.tradecenter.common.exception.TradeCenterBusinessException;
 import cn.htd.tradecenter.common.utils.ExceptionUtils;
 import cn.htd.tradecenter.common.utils.ValidateResult;
@@ -83,6 +84,9 @@ public class VMSOrderServiceImpl implements VMSOrderService{
             long count = vmsOrderDAO.queryVMSpendingOrderCountByCondition(conditionDTO);
             if(count > 0){
                 List<TradeOrdersShowDTO> orderlist = vmsOrderDAO.queryVMSpendingOrderByCondition(conditionDTO, pager);
+                for(TradeOrdersShowDTO order : orderlist){
+                    this.setOrderType(order);
+                }
                 dataGrid.setRows(orderlist);
             }
             dataGrid.setTotal(count);
@@ -108,8 +112,6 @@ public class VMSOrderServiceImpl implements VMSOrderService{
             orderStatusList.add(OrderStatusEnum.WAIT_PAY.getValue());
             orderStatusList.add(OrderStatusEnum.VERIFY_WAIT_PAY.getValue());
             conditionDTO.setOrderStatusList(orderStatusList);
-            conditionDTO.setIsTimelimitedOrder(VMSOrderConstants.IS_NOT_TIMELIMITED_ORDER);
-            conditionDTO.setHasUsedCoupon(VMSOrderConstants.HAS_NOT_USED_COUPON);
             conditionDTO.setIsErrorFlag(VMSOrderConstants.IS_NOT_ERROR_ORDER);
             conditionDTO.setIsCancelFlag(VMSOrderConstants.IS_NOT_CANCEL_ORDER);
         }else if(VMSOrderConstants.SEARCH_CONDITION_WAITING_CONFIRM.equals(conditionDTO.getSearchFlag())){
@@ -125,6 +127,18 @@ public class VMSOrderServiceImpl implements VMSOrderService{
         }else if(VMSOrderConstants.SEARCH_CONDITION_ORDER_ERROR.equals(conditionDTO.getSearchFlag())){
             conditionDTO.setIsErrorFlag(VMSOrderConstants.IS_ERROR_ORDER);
             conditionDTO.setIsCancelFlag(VMSOrderConstants.IS_NOT_CANCEL_ORDER);
+        }
+    }
+
+    private void setOrderType(TradeOrdersShowDTO orderDTO){
+        if(!VMSOrderConstants.ORDER_FROM_VMS.equals(orderDTO.getOrderFrom())){
+            if(YesNoEnum.NO.getValue() == orderDTO.getIsTimelimitedOrder() && YesNoEnum.NO.getValue() == orderDTO.getHasUsedCoupon()){
+                orderDTO.setOrderType(VMSOrderConstants.ORDER_TYPE_NORMAL);
+            }else if(YesNoEnum.YES.getValue() == orderDTO.getIsTimelimitedOrder()){
+                orderDTO.setOrderType(VMSOrderConstants.ORDER_TYPE_TIMELIMITED);
+            }else if(YesNoEnum.NO.getValue() == orderDTO.getIsTimelimitedOrder() && YesNoEnum.YES.getValue() == orderDTO.getHasUsedCoupon()){
+                orderDTO.setOrderType(VMSOrderConstants.ORDER_TYPE_COUPON);
+            }
         }
     }
 

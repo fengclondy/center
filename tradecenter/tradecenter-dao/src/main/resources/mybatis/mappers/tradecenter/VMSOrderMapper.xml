@@ -222,8 +222,8 @@
             </if>
             <if test="entity.searchStr != null and entity.searchStr != ''">
                 and (
-                order_no = #{entity.searchStr}
-                or consignee_phone_num = #{entity.searchStr}
+                order_no like concat('%', #{entity.searchStr}, '%')
+                or consignee_phone_num like concat('%', #{entity.searchStr}, '%')
                 or buyer_name like concat('%', #{entity.searchStr}, '%')
                 )
             </if>

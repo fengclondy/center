@@ -75,6 +75,8 @@ public class TradeOrdersDTO implements Serializable {
 
 	private int isChangePrice;
 
+	private int orderType;
+
 	private String orderStatus;
 
 	private Date orderReceiptTime;
@@ -455,6 +457,14 @@ public class TradeOrdersDTO implements Serializable {
 
 	public void setIsChangePrice(int isChangePrice) {
 		this.isChangePrice = isChangePrice;
+	}
+
+	public int getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(int orderType) {
+		this.orderType = orderType;
 	}
 
 	public String getOrderStatus() {

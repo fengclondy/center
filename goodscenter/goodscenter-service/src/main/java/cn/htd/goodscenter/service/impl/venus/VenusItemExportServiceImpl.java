@@ -1412,7 +1412,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 		// 校验同步标记;包厢和大厅只能勾选一个
 		if ("1".equals(venusItemSkuPublishInDTO.getErpSync())) { // 如狗勾上了同步标记，校验其他情况是否勾上
-			String anotherShelfType = venusItemSkuPublishInDTO.getIsBoxFlag() == 0 ? "1" : "2";
+			String anotherShelfType = "1".equals(venusItemSkuPublishInDTO.getShelfType()) ? "2" : "1";
 			ItemSkuPublishInfo itemSkuPublishInfoFromAnother = itemSkuPublishInfoMapper.selectByItemSkuAndShelfType(venusItemSkuPublishInDTO.getSkuId(), anotherShelfType,"0");
 			if (itemSkuPublishInfoFromAnother != null && itemSkuPublishInfoFromAnother.getErpSync() == 1) {
 				// 更新另外一种情况为不勾上

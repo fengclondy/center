@@ -17,7 +17,7 @@ import cn.htd.pricecenter.dto.StandardPriceDTO;
  * Description: [描述该类概要功能介绍:商品信息的DTO]
  * </p>
  */
-public class ItemDTO implements Serializable {
+public class  ItemDTO implements Serializable {
 	private static final long serialVersionUID = 2464215588527124822L;
 	private Long itemId;// 商品id
 	private Long sellerId;// 商家ID 平台:非必填；商家:必填
@@ -25,8 +25,12 @@ public class ItemDTO implements Serializable {
 	private String itemName;// 商品名称 平台:必填；商家:必填
 	private String itemCode;//商品编码
 	private String ad;// 广告词 平台:非必填；商家:非必填
-	private Long cid;// 类目ID 平台:必填；商家:必填
-	private String cName;// 类目名称
+	private Long firstCid;// 一级类目ID
+	private String firstCName;// 一级类目名称
+	private Long secondCid;// 二级类目ID
+	private String secondCName;// 二级类目名称
+	private Long cid;// 三级类目ID 平台:必填；商家:必填
+	private String cName;// 三级类目名称
 	private String outerItemStatus;//外部商品状态
 	private Long brand;// 品牌 平台:必填；商家:必填
 	private String brandName;// 品牌名称 查询用
@@ -794,4 +798,37 @@ public class ItemDTO implements Serializable {
 	public void setVerifyName(String verifyName) {
 		this.verifyName = verifyName;
 	}
+
+	public Long getFirstCid() {
+		return firstCid;
+	}
+
+	public void setFirstCid(Long firstCid) {
+		this.firstCid = firstCid;
+	}
+
+	public String getFirstCName() {
+		return firstCName;
+	}
+
+	public void setFirstCName(String firstCName) {
+		this.firstCName = firstCName;
+	}
+
+	public Long getSecondCid() {
+		return secondCid;
+	}
+
+	public void setSecondCid(Long secondCid) {
+		this.secondCid = secondCid;
+	}
+
+	public String getSecondCName() {
+		return secondCName;
+	}
+
+	public void setSecondCName(String secondCName) {
+		this.secondCName = secondCName;
+	}
+
 }

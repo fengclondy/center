@@ -14,6 +14,7 @@ import cn.htd.goodscenter.dao.spu.ItemSpuDescribeMapper;
 import cn.htd.goodscenter.dao.spu.ItemSpuPictureMapper;
 import cn.htd.goodscenter.domain.spu.ItemSpuDescribe;
 import cn.htd.goodscenter.domain.spu.ItemSpuPicture;
+import cn.htd.goodscenter.dto.*;
 import cn.htd.goodscenter.service.converter.Converters;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -80,25 +81,6 @@ import cn.htd.goodscenter.domain.ItemSkuPicture;
 import cn.htd.goodscenter.domain.ItemSkuPublishInfo;
 import cn.htd.goodscenter.domain.ItemSkuTotalStock;
 import cn.htd.goodscenter.domain.spu.ItemSpu;
-import cn.htd.goodscenter.dto.ItemAdDTO;
-import cn.htd.goodscenter.dto.ItemAttrDTO;
-import cn.htd.goodscenter.dto.ItemAttrValueDTO;
-import cn.htd.goodscenter.dto.ItemAttrValueItemDTO;
-import cn.htd.goodscenter.dto.ItemCatCascadeDTO;
-import cn.htd.goodscenter.dto.ItemCategoryDTO;
-import cn.htd.goodscenter.dto.ItemDBDTO;
-import cn.htd.goodscenter.dto.ItemDTO;
-import cn.htd.goodscenter.dto.ItemQueryInDTO;
-import cn.htd.goodscenter.dto.ItemQueryOutDTO;
-import cn.htd.goodscenter.dto.ItemShopCartDTO;
-import cn.htd.goodscenter.dto.ItemShopCidDTO;
-import cn.htd.goodscenter.dto.ItemStatusModifyDTO;
-import cn.htd.goodscenter.dto.ItemWaringOutDTO;
-import cn.htd.goodscenter.dto.SkuColorGroupPictureDTO;
-import cn.htd.goodscenter.dto.SkuInfoDTO;
-import cn.htd.goodscenter.dto.SkuPictureDTO;
-import cn.htd.goodscenter.dto.SpuInfoDTO;
-import cn.htd.goodscenter.dto.WaitAuditItemInfoDTO;
 import cn.htd.goodscenter.dto.enums.HtdItemStatusEnum;
 import cn.htd.goodscenter.dto.enums.ItemErpStatusEnum;
 import cn.htd.goodscenter.dto.enums.ItemPlatLinkStatusEnum;
@@ -3569,6 +3551,27 @@ public class ItemExportServiceImpl implements ItemExportService {
 			List<ItemDTO> itemDTOList = new ArrayList<>();
 			if (count > 0) {
 				itemDTOList = this.itemMybatisDAO.queryItemListBySellerIdOrderByStock(itemName, sellerId, pager);
+				// 补充类目
+				List<Long> cidList = new ArrayList<>();
+				for (ItemDTO itemDTO : itemDTOList) {
+					if (itemDTO.getCid() == null) {
+						continue;
+					}
+					cidList.add(itemDTO.getCid());
+				}
+				if (cidList.size() > 0) {
+					List<ItemCategoryCompleteDTO> itemCategoryCompleteDTOList = this.itemCategoryDAO.batchQueryCategoryComplete(cidList);
+					for (ItemDTO itemDTO : itemDTOList) {
+						for (ItemCategoryCompleteDTO itemCategoryCompleteDTO : itemCategoryCompleteDTOList) {
+							if (itemDTO.getCid().equals(itemCategoryCompleteDTO.getThirdCategoryId())) {
+								itemDTO.setFirstCid(itemCategoryCompleteDTO.getFirstCategoryId());
+								itemDTO.setFirstCName(itemCategoryCompleteDTO.getFirstCategoryName());
+								itemDTO.setSecondCid(itemCategoryCompleteDTO.getSecondCategoryId());
+								itemDTO.setSecondCName(itemCategoryCompleteDTO.getSecondCategoryName());
+							}
+						}
+					}
+				}
 			}
 			dtoDataGrid.setTotal(count);
 			dtoDataGrid.setRows(itemDTOList);

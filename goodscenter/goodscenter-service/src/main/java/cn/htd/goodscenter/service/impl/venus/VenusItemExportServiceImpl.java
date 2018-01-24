@@ -1197,6 +1197,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 
 	private void syncTotalStock(ItemSku itemSku,ItemStockResponseDTO itemStockResponse){
 		if(itemSku==null||itemStockResponse==null){
+			logger.error("查询不到实际库存, itemStockResponse:{}", itemStockResponse);
 			return;
 		}
         //查询库存上架信息
@@ -1482,7 +1483,7 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		if(venusItemSkuPublishInDTO.getItemSaleArea() != null && !(1==venusItemSkuPublishInDTO.getItemSaleArea().getIsSalesWholeCountry())){
 			if(venusItemSkuPublishInDTO.getItemSaleArea()!=null&&CollectionUtils.isEmpty(venusItemSkuPublishInDTO.getItemSaleAreaDetailList())){
 				result.setCode(VenusErrorCodes.E1040014.name());
-				result.setErrorMessages(Lists.newArrayList("销售区域不能为空");
+				result.setErrorMessages(Lists.newArrayList("销售区域不能为空"));
 				return  result;
 			}
 			

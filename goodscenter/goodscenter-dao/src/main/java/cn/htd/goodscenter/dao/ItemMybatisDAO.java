@@ -369,4 +369,21 @@ public interface ItemMybatisDAO extends BaseDAO<Item> {
 	List<ItemDTO> queryItemListBySellerIdOrderByStock(@Param("itemName") String itemName, @Param("sellerId") Long sellerId, @Param("page") Pager pager);
 
     Long queryItemListCountBySellerIdOrderByStock(@Param("itemName") String itemName, @Param("sellerId") Long sellerId);
+
+	/**
+	 * 根据大B下某商品名称的数量
+	 * @param itemName
+	 * @param sellerId
+	 * @return
+	 */
+	Long queryItemListCountBySellerId(@Param("itemName") String itemName, @Param("sellerId") Long sellerId);
+
+	/**
+	 * 更新时检查是否存在相同名称的，排除自己
+	 * @param itemName
+	 * @param sellerId
+	 * @param itemCode
+	 * @return
+	 */
+	Long queryItemListCountBySellerId4Update(@Param("itemName") String itemName, @Param("sellerId") Long sellerId,  @Param("itemId") Long itemId);
 }

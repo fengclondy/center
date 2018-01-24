@@ -2694,4 +2694,27 @@
 		ORDER BY
 		stock.inventory DESC
 	</select>
+
+	<select id="queryItemListCountBySellerId" resultType="Long">
+		SELECT
+		COUNT(1)
+		FROM
+		item item
+		WHERE
+		item.item_status != 6
+		AND item.seller_id = #{sellerId}
+		AND item.item_name = #{itemName}
+	</select>
+
+	<select id="queryItemListCountBySellerId4Update" resultType="Long">
+		SELECT
+		COUNT(1)
+		FROM
+		item item
+		WHERE
+		item.item_status != 6
+		AND item.seller_id = #{sellerId}
+		AND item.item_name = #{itemName}
+		AND item.item_id != #{itemId}
+	</select>
 </mapper>

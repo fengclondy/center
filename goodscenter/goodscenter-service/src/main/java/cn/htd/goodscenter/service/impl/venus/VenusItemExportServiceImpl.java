@@ -182,17 +182,13 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			return  result;
 		}
 		try{
+			// 新增校验，同一个大B不能新增一样的商品
+			// 放重操作；防止一瞬间来多个相同名称的新增
+			if (validateSameItemInDB(venusItemDTO, result, false)) {
+				return result;
+			}
 			//DTO转化为domain
 			Item item=Converters.convert(venusItemDTO, Item.class);
-//			//自动创建一条商品SPU
-//			ItemSpu itemSpu = doAddItemSpu(venusItemDTO, item);
-//			item.setItemSpuId(itemSpu.getSpuId());
-//			//税率一致校验
-//			if (itemSpu.getTaxRate().compareTo(item.getTaxRate()) != 0) {
-//				result.setCode(VenusErrorCodes.E1040020.name());
-//				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040020.getErrorMsg()));
-//				return result;
-//			}
 			//存储item到数据库
 		    itemMybatisDAO.addItem(item);
 			//生成SKU
@@ -446,6 +442,9 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			return  result;
 		}
 		try{
+			if (validateSameItemInDB(venusItemDTO, result, true)) {
+				return result;
+			}
 			//查询数据库中item
 			Item itemFromDb = itemMybatisDAO.queryItemByPk(venusItemDTO.getItemId());
 			if(itemFromDb == null){
@@ -464,6 +463,37 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return result;
+	}
+
+	private boolean validateSameItemInDB(VenusItemInDTO venusItemDTO, ExecuteResult<String> result, boolean isUpdate) {
+		// 新增校验，同一个大B不能新增一样的商品
+		// 放重操作；防止一瞬间来多个相同名称的新增
+		Long sellerId = venusItemDTO.getHtdVendorId();
+		String productName = venusItemDTO.getProductName();
+		Long itemId = venusItemDTO.getItemId();
+		String key = Constants.REDIS_KEY_ADD_MODIFY_ITEM_NAME_COUNT + "|" + sellerId + "|" + productName;
+		Long indx = redisDB.incr(key);
+		redisDB.expire(key, 1);
+		if (indx > 1) {
+            result.setCode(ErrorCodes.E10006.name());
+            result.setResultMessage("已经有" + productName + "商品在新增或者修改中, 请稍后再试!");
+            result.addErrorMessage("已经有" + productName + "商品在新增或者修改中, 请稍后再试!");
+			return true;
+        }
+		//  查询数据库是否有相同名称的商品存在
+		Long count = 0L;
+		if (isUpdate) {
+			count = itemMybatisDAO.queryItemListCountBySellerId4Update(productName, sellerId, itemId);
+		} else {
+			count = itemMybatisDAO.queryItemListCountBySellerId(productName, sellerId);
+		}
+		if (count >= 1) {
+            result.setCode(ErrorCodes.E10006.name());
+            result.setResultMessage("供应商已经存在商品" + productName + ", 不能重名");
+            result.addErrorMessage("供应商已经存在商品" + productName + ", 不能重名");
+			return true;
+        }
+		return false;
 	}
 
 	private ItemDraft doUpdateItemDraft(VenusItemInDTO venusItemDTO, Item itemFromDb) {
@@ -1452,13 +1482,13 @@ public class VenusItemExportServiceImpl implements VenusItemExportService{
 		if(venusItemSkuPublishInDTO.getItemSaleArea() != null && !(1==venusItemSkuPublishInDTO.getItemSaleArea().getIsSalesWholeCountry())){
 			if(venusItemSkuPublishInDTO.getItemSaleArea()!=null&&CollectionUtils.isEmpty(venusItemSkuPublishInDTO.getItemSaleAreaDetailList())){
 				result.setCode(VenusErrorCodes.E1040014.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("saleAreaDetail")));
+				result.setErrorMessages(Lists.newArrayList("销售区域不能为空");
 				return  result;
 			}
 			
 			if(venusItemSkuPublishInDTO.getItemSaleArea()==null&&CollectionUtils.isNotEmpty(venusItemSkuPublishInDTO.getItemSaleAreaDetailList())){
 				result.setCode(VenusErrorCodes.E1040014.name());
-				result.setErrorMessages(Lists.newArrayList(VenusErrorCodes.E1040014.getErrorMsg("SaleArea")));
+				result.setErrorMessages(Lists.newArrayList("销售区域不能为空"));
 				return  result;
 			}
 		}

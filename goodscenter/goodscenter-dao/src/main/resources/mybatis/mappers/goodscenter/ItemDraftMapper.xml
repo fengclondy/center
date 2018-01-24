@@ -555,13 +555,13 @@
       and i.item_status in (1, 4, 5)
     </if>
     and sku.seller_id = #{param.sellerId}
-    <if test="param.productCode !=null and productCode != '' ">
+    <if test="param.productCode != null and param.productCode != '' ">
       and i.item_code=#{param.productCode}
     </if>
-    <if test="param.productName !=null and productName != '' ">
+    <if test="param.productName != null and param.productName != '' ">
       and t.item_name  like concat('%',#{param.productName},'%')
     </if>
-    <if test="param.brandName != null and brandName != '' ">
+    <if test="param.brandName != null and param.brandName != '' ">
       and brand.brand_name = #{param.brandName}
     </if>
     <if test="param.thirdCategoryIdList != null">
@@ -588,13 +588,13 @@
     t.status = 0
     and i.item_status in (0, 1, 4, 5)
     and sku.seller_id = #{param.sellerId}
-    <if test="param.productCode !=null and productCode != '' ">
+    <if test="param.productCode != null and param.productCode != '' ">
       and i.item_code=#{param.productCode}
     </if>
-    <if test="param.productName !=null and productName != '' ">
+    <if test="param.productName != null and param.productName != '' ">
       and t.item_name  like concat('%',#{param.productName},'%')
     </if>
-    <if test="param.brandName != null and brandName != '' ">
+    <if test="param.brandName != null and param.brandName != '' ">
       and brand.brand_name = #{param.brandName}
     </if>
     <if test="param.thirdCategoryIdList != null">

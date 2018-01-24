@@ -121,4 +121,9 @@ public class Constants {
 	 * 预售商品准备 推送失败
 	 */
 	public static final int PRE_SALE_ITEM_PUSH_FAIL = 3;
+
+	/**
+	 * redis缓存前缀 - 商品修改或新增计数放重
+	 */
+	public static final String REDIS_KEY_ADD_MODIFY_ITEM_NAME_COUNT = "B2B_MIDDLE_PRODUCT_ADD_COUNT";
 }
